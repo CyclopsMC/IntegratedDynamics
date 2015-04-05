@@ -1,0 +1,42 @@
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
+
+    // Project lombok
+    compile "org.projectlombok:lombok:1.14.4"
+}
+
+minecraft {
+    version = "${config.minecraft_version}-${config.forge_version}"
+    
+    replaceIn "Reference.java"
+    replace "@VERSION@", project.version
+    replace "@MC_VERSION@", project.config.minecraft_version
+    replace "@FORGE_VERSION@", project.config.forge_version
+    replace "@BUILD_NUMBER@", project.buildnumber
+    replace "@CYCLOPSCORE_VERSION@", project.config.cyclopscore_version
+}
+
+if (System.getenv().RELEASE)
+    version = "${config.minecraft_version}-${config.mod_version}"
+else
+    version = "${config.minecraft_version}-${config.mod_version}-${buildnumber}"
+
+processResources {
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else, that is not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}

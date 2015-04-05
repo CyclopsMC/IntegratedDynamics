@@ -1,0 +1,74 @@
+apply plugin: "curseforge"
+apply plugin: 'maven'
+
+if(project.hasProperty("curseforge_key") && project.hasProperty("changelog")) {
+    curse {
+        apiKey = project.curseforge_key
+        projectId = "TODO" // my project url is http://minecraft.curseforge.com/mc-mods/TODO/
+        changelog = new File(project.changelog).text
+        releaseType = "release"
+
+        additionalArtifact deobfJar
+        additionalArtifact apiJar
+        additionalArtifact sourceJar
+        additionalArtifact javadocJar
+    }
+}
+
+configurations {
+    deployerJars
+}
+
+dependencies {
+    deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
+}
+
+uploadArchives {
+    repositories {
+        add getProject().repositories.mavenLocal()
+    }
+    repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+
+        if (project.hasProperty("filesmaven_url")) {
+            logger.info('Publishing to files server')
+            repository(url: project.filesmaven_url) {
+                authentication(userName: project.filesmaven_username, password: project.filesmaven_key)
+            }
+        } else {
+            logger.info('Publishing to repo folder')
+            repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
+        }
+
+        pom {
+            groupId = project.group
+            version = project.version
+            artifactId = project.archivesBaseName
+        }
+        pom.project {
+            name project.archivesBaseName
+            packaging 'jar'
+            description 'An evil mod for Minecraft'
+            url 'https://github.com/rubensworks/EvilCraft'
+
+            scm {
+                url 'https://github.com/rubensworks/EvilCraft'
+                connection 'scm:git:git://github.com/rubensworks/EvilCraft.git'
+                developerConnection 'scm:git:git@github.com:rubensworks/EvilCraft.git'
+            }
+
+            issueManagement {
+                system 'github'
+                url 'https://github.com/rubensworks/EvilCraft/issues'
+            }
+
+            developers {
+                developer {
+                    id 'rubensworks'
+                    name 'rubensworks'
+                    roles { role 'developer' }
+                }
+            }
+        }
+    }
+}

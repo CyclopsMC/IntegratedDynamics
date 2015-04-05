@@ -1,0 +1,26 @@
+# We don't want compiled stuff in here!
+/bin
+doc/info.txt
+/build
+/run
+
+# Ignore project specific files
+.classpath
+.project
+.settings
+.pydevproject
+eclipse/*
+.gradle/*
+repo/*
+*.iml
+*.ipr
+*.iws
+out/*
+
+# Ignore mac-specific file(s)
+.DS_Store
+
+# Ignore files specific to dev environments
+gradle.properties
+build_number.properties
+changelog.txt

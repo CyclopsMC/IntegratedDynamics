@@ -1,0 +1,17 @@
+[
+{
+  "modid": "IntegratedDynamics",
+  "name": "Integrated Dynamics",
+  "description": "Take full and automated control of your appliances.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "logoFile": "assets/integrateddynamics/textures/logo.png",
+  "url": "TODO",
+  "updateUrl": "TODO",
+  "authorList": [ "rubensworks (aka kroeserr)" ],
+  "credits": "kroeserr",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
