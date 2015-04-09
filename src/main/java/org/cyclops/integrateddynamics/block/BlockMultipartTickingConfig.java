@@ -1,10 +1,10 @@
-package org.cyclops.integrateddynamics.core.block;
+package org.cyclops.integrateddynamics.block;
 
 import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
- * Config for {@link org.cyclops.integrateddynamics.core.block.BlockMultipartTicking}.
+ * Config for {@link BlockMultipartTicking}.
  * @author rubensworks
  */
 public class BlockMultipartTickingConfig extends BlockContainerConfig {

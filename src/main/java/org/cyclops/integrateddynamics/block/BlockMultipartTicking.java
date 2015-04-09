@@ -1,7 +1,6 @@
-package org.cyclops.integrateddynamics.core.block;
+package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -32,16 +31,6 @@ public class BlockMultipartTicking extends ConfigurableBlockContainer {
 
         setHardness(3.0F);
         setStepSound(soundTypeMetal);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0; // TODO: abstract
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState(); // TODO: abstract
     }
 
 }
