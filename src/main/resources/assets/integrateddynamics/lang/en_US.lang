@@ -1,0 +1,10 @@
+# General
+itemGroup.integrateddynamics=Integrated Dynamics
+
+# Blocks
+tile.blocks.integrateddynamics.cable.name=Cable
+tile.blocks.integrateddynamics.cable.info=Default cable
+
+# Items
+item.items.integrateddynamics.partRedstone.name=Redstone Part
+item.items.integrateddynamics.partRedstone.info=A reader/writer for redstone
