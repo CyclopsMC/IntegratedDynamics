@@ -10,15 +10,15 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
  * This block refers to a ticking tile entity.
  * @author rubensworks
  */
-public class BlockMultipartTicking extends ConfigurableBlockContainer {
+public class BlockCable extends ConfigurableBlockContainer {
 
-    private static BlockMultipartTicking _instance = null;
+    private static BlockCable _instance = null;
 
     /**
      * Get the unique instance.
      * @return The instance.
      */
-    public static BlockMultipartTicking getInstance() {
+    public static BlockCable getInstance() {
         return _instance;
     }
 
@@ -26,11 +26,16 @@ public class BlockMultipartTicking extends ConfigurableBlockContainer {
      * Make a new block instance.
      * @param eConfig Config for this block.
      */
-    public BlockMultipartTicking(ExtendedConfig eConfig) {
+    public BlockCable(ExtendedConfig eConfig) {
         super(eConfig, Material.glass, TileMultipartTicking.class);
 
         setHardness(3.0F);
         setStepSound(soundTypeMetal);
+    }
+
+    @Override
+    public int getRenderType() {
+        return 3;
     }
 
 }
