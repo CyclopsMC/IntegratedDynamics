@@ -3,14 +3,17 @@ package org.cyclops.integrateddynamics.core.tileentity;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import lombok.Data;
+import lombok.Setter;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.tileentity.TickingCyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.block.ICableConnectable;
 import org.cyclops.integrateddynamics.core.parts.EnumPartType;
 import org.cyclops.integrateddynamics.core.parts.IPart;
 import org.cyclops.integrateddynamics.core.parts.IPartContainer;
@@ -26,6 +29,8 @@ import java.util.Map;
 public class TileMultipartTicking extends TickingCyclopsTileEntity implements IPartContainer {
 
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
+
+    @Setter private IExtendedBlockState connectionState;
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
@@ -122,6 +127,13 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
                     getPosition()));
         }
         return partStateHolder.getState();
+    }
+
+    public IExtendedBlockState getConnectionState() {
+        if(connectionState == null) {
+            connectionState = ((ICableConnectable) getBlock()).updateConnections(getWorld(), getPos());
+        }
+        return connectionState;
     }
 
     @Data
