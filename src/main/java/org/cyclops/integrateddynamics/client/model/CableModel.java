@@ -88,11 +88,12 @@ public class CableModel extends DynamicModel {
                     Vec3 v3 = rotate(new Vec3(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);
                     Vec3 v4 = rotate(new Vec3(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).addVector(.5, .5, .5);
                     EnumFacing realSide = getSideFromVecs(v1, v2, v3);
+                    boolean invert = i == 2 || i == 1;
                     int[] data = Ints.concat(
-                            vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture, 4, i == 2 ? 4 : 0),
-                            vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture, 12, i == 2 ? 4 : 0),
-                            vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture, 12, i == 2 ? 0 : 4),
-                            vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture, 4, i == 2 ? 0 : 4)
+                            vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture, 4, invert ? 4 : 0),
+                            vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture, 12, invert ? 4 : 0),
+                            vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture, 12, invert ? 0 : 4),
+                            vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture, 4, invert ? 0 : 4)
                     );
                     i++;
                     ret.add(new BakedQuad(data, -1, realSide));
