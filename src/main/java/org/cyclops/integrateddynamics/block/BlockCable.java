@@ -6,8 +6,10 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -22,8 +24,11 @@ import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+
+import java.util.List;
 
 /**
  * A block that is build up from different parts.
@@ -41,6 +46,15 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     }
 
     private static BlockCable _instance = null;
+
+    private static final float[][] COLLISION_BOXES = {
+            {CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // DOWN
+            {CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX}, // UP
+            {CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // NORTH
+            {CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MAX, 1}, // SOUTH
+            {0, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // WEST
+            {CableModel.MIN, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX}, // EAST
+    };
 
     @Icon(location = "blocks/cable")
     public TextureAtlasSprite texture;
@@ -77,6 +91,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @Override
     public IExtendedBlockState updateConnections(World world, BlockPos pos) {
+        System.out.println("Updating at " + pos + " AT " + MinecraftHelpers.isClientSide());
         TileMultipartTicking tile = (TileMultipartTicking) world.getTileEntity(pos);
         if(tile != null) {
             IExtendedBlockState extendedState = (IExtendedBlockState) getDefaultState();
@@ -103,21 +118,28 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         world.markBlockRangeForRenderUpdate(pos, pos);
     }
 
+
+    protected void triggerNeighbourConnections(World world, BlockPos blockPos) {
+        for(EnumFacing side : EnumFacing.VALUES) {
+            requestConnectionsUpdate(world, blockPos.offset(side));
+        }
+    }
+
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
-        world.notifyNeighborsOfStateChange(pos, this);
-        for(EnumFacing side : EnumFacing.VALUES) {
-            requestConnectionsUpdate(world, pos.offset(side));
-        }
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
+        triggerNeighbourConnections(world, pos);
     }
 
     @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
         super.onNeighborBlockChange(world, pos, state, neighborBlock);
-        if(neighborBlock instanceof ICableConnectable) {
-            requestConnectionsUpdate(world, pos);
-        }
+    }
+
+    @Override
+    protected void onPostBlockDestroyed(World world, BlockPos blockPos) {
+        triggerNeighbourConnections(world, blockPos);
+        super.onPostBlockDestroyed(world, blockPos);
     }
 
     @Override
@@ -155,6 +177,24 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.TRANSLUCENT;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB axisalignedbb, List list, Entity collidingEntity) {
+        setBlockBounds(CableModel.MIN, CableModel.MIN, CableModel.MIN,
+                       CableModel.MAX, CableModel.MAX, CableModel.MAX);
+        super.addCollisionBoxesToList(world, pos, state, axisalignedbb, list, collidingEntity);
+        IExtendedBlockState extendedState = (IExtendedBlockState) getExtendedState(state, world, pos);
+        for(EnumFacing side : EnumFacing.values()) {
+            if(extendedState != null && extendedState.getValue(CONNECTED[side.ordinal()]) != null) {
+                if(extendedState.getValue(BlockCable.CONNECTED[side.ordinal()])) {
+                    float[] b = COLLISION_BOXES[side.ordinal()];
+                    setBlockBounds(b[0], b[1], b[2], b[3], b[4], b[5]);
+                    super.addCollisionBoxesToList(world, pos, state, axisalignedbb, list, collidingEntity);
+                }
+            }
+        }
     }
 
 }

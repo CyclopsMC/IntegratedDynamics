@@ -21,6 +21,14 @@ import java.util.List;
  */
 public class CableModel extends DynamicModel {
 
+    private static final int RADIUS = 4;
+    private static final int TEXTURE_SIZE = 16;
+
+    private static final int LENGTH_CONNECTION = (TEXTURE_SIZE - RADIUS) / 2;
+    private static final int INV_LENGTH_CONNECTION = TEXTURE_SIZE - LENGTH_CONNECTION;
+    public static final float MIN = (float) LENGTH_CONNECTION / (float) TEXTURE_SIZE;
+    public static final float MAX = 1.0F - MIN;
+
     public CableModel(IExtendedBlockState state, boolean isItemStack) {
         super(state, isItemStack);
     }
@@ -31,28 +39,28 @@ public class CableModel extends DynamicModel {
 
     private float[][][] quadVertexes = new float[][][]{
             {
-                    {0.25F, 1.00F, 0.25F},
-                    {0.75F, 1.00F, 0.25F},
-                    {0.75F, 0.75F, 0.25F},
-                    {0.25F, 0.75F, 0.25F},
+                    {MIN, 1.00F, MIN},
+                    {MAX, 1.00F, MIN},
+                    {MAX, MAX  , MIN},
+                    {MIN, MAX  , MIN},
             },
             {
-                    {0.25F, 0.75F, 0.25F},
-                    {0.25F, 0.75F, 0.75F},
-                    {0.25F, 1.00F, 0.75F},
-                    {0.25F, 1.00F, 0.25F},
+                    {MIN, MAX  , MIN},
+                    {MIN, MAX  , MAX},
+                    {MIN, 1.00F, MAX},
+                    {MIN, 1.00F, MIN},
             },
             {
-                    {0.25F, 0.75F, 0.75F},
-                    {0.75F, 0.75F, 0.75F},
-                    {0.75F, 1.00F, 0.75F},
-                    {0.25F, 1.00F, 0.75F},
+                    {MIN, MAX  , MAX},
+                    {MAX, MAX  , MAX},
+                    {MAX, 1.00F,  MAX},
+                    {MIN, 1.00F, MAX},
             },
             {
-                    {0.75F, 1.00F, 0.25F},
-                    {0.75F, 1.00F, 0.75F},
-                    {0.75F, 0.75F, 0.75F},
-                    {0.75F, 0.75F, 0.25F},
+                    {MAX, 1.00F, MIN},
+                    {MAX, 1.00F, MAX},
+                    {MAX, MAX  , MAX},
+                    {MAX, MAX  , MIN},
             }
     };
 
@@ -90,16 +98,20 @@ public class CableModel extends DynamicModel {
                     EnumFacing realSide = getSideFromVecs(v1, v2, v3);
                     boolean invert = i == 2 || i == 1;
                     int[] data = Ints.concat(
-                            vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture, 4, invert ? 4 : 0),
-                            vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture, 12, invert ? 4 : 0),
-                            vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture, 12, invert ? 0 : 4),
-                            vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture, 4, invert ? 0 : 4)
+                            vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture,
+                                    LENGTH_CONNECTION    , invert ? LENGTH_CONNECTION : 0),
+                            vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture,
+                                    INV_LENGTH_CONNECTION, invert ? LENGTH_CONNECTION : 0),
+                            vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture,
+                                    INV_LENGTH_CONNECTION, invert ? 0 : LENGTH_CONNECTION),
+                            vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture,
+                                    LENGTH_CONNECTION    , invert ? 0 : LENGTH_CONNECTION)
                     );
                     i++;
                     ret.add(new BakedQuad(data, -1, realSide));
                 }
             } else {
-                addBakedQuad(ret, 0.25F, 0.75F, 0.25F, 0.75F, 0.75F, texture, side);
+                addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
             }
         }
         return ret;
