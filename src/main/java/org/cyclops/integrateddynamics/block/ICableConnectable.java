@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
@@ -27,5 +28,14 @@ public interface ICableConnectable {
      * @return The resulting state.
      */
     public IExtendedBlockState updateConnections(World world, BlockPos pos);
+
+    /**
+     * Check if this cable is connected to a side.
+     * @param world The world.
+     * @param pos The position of this block.
+     * @param side The side to check a connection for.
+     * @return If this block is connected with that side.
+     */
+    public boolean isConnected(World world, BlockPos pos, EnumFacing side);
 
 }

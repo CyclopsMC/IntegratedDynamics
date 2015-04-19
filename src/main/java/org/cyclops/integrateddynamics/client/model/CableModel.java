@@ -114,6 +114,13 @@ public class CableModel extends DynamicModel {
                 addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
             }
         }
+
+        // Close the cable connections for items
+        if(isItemStack()) {
+            addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, EnumFacing.EAST);
+            addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, EnumFacing.WEST);
+        }
+
         return ret;
     }
 
