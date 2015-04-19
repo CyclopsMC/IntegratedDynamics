@@ -1,12 +1,15 @@
 package org.cyclops.integrateddynamics.parts;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.core.parts.DefaultPartState;
 import org.cyclops.integrateddynamics.core.parts.EnumPartType;
 import org.cyclops.integrateddynamics.core.parts.IPartContainer;
-import org.cyclops.integrateddynamics.core.parts.IPartState;
 import org.cyclops.integrateddynamics.core.parts.read.IPartRedstoneReader;
 import org.cyclops.integrateddynamics.core.parts.write.IPartRedstoneWriter;
 
@@ -24,14 +27,14 @@ public class PartRedstone implements IPartRedstoneReader<PartRedstone, PartRedst
 
     @Override
     public void toNBT(NBTTagCompound tag, PartRedstoneState partState) {
-        System.out.println("WRITE");
-        // TODO: abstract IPartState writing with parts of the TE NBTPersist annotation (this will require another abstraction for that writing).
+        partState.writeToNBT(tag);
     }
 
     @Override
     public PartRedstoneState fromNBT(NBTTagCompound tag) {
-        System.out.println("READ");
-        return getDefaultState(); // TODO: abstract IPartState reading
+        PartRedstoneState partState = getDefaultState();
+        partState.readFromNBT(tag);
+        return partState;
     }
 
     @Override
@@ -50,10 +53,13 @@ public class PartRedstone implements IPartRedstoneReader<PartRedstone, PartRedst
         partContainer.setPartState(side, PartRedstoneState.of(level));
     }
 
+    @EqualsAndHashCode(callSuper = false)
     @Data(staticConstructor = "of")
-    public static class PartRedstoneState implements IPartState<PartRedstone> {
+    public static class PartRedstoneState extends DefaultPartState<PartRedstone> {
 
-        private final int redstoneLevel;
+        @NBTPersist
+        @NonNull
+        private int redstoneLevel;
 
     }
 

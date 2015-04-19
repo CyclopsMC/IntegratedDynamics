@@ -25,7 +25,6 @@ import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
@@ -94,7 +93,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @Override
     public IExtendedBlockState updateConnections(World world, BlockPos pos) {
-        System.out.println("Updating at " + pos + " AT " + MinecraftHelpers.isClientSide());
         TileMultipartTicking tile = (TileMultipartTicking) world.getTileEntity(pos);
         if(tile != null) {
             IExtendedBlockState extendedState = (IExtendedBlockState) getDefaultState();

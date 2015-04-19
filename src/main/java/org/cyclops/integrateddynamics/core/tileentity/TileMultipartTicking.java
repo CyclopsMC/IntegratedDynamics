@@ -50,8 +50,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        NBTTagList partList = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagList.ordinal());
+        NBTTagList partList = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
         for(int i = 0; i < partList.tagCount(); i++) {
             NBTTagCompound partTag = partList.getCompoundTagAt(i);
             EnumPartType type = EnumPartType.getInstance(partTag.getString("__partType"));
@@ -71,6 +70,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
                         partTag.getString("__partType"), getPosition()));
             }
         }
+        super.readFromNBT(tag);
     }
 
     @Override
@@ -89,9 +89,14 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         });
     }
 
+    protected void onPartsChanged() {
+        markDirty();
+    }
+
     @Override
     public void setPart(EnumFacing side, IPart part) {
         partData.put(side, PartStateHolder.of(part, part.getDefaultState()));
+        onPartsChanged();
     }
 
     @Override
@@ -106,17 +111,20 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     @Override
     public IPart removePart(EnumFacing side) {
-        return partData.remove(side).getPart();
+        IPart removed = partData.remove(side).getPart();
+        onPartsChanged();
+        return removed;
     }
 
     @Override
-    public  void setPartState(EnumFacing side, IPartState partState) {
+    public void setPartState(EnumFacing side, IPartState partState) {
         PartStateHolder<?, ?> partStateHolder = partData.get(side);
         if(partStateHolder == null) {
             throw new IllegalArgumentException(String.format("No part at position %s was found to update the state " +
                     "for.", getPosition()));
         }
         partData.put(side, PartStateHolder.of(partStateHolder.getPart(), partState));
+        onPartsChanged();
     }
 
     @Override
