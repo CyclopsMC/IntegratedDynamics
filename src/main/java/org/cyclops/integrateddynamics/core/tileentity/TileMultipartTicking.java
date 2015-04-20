@@ -3,16 +3,20 @@ package org.cyclops.integrateddynamics.core.tileentity;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import lombok.Data;
-import lombok.Setter;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.TickingCyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.ICableConnectable;
 import org.cyclops.integrateddynamics.core.parts.EnumPartType;
 import org.cyclops.integrateddynamics.core.parts.IPart;
@@ -30,7 +34,8 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
 
-    @Setter private IExtendedBlockState connectionState;
+    //@Setter private IExtendedBlockState connectionState;
+    @NBTPersist private Map<Integer, Boolean> connected = Maps.newHashMap();
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
@@ -137,11 +142,42 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         return partStateHolder.getState();
     }
 
-    public IExtendedBlockState getConnectionState() {
-        if(connectionState == null) {
-            connectionState = ((ICableConnectable) getBlock()).updateConnections(getWorld(), getPos());
+    /**
+     * Reset and update the cable connections for all sides.
+     */
+    public void updateCableConnections() {
+        World world = getWorld();
+        for(EnumFacing side : EnumFacing.VALUES) {
+            BlockPos neighbourPos = pos.offset(side);
+            Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
+            connected.put(side.ordinal(), neighbourBlock instanceof ICableConnectable &&
+                    ((ICableConnectable) neighbourBlock).canConnect(world, neighbourPos, (ICableConnectable) getBlock(), pos));
         }
-        return connectionState;
+        markDirty();
+        sendUpdate();
+    }
+
+    @Override
+    public void onUpdateReceived() {
+        getWorld().markBlockRangeForRenderUpdate(pos, pos);
+    }
+
+    public IExtendedBlockState getConnectionState() {
+        IExtendedBlockState extendedState = (IExtendedBlockState) getBlock().getDefaultState();
+        if(connected.isEmpty()) {
+            updateCableConnections();
+        }
+        for(EnumFacing side : EnumFacing.VALUES) {
+            extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()], connected.get(side.ordinal()));
+        }
+        return extendedState;
+    }
+
+    @Override
+    protected void updateTileEntity() {
+        if(connected.isEmpty()) {
+            updateCableConnections();
+        }
     }
 
     @Data

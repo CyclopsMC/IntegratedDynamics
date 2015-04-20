@@ -88,25 +88,19 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return ((TileMultipartTicking) world.getTileEntity(pos)).getConnectionState();
+        TileMultipartTicking tile = (TileMultipartTicking) world.getTileEntity(pos);
+        if(tile != null) {
+            return tile.getConnectionState();
+        }
+        return getDefaultState();
     }
 
     @Override
     public IExtendedBlockState updateConnections(World world, BlockPos pos) {
         TileMultipartTicking tile = (TileMultipartTicking) world.getTileEntity(pos);
         if(tile != null) {
-            IExtendedBlockState extendedState = (IExtendedBlockState) getDefaultState();
-            for(EnumFacing side : EnumFacing.VALUES) {
-                BlockPos neighbourPos = pos.offset(side);
-                Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-                if(neighbourBlock instanceof ICableConnectable &&
-                        ((ICableConnectable) neighbourBlock).canConnect(world, neighbourPos, this, pos)) {
-                    extendedState = extendedState.withProperty(CONNECTED[side.ordinal()], true);
-                }
-            }
-            tile.setConnectionState(extendedState);
-            world.markBlockRangeForRenderUpdate(pos, pos);
-            return extendedState;
+            tile.updateCableConnections();
+            return tile.getConnectionState();
         }
         return null;
     }
@@ -121,7 +115,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     protected void requestConnectionsUpdate(World world, BlockPos pos) {
         TileMultipartTicking tile = (TileMultipartTicking) world.getTileEntity(pos);
         if(tile != null) {
-            tile.setConnectionState(null);
+            tile.updateCableConnections();
         }
         world.markBlockRangeForRenderUpdate(pos, pos);
     }
@@ -146,8 +140,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @Override
     protected void onPostBlockDestroyed(World world, BlockPos blockPos) {
-        triggerNeighbourConnections(world, blockPos);
         super.onPostBlockDestroyed(world, blockPos);
+        triggerNeighbourConnections(world, blockPos);
     }
 
     @Override
