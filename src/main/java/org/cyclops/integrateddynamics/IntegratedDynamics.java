@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics;
 
+import lombok.Getter;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraftforge.fml.common.Mod;
@@ -23,6 +24,8 @@ import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 )
 public class IntegratedDynamics extends ModBase {
 
+    @Getter private GlobalCounters globalCounters = new GlobalCounters(this); // We require global counters in this mod.
+
     /**
      * The unique instance of this mod.
      */
@@ -31,7 +34,7 @@ public class IntegratedDynamics extends ModBase {
 
     public IntegratedDynamics() {
         super(Reference.MOD_ID, Reference.MOD_NAME);
-        setGlobalCounters(new GlobalCounters(this)); // We require global counters in this mod.
+        registerWorldStorage(globalCounters);
     }
 
     @Mod.EventHandler
