@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.parts;
+package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -6,10 +6,10 @@ import net.minecraft.nbt.NBTTagCompound;
  * A type of part that can be inserted into a
  * {@link org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking}.
  * Only one unique instance for each part should exist, the values are stored inside an
- * {@link org.cyclops.integrateddynamics.core.parts.IPartState}.
+ * {@link org.cyclops.integrateddynamics.core.part.IPartState}.
  * @author rubensworks
  */
-public interface IPart<P extends IPart<P, S>, S extends IPartState<P>> {
+public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
 
     /**
      * @return The part type.
@@ -36,5 +36,35 @@ public interface IPart<P extends IPart<P, S>, S extends IPartState<P>> {
      * @return The default state of this part.
      */
     public IPartState<P> getDefaultState();
+
+    /**
+     * @param state The state
+     * @return The tick interval to update this element.
+     */
+    public int getUpdateInterval(IPartState<P> state);
+
+    /**
+     * @param state The state
+     * @return If this element should be updated. This method is only called once during network initialization.
+     */
+    public boolean isUpdate(IPartState<P> state);
+
+    /**
+     * @param state The state
+     * Update at the tick interval specified.
+     */
+    public void update(IPartState<P> state);
+
+    /**
+     * @param state The state
+     * Called right before the network is terminated or will be reset.
+     */
+    public void beforeNetworkKill(IPartState<P> state);
+
+    /**
+     * @param state The state
+     * Called right after this network is initialized.
+     */
+    public void afterNetworkAlive(IPartState<P> state);
 
 }

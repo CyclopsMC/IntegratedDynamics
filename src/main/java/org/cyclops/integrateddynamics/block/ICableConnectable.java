@@ -4,12 +4,14 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import org.cyclops.integrateddynamics.core.path.IPathElement;
+import org.cyclops.integrateddynamics.core.path.IPathElementProvider;
 
 /**
  * Interface for blocks which can connect with cables.
  * @author rubensworks
  */
-public interface ICableConnectable {
+public interface ICableConnectable<E extends IPathElement<E>> extends IPathElementProvider<E> {
 
     /**
      * Check if the given position should connect with this.

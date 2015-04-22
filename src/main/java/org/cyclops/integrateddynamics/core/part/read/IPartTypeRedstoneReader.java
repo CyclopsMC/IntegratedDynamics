@@ -1,14 +1,14 @@
-package org.cyclops.integrateddynamics.core.parts.read;
+package org.cyclops.integrateddynamics.core.part.read;
 
 import net.minecraft.util.EnumFacing;
-import org.cyclops.integrateddynamics.core.parts.IPartContainer;
-import org.cyclops.integrateddynamics.core.parts.IPartState;
+import org.cyclops.integrateddynamics.core.part.IPartContainer;
+import org.cyclops.integrateddynamics.core.part.IPartState;
 
 /**
  * A part that can read redstone levels.
  * @author rubensworks
  */
-public interface IPartRedstoneReader<P extends IPartRedstoneReader<P, S>, S extends IPartState<P>> extends IPartReader<P, S> {
+public interface IPartTypeRedstoneReader<P extends IPartTypeRedstoneReader<P, S>, S extends IPartState<P>> extends IPartTypeReader<P, S> {
 
     /**
      * Get the redstone level from given container.

@@ -9,9 +9,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.core.parts.IPart;
-import org.cyclops.integrateddynamics.core.parts.IPartContainer;
-import org.cyclops.integrateddynamics.core.parts.IPartState;
+import org.cyclops.integrateddynamics.core.part.IPartContainer;
+import org.cyclops.integrateddynamics.core.part.IPartState;
+import org.cyclops.integrateddynamics.core.part.IPartType;
 
 /**
  * An item that can place parts.
@@ -19,9 +19,9 @@ import org.cyclops.integrateddynamics.core.parts.IPartState;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class ItemPart<P extends IPart<P, S>, S extends IPartState<P>> extends ConfigurableItem {
+public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extends ConfigurableItem {
 
-    private final IPart<P, S> part;
+    private final IPartType<P, S> part;
 
     /**
      * Make a new item instance.
@@ -29,7 +29,7 @@ public class ItemPart<P extends IPart<P, S>, S extends IPartState<P>> extends Co
      * @param eConfig Config for this blockState.
      * @param part    The part this item will place.
      */
-    public ItemPart(ExtendedConfig eConfig, IPart<P, S> part) {
+    public ItemPart(ExtendedConfig eConfig, IPartType<P, S> part) {
         super(eConfig);
         this.part = part;
     }

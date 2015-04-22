@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.parts;
+package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -6,7 +6,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import java.util.Map;
 
 /**
- * A interface for containers that can hold {@link org.cyclops.integrateddynamics.core.parts.IPart}s.
+ * A interface for containers that can hold {@link IPartType}s.
  * @author rubensworks
  */
 public interface IPartContainer {
@@ -19,7 +19,7 @@ public interface IPartContainer {
     /**
      * @return The parts inside this container.
      */
-    public Map<EnumFacing, IPart<?, ?>> getParts();
+    public Map<EnumFacing, IPartType<?, ?>> getParts();
 
     /**
      * Set the part for a side.
@@ -28,14 +28,14 @@ public interface IPartContainer {
      * @param <P> The type of part.
      * @param <S> The type of part state.
      */
-    public <P extends IPart<P, S>, S extends IPartState<P>> void setPart(EnumFacing side, IPart<P, S> part);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void setPart(EnumFacing side, IPartType<P, S> part);
 
     /**
      * Get the part of a side, can be null.
      * @param side The side.
      * @return The part or null.
      */
-    public IPart getPart(EnumFacing side);
+    public IPartType getPart(EnumFacing side);
 
     /**
      * @param side The side.
@@ -48,7 +48,7 @@ public interface IPartContainer {
      * @param side The side.
      * @return The removed part or null.
      */
-    public IPart removePart(EnumFacing side);
+    public IPartType removePart(EnumFacing side);
 
     /**
      * Set the state of a part.

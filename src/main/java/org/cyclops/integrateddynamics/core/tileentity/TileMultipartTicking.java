@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.core.tileentity;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,10 +20,11 @@ import org.cyclops.cyclopscore.tileentity.TickingCyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.ICableConnectable;
-import org.cyclops.integrateddynamics.core.parts.EnumPartType;
-import org.cyclops.integrateddynamics.core.parts.IPart;
-import org.cyclops.integrateddynamics.core.parts.IPartContainer;
-import org.cyclops.integrateddynamics.core.parts.IPartState;
+import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.part.EnumPartType;
+import org.cyclops.integrateddynamics.core.part.IPartContainer;
+import org.cyclops.integrateddynamics.core.part.IPartState;
+import org.cyclops.integrateddynamics.core.part.IPartType;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -34,8 +37,11 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
 
-    //@Setter private IExtendedBlockState connectionState;
     @NBTPersist private Map<Integer, Boolean> connected = Maps.newHashMap();
+
+    @Getter
+    @Setter
+    private Network network;
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
@@ -43,7 +49,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         NBTTagList partList = new NBTTagList();
         for(Map.Entry<EnumFacing, PartStateHolder<?, ?>> entry : partData.entrySet()) {
             NBTTagCompound partTag = new NBTTagCompound();
-            IPart part = entry.getValue().getPart();
+            IPartType part = entry.getValue().getPart();
             IPartState partState = entry.getValue().getState();
             partTag.setString("__partType", part.getType().getName());
             partTag.setString("__side", entry.getKey().getName());
@@ -62,7 +68,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
             if(type != null) {
                 EnumFacing side = EnumFacing.byName(partTag.getString("__side"));
                 if(side != null) {
-                    IPart part = type.getPart();
+                    IPartType part = type.getPart();
                     IPartState partState = part.fromNBT(partTag);
                     partData.put(side, PartStateHolder.of(part, partState));
                 } else {
@@ -84,11 +90,11 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     }
 
     @Override
-    public Map<EnumFacing, IPart<?, ?>> getParts() {
-        return Maps.transformValues(partData, new Function<PartStateHolder<?, ?>, IPart<?, ?>>() {
+    public Map<EnumFacing, IPartType<?, ?>> getParts() {
+        return Maps.transformValues(partData, new Function<PartStateHolder<?, ?>, IPartType<?, ?>>() {
             @Nullable
             @Override
-            public IPart<?, ?> apply(@Nullable PartStateHolder<?, ?> input) {
+            public IPartType<?, ?> apply(@Nullable PartStateHolder<?, ?> input) {
                 return input.getPart();
             }
         });
@@ -99,13 +105,13 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     }
 
     @Override
-    public void setPart(EnumFacing side, IPart part) {
+    public void setPart(EnumFacing side, IPartType part) {
         partData.put(side, PartStateHolder.of(part, part.getDefaultState()));
         onPartsChanged();
     }
 
     @Override
-    public IPart getPart(EnumFacing side) {
+    public IPartType getPart(EnumFacing side) {
         return partData.get(side).getPart();
     }
 
@@ -115,8 +121,8 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     }
 
     @Override
-    public IPart removePart(EnumFacing side) {
-        IPart removed = partData.remove(side).getPart();
+    public IPartType removePart(EnumFacing side) {
+        IPartType removed = partData.remove(side).getPart();
         onPartsChanged();
         return removed;
     }
@@ -181,12 +187,12 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     }
 
     @Data
-    private static class PartStateHolder<P extends IPart<P, S>, S extends IPartState<P>> {
+    private static class PartStateHolder<P extends IPartType<P, S>, S extends IPartState<P>> {
 
-        private final IPart<P, S> part;
+        private final IPartType<P, S> part;
         private final S state;
 
-        public static PartStateHolder<?, ?> of(IPart part, IPartState partState) {
+        public static PartStateHolder<?, ?> of(IPartType part, IPartState partState) {
             return new PartStateHolder(part, partState);
         }
 

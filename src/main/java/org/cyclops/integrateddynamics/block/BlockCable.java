@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.google.common.collect.Sets;
 import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -25,11 +26,19 @@ import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.client.model.CableModel;
+import org.cyclops.integrateddynamics.core.network.INetworkElement;
+import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
+import org.cyclops.integrateddynamics.core.part.IPartContainer;
+import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * A block that is build up from different parts.
@@ -37,7 +46,8 @@ import java.util.List;
  * Ray tracing code is partially based on BuildCraft's pipe code.
  * @author rubensworks
  */
-public class BlockCable extends ConfigurableBlockContainer implements ICableConnectable {
+public class BlockCable extends ConfigurableBlockContainer implements ICableConnectable<CablePathElement>,
+        INetworkElementProvider, IPartContainerFacade {
 
     @BlockProperty
     public static final IUnlistedProperty<Boolean>[] CONNECTED = new IUnlistedProperty[6];
@@ -131,6 +141,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
         triggerNeighbourConnections(world, pos);
+
+        // TODO: temp
+        Network network = Network.initiateNetworkSetup(this, world, pos);
+        network.initialize();
     }
 
     @Override
@@ -306,6 +320,25 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     private void setBlockBounds(AxisAlignedBB bounds) {
         setBlockBounds((float) bounds.minX, (float) bounds.minY, (float) bounds.minZ,
                        (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ);
+    }
+
+    @Override
+    public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
+        Set<INetworkElement> sidedElements = Sets.newHashSet();
+        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : getPartContainer(world, blockPos).getParts().entrySet()) {
+            sidedElements.add(new PartNetworkElement(entry.getValue(), this, world, blockPos, entry.getKey()));
+        }
+        return sidedElements;
+    }
+
+    @Override
+    public IPartContainer getPartContainer(World world, BlockPos pos) {
+        return (IPartContainer) world.getTileEntity(pos);
+    }
+
+    @Override
+    public CablePathElement createPathElement(World world, BlockPos blockPos) {
+        return new CablePathElement(this, DimPos.of(world, blockPos));
     }
 
     @Data

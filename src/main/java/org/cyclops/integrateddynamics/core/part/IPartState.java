@@ -1,13 +1,13 @@
-package org.cyclops.integrateddynamics.core.parts;
+package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * A value holder for an {@link org.cyclops.integrateddynamics.core.parts.IPart}.
+ * A value holder for an {@link IPartType}.
  * This is what will be serialized from and to NBT.
  * @author rubensworks
  */
-public interface IPartState<P extends IPart> {
+public interface IPartState<P extends IPartType> {
 
     /**
      * Write a state to NBT.

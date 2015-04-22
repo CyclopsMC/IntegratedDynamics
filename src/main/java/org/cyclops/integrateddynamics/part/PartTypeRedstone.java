@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.parts;
+package org.cyclops.integrateddynamics.part;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,22 +7,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.core.parts.DefaultPartState;
-import org.cyclops.integrateddynamics.core.parts.EnumPartType;
-import org.cyclops.integrateddynamics.core.parts.IPartContainer;
-import org.cyclops.integrateddynamics.core.parts.read.IPartRedstoneReader;
-import org.cyclops.integrateddynamics.core.parts.write.IPartRedstoneWriter;
+import org.cyclops.integrateddynamics.core.part.*;
+import org.cyclops.integrateddynamics.core.part.read.IPartTypeRedstoneReader;
+import org.cyclops.integrateddynamics.core.part.write.IPartTypeRedstoneWriter;
 
 /**
  * A redstone I/O part.
  * @author rubensworks
  */
-public class PartRedstone implements IPartRedstoneReader<PartRedstone, PartRedstone.PartRedstoneState>,
-        IPartRedstoneWriter<PartRedstone, PartRedstone.PartRedstoneState> {
+public class PartTypeRedstone implements IPartTypeRedstoneReader<PartTypeRedstone, PartTypeRedstone.PartRedstoneState>,
+        IPartTypeRedstoneWriter<PartTypeRedstone, PartTypeRedstone.PartRedstoneState> {
 
     @Override
     public EnumPartType getType() {
-        return Parts.REDSTONE;
+        return PartTypes.REDSTONE;
     }
 
     @Override
@@ -43,6 +41,31 @@ public class PartRedstone implements IPartRedstoneReader<PartRedstone, PartRedst
     }
 
     @Override
+    public int getUpdateInterval(IPartState<PartTypeRedstone> state) {
+        return 10;
+    }
+
+    @Override
+    public boolean isUpdate(IPartState<PartTypeRedstone> state) {
+        return true;
+    }
+
+    @Override
+    public void update(IPartState<PartTypeRedstone> state) {
+        System.out.println("Update " + state);
+    }
+
+    @Override
+    public void beforeNetworkKill(IPartState<PartTypeRedstone> state) {
+        System.out.println("killing " + state);
+    }
+
+    @Override
+    public void afterNetworkAlive(IPartState<PartTypeRedstone> state) {
+        System.out.println("alive " + state);
+    }
+
+    @Override
     public int getRedstoneLevel(IPartContainer partContainer, EnumFacing side) {
         DimPos dimPos = partContainer.getPosition();
         return dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), side);
@@ -55,7 +78,7 @@ public class PartRedstone implements IPartRedstoneReader<PartRedstone, PartRedst
 
     @EqualsAndHashCode(callSuper = false)
     @Data(staticConstructor = "of")
-    public static class PartRedstoneState extends DefaultPartState<PartRedstone> {
+    public static class PartRedstoneState extends DefaultPartState<PartTypeRedstone> {
 
         @NBTPersist
         @NonNull

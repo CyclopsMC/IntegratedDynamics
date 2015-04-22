@@ -4,8 +4,8 @@ import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
-import org.cyclops.integrateddynamics.parts.PartRedstone;
-import org.cyclops.integrateddynamics.parts.Parts;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.part.PartTypeRedstone;
 
 /**
  * Config for a redstone part.
@@ -28,6 +28,6 @@ public class ItemPartRedstoneConfig extends ItemConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return new ItemPart<PartRedstone, PartRedstone.PartRedstoneState>(this, Parts.REDSTONE.getPart());
+        return new ItemPart<PartTypeRedstone, PartTypeRedstone.PartRedstoneState>(this, PartTypes.REDSTONE.getPart());
     }
 }
