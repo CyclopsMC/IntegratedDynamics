@@ -3,13 +3,12 @@ package org.cyclops.integrateddynamics;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 
 /**
  * The main mod class of IntegratedDynamics.
@@ -32,6 +31,7 @@ public class IntegratedDynamics extends ModBase {
 
     public IntegratedDynamics() {
         super(Reference.MOD_ID, Reference.MOD_NAME);
+        setGlobalCounters(new GlobalCounters(this)); // We require global counters in this mod.
     }
 
     @Mod.EventHandler
@@ -50,6 +50,18 @@ public class IntegratedDynamics extends ModBase {
     @Override
     public final void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
+    }
+
+    @Mod.EventHandler
+    @Override
+    public void onServerStarted(FMLServerStartedEvent event) {
+        super.onServerStarted(event);
+    }
+
+    @Mod.EventHandler
+    @Override
+    public void onServerStopping(FMLServerStoppingEvent event) {
+        super.onServerStopping(event);
     }
 
     @Override
