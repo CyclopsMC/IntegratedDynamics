@@ -148,6 +148,12 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         return partStateHolder.getState();
     }
 
+    @Override
+    public void resetCurrentNetwork() {
+        if(network == null)
+        setNetwork(null);
+    }
+
     /**
      * Reset and update the cable connections for all sides.
      */

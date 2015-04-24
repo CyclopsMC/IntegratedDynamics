@@ -41,4 +41,11 @@ public class CablePathElement implements IPathElement<CablePathElement> {
         }
         return elements;
     }
+
+    public boolean equals(Object o) {
+        return o instanceof CablePathElement
+                && cable == ((CablePathElement) o).cable
+                && position.getWorld() == ((CablePathElement) o).position.getWorld()
+                && position.getBlockPos().equals(((CablePathElement) o).position.getBlockPos());
+    }
 }

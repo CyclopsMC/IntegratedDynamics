@@ -52,4 +52,12 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public void afterNetworkAlive() {
         part.afterNetworkAlive(getPartState());
     }
+
+    public boolean equals(Object o) {
+        return o instanceof PartNetworkElement
+                && part == ((PartNetworkElement) o).part
+                && partContainerFacade == ((PartNetworkElement) o).partContainerFacade
+                && world == ((PartNetworkElement) o).world && pos.equals(((PartNetworkElement) o).pos)
+                && side == ((PartNetworkElement) o).side;
+    }
 }

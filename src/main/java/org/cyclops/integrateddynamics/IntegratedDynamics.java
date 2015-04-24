@@ -10,6 +10,7 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
+import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 /**
  * The main mod class of IntegratedDynamics.
@@ -34,7 +35,10 @@ public class IntegratedDynamics extends ModBase {
 
     public IntegratedDynamics() {
         super(Reference.MOD_ID, Reference.MOD_NAME);
+
+        // Register world storages
         registerWorldStorage(globalCounters);
+        registerWorldStorage(NetworkWorldStorage.getInstance(this));
     }
 
     @Mod.EventHandler
