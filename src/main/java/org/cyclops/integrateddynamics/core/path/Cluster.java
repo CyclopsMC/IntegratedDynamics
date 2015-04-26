@@ -67,11 +67,12 @@ public class Cluster<E extends IPathElement> implements Collection<E>, INBTSeria
                         "invalid dimension id %s.", dimensionId));
             } else {
                 World world = MinecraftServer.getServer().worldServers[dimensionId];
-                if(!(world.getBlockState(pos).getBlock() instanceof IPathElement)) {
+                if(!(world.getBlockState(pos).getBlock() instanceof IPathElementProvider)) {
                     IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part a part from a network at " +
-                            "position %s because it is no valid network element block.", pos));
+                            "position %s in world %s because it is no valid network element provider block.", pos, dimensionId));
                 } else {
-                    elements.add((E) world.getBlockState(pos).getBlock());
+                    elements.add((E) ((IPathElementProvider) world.getBlockState(pos).getBlock())
+                            .createPathElement(world, pos));
                 }
             }
         }

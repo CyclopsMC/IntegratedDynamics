@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -44,7 +45,7 @@ public class NetworkWorldStorage extends WorldStorage {
      * Add a network that needs persistence.
      * @param network The network.
      */
-    public void addNewNetwork(Network network) {
+    public synchronized void addNewNetwork(Network network) {
         networks.add(network);
     }
 
@@ -53,7 +54,30 @@ public class NetworkWorldStorage extends WorldStorage {
      * This is allowed to be called if the network was already removed.
      * @param network The network.
      */
-    public void removeInvalidatedNetwork(Network network) {
+    public synchronized void removeInvalidatedNetwork(Network network) {
         networks.remove(network);
     }
+
+    /**
+     * @return A thread-safe copy of the current network set.
+     */
+    public synchronized Set<Network> getNetworks() {
+        //System.out.println(networks);
+        return ImmutableSet.copyOf(networks);
+    }
+
+    @Override
+    public void afterLoad() {
+        for(Network network : networks) {
+            network.afterServerLoad();
+        }
+    }
+
+    @Override
+    public void beforeSave() {
+        for(Network network : networks) {
+            network.beforeServerStop();
+        }
+    }
+
 }

@@ -34,22 +34,13 @@ public class Network implements INBTSerializable {
     private int networkId;
 
     private boolean partsChanged = false;
+    private boolean killed = false;
 
     /**
      * This constructor should not be called, except for the process of constructing networks from NBT.
      */
     public Network() {
-
-    }
-
-    /**
-     * Create a new network for a predefined collection of network elements.
-     * @param elements The network elements that make up the network.
-     * @param networkId The unique network ID.
-     */
-    private Network(Collection<INetworkElement> elements, int networkId) {
-        this.elements.addAll(elements);
-        this.networkId = networkId;
+        this.baseCluster = new Cluster<CablePathElement>();
     }
 
     /**
@@ -69,22 +60,24 @@ public class Network implements INBTSerializable {
     }
 
     private void deriveNetworkElements(Cluster<CablePathElement> cables) {
-        for(CablePathElement cable : cables) {
-            World world = cable.getPosition().getWorld();
-            BlockPos pos = cable.getPosition().getBlockPos();
-            Block block = world.getBlockState(pos).getBlock();
-            if(block instanceof INetworkElementProvider) {
-                elements.addAll(((INetworkElementProvider) block).createNetworkElements(world, pos));
-            }
-            if(block instanceof IPartContainerFacade) {
-                IPartContainer partContainer = ((IPartContainerFacade) block).getPartContainer(world, pos);
-                Network network = partContainer.getNetwork();
-                if(network != null) {
-                    network.removeCable(block, cable);
-                    network.notifyPartsChanged();
+        if(!killIfEmpty()) {
+            for (CablePathElement cable : cables) {
+                World world = cable.getPosition().getWorld();
+                BlockPos pos = cable.getPosition().getBlockPos();
+                Block block = world.getBlockState(pos).getBlock();
+                if (block instanceof INetworkElementProvider) {
+                    elements.addAll(((INetworkElementProvider) block).createNetworkElements(world, pos));
                 }
-                partContainer.resetCurrentNetwork();
-                partContainer.setNetwork(this);
+                if (block instanceof IPartContainerFacade) {
+                    IPartContainer partContainer = ((IPartContainerFacade) block).getPartContainer(world, pos);
+                    Network network = partContainer.getNetwork();
+                    if (network != null) {
+                        network.removeCable(block, cable);
+                        network.notifyPartsChanged();
+                    }
+                    partContainer.resetCurrentNetwork();
+                    partContainer.setNetwork(this);
+                }
             }
         }
     }
@@ -94,6 +87,16 @@ public class Network implements INBTSerializable {
      */
     public void initialize() {
         initialize(false);
+    }
+
+    public void addNetworkElement(INetworkElement element) {
+        // TODO: for when a new part has been attached to a cable on the network
+        // TODO: call from IPartContainer#setPart?
+    }
+
+    public void removeNetworkElement(INetworkElement element) {
+        // TODO: for when a new part has been removed from a cable on the network
+        // TODO: call from IPartContainer#setPart?
     }
 
     protected void initialize(boolean silent) {
@@ -117,23 +120,40 @@ public class Network implements INBTSerializable {
         for(INetworkElement element : elements) {
             element.beforeNetworkKill();
         }
+        killed = true;
+    }
+
+    /**
+     * Kills the network is it had no more network elements.
+     * @return If the network was killed.
+     */
+    public boolean killIfEmpty() {
+        if(baseCluster.isEmpty()) {
+            kill();
+            return true;
+        }
+        return false;
     }
 
     /**
      * This network updating should be called each tick.
      */
     public void update() {
-        if(partsChanged) {
-            this.partsChanged = false;
-            onPartsChanged();
-        }
-
-        for(INetworkElement element : updateableElements) {
-            if(updateableElementsTicks.get(element) <= 0) {
-                updateableElementsTicks.put(element, element.getUpdateInterval());
-                element.update();
+        if(killIfEmpty() || killed) {
+            System.out.println("Killed " + this + ".");
+            NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
+        } else {
+            if (partsChanged) {
+                this.partsChanged = false;
+                onPartsChanged();
             }
-            updateableElementsTicks.put(element, updateableElementsTicks.get(element) - 1);
+            for (INetworkElement element : updateableElements) {
+                if (updateableElementsTicks.get(element) <= 0) {
+                    updateableElementsTicks.put(element, element.getUpdateInterval());
+                    element.update();
+                }
+                updateableElementsTicks.put(element, updateableElementsTicks.get(element) - 1);
+            }
         }
     }
 
@@ -195,11 +215,26 @@ public class Network implements INBTSerializable {
 
     @Override
     public void fromNBT(NBTTagCompound tag) {
-        this.baseCluster = new Cluster<CablePathElement>();
         this.baseCluster.fromNBT(tag.getCompoundTag("baseCluster"));
         this.networkId = tag.getInteger("id");
         deriveNetworkElements(baseCluster);
         initialize(true);
+    }
+
+    /**
+     * Called when the server loaded this network.
+     * This is the time to notify all network elements of this network.
+     */
+    public void afterServerLoad() {
+        System.out.println(this + " loaded.");
+    }
+
+    /**
+     * Called when the server will save this network before stopping.
+     * This is the time to notify all network elements of this network.
+     */
+    public void beforeServerStop() {
+        System.out.println(this + " saved.");
     }
 
     /**

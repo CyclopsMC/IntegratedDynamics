@@ -52,7 +52,7 @@ public class PartTypeRedstone implements IPartTypeRedstoneReader<PartTypeRedston
 
     @Override
     public void update(IPartState<PartTypeRedstone> state) {
-        System.out.println("Update " + state);
+        
     }
 
     @Override

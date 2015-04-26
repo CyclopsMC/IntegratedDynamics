@@ -143,8 +143,14 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         triggerNeighbourConnections(world, pos);
 
         // TODO: temp
-        Network network = Network.initiateNetworkSetup(this, world, pos);
-        network.initialize();
+        // TODO: cyclops world+counter abstraction (custom folder) (looping counter and then checking if that id for a network already exists)
+        // TODO: persist in world storage type thing + unique network id generator (synchronization!!!)
+        // TODO: let networks tick in a world tick handler
+        // TODO: globalcounters not needed? + defragmentation of id's
+        if(!world.isRemote) {
+            Network network = Network.initiateNetworkSetup(this, world, pos);
+            network.initialize();
+        }
     }
 
     @Override

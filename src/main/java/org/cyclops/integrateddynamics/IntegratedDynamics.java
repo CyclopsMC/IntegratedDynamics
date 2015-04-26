@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics;
 import lombok.Getter;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
@@ -10,6 +11,7 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
+import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 /**
@@ -45,6 +47,8 @@ public class IntegratedDynamics extends ModBase {
     @Override
     public final void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
+
+        FMLCommonHandler.instance().bus().register(TickHandler.getInstance());
     }
 
     @Mod.EventHandler
