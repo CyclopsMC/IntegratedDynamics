@@ -31,7 +31,6 @@ public class Network implements INBTSerializable {
     private final Set<INetworkElement> elements = Sets.newHashSet();
     private Set<INetworkElement> updateableElements = null;
     private Map<INetworkElement, Integer> updateableElementsTicks = null;
-    private int networkId;
 
     private boolean partsChanged = false;
     private boolean killed = false;
@@ -51,11 +50,9 @@ public class Network implements INBTSerializable {
      * will have the network stored in its part container.
      * @param cables The cables that make up the connections in the network which can potentially provide network
      *               elements.
-     * @param networkId The unique network ID.
      */
-    public Network(Cluster<CablePathElement> cables, int networkId) {
+    public Network(Cluster<CablePathElement> cables) {
         this.baseCluster = cables;
-        this.networkId = networkId;
         deriveNetworkElements(baseCluster);
     }
 
@@ -167,7 +164,7 @@ public class Network implements INBTSerializable {
     private void onPartsChanged() {
         //deriveNetworkElements(baseCluster);
         //initialize(true);
-        System.out.println("Parts of network " + networkId + " are changed.");
+        System.out.println("Parts of network " + this + " are changed.");
     }
 
     /**
@@ -208,7 +205,6 @@ public class Network implements INBTSerializable {
     @Override
     public NBTTagCompound toNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setInteger("id", this.networkId);
         tag.setTag("baseCluster", this.baseCluster.toNBT());
         return tag;
     }
@@ -216,7 +212,6 @@ public class Network implements INBTSerializable {
     @Override
     public void fromNBT(NBTTagCompound tag) {
         this.baseCluster.fromNBT(tag.getCompoundTag("baseCluster"));
-        this.networkId = tag.getInteger("id");
         deriveNetworkElements(baseCluster);
         initialize(true);
     }
@@ -245,9 +240,7 @@ public class Network implements INBTSerializable {
      * @return The newly formed network.
      */
     public static Network initiateNetworkSetup(ICableConnectable<CablePathElement> connectable, World world, BlockPos pos) {
-        int nextId = IntegratedDynamics._instance.getGlobalCounters().getNext("network");
-        System.out.println("Next network id: " + nextId);
-        Network network = new Network(PathFinder.getConnectedCluster(connectable.createPathElement(world, pos)), nextId);
+        Network network = new Network(PathFinder.getConnectedCluster(connectable.createPathElement(world, pos)));
         NetworkWorldStorage.getInstance(IntegratedDynamics._instance).addNewNetwork(network);
         return network;
     }
