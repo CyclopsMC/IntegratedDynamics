@@ -9,7 +9,7 @@ import java.util.Set;
  * {@link org.cyclops.integrateddynamics.core.path.PathFinder}.
  * @author rubensworks
  */
-public interface IPathElement<E extends IPathElement<E>> {
+public interface IPathElement<E extends IPathElement<E>> extends Comparable<E> {
 
     /**
      * @return The position of this element.

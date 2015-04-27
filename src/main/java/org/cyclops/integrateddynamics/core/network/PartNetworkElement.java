@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Data;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
@@ -17,15 +16,14 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     private final P part;
     private final IPartContainerFacade partContainerFacade;
-    private final World world;
-    private final BlockPos pos;
+    private final DimPos pos;
     private final EnumFacing side;
 
     /**
      * @return The state for this part.
      */
     public S getPartState() {
-        return (S) partContainerFacade.getPartContainer(world, pos).getPartState(side);
+        return (S) partContainerFacade.getPartContainer(pos.getWorld(), pos.getBlockPos()).getPartState(side);
     }
 
     @Override
@@ -54,10 +52,23 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     public boolean equals(Object o) {
-        return o instanceof PartNetworkElement
-                && part == ((PartNetworkElement) o).part
-                && partContainerFacade == ((PartNetworkElement) o).partContainerFacade
-                && world == ((PartNetworkElement) o).world && pos.equals(((PartNetworkElement) o).pos)
-                && side == ((PartNetworkElement) o).side;
+        return o instanceof PartNetworkElement && compareTo((INetworkElement) o) == 0;
+    }
+
+    @Override
+    public int compareTo(INetworkElement o) {
+        if(o instanceof PartNetworkElement) {
+            PartNetworkElement p = (PartNetworkElement) o;
+            int compPart = Integer.compare(part.hashCode(), p.part.hashCode());
+            if(compPart == 0) {
+                int compPos = pos.compareTo(p.pos);
+                if(compPos == 0) {
+                    return side.compareTo(p.side);
+                }
+                return compPos;
+            }
+            return compPart;
+        }
+        return Integer.compare(hashCode(), o.hashCode());
     }
 }

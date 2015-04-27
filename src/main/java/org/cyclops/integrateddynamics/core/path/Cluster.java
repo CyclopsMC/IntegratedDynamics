@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A cluster for a collection of path elements.
@@ -30,10 +31,10 @@ public class Cluster<E extends IPathElement> implements Collection<E>, INBTSeria
      * This constructor should not be called, except for the process of constructing networks from NBT.
      */
     public Cluster() {
-        this.elements = Sets.newHashSet();
+        this.elements = Sets.newTreeSet();
     }
 
-    public Cluster(Set<E> elements) {
+    public Cluster(TreeSet<E> elements) {
         this.elements = elements;
     }
 

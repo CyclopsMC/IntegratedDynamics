@@ -4,7 +4,7 @@ package org.cyclops.integrateddynamics.core.network;
  * Objects that can be an element of a {@link org.cyclops.integrateddynamics.core.network.Network}.
  * @author rubensworks
  */
-public interface INetworkElement {
+public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * @return The tick interval to update this element.

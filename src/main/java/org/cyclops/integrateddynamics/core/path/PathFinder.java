@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Algorithm to construct paths/clusters of {@link org.cyclops.integrateddynamics.core.path.IPathElement}s.
@@ -11,8 +12,14 @@ import java.util.Set;
  */
 public final class PathFinder {
 
-    protected static <E extends IPathElement<E>> Set<E> getConnectedElements(E head, Set<DimPos> visitedPositions) {
-        Set<E> elements = Sets.newHashSet();
+    protected static <E extends IPathElement<E>> TreeSet<E> getConnectedElements(E head, Set<DimPos> visitedPositions) {
+        TreeSet<E> elements = Sets.newTreeSet();
+
+        // Make sure to add our head
+        if(!visitedPositions.contains(head.getPosition())) {
+            elements.add(head);
+            visitedPositions.add(head.getPosition());
+        }
 
         // Add neighbours that haven't been checked yet.
         for(E neighbour : head.getReachableElements()) {
@@ -33,7 +40,7 @@ public final class PathFinder {
     }
 
     public static <E extends IPathElement<E>> Cluster<E> getConnectedCluster(E head) {
-        return new Cluster<E>(getConnectedElements(head, Sets.<DimPos>newHashSet()));
+        return new Cluster<E>(getConnectedElements(head, Sets.<DimPos>newTreeSet()));
     }
 
 }

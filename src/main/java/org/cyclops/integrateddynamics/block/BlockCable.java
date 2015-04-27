@@ -142,11 +142,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
         triggerNeighbourConnections(world, pos);
 
-        // TODO: temp
-        // TODO: cyclops world+counter abstraction (custom folder) (looping counter and then checking if that id for a network already exists)
-        // TODO: persist in world storage type thing + unique network id generator (synchronization!!!)
-        // TODO: let networks tick in a world tick handler
-        // TODO: globalcounters not needed? + defragmentation of id's
         if(!world.isRemote) {
             Network network = Network.initiateNetworkSetup(this, world, pos);
             network.initialize();
@@ -158,10 +153,30 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         super.onNeighborBlockChange(world, pos, state, neighborBlock);
     }
 
+    protected void onPreBlockDestroyed(World world, BlockPos pos) {
+        Network network = getPartContainer(world, pos).getNetwork();
+        if(network != null) {
+            network.removeCable(this, createPathElement(world, pos));
+        }
+
+        super.onPreBlockDestroyed(world, pos);
+    }
+
     @Override
-    protected void onPostBlockDestroyed(World world, BlockPos blockPos) {
-        super.onPostBlockDestroyed(world, blockPos);
-        triggerNeighbourConnections(world, blockPos);
+    protected void onPostBlockDestroyed(World world, BlockPos pos) {
+        super.onPostBlockDestroyed(world, pos);
+        triggerNeighbourConnections(world, pos);
+
+        for(EnumFacing side : EnumFacing.VALUES) {
+            if(!world.isRemote) {
+                BlockPos sidePos = pos.offset(side);
+                Block block = world.getBlockState(sidePos).getBlock();
+                if(block instanceof ICableConnectable) {
+                    Network sideNetwork = Network.initiateNetworkSetup((ICableConnectable<CablePathElement>) block, world, sidePos);
+                    sideNetwork.initialize();
+                }
+            }
+        }
     }
 
     @Override
@@ -332,7 +347,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
         Set<INetworkElement> sidedElements = Sets.newHashSet();
         for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : getPartContainer(world, blockPos).getParts().entrySet()) {
-            sidedElements.add(new PartNetworkElement(entry.getValue(), this, world, blockPos, entry.getKey()));
+            sidedElements.add(new PartNetworkElement(entry.getValue(), this, DimPos.of(world, blockPos), entry.getKey()));
         }
         return sidedElements;
     }

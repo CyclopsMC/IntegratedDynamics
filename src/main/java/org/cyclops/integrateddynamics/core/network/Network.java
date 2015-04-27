@@ -17,8 +17,8 @@ import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A network instance that can hold a set of {@link org.cyclops.integrateddynamics.core.network.INetworkElement}s.
@@ -28,12 +28,12 @@ public class Network implements INBTSerializable {
 
     private Cluster<CablePathElement> baseCluster;
 
-    private final Set<INetworkElement> elements = Sets.newHashSet();
-    private Set<INetworkElement> updateableElements = null;
-    private Map<INetworkElement, Integer> updateableElementsTicks = null;
+    private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
+    private TreeSet<INetworkElement> updateableElements = null;
+    private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
 
-    private boolean partsChanged = false;
-    private boolean killed = false;
+    private volatile boolean partsChanged = false;
+    private volatile boolean killed = false;
 
     /**
      * This constructor should not be called, except for the process of constructing networks from NBT.
@@ -97,8 +97,8 @@ public class Network implements INBTSerializable {
     }
 
     protected void initialize(boolean silent) {
-        updateableElements = Sets.newHashSet();
-        updateableElementsTicks = Maps.newHashMap();
+        updateableElements = Sets.newTreeSet();
+        updateableElementsTicks = Maps.newTreeMap();
         for(INetworkElement element : elements) {
             if(element.isUpdate()) {
                 updateableElements.add(element);
@@ -137,7 +137,6 @@ public class Network implements INBTSerializable {
      */
     public void update() {
         if(killIfEmpty() || killed) {
-            System.out.println("Killed " + this + ".");
             NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
         } else {
             if (partsChanged) {
@@ -221,7 +220,7 @@ public class Network implements INBTSerializable {
      * This is the time to notify all network elements of this network.
      */
     public void afterServerLoad() {
-        System.out.println(this + " loaded.");
+
     }
 
     /**
@@ -229,7 +228,7 @@ public class Network implements INBTSerializable {
      * This is the time to notify all network elements of this network.
      */
     public void beforeServerStop() {
-        System.out.println(this + " saved.");
+
     }
 
     /**
