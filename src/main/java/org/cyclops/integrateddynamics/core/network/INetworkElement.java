@@ -6,6 +6,9 @@ import java.util.List;
 
 /**
  * Objects that can be an element of a {@link org.cyclops.integrateddynamics.core.network.Network}.
+ * Multiple instances for the same 'element' can be created, so the comparator implementation must
+ * make sure that these instances are considered equal.
+ * These instances are used as a simple way of referring to these elements.
  * @author rubensworks
  */
 public interface INetworkElement extends Comparable<INetworkElement> {
