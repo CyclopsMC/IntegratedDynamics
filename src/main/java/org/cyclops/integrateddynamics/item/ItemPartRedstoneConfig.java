@@ -14,6 +14,11 @@ import org.cyclops.integrateddynamics.part.PartTypeRedstone;
 public class ItemPartRedstoneConfig extends ItemConfig {
 
     /**
+     * The unique instance.
+     */
+    public static ItemPartRedstoneConfig _instance;
+
+    /**
      * Make a new instance.
      */
     public ItemPartRedstoneConfig() {

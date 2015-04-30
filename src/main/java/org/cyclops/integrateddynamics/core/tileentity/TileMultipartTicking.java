@@ -21,10 +21,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.ICableConnectable;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.EnumPartType;
-import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartState;
-import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.core.part.*;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -107,6 +104,10 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     @Override
     public void setPart(EnumFacing side, IPartType part) {
         partData.put(side, PartStateHolder.of(part, part.getDefaultState()));
+        if(getNetwork() != null) {
+            getNetwork().addNetworkElement(part.createNetworkElement(
+                    (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side));
+        }
         onPartsChanged();
     }
 

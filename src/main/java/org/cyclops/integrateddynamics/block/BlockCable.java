@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import net.minecraft.block.Block;
@@ -31,7 +32,6 @@ import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartType;
@@ -153,7 +153,22 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         super.onNeighborBlockChange(world, pos, state, neighborBlock);
     }
 
+    @Override
+    public boolean saveNBTToDroppedItem() {
+        return false;
+    }
+
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
+        // Drop all parts types as item.
+        List<ItemStack> itemStacks = Lists.newLinkedList();
+        for (INetworkElement networkElement : createNetworkElements(world, pos)) {
+            networkElement.addDrops(itemStacks);
+        }
+        for(ItemStack itemStack : itemStacks) {
+            spawnAsEntity(world, pos, itemStack);
+        }
+
+        // Remove the cable from this network if it exists
         Network network = getPartContainer(world, pos).getNetwork();
         if(network != null) {
             network.removeCable(this, createPathElement(world, pos));
@@ -167,6 +182,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         super.onPostBlockDestroyed(world, pos);
         triggerNeighbourConnections(world, pos);
 
+        // Reinit neighbouring networks.
         for(EnumFacing side : EnumFacing.VALUES) {
             if(!world.isRemote) {
                 BlockPos sidePos = pos.offset(side);
@@ -347,7 +363,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
         Set<INetworkElement> sidedElements = Sets.newHashSet();
         for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : getPartContainer(world, blockPos).getParts().entrySet()) {
-            sidedElements.add(new PartNetworkElement(entry.getValue(), this, DimPos.of(world, blockPos), entry.getKey()));
+            sidedElements.add(entry.getValue().createNetworkElement(this, DimPos.of(world, blockPos), entry.getKey()));
         }
         return sidedElements;
     }

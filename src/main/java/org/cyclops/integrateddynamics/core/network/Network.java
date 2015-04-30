@@ -86,24 +86,55 @@ public class Network implements INBTSerializable {
         initialize(false);
     }
 
+    /**
+     * Add a given network element to the network
+     * Also checks if it can tick and will handle it accordingly.
+     * @param element The network element.
+     */
     public void addNetworkElement(INetworkElement element) {
-        // TODO: for when a new part has been attached to a cable on the network
-        // TODO: call from IPartContainer#setPart?
+        elements.add(element);
+        addNetworkElementUpdateable(element);
     }
 
+    /**
+     * Add a given network element to the tickable elements set.
+     * @param element The network element.
+     */
+    public void addNetworkElementUpdateable(INetworkElement element) {
+        if(element.isUpdate()) {
+            updateableElements.add(element);
+            updateableElementsTicks.put(element, 0);
+        }
+    }
+
+    /**
+     * Remove a given network element from the network.
+     * Also removed its tickable instance.
+     * @param element The network element.
+     */
     public void removeNetworkElement(INetworkElement element) {
-        // TODO: for when a new part has been removed from a cable on the network
-        // TODO: call from IPartContainer#setPart?
+        elements.remove(element);
+        removeNetworkElementUpdateable(element);
     }
 
+    /**
+     * Remove given network element from the tickable elements set.
+     * @param element The network element.
+     */
+    public void removeNetworkElementUpdateable(INetworkElement element) {
+        updateableElements.remove(element);
+        updateableElementsTicks.remove(element);
+    }
+
+    /**
+     * Called when a network is server-loaded or newly created.
+     * @param silent If the element should not be notified for the network becoming alive.
+     */
     protected void initialize(boolean silent) {
         updateableElements = Sets.newTreeSet();
         updateableElementsTicks = Maps.newTreeMap();
         for(INetworkElement element : elements) {
-            if(element.isUpdate()) {
-                updateableElements.add(element);
-                updateableElementsTicks.put(element, 0);
-            }
+            addNetworkElementUpdateable(element);
             if(!silent) {
                 element.afterNetworkAlive();
             }
@@ -161,8 +192,6 @@ public class Network implements INBTSerializable {
     }
 
     private void onPartsChanged() {
-        //deriveNetworkElements(baseCluster);
-        //initialize(true);
         System.out.println("Parts of network " + this + " are changed.");
     }
 
@@ -179,9 +208,7 @@ public class Network implements INBTSerializable {
                     createNetworkElements(cable.getPosition().getWorld(), cable.getPosition().getBlockPos());
             for(INetworkElement networkElement : networkElements) {
                 networkElement.beforeNetworkKill();
-                elements.remove(networkElement);
-                updateableElements.remove(networkElement);
-                updateableElementsTicks.remove(networkElement);
+                removeNetworkElement(networkElement);
             }
         }
     }

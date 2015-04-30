@@ -1,11 +1,14 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Data;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
+
+import java.util.List;
 
 /**
  * A network element for parts.
@@ -49,6 +52,11 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     @Override
     public void afterNetworkAlive() {
         part.afterNetworkAlive(getPartState());
+    }
+
+    @Override
+    public void addDrops(List<ItemStack> itemStacks) {
+        part.addDrops(getPartState(), itemStacks);
     }
 
     public boolean equals(Object o) {
