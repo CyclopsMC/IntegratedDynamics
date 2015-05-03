@@ -18,10 +18,10 @@ public interface ICableConnectable<E extends IPathElement<E>> extends IPathEleme
      * @param world The world.
      * @param selfPosition The position for this block.
      * @param connector The connecting block.
-     * @param otherPosition The position of the connecting block.
+     * @param side The side of the connecting block.
      * @return If it should connect.
      */
-    public boolean canConnect(World world, BlockPos selfPosition, ICableConnectable connector, BlockPos otherPosition);
+    public boolean canConnect(World world, BlockPos selfPosition, ICableConnectable connector, EnumFacing side);
 
     /**
      * Update the cable connections at the given position.
@@ -39,5 +39,13 @@ public interface ICableConnectable<E extends IPathElement<E>> extends IPathEleme
      * @return If this block is connected with that side.
      */
     public boolean isConnected(World world, BlockPos pos, EnumFacing side);
+
+    /**
+     * Disconnect the cable connection for a side.
+     * @param world The world.
+     * @param pos The position of this block.
+     * @param side The side to block the connection for.
+     */
+    public void disconnect(World world, BlockPos pos, EnumFacing side);
 
 }

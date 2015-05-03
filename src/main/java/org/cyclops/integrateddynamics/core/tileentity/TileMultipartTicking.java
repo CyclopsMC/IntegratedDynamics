@@ -35,6 +35,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
 
     @NBTPersist private Map<Integer, Boolean> connected = Maps.newHashMap();
+    @NBTPersist private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
 
     @Getter
     @Setter
@@ -113,6 +114,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     @Override
     public IPartType getPart(EnumFacing side) {
+        if(!partData.containsKey(side)) return null;
         return partData.get(side).getPart();
     }
 
@@ -163,8 +165,15 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         for(EnumFacing side : EnumFacing.VALUES) {
             BlockPos neighbourPos = pos.offset(side);
             Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-            connected.put(side.ordinal(), neighbourBlock instanceof ICableConnectable &&
-                    ((ICableConnectable) neighbourBlock).canConnect(world, neighbourPos, (ICableConnectable) getBlock(), pos));
+            boolean cableConnected = neighbourBlock instanceof ICableConnectable &&
+                    ((ICableConnectable) neighbourBlock).canConnect(world, neighbourPos, (ICableConnectable) getBlock(),
+                            side.getOpposite());
+            connected.put(side.ordinal(), cableConnected);
+
+            // Remove any already existing force-disconnects for this side.
+            if(!cableConnected) {
+                forceDisconnected.put(side.ordinal(), false);
+            }
         }
         markDirty();
         sendUpdate();
@@ -181,9 +190,20 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
             updateCableConnections();
         }
         for(EnumFacing side : EnumFacing.VALUES) {
-            extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()], connected.get(side.ordinal()));
+            extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()],
+                    !isForceDisconnected(side) && connected.get(side.ordinal()));
         }
         return extendedState;
+    }
+
+    public void forceDisconnect(EnumFacing side) {
+        forceDisconnected.put(side.ordinal(), true);
+    }
+
+    public boolean isForceDisconnected(EnumFacing side) {
+        if(hasPart(side)) return true;
+        if(!forceDisconnected.containsKey(side.ordinal())) return false;
+        return forceDisconnected.get(side.ordinal());
     }
 
     @Override

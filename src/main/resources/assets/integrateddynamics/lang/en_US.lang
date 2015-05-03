@@ -8,3 +8,4 @@ tile.blocks.integrateddynamics.cable.info=Default cable
 # Items
 item.items.integrateddynamics.partRedstone.name=Redstone Part
 item.items.integrateddynamics.partRedstone.info=A reader/writer for redstone
+item.items.integrateddynamics.wrench.name=Wrench

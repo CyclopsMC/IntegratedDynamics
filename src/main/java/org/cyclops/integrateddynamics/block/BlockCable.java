@@ -28,7 +28,9 @@ import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.client.model.CableModel;
+import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -98,7 +100,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileMultipartTicking tile = (TileMultipartTicking) world.getTileEntity(pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
         if(tile != null) {
             return tile.getConnectionState();
         }
@@ -107,7 +109,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @Override
     public IExtendedBlockState updateConnections(World world, BlockPos pos) {
-        TileMultipartTicking tile = (TileMultipartTicking) world.getTileEntity(pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
         if(tile != null) {
             tile.updateCableConnections();
             return tile.getConnectionState();
@@ -122,8 +124,46 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
                 && extendedState.getValue(BlockCable.CONNECTED[side.ordinal()]);
     }
 
+    @Override
+    public void disconnect(World world, BlockPos pos, EnumFacing side) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        if(tile != null) {
+            tile.forceDisconnect(side);
+        }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+                                    EnumFacing side, float hitX, float hitY, float hitZ) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        if(!world.isRemote && WrenchHelpers.isWrench(player, pos) && tile != null) {
+            RayTraceResult rayTraceResult = doRayTrace(world, pos, player);
+            if(rayTraceResult != null) {
+                EnumFacing disconnectedSide = rayTraceResult.getSideHit();
+
+                // Store the disconnection in the tile entity
+                disconnect(world, pos, disconnectedSide);
+
+                // Signal changes
+                tile.updateCableConnections();
+                triggerNeighbourConnections(world, pos);
+
+                // Reinit the networks for this block and the disconnected neighbour.
+                Network.initiateNetworkSetup(this, world, pos).initialize();
+                BlockPos neighbourPos = pos.offset(disconnectedSide);
+                Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
+                if(neighbourBlock instanceof ICableConnectable) {
+                    Network.initiateNetworkSetup((ICableConnectable<CablePathElement>) neighbourBlock,
+                            world, neighbourPos).initialize();
+                }
+                return true;
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player , side, hitX, hitY, hitZ);
+    }
+
     protected void requestConnectionsUpdate(World world, BlockPos pos) {
-        TileMultipartTicking tile = (TileMultipartTicking) world.getTileEntity(pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
         if(tile != null) {
             tile.updateCableConnections();
         }
@@ -143,8 +183,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         triggerNeighbourConnections(world, pos);
 
         if(!world.isRemote) {
-            Network network = Network.initiateNetworkSetup(this, world, pos);
-            network.initialize();
+            Network.initiateNetworkSetup(this, world, pos).initialize();
         }
     }
 
@@ -188,8 +227,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
                 BlockPos sidePos = pos.offset(side);
                 Block block = world.getBlockState(sidePos).getBlock();
                 if(block instanceof ICableConnectable) {
-                    Network sideNetwork = Network.initiateNetworkSetup((ICableConnectable<CablePathElement>) block, world, sidePos);
-                    sideNetwork.initialize();
+                    Network.initiateNetworkSetup((ICableConnectable<CablePathElement>) block, world, sidePos).initialize();
                 }
             }
         }
@@ -207,7 +245,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     }
 
     @Override
-    public boolean canConnect(World world, BlockPos selfPosition, ICableConnectable connector, BlockPos otherPosition) {
+    public boolean canConnect(World world, BlockPos selfPosition, ICableConnectable connector, EnumFacing side) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, selfPosition);
+        if(tile != null) {
+            return !tile.isForceDisconnected(side);
+        }
         return true;
     }
 
@@ -315,7 +357,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         setBlockBounds(bb);
         boxes[i]   = bb;
         hits[i]    = super.collisionRayTrace(world, pos, origin, direction);
-        sideHit[i] = null;
+        sideHit[i] = side;
     }
 
     private RayTraceResult doRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
