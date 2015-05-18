@@ -77,7 +77,7 @@ public class CableModel extends DynamicModel {
     }
 
     @Override
-    public List<BakedQuad> func_177550_a() {
+    public List<BakedQuad> getGeneralQuads() {
         List<BakedQuad> ret = Lists.newLinkedList();
         TextureAtlasSprite texture = getTexture();
 
