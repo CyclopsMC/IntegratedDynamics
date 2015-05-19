@@ -4,11 +4,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.proxy.ICommonProxy;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
@@ -24,6 +26,13 @@ import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
      dependencies = Reference.MOD_DEPENDENCIES
 )
 public class IntegratedDynamics extends ModBase {
+
+    /**
+     * The proxy of this mod, depending on 'side' a different proxy will be inside this field.
+     * @see net.minecraftforge.fml.common.SidedProxy
+     */
+    @SidedProxy(clientSide = "org.cyclops.integrateddynamics.proxy.ClientProxy", serverSide = "org.cyclops.integrateddynamics.proxy.CommonProxy")
+    public static ICommonProxy proxy;
 
     /**
      * The unique instance of this mod.
@@ -83,6 +92,11 @@ public class IntegratedDynamics extends ModBase {
     @Override
     public void onMainConfigsRegister(ConfigHandler configHandler) {
         Configs.registerBlocks(configHandler);
+    }
+
+    @Override
+    public ICommonProxy getProxy() {
+        return proxy;
     }
 
     /**

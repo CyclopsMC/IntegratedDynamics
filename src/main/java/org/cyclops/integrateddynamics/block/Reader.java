@@ -1,9 +1,13 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlock;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 
@@ -12,6 +16,9 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
  * @author rubensworks
  */
 public class Reader extends ConfigurableBlock {
+
+    @BlockProperty
+    public static final PropertyEnum FACING = PropertyDirection.create("facing", EnumFacing.class);
 
     private static Reader _instance = null;
 

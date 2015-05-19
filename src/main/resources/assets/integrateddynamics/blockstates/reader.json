@@ -1,5 +1,10 @@
 {
   "variants": {
-    "normal": { "model": "integrateddynamics:reader" }
+    "facing=north": { "model": "integrateddynamics:reader", "y": 180 },
+    "facing=east":  { "model": "integrateddynamics:reader", "y": 270 },
+    "facing=south": { "model": "integrateddynamics:reader" },
+    "facing=west":  { "model": "integrateddynamics:reader", "y": 90 },
+    "facing=up":    { "model": "integrateddynamics:reader", "x": 90 },
+    "facing=down":  { "model": "integrateddynamics:reader", "x": 270 }
   }
 }

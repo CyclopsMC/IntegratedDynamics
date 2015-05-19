@@ -1,8 +1,13 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.client.render.tileentity.RenderCable;
 import org.cyclops.integrateddynamics.core.block.BlockMultipartTicking;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 /**
  * Config for {@link BlockMultipartTicking}.
@@ -26,6 +31,19 @@ public class BlockCableConfig extends BlockContainerConfig {
             null,
             BlockCable.class
         );
+    }
+
+    @Override
+    public void onRegistered() {
+        super.onRegistered();
+        if(MinecraftHelpers.isClientSide()) {
+            registerClientSide();
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void registerClientSide() {
+        IntegratedDynamics._instance.proxy.registerRenderer(TileMultipartTicking.class, new RenderCable());
     }
 
 }
