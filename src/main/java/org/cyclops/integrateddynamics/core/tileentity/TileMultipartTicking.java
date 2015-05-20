@@ -100,6 +100,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     protected void onPartsChanged() {
         markDirty();
+        getWorld().markBlockRangeForRenderUpdate(pos, pos);
     }
 
     @Override
@@ -192,6 +193,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         for(EnumFacing side : EnumFacing.VALUES) {
             extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()],
                     !isForceDisconnected(side) && connected.get(side.ordinal()));
+            extendedState = extendedState.withProperty(BlockCable.PART[side.ordinal()], hasPart(side));
         }
         return extendedState;
     }

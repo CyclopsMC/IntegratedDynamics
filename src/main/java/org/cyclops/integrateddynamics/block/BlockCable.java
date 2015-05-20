@@ -53,9 +53,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @BlockProperty
     public static final IUnlistedProperty<Boolean>[] CONNECTED = new IUnlistedProperty[6];
+    @BlockProperty
+    public static final IUnlistedProperty<Boolean>[] PART = new IUnlistedProperty[6];
     static {
         for(EnumFacing side : EnumFacing.values()) {
-            CONNECTED[side.ordinal()] = Properties.toUnlisted(PropertyBool.create(side.getName()));
+            CONNECTED[side.ordinal()] = Properties.toUnlisted(PropertyBool.create("connect-" + side.getName()));
+            PART[side.ordinal()] = Properties.toUnlisted(PropertyBool.create("part-" + side.getName()));
         }
     }
 
