@@ -1,0 +1,95 @@
+package org.cyclops.integrateddynamics.core.block;
+
+import lombok.Data;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.*;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * Interface for blocks that have a collidable component.
+ * Delegate calls to {@link org.cyclops.integrateddynamics.core.block.CollidableComponent}.
+ * @author rubensworks
+ */
+public interface ICollidable {
+
+    /**
+     * @return The colliding block instance
+     */
+    public Block getBlock();
+
+    /**
+     * Add the current block bounding box to the given list.
+     * @param world The world
+     * @param pos The position
+     * @param state The block state
+     * @param mask The bounding boxes mask
+     * @param list The list to add to
+     * @param collidingEntity The entity that is colliding
+     */
+    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask,
+                                        List list, Entity collidingEntity);
+
+    /**
+     * The the selected bounding box.
+     * @param worldIn The world
+     * @param pos The position
+     * @return The selected bounding box
+     */
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos);
+
+    /**
+     * Do a ray trace for the current look direction of the player.
+     * @param world The world.
+     * @param pos The block position to perform a ray trace for.
+     * @param player The player.
+     * @return A holder object with information on the ray tracing.
+     */
+    public RayTraceResult doRayTrace(World world, BlockPos pos, EntityPlayer player);
+
+    /**
+     * Ray trace the given direction.
+     * @param world The world
+     * @param pos The position
+     * @param origin The origin vector
+     * @param direction The direction vector
+     * @return The position object holder
+     */
+    public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction);
+
+    /**
+     * Result from ray tracing
+     */
+    @Data
+    public static class RayTraceResult {
+        private final MovingObjectPosition movingObjectPosition;
+        private final AxisAlignedBB boundingBox;
+        private final EnumFacing positionHit;
+        private final IComponent<?, ?> collisionType;
+
+        @Override
+        public String toString() {
+            return String.format("RayTraceResult: %s %s", boundingBox, collisionType);
+        }
+    }
+
+    /**
+     * A component that can be part of the collision detection for a block.
+     * @param <P> The type of positions this component type can provide.
+     * @param <B> The type of block this component is part of.
+     */
+    public static interface IComponent<P, B> {
+        public Collection<P> getPossiblePositions();
+        public boolean isActive(B block, World world, BlockPos pos, P position);
+        public AxisAlignedBB getBounds(B block, World world, BlockPos pos, P position);
+    }
+
+}

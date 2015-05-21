@@ -2,18 +2,16 @@ package org.cyclops.integrateddynamics.block;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import lombok.Data;
+import lombok.experimental.Delegate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
@@ -28,8 +26,13 @@ import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.MatrixHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.client.model.CableModel;
+import org.cyclops.integrateddynamics.core.block.CollidableComponent;
+import org.cyclops.integrateddynamics.core.block.ICollidable;
+import org.cyclops.integrateddynamics.core.block.ICollidableParent;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
@@ -49,8 +52,9 @@ import java.util.*;
  * @author rubensworks
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableConnectable<CablePathElement>,
-        INetworkElementProvider, IPartContainerFacade {
+        INetworkElementProvider, IPartContainerFacade, ICollidable, ICollidableParent {
 
+    // Properties
     @BlockProperty
     public static final IUnlistedProperty<Boolean>[] CONNECTED = new IUnlistedProperty[6];
     @BlockProperty
@@ -62,9 +66,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         }
     }
 
-    private static BlockCable _instance = null;
-
-    float[][] COLLISION_BOXES = {
+    // Collision boxes
+    private static final float[][] CABLE_COLLISION_BOXES = {
             {CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // DOWN
             {CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX}, // UP
             {CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // NORTH
@@ -72,6 +75,70 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
             {0, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // WEST
             {CableModel.MIN, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX}, // EAST
     };
+    private static final float[][] PART_COLLISION_BOXES = {
+            {0.19F, 0.81F}, {CableModel.MIN - 0.37F, CableModel.MIN}, {0.19F, 0.81F}
+    };
+
+    // Collision components
+    private static final List<IComponent<EnumFacing, BlockCable>> COLLIDABLE_COMPONENTS = Lists.newLinkedList();
+    private static final IComponent<EnumFacing, BlockCable> CENTER_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
+        @Override
+        public Collection<EnumFacing> getPossiblePositions() {
+            return Arrays.asList(new EnumFacing[]{null});
+        }
+
+        @Override
+        public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return true;
+        }
+
+        @Override
+        public AxisAlignedBB getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return AxisAlignedBB.fromBounds(CableModel.MIN, CableModel.MIN, CableModel.MIN,
+                                            CableModel.MAX, CableModel.MAX, CableModel.MAX);
+        }
+    };
+    private static final IComponent<EnumFacing, BlockCable> CABLECONNECTIONS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
+        @Override
+        public Collection<EnumFacing> getPossiblePositions() {
+            return Arrays.asList(EnumFacing.VALUES);
+        }
+
+        @Override
+        public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return block.isConnected(world, pos, position);
+        }
+
+        @Override
+        public AxisAlignedBB getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return block.getCableBoundingBox(position);
+        }
+    };
+    private static final IComponent<EnumFacing, BlockCable> PARTS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
+        @Override
+        public Collection<EnumFacing> getPossiblePositions() {
+            return Arrays.asList(EnumFacing.VALUES);
+        }
+
+        @Override
+        public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return block.hasPart(world, pos, position);
+        }
+
+        @Override
+        public AxisAlignedBB getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return block.getPartBoundingBox(position);
+        }
+    };
+    static {
+        COLLIDABLE_COMPONENTS.add(CENTER_COMPONENT);
+        COLLIDABLE_COMPONENTS.add(CABLECONNECTIONS_COMPONENT);
+        COLLIDABLE_COMPONENTS.add(PARTS_COMPONENT);
+    }
+    @Delegate
+    private ICollidable collidableComponent = new CollidableComponent<BlockCable>(this, COLLIDABLE_COMPONENTS);
+
+    private static BlockCable _instance = null;
 
     @Icon(location = "blocks/cable")
     public TextureAtlasSprite texture;
@@ -122,9 +189,18 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @Override
     public boolean isConnected(World world, BlockPos pos, EnumFacing side) {
-        IExtendedBlockState extendedState = (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos);
-        return extendedState != null && extendedState.getValue(CONNECTED[side.ordinal()]) != null
-                && extendedState.getValue(BlockCable.CONNECTED[side.ordinal()]);
+        return BlockHelpers.getSafeBlockStateProperty(
+                (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
+                CONNECTED[side.ordinal()],
+                false);
+    }
+
+    @Override
+    public boolean hasPart(World world, BlockPos pos, EnumFacing side) {
+        return BlockHelpers.getSafeBlockStateProperty(
+                (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
+                PART[side.ordinal()],
+                false);
     }
 
     @Override
@@ -142,22 +218,25 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         if(!world.isRemote && WrenchHelpers.isWrench(player, pos) && tile != null) {
             RayTraceResult rayTraceResult = doRayTrace(world, pos, player);
             if(rayTraceResult != null) {
-                EnumFacing disconnectedSide = rayTraceResult.getSideHit();
+                EnumFacing disconnectedSide = rayTraceResult.getPositionHit();
+                if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {
+                    System.out.println("PART!"); // TODO
+                } else if (rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT) {
+                    // Store the disconnection in the tile entity
+                    disconnect(world, pos, disconnectedSide);
 
-                // Store the disconnection in the tile entity
-                disconnect(world, pos, disconnectedSide);
+                    // Signal changes
+                    tile.updateCableConnections();
+                    triggerNeighbourConnections(world, pos);
 
-                // Signal changes
-                tile.updateCableConnections();
-                triggerNeighbourConnections(world, pos);
-
-                // Reinit the networks for this block and the disconnected neighbour.
-                Network.initiateNetworkSetup(this, world, pos).initialize();
-                BlockPos neighbourPos = pos.offset(disconnectedSide);
-                Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-                if(neighbourBlock instanceof ICableConnectable) {
-                    Network.initiateNetworkSetup((ICableConnectable<CablePathElement>) neighbourBlock,
-                            world, neighbourPos).initialize();
+                    // Reinit the networks for this block and the disconnected neighbour.
+                    Network.initiateNetworkSetup(this, world, pos).initialize();
+                    BlockPos neighbourPos = pos.offset(disconnectedSide);
+                    Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
+                    if (neighbourBlock instanceof ICableConnectable) {
+                        Network.initiateNetworkSetup((ICableConnectable<CablePathElement>) neighbourBlock,
+                                world, neighbourPos).initialize();
+                    }
                 }
                 return true;
             }
@@ -250,10 +329,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     @Override
     public boolean canConnect(World world, BlockPos selfPosition, ICableConnectable connector, EnumFacing side) {
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, selfPosition);
-        if(tile != null) {
-            return !tile.isForceDisconnected(side);
-        }
-        return true;
+        return tile == null || !tile.isForceDisconnected(side);
     }
 
     @Override
@@ -277,131 +353,26 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         return EnumWorldBlockLayer.TRANSLUCENT;
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB axisalignedbb, List list, Entity collidingEntity) {
-        // The center collision box of the cable which is always present.
-        setBlockBounds(CableModel.MIN, CableModel.MIN, CableModel.MIN,
-                       CableModel.MAX, CableModel.MAX, CableModel.MAX);
-        super.addCollisionBoxesToList(world, pos, state, axisalignedbb, list, collidingEntity);
-
-        // The boxes for the 6 sides if they are connected
-        for(EnumFacing side : EnumFacing.values()) {
-            if(isConnected(world, pos, side)) {
-                setBlockBounds(getCableBoundingBox(side));
-                super.addCollisionBoxesToList(world, pos, state, axisalignedbb, list, collidingEntity);
-            }
-        }
-
-        // Reset the bounding box to prevent any entity glitches.
-        setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
-        RayTraceResult rayTraceResult = doRayTrace(world, pos, Minecraft.getMinecraft().thePlayer);
-        if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
-            AxisAlignedBB box = rayTraceResult.boundingBox;
-            return box.offset(pos.getX(), pos.getY(), pos.getZ());
-        }
-        // Happens when client hovers away from a block.
-        return super.getSelectedBoundingBox(world, pos).expand(-0.625F, -0.625F, -0.625F);
-    }
-
-    /**
-     * Do a ray trace for the current look direction of the player.
-     * @param world The world.
-     * @param pos The block position to perform a ray trace for.
-     * @param player The player.
-     * @return A holder object with information on the ray tracing.
-     */
-    public RayTraceResult doRayTrace(World world, BlockPos pos, EntityPlayer player) {
-        double reachDistance;
-        if (player instanceof EntityPlayerMP) {
-            reachDistance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
-        } else {
-            reachDistance = 5;
-        }
-
-        double eyeHeight = world.isRemote ? player.getEyeHeight(): player.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
-        Vec3 lookVec = player.getLookVec();
-        Vec3 origin = new Vec3(player.posX, player.posY + eyeHeight, player.posZ);
-        Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
-
-        return doRayTrace(world, pos, origin, direction);
-    }
-
-    @Override
-    public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
-        RayTraceResult raytraceResult = doRayTrace(world, pos, origin, direction);
-        if (raytraceResult == null) {
-            return null;
-        } else {
-            return raytraceResult.getMovingObjectPosition();
-        }
-    }
-
     private AxisAlignedBB getCableBoundingBox(EnumFacing side) {
         float min = CableModel.MIN;
         float max = CableModel.MAX;
         if (side == null) {
             return AxisAlignedBB.fromBounds(min, min, min, max, max, max).expand(0.002F, 0.002F, 0.002F);
         } else {
-            float[] b = COLLISION_BOXES[side.ordinal()];
+            float[] b = CABLE_COLLISION_BOXES[side.ordinal()];
             return AxisAlignedBB.fromBounds(b[0], b[1], b[2], b[3], b[4], b[5]).expand(0.001F, 0.001F, 0.001F);
         }
     }
 
-    private void doRayTraceForSide(World world, BlockPos pos, Vec3 origin, Vec3 direction, EnumFacing side,
-                                   MovingObjectPosition[] hits, AxisAlignedBB[] boxes, EnumFacing[] sideHit) {
-        int i = side == null ? 6 : side.ordinal();
-        AxisAlignedBB bb = getCableBoundingBox(side);
-        setBlockBounds(bb);
-        boxes[i]   = bb;
-        hits[i]    = super.collisionRayTrace(world, pos, origin, direction);
-        sideHit[i] = side;
-    }
+    private AxisAlignedBB getPartBoundingBox(EnumFacing side) {
+        // Copy bounds
+        float[][] bounds = new float[PART_COLLISION_BOXES.length][PART_COLLISION_BOXES[0].length];
+        for (int i = 0; i < bounds.length; i++)
+            bounds[i] = Arrays.copyOf(PART_COLLISION_BOXES[i], PART_COLLISION_BOXES[i].length);
 
-    private RayTraceResult doRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
-        // Perform a ray trace for all six sides.
-        MovingObjectPosition[] hits = new MovingObjectPosition[7];
-        AxisAlignedBB[] boxes = new AxisAlignedBB[7];
-        EnumFacing[] sideHit = new EnumFacing[7];
-        Arrays.fill(sideHit, null);
-        for (EnumFacing side : EnumFacing.VALUES) {
-            if(isConnected(world, pos, side)) {
-                doRayTraceForSide(world, pos, origin, direction, side, hits, boxes, sideHit);
-            }
-        }
-        // Perform a ray trace for the center
-        doRayTraceForSide(world, pos, origin, direction, null, hits, boxes, sideHit);
-
-        // Find the closest hit
-        double minDistance = Double.POSITIVE_INFINITY;
-        int minIndex = -1;
-        for (int i = 0; i < hits.length; i++) {
-            if (hits[i] != null) {
-                double d = hits[i].hitVec.squareDistanceTo(origin);
-                if (d < minDistance) {
-                    minDistance = d;
-                    minIndex = i;
-                }
-            }
-        }
-
-        // Reset bounds
-        setBlockBounds(0, 0, 0, 1, 1, 1);
-
-        if (minIndex != -1) {
-            return new RayTraceResult(hits[minIndex], boxes[minIndex], sideHit[minIndex]);
-        }
-        return null;
-    }
-
-    private void setBlockBounds(AxisAlignedBB bounds) {
-        setBlockBounds((float) bounds.minX, (float) bounds.minY, (float) bounds.minZ,
-                       (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ);
+        // Transform bounds
+        MatrixHelpers.transform(bounds, side);
+        return AxisAlignedBB.fromBounds(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
     }
 
     @Override
@@ -423,16 +394,20 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         return new CablePathElement(this, DimPos.of(world, blockPos));
     }
 
-    @Data
-    static class RayTraceResult {
-        private final MovingObjectPosition movingObjectPosition;
-        private final AxisAlignedBB boundingBox;
-        private final EnumFacing sideHit;
+    @Override
+    public void addCollisionBoxesToListParent(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask,
+                                              List list, Entity collidingEntity) {
+        super.addCollisionBoxesToList(worldIn, pos, state, mask, list, collidingEntity);
+    }
 
-        @Override
-        public String toString() {
-            return String.format("RayTraceResult: %s", boundingBox == null ? "null" : boundingBox.toString());
-        }
+    @Override
+    public AxisAlignedBB getSelectedBoundingBoxParent(World worldIn, BlockPos pos) {
+        return super.getSelectedBoundingBox(worldIn, pos);
+    }
+
+    @Override
+    public MovingObjectPosition collisionRayTraceParent(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
+        return super.collisionRayTrace(world, pos, origin, direction);
     }
 
 }
