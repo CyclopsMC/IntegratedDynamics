@@ -52,7 +52,7 @@ import java.util.*;
  * @author rubensworks
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableConnectable<CablePathElement>,
-        INetworkElementProvider, IPartContainerFacade, ICollidable, ICollidableParent {
+        INetworkElementProvider, IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent {
 
     // Properties
     @BlockProperty
@@ -136,7 +136,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         COLLIDABLE_COMPONENTS.add(PARTS_COMPONENT);
     }
     @Delegate
-    private ICollidable collidableComponent = new CollidableComponent<BlockCable>(this, COLLIDABLE_COMPONENTS);
+    private ICollidable collidableComponent = new CollidableComponent<EnumFacing, BlockCable>(this, COLLIDABLE_COMPONENTS);
 
     private static BlockCable _instance = null;
 
@@ -216,7 +216,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
                                     EnumFacing side, float hitX, float hitY, float hitZ) {
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
         if(!world.isRemote && WrenchHelpers.isWrench(player, pos) && tile != null) {
-            RayTraceResult rayTraceResult = doRayTrace(world, pos, player);
+            RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
             if(rayTraceResult != null) {
                 EnumFacing disconnectedSide = rayTraceResult.getPositionHit();
                 if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {

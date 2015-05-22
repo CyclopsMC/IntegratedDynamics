@@ -18,15 +18,17 @@ import java.util.List;
 /**
  * Component for blocks that require complex collision detection.
  * @author rubensworks
+ * @param <P> The type of positions this component type can provide.
+ * @param <B> The type of block this component is part of.
  */
 @Data
-public class CollidableComponent<B extends Block & ICollidableParent> implements ICollidable {
+public class CollidableComponent<P, B extends Block & ICollidableParent> implements ICollidable {
 
     private final B block;
-    private final List<IComponent<EnumFacing, B>> components;
+    private final List<IComponent<P, B>> components;
     private final int totalComponents;
 
-    public CollidableComponent(B block, List<IComponent<EnumFacing, B>> components) {
+    public CollidableComponent(B block, List<IComponent<P, B>> components) {
         this.block = block;
         this.components = components;
         int count = 0;
@@ -46,6 +48,7 @@ public class CollidableComponent<B extends Block & ICollidableParent> implements
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB axisalignedbb,
                                         List list, Entity collidingEntity) {
@@ -103,12 +106,12 @@ public class CollidableComponent<B extends Block & ICollidableParent> implements
         return doRayTrace(world, pos, origin, direction);
     }
 
-    private int doRayTraceComponent(IComponent<EnumFacing, B> component, int countStart,
+    private int doRayTraceComponent(IComponent<P, B> component, int countStart,
                                         World world, BlockPos pos, Vec3 origin, Vec3 direction,
-                                        MovingObjectPosition[] hits, AxisAlignedBB[] boxes, EnumFacing[] sideHit,
-                                        IComponent<EnumFacing, B>[] components) {
+                                        MovingObjectPosition[] hits, AxisAlignedBB[] boxes, P[] sideHit,
+                                        IComponent<P, B>[] components) {
         int i = countStart;
-        for(EnumFacing position : component.getPossiblePositions()) {
+        for(P position : component.getPossiblePositions()) {
             if(component.isActive(getBlock(), world, pos, position)) {
                 AxisAlignedBB bb = component.getBounds(getBlock(), world, pos, position);
                 setBlockBounds(bb);
@@ -126,13 +129,15 @@ public class CollidableComponent<B extends Block & ICollidableParent> implements
         // Perform a ray trace for all six sides.
         MovingObjectPosition[] hits = new MovingObjectPosition[totalComponents];
         AxisAlignedBB[] boxes = new AxisAlignedBB[totalComponents];
-        EnumFacing[] sideHit = new EnumFacing[totalComponents];
-        IComponent<EnumFacing, B>[] componentsOutput = new IComponent[totalComponents];
+        @SuppressWarnings("unchecked")
+        P[] sideHit = (P[]) new Object[totalComponents];
+        @SuppressWarnings("unchecked")
+        IComponent<P, B>[] componentsOutput = new IComponent[totalComponents];
         Arrays.fill(sideHit, null);
 
         // Ray trace for all active components.
         int count = 0;
-        for(IComponent<EnumFacing, B> component : components) {
+        for(IComponent<P, B> component : components) {
             count = doRayTraceComponent(component, count, world, pos, origin, direction, hits, boxes, sideHit, componentsOutput);
         }
 
@@ -153,7 +158,7 @@ public class CollidableComponent<B extends Block & ICollidableParent> implements
         getBlock().setBlockBounds(0, 0, 0, 1, 1, 1);
 
         if (minIndex != -1) {
-            return new RayTraceResult(hits[minIndex], boxes[minIndex], sideHit[minIndex], componentsOutput[minIndex]);
+            return new RayTraceResult<P>(hits[minIndex], boxes[minIndex], sideHit[minIndex], componentsOutput[minIndex]);
         }
         return null;
     }

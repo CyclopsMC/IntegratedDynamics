@@ -5,7 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,9 +19,10 @@ import java.util.List;
 /**
  * Interface for blocks that have a collidable component.
  * Delegate calls to {@link org.cyclops.integrateddynamics.core.block.CollidableComponent}.
+ * @param <P> The type of positions this component type can provide.
  * @author rubensworks
  */
-public interface ICollidable {
+public interface ICollidable<P> {
 
     /**
      * @return The colliding block instance
@@ -53,7 +57,7 @@ public interface ICollidable {
      * @param player The player.
      * @return A holder object with information on the ray tracing.
      */
-    public RayTraceResult doRayTrace(World world, BlockPos pos, EntityPlayer player);
+    public RayTraceResult<P> doRayTrace(World world, BlockPos pos, EntityPlayer player);
 
     /**
      * Ray trace the given direction.
@@ -67,12 +71,13 @@ public interface ICollidable {
 
     /**
      * Result from ray tracing
+     * @param <P> The type of position that can be hit.
      */
     @Data
-    public static class RayTraceResult {
+    public static class RayTraceResult<P> {
         private final MovingObjectPosition movingObjectPosition;
         private final AxisAlignedBB boundingBox;
-        private final EnumFacing positionHit;
+        private final P positionHit;
         private final IComponent<?, ?> collisionType;
 
         @Override
