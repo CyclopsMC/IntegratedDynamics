@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.part;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -11,9 +10,6 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.core.part.*;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeRedstoneReader;
 import org.cyclops.integrateddynamics.core.part.write.IPartTypeRedstoneWriter;
-import org.cyclops.integrateddynamics.item.ItemPartRedstoneConfig;
-
-import java.util.List;
 
 /**
  * A redstone I/O part.
@@ -36,13 +32,13 @@ public class PartTypeRedstone extends PartTypeBase<PartTypeRedstone, PartTypeRed
 
     @Override
     public PartRedstoneState fromNBT(NBTTagCompound tag) {
-        PartRedstoneState partState = getDefaultState();
+        PartRedstoneState partState = constructDefaultState();
         partState.readFromNBT(tag);
         return partState;
     }
 
     @Override
-    public PartRedstoneState getDefaultState() {
+    public PartRedstoneState constructDefaultState() {
         return PartRedstoneState.of(0);
     }
 
@@ -69,11 +65,6 @@ public class PartTypeRedstone extends PartTypeBase<PartTypeRedstone, PartTypeRed
     @Override
     public void afterNetworkAlive(IPartState<PartTypeRedstone> state) {
         System.out.println("alive " + state);
-    }
-
-    @Override
-    public void addDrops(IPartState<PartTypeRedstone> state, List<ItemStack> itemStacks) {
-        itemStacks.add(new ItemStack(ItemPartRedstoneConfig._instance.getItemInstance()));
     }
 
     @Override

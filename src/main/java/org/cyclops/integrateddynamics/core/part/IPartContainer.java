@@ -26,10 +26,12 @@ public interface IPartContainer {
      * Set the part for a side.
      * @param side The side to place the part on.
      * @param part The part.
+     * @param partState The state for this part.
      * @param <P> The type of part.
      * @param <S> The type of part state.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void setPart(EnumFacing side, IPartType<P, S> part);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void setPart(EnumFacing side, IPartType<P, S> part,
+                                                                             IPartState<P> partState);
 
     /**
      * Get the part of a side, can be null.

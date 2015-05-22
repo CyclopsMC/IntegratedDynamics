@@ -5,18 +5,21 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.ICableConnectable;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -31,6 +34,7 @@ public class Network implements INBTSerializable {
     private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
     private TreeSet<INetworkElement> updateableElements = null;
     private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
+    private Map<Integer, IPartState> partStates = Maps.newHashMap();
 
     private volatile boolean partsChanged = false;
     private volatile boolean killed = false;
@@ -67,6 +71,9 @@ public class Network implements INBTSerializable {
                 }
                 if (block instanceof IPartContainerFacade) {
                     IPartContainer partContainer = ((IPartContainerFacade) block).getPartContainer(world, pos);
+
+                    // Correctly remove any previously saved network in this partcontainer
+                    // and set the new network to this.
                     Network network = partContainer.getNetwork();
                     if (network != null) {
                         network.removeCable(block, cable);
@@ -74,6 +81,11 @@ public class Network implements INBTSerializable {
                     }
                     partContainer.resetCurrentNetwork();
                     partContainer.setNetwork(this);
+
+                    // Capture all parts in this container
+                    for(EnumFacing side : partContainer.getParts().keySet()) {
+                        addPart(partContainer.getPartState(side));
+                    }
                 }
             }
         }
@@ -84,6 +96,36 @@ public class Network implements INBTSerializable {
      */
     public void initialize() {
         initialize(false);
+    }
+
+    /**
+     * Add the given part state to the network.
+     * @param partState The part state to add.
+     * @return If the addition was successful.
+     */
+    public boolean addPart(IPartState partState) {
+        if(partStates.containsKey(partState.getId())) {
+            return false;
+        }
+        partStates.put(partState.getId(), partState);
+        return true;
+    }
+
+    /**
+     * Get the part state by id from this network.
+     * @param partId The part state id.
+     * @return The corresponding part state or null.
+     */
+    public IPartState getPart(int partId) {
+        return partStates.get(partId);
+    }
+
+    /**
+     * Remove the part state by id from this network.
+     * @param partId The part state id.
+     */
+    public void removePart(int partId) {
+        partStates.remove(partId);
     }
 
     /**

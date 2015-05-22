@@ -83,8 +83,6 @@ public class CableModel extends DynamicModel {
         return EnumFacing.getFront(dir);
     }
 
-
-
     @Override
     public List<BakedQuad> getGeneralQuads() {
         List<BakedQuad> ret = Lists.newLinkedList();

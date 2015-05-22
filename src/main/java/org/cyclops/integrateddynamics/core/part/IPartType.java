@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -23,6 +24,18 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public EnumPartType getType();
 
     /**
+     * @return The item associated with this part type.
+     */
+    public Item getItem();
+
+    /**
+     * Set the item associated with this part type.
+     * Can only be called once per type.
+     * @param item The item associated with this part type.
+     */
+    public void setItem(Item item);
+
+    /**
      * Write the properties of this part to NBT.
      * An identificator for this part is not required, this is written somewhere else.
      * @param tag The tag to write to. This tag is guaranteed to be empty.
@@ -41,7 +54,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     /**
      * @return The default state of this part.
      */
-    public IPartState<P> getDefaultState();
+    public S getDefaultState();
 
     /**
      * @param state The state
@@ -74,11 +87,25 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public void afterNetworkAlive(IPartState<P> state);
 
     /**
+     * Get the itemstack from the given state.
+     * @param state The state
+     * @return The itemstack possibly containing the state information.
+     */
+    public ItemStack getItemStack(S state);
+
+    /**
+     * Get the part state from the given itemstack.
+     * @param itemStack The itemstack possibly containing state information.
+     * @return The state contained in the itemstack or the default part state.
+     */
+    public S getState(ItemStack itemStack);
+
+    /**
      * Add the itemstacks to drop when this element is removed.
      * @param state The state
      * @param itemStacks The itemstack list to add to.
      */
-    public void addDrops(IPartState<P> state, List<ItemStack> itemStacks);
+    public void addDrops(S state, List<ItemStack> itemStacks);
 
     /**
      * Create a network element for this part type.

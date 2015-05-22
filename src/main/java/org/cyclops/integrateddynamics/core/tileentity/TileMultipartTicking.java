@@ -100,15 +100,23 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     protected void onPartsChanged() {
         markDirty();
-        getWorld().markBlockRangeForRenderUpdate(pos, pos);
+        sendUpdate();
+        //getWorld().markBlockRangeForRenderUpdate(pos, pos);
     }
 
     @Override
-    public void setPart(EnumFacing side, IPartType part) {
-        partData.put(side, PartStateHolder.of(part, part.getDefaultState()));
+    public void setPart(EnumFacing side, IPartType part, IPartState partState) {
+        partData.put(side, PartStateHolder.of(part, partState));
         if(getNetwork() != null) {
             getNetwork().addNetworkElement(part.createNetworkElement(
                     (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side));
+            if(!getNetwork().addPart(partState)) {
+                IntegratedDynamics.clog(Level.WARN, "A part already existed in the network, this is possibly a " +
+                        "result from item duplication.");
+                partState = part.getDefaultState();
+                getNetwork().addPart(partState);
+                partData.put(side, PartStateHolder.of(part, partState));
+            }
         }
         onPartsChanged();
     }
