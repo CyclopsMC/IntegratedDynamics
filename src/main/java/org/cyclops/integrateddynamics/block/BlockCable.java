@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import lombok.Setter;
 import lombok.experimental.Delegate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -142,6 +143,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     @Icon(location = "blocks/cable")
     public TextureAtlasSprite texture;
+    @Setter
+    private boolean disableCollisionBox = false;
 
     /**
      * Get the unique instance.
@@ -161,6 +164,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
         setHardness(3.0F);
         setStepSound(soundTypeMetal);
         eConfig.getMod().getIconProvider().registerIconHolderObject(this);
+    }
+
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+        if(disableCollisionBox) return null;
+        return super.getCollisionBoundingBox(worldIn, pos, state);
     }
 
     @Override
