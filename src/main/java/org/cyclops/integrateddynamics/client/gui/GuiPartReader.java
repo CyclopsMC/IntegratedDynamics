@@ -12,7 +12,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
  * Gui for a reader part.
  * @author rubensworks
  */
-public class GuiPartReader<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>> extends GuiMultipart<P, S> {
+public class GuiPartReader<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
+        extends GuiMultipart<P, S> {
 
     /**
      * Make a new instance.
@@ -22,8 +23,21 @@ public class GuiPartReader<P extends IPartType<P, S> & IGuiContainerProvider, S 
      * @param partState The targeted part state.
      */
     public GuiPartReader(InventoryPlayer inventory, IPartContainer partContainer, P partType, S partState) {
-        super(inventory, new ContainerPartReader<P, S>(inventory, partContainer, partType, partState), partContainer,
-                partType, partState);
+        super(new ContainerPartReader<P, S>(inventory, partContainer, partType, partState));
     }
 
+    @Override
+    protected String getNameId() {
+        return "partReader";
+    }
+
+    @Override
+    protected int getBaseXSize() {
+        return 195;
+    }
+
+    @Override
+    protected int getBaseYSize() {
+        return 213;
+    }
 }

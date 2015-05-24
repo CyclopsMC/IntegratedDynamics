@@ -16,7 +16,7 @@ import org.cyclops.integrateddynamics.core.part.IPartType;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class ContainerMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
+public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
         extends ExtendedInventoryContainer {
 
     private final IPartContainer partContainer;
