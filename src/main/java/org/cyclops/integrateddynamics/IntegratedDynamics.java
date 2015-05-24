@@ -7,12 +7,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
+import org.cyclops.cyclopscore.client.gui.GuiHandler;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
 import org.cyclops.integrateddynamics.core.TickHandler;
+import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 /**
@@ -49,6 +51,11 @@ public class IntegratedDynamics extends ModBase {
         // Register world storages
         registerWorldStorage(NetworkWorldStorage.getInstance(this));
         registerWorldStorage(globalCounters = new GlobalCounters(this));
+    }
+
+    @Override
+    protected GuiHandler constructGuiHandler() {
+        return new ExtendedGuiHandler(this);
     }
 
     @Mod.EventHandler

@@ -3,13 +3,21 @@ package org.cyclops.integrateddynamics.part;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.client.gui.GuiPartReader;
 import org.cyclops.integrateddynamics.core.part.*;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeRedstoneReader;
 import org.cyclops.integrateddynamics.core.part.write.IPartTypeRedstoneWriter;
+import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
 
 /**
  * A redstone I/O part.
@@ -19,6 +27,22 @@ public class PartTypeRedstone extends PartTypeBase<PartTypeRedstone, PartTypeRed
         implements
         IPartTypeRedstoneReader<PartTypeRedstone, PartTypeRedstone.PartRedstoneState>,
         IPartTypeRedstoneWriter<PartTypeRedstone, PartTypeRedstone.PartRedstoneState> {
+
+    @Override
+    protected boolean hasGui() {
+        return true;
+    }
+
+    @Override
+    public Class<? extends Container> getContainer() {
+        return ContainerPartReader.class;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Class<? extends GuiScreen> getGui() {
+        return GuiPartReader.class;
+    }
 
     @Override
     public EnumPartType getType() {
@@ -76,6 +100,11 @@ public class PartTypeRedstone extends PartTypeBase<PartTypeRedstone, PartTypeRed
     @Override
     public void setRedstoneLevel(IPartContainer partContainer, EnumFacing side, int level) {
         partContainer.setPartState(side, PartRedstoneState.of(level));
+    }
+
+    @Override
+    public ModBase getMod() {
+        return IntegratedDynamics._instance;
     }
 
     @EqualsAndHashCode(callSuper = false)

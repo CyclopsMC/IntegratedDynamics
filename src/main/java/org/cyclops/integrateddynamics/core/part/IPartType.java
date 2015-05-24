@@ -1,9 +1,13 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 
@@ -115,5 +119,21 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      * @return A new network element instance.
      */
     public INetworkElement createNetworkElement(IPartContainerFacade partContainerFacade, DimPos pos, EnumFacing side);
+
+    /**
+     * Called when a part is right-clicked.
+     * @param world The world.
+     * @param pos The position of the block this part is part of.
+     * @param state The block state of the parent block.
+     * @param partState The state of this part.
+     * @param player The player activating the part.
+     * @param side The side this part is attached on.
+     * @param hitX The X hit position.
+     * @param hitY The Y hit position.
+     * @param hitZ The Z hit position.
+     * @return True if the further processing should be stopped.
+     */
+    public boolean onPartActivated(World world, BlockPos pos, IBlockState state, S partState, EntityPlayer player,
+                                   EnumFacing side, float hitX, float hitY, float hitZ);
 
 }

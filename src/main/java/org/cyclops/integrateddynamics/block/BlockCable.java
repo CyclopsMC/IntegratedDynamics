@@ -224,15 +224,21 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
                                     EnumFacing side, float hitX, float hitY, float hitZ) {
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
-        if(!world.isRemote && WrenchHelpers.isWrench(player, pos) && tile != null) {
+        if(tile != null) {
             RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
             if(rayTraceResult != null) {
-                EnumFacing disconnectedSide = rayTraceResult.getPositionHit();
+                EnumFacing positionHit = rayTraceResult.getPositionHit();
                 if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {
-                    System.out.println("PART!"); // TODO
-                } else if (rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT) {
+                    if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
+                        // TODO: remove part
+                    } else {
+                        getPartContainer(world, pos).getPart(positionHit).onPartActivated(world, pos, state,
+                                getPartContainer(world, pos).getPartState(positionHit), player, positionHit, hitX, hitY, hitZ);
+                    }
+                } else if (!world.isRemote && rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT
+                        && WrenchHelpers.isWrench(player, pos)) {
                     // Store the disconnection in the tile entity
-                    disconnect(world, pos, disconnectedSide);
+                    disconnect(world, pos, positionHit);
 
                     // Signal changes
                     tile.updateCableConnections();
@@ -240,7 +246,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
                     // Reinit the networks for this block and the disconnected neighbour.
                     Network.initiateNetworkSetup(this, world, pos).initialize();
-                    BlockPos neighbourPos = pos.offset(disconnectedSide);
+                    BlockPos neighbourPos = pos.offset(positionHit);
                     Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
                     if (neighbourBlock instanceof ICableConnectable) {
                         Network.initiateNetworkSetup((ICableConnectable<CablePathElement>) neighbourBlock,
