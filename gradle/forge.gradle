@@ -8,6 +8,7 @@ dependencies {
 
     // Project lombok
     compile "org.projectlombok:lombok:1.14.4"
+    testCompile "junit:junit:4.12"
 }
 
 minecraft {
