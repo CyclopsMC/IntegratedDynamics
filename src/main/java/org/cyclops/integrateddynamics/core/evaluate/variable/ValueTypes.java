@@ -6,6 +6,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
  */
 public class ValueTypes {
 
-    public static IValueType<ValueTypeBoolean.ValueBoolean> BOOLEAN = new ValueTypeBoolean();
+    public static ValueTypeBoolean BOOLEAN = new ValueTypeBoolean();
 
 }

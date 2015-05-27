@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
-import org.cyclops.integrateddynamics.part.PartTypeRedstone;
+import org.cyclops.integrateddynamics.part.PartTypeRedstoneReader;
 
 /**
  * Collection of parts types.
@@ -8,6 +8,6 @@ import org.cyclops.integrateddynamics.part.PartTypeRedstone;
  */
 public final class PartTypes {
 
-    public static final EnumPartType REDSTONE = EnumPartType.create("redstone", new PartTypeRedstone());
+    public static final EnumPartType REDSTONE_READER = EnumPartType.create("redstoneReader", new PartTypeRedstoneReader());
 
 }

@@ -20,6 +20,6 @@ public interface IValue {
      * @return The downcasted value.
      * @throws org.cyclops.integrateddynamics.core.evaluate.InvalidValueTypeException If this value could not be cast to the given type.
      */
-    public <V> V cast(IValueType<V> valueType) throws InvalidValueTypeException;
+    public <V extends IValue> V cast(IValueType<V> valueType) throws InvalidValueTypeException;
 
 }

@@ -14,7 +14,7 @@ public abstract class BaseValue implements IValue {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <V> V cast(IValueType<V> valueType) throws InvalidValueTypeException {
+    public <V extends IValue> V cast(IValueType<V> valueType) throws InvalidValueTypeException {
         if(valueType == getType()) {
             return (V) this;
         } else {

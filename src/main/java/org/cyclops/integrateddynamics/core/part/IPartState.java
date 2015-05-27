@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 
 /**
  * A value holder for an {@link IPartType}.
@@ -34,5 +36,19 @@ public interface IPartState<P extends IPartType> {
      * @return The unique ID
      */
     public int getId();
+
+    /**
+     * Get the singleton variable for an aspect.
+     * @param aspect The aspect from the part of this state.
+     * @return The variable that exists only once for an aspect in this part state.
+     */
+    public IAspectVariable getVariable(IAspect aspect);
+
+    /**
+     * Get the singleton variable for an aspect.
+     * @param aspect The aspect from the part of this state.
+     * @param variable The variable that exists only once for an aspect in this part state.
+     */
+    public void setVariable(IAspect aspect, IAspectVariable variable);
 
 }

@@ -1,11 +1,16 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import com.google.common.collect.Maps;
 import lombok.experimental.Delegate;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.nbt.NBTProviderComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
+
+import java.util.Map;
 
 /**
  * A default implementation of the {@link org.cyclops.integrateddynamics.core.part.IPartState} with auto-persistence
@@ -18,6 +23,7 @@ public class DefaultPartState<P extends IPartType> implements IPartState<P>, INB
     private INBTProvider nbtProviderComponent = new NBTProviderComponent(this);
     @NBTPersist
     private int id = -1;
+    private final Map<IAspect, IAspectVariable> aspectVariables = Maps.newHashMap();
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
@@ -37,5 +43,15 @@ public class DefaultPartState<P extends IPartType> implements IPartState<P>, INB
     @Override
     public int getId() {
         return this.id;
+    }
+
+    @Override
+    public IAspectVariable getVariable(IAspect aspect) {
+        return aspectVariables.get(aspect);
+    }
+
+    @Override
+    public void setVariable(IAspect aspect, IAspectVariable variable) {
+        aspectVariables.put(aspect, variable);
     }
 }

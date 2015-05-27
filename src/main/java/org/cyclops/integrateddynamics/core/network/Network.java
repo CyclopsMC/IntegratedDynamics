@@ -10,9 +10,12 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.ICableConnectable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
@@ -311,6 +314,39 @@ public class Network implements INBTSerializable {
         Network network = new Network(PathFinder.getConnectedCluster(connectable.createPathElement(world, pos)));
         NetworkWorldStorage.getInstance(IntegratedDynamics._instance).addNewNetwork(network);
         return network;
+    }
+
+    /**
+     * Check if this network contains the given part id.
+     * @param partId The part state id.
+     * @return If this part is present in this network.
+     */
+    public boolean hasPart(int partId) {
+        return partStates.containsKey(partId);
+    }
+
+    /**
+     * Check if a variable can be found for a given part and aspect.
+     * @param partId The part state id.
+     * @param aspect The aspect from the given part.
+     * @param <V> The value.
+     * @return True if such a variable can be found. False if the given part is not present in the network or if the
+     *         given aspect is not present at that part.
+     */
+    public <V extends IValue> boolean hasVariable(int partId, IAspect<V, ?> aspect) {
+        return hasPart(partId) && getPart(partId).getVariable(aspect) != null;
+    }
+
+    /**
+     * Get the current variable from the aspect of the given part id.
+     * This method can call a NPE when the given part does not exists, so make sure to check this before.
+     * @param partId The part state id.
+     * @param aspect The aspect from the given part.
+     * @param <V> The value.
+     * @return The variable.
+     */
+    public <V extends IValue> IVariable<V> getVariable(int partId, IAspect<V, ?> aspect) {
+        return getPart(partId).getVariable(aspect);
     }
 
 }

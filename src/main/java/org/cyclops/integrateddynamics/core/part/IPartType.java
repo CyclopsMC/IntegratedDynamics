@@ -10,8 +10,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * A type of part that can be inserted into a
@@ -40,6 +43,20 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public void setItem(Item item);
 
     /**
+     * @return All possible aspects that can be used in this part type.
+     */
+    public Set<IAspect> getAspects();
+
+    /**
+     * Get the singleton variable for an aspect.
+     * @param target The target block.
+     * @param partState The state of this part.
+     * @param aspect The aspect from the part of this state.
+     * @return The variable that exists only once for an aspect in the given part state.
+     */
+    public IAspectVariable getVariable(PartTarget target, S partState, IAspect aspect);
+
+    /**
      * Write the properties of this part to NBT.
      * An identificator for this part is not required, this is written somewhere else.
      * @param tag The tag to write to. This tag is guaranteed to be empty.
@@ -64,31 +81,32 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      * @param state The state
      * @return The tick interval to update this element.
      */
-    public int getUpdateInterval(IPartState<P> state);
+    public int getUpdateInterval(S state);
 
     /**
      * @param state The state
      * @return If this element should be updated. This method is only called once during network initialization.
      */
-    public boolean isUpdate(IPartState<P> state);
+    public boolean isUpdate(S state);
 
     /**
      * @param state The state
+     * @param target The target block.
      * Update at the tick interval specified.
      */
-    public void update(IPartState<P> state);
+    public void update(PartTarget target, S state);
 
     /**
      * @param state The state
      * Called right before the network is terminated or will be reset.
      */
-    public void beforeNetworkKill(IPartState<P> state);
+    public void beforeNetworkKill(S state);
 
     /**
      * @param state The state
      * Called right after this network is initialized.
      */
-    public void afterNetworkAlive(IPartState<P> state);
+    public void afterNetworkAlive(S state);
 
     /**
      * Get the itemstack from the given state.

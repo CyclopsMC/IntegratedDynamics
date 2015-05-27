@@ -7,6 +7,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.core.part.PartTarget;
 
 import java.util.List;
 
@@ -19,14 +20,30 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     private final P part;
     private final IPartContainerFacade partContainerFacade;
-    private final DimPos pos;
-    private final EnumFacing side;
+    private final PartTarget target;
+
+    protected final DimPos getCenterPos() {
+        return getTarget().getDimPosCenter();
+    }
+
+    protected final EnumFacing getCenterSide() {
+        return getTarget().getSideCenter();
+    }
+
+    protected final DimPos getTargetPos() {
+        return getTarget().getDimPosTarget();
+    }
+
+    protected final EnumFacing getTargetSide() {
+        return getTarget().getSideTarget();
+    }
 
     /**
      * @return The state for this part.
      */
     public S getPartState() {
-        return (S) partContainerFacade.getPartContainer(pos.getWorld(), pos.getBlockPos()).getPartState(side);
+        return (S) partContainerFacade.getPartContainer(getCenterPos().getWorld(), getCenterPos().getBlockPos()).
+               getPartState(getCenterSide());
     }
 
     @Override
@@ -41,7 +58,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void update() {
-        part.update(getPartState());
+        part.update(getTarget(), getPartState());
     }
 
     @Override
@@ -69,9 +86,9 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
             PartNetworkElement p = (PartNetworkElement) o;
             int compPart = Integer.compare(part.hashCode(), p.part.hashCode());
             if(compPart == 0) {
-                int compPos = pos.compareTo(p.pos);
+                int compPos = getCenterPos().compareTo(p.getCenterPos());
                 if(compPos == 0) {
-                    return side.compareTo(p.side);
+                    return getCenterSide().compareTo(p.getCenterSide());
                 }
                 return compPos;
             }

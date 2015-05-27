@@ -15,6 +15,8 @@ import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 /**
@@ -62,6 +64,8 @@ public class IntegratedDynamics extends ModBase {
     @Override
     public final void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
+
+        getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());
 
         FMLCommonHandler.instance().bus().register(TickHandler.getInstance());
     }

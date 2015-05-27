@@ -234,6 +234,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
                     } else {
                         getPartContainer(world, pos).getPart(positionHit).onPartActivated(world, pos, state,
                                 getPartContainer(world, pos).getPartState(positionHit), player, positionHit, hitX, hitY, hitZ);
+                        return true;
                     }
                 } else if (!world.isRemote && rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT
                         && WrenchHelpers.isWrench(player, pos)) {
@@ -252,8 +253,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
                         Network.initiateNetworkSetup((ICableConnectable<CablePathElement>) neighbourBlock,
                                 world, neighbourPos).initialize();
                     }
+
+                    return true;
                 }
-                return true;
             }
         }
         return super.onBlockActivated(world, pos, state, player , side, hitX, hitY, hitZ);

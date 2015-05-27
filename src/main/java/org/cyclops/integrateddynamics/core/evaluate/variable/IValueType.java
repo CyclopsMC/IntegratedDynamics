@@ -4,7 +4,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
  * Type of variable
  * @author rubensworks
  */
-public interface IValueType<V> {
+public interface IValueType<V extends IValue> {
 
     /**
      * Create an immutable default value.
