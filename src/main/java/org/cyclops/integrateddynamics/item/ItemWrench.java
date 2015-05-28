@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.core.item.IWrench;
@@ -29,6 +30,11 @@ public class ItemWrench extends ConfigurableItem implements IWrench {
      */
     public ItemWrench(ExtendedConfig eConfig) {
         super(eConfig);
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
+        return true;
     }
 
     @Override

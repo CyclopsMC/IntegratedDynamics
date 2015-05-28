@@ -57,4 +57,11 @@ public interface ICableConnectable<E extends IPathElement<E>> extends IPathEleme
      */
     public boolean hasPart(World world, BlockPos pos, EnumFacing side);
 
+    /**
+     * (Re-)initialize the network at the given position.
+     * @param world The world.
+     * @param pos The position of this block.
+     */
+    public void initNetwork(World world, BlockPos pos);
+
 }
