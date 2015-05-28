@@ -64,4 +64,18 @@ public interface ICableConnectable<E extends IPathElement<E>> extends IPathEleme
      */
     public void initNetwork(World world, BlockPos pos);
 
+    /**
+     * @param world The world.
+     * @param pos The position of this block.
+     * @return If this cable is a real cable, otherwise it is just a holder block for parts without connections.
+     */
+    public boolean isRealCable(World world, BlockPos pos);
+
+    /**
+     * @param world The world.
+     * @param pos The position of this block.
+     * @param realCable If this cable is a real cable, otherwise it is just a holder block for parts without connections.
+     */
+    public void setRealCable(World world, BlockPos pos, boolean realCable);
+
 }

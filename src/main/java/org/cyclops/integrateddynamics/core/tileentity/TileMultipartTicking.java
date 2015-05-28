@@ -38,6 +38,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
 
+    @NBTPersist private boolean realCable = true;
     @NBTPersist private Map<Integer, Boolean> connected = Maps.newHashMap();
     @NBTPersist private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
 
@@ -87,6 +88,23 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         super.readFromNBT(tag);
     }
 
+    /**
+     * Indicate that this cable is not a real cable if false and should not allow any connections.
+     * Parts can be added to it though.
+     * @param realCable If this cable is real and should accept connections.
+     */
+    public void setRealCable(boolean realCable) {
+        this.realCable = realCable;
+        sendUpdate();
+    }
+
+    /**
+     * @return If this cable is real.
+     */
+    public boolean isRealCable() {
+        return this.realCable;
+    }
+
     @Override
     public DimPos getPosition() {
         return DimPos.of(getWorld(), getPos());
@@ -101,6 +119,11 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
                 return input.getPart();
             }
         });
+    }
+
+    @Override
+    public boolean hasParts() {
+        return !partData.isEmpty();
     }
 
     protected void onPartsChanged() {
@@ -226,6 +249,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     public IExtendedBlockState getConnectionState() {
         IExtendedBlockState extendedState = (IExtendedBlockState) getBlock().getDefaultState();
+        extendedState = extendedState.withProperty(BlockCable.REALCABLE, isRealCable());
         if(connected.isEmpty()) {
             updateCableConnections();
         }
@@ -242,6 +266,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     }
 
     public boolean isForceDisconnected(EnumFacing side) {
+        if(!isRealCable()) return true;
         if(hasPart(side)) return true;
         if(!forceDisconnected.containsKey(side.ordinal())) return false;
         return forceDisconnected.get(side.ordinal());

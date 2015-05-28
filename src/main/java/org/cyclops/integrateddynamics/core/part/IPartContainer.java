@@ -23,6 +23,11 @@ public interface IPartContainer {
     public Map<EnumFacing, IPartType<?, ?>> getParts();
 
     /**
+     * @return If this container has at least one part.
+     */
+    public boolean hasParts();
+
+    /**
      * Set the part for a side.
      * @param side The side to place the part on.
      * @param part The part.
