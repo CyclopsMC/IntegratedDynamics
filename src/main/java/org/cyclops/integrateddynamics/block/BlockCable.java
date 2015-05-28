@@ -71,12 +71,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
 
     // Collision boxes
     private static final float[][] CABLE_COLLISION_BOXES = {
-            {CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // DOWN
-            {CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX}, // UP
-            {CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // NORTH
-            {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, CableModel.MIN, 1}, // SOUTH
-            {0, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX}, // WEST
-            {CableModel.MIN, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX}, // EAST
+            {CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX}, // DOWN
+            {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX}, // UP
+            {CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MIN}, // NORTH
+            {CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1}, // SOUTH
+            {0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX}, // WEST
+            {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX}, // EAST
     };
     private static final float[][] PART_COLLISION_BOXES = {
             {0.19F, 0.81F}, {CableModel.MIN - 0.37F, CableModel.MIN}, {0.19F, 0.81F}
