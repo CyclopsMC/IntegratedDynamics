@@ -158,6 +158,7 @@ public class Network implements INBTSerializable {
      * @param element The network element.
      */
     public void removeNetworkElement(INetworkElement element) {
+        element.beforeNetworkKill();
         elements.remove(element);
         removeNetworkElementUpdateable(element);
     }
@@ -252,7 +253,6 @@ public class Network implements INBTSerializable {
             Collection<INetworkElement> networkElements = ((INetworkElementProvider) block).
                     createNetworkElements(cable.getPosition().getWorld(), cable.getPosition().getBlockPos());
             for(INetworkElement networkElement : networkElements) {
-                networkElement.beforeNetworkKill();
                 removeNetworkElement(networkElement);
             }
         }

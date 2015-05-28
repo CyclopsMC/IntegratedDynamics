@@ -230,7 +230,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableConn
                 EnumFacing positionHit = rayTraceResult.getPositionHit();
                 if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {
                     if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
-                        // TODO: remove part
+                        getPartContainer(world, pos).removePart(positionHit);
                     } else {
                         getPartContainer(world, pos).getPart(positionHit).onPartActivated(world, pos, state,
                                 getPartContainer(world, pos).getPartState(positionHit), player, positionHit, hitX, hitY, hitZ);

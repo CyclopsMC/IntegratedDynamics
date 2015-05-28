@@ -1,11 +1,13 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -20,10 +22,12 @@ import org.cyclops.cyclopscore.tileentity.TickingCyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.ICableConnectable;
+import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.*;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,6 +63,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
+        partData.clear(); // We only want the new data.
         NBTTagList partList = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
         for(int i = 0; i < partList.tagCount(); i++) {
             NBTTagCompound partTag = partList.getCompoundTagAt(i);
@@ -134,9 +139,35 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     @Override
     public IPartType removePart(EnumFacing side) {
-        IPartType removed = partData.remove(side).getPart();
-        onPartsChanged();
-        return removed;
+        PartStateHolder<?, ?> partStateHolder = partData.get(side); // Don't remove the state just yet! We might need it in network removal.
+        if(partStateHolder == null) {
+            IntegratedDynamics.clog(Level.WARN, "Attempted to remove a part at a side where no part was.");
+            return null;
+        } else {
+            IPartType removed = partStateHolder.getPart();
+            if (getNetwork() != null) {
+                INetworkElement networkElement = removed.createNetworkElement(
+                        (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side);
+
+                // Drop all parts types as item.
+                List<ItemStack> itemStacks = Lists.newLinkedList();
+                networkElement.addDrops(itemStacks);
+                for(ItemStack itemStack : itemStacks) {
+                    Block.spawnAsEntity(getWorld(), pos, itemStack);
+                }
+
+                // Remove the part data from the network
+                getNetwork().removePart(partStateHolder.getState().getId());
+
+                // Remove the element from the network.
+                getNetwork().removeNetworkElement(networkElement);
+            }
+            // Remove the part data from the
+            // Finally remove the part data from this tile.
+            IPartType ret = partData.remove(side).getPart();
+            onPartsChanged();
+            return ret;
+        }
     }
 
     @Override
