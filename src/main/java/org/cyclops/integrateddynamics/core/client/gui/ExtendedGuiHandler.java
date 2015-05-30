@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.client.gui;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -41,8 +40,8 @@ public class ExtendedGuiHandler extends GuiHandler {
                             new BlockPos(x, y, z), side);
                     if(data == null) return null;
                     Constructor<? extends Container> containerConstructor = containerClass.getConstructor(
-                            InventoryPlayer.class, IPartContainer.class, IPartType.class, IPartState.class);
-                    return containerConstructor.newInstance(player.inventory, data.getLeft(), data.getMiddle(),
+                            EntityPlayer.class, IPartContainer.class, IPartType.class, IPartState.class);
+                    return containerConstructor.newInstance(player, data.getLeft(), data.getMiddle(),
                            data.getRight());
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException
                         | NoSuchMethodException e) {
@@ -60,9 +59,9 @@ public class ExtendedGuiHandler extends GuiHandler {
                         Triple<IPartContainer, IPartType, IPartState> data = getPartConstructionData(world,
                                 new BlockPos(x, y, z), side);
                         if(data == null) return null;
-                        Constructor<? extends GuiScreen> guiConstructor = guiClass.getConstructor(InventoryPlayer.class,
-                                IPartContainer.class, IPartType.class, IPartState.class);
-                        return guiConstructor.newInstance(player.inventory, data.getLeft(), data.getMiddle(),
+                        Constructor<? extends GuiScreen> guiConstructor = guiClass.getConstructor(
+                                EntityPlayer.class, IPartContainer.class, IPartType.class, IPartState.class);
+                        return guiConstructor.newInstance(player, data.getLeft(), data.getMiddle(),
                                 data.getRight());
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         e.printStackTrace();

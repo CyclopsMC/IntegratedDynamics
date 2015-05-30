@@ -13,6 +13,13 @@ import org.cyclops.integrateddynamics.core.part.aspect.LazyAspectVariable;
 public abstract class AspectBooleanRedstoneBase extends AspectBooleanBase {
 
     @Override
+    protected String getUnlocalizedBooleanType() {
+        return "redstone." + getUnlocalizedBooleanRedstoneType();
+    }
+
+    protected abstract String getUnlocalizedBooleanRedstoneType();
+
+    @Override
     public IAspectVariable<ValueTypeBoolean.ValueBoolean> createNewVariable(final PartTarget target) {
         return new LazyAspectVariable<ValueTypeBoolean.ValueBoolean>(getValueType(), target) {
             @Override

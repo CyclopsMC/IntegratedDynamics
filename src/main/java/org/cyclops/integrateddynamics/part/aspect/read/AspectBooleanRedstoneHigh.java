@@ -9,4 +9,9 @@ public class AspectBooleanRedstoneHigh extends AspectBooleanRedstoneBase {
     protected boolean getValue(int redstoneLevel) {
         return redstoneLevel == 15;
     }
+
+    @Override
+    protected String getUnlocalizedBooleanRedstoneType() {
+        return "high";
+    }
 }

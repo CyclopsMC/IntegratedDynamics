@@ -53,4 +53,9 @@ public class BlockCableConfig extends BlockContainerConfig {
         return ItemBlockCable.class;
     }
 
+    @Override
+    public boolean isDisableable() {
+        return false;
+    }
+
 }

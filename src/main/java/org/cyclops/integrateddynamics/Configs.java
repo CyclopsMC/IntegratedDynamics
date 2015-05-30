@@ -4,6 +4,7 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.block.ReaderConfig;
 import org.cyclops.integrateddynamics.item.ItemPartRedstoneConfig;
+import org.cyclops.integrateddynamics.item.ItemVariableConfig;
 import org.cyclops.integrateddynamics.item.ItemWrenchConfig;
 
 /**
@@ -20,6 +21,7 @@ public class Configs {
 
         // Items
         configHandler.add(new ItemWrenchConfig());
+        configHandler.add(new ItemVariableConfig());
         configHandler.add(new ItemPartRedstoneConfig());
 
     }

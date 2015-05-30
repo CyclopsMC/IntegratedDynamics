@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
@@ -17,13 +17,13 @@ public class GuiPartReader<P extends IPartType<P, S> & IGuiContainerProvider, S 
 
     /**
      * Make a new instance.
-     * @param inventory The player inventory.
+     * @param player The player.
      * @param partContainer The part container.
      * @param partType The targeted part type.
      * @param partState The targeted part state.
      */
-    public GuiPartReader(InventoryPlayer inventory, IPartContainer partContainer, P partType, S partState) {
-        super(new ContainerPartReader<P, S>(inventory, partContainer, partType, partState));
+    public GuiPartReader(EntityPlayer player, IPartContainer partContainer, P partType, S partState) {
+        super(new ContainerPartReader<P, S>(player, partContainer, partType, partState));
     }
 
     @Override
