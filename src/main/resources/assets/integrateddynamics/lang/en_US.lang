@@ -7,8 +7,10 @@ tile.blocks.integrateddynamics.cable.info=Default cable
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
-item.items.integrateddynamics.partRedstone.name=Redstone Part
-item.items.integrateddynamics.partRedstone.info=A reader/writer for redstone
+item.items.integrateddynamics.partReaderRedstone.name=Redstone Reader Part
+item.items.integrateddynamics.partReaderRedstone.info=A reader for redstone
+item.items.integrateddynamics.partWriterRedstone.name=Redstone Writer Part
+item.items.integrateddynamics.partWriterRedstone.info=A writer for redstone
 item.items.integrateddynamics.wrench.name=Wrench
 item.items.integrateddynamics.variable.name=Variable Card
 item.items.integrateddynamics.variable.type=§e§lType: §r%s

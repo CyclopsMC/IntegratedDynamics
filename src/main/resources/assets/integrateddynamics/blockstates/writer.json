@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=north": { "model": "integrateddynamics:writer", "y": 180 },
+    "facing=east":  { "model": "integrateddynamics:writer", "y": 270 },
+    "facing=south": { "model": "integrateddynamics:writer" },
+    "facing=west":  { "model": "integrateddynamics:writer", "y": 90 },
+    "facing=up":    { "model": "integrateddynamics:writer", "x": 90 },
+    "facing=down":  { "model": "integrateddynamics:writer", "x": 270 }
+  }
+}

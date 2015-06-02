@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
- * A redstone I/O part.
+ * A redstone reader part.
  * @author rubensworks
  */
 public class PartTypeRedstoneReader extends PartTypeBase<PartTypeRedstoneReader, DefaultPartState<PartTypeRedstoneReader>>

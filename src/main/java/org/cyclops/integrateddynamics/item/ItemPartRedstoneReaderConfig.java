@@ -9,24 +9,24 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.part.PartTypeRedstoneReader;
 
 /**
- * Config for a redstone part.
+ * Config for a reader redstone part.
  * @author rubensworks
  */
-public class ItemPartRedstoneConfig extends ItemConfig {
+public class ItemPartRedstoneReaderConfig extends ItemConfig {
 
     /**
      * The unique instance.
      */
-    public static ItemPartRedstoneConfig _instance;
+    public static ItemPartRedstoneReaderConfig _instance;
 
     /**
      * Make a new instance.
      */
-    public ItemPartRedstoneConfig() {
+    public ItemPartRedstoneReaderConfig() {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "partRedstone",
+                "partReaderRedstone",
                 null,
                 null
         );
