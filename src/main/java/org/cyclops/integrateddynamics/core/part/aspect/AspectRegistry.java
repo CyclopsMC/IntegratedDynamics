@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,6 +55,9 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @Override
     public Set<IAspect> getAspects(IPartType partType) {
+        if(!partAspects.containsKey(partType)) {
+            return Collections.emptySet();
+        }
         return partAspects.get(partType);
     }
 

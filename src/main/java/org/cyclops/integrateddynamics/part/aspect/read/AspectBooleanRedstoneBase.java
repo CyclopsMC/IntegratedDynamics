@@ -24,9 +24,9 @@ public abstract class AspectBooleanRedstoneBase extends AspectBooleanBase {
         return new LazyAspectVariable<ValueTypeBoolean.ValueBoolean>(getValueType(), target) {
             @Override
             public ValueTypeBoolean.ValueBoolean getValueLazy() {
-                DimPos dimPos = target.getDimPosTarget();
+                DimPos dimPos = target.getTarget().getPos();
                 boolean value = AspectBooleanRedstoneBase.this.getValue(dimPos.getWorld().getRedstonePower(
-                        dimPos.getBlockPos(), target.getSideCenter()));
+                        dimPos.getBlockPos(), target.getCenter().getSide()));
                 return ValueTypeBoolean.ValueBoolean.of(value);
             }
         };

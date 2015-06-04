@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -15,11 +16,13 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
+import org.cyclops.integrateddynamics.core.part.PartPos;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.Collection;
 import java.util.Map;
@@ -28,6 +31,7 @@ import java.util.TreeSet;
 
 /**
  * A network instance that can hold a set of {@link org.cyclops.integrateddynamics.core.network.INetworkElement}s.
+ * Note that this network only contains references to the relevant data, it does not contain the actual information.
  * @author rubensworks
  */
 public class Network implements INBTSerializable {
@@ -37,7 +41,7 @@ public class Network implements INBTSerializable {
     private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
     private TreeSet<INetworkElement> updateableElements = null;
     private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
-    private Map<Integer, IPartState> partStates = Maps.newHashMap();
+    private Map<Integer, PartPos> partPositions = Maps.newHashMap();
 
     private volatile boolean partsChanged = false;
     private volatile boolean killed = false;
@@ -87,7 +91,7 @@ public class Network implements INBTSerializable {
 
                     // Capture all parts in this container
                     for(EnumFacing side : partContainer.getParts().keySet()) {
-                        addPart(partContainer.getPartState(side));
+                        addPart(partContainer.getPartState(side).getId(), PartPos.of(world, pos, side));
                     }
                 }
             }
@@ -103,14 +107,15 @@ public class Network implements INBTSerializable {
 
     /**
      * Add the given part state to the network.
-     * @param partState The part state to add.
+     * @param partId The id of the part.
+     * @param partPos The part position to add.
      * @return If the addition was successful.
      */
-    public boolean addPart(IPartState partState) {
-        if(partStates.containsKey(partState.getId())) {
+    public boolean addPart(int partId, PartPos partPos) {
+        if(partPositions.containsKey(partId)) {
             return false;
         }
-        partStates.put(partState.getId(), partState);
+        partPositions.put(partId, partPos);
         return true;
     }
 
@@ -120,7 +125,8 @@ public class Network implements INBTSerializable {
      * @return The corresponding part state or null.
      */
     public IPartState getPart(int partId) {
-        return partStates.get(partId);
+        PartPos partPos = partPositions.get(partId);
+        return TileMultipartTicking.get(partPos.getPos()).getPartState(partPos.getSide());
     }
 
     /**
@@ -128,7 +134,7 @@ public class Network implements INBTSerializable {
      * @param partId The part state id.
      */
     public void removePart(int partId) {
-        partStates.remove(partId);
+        partPositions.remove(partId);
     }
 
     /**
@@ -321,8 +327,13 @@ public class Network implements INBTSerializable {
      * @param partId The part state id.
      * @return If this part is present in this network.
      */
-    public boolean hasPart(int partId) {
-        return partStates.containsKey(partId);
+    public <T extends TileEntity & IPartContainer> boolean hasPart(int partId) {
+        if(!partPositions.containsKey(partId)) {
+            return false;
+        }
+        PartPos partPos = partPositions.get(partId);
+        T tile = TileMultipartTicking.get(partPos.getPos());
+        return tile != null && tile.hasPart(partPos.getSide());
     }
 
     /**

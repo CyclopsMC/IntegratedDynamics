@@ -23,19 +23,19 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     private final PartTarget target;
 
     protected final DimPos getCenterPos() {
-        return getTarget().getDimPosCenter();
+        return getTarget().getCenter().getPos();
     }
 
     protected final EnumFacing getCenterSide() {
-        return getTarget().getSideCenter();
+        return getTarget().getCenter().getSide();
     }
 
     protected final DimPos getTargetPos() {
-        return getTarget().getDimPosTarget();
+        return getTarget().getTarget().getPos();
     }
 
     protected final EnumFacing getTargetSide() {
-        return getTarget().getSideTarget();
+        return getTarget().getTarget().getSide();
     }
 
     /**

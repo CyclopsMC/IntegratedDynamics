@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -17,6 +18,7 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.TickingCyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -138,11 +140,12 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         if(getNetwork() != null) {
             getNetwork().addNetworkElement(part.createNetworkElement(
                     (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side));
-            if(!getNetwork().addPart(partState)) {
+            PartPos partPos = PartPos.of(getWorld(), getPos(), side);
+            if(!getNetwork().addPart(partState.getId(), partPos)) {
                 IntegratedDynamics.clog(Level.WARN, "A part already existed in the network, this is possibly a " +
                         "result from item duplication.");
                 partState = part.getDefaultState();
-                getNetwork().addPart(partState);
+                getNetwork().addPart(partState.getId(), partPos);
                 partData.put(side, PartStateHolder.of(part, partState));
             }
         }
@@ -277,6 +280,16 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         if(connected.isEmpty()) {
             updateCableConnections();
         }
+    }
+
+    /**
+     * Get the part container at the given position.
+     * @param pos The position.
+     * @param <T> The container type.
+     * @return The container or null.
+     */
+    public static <T extends TileEntity & IPartContainer> T get(DimPos pos) {
+        return TileHelpers.getSafeTile(pos.getWorld(), pos.getBlockPos());
     }
 
     @Data

@@ -7,16 +7,14 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
 /**
- * Object holder to refer to another block side.
+ * Object holder to refer to another block side and its origin.
  * @author rubensworks
  */
 @Data(staticConstructor = "of")
 public class PartTarget {
 
-    private final DimPos dimPosCenter;
-    private final EnumFacing sideCenter;
-    private final DimPos dimPosTarget;
-    private final EnumFacing sideTarget;
+    private final PartPos center;
+    private final PartPos target;
 
     /**
      * Get the target from a center block that is targeted at another block.
@@ -25,7 +23,10 @@ public class PartTarget {
      * @return The target referral.
      */
     public static PartTarget fromCenter(DimPos pos, EnumFacing side) {
-        return PartTarget.of(pos, side, DimPos.of(pos.getWorld(), pos.getBlockPos().offset(side)), side.getOpposite());
+        return PartTarget.of(
+                PartPos.of(pos, side),
+                PartPos.of(DimPos.of(pos.getWorld(), pos.getBlockPos().offset(side)), side.getOpposite())
+        );
     }
 
     /**
