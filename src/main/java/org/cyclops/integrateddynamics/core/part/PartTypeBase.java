@@ -42,14 +42,17 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     private Item item = null;
     @Getter
     private final int guiID;
+    @Getter
+    private final String name;
 
-    public PartTypeBase() {
+    public PartTypeBase(String name) {
         if(hasGui()) {
             this.guiID = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
             getMod().getGuiHandler().registerGUI(this, ExtendedGuiHandler.PART);
         } else {
             this.guiID = -1;
         }
+        this.name = name;
     }
 
     @Override

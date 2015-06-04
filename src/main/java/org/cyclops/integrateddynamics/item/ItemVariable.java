@@ -8,9 +8,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRegistry;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.List;
 
@@ -43,8 +42,7 @@ public class ItemVariable extends ConfigurableItem {
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean par4) {
-        Pair<Integer, IAspect> aspectInfo = IntegratedDynamics._instance.getRegistryManager()
-                .getRegistry(IAspectRegistry.class).readAspect(itemStack);
+        Pair<Integer, IAspect> aspectInfo = Aspects.REGISTRY.readAspect(itemStack);
         if(aspectInfo != null) {
             list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.type",
                     aspectInfo.getRight().getValueType().getTypeName()));

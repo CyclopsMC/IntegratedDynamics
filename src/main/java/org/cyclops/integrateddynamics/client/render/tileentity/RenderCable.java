@@ -23,9 +23,9 @@ public class RenderCable extends RenderTileEntityBakedModel<TileMultipartTicking
                                       int destroyStage) {
         for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : tile.getParts().entrySet()) {
             // TODO: improve model type retrieval
-            if(entry.getValue().getType() == PartTypes.REDSTONE_READER) {
+            if(entry.getValue() == PartTypes.REDSTONE_READER) {
                 tempBlockState = Reader.getInstance().getDefaultState().withProperty(Reader.FACING, entry.getKey());
-            } else if(entry.getValue().getType() == PartTypes.REDSTONE_WRITER) {
+            } else if(entry.getValue() == PartTypes.REDSTONE_WRITER) {
                 tempBlockState = Writer.getInstance().getDefaultState().withProperty(Reader.FACING, entry.getKey());
             }
             super.renderTileEntityAt(tile, x, y, z, partialTick, destroyStage);

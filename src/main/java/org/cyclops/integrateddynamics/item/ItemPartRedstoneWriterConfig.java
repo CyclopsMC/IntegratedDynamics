@@ -34,6 +34,6 @@ public class ItemPartRedstoneWriterConfig extends ItemConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return new ItemPart<PartTypeRedstoneWriter, DefaultPartState<PartTypeRedstoneWriter>>(this, PartTypes.REDSTONE_WRITER.getPart());
+        return new ItemPart<PartTypeRedstoneWriter, DefaultPartState<PartTypeRedstoneWriter>>(this, PartTypes.REDSTONE_WRITER);
     }
 }

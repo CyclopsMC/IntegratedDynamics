@@ -56,7 +56,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
             NBTTagCompound partTag = new NBTTagCompound();
             IPartType part = entry.getValue().getPart();
             IPartState partState = entry.getValue().getState();
-            partTag.setString("__partType", part.getType().getName());
+            partTag.setString("__partType", part.getName());
             partTag.setString("__side", entry.getKey().getName());
             part.toNBT(partTag, partState);
             partList.appendTag(partTag);
@@ -70,17 +70,16 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         NBTTagList partList = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
         for(int i = 0; i < partList.tagCount(); i++) {
             NBTTagCompound partTag = partList.getCompoundTagAt(i);
-            EnumPartType type = EnumPartType.getInstance(partTag.getString("__partType"));
-            if(type != null) {
+            IPartType partType = PartTypes.REGISTRY.getPartType(partTag.getString("__partType"));
+            if(partType != null) {
                 EnumFacing side = EnumFacing.byName(partTag.getString("__side"));
                 if(side != null) {
-                    IPartType part = type.getPart();
-                    IPartState partState = part.fromNBT(partTag);
-                    partData.put(side, PartStateHolder.of(part, partState));
+                    IPartState partState = partType.fromNBT(partTag);
+                    partData.put(side, PartStateHolder.of(partType, partState));
                 } else {
                     IntegratedDynamics.clog(Level.WARN, String.format("The part %s at position %s was at an invalid " +
                                     "side and removed.",
-                            type, getPosition()));
+                            partType.getName(), getPosition()));
                 }
             } else {
                 IntegratedDynamics.clog(Level.WARN, String.format("The part %s at position %s was unknown and removed.",

@@ -15,13 +15,12 @@ import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.item.ItemVariable;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.regex.Pattern;
 
@@ -150,8 +149,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     }
 
     protected ItemStack writeAspectInfo(ItemStack itemStack, IAspect aspect) {
-        return IntegratedDynamics._instance.getRegistryManager().getRegistry(IAspectRegistry.class)
-                .writeAspect(itemStack, getPartState().getId(), aspect);
+        return Aspects.REGISTRY.writeAspect(itemStack, getPartState().getId(), aspect);
     }
 
     protected void processInput() {

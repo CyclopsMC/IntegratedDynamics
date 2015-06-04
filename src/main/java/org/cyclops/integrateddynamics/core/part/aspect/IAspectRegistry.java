@@ -17,8 +17,9 @@ public interface IAspectRegistry extends IRegistry {
      * Register a new aspect for a given part type.
      * @param partType The part type.
      * @param aspect The aspect.
+     * @return The registered element.
      */
-    public void register(IPartType partType, IAspect aspect);
+    public IAspect register(IPartType partType, IAspect aspect);
 
     /**
      * Register a set of aspects for a given part type.

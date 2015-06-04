@@ -26,9 +26,9 @@ import java.util.Set;
 public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
 
     /**
-     * @return The part type.
+     * @return The unique name for this part type.
      */
-    public EnumPartType getType();
+    public String getName();
 
     /**
      * @return The item associated with this part type.

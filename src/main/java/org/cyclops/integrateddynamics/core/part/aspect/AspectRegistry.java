@@ -36,7 +36,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public void register(IPartType partType, IAspect aspect) {
+    public IAspect register(IPartType partType, IAspect aspect) {
         Set<IAspect> aspects = partAspects.get(partType);
         if(aspects == null) {
             aspects = Sets.newHashSet();
@@ -44,6 +44,7 @@ public final class AspectRegistry implements IAspectRegistry {
         }
         aspects.add(aspect);
         unlocalizedAspects.put(aspect.getUnlocalizedName(), aspect);
+        return aspect;
     }
 
     @Override

@@ -34,6 +34,6 @@ public class ItemPartRedstoneReaderConfig extends ItemConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return new ItemPart<PartTypeRedstoneReader, DefaultPartState<PartTypeRedstoneReader>>(this, PartTypes.REDSTONE_READER.getPart());
+        return new ItemPart<PartTypeRedstoneReader, DefaultPartState<PartTypeRedstoneReader>>(this, PartTypes.REDSTONE_READER);
     }
 }
