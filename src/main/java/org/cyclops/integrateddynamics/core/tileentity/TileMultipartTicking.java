@@ -23,7 +23,7 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.TickingCyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.block.ICableConnectable;
+import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.*;
@@ -231,8 +231,8 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         for(EnumFacing side : EnumFacing.VALUES) {
             BlockPos neighbourPos = pos.offset(side);
             Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-            boolean cableConnected = neighbourBlock instanceof ICableConnectable &&
-                    ((ICableConnectable) neighbourBlock).canConnect(world, neighbourPos, (ICableConnectable) getBlock(),
+            boolean cableConnected = neighbourBlock instanceof ICable &&
+                    ((ICable) neighbourBlock).canConnect(world, neighbourPos, (ICable) getBlock(),
                             side.getOpposite());
             connected.put(side.ordinal(), cableConnected);
 

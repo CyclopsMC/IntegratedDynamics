@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.item.ItemBlockExtended;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.block.ICableConnectable;
+import org.cyclops.integrateddynamics.core.block.cable.ICableFakeable;
 
 /**
  * @author rubensworks
@@ -28,7 +28,7 @@ public class ItemBlockCable extends ItemBlockExtended {
 
     protected boolean checkCableAt(World world, BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
-        return block instanceof ICableConnectable && !((ICableConnectable) block).isRealCable(world, pos);
+        return block instanceof ICableFakeable && !((ICableFakeable) block).isRealCable(world, pos);
     }
 
     @SideOnly(Side.CLIENT)
@@ -46,8 +46,8 @@ public class ItemBlockCable extends ItemBlockExtended {
 
     protected boolean attempItemUseTarget(ItemStack stack, World worldIn, BlockPos pos, BlockCable blockCable) {
         Block block = worldIn.getBlockState(pos).getBlock();
-        if(block instanceof ICableConnectable) {
-            ICableConnectable cable = (ICableConnectable) block;
+        if(block instanceof ICableFakeable) {
+            ICableFakeable cable = (ICableFakeable) block;
             if(!cable.isRealCable(worldIn, pos)) {
                 cable.setRealCable(worldIn, pos, true);
                 --stack.stackSize;

@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.block.ICableConnectable;
+import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
@@ -316,7 +316,7 @@ public class Network implements INBTSerializable {
      * @param pos The position.
      * @return The newly formed network.
      */
-    public static Network initiateNetworkSetup(ICableConnectable<CablePathElement> connectable, World world, BlockPos pos) {
+    public static Network initiateNetworkSetup(ICable<CablePathElement> connectable, World world, BlockPos pos) {
         Network network = new Network(PathFinder.getConnectedCluster(connectable.createPathElement(world, pos)));
         NetworkWorldStorage.getInstance(IntegratedDynamics._instance).addNewNetwork(network);
         return network;
