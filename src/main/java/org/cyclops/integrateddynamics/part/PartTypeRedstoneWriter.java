@@ -1,8 +1,11 @@
 package org.cyclops.integrateddynamics.part;
 
+import net.minecraft.block.state.IBlockState;
+import org.cyclops.integrateddynamics.block.WriterConfig;
 import org.cyclops.integrateddynamics.core.part.DefaultPartState;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 /**
  * A redstone writer part.
@@ -29,6 +32,11 @@ public class PartTypeRedstoneWriter extends PartTypeBase<PartTypeRedstoneWriter,
     @Override
     public int getUpdateInterval(DefaultPartState<PartTypeRedstoneWriter> state) {
         return 10;
+    }
+
+    @Override
+    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick, int destroyStage) {
+        return WriterConfig._instance.getBlockInstance().getDefaultState();
     }
 
 }

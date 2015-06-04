@@ -12,6 +12,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.List;
 import java.util.Set;
@@ -153,5 +154,19 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      */
     public boolean onPartActivated(World world, BlockPos pos, IBlockState state, S partState, EntityPlayer player,
                                    EnumFacing side, float hitX, float hitY, float hitZ);
+
+    /**
+     * Get the base block state that will be rendered for this part.
+     * An appropriate {@link org.cyclops.integrateddynamics.core.block.IgnoredBlock#FACING} property will be set.
+     * @param tile The tile entity.
+     * @param x X
+     * @param y Y
+     * @param z Z
+     * @param partialTick The partial tick
+     * @param destroyStage The stage of the block destruction.
+     * @return The block state to render with.
+     */
+    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+                                        int destroyStage);
 
 }

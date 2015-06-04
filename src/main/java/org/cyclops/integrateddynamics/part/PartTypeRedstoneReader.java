@@ -1,11 +1,14 @@
 package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
+import net.minecraft.block.state.IBlockState;
+import org.cyclops.integrateddynamics.block.ReaderConfig;
 import org.cyclops.integrateddynamics.core.part.DefaultPartState;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
@@ -32,6 +35,11 @@ public class PartTypeRedstoneReader extends PartTypeBase<PartTypeRedstoneReader,
     @Override
     public int getUpdateInterval(DefaultPartState<PartTypeRedstoneReader> state) {
         return 10;
+    }
+
+    @Override
+    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick, int destroyStage) {
+        return ReaderConfig._instance.getBlockInstance().getDefaultState();
     }
 
 }

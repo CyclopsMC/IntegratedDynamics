@@ -3,10 +3,8 @@ package org.cyclops.integrateddynamics.client.render.tileentity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.client.render.tileentity.RenderTileEntityBakedModel;
-import org.cyclops.integrateddynamics.block.Reader;
-import org.cyclops.integrateddynamics.block.Writer;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.part.IPartType;
-import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.Map;
@@ -22,12 +20,7 @@ public class RenderCable extends RenderTileEntityBakedModel<TileMultipartTicking
     protected void renderTileEntityAt(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                       int destroyStage) {
         for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : tile.getParts().entrySet()) {
-            // TODO: improve model type retrieval
-            if(entry.getValue() == PartTypes.REDSTONE_READER) {
-                tempBlockState = Reader.getInstance().getDefaultState().withProperty(Reader.FACING, entry.getKey());
-            } else if(entry.getValue() == PartTypes.REDSTONE_WRITER) {
-                tempBlockState = Writer.getInstance().getDefaultState().withProperty(Reader.FACING, entry.getKey());
-            }
+            tempBlockState = entry.getValue().getBlockState(tile, x, y, z, partialTick, destroyStage).withProperty(IgnoredBlock.FACING, entry.getKey());
             super.renderTileEntityAt(tile, x, y, z, partialTick, destroyStage);
         }
     }
