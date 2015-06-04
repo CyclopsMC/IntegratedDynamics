@@ -76,19 +76,20 @@ public class Network implements INBTSerializable {
                 if (block instanceof INetworkElementProvider) {
                     elements.addAll(((INetworkElementProvider) block).createNetworkElements(world, pos));
                 }
-                if (block instanceof IPartContainerFacade) {
-                    IPartContainer partContainer = ((IPartContainerFacade) block).getPartContainer(world, pos);
-
-                    // Correctly remove any previously saved network in this partcontainer
+                if (block instanceof INetworkCarrier) {
+                    INetworkCarrier networkCarrier = (INetworkCarrier) block;
+                    // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
-                    Network network = partContainer.getNetwork();
+                    Network network = networkCarrier.getNetwork(world, pos);
                     if (network != null) {
                         network.removeCable(block, cable);
                         network.notifyPartsChanged();
                     }
-                    partContainer.resetCurrentNetwork();
-                    partContainer.setNetwork(this);
-
+                    networkCarrier.resetCurrentNetwork(world, pos);
+                    networkCarrier.setNetwork(this, world, pos);
+                }
+                if (block instanceof IPartContainerFacade) {
+                    IPartContainer partContainer = ((IPartContainerFacade) block).getPartContainer(world, pos);
                     // Capture all parts in this container
                     for(EnumFacing side : partContainer.getParts().keySet()) {
                         addPart(partContainer.getPartState(side).getId(), PartPos.of(world, pos, side));

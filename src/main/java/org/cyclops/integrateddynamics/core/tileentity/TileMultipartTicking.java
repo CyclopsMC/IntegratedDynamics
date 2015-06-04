@@ -216,10 +216,12 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         return partStateHolder.getState();
     }
 
-    @Override
+    /**
+     * Tell the container it is no longer part of its current network.
+     * Won't do anything if it doesn't have a network.
+     */
     public void resetCurrentNetwork() {
-        if(network == null)
-        setNetwork(null);
+        if(network != null) setNetwork(null);
     }
 
     /**

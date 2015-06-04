@@ -214,6 +214,31 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
+    public void resetCurrentNetwork(World world, BlockPos pos) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        if(tile != null) {
+            tile.resetCurrentNetwork();
+        }
+    }
+
+    @Override
+    public void setNetwork(Network network, World world, BlockPos pos) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        if(tile != null) {
+            tile.setNetwork(network);
+        }
+    }
+
+    @Override
+    public Network getNetwork(World world, BlockPos pos) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        if(tile != null) {
+            return tile.getNetwork();
+        }
+        return null;
+    }
+
+    @Override
     public boolean isRealCable(World world, BlockPos pos) {
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
         if(tile != null) {
@@ -363,7 +388,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     protected void removeFromNetwork(World world, BlockPos pos, boolean preDestroy) {
         if(preDestroy) {
             // Remove the cable from this network if it exists
-            Network network = getPartContainer(world, pos).getNetwork();
+            Network network = getNetwork(world, pos);
             if(network != null) {
                 network.removeCable(this, createPathElement(world, pos));
             }
