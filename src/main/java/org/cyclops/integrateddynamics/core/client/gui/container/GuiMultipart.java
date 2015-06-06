@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -56,10 +57,16 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         FontRenderer fontRenderer = fontRendererObj;
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
+                GlStateManager.disableAlpha();
+                GlStateManager.color(1, 1, 1, 1);
+                mc.renderEngine.bindTexture(texture);
+                drawTexturedModalRect(guiLeft + offsetX + 9,
+                        guiTop + offsetY + 18 + (ContainerMultipart.ASPECT_BOX_HEIGHT) * i, 0, 213, 160,
+                        ContainerMultipart.ASPECT_BOX_HEIGHT - 1);
                 IAspect aspect = container.getVisibleElement(i);
                 String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
-                fontRenderer.drawString(aspectName, this.guiLeft + 10,
-                        this.guiTop + 20 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
+                fontRenderer.drawString(aspectName, this.guiLeft + offsetX + 10,
+                        this.guiTop + offsetY + 20 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
                         RenderHelpers.RGBToInt(40, 40, 40));
             }
         }
