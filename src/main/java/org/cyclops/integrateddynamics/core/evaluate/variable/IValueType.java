@@ -17,4 +17,15 @@ public interface IValueType<V extends IValue> {
      */
     public String getTypeName();
 
+    /**
+     * @param value The value
+     * @return A short string representation used in guis to show the value.
+     */
+    public String toCompactString(V value);
+
+    /**
+     * @return The color that is used to identify this value type.
+     */
+    public int getDisplayColor();
+
 }

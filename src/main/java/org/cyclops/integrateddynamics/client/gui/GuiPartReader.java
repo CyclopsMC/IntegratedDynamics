@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
 
 /**
@@ -17,13 +18,14 @@ public class GuiPartReader<P extends IPartType<P, S> & IGuiContainerProvider, S 
 
     /**
      * Make a new instance.
+     * @param partTarget The target.
      * @param player The player.
      * @param partContainer The part container.
      * @param partType The targeted part type.
      * @param partState The targeted part state.
      */
-    public GuiPartReader(EntityPlayer player, IPartContainer partContainer, P partType, S partState) {
-        super(new ContainerPartReader<P, S>(player, partContainer, partType, partState));
+    public GuiPartReader(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType, S partState) {
+        super(new ContainerPartReader<P, S>(player, partTarget, partContainer, partType, partState));
     }
 
     @Override

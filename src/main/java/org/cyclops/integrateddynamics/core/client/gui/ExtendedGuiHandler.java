@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.core.part.PartTarget;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -40,8 +41,9 @@ public class ExtendedGuiHandler extends GuiHandler {
                             new BlockPos(x, y, z), side);
                     if(data == null) return null;
                     Constructor<? extends Container> containerConstructor = containerClass.getConstructor(
-                            EntityPlayer.class, IPartContainer.class, IPartType.class, IPartState.class);
-                    return containerConstructor.newInstance(player, data.getLeft(), data.getMiddle(),
+                            EntityPlayer.class, PartTarget.class, IPartContainer.class, IPartType.class, IPartState.class);
+                    return containerConstructor.newInstance(player,
+                           PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(), data.getMiddle(),
                            data.getRight());
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException
                         | NoSuchMethodException e) {
@@ -60,9 +62,10 @@ public class ExtendedGuiHandler extends GuiHandler {
                                 new BlockPos(x, y, z), side);
                         if(data == null) return null;
                         Constructor<? extends GuiScreen> guiConstructor = guiClass.getConstructor(
-                                EntityPlayer.class, IPartContainer.class, IPartType.class, IPartState.class);
-                        return guiConstructor.newInstance(player, data.getLeft(), data.getMiddle(),
-                                data.getRight());
+                                EntityPlayer.class, PartTarget.class, IPartContainer.class, IPartType.class, IPartState.class);
+                        return guiConstructor.newInstance(player,
+                               PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(),
+                               data.getMiddle(), data.getRight());
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         e.printStackTrace();
                     }

@@ -20,6 +20,16 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
         return "boolean";
     }
 
+    @Override
+    public String toCompactString(DummyValue value) {
+        return "dummy";
+    }
+
+    @Override
+    public int getDisplayColor() {
+        return 0;
+    }
+
     @ToString
     public static class DummyValue extends BaseValue {
 

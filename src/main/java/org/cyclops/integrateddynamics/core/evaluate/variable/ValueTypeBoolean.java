@@ -1,12 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
+import org.cyclops.cyclopscore.helper.Helpers;
 
 /**
  * Value type with values 'true' or 'false'
  * @author rubensworks
  */
-public class ValueTypeBoolean implements IValueType<ValueTypeBoolean.ValueBoolean> {
+public class ValueTypeBoolean extends BaseValueType<ValueTypeBoolean.ValueBoolean> {
+
+    public ValueTypeBoolean() {
+        super("boolean", Helpers.RGBToInt(43, 47, 231));
+    }
 
     @Override
     public ValueBoolean getDefault() {
@@ -14,8 +19,8 @@ public class ValueTypeBoolean implements IValueType<ValueTypeBoolean.ValueBoolea
     }
 
     @Override
-    public String getTypeName() {
-        return "boolean";
+    public String toCompactString(ValueBoolean value) {
+        return Boolean.toString(value.getRawValue());
     }
 
     @ToString
@@ -35,7 +40,6 @@ public class ValueTypeBoolean implements IValueType<ValueTypeBoolean.ValueBoolea
         public boolean getRawValue() {
             return value;
         }
-
     }
 
 }

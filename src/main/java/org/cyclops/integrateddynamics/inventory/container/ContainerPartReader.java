@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipar
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.core.part.PartTarget;
 
 /**
  * Container for reader parts.
@@ -15,13 +16,14 @@ public class ContainerPartReader<P extends IPartType<P, S> & IGuiContainerProvid
         extends ContainerMultipart<P, S> {
     /**
      * Make a new instance.
+     * @param partTarget    The target.
      * @param player        The player.
      * @param partContainer The part container.
      * @param partType      The part type.
      * @param partState     The part state.
      */
-    public ContainerPartReader(EntityPlayer player, IPartContainer partContainer, P partType, S partState) {
-        super(player, partContainer, partType, partState);
+    public ContainerPartReader(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType, S partState) {
+        super(player, partTarget, partContainer, partType, partState);
     }
 
 }

@@ -39,6 +39,8 @@ public interface IPartState<P extends IPartType> {
 
     /**
      * Get the singleton variable for an aspect.
+     * This only retrieves the previously stored state.
+     * Better to call {@link org.cyclops.integrateddynamics.core.part.IPartType#getVariable(PartTarget, IPartState, org.cyclops.integrateddynamics.core.part.aspect.IAspect)}.
      * @param aspect The aspect from the part of this state.
      * @return The variable that exists only once for an aspect in this part state.
      */

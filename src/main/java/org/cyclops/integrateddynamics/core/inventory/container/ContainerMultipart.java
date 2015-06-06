@@ -18,6 +18,7 @@ import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -36,6 +37,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     private static final int PAGE_SIZE = 3;
     public static final int ASPECT_BOX_HEIGHT = 36;
 
+    private final PartTarget target;
     private final IPartContainer partContainer;
     private final P partType;
     private final S partState;
@@ -46,12 +48,13 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
 
     /**
      * Make a new instance.
+     * @param partTarget The target.
      * @param player The player.
      * @param partContainer The part container.
      * @param partType The part type.
      * @param partState The part state.
      */
-    public ContainerMultipart(EntityPlayer player, IPartContainer partContainer, P partType, S partState) {
+    public ContainerMultipart(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType, S partState) {
         super(player.inventory, partType, Lists.newArrayList(partType.getAspects()), new IItemPredicate<IAspect>() {
             @Override
             public boolean apply(IAspect item, Pattern pattern) {
@@ -60,6 +63,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
                 return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName())).matches();
             }
         });
+        this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
         this.partState = partState;

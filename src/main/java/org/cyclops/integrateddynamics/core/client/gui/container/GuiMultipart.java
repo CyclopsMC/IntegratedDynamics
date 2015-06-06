@@ -2,9 +2,11 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
@@ -14,7 +16,9 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipar
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 
 /**
  * Gui for parts.
@@ -25,9 +29,12 @@ import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
         extends ScrollingGuiContainer {
 
+    private final PartTarget target;
     private final IPartContainer partContainer;
     private final P partType;
     private final S partState;
+
+    private long lastUpdate = -1;
 
     /**
      * Make a new instance.
@@ -35,6 +42,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
      */
     public GuiMultipart(ContainerMultipart<P, S> container) {
         super(container);
+        this.target = container.getTarget();
         this.partContainer = container.getPartContainer();
         this.partType = container.getPartType();
         this.partState = container.getPartState();
@@ -48,6 +56,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                + getNameId() + ".png";
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
@@ -55,7 +64,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
 
         // Draw part name
         RenderHelpers.drawScaledCenteredString(fontRenderer, L10NHelpers.localize(getPartType().getUnlocalizedName()),
-                this.guiLeft + offsetX + 6, this.guiTop + offsetY + 10, 70, RenderHelpers.RGBToInt(0, 0, 0));
+                this.guiLeft + offsetX + 6, this.guiTop + offsetY + 10, 70, Helpers.RGBToInt(0, 0, 0));
 
         // Draw aspects
         ScrollingInventoryContainer<IAspect> container = getScrollingInventoryContainer();
@@ -63,15 +72,31 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
             if(container.isElementVisible(i)) {
                 GlStateManager.disableAlpha();
                 GlStateManager.color(1, 1, 1, 1);
+
+                // Background
                 mc.renderEngine.bindTexture(texture);
                 drawTexturedModalRect(guiLeft + offsetX + 9,
                         guiTop + offsetY + 18 + (ContainerMultipart.ASPECT_BOX_HEIGHT) * i, 0, 213, 160,
                         ContainerMultipart.ASPECT_BOX_HEIGHT - 1);
+
+                // Aspect type info
                 IAspect aspect = container.getVisibleElement(i);
                 String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
                 fontRenderer.drawString(aspectName, this.guiLeft + offsetX + 10,
                         this.guiTop + offsetY + 20 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
-                        RenderHelpers.RGBToInt(40, 40, 40));
+                        Helpers.RGBToInt(40, 40, 40));
+
+                // Current aspect value
+                // Client-side, so we need to do a manual part update, but not every frame refresh.
+                if(Minecraft.getMinecraft().theWorld.getWorldTime() > lastUpdate) {
+                    lastUpdate = Minecraft.getMinecraft().theWorld.getWorldTime();
+                    getPartType().update(getTarget(), getPartState());
+                }
+                IAspectVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspect);
+                String value = variable.getType().toCompactString(variable.getValue());
+                fontRenderer.drawString(value, this.guiLeft + offsetX + 16,
+                        this.guiTop + offsetY + 35 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
+                        variable.getType().getDisplayColor());
             }
         }
     }
