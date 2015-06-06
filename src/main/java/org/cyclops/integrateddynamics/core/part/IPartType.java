@@ -32,6 +32,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public String getName();
 
     /**
+     * @return The unlocalized name of this part.
+     */
+    public String getUnlocalizedName();
+
+    /**
      * @return The item associated with this part type.
      */
     public Item getItem();

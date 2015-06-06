@@ -18,6 +18,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.client.gui.GuiPartReader;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
@@ -53,6 +54,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             this.guiID = -1;
         }
         this.name = name;
+    }
+
+    @Override
+    public String getUnlocalizedName() {
+        return "parttype.parttypes." + Reference.MOD_ID + "." + getName();
     }
 
     @Override

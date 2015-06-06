@@ -51,10 +51,14 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+        FontRenderer fontRenderer = fontRendererObj;
+
+        // Draw part name
+        RenderHelpers.drawScaledCenteredString(fontRenderer, L10NHelpers.localize(getPartType().getUnlocalizedName()),
+                this.guiLeft + offsetX + 6, this.guiTop + offsetY + 10, 70, RenderHelpers.RGBToInt(0, 0, 0));
 
         // Draw aspects
         ScrollingInventoryContainer<IAspect> container = getScrollingInventoryContainer();
-        FontRenderer fontRenderer = fontRendererObj;
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
                 GlStateManager.disableAlpha();
