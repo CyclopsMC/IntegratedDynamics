@@ -1,14 +1,19 @@
 package org.cyclops.integrateddynamics.core.part.aspect;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +28,8 @@ public final class AspectRegistry implements IAspectRegistry {
 
     private Map<IPartType, Set<IAspect>> partAspects = Maps.newHashMap();
     private Map<String, IAspect> unlocalizedAspects = Maps.newHashMap();
+    @SideOnly(Side.CLIENT)
+    private Map<IAspect, ModelResourceLocation> aspectModels = Maps.newHashMap();
 
     private AspectRegistry() {
 
@@ -63,6 +70,11 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
+    public Set<IAspect> getAspects() {
+        return ImmutableSet.copyOf(unlocalizedAspects.values());
+    }
+
+    @Override
     public IAspect getAspect(String unlocalizedName) {
         return unlocalizedAspects.get(unlocalizedName);
     }
@@ -92,6 +104,24 @@ public final class AspectRegistry implements IAspectRegistry {
             return null;
         }
         return Pair.of(pairId, aspect);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void registerAspectModel(IAspect aspect, ModelResourceLocation modelLocation) {
+        aspectModels.put(aspect, modelLocation);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public ModelResourceLocation getAspectModel(IAspect aspect) {
+        return aspectModels.get(aspect);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Collection<ModelResourceLocation> getAspectModels() {
+        return aspectModels.values();
     }
 
 }

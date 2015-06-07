@@ -15,7 +15,7 @@ public interface IValueType<V extends IValue> {
     /**
      * @return The unique name of this type that will also be used for display.
      */
-    public String getTypeName();
+    public String getUnlocalizedName();
 
     /**
      * @param value The value

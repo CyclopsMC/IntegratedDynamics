@@ -7,7 +7,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
  * Value type with values 'true' or 'false'
  * @author rubensworks
  */
-public class ValueTypeBoolean extends BaseValueType<ValueTypeBoolean.ValueBoolean> {
+public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolean> {
 
     public ValueTypeBoolean() {
         super("boolean", Helpers.RGBToInt(43, 47, 231));

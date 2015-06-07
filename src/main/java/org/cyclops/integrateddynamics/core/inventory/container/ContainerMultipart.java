@@ -48,7 +48,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
 
     /**
      * Make a new instance.
-     * @param partTarget The target.
+     * @param target The target.
      * @param player The player.
      * @param partContainer The part container.
      * @param partType The part type.
@@ -60,7 +60,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
             public boolean apply(IAspect item, Pattern pattern) {
                 // We could cache this if this would prove to be a bottleneck.
                 // But we have a small amount of aspects, so this shouldn't be a problem.
-                return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName())).matches();
+                return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName()).toLowerCase()).matches();
             }
         });
         this.target = target;
@@ -152,7 +152,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         }
     }
 
-    protected ItemStack writeAspectInfo(ItemStack itemStack, IAspect aspect) {
+    public ItemStack writeAspectInfo(ItemStack itemStack, IAspect aspect) {
         return Aspects.REGISTRY.writeAspect(itemStack, getPartState().getId(), aspect);
     }
 

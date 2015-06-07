@@ -45,7 +45,7 @@ public class ItemVariable extends ConfigurableItem {
         Pair<Integer, IAspect> aspectInfo = Aspects.REGISTRY.readAspect(itemStack);
         if(aspectInfo != null) {
             list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.type",
-                    aspectInfo.getRight().getValueType().getTypeName()));
+                    L10NHelpers.localize(aspectInfo.getRight().getValueType().getUnlocalizedName())));
             list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.aspectName",
                     L10NHelpers.localize(aspectInfo.getRight().getUnlocalizedName())));
             list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.partId",
@@ -53,4 +53,5 @@ public class ItemVariable extends ConfigurableItem {
         }
         super.addInformation(itemStack, entityPlayer, list, par4);
     }
+
 }

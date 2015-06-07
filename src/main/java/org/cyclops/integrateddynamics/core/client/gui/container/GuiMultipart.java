@@ -5,13 +5,13 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
-import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.item.ItemVariable;
 
 /**
  * Gui for parts.
@@ -67,7 +68,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                 this.guiLeft + offsetX + 6, this.guiTop + offsetY + 10, 70, Helpers.RGBToInt(0, 0, 0));
 
         // Draw aspects
-        ScrollingInventoryContainer<IAspect> container = getScrollingInventoryContainer();
+        ContainerMultipart<?, ?> container = (ContainerMultipart) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
                 GlStateManager.disableAlpha();
@@ -82,8 +83,8 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                 // Aspect type info
                 IAspect aspect = container.getVisibleElement(i);
                 String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
-                fontRenderer.drawString(aspectName, this.guiLeft + offsetX + 10,
-                        this.guiTop + offsetY + 20 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
+                fontRenderer.drawString(aspectName, this.guiLeft + offsetX + 24,
+                        this.guiTop + offsetY + 22 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
                         Helpers.RGBToInt(40, 40, 40));
 
                 // Current aspect value
@@ -97,6 +98,13 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                 fontRenderer.drawString(value, this.guiLeft + offsetX + 16,
                         this.guiTop + offsetY + 35 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
                         variable.getType().getDisplayColor());
+
+                // Render target item
+                // This could be cached if this would prove to be a bottleneck
+                ItemStack itemStack = container.writeAspectInfo(new ItemStack(ItemVariable.getInstance()), aspect);
+                int x = this.guiLeft + offsetX + 8;
+                int y = this.guiTop + offsetY + 17 + ContainerMultipart.ASPECT_BOX_HEIGHT * i;
+                itemRender.renderItemAndEffectIntoGUI(itemStack, x, y);
             }
         }
     }

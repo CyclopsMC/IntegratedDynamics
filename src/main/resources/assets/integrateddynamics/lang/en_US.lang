@@ -17,6 +17,9 @@ item.items.integrateddynamics.variable.type=§e§lType: §r%s
 item.items.integrateddynamics.variable.aspectName=§e§lAspect: §r%s
 item.items.integrateddynamics.variable.partId=§e§oPart ID: §r§o%s
 
+# Value typs
+valuetype.valuetypes.integrateddynamics.boolean=Boolean
+
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader=Redstone Reader
 parttype.parttypes.integrateddynamics.redstoneWriter=Redstone Writer
