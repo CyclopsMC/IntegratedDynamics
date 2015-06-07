@@ -46,7 +46,7 @@ public final class AspectRegistry implements IAspectRegistry {
     public IAspect register(IPartType partType, IAspect aspect) {
         Set<IAspect> aspects = partAspects.get(partType);
         if(aspects == null) {
-            aspects = Sets.newHashSet();
+            aspects = Sets.newTreeSet(IAspect.AspectComparator.getInstance());
             partAspects.put(partType, aspects);
         }
         aspects.add(aspect);
