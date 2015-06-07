@@ -38,16 +38,13 @@ public class ItemVariable extends ConfigurableItem {
         super(eConfig);
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean par4) {
         Pair<Integer, IAspect> aspectInfo = Aspects.REGISTRY.readAspect(itemStack);
         if(aspectInfo != null) {
-            list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.type",
-                    L10NHelpers.localize(aspectInfo.getRight().getValueType().getUnlocalizedName())));
-            list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.aspectName",
-                    L10NHelpers.localize(aspectInfo.getRight().getUnlocalizedName())));
+            aspectInfo.getRight().loadTooltip(list, false);
             list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.partId",
                     aspectInfo.getLeft()));
         }

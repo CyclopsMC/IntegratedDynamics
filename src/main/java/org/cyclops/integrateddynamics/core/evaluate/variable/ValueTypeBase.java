@@ -25,7 +25,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public String getUnlocalizedName() {
-        return "valuetype.valuetypes." + getModId() + "." + getTypeName();
+        return "valuetype.valuetypes." + getModId() + "." + getTypeName() + ".name";
     }
 
     protected String getTypeName() {

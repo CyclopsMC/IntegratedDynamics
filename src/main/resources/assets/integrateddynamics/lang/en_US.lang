@@ -13,18 +13,21 @@ item.items.integrateddynamics.partWriterRedstone.name=Redstone Writer Part
 item.items.integrateddynamics.partWriterRedstone.info=A writer for redstone
 item.items.integrateddynamics.wrench.name=Wrench
 item.items.integrateddynamics.variable.name=Variable Card
-item.items.integrateddynamics.variable.type=§e§lType: §r%s
-item.items.integrateddynamics.variable.aspectName=§e§lAspect: §r%s
 item.items.integrateddynamics.variable.partId=§e§oPart ID: §r§o%s
 
-# Value typs
-valuetype.valuetypes.integrateddynamics.boolean=Boolean
+# Value types
+valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 
 # Part types
-parttype.parttypes.integrateddynamics.redstoneReader=Redstone Reader
-parttype.parttypes.integrateddynamics.redstoneWriter=Redstone Writer
+parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
+parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 
 # Aspects
-aspect.aspects.integrateddynamics.boolean.redstone.high=Redstone High
-aspect.aspects.integrateddynamics.boolean.redstone.low=Redstone Low
-aspect.aspects.integrateddynamics.boolean.redstone.nonlow=Redstone
+aspect.tooltip.aspectName=§eAspect: §r%s
+aspect.tooltip.valueTypeName=§eType: §r%s
+aspect.aspects.integrateddynamics.boolean.redstone.high.name=Redstone High
+aspect.aspects.integrateddynamics.boolean.redstone.high.info=If the redstone level is at its maximum
+aspect.aspects.integrateddynamics.boolean.redstone.low.name=Redstone Low
+aspect.aspects.integrateddynamics.boolean.redstone.low.info=If there is no redstone level
+aspect.aspects.integrateddynamics.boolean.redstone.nonlow.name=Redstone
+aspect.aspects.integrateddynamics.boolean.redstone.nonlow.info=If there is a redstone level

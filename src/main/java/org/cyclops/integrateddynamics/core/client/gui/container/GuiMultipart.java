@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
+import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
@@ -21,6 +22,9 @@ import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
+import java.awt.*;
+import java.util.List;
+
 /**
  * Gui for parts.
  * @author rubensworks
@@ -29,6 +33,8 @@ import org.cyclops.integrateddynamics.item.ItemVariable;
 @Data
 public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
         extends ScrollingGuiContainer {
+
+    private static final Rectangle ITEM_POSITION = new Rectangle(8, 17, 18, 18);
 
     private final PartTarget target;
     private final IPartContainer partContainer;
@@ -83,9 +89,10 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                 // Aspect type info
                 IAspect aspect = container.getVisibleElement(i);
                 String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
-                fontRenderer.drawString(aspectName, this.guiLeft + offsetX + 24,
-                        this.guiTop + offsetY + 22 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
-                        Helpers.RGBToInt(40, 40, 40));
+                RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
+                        this.guiLeft + offsetX + 26,
+                        this.guiTop + offsetY + 25 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
+                        60, Helpers.RGBToInt(40, 40, 40));
 
                 // Current aspect value
                 // Client-side, so we need to do a manual part update, but not every frame refresh.
@@ -102,9 +109,29 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                 // Render target item
                 // This could be cached if this would prove to be a bottleneck
                 ItemStack itemStack = container.writeAspectInfo(new ItemStack(ItemVariable.getInstance()), aspect);
-                int x = this.guiLeft + offsetX + 8;
-                int y = this.guiTop + offsetY + 17 + ContainerMultipart.ASPECT_BOX_HEIGHT * i;
-                itemRender.renderItemAndEffectIntoGUI(itemStack, x, y);
+                Rectangle pos = getElementPosition(container, i, true);
+                itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
+            }
+        }
+    }
+
+    protected Rectangle getElementPosition(ContainerMultipart<?, ?> container, int i, boolean absolute) {
+        return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.guiLeft : 0),
+                             ITEM_POSITION.y + ContainerMultipart.ASPECT_BOX_HEIGHT * i + offsetY + (absolute ? this.guiTop : 0),
+                             ITEM_POSITION.width, ITEM_POSITION.height
+        );
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        ContainerMultipart<?, ?> container = (ContainerMultipart) getScrollingInventoryContainer();
+        for(int i = 0; i < container.getPageSize(); i++) {
+            if(container.isElementVisible(i)) {
+                if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
+                    List<String> lines = Lists.newLinkedList();
+                    container.getVisibleElement(i).loadTooltip(lines, true);
+                    drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
+                }
             }
         }
     }

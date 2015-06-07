@@ -21,8 +21,9 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
      * @param lines The list to add lines to.
+     * @param appendOptionalInfo If shift-to-show info should be added.
      */
-    public void loadTooltip(List<String> lines);
+    public void loadTooltip(List<String> lines, boolean appendOptionalInfo);
 
     /**
      * @return The type of value this aspect can return.
