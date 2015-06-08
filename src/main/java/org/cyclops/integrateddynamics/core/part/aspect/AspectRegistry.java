@@ -27,7 +27,11 @@ public final class AspectRegistry implements IAspectRegistry {
     private static AspectRegistry INSTANCE = new AspectRegistry();
 
     private Map<IPartType, Set<IAspect>> partAspects = Maps.newHashMap();
+    private Map<IPartType, Set<IAspectRead>> partReadAspects = Maps.newHashMap();
+    private Map<IPartType, Set<IAspectWrite>> partWriteAspects = Maps.newHashMap();
     private Map<String, IAspect> unlocalizedAspects = Maps.newHashMap();
+    private Map<String, IAspectRead> unlocalizedReadAspects = Maps.newHashMap();
+    private Map<String, IAspectWrite> unlocalizedWriteAspects = Maps.newHashMap();
     @SideOnly(Side.CLIENT)
     private Map<IAspect, ModelResourceLocation> aspectModels = Maps.newHashMap();
 
@@ -44,14 +48,25 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @Override
     public IAspect register(IPartType partType, IAspect aspect) {
-        Set<IAspect> aspects = partAspects.get(partType);
+        registerSubAspectType(partType, aspect, partAspects, unlocalizedAspects);
+        if(aspect instanceof IAspectRead) {
+            registerSubAspectType(partType, (IAspectRead) aspect, partReadAspects, unlocalizedReadAspects);
+        }
+        if(aspect instanceof IAspectWrite) {
+            registerSubAspectType(partType, (IAspectWrite) aspect, partWriteAspects, unlocalizedWriteAspects);
+        }
+        return aspect;
+    }
+
+    protected <T extends IAspect> void registerSubAspectType(IPartType partType, T aspect, Map<IPartType,
+                                                             Set<T>> partAspects, Map<String, T> unlocalizedAspects) {
+        Set<T> aspects = partAspects.get(partType);
         if(aspects == null) {
             aspects = Sets.newTreeSet(IAspect.AspectComparator.getInstance());
             partAspects.put(partType, aspects);
         }
         aspects.add(aspect);
         unlocalizedAspects.put(aspect.getUnlocalizedName(), aspect);
-        return aspect;
     }
 
     @Override
@@ -70,8 +85,28 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
+    public Set<IAspectRead> getReadAspects(IPartType partType) {
+        return partReadAspects.get(partType);
+    }
+
+    @Override
+    public Set<IAspectWrite> getWriteAspects(IPartType partType) {
+        return partWriteAspects.get(partType);
+    }
+
+    @Override
     public Set<IAspect> getAspects() {
         return ImmutableSet.copyOf(unlocalizedAspects.values());
+    }
+
+    @Override
+    public Set<IAspectRead> getReadAspects() {
+        return ImmutableSet.copyOf(unlocalizedReadAspects.values());
+    }
+
+    @Override
+    public Set<IAspectWrite> getWriteAspects() {
+        return ImmutableSet.copyOf(unlocalizedWriteAspects.values());
     }
 
     @Override

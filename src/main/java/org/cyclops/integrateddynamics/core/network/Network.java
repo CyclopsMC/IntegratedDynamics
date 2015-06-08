@@ -17,7 +17,7 @@ import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartPos;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
@@ -345,7 +345,7 @@ public class Network implements INBTSerializable {
      * @return True if such a variable can be found. False if the given part is not present in the network or if the
      *         given aspect is not present at that part.
      */
-    public <V extends IValue> boolean hasVariable(int partId, IAspect<V, ?> aspect) {
+    public <V extends IValue> boolean hasVariable(int partId, IAspectRead<V, ?> aspect) {
         return hasPart(partId) && getPart(partId).getVariable(aspect) != null;
     }
 
@@ -357,7 +357,7 @@ public class Network implements INBTSerializable {
      * @param <V> The value.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(int partId, IAspect<V, ?> aspect) {
+    public <V extends IValue> IVariable<V> getVariable(int partId, IAspectRead<V, ?> aspect) {
         return getPart(partId).getVariable(aspect);
     }
 

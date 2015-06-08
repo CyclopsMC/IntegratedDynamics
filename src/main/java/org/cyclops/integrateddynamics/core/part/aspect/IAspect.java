@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.part.aspect;
 
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.part.IPartState;
+import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 
 import java.util.Comparator;
@@ -26,16 +28,19 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo);
 
     /**
-     * @return The type of value this aspect can return.
+     * @return The type of value this aspect can handle.
      */
     public T getValueType();
 
     /**
-     * Creates a new variable for this aspect.
-     * @param target The target for this aspect.
-     * @return The variable pointing to the given target.
+     * Called inside part types for updating a part on a block.
+     * @param partType The part type.
+     * @param target The position that is targeted by the given part.
+     * @param state The current state of the given part.
+     * @param <P> The part type type.
+     * @param <S> The part state.
      */
-    public IAspectVariable<V> createNewVariable(PartTarget target);
+    public <P extends IPartType<P, S>, S extends IPartState<P>>  void update(P partType, PartTarget target, S state);
 
     /**
      * Use this comparator for any comparisons with aspects.

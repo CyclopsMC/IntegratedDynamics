@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @EqualsAndHashCode(callSuper = false)
 @Data
 public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
-        extends ScrollingInventoryContainer<IAspect> {
+        extends ScrollingInventoryContainer<IAspectRead> {
 
     private static final int PAGE_SIZE = 3;
     public static final int ASPECT_BOX_HEIGHT = 36;
@@ -55,9 +56,9 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
      * @param partState The part state.
      */
     public ContainerMultipart(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType, S partState) {
-        super(player.inventory, partType, Lists.newArrayList(partType.getAspects()), new IItemPredicate<IAspect>() {
+        super(player.inventory, partType, Lists.newArrayList(partType.getReadAspects()), new IItemPredicate<IAspectRead>() {
             @Override
-            public boolean apply(IAspect item, Pattern pattern) {
+            public boolean apply(IAspectRead item, Pattern pattern) {
                 // We could cache this if this would prove to be a bottleneck.
                 // But we have a small amount of aspects, so this shouldn't be a problem.
                 return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName()).toLowerCase()).matches();
@@ -118,7 +119,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     }
 
     @Override
-    protected void enableElementAt(int row, int elementIndex, IAspect element) {
+    protected void enableElementAt(int row, int elementIndex, IAspectRead element) {
         super.enableElementAt(row, elementIndex, element);
         enableSlot(elementIndex, row, true);
         enableSlot(elementIndex, row, false);

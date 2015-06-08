@@ -40,10 +40,36 @@ public interface IAspectRegistry extends IRegistry {
     public Set<IAspect> getAspects(IPartType partType);
 
     /**
+     * Get the registered read aspects for a given part type.
+     * @param partType The part type.
+     * @return The read aspects.
+     */
+    public Set<IAspectRead> getReadAspects(IPartType partType);
+
+    /**
+     * Get the registered write aspects for a given part type.
+     * @param partType The part type.
+     * @return The write aspects.
+     */
+    public Set<IAspectWrite> getWriteAspects(IPartType partType);
+
+    /**
      * Get all registered aspects.
      * @return The aspects.
      */
     public Set<IAspect> getAspects();
+
+    /**
+     * Get all registered read aspects.
+     * @return The read aspects.
+     */
+    public Set<IAspectRead> getReadAspects();
+
+    /**
+     * Get all registered write aspects.
+     * @return The write aspects.
+     */
+    public Set<IAspectWrite> getWriteAspects();
 
     /**
      * Get an aspect by unlocalized name.

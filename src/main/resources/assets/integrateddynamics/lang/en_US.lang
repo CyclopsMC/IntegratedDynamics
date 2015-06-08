@@ -25,9 +25,9 @@ parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 # Aspects
 aspect.tooltip.aspectName=§eAspect: §r%s
 aspect.tooltip.valueTypeName=§eType: §r%s
-aspect.aspects.integrateddynamics.boolean.redstone.high.name=Redstone High
-aspect.aspects.integrateddynamics.boolean.redstone.high.info=If the redstone level is at its maximum
-aspect.aspects.integrateddynamics.boolean.redstone.low.name=Redstone Low
-aspect.aspects.integrateddynamics.boolean.redstone.low.info=If there is no redstone level
-aspect.aspects.integrateddynamics.boolean.redstone.nonlow.name=Redstone
-aspect.aspects.integrateddynamics.boolean.redstone.nonlow.info=If there is a redstone level
+aspect.aspects.integrateddynamics.read.boolean.redstone.high.name=Redstone High
+aspect.aspects.integrateddynamics.read.boolean.redstone.high.info=If the redstone level is at its maximum
+aspect.aspects.integrateddynamics.read.boolean.redstone.low.name=Redstone Low
+aspect.aspects.integrateddynamics.read.boolean.redstone.low.info=If there is no redstone level
+aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.name=Redstone
+aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.info=If there is a redstone level

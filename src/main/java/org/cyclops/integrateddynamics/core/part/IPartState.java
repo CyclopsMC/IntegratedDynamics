@@ -1,7 +1,10 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 
 /**
@@ -40,11 +43,11 @@ public interface IPartState<P extends IPartType> {
     /**
      * Get the singleton variable for an aspect.
      * This only retrieves the previously stored state.
-     * Better to call {@link org.cyclops.integrateddynamics.core.part.IPartType#getVariable(PartTarget, IPartState, org.cyclops.integrateddynamics.core.part.aspect.IAspect)}.
+     * Better to call {@link org.cyclops.integrateddynamics.core.part.IPartType#getVariable(PartTarget, IPartState, org.cyclops.integrateddynamics.core.part.aspect.IAspectRead)}.
      * @param aspect The aspect from the part of this state.
      * @return The variable that exists only once for an aspect in this part state.
      */
-    public IAspectVariable getVariable(IAspect aspect);
+    public <V extends IValue, T extends IValueType<V>> IAspectVariable<V> getVariable(IAspectRead<V, T> aspect);
 
     /**
      * Get the singleton variable for an aspect.

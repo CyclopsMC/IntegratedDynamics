@@ -7,7 +7,10 @@ import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.nbt.NBTProviderComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 
 import java.util.Map;
@@ -45,8 +48,9 @@ public class DefaultPartState<P extends IPartType> implements IPartState<P>, INB
         return this.id;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public IAspectVariable getVariable(IAspect aspect) {
+    public <V extends IValue, T extends IValueType<V>> IAspectVariable<V> getVariable(IAspectRead<V, T> aspect) {
         return aspectVariables.get(aspect);
     }
 

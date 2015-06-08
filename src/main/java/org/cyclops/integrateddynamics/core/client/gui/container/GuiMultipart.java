@@ -18,7 +18,7 @@ import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
@@ -87,7 +87,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                         ContainerMultipart.ASPECT_BOX_HEIGHT - 1);
 
                 // Aspect type info
-                IAspect aspect = container.getVisibleElement(i);
+                IAspectRead aspect = container.getVisibleElement(i);
                 String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
                         this.guiLeft + offsetX + 26,

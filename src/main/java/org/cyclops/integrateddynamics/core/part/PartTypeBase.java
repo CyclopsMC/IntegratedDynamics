@@ -21,12 +21,16 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.client.gui.GuiPartReader;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
-import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.List;
 import java.util.Set;
@@ -63,7 +67,17 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public Set<IAspect> getAspects() {
-        return AspectRegistry.getInstance().getAspects(this);
+        return Aspects.REGISTRY.getAspects(this);
+    }
+
+    @Override
+    public Set<IAspectRead> getReadAspects() {
+        return Aspects.REGISTRY.getReadAspects(this);
+    }
+
+    @Override
+    public Set<IAspectWrite> getWriteAspects() {
+        return Aspects.REGISTRY.getWriteAspects(this);
     }
 
     @Override
@@ -88,10 +102,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public void update(PartTarget target, S state) {
         for(IAspect aspect : getAspects()) {
-            IAspectVariable variable = getVariable(target, state, aspect);
-            if(variable.requiresUpdate()) {
-                variable.update();
-            }
+            aspect.update(this, target, state);
         }
     }
 
@@ -121,12 +132,13 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public IAspectVariable getVariable(PartTarget target, S partState, IAspect aspect) {
+    public <V extends IValue, T extends IValueType<V>>  IAspectVariable<V> getVariable(PartTarget target, S partState,
+                                                                                       IAspectRead<V, T> aspect) {
         if(!getAspects().contains(aspect)) {
             throw new IllegalArgumentException("Tried to get the variable for an aspect that did not exist within a " +
                     "part type.");
         }
-        IAspectVariable variable = partState.getVariable(aspect);
+        IAspectVariable<V> variable = partState.getVariable(aspect);
         if(variable == null) {
             variable = aspect.createNewVariable(target);
             partState.setVariable(aspect, variable);
