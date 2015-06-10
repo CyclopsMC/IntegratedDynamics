@@ -7,15 +7,15 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipar
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
 
 /**
- * Container for reader parts.
+ * Container for writer parts.
  * @author rubensworks
  */
-public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvider, S extends IPartState<P>>
-        extends ContainerMultipart<P, S, IAspectRead> {
+public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvider, S extends IPartState<P>>
+        extends ContainerMultipart<P, S, IAspectWrite> {
     /**
      * Make a new instance.
      * @param partTarget    The target.
@@ -24,8 +24,8 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
      * @param partType      The part type.
      * @param partState     The part state.
      */
-    public ContainerPartReader(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType, S partState) {
-        super(player, partTarget, partContainer, partType, partState, Lists.newArrayList(partType.getReadAspects()));
+    public ContainerPartWriter(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType, S partState) {
+        super(player, partTarget, partContainer, partType, partState, Lists.newArrayList(partType.getWriteAspects()));
     }
 
 }

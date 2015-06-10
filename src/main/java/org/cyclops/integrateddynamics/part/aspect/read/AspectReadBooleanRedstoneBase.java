@@ -10,7 +10,7 @@ import org.cyclops.integrateddynamics.core.part.aspect.LazyAspectVariable;
  * Base class for boolean redstone aspects.
  * @author rubensworks
  */
-public abstract class AspectBooleanRedstoneBase extends AspectBooleanBase {
+public abstract class AspectReadBooleanRedstoneBase extends AspectReadBooleanBase {
 
     @Override
     protected String getUnlocalizedBooleanType() {
@@ -25,7 +25,7 @@ public abstract class AspectBooleanRedstoneBase extends AspectBooleanBase {
             @Override
             public ValueTypeBoolean.ValueBoolean getValueLazy() {
                 DimPos dimPos = target.getTarget().getPos();
-                boolean value = AspectBooleanRedstoneBase.this.getValue(dimPos.getWorld().getRedstonePower(
+                boolean value = AspectReadBooleanRedstoneBase.this.getValue(dimPos.getWorld().getRedstonePower(
                         dimPos.getBlockPos(), target.getCenter().getSide()));
                 return ValueTypeBoolean.ValueBoolean.of(value);
             }

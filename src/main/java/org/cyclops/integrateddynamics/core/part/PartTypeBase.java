@@ -2,34 +2,23 @@ package org.cyclops.integrateddynamics.core.part;
 
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.client.gui.GuiPartReader;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
-import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.List;
@@ -68,16 +57,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public Set<IAspect> getAspects() {
         return Aspects.REGISTRY.getAspects(this);
-    }
-
-    @Override
-    public Set<IAspectRead> getReadAspects() {
-        return Aspects.REGISTRY.getReadAspects(this);
-    }
-
-    @Override
-    public Set<IAspectWrite> getWriteAspects() {
-        return Aspects.REGISTRY.getWriteAspects(this);
     }
 
     @Override
@@ -132,21 +111,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public <V extends IValue, T extends IValueType<V>>  IAspectVariable<V> getVariable(PartTarget target, S partState,
-                                                                                       IAspectRead<V, T> aspect) {
-        if(!getAspects().contains(aspect)) {
-            throw new IllegalArgumentException("Tried to get the variable for an aspect that did not exist within a " +
-                    "part type.");
-        }
-        IAspectVariable<V> variable = partState.getVariable(aspect);
-        if(variable == null) {
-            variable = aspect.createNewVariable(target);
-            partState.setVariable(aspect, variable);
-        }
-        return variable;
-    }
-
-    @Override
     public void toNBT(NBTTagCompound tag, S partState) {
         partState.writeToNBT(tag);
     }
@@ -182,17 +146,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     protected boolean hasGui() {
         return true;
-    }
-
-    @Override
-    public Class<? extends Container> getContainer() {
-        return ContainerPartReader.class;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public Class<? extends GuiScreen> getGui() {
-        return GuiPartReader.class;
     }
 
     @Override

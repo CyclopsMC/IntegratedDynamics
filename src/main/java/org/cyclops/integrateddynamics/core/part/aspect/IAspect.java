@@ -11,6 +11,8 @@ import java.util.List;
 
 /**
  * An element that can be used inside parts to access a specific aspect of something to read/write.
+ * @param <V> The value type.
+ * @param <T> The value type type.
  * @author rubensworks
  */
 public interface IAspect<V extends IValue, T extends IValueType<V>> {
@@ -40,7 +42,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * @param <P> The part type type.
      * @param <S> The part state.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>>  void update(P partType, PartTarget target, S state);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(P partType, PartTarget target, S state);
 
     /**
      * Use this comparator for any comparisons with aspects.

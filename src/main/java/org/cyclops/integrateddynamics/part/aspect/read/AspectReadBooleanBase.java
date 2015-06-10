@@ -4,10 +4,10 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 /**
- * Base class for boolean aspects.
+ * Base class for boolean read aspects.
  * @author rubensworks
  */
-public abstract class AspectBooleanBase extends AspectReadBase<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> {
+public abstract class AspectReadBooleanBase extends AspectReadBase<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> {
 
     @Override
     public String getUnlocalizedType() {

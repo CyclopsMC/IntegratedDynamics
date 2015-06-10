@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,10 +19,10 @@ import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -32,8 +31,8 @@ import java.util.regex.Pattern;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
-        extends ScrollingInventoryContainer<IAspectRead> {
+public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>, A extends IAspect>
+        extends ScrollingInventoryContainer<A> {
 
     private static final int PAGE_SIZE = 3;
     public static final int ASPECT_BOX_HEIGHT = 36;
@@ -55,10 +54,10 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
      * @param partType The part type.
      * @param partState The part state.
      */
-    public ContainerMultipart(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType, S partState) {
-        super(player.inventory, partType, Lists.newArrayList(partType.getReadAspects()), new IItemPredicate<IAspectRead>() {
+    public ContainerMultipart(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType, S partState, List<A> items) {
+        super(player.inventory, partType, items, new IItemPredicate<A>() {
             @Override
-            public boolean apply(IAspectRead item, Pattern pattern) {
+            public boolean apply(A item, Pattern pattern) {
                 // We could cache this if this would prove to be a bottleneck.
                 // But we have a small amount of aspects, so this shouldn't be a problem.
                 return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName()).toLowerCase()).matches();
@@ -119,7 +118,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     }
 
     @Override
-    protected void enableElementAt(int row, int elementIndex, IAspectRead element) {
+    protected void enableElementAt(int row, int elementIndex, A element) {
         super.enableElementAt(row, elementIndex, element);
         enableSlot(elementIndex, row, true);
         enableSlot(elementIndex, row, false);

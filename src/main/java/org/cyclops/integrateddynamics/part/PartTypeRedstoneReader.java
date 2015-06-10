@@ -4,10 +4,9 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
 import org.cyclops.integrateddynamics.block.ReaderConfig;
 import org.cyclops.integrateddynamics.core.part.DefaultPartState;
-import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
+import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -15,8 +14,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
  * A redstone reader part.
  * @author rubensworks
  */
-public class PartTypeRedstoneReader extends PartTypeBase<PartTypeRedstoneReader, DefaultPartState<PartTypeRedstoneReader>>
-        implements IPartTypeReader<PartTypeRedstoneReader, DefaultPartState<PartTypeRedstoneReader>> {
+public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneReader, DefaultPartState<PartTypeRedstoneReader>> {
 
     public PartTypeRedstoneReader(String name) {
         super(name);

@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.part.aspect.AspectBase;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -27,11 +28,14 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>>  void update(P partType, PartTarget target, S state) {
-        IAspectVariable variable = partType.getVariable(target, state, this);
-        if (variable.requiresUpdate()) {
-            variable.update();
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(P partType, PartTarget target, S state) {
+        if(partType instanceof IPartTypeReader) {
+            IAspectVariable variable = ((IPartTypeReader) partType).getVariable(target, state, this);
+            if (variable.requiresUpdate()) {
+                variable.update();
+            }
         }
     }
 

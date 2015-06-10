@@ -1,27 +1,28 @@
 package org.cyclops.integrateddynamics.part;
 
+import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
 import org.cyclops.integrateddynamics.block.WriterConfig;
 import org.cyclops.integrateddynamics.core.part.DefaultPartState;
-import org.cyclops.integrateddynamics.core.part.PartTypeBase;
+import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
+import org.cyclops.integrateddynamics.core.part.write.PartTypeWriteBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
  * A redstone writer part.
  * @author rubensworks
  */
-public class PartTypeRedstoneWriter extends PartTypeBase<PartTypeRedstoneWriter, DefaultPartState<PartTypeRedstoneWriter>>
+public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWriter, DefaultPartState<PartTypeRedstoneWriter>>
         implements IPartTypeWriter<PartTypeRedstoneWriter, DefaultPartState<PartTypeRedstoneWriter>> {
 
     public PartTypeRedstoneWriter(String name) {
         super(name);
-        // TODO: register input aspects
-        /*AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-                Aspects.READ_BOOLEAN_REDSTONE_LOW,
-                Aspects.READ_BOOLEAN_REDSTONE_NONLOW,
-                Aspects.READ_BOOLEAN_REDSTONE_HIGH
-        ));*/
+        AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
+                Aspects.WRITE_BOOLEAN_REDSTONE
+        ));
     }
 
     @Override
