@@ -17,8 +17,6 @@ import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
-import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -42,9 +40,9 @@ public class ExtendedGuiHandler extends GuiHandler {
                     Triple<IPartContainer, IPartType, IPartState> data = getPartConstructionData(world,
                             new BlockPos(x, y, z), side);
                     if(data == null) return null;
-                    Class<?> partTypeClass = data.getMiddle() instanceof IPartTypeReader ? IPartTypeReader.class : IPartTypeWriter.class;
                     Constructor<? extends Container> containerConstructor = containerClass.getConstructor(
-                            EntityPlayer.class, PartTarget.class, IPartContainer.class, partTypeClass, IPartState.class);
+                            EntityPlayer.class, PartTarget.class, IPartContainer.class,
+                            data.getMiddle().getPartTypeClass(), data.getRight().getPartStateClass());
                     return containerConstructor.newInstance(player,
                            PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(), data.getMiddle(),
                            data.getRight());
@@ -64,9 +62,9 @@ public class ExtendedGuiHandler extends GuiHandler {
                         Triple<IPartContainer, IPartType, IPartState> data = getPartConstructionData(world,
                                 new BlockPos(x, y, z), side);
                         if(data == null) return null;
-                        Class<?> partTypeClass = data.getMiddle() instanceof IPartTypeReader ? IPartTypeReader.class : IPartTypeWriter.class;
                         Constructor<? extends GuiScreen> guiConstructor = guiClass.getConstructor(
-                                EntityPlayer.class, PartTarget.class, IPartContainer.class, partTypeClass, IPartState.class);
+                                EntityPlayer.class, PartTarget.class, IPartContainer.class,
+                                data.getMiddle().getPartTypeClass(), data.getRight().getPartStateClass());
                         return guiConstructor.newInstance(player,
                                PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(),
                                data.getMiddle(), data.getRight());

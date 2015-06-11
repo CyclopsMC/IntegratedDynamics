@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartPos;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
+import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
@@ -165,7 +166,7 @@ public class Network implements INBTSerializable {
      * @param element The network element.
      */
     public void removeNetworkElement(INetworkElement element) {
-        element.beforeNetworkKill();
+        element.beforeNetworkKill(this);
         elements.remove(element);
         removeNetworkElementUpdateable(element);
     }
@@ -189,7 +190,7 @@ public class Network implements INBTSerializable {
         for(INetworkElement element : elements) {
             addNetworkElementUpdateable(element);
             if(!silent) {
-                element.afterNetworkAlive();
+                element.afterNetworkAlive(this);
             }
         }
     }
@@ -199,7 +200,7 @@ public class Network implements INBTSerializable {
      */
     public void kill() {
         for(INetworkElement element : elements) {
-            element.beforeNetworkKill();
+            element.beforeNetworkKill(this);
         }
         killed = true;
     }
@@ -230,7 +231,7 @@ public class Network implements INBTSerializable {
             for (INetworkElement element : updateableElements) {
                 if (updateableElementsTicks.get(element) <= 0) {
                     updateableElementsTicks.put(element, element.getUpdateInterval());
-                    element.update();
+                    element.update(this);
                 }
                 updateableElementsTicks.put(element, updateableElementsTicks.get(element) - 1);
             }
@@ -346,19 +347,26 @@ public class Network implements INBTSerializable {
      *         given aspect is not present at that part.
      */
     public <V extends IValue> boolean hasVariable(int partId, IAspectRead<V, ?> aspect) {
-        return hasPart(partId) && getPart(partId).getVariable(aspect) != null;
+        if(!hasPart(partId)) {
+            return false;
+        }
+        IPartState partState = getPart(partId);
+        if(!(partState instanceof IPartStateReader)) {
+            return false;
+        }
+        return ((IPartStateReader) partState).getVariable(aspect) != null;
     }
 
     /**
      * Get the current variable from the aspect of the given part id.
-     * This method can call a NPE when the given part does not exists, so make sure to check this before.
+     * This method can call a NPE or cast exception when the given part does not exists, so make sure to check this before.
      * @param partId The part state id.
      * @param aspect The aspect from the given part.
      * @param <V> The value.
      * @return The variable.
      */
     public <V extends IValue> IVariable<V> getVariable(int partId, IAspectRead<V, ?> aspect) {
-        return getPart(partId).getVariable(aspect);
+        return ((IPartStateReader) getPart(partId)).getVariable(aspect);
     }
 
 }

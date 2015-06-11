@@ -5,9 +5,9 @@ import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 
@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
  * Gui for a writer part.
  * @author rubensworks
  */
-public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvider, S extends IPartState<P>>
+public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvider, S extends IPartStateWriter<P>>
         extends GuiMultipart<P, S, IAspectWrite> {
 
     private long lastUpdate = -1;

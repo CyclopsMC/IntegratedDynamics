@@ -43,13 +43,14 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     @NBTPersist private boolean realCable = true;
     @NBTPersist private Map<Integer, Boolean> connected = Maps.newHashMap();
     @NBTPersist private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
+    @NBTPersist private Map<Integer, Integer> redstoneLevels = Maps.newHashMap();
 
     @Getter
     @Setter
     private Network network;
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
+    public void writeToNBT(NBTTagCompound tag) {this.markDirty();
         super.writeToNBT(tag);
         NBTTagList partList = new NBTTagList();
         for(Map.Entry<EnumFacing, PartStateHolder<?, ?>> entry : partData.entrySet()) {
@@ -278,8 +279,54 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     @Override
     protected void updateTileEntity() {
+        // If the connection data were reset, update the cable connections
         if(connected.isEmpty()) {
             updateCableConnections();
+        }
+
+        // Loop over all part states to check their dirtiness
+        for(PartStateHolder<?, ?> partStateHolder : partData.values()) {
+            if(partStateHolder.getState().isDirtyAndReset()) {
+                markDirty();
+            }
+        }
+    }
+
+    protected void updateRedstoneInfo(EnumFacing side) {
+        sendUpdate();
+        getWorld().notifyNeighborsOfStateChange(getPos(), getBlock());
+        getWorld().notifyNeighborsOfStateChange(pos.offset(side.getOpposite()), getBlock());
+    }
+
+    public void setRedstoneLevel(EnumFacing side, int level) {
+        if(!getWorld().isRemote) {
+            boolean sendUpdate = false;
+            if(redstoneLevels.containsKey(side.ordinal())) {
+                if(redstoneLevels.get(side.ordinal()) != level) {
+                    sendUpdate = true;
+                    redstoneLevels.put(side.ordinal(), level);
+                }
+            } else {
+                sendUpdate = true;
+                redstoneLevels.put(side.ordinal(), level);
+            }
+            if(sendUpdate) {
+                updateRedstoneInfo(side);
+            }
+        }
+    }
+
+    public int getRedstoneLevel(EnumFacing side) {
+        if(redstoneLevels.containsKey(side.ordinal())) {
+            return redstoneLevels.get(side.ordinal());
+        }
+        return -1;
+    }
+
+    public void disableRedstoneLevel(EnumFacing side) {
+        if(!getWorld().isRemote) {
+            redstoneLevels.remove(side.ordinal());
+            updateRedstoneInfo(side);
         }
     }
 

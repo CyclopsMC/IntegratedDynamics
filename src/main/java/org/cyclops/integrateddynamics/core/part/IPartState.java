@@ -1,11 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.nbt.NBTTagCompound;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 
 /**
  * A value holder for an {@link IPartType}.
@@ -16,6 +11,13 @@ import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 public interface IPartState<P extends IPartType> {
 
     public static final String GLOBALCOUNTER_KEY = "part";
+
+    /**
+     * Get the part state class.
+     * This is used for doing dynamic construction of guis.
+     * @return The actual class for this part state.
+     */
+    public Class<? extends IPartState> getPartStateClass();
 
     /**
      * Write a state to NBT.
@@ -41,19 +43,9 @@ public interface IPartState<P extends IPartType> {
     public int getId();
 
     /**
-     * Get the singleton variable for an aspect.
-     * This only retrieves the previously stored state.
-     * Better to call {@link org.cyclops.integrateddynamics.core.part.IPartType#getVariable(PartTarget, IPartState, org.cyclops.integrateddynamics.core.part.aspect.IAspectRead)}.
-     * @param aspect The aspect from the part of this state.
-     * @return The variable that exists only once for an aspect in this part state.
+     * Check if dirty and reset the dirty state.
+     * @return If this state has changed since the last time and needs to be persisted to NBT eventually.
      */
-    public <V extends IValue, T extends IValueType<V>> IAspectVariable<V> getVariable(IAspectRead<V, T> aspect);
-
-    /**
-     * Get the singleton variable for an aspect.
-     * @param aspect The aspect from the part of this state.
-     * @param variable The variable that exists only once for an aspect in this part state.
-     */
-    public void setVariable(IAspect aspect, IAspectVariable variable);
+    public boolean isDirtyAndReset();
 
 }

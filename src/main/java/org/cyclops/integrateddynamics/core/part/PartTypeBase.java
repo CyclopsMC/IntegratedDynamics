@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
+import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -79,9 +80,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void update(PartTarget target, S state) {
+    public void update(Network network, PartTarget target, S state) {
         for(IAspect aspect : getAspects()) {
-            aspect.update(this, target, state);
+            aspect.update(network, this, target, state);
         }
     }
 
@@ -135,12 +136,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void beforeNetworkKill(S state) {
+    public void beforeNetworkKill(Network network, PartTarget target, S state) {
         System.out.println("killing " + state);
     }
 
     @Override
-    public void afterNetworkAlive(S state) {
+    public void afterNetworkAlive(Network network, PartTarget target, S state) {
         System.out.println("alive " + state);
     }
 

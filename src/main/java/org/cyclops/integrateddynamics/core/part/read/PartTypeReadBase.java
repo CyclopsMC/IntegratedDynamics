@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.read;
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
@@ -7,7 +8,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.integrateddynamics.client.gui.GuiPartReader;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
@@ -15,13 +15,13 @@ import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * An abstract {@link org.cyclops.integrateddynamics.core.part.read.IPartTypeReader}.
  * @author rubensworks
  */
-public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extends IPartState<P>>
+public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extends IPartStateReader<P>>
         extends PartTypeBase<P, S> implements IPartTypeReader<P, S> {
 
     public PartTypeReadBase(String name) {
@@ -29,8 +29,13 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    public Set<IAspectRead> getReadAspects() {
-        return Aspects.REGISTRY.getReadAspects(this);
+    public Class<? super P> getPartTypeClass() {
+        return IPartTypeReader.class;
+    }
+
+    @Override
+    public List<IAspectRead> getReadAspects() {
+        return Lists.newArrayList(Aspects.REGISTRY.getReadAspects(this));
     }
 
     @Override

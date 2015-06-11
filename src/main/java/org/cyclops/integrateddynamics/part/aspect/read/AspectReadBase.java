@@ -6,11 +6,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.part.aspect.AspectBase;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -30,9 +32,9 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
 
     @SuppressWarnings("unchecked")
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(P partType, PartTarget target, S state) {
-        if(partType instanceof IPartTypeReader) {
-            IAspectVariable variable = ((IPartTypeReader) partType).getVariable(target, state, this);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(Network network, P partType, PartTarget target, S state) {
+        if(partType instanceof IPartTypeReader && state instanceof IPartStateReader) {
+            IAspectVariable variable = ((IPartTypeReader) partType).getVariable(target, (IPartStateReader) state, this);
             if (variable.requiresUpdate()) {
                 variable.update();
             }

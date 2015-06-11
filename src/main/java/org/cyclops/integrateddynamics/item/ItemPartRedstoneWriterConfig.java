@@ -4,8 +4,8 @@ import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
-import org.cyclops.integrateddynamics.core.part.DefaultPartState;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.core.part.write.DefaultPartStateWriter;
 import org.cyclops.integrateddynamics.part.PartTypeRedstoneWriter;
 
 /**
@@ -34,6 +34,6 @@ public class ItemPartRedstoneWriterConfig extends ItemConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return new ItemPart<PartTypeRedstoneWriter, DefaultPartState<PartTypeRedstoneWriter>>(this, PartTypes.REDSTONE_WRITER);
+        return new ItemPart<PartTypeRedstoneWriter, DefaultPartStateWriter<PartTypeRedstoneWriter>>(this, PartTypes.REDSTONE_WRITER);
     }
 }

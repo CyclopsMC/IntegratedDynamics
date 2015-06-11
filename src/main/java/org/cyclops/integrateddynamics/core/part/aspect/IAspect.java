@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.part.aspect;
 
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
@@ -36,13 +37,14 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
     /**
      * Called inside part types for updating a part on a block.
+     * @param network The network to update in.
      * @param partType The part type.
      * @param target The position that is targeted by the given part.
      * @param state The current state of the given part.
      * @param <P> The part type type.
      * @param <S> The part state.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(P partType, PartTarget target, S state);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(Network network, P partType, PartTarget target, S state);
 
     /**
      * Use this comparator for any comparisons with aspects.

@@ -34,6 +34,7 @@ import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
 import org.cyclops.integrateddynamics.core.block.ICollidableParent;
+import org.cyclops.integrateddynamics.core.block.IDynamicRedstoneBlock;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.core.block.cable.ICableNetwork;
@@ -58,7 +59,7 @@ import java.util.*;
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<CablePathElement>,
         ICableFakeable<CablePathElement>, ICableWithParts<CablePathElement>, INetworkElementProvider,
-        IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent {
+        IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock {
 
     // Properties
     @BlockProperty
@@ -533,6 +534,52 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public MovingObjectPosition collisionRayTraceParent(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
         return super.collisionRayTrace(world, pos, origin, direction);
+    }
+
+    @Override
+    public void disableRedstoneAt(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        if(tile != null) {
+            tile.disableRedstoneLevel(side);
+        }
+    }
+
+    @Override
+    public void setRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side, int level) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        if(tile != null) {
+            tile.setRedstoneLevel(side, level);
+        }
+    }
+
+    @Override
+    public int getRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        if(tile != null) {
+            return tile.getRedstoneLevel(side);
+        }
+        return -1;
+    }
+
+    @Override
+    public boolean canProvidePower() {
+        return true;
+    }
+
+    @Override
+    public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return getRedstoneLevel(world, pos, side.getOpposite()) >= 0;
+    }
+
+    @Override
+    public int isProvidingStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+        int level = getRedstoneLevel(world, pos, side);
+        return level < 0 ? 0 : level;
+    }
+
+    @Override
+    public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+        return isProvidingStrongPower(world, pos, state, side.getOpposite());
     }
 
 }

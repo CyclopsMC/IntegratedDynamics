@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
+import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
@@ -24,6 +25,13 @@ import java.util.Set;
  * @author rubensworks
  */
 public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
+
+    /**
+     * Get the part type class.
+     * This is used for doing dynamic construction of guis.
+     * @return The actual class for this part type.
+     */
+    public Class<? super P> getPartTypeClass();
 
     /**
      * @return The unique name for this part type.
@@ -86,23 +94,28 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public boolean isUpdate(S state);
 
     /**
+     * @param network The network to update in.
      * @param state The state
      * @param target The target block.
      * Update at the tick interval specified.
      */
-    public void update(PartTarget target, S state);
+    public void update(Network network, PartTarget target, S state);
 
     /**
+     * @param network The network to update in.
      * @param state The state
+     * @param target The target block.
      * Called right before the network is terminated or will be reset.
      */
-    public void beforeNetworkKill(S state);
+    public void beforeNetworkKill(Network network, PartTarget target, S state);
 
     /**
+     * @param network The network to update in.
      * @param state The state
+     * @param target The target block.
      * Called right after this network is initialized.
      */
-    public void afterNetworkAlive(S state);
+    public void afterNetworkAlive(Network network, PartTarget target, S state);
 
     /**
      * Get the itemstack from the given state.

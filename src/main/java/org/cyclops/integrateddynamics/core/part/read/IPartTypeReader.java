@@ -2,24 +2,23 @@ package org.cyclops.integrateddynamics.core.part.read;
 
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * A part type for readers.
  * @author rubensworks
  */
-public interface IPartTypeReader<P extends IPartTypeReader<P, S>, S extends IPartState<P>> extends IPartType<P, S> {
+public interface IPartTypeReader<P extends IPartTypeReader<P, S>, S extends IPartStateReader<P>> extends IPartType<P, S> {
 
     /**
      * @return All possible read aspects that can be used in this part type.
      */
-    public Set<IAspectRead> getReadAspects();
+    public List<IAspectRead> getReadAspects();
 
     /**
      * Get the singleton variable for an aspect.

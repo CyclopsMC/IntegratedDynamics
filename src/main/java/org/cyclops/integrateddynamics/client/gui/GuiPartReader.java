@@ -8,10 +8,10 @@ import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
 import org.cyclops.integrateddynamics.item.ItemVariable;
@@ -22,7 +22,7 @@ import java.awt.*;
  * Gui for a reader part.
  * @author rubensworks
  */
-public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvider, S extends IPartState<P>>
+public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvider, S extends IPartStateReader<P>>
         extends GuiMultipart<P, S, IAspectRead> {
 
     private long lastUpdate = -1;
@@ -52,7 +52,7 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
         // Client-side, so we need to do a manual part update, but not every frame refresh.
         if(Minecraft.getMinecraft().theWorld.getWorldTime() > lastUpdate) {
             lastUpdate = Minecraft.getMinecraft().theWorld.getWorldTime();
-            getPartType().update(getTarget(), getPartState());
+            getPartType().update(null, getTarget(), getPartState());
         }
         IAspectVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspect);
         String value = variable.getType().toCompactString(variable.getValue());

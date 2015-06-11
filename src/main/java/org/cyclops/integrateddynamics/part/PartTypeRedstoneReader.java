@@ -3,9 +3,9 @@ package org.cyclops.integrateddynamics.part;
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
 import org.cyclops.integrateddynamics.block.ReaderConfig;
-import org.cyclops.integrateddynamics.core.part.DefaultPartState;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
  * A redstone reader part.
  * @author rubensworks
  */
-public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneReader, DefaultPartState<PartTypeRedstoneReader>> {
+public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneReader, DefaultPartStateReader<PartTypeRedstoneReader>> {
 
     public PartTypeRedstoneReader(String name) {
         super(name);
@@ -26,12 +26,12 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     }
 
     @Override
-    public DefaultPartState<PartTypeRedstoneReader> constructDefaultState() {
-        return new DefaultPartState<PartTypeRedstoneReader>();
+    public DefaultPartStateReader<PartTypeRedstoneReader> constructDefaultState() {
+        return new DefaultPartStateReader<PartTypeRedstoneReader>();
     }
 
     @Override
-    public int getUpdateInterval(DefaultPartState<PartTypeRedstoneReader> state) {
+    public int getUpdateInterval(DefaultPartStateReader<PartTypeRedstoneReader> state) {
         return 10;
     }
 

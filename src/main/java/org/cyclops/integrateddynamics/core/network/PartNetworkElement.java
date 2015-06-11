@@ -57,18 +57,18 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void update() {
-        part.update(getTarget(), getPartState());
+    public void update(Network network) {
+        part.update(network, getTarget(), getPartState());
     }
 
     @Override
-    public void beforeNetworkKill() {
-        part.beforeNetworkKill(getPartState());
+    public void beforeNetworkKill(Network network) {
+        part.beforeNetworkKill(network, target, getPartState());
     }
 
     @Override
-    public void afterNetworkAlive() {
-        part.afterNetworkAlive(getPartState());
+    public void afterNetworkAlive(Network network) {
+        part.afterNetworkAlive(network, target, getPartState());
     }
 
     @Override

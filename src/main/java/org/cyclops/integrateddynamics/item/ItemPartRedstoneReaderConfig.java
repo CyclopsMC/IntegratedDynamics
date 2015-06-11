@@ -4,8 +4,8 @@ import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
-import org.cyclops.integrateddynamics.core.part.DefaultPartState;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
 import org.cyclops.integrateddynamics.part.PartTypeRedstoneReader;
 
 /**
@@ -34,6 +34,6 @@ public class ItemPartRedstoneReaderConfig extends ItemConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return new ItemPart<PartTypeRedstoneReader, DefaultPartState<PartTypeRedstoneReader>>(this, PartTypes.REDSTONE_READER);
+        return new ItemPart<PartTypeRedstoneReader, DefaultPartStateReader<PartTypeRedstoneReader>>(this, PartTypes.REDSTONE_READER);
     }
 }

@@ -25,18 +25,21 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Update at the tick interval specified.
+     * @param network The network to update in.
      */
-    public void update();
+    public void update(Network network);
 
     /**
      * Called right before the network is terminated or will be reset.
+     * @param network The network to update in.
      */
-    public void beforeNetworkKill();
+    public void beforeNetworkKill(Network network);
 
     /**
      * Called right after this network is initialized.
+     * @param network The network to update in.
      */
-    public void afterNetworkAlive();
+    public void afterNetworkAlive(Network network);
 
     /**
      * Add the itemstacks to drop when this element is removed.
