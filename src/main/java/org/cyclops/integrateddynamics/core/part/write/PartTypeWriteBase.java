@@ -68,7 +68,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @SuppressWarnings("unchecked")
     @Override
     public <V extends IValue> IVariable<V> getActiveVariable(Network network, PartTarget target, S partState) {
-        Pair<Integer, IAspect> aspectInfo = partState.getCurrentAspectInfo();
+        Pair<Integer, IAspect> aspectInfo = partState.getCurrentAspectInfo(network);
         if(aspectInfo != null && aspectInfo.getRight() instanceof IAspectRead && network.hasPart(aspectInfo.getLeft())) {
             return network.getVariable(aspectInfo.getLeft(), (IAspectRead) aspectInfo.getRight());
         }
@@ -92,6 +92,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         }
         IAspectWrite aspect = activeIndex == -1 ? null : getWriteAspects().get(activeIndex);
         partState.triggerAspectInfoUpdate((P) this, target, aspect);
+    }
+
+    @Override
+    public List<String> getLocalizedErrorMessage(S state, IAspect aspect) {
+        return null;
     }
 
     @Override

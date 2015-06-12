@@ -69,6 +69,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
 
         // Draw aspects
         ContainerMultipart<P, S, A> container = (ContainerMultipart) getScrollingInventoryContainer();
+        int aspectBoxHeight = container.getAspectBoxHeight();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
                 GlStateManager.disableAlpha();
@@ -77,15 +78,14 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                 // Background
                 mc.renderEngine.bindTexture(texture);
                 drawTexturedModalRect(guiLeft + offsetX + 9,
-                        guiTop + offsetY + 18 + (ContainerMultipart.ASPECT_BOX_HEIGHT) * i, 0, 213, 160,
-                        ContainerMultipart.ASPECT_BOX_HEIGHT - 1);
+                        guiTop + offsetY + 18 + aspectBoxHeight * i, 0, 213, 160, aspectBoxHeight - 1);
 
                 // Aspect type info
                 A aspect = container.getVisibleElement(i);
                 String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
                         this.guiLeft + offsetX + 26,
-                        this.guiTop + offsetY + 25 + ContainerMultipart.ASPECT_BOX_HEIGHT * i,
+                        this.guiTop + offsetY + 25 + aspectBoxHeight * i,
                         60, Helpers.RGBToInt(40, 40, 40));
 
                 drawAdditionalElementInfo(container, i, aspect);
@@ -97,7 +97,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
 
     protected Rectangle getElementPosition(ContainerMultipart<P, S, A> container, int i, boolean absolute) {
         return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.guiLeft : 0),
-                             ITEM_POSITION.y + ContainerMultipart.ASPECT_BOX_HEIGHT * i + offsetY + (absolute ? this.guiTop : 0),
+                             ITEM_POSITION.y + container.getAspectBoxHeight() * i + offsetY + (absolute ? this.guiTop : 0),
                              ITEM_POSITION.width, ITEM_POSITION.height
         );
     }
@@ -112,8 +112,12 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                     container.getVisibleElement(i).loadTooltip(lines, true);
                     drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
                 }
+                drawAdditionalElementInfoForeground(container, i, container.getVisibleElement(i), mouseX, mouseY);
             }
         }
     }
+
+    protected abstract void drawAdditionalElementInfoForeground(ContainerMultipart<P, S, A> container, int index,
+                                                                A aspect, int mouseX, int mouseY);
 
 }

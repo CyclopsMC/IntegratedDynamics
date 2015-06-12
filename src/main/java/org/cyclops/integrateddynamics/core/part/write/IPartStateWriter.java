@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.part.write;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
@@ -22,8 +23,9 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
 
     /**
      * @return A pair of the source part id and part aspect to get the variable for.
+     * @param network The network this part belongs to.
      */
-    public Pair<Integer, IAspect> getCurrentAspectInfo();
+    public Pair<Integer, IAspect> getCurrentAspectInfo(Network network);
 
     /**
      * Indicate that this state should eventually recheck its aspect info because something might have changed what can

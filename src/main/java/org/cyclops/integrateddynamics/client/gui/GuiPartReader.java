@@ -45,19 +45,30 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
     }
 
     @Override
-    protected void drawAdditionalElementInfo(ContainerMultipart container, int index, IAspectRead aspect) {
-        FontRenderer fontRenderer = fontRendererObj;
+    protected void drawAdditionalElementInfoForeground(ContainerMultipart<P, S, IAspectRead> container, int index, IAspectRead aspect, int mouseX, int mouseY) {
 
-        // Current aspect value
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         // Client-side, so we need to do a manual part update, but not every frame refresh.
         if(Minecraft.getMinecraft().theWorld.getWorldTime() > lastUpdate) {
             lastUpdate = Minecraft.getMinecraft().theWorld.getWorldTime();
             getPartType().update(null, getTarget(), getPartState());
         }
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    }
+
+    @Override
+    protected void drawAdditionalElementInfo(ContainerMultipart container, int index, IAspectRead aspect) {
+        FontRenderer fontRenderer = fontRendererObj;
+
+        // Current aspect value
         IAspectVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspect);
         String value = variable.getType().toCompactString(variable.getValue());
         fontRenderer.drawString(value, this.guiLeft + offsetX + 16,
-                this.guiTop + offsetY + 35 + ContainerMultipart.ASPECT_BOX_HEIGHT * index,
+                this.guiTop + offsetY + 35 + container.getAspectBoxHeight() * index,
                 variable.getType().getDisplayColor());
 
         // Render target item

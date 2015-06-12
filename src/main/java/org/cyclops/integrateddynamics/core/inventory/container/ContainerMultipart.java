@@ -12,14 +12,12 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
-import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.List;
@@ -35,7 +33,6 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         extends ScrollingInventoryContainer<A> implements IDirtyMarkListener {
 
     private static final int PAGE_SIZE = 3;
-    public static final int ASPECT_BOX_HEIGHT = 36;
 
     private final PartTarget target;
     private final IPartContainer partContainer;
@@ -71,11 +68,9 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         this.pos = player.getPosition();
 
         this.inputSlots = constructInputSlotsInventory();
-        for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            addSlotToContainer(new SlotSingleItem(inputSlots, i, 96, 27 + ASPECT_BOX_HEIGHT * i, ItemVariable.getInstance()));
-            disableSlot(i);
-        }
     }
+
+    public abstract int getAspectBoxHeight();
 
     protected IInventory constructInputSlotsInventory() {
         SimpleInventory inventory = new SimpleInventory(getUnfilteredItemCount(), "temporaryInputSlots", 1);
@@ -91,11 +86,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         slot.yDisplayPosition = Integer.MIN_VALUE;
     }
 
-    protected void enableSlot(int slotIndex, int row) {
-        Slot slot = getSlot(slotIndex);
-        slot.xDisplayPosition = 96;
-        slot.yDisplayPosition = 27 + ASPECT_BOX_HEIGHT * row;
-    }
+    protected abstract void enableSlot(int slotIndex, int row);
 
     @Override
     public int getPageSize() {

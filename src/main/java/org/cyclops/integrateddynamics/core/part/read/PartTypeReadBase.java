@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
@@ -51,6 +52,11 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
             partState.setVariable(aspect, variable);
         }
         return variable;
+    }
+
+    @Override
+    public List<String> getLocalizedErrorMessage(S state, IAspect aspect) {
+        return null;
     }
 
     @Override

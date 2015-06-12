@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.DefaultPartState;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
@@ -35,7 +36,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     }
 
     @Override
-    public Pair<Integer, IAspect> getCurrentAspectInfo() {
+    public Pair<Integer, IAspect> getCurrentAspectInfo(Network network) {
         if(!checkedForWriteVariable) {
             for(int slot = 0; slot < getInventory().getSizeInventory(); slot++) {
                 ItemStack itemStack = getInventory().getStackInSlot(slot);

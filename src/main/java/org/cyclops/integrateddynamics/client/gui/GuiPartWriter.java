@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
@@ -10,6 +11,10 @@ import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
+import org.cyclops.integrateddynamics.item.ItemVariable;
+
+import java.awt.*;
+
 
 /**
  * Gui for a writer part.
@@ -17,8 +22,6 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
  */
 public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvider, S extends IPartStateWriter<P>>
         extends GuiMultipart<P, S, IAspectWrite> {
-
-    private long lastUpdate = -1;
 
     /**
      * Make a new instance.
@@ -34,12 +37,23 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
 
     @Override
     protected String getNameId() {
-        return "partReader";
+        return "partWriter";
+    }
+
+    @Override
+    protected void drawAdditionalElementInfoForeground(ContainerMultipart<P, S, IAspectWrite> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
+
     }
 
     @Override
     protected void drawAdditionalElementInfo(ContainerMultipart container, int index, IAspectWrite aspect) {
-        // Do nothing
+        int aspectBoxHeight = container.getAspectBoxHeight();
+
+        // Render dummy target item
+        // This could be cached if this would prove to be a bottleneck
+        ItemStack itemStack = container.writeAspectInfo(new ItemStack(ItemVariable.getInstance()), aspect);
+        Rectangle pos = getElementPosition(container, index, true);
+        itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
     }
 
     @Override

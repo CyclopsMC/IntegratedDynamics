@@ -36,4 +36,5 @@ public class DefaultPartStateReader<P extends IPartTypeReader>
     public Class<? extends IPartState> getPartStateClass() {
         return IPartStateReader.class;
     }
+
 }

@@ -7,12 +7,14 @@ import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
+import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
+import org.cyclops.integrateddynamics.item.ItemVariable;
 
 /**
  * Container for reader parts.
@@ -20,6 +22,8 @@ import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
  */
 public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvider, S extends IPartStateReader<P>>
         extends ContainerMultipart<P, S, IAspectRead> {
+
+    public static final int ASPECT_BOX_HEIGHT = 36;
 
     private final IInventory outputSlots;
 
@@ -34,13 +38,30 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     public ContainerPartReader(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType, S partState) {
         super(player, partTarget, partContainer, partType, partState, partType.getReadAspects());
 
+        for(int i = 0; i < getUnfilteredItemCount(); i++) {
+            addSlotToContainer(new SlotSingleItem(inputSlots, i, 96, 27 + getAspectBoxHeight() * i, ItemVariable.getInstance()));
+            disableSlot(i);
+        }
+
         this.outputSlots = new SimpleInventory(getUnfilteredItemCount(), "temporaryOutputSlots", 1);
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            addSlotToContainer(new SlotRemoveOnly(outputSlots, i, 144, 27 + ASPECT_BOX_HEIGHT * i));
+            addSlotToContainer(new SlotRemoveOnly(outputSlots, i, 144, 27 + getAspectBoxHeight() * i));
             disableSlot(i + getUnfilteredItemCount());
         }
 
         addPlayerInventory(player.inventory, 9, 131);
+    }
+
+    @Override
+    public int getAspectBoxHeight() {
+        return ASPECT_BOX_HEIGHT;
+    }
+
+    @Override
+    protected void enableSlot(int slotIndex, int row) {
+        Slot slot = getSlot(slotIndex);
+        slot.xDisplayPosition = 96;
+        slot.yDisplayPosition = 27 + getAspectBoxHeight() * row;
     }
 
     protected void disableSlotOutput(int slotIndex) {
@@ -54,7 +75,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     protected void enableSlotOutput(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex + getUnfilteredItemCount());
         slot.xDisplayPosition = 144;
-        slot.yDisplayPosition = 27 + ASPECT_BOX_HEIGHT * row;
+        slot.yDisplayPosition = 27 + getAspectBoxHeight() * row;
     }
 
     @Override
