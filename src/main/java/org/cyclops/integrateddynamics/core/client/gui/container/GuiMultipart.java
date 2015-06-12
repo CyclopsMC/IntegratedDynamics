@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -57,6 +58,10 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                + getNameId() + ".png";
     }
 
+    protected float colorSmoothener(float color) {
+        return 1F - ((1F - color) / 4F);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
@@ -72,8 +77,12 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         int aspectBoxHeight = container.getAspectBoxHeight();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
+                A aspect = container.getVisibleElement(i);
+
                 GlStateManager.disableAlpha();
-                GlStateManager.color(1, 1, 1, 1);
+                Triple<Float, Float, Float> rgb = Helpers.intToRGB(aspect.getValueType().getDisplayColor());
+                GlStateManager.color(colorSmoothener(rgb.getLeft()), colorSmoothener(rgb.getMiddle()),
+                        colorSmoothener(rgb.getRight()), 1);
 
                 // Background
                 mc.renderEngine.bindTexture(texture);
@@ -81,7 +90,6 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                         guiTop + offsetY + 18 + aspectBoxHeight * i, 0, 213, 160, aspectBoxHeight - 1);
 
                 // Aspect type info
-                A aspect = container.getVisibleElement(i);
                 String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
                         this.guiLeft + offsetX + 26,
