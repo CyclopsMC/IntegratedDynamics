@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
-import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -62,7 +61,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     @Override
     public List<IAspectWrite> getWriteAspects() {
-        return Lists.newArrayList(Aspects.REGISTRY.getWriteAspects(this));
+        return Aspects.REGISTRY.getWriteAspects(this);
     }
 
     @SuppressWarnings("unchecked")

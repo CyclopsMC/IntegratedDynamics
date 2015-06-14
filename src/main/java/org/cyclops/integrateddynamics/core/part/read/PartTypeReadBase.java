@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.part.read;
 
-import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,7 +34,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
 
     @Override
     public List<IAspectRead> getReadAspects() {
-        return Lists.newArrayList(Aspects.REGISTRY.getReadAspects(this));
+        return Aspects.REGISTRY.getReadAspects(this);
     }
 
     @Override
