@@ -35,7 +35,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     private Map<String, L10NHelpers.UnlocalizedString> errorMessages = Maps.newHashMap();
 
     public DefaultPartStateWriter(int inventorySize) {
-        this.inventory = new SimpleInventory(inventorySize, "stateInventory", 1);
+        this.inventory = new SingularInventory(inventorySize);
         this.inventory.addDirtyMarkListener(this); // No need to remove myself eventually. If I am removed, inv is also removed.
     }
 
@@ -119,6 +119,36 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         inventory.readFromNBT(tag);
+    }
+
+    /**
+     * An inventory that can only hold one filled slot at a time.
+     */
+    public static class SingularInventory extends SimpleInventory {
+
+        /**
+         * Make a new instance.
+         *
+         * @param size The amount of slots in the inventory.
+         */
+        public SingularInventory(int size) {
+            super(size, "stateInventory", 1);
+        }
+
+        protected boolean canInsert() {
+            for (int i = 0; i < getSizeInventory(); i++) {
+                if (getStackInSlot(i) != null) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+            return canInsert() && super.isItemValidForSlot(i, itemstack);
+        }
+
     }
 
 }
