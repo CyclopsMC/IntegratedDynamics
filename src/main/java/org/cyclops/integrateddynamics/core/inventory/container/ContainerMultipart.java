@@ -80,6 +80,13 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         return inventory;
     }
 
+    @Override
+    public void onContainerClosed(EntityPlayer player) {
+        if(inputSlots instanceof SimpleInventory) {
+            ((SimpleInventory) inputSlots).removeDirtyMarkListener(this);
+        }
+    }
+
     protected void disableSlot(int slotIndex) {
         Slot slot = getSlot(slotIndex);
         // Yes I know this is ugly.

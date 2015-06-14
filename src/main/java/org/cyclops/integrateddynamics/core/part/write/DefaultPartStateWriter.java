@@ -36,7 +36,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
 
     public DefaultPartStateWriter(int inventorySize) {
         this.inventory = new SimpleInventory(inventorySize, "stateInventory", 1);
-        this.inventory.addDirtyMarkListener(this);
+        this.inventory.addDirtyMarkListener(this); // No need to remove myself eventually. If I am removed, inv is also removed.
     }
 
     @Override
