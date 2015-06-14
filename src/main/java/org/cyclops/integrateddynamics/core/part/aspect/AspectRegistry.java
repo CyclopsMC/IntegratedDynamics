@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part.aspect;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -13,10 +14,7 @@ import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Registry for {@link org.cyclops.integrateddynamics.core.part.aspect.IAspect}.
@@ -29,6 +27,8 @@ public final class AspectRegistry implements IAspectRegistry {
     private Map<IPartType, Set<IAspect>> partAspects = Maps.newHashMap();
     private Map<IPartType, Set<IAspectRead>> partReadAspects = Maps.newHashMap();
     private Map<IPartType, Set<IAspectWrite>> partWriteAspects = Maps.newHashMap();
+    private Map<IPartType, List<IAspectRead>> partReadAspectsListTransform = Maps.newHashMap();
+    private Map<IPartType, List<IAspectWrite>> partWriteAspectsListTransform = Maps.newHashMap();
     private Map<String, IAspect> unlocalizedAspects = Maps.newHashMap();
     private Map<String, IAspectRead> unlocalizedReadAspects = Maps.newHashMap();
     private Map<String, IAspectWrite> unlocalizedWriteAspects = Maps.newHashMap();
@@ -51,9 +51,11 @@ public final class AspectRegistry implements IAspectRegistry {
         registerSubAspectType(partType, aspect, partAspects, unlocalizedAspects);
         if(aspect instanceof IAspectRead) {
             registerSubAspectType(partType, (IAspectRead) aspect, partReadAspects, unlocalizedReadAspects);
+            partReadAspectsListTransform.put(partType, Lists.newArrayList(partReadAspects.get(partType)));
         }
         if(aspect instanceof IAspectWrite) {
             registerSubAspectType(partType, (IAspectWrite) aspect, partWriteAspects, unlocalizedWriteAspects);
+            partWriteAspectsListTransform.put(partType, Lists.newArrayList(partWriteAspects.get(partType)));
         }
         return aspect;
     }
@@ -85,13 +87,13 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public Set<IAspectRead> getReadAspects(IPartType partType) {
-        return partReadAspects.get(partType);
+    public List<IAspectRead> getReadAspects(IPartType partType) {
+        return partReadAspectsListTransform.get(partType);
     }
 
     @Override
-    public Set<IAspectWrite> getWriteAspects(IPartType partType) {
-        return partWriteAspects.get(partType);
+    public List<IAspectWrite> getWriteAspects(IPartType partType) {
+        return partWriteAspectsListTransform.get(partType);
     }
 
     @Override

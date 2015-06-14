@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,14 +45,14 @@ public interface IAspectRegistry extends IRegistry {
      * @param partType The part type.
      * @return The read aspects.
      */
-    public Set<IAspectRead> getReadAspects(IPartType partType);
+    public List<IAspectRead> getReadAspects(IPartType partType);
 
     /**
      * Get the registered write aspects for a given part type.
      * @param partType The part type.
      * @return The write aspects.
      */
-    public Set<IAspectWrite> getWriteAspects(IPartType partType);
+    public List<IAspectWrite> getWriteAspects(IPartType partType);
 
     /**
      * Get all registered aspects.
