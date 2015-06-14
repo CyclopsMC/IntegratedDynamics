@@ -37,7 +37,6 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     private final PartTarget target;
     private final IPartContainer partContainer;
     private final P partType;
-    private final S partState;
     private final World world;
     private final BlockPos pos;
 
@@ -49,9 +48,8 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
      * @param player The player.
      * @param partContainer The part container.
      * @param partType The part type.
-     * @param partState The part state.
      */
-    public ContainerMultipart(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType, S partState, List<A> items) {
+    public ContainerMultipart(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType, List<A> items) {
         super(player.inventory, partType, items, new IItemPredicate<A>() {
             @Override
             public boolean apply(A item, Pattern pattern) {
@@ -63,11 +61,15 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
-        this.partState = partState;
         this.world = player.getEntityWorld();
         this.pos = player.getPosition();
 
         this.inputSlots = constructInputSlotsInventory();
+    }
+
+    @SuppressWarnings("unchecked")
+    public S getPartState() {
+        return (S) partContainer.getPartState(getTarget().getCenter().getSide());
     }
 
     public abstract int getAspectBoxHeight();

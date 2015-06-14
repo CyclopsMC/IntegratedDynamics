@@ -6,6 +6,8 @@ import net.minecraft.nbt.NBTTagCompound;
  * A value holder for an {@link IPartType}.
  * This is what will be serialized from and to NBT.
  * This object is mutable and should not be recreated.
+ * Note that you should be careful when passing around this state, because when the server sends an update to the
+ * client, this state could be overwritten with a new version, so always try to use the part container to get the state.
  * @author rubensworks
  */
 public interface IPartState<P extends IPartType> {
@@ -47,5 +49,11 @@ public interface IPartState<P extends IPartType> {
      * @return If this state has changed since the last time and needs to be persisted to NBT eventually.
      */
     public boolean isDirtyAndReset();
+
+    /**
+     * Check if this part state should update and reset the flag.
+     * @return If this state has changed since the last time and needs to be updated to the client.
+     */
+    public boolean isUpdateAndReset();
 
 }

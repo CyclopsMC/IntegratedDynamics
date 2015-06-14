@@ -33,10 +33,9 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
      * @param player The player.
      * @param partContainer The part container.
      * @param partType The targeted part type.
-     * @param partState The targeted part state.
      */
-    public GuiPartReader(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType, S partState) {
-        super(new ContainerPartReader<P, S>(player, partTarget, partContainer, partType, partState));
+    public GuiPartReader(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType) {
+        super(new ContainerPartReader<P, S>(player, partTarget, partContainer, partType));
     }
 
     @Override

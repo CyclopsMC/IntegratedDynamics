@@ -95,11 +95,6 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public List<String> getLocalizedErrorMessage(S state, IAspect aspect) {
-        return null;
-    }
-
-    @Override
     public Class<? extends Container> getContainer() {
         return ContainerPartWriter.class;
     }

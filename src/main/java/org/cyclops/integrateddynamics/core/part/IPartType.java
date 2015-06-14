@@ -177,12 +177,4 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                         int destroyStage);
 
-    /**
-     * Get an optional error message for the given aspect in this part.
-     * @param state The part state.
-     * @param aspect The aspect to get the errors from.
-     * @return The list of errors, or null if not applicable.
-     */
-    public List<String> getLocalizedErrorMessage(S state, IAspect aspect);
-
 }

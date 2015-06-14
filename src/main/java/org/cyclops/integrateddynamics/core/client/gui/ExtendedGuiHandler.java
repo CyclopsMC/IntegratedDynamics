@@ -7,14 +7,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Triple;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.client.gui.GuiHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 
@@ -37,15 +36,14 @@ public class ExtendedGuiHandler extends GuiHandler {
             public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z,
                                               Class<? extends Container> containerClass, EnumFacing side) {
                 try {
-                    Triple<IPartContainer, IPartType, IPartState> data = getPartConstructionData(world,
+                    Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
                             new BlockPos(x, y, z), side);
                     if(data == null) return null;
                     Constructor<? extends Container> containerConstructor = containerClass.getConstructor(
                             EntityPlayer.class, PartTarget.class, IPartContainer.class,
-                            data.getMiddle().getPartTypeClass(), data.getRight().getPartStateClass());
+                            data.getRight().getPartTypeClass());
                     return containerConstructor.newInstance(player,
-                           PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(), data.getMiddle(),
-                           data.getRight());
+                           PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(), data.getRight());
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException
                         | NoSuchMethodException e) {
                     e.printStackTrace();
@@ -59,15 +57,15 @@ public class ExtendedGuiHandler extends GuiHandler {
                 public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z,
                                                   Class<? extends GuiScreen> guiClass, EnumFacing side) {
                     try {
-                        Triple<IPartContainer, IPartType, IPartState> data = getPartConstructionData(world,
+                        Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
                                 new BlockPos(x, y, z), side);
                         if(data == null) return null;
                         Constructor<? extends GuiScreen> guiConstructor = guiClass.getConstructor(
                                 EntityPlayer.class, PartTarget.class, IPartContainer.class,
-                                data.getMiddle().getPartTypeClass(), data.getRight().getPartStateClass());
+                                data.getRight().getPartTypeClass());
                         return guiConstructor.newInstance(player,
                                PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(),
-                               data.getMiddle(), data.getRight());
+                               data.getRight());
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         e.printStackTrace();
                     }
@@ -77,7 +75,7 @@ public class ExtendedGuiHandler extends GuiHandler {
         }
     }
 
-    private static Triple<IPartContainer, IPartType, IPartState> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
+    private static Pair<IPartContainer, IPartType> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
         TileEntity tileEntity = world.getTileEntity(pos);
         if(!(tileEntity instanceof IPartContainer)) {
             IntegratedDynamics.clog(Level.WARN, String.format("The tile at %s is not a valid part container.", pos));
@@ -90,8 +88,7 @@ public class ExtendedGuiHandler extends GuiHandler {
                             "have a valid part.", pos, side));
             return null;
         }
-        IPartState partState = partContainer.getPartState(side);
-        return Triple.of(partContainer, partType, partState);
+        return Pair.of(partContainer, partType);
     }
 
     public ExtendedGuiHandler(ModBase mod) {

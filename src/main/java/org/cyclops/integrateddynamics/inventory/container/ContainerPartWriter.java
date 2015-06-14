@@ -23,18 +23,20 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
 
     public static final int ASPECT_BOX_HEIGHT = 18;
     private static final int PAGE_SIZE = 6;
+    private static final int SLOT_X = 131;
+    private static final int SLOT_Y = 18;
+
     /**
      * Make a new instance.
      * @param partTarget    The target.
      * @param player        The player.
      * @param partContainer The part container.
      * @param partType      The part type.
-     * @param partState     The part state.
      */
-    public ContainerPartWriter(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType, S partState) {
-        super(player, partTarget, partContainer, partType, partState, partType.getWriteAspects());
+    public ContainerPartWriter(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType) {
+        super(player, partTarget, partContainer, partType, partType.getWriteAspects());
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            addSlotToContainer(new SlotSingleItem(inputSlots, i, 144, 18 + ASPECT_BOX_HEIGHT * i, ItemVariable.getInstance()));
+            addSlotToContainer(new SlotSingleItem(inputSlots, i, SLOT_X, SLOT_Y + getAspectBoxHeight() * i, ItemVariable.getInstance()));
             disableSlot(i);
         }
 
@@ -54,8 +56,8 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     @Override
     protected void enableSlot(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex);
-        slot.xDisplayPosition = 144;
-        slot.yDisplayPosition = 18 + ASPECT_BOX_HEIGHT * row;
+        slot.xDisplayPosition = SLOT_X;
+        slot.yDisplayPosition = SLOT_Y + ASPECT_BOX_HEIGHT * row;
     }
 
     @Override

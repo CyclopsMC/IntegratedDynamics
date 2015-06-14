@@ -36,7 +36,6 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
     private final PartTarget target;
     private final IPartContainer partContainer;
     private final P partType;
-    private final S partState;
 
     /**
      * Make a new instance.
@@ -47,7 +46,11 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         this.target = container.getTarget();
         this.partContainer = container.getPartContainer();
         this.partType = container.getPartType();
-        this.partState = container.getPartState();
+    }
+
+    @SuppressWarnings("unchecked")
+    public S getPartState() {
+        return ((ContainerMultipart<P, S, A>) container).getPartState();
     }
 
     protected abstract String getNameId();

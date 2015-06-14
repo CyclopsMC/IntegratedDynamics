@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
@@ -40,5 +41,19 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      * @return The currently active aspect for this part, can be null.
      */
     public IAspectWrite getActiveAspect();
+
+    /**
+     * Get the current error for the given aspect.
+     * @param aspect The aspect to get the error from.
+     * @return The current error, can be null if N/A.
+     */
+    public L10NHelpers.UnlocalizedString getError(IAspectWrite aspect);
+
+    /**
+     * Set the current error for the given aspect.
+     * @param aspect The aspect to set the error for.
+     * @param error The error to set, or null to clear.
+     */
+    public void setError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error);
 
 }

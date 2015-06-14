@@ -284,10 +284,15 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
             updateCableConnections();
         }
 
-        // Loop over all part states to check their dirtiness
-        for(PartStateHolder<?, ?> partStateHolder : partData.values()) {
-            if(partStateHolder.getState().isDirtyAndReset()) {
-                markDirty();
+        if(!MinecraftHelpers.isClientSide()) {
+            // Loop over all part states to check their dirtiness
+            for (PartStateHolder<?, ?> partStateHolder : partData.values()) {
+                if (partStateHolder.getState().isDirtyAndReset()) {
+                    markDirty();
+                }
+                if (partStateHolder.getState().isUpdateAndReset()) {
+                    sendUpdate();
+                }
             }
         }
     }

@@ -38,7 +38,9 @@ public class AspectWriteBooleanRedstone extends AspectWriteBooleanBase {
         super.onDeactivate(partType, target, state);
         DimPos dimPos = target.getCenter().getPos();
         IDynamicRedstoneBlock block = getDynamicRedstoneBlock(dimPos);
-        block.disableRedstoneAt(dimPos.getWorld(), dimPos.getBlockPos(), target.getCenter().getSide());
+        if(block != null) {
+            block.disableRedstoneAt(dimPos.getWorld(), dimPos.getBlockPos(), target.getCenter().getSide());
+        }
     }
 
     protected IDynamicRedstoneBlock getDynamicRedstoneBlock(DimPos dimPos) {

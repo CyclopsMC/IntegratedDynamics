@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 public abstract class DefaultPartState<P extends IPartType> implements IPartState<P>, INBTProvider, IDirtyMarkListener {
 
     private boolean dirty = false;
+    private boolean update = false;
     @Delegate
     private INBTProvider nbtProviderComponent = new NBTProviderComponent(this);
     @NBTPersist
@@ -49,8 +50,22 @@ public abstract class DefaultPartState<P extends IPartType> implements IPartStat
     }
 
     @Override
+    public boolean isUpdateAndReset() {
+        boolean wasUpdate = this.update;
+        this.update = false;
+        return wasUpdate;
+    }
+
+    @Override
     public void onDirty() {
         this.dirty = true;
+    }
+
+    /**
+     * Enables a flag that tells the part container to send an NBT update to the client(s).
+     */
+    public void sendUpdate() {
+        this.update = true;
     }
 
 }

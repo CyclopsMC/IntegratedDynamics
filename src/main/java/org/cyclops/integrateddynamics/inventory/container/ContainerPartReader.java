@@ -24,6 +24,10 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
         extends ContainerMultipart<P, S, IAspectRead> {
 
     public static final int ASPECT_BOX_HEIGHT = 36;
+    private static final int SLOT_IN_X = 96;
+    private static final int SLOT_IN_Y = 27;
+    private static final int SLOT_OUT_X = 144;
+    private static final int SLOT_OUT_Y = 27;
 
     private final IInventory outputSlots;
 
@@ -33,19 +37,18 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
      * @param player        The player.
      * @param partContainer The part container.
      * @param partType      The part type.
-     * @param partState     The part state.
      */
-    public ContainerPartReader(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType, S partState) {
-        super(player, partTarget, partContainer, partType, partState, partType.getReadAspects());
+    public ContainerPartReader(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType) {
+        super(player, partTarget, partContainer, partType, partType.getReadAspects());
 
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            addSlotToContainer(new SlotSingleItem(inputSlots, i, 96, 27 + getAspectBoxHeight() * i, ItemVariable.getInstance()));
+            addSlotToContainer(new SlotSingleItem(inputSlots, i, SLOT_IN_X, SLOT_IN_Y + getAspectBoxHeight() * i, ItemVariable.getInstance()));
             disableSlot(i);
         }
 
         this.outputSlots = new SimpleInventory(getUnfilteredItemCount(), "temporaryOutputSlots", 1);
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            addSlotToContainer(new SlotRemoveOnly(outputSlots, i, 144, 27 + getAspectBoxHeight() * i));
+            addSlotToContainer(new SlotRemoveOnly(outputSlots, i, SLOT_OUT_X, SLOT_OUT_Y + getAspectBoxHeight() * i));
             disableSlot(i + getUnfilteredItemCount());
         }
 
@@ -60,8 +63,8 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     @Override
     protected void enableSlot(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex);
-        slot.xDisplayPosition = 96;
-        slot.yDisplayPosition = 27 + getAspectBoxHeight() * row;
+        slot.xDisplayPosition = SLOT_IN_X;
+        slot.yDisplayPosition = SLOT_IN_Y + getAspectBoxHeight() * row;
     }
 
     protected void disableSlotOutput(int slotIndex) {
@@ -74,8 +77,8 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
 
     protected void enableSlotOutput(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex + getUnfilteredItemCount());
-        slot.xDisplayPosition = 144;
-        slot.yDisplayPosition = 27 + getAspectBoxHeight() * row;
+        slot.xDisplayPosition = SLOT_OUT_X;
+        slot.yDisplayPosition = SLOT_OUT_Y + getAspectBoxHeight() * row;
     }
 
     @Override
