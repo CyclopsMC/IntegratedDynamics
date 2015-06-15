@@ -31,4 +31,16 @@ public class TestVariables {
         assertThat("true value is not false", bFalse.getValue().getRawValue(), not(false));
     }
 
+    @Test
+    public void testIntegerType() {
+        DummyVariableInteger i0 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+        assertThat("0 value is 0", i0.getValue().getRawValue(), is(0));
+
+        DummyVariableInteger im10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-10));
+        assertThat("-10 value is -10", im10.getValue().getRawValue(), is(-10));
+
+        DummyVariableInteger i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
+        assertThat("10 value is 10", i10.getValue().getRawValue(), is(10));
+    }
+
 }

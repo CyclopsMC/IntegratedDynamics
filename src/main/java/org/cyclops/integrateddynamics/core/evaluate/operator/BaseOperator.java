@@ -82,8 +82,9 @@ public abstract class BaseOperator implements IOperator {
          * Evaluate this function for the given input.
          * @param variables The input variables. They can be considered type-safe.
          * @return The output value.
+         * @throws EvaluationException If an exception occurs while evaluating
          */
-        public IValue evaluate(IVariable... variables);
+        public IValue evaluate(IVariable... variables) throws EvaluationException;
 
     }
 

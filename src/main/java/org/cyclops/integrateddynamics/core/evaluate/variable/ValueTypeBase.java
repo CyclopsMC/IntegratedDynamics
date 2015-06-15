@@ -18,7 +18,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     public ValueTypeBase(String typeName, int color) {
         this.typeName = typeName;
         this.color = color;
-        if(MinecraftHelpers.isClientSide()) {
+        if(MinecraftHelpers.isModdedEnvironment() && MinecraftHelpers.isClientSide()) {
             registerModelResourceLocation();
         }
     }
