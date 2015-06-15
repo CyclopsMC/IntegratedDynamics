@@ -6,7 +6,6 @@ import org.cyclops.integrateddynamics.block.WriterConfig;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.write.DefaultPartStateWriter;
-import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.part.write.PartTypeWriteBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -15,8 +14,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
  * A redstone writer part.
  * @author rubensworks
  */
-public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWriter, DefaultPartStateWriter<PartTypeRedstoneWriter>>
-        implements IPartTypeWriter<PartTypeRedstoneWriter, DefaultPartStateWriter<PartTypeRedstoneWriter>> {
+public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWriter, DefaultPartStateWriter<PartTypeRedstoneWriter>> {
 
     public PartTypeRedstoneWriter(String name) {
         super(name);
@@ -27,7 +25,7 @@ public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWr
 
     @Override
     public DefaultPartStateWriter<PartTypeRedstoneWriter> constructDefaultState() {
-        return new DefaultPartStateWriter<PartTypeRedstoneWriter>(Aspects.REGISTRY.getAspects().size());
+        return new DefaultPartStateWriter<PartTypeRedstoneWriter>(Aspects.REGISTRY.getAspects(this).size());
     }
 
     @Override
