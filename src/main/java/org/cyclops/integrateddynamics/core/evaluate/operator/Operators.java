@@ -64,9 +64,9 @@ public final class  Operators {
     private static final ValueTypeInteger.ValueInteger ZERO = ValueTypeInteger.ValueInteger.of(0);
 
     /**
-     * Integer ADD operator with two input integers and one output integer.
+     * Arithmetic ADD operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_ADDITION = new IntegerOperator("+", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_ADDITION = new ArithmeticOperator("+", new BaseOperator.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -84,9 +84,9 @@ public final class  Operators {
     });
 
     /**
-     * Integer MINUS operator with two input integers and one output integer.
+     * Arithmetic MINUS operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_SUBTRACTION = new IntegerOperator("-", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_SUBTRACTION = new ArithmeticOperator("-", new BaseOperator.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) {
             int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
@@ -100,9 +100,9 @@ public final class  Operators {
     });
 
     /**
-     * Integer MULTIPLY operator with two input integers and one output integer.
+     * Arithmetic MULTIPLY operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_MULTIPLICATION = new IntegerOperator("*", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MULTIPLICATION = new ArithmeticOperator("*", new BaseOperator.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -122,9 +122,9 @@ public final class  Operators {
     });
 
     /**
-     * Integer DIVIDE operator with two input integers and one output integer.
+     * Arithmetic DIVIDE operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_DIVISION = new IntegerOperator("/", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_DIVISION = new ArithmeticOperator("/", new BaseOperator.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
@@ -140,9 +140,9 @@ public final class  Operators {
     });
 
     /**
-     * Integer MODULO operator with two input integers and one output integer.
+     * Arithmetic MODULO operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_MODULUS = new IntegerOperator("%", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MODULUS = new ArithmeticOperator("%", new BaseOperator.IFunction() {
 
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
@@ -159,9 +159,9 @@ public final class  Operators {
     });
 
     /**
-     * Integer MAX operator with two input integers and one output integer.
+     * Arithmetic MAX operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_MAX = new IntegerOperator("max", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MAX = new ArithmeticOperator("max", new BaseOperator.IFunction() {
 
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
@@ -172,9 +172,9 @@ public final class  Operators {
     });
 
     /**
-     * Integer MIN operator with two input integers and one output integer.
+     * Arithmetic MIN operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_MIN = new IntegerOperator("min", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MIN = new ArithmeticOperator("min", new BaseOperator.IFunction() {
 
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
