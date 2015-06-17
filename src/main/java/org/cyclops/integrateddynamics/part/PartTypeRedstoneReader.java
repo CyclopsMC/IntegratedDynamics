@@ -21,7 +21,8 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
                 Aspects.READ_BOOLEAN_REDSTONE_LOW,
                 Aspects.READ_BOOLEAN_REDSTONE_NONLOW,
-                Aspects.READ_BOOLEAN_REDSTONE_HIGH
+                Aspects.READ_BOOLEAN_REDSTONE_HIGH,
+                Aspects.READ_INTEGER_REDSTONE
         ));
     }
 

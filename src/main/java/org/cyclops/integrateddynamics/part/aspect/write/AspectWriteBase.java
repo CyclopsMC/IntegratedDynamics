@@ -33,9 +33,10 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
     @SuppressWarnings("unchecked")
     @Override
     public <P extends IPartType<P, S>, S extends IPartState<P>> void update(Network network, P partType, PartTarget target, S state) {
-        if(partType instanceof IPartTypeWriter && state instanceof IPartStateWriter) {
+        if(partType instanceof IPartTypeWriter && state instanceof IPartStateWriter
+                && ((IPartStateWriter) state).getActiveAspect() == this) {
             IVariable variable = ((IPartTypeWriter) partType).getActiveVariable(network, target, (IPartStateWriter) state);
-            if(variable != null) {
+            if(variable != null && variable.getType() == ((IPartStateWriter) state).getActiveAspect().getValueType()) {
                 write((IPartTypeWriter) partType, target, (IPartStateWriter) state, variable);
             }
         }

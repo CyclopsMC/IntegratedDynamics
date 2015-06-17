@@ -17,6 +17,7 @@ item.items.integrateddynamics.variable.partId=§e§oPart ID: §r§o%s
 
 # Value types
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
+valuetype.valuetypes.integrateddynamics.integer.name=Integer
 
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
@@ -27,6 +28,7 @@ aspect.tooltip.aspectName=§eAspect: §r%s
 aspect.tooltip.valueTypeName=§eType: §r%s
 aspect.error.invalidVariableItem=The current variable can not be used in this aspect.
 aspect.error.partNotInNetwork=Part with id %s could not be found within the current network.
+aspect.error.invalidType=This aspect expects %s, but %s was given.
 
 aspect.aspects.integrateddynamics.read.boolean.redstone.high.name=Redstone High
 aspect.aspects.integrateddynamics.read.boolean.redstone.high.info=If the redstone level is at its maximum
@@ -34,6 +36,11 @@ aspect.aspects.integrateddynamics.read.boolean.redstone.low.name=Redstone Low
 aspect.aspects.integrateddynamics.read.boolean.redstone.low.info=If there is no redstone level
 aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.name=Redstone
 aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.info=If there is a redstone level
+aspect.aspects.integrateddynamics.read.integer.redstone.name=Redstone
+aspect.aspects.integrateddynamics.read.integer.redstone.info=Get the exact redstone level
 
 aspect.aspects.integrateddynamics.write.boolean.redstone.name=Redstone
 aspect.aspects.integrateddynamics.write.boolean.redstone.info=Outputs a full redstone signal if true
+
+aspect.aspects.integrateddynamics.write.integer.redstone.name=Redstone
+aspect.aspects.integrateddynamics.write.integer.redstone.info=Outputs the value as exact redstone signal

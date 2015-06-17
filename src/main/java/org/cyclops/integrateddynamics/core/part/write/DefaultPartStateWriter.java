@@ -59,6 +59,10 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
                                 && network.hasPart(this.currentAspectInfo.getLeft()))) {
                             setError(getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
                                     this.currentAspectInfo.getLeft().toString()));
+                        } else if (getActiveAspect().getValueType() != this.currentAspectInfo.getValue().getValueType()) {
+                            setError(getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
+                                    new L10NHelpers.UnlocalizedString(getActiveAspect().getValueType().getUnlocalizedName()),
+                                    new L10NHelpers.UnlocalizedString(this.currentAspectInfo.getValue().getValueType().getUnlocalizedName())));
                         }
                     }
                 }
