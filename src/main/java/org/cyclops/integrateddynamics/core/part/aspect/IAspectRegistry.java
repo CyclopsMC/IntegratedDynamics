@@ -4,8 +4,8 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.init.IRegistry;
+import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.Set;
  * Registry for {@link org.cyclops.integrateddynamics.core.part.aspect.IAspect}.
  * @author rubensworks
  */
-public interface IAspectRegistry extends IRegistry {
+public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler {
 
     /**
      * Register a new aspect for a given part type.
@@ -89,11 +89,11 @@ public interface IAspectRegistry extends IRegistry {
     public ItemStack writeAspect(ItemStack baseItemStack, int partId, IAspect aspect);
 
     /**
-     * Read aspect info from a given item./
+     * Read aspect info from a given item.
      * @param itemStack The item containing aspect information.
-     * @return A pair of part id and aspect type. Will be null if the item was invalid.
+     * @return Facade for retrieving the variable.
      */
-    public Pair<Integer, IAspect> readAspect(ItemStack itemStack);
+    public AspectVariableFacade readAspect(ItemStack itemStack);
 
     /**
      * Register a model resource location for the given aspect.

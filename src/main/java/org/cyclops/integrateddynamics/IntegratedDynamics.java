@@ -17,6 +17,8 @@ import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
+import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.part.IPartTypeRegistry;
 import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
@@ -67,6 +69,7 @@ public class IntegratedDynamics extends ModBase {
     @Mod.EventHandler
     @Override
     public final void preInit(FMLPreInitializationEvent event) {
+        getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IPartTypeRegistry.class, PartTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());

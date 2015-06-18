@@ -4,12 +4,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.part.aspect.Aspects;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.core.network.IVariableFacade;
 
 import java.util.List;
 
@@ -42,13 +41,12 @@ public class ItemVariable extends ConfigurableItem {
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean par4) {
-        Pair<Integer, IAspect> aspectInfo = Aspects.REGISTRY.readAspect(itemStack);
-        if(aspectInfo != null) {
-            aspectInfo.getRight().loadTooltip(list, false);
-            list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.partId",
-                    aspectInfo.getLeft()));
-        }
+        getVariableFacade(itemStack).addInformation(list, entityPlayer);
         super.addInformation(itemStack, entityPlayer, list, par4);
+    }
+
+    public IVariableFacade getVariableFacade(ItemStack itemStack) {
+        return IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack);
     }
 
 }

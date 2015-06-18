@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.SimpleBakedModel;
@@ -9,10 +11,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ISmartItemModel;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.network.IVariableFacade;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.part.aspect.Aspects;
+import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,8 @@ import java.util.Map;
  * A baked variable model.
  * @author rubensworks
  */
+@EqualsAndHashCode(callSuper = false)
+@Data
 public class VariableModelBaked extends IFlexibleBakedModel.Wrapper implements ISmartItemModel {
 
     private final IBakedModel parent;
@@ -47,14 +51,9 @@ public class VariableModelBaked extends IFlexibleBakedModel.Wrapper implements I
         // Add regular quads for variable
         quads.addAll(parent.getGeneralQuads());
 
-        // Optionally add variable type overlay
-        Pair<Integer, IAspect> aspectInfo = Aspects.REGISTRY.readAspect(itemStack);
-        if(aspectInfo != null) {
-            IAspect aspect = aspectInfo.getRight();
-            IValueType valueType = aspect.getValueType();
-            quads.addAll(valueTypeSubModels.get(valueType).getGeneralQuads());
-            quads.addAll(aspectSubModels.get(aspect).getGeneralQuads());
-        }
+        // Add variable type overlay
+        IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
+        variableFacade.addModelOverlay(this, quads);
 
         return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.isGui3d(),
                 this.getTexture(), this.getItemCameraTransforms());

@@ -9,9 +9,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.core.network.IVariableFacade;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 
 import java.util.*;
@@ -23,6 +25,7 @@ import java.util.*;
 public final class AspectRegistry implements IAspectRegistry {
 
     private static AspectRegistry INSTANCE = new AspectRegistry();
+    private static final AspectVariableFacade INVALID_FACADE = new AspectVariableFacade(-1, null);
 
     private Map<IPartType, Set<IAspect>> partAspects = Maps.newHashMap();
     private Map<IPartType, Set<IAspectRead>> partReadAspects = Maps.newHashMap();
@@ -36,7 +39,7 @@ public final class AspectRegistry implements IAspectRegistry {
     private Map<IAspect, ModelResourceLocation> aspectModels = Maps.newHashMap();
 
     private AspectRegistry() {
-
+        IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
     }
 
     /**
@@ -120,27 +123,28 @@ public final class AspectRegistry implements IAspectRegistry {
     public ItemStack writeAspect(ItemStack baseItemStack, int partId, IAspect aspect) {
         ItemStack itemStack = baseItemStack.copy();
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        tag.setString("variableFacadeHandler", "aspect");
         tag.setInteger("partId", partId);
         tag.setString("aspectName", aspect.getUnlocalizedName());
         return itemStack;
     }
 
     @Override
-    public Pair<Integer, IAspect> readAspect(ItemStack itemStack) {
+    public AspectVariableFacade readAspect(ItemStack itemStack) {
         if(!itemStack.hasTagCompound()) {
-            return null;
+            return INVALID_FACADE;
         }
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
         if(!tag.hasKey("partId", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())
                 || !tag.hasKey("aspectName", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
-            return null;
+            return INVALID_FACADE;
         }
-        int pairId = tag.getInteger("partId");
+        int partId = tag.getInteger("partId");
         IAspect aspect = getAspect(tag.getString("aspectName"));
         if(aspect == null) {
-            return null;
+            return INVALID_FACADE;
         }
-        return Pair.of(pairId, aspect);
+        return new AspectVariableFacade(partId, aspect);
     }
 
     @SideOnly(Side.CLIENT)
@@ -161,4 +165,13 @@ public final class AspectRegistry implements IAspectRegistry {
         return aspectModels.values();
     }
 
+    @Override
+    public boolean canHandle(ItemStack itemStack) {
+        return itemStack.hasTagCompound() && "aspect".equals(itemStack.getTagCompound().getString("variableFacadeHandler"));
+    }
+
+    @Override
+    public IVariableFacade getVariableFacade(ItemStack itemStack) {
+        return readAspect(itemStack);
+    }
 }

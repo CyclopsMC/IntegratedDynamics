@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
 
 /**
@@ -23,10 +23,11 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
     public SimpleInventory getInventory();
 
     /**
-     * @return A pair of the source part id and part aspect to get the variable for.
+     * Get the current target variable.
+     * @return The active variable to read from.
      * @param network The network this part belongs to.
      */
-    public Pair<Integer, IAspect> getCurrentAspectInfo(Network network);
+    public <V extends IValue> IVariable<V> getVariable(Network network);
 
     /**
      * Indicate that this state should eventually recheck its aspect info because something might have changed what can

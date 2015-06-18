@@ -5,15 +5,12 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.client.gui.GuiPartWriter;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -67,11 +64,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @SuppressWarnings("unchecked")
     @Override
     public <V extends IValue> IVariable<V> getActiveVariable(Network network, PartTarget target, S partState) {
-        Pair<Integer, IAspect> aspectInfo = partState.getCurrentAspectInfo(network);
-        if(aspectInfo != null && aspectInfo.getRight() instanceof IAspectRead && network.hasPart(aspectInfo.getLeft())) {
-            return network.getVariable(aspectInfo.getLeft(), (IAspectRead) aspectInfo.getRight());
-        }
-        return null;
+        return partState.getVariable(network);
     }
 
     @Override

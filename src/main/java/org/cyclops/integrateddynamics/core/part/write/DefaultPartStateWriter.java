@@ -3,17 +3,19 @@ package org.cyclops.integrateddynamics.core.part.write;
 import com.google.common.collect.Maps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.network.IVariableFacade;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.DefaultPartState;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Map;
@@ -27,7 +29,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
         extends DefaultPartState<P> implements IPartStateWriter<P> {
 
     private boolean checkedForWriteVariable = false;
-    private Pair<Integer, IAspect> currentAspectInfo = null;
+    private IVariableFacade currentVariableFacade = null;
     @NBTPersist
     private String activeAspectName = null;
     private SimpleInventory inventory;
@@ -45,31 +47,21 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     }
 
     @Override
-    public Pair<Integer, IAspect> getCurrentAspectInfo(Network network) {
+    public <V extends IValue> IVariable<V> getVariable(Network network) {
         if(!checkedForWriteVariable) {
             for(int slot = 0; slot < getInventory().getSizeInventory(); slot++) {
                 ItemStack itemStack = getInventory().getStackInSlot(slot);
                 if(itemStack != null) {
-                    this.currentAspectInfo = Aspects.REGISTRY.readAspect(itemStack);
+                    this.currentVariableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
                     // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
                     if(getActiveAspect() != null) {
-                        if (this.currentAspectInfo == null) {
-                            setError(getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidVariableItem"));
-                        } else if (!(this.currentAspectInfo.getRight() instanceof IAspectRead
-                                && network.hasPart(this.currentAspectInfo.getLeft()))) {
-                            setError(getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
-                                    this.currentAspectInfo.getLeft().toString()));
-                        } else if (getActiveAspect().getValueType() != this.currentAspectInfo.getValue().getValueType()) {
-                            setError(getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
-                                    new L10NHelpers.UnlocalizedString(getActiveAspect().getValueType().getUnlocalizedName()),
-                                    new L10NHelpers.UnlocalizedString(this.currentAspectInfo.getValue().getValueType().getUnlocalizedName())));
-                        }
+                        this.currentVariableFacade.validate(network, this);
                     }
                 }
             }
             this.checkedForWriteVariable = true;
         }
-        return currentAspectInfo;
+        return currentVariableFacade.getVariable(network);
     }
 
     @Override
@@ -80,7 +72,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
             activeAspect.onDeactivate(partType, target, this);
             setError(activeAspect, null);
         }
-        this.currentAspectInfo = null;
+        this.currentVariableFacade = null;
         this.activeAspectName = newAspect == null ? null : newAspect.getUnlocalizedName();
     }
 
