@@ -7,7 +7,7 @@ dependencies {
     compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
 
     // Project lombok
-    compile "org.projectlombok:lombok:1.14.4"
+    compile "org.projectlombok:lombok:1.16.4"
     testCompile "junit:junit:4.12"
 }
 
