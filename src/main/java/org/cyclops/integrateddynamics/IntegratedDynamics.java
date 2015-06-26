@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -9,10 +8,12 @@ import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.client.gui.GuiHandler;
 import org.cyclops.cyclopscore.config.ConfigHandler;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockItemConfigReference;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
+import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueTypeRegistry;
@@ -105,7 +106,7 @@ public class IntegratedDynamics extends ModBase {
 
     @Override
     public CreativeTabs constructDefaultCreativeTab() {
-        return new ItemCreativeTab(this, Items.bed); // TODO: temp
+        return new ItemCreativeTab(this, new BlockItemConfigReference(BlockCableConfig.class));
     }
 
     @Override

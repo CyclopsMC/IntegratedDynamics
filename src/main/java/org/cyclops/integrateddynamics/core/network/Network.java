@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -329,13 +328,13 @@ public class Network implements INBTSerializable {
      * @param partId The part state id.
      * @return If this part is present in this network.
      */
-    public <T extends TileEntity & IPartContainer> boolean hasPart(int partId) {
+    public boolean hasPart(int partId) {
         if(!partPositions.containsKey(partId)) {
             return false;
         }
         PartPos partPos = partPositions.get(partId);
-        T tile = TileMultipartTicking.get(partPos.getPos());
-        return tile != null && tile.hasPart(partPos.getSide());
+        IPartContainer partContainer = TileMultipartTicking.get(partPos.getPos());
+        return partContainer != null && partContainer.hasPart(partPos.getSide());
     }
 
     /**

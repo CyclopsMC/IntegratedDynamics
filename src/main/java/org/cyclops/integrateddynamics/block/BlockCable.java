@@ -175,7 +175,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             return tile.getConnectionState();
         }
@@ -184,7 +184,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public IExtendedBlockState updateConnections(World world, BlockPos pos) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.updateCableConnections();
             world.markBlockRangeForRenderUpdate(pos, pos);
@@ -216,7 +216,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public void resetCurrentNetwork(World world, BlockPos pos) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.resetCurrentNetwork();
         }
@@ -224,7 +224,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public void setNetwork(Network network, World world, BlockPos pos) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.setNetwork(network);
         }
@@ -232,7 +232,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public Network getNetwork(World world, BlockPos pos) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             return tile.getNetwork();
         }
@@ -241,7 +241,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public boolean isRealCable(World world, BlockPos pos) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             return tile.isRealCable();
         }
@@ -250,7 +250,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public void setRealCable(World world, BlockPos pos, boolean realCable) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.setRealCable(realCable);
             // TODO: place/break sound
@@ -264,7 +264,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public void disconnect(World world, BlockPos pos, EnumFacing side) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.forceDisconnect(side);
         }
@@ -279,7 +279,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     sneak + right-click on part to remove that part
             No wrench: right-click to open GUI
          */
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
             if(rayTraceResult != null) {
@@ -432,7 +432,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public boolean canConnect(World world, BlockPos selfPosition, ICable connector, EnumFacing side) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, selfPosition);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, selfPosition, TileMultipartTicking.class);
         return tile == null || !tile.isForceDisconnected(side);
     }
 
@@ -538,7 +538,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public void disableRedstoneAt(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.disableRedstoneLevel(side);
         }
@@ -546,7 +546,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public void setRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side, int level) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.setRedstoneLevel(side, level);
         }
@@ -554,7 +554,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public int getRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             return tile.getRedstoneLevel(side);
         }

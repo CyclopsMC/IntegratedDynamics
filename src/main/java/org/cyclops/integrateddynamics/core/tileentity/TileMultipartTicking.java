@@ -10,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -338,11 +337,10 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     /**
      * Get the part container at the given position.
      * @param pos The position.
-     * @param <T> The container type.
      * @return The container or null.
      */
-    public static <T extends TileEntity & IPartContainer> T get(DimPos pos) {
-        return TileHelpers.getSafeTile(pos.getWorld(), pos.getBlockPos());
+    public static IPartContainer get(DimPos pos) {
+        return TileHelpers.getSafeTile(pos.getWorld(), pos.getBlockPos(), IPartContainer.class);
     }
 
     @Data
