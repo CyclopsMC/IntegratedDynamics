@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.network;
+package org.cyclops.integrateddynamics.core.item;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,6 +7,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 
 import java.util.List;

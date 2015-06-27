@@ -6,17 +6,22 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.AspectVariableFacade;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -126,7 +131,15 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     }
 
     public ItemStack writeAspectInfo(ItemStack itemStack, IAspect aspect) {
-        return Aspects.REGISTRY.writeAspect(itemStack, getPartState().getId(), aspect);
+        if(itemStack == null) {
+            return null;
+        }
+        itemStack = itemStack.copy();
+        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        AspectVariableFacade variableFacade = new AspectVariableFacade(getPartState().getId(), aspect);
+        IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).
+                write(tag, variableFacade, Aspects.REGISTRY);
+        return itemStack;
     }
 
 }

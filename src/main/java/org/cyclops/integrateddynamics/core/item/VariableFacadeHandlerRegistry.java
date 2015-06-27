@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.network.IVariableFacade;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The variable facade handler registry.
@@ -23,7 +23,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     private static VariableFacadeHandlerRegistry INSTANCE = new VariableFacadeHandlerRegistry();
     private static DummyVariableFacade DUMMY_FACADE = new DummyVariableFacade();
 
-    private final List<IVariableFacadeHandler> handlers = Lists.newLinkedList();
+    private final Map<String, IVariableFacadeHandler> handlers = Maps.newHashMap();
 
     private VariableFacadeHandlerRegistry() {
 
@@ -38,17 +38,26 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public void registerHandler(IVariableFacadeHandler variableFacadeHandler) {
-        handlers.add(variableFacadeHandler);
+        handlers.put(variableFacadeHandler.getTypeId(), variableFacadeHandler);
     }
 
     @Override
-    public IVariableFacade handle(ItemStack itemStack) {
-        for(IVariableFacadeHandler handler : handlers) {
-            if(handler.canHandle(itemStack)) {
-                return handler.getVariableFacade(itemStack);
-            }
+    public IVariableFacade handle(NBTTagCompound tagCompound) {
+        if(tagCompound == null) {
+            return DUMMY_FACADE;
+        }
+        String type = tagCompound.getString("_type");
+        IVariableFacadeHandler handler = handlers.get(type);
+        if(handler != null) {
+            return handler.getVariableFacade(tagCompound);
         }
         return DUMMY_FACADE;
+    }
+
+    @Override
+    public <F extends IVariableFacade> void write(NBTTagCompound tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
+        tagCompound.setString("_type", handler.getTypeId());
+        handler.setVariableFacade(tagCompound, variableFacade);
     }
 
     /**

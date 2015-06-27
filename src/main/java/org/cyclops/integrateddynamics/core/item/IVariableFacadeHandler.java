@@ -1,27 +1,31 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import net.minecraft.item.ItemStack;
-import org.cyclops.integrateddynamics.core.network.IVariableFacade;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Handler for retrieving variable facades from items.
+ * @param <F> The type of variable facade.
  * @author rubensworks
  */
-public interface IVariableFacadeHandler {
+public interface IVariableFacadeHandler<F extends IVariableFacade> {
 
     /**
-     * Check if this handler can handle the given item.
-     * @param itemStack The item containing variable facade info.
-     * @return If this handler can take this item.
+     * @return The unique name of this type used to identity variables to this handler.
      */
-    public boolean canHandle(ItemStack itemStack);
+    public String getTypeId();
 
     /**
-     * Get the variable facade for the given item.
-     * This will only be called after the check {@link IVariableFacadeHandler#canHandle(ItemStack)}.
-     * @param itemStack The item containing variable facade info.
+     * Get the variable facade for the given tag.
+     * @param tagCompound The tag containing information that can be read and used to form a variable facade.
      * @return The variable facade
      */
-    public IVariableFacade getVariableFacade(ItemStack itemStack);
+    public F getVariableFacade(NBTTagCompound tagCompound);
+
+    /**
+     * Set the variable facade for the given tag.
+     * @param tagCompound The tag that is used to write variable facade information to.
+     * @param variableFacade The facade to write.
+     */
+    public void setVariableFacade(NBTTagCompound tagCompound, F variableFacade);
 
 }

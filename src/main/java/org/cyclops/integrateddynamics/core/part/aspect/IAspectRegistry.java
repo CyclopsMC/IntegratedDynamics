@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.aspect;
 
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.init.IRegistry;
@@ -16,7 +15,7 @@ import java.util.Set;
  * Registry for {@link org.cyclops.integrateddynamics.core.part.aspect.IAspect}.
  * @author rubensworks
  */
-public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler {
+public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<AspectVariableFacade> {
 
     /**
      * Register a new aspect for a given part type.
@@ -78,22 +77,6 @@ public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler {
      * @return The matching aspect.
      */
     public IAspect getAspect(String unlocalizedName);
-
-    /**
-     * Write aspect info to an item.
-     * @param baseItemStack The item to write to.
-     * @param partId The id of the part the given aspect belongs to.
-     * @param aspect The aspect in the given part.
-     * @return The item with aspect info.
-     */
-    public ItemStack writeAspect(ItemStack baseItemStack, int partId, IAspect aspect);
-
-    /**
-     * Read aspect info from a given item.
-     * @param itemStack The item containing aspect information.
-     * @return Facade for retrieving the variable.
-     */
-    public AspectVariableFacade readAspect(ItemStack itemStack);
 
     /**
      * Register a model resource location for the given aspect.

@@ -7,8 +7,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.core.network.IVariableFacade;
 
 import java.util.List;
 
@@ -46,7 +46,8 @@ public class ItemVariable extends ConfigurableItem {
     }
 
     public IVariableFacade getVariableFacade(ItemStack itemStack) {
-        return IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack);
+        return IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).
+                handle(itemStack.getTagCompound());
     }
 
 }
