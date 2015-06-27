@@ -32,7 +32,7 @@ public abstract class VariableFacadeBase implements IVariableFacade {
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {
-        list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.id", getId() > -1 ? "..." : getId()));
+        list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
     }
 
 }
