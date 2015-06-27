@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.block.cable;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.integrateddynamics.core.path.IPathElement;
 import org.cyclops.integrateddynamics.core.path.IPathElementProvider;
 
@@ -27,9 +26,8 @@ public interface ICable<E extends IPathElement<E>> extends IPathElementProvider<
      * Update the cable connections at the given position.
      * @param world The world.
      * @param pos The position of this block.
-     * @return The resulting state.
      */
-    public IExtendedBlockState updateConnections(World world, BlockPos pos);
+    public void updateConnections(World world, BlockPos pos);
 
     /**
      * Check if this cable is connected to a side.

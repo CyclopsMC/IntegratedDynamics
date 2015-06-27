@@ -35,7 +35,7 @@ import java.util.Map;
  * A ticking tile entity which is made up of different parts.
  * @author Ruben Taelman
  */
-public class TileMultipartTicking extends TickingCyclopsTileEntity implements IPartContainer {
+public class TileMultipartTicking extends TickingCyclopsTileEntity implements IPartContainer, ITileCableNetwork {
 
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
 
@@ -216,36 +216,6 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         return partStateHolder.getState();
     }
 
-    /**
-     * Tell the container it is no longer part of its current network.
-     * Won't do anything if it doesn't have a network.
-     */
-    public void resetCurrentNetwork() {
-        if(network != null) setNetwork(null);
-    }
-
-    /**
-     * Reset and update the cable connections for all sides.
-     */
-    public void updateCableConnections() {
-        World world = getWorld();
-        for(EnumFacing side : EnumFacing.VALUES) {
-            BlockPos neighbourPos = pos.offset(side);
-            Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-            boolean cableConnected = neighbourBlock instanceof ICable &&
-                    ((ICable) neighbourBlock).canConnect(world, neighbourPos, (ICable) getBlock(),
-                            side.getOpposite());
-            connected.put(side.ordinal(), cableConnected);
-
-            // Remove any already existing force-disconnects for this side.
-            if(!cableConnected) {
-                forceDisconnected.put(side.ordinal(), false);
-            }
-        }
-        markDirty();
-        sendUpdate();
-    }
-
     @Override
     public void onUpdateReceived() {
         getWorld().markBlockRangeForRenderUpdate(pos, pos);
@@ -255,7 +225,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
         IExtendedBlockState extendedState = (IExtendedBlockState) getBlock().getDefaultState();
         extendedState = extendedState.withProperty(BlockCable.REALCABLE, isRealCable());
         if(connected.isEmpty()) {
-            updateCableConnections();
+            updateConnections();
         }
         for(EnumFacing side : EnumFacing.VALUES) {
             extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()],
@@ -263,10 +233,6 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
             extendedState = extendedState.withProperty(BlockCable.PART[side.ordinal()], hasPart(side));
         }
         return extendedState;
-    }
-
-    public void forceDisconnect(EnumFacing side) {
-        forceDisconnected.put(side.ordinal(), true);
     }
 
     public boolean isForceDisconnected(EnumFacing side) {
@@ -280,7 +246,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     protected void updateTileEntity() {
         // If the connection data were reset, update the cable connections
         if(connected.isEmpty()) {
-            updateCableConnections();
+            updateConnections();
         }
 
         if(!MinecraftHelpers.isClientSide()) {
@@ -341,6 +307,46 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
      */
     public static IPartContainer get(DimPos pos) {
         return TileHelpers.getSafeTile(pos.getWorld(), pos.getBlockPos(), IPartContainer.class);
+    }
+
+    @Override
+    public void resetCurrentNetwork() {
+        if(network != null) setNetwork(null);
+    }
+
+    @Override
+    public boolean canConnect(ICable connector, EnumFacing side) {
+        return !isForceDisconnected(side);
+    }
+
+    @Override
+    public void updateConnections() {
+        World world = getWorld();
+        for(EnumFacing side : EnumFacing.VALUES) {
+            BlockPos neighbourPos = pos.offset(side);
+            Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
+            boolean cableConnected = neighbourBlock instanceof ICable &&
+                    ((ICable) neighbourBlock).canConnect(world, neighbourPos, (ICable) getBlock(),
+                            side.getOpposite());
+            connected.put(side.ordinal(), cableConnected);
+
+            // Remove any already existing force-disconnects for this side.
+            if(!cableConnected) {
+                forceDisconnected.put(side.ordinal(), false);
+            }
+        }
+        markDirty();
+        sendUpdate();
+    }
+
+    @Override
+    public boolean isConnected(EnumFacing side) {
+        return connected.containsKey(side) && connected.get(side);
+    }
+
+    @Override
+    public void disconnect(EnumFacing side) {
+        forceDisconnected.put(side.ordinal(), true);
     }
 
     @Data
