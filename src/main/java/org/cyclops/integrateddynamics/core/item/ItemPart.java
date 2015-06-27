@@ -61,11 +61,9 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             } else {
                 // Place part at a new position with an unreal cable
                 BlockPos target = pos.offset(side);
-                System.out.println("target:" + target + world.getBlockState(target).getBlock());
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
                 if(itemBlockCable.onItemUse(itemStack, playerIn, world, target, side, hitX, hitY, hitZ)) {
                     IPartContainer partContainer = (IPartContainer) world.getTileEntity(target);
-                    System.out.println("ooo" + partContainer);
                     if(partContainer != null) {
                         partContainer.setPart(side.getOpposite(), getPart(), getPart().getState(itemStack));
                         System.out.println("Setting part " + getPart());

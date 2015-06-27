@@ -81,19 +81,19 @@ public final class AspectRegistry implements IAspectRegistry {
     @Override
     public Set<IAspect> getAspects(IPartType partType) {
         if(!partAspects.containsKey(partType)) {
-            return Collections.emptySet();
+            return Collections.unmodifiableSet(Collections.<IAspect>emptySet());
         }
-        return partAspects.get(partType);
+        return Collections.unmodifiableSet(partAspects.get(partType));
     }
 
     @Override
     public List<IAspectRead> getReadAspects(IPartType partType) {
-        return partReadAspectsListTransform.get(partType);
+        return Collections.unmodifiableList(partReadAspectsListTransform.get(partType));
     }
 
     @Override
     public List<IAspectWrite> getWriteAspects(IPartType partType) {
-        return partWriteAspectsListTransform.get(partType);
+        return Collections.unmodifiableList(partWriteAspectsListTransform.get(partType));
     }
 
     @Override
@@ -131,7 +131,7 @@ public final class AspectRegistry implements IAspectRegistry {
     @SideOnly(Side.CLIENT)
     @Override
     public Collection<ModelResourceLocation> getAspectModels() {
-        return aspectModels.values();
+        return Collections.unmodifiableCollection(aspectModels.values());
     }
 
     @Override
