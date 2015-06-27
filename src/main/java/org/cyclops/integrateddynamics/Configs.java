@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
+import org.cyclops.integrateddynamics.block.BlockDatastoreConfig;
 import org.cyclops.integrateddynamics.block.ReaderConfig;
 import org.cyclops.integrateddynamics.block.WriterConfig;
 import org.cyclops.integrateddynamics.item.ItemPartRedstoneReaderConfig;
@@ -19,6 +20,7 @@ public class Configs {
 
         // Blocks
         configHandler.add(new BlockCableConfig());
+        configHandler.add(new BlockDatastoreConfig());
         configHandler.add(new ReaderConfig());
         configHandler.add(new WriterConfig());
 

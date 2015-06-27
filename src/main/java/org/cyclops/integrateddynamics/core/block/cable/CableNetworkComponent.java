@@ -177,4 +177,22 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
     public void onPostBlockDestroyed(World world, BlockPos pos) {
         removeFromNetwork(world, pos, false);
     }
+
+    /**
+     * Check if one side of a cable can connect.
+     * To be used when the cable connections are being updated.
+     * @param world The world.
+     * @param pos The center position.
+     * @param side The side from the center position to check.
+     * @param originCable The cable at the center position.
+     * @return If it can connect.
+     */
+    public static boolean canSideConnect(World world, BlockPos pos, EnumFacing side, ICable originCable) {
+        BlockPos neighbourPos = pos.offset(side);
+        Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
+        return neighbourBlock instanceof ICable &&
+                ((ICable) neighbourBlock).canConnect(world, neighbourPos, (ICable) originCable,
+                        side.getOpposite());
+    }
+
 }

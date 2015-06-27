@@ -3,7 +3,7 @@ itemGroup.integrateddynamics=Integrated Dynamics
 
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
-tile.blocks.integrateddynamics.cable.info=Default cable
+tile.blocks.integrateddynamics.datastore.name=Datastore
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s

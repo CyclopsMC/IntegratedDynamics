@@ -10,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -22,6 +21,7 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.TickingCyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -323,11 +323,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     public void updateConnections() {
         World world = getWorld();
         for(EnumFacing side : EnumFacing.VALUES) {
-            BlockPos neighbourPos = pos.offset(side);
-            Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-            boolean cableConnected = neighbourBlock instanceof ICable &&
-                    ((ICable) neighbourBlock).canConnect(world, neighbourPos, (ICable) getBlock(),
-                            side.getOpposite());
+            boolean cableConnected = CableNetworkComponent.canSideConnect(world, pos, side, (ICable) getBlock());
             connected.put(side.ordinal(), cableConnected);
 
             // Remove any already existing force-disconnects for this side.

@@ -64,12 +64,12 @@ public class Cluster<E extends IPathElement> implements Collection<E>, INBTSeria
             BlockPos pos = BlockPos.fromLong(elementTag.getLong("pos"));
 
             if(dimensionId < 0 || dimensionId >= MinecraftServer.getServer().worldServers.length) {
-                IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part a part from a network at the " +
+                IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at the " +
                         "invalid dimension id %s.", dimensionId));
             } else {
                 World world = MinecraftServer.getServer().worldServers[dimensionId];
                 if(!(world.getBlockState(pos).getBlock() instanceof IPathElementProvider)) {
-                    IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part a part from a network at " +
+                    IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +
                             "position %s in world %s because it is no valid network element provider block.", pos, dimensionId));
                 } else {
                     elements.add((E) ((IPathElementProvider) world.getBlockState(pos).getBlock())

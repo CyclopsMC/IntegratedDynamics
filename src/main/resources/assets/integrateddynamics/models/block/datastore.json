@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "particle": "integrateddynamics:blocks/datastore_front",
+        "down": "integrateddynamics:blocks/datastore_top",
+        "up": "integrateddynamics:blocks/datastore_top",
+        "north": "integrateddynamics:blocks/datastore_front",
+        "east": "integrateddynamics:blocks/datastore_side",
+        "south": "integrateddynamics:blocks/datastore_side",
+        "west": "integrateddynamics:blocks/datastore_side"
+    }
+}
