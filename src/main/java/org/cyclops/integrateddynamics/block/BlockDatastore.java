@@ -5,6 +5,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -17,6 +18,7 @@ import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
+import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -61,6 +63,16 @@ public class BlockDatastore extends ConfigurableBlockContainer implements ICable
 
         setHardness(3.0F);
         setStepSound(soundTypeMetal);
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+                                    EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (!world.isRemote && WrenchHelpers.isWrench(player, pos) && player.isSneaking()) {
+            world.destroyBlock(pos, !player.capabilities.isCreativeMode);
+            return true;
+        }
+        return super.onBlockActivated(world, pos, state, player , side, hitX, hitY, hitZ);
     }
 
     @Override
