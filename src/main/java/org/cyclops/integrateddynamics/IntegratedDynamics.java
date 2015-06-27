@@ -16,6 +16,8 @@ import org.cyclops.cyclopscore.proxy.ICommonProxy;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.evaluate.operator.IOperatorRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
@@ -74,6 +76,7 @@ public class IntegratedDynamics extends ModBase {
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IPartTypeRegistry.class, PartTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());
+        getRegistryManager().addRegistry(IOperatorRegistry.class, OperatorRegistry.getInstance());
 
         super.preInit(event);
 
