@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part.aspect;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -10,7 +11,7 @@ import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
+import org.cyclops.integrateddynamics.core.item.VariableFacadeBase;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 
@@ -20,11 +21,24 @@ import java.util.List;
  * Variable facade for variables determined by part aspects.
  * @author rubensworks
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class AspectVariableFacade implements IVariableFacade {
+public class AspectVariableFacade extends VariableFacadeBase {
 
     private final int partId;
     private final IAspect aspect;
+
+    public AspectVariableFacade(boolean generateId, int partId, IAspect aspect) {
+        super(generateId);
+        this.partId = partId;
+        this.aspect = aspect;
+    }
+
+    public AspectVariableFacade(int id, int partId, IAspect aspect) {
+        super(id);
+        this.partId = partId;
+        this.aspect = aspect;
+    }
 
     @Override
     public <V extends IValue> IVariable<V> getVariable(Network network) {
@@ -61,6 +75,7 @@ public class AspectVariableFacade implements IVariableFacade {
             getAspect().loadTooltip(list, false);
             list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.partId", getPartId()));
         }
+        super.addInformation(list, entityPlayer);
     }
 
     @SuppressWarnings("unchecked")

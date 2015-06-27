@@ -123,7 +123,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
             ItemStack itemStack = inputSlots.getStackInSlot(i);
             if(itemStack != null && outputSlots.getStackInSlot(i) == null) {
-                ItemStack outputStack = writeAspectInfo(itemStack.copy(), getUnfilteredItems().get(i));
+                ItemStack outputStack = writeAspectInfo(!getWorld().isRemote, itemStack.copy(), getUnfilteredItems().get(i));
                 outputSlots.setInventorySlotContents(i, outputStack);
                 inputSlots.decrStackSize(i, 1);
             }

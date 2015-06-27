@@ -22,7 +22,7 @@ import java.util.*;
 public final class AspectRegistry implements IAspectRegistry {
 
     private static AspectRegistry INSTANCE = new AspectRegistry();
-    private static final AspectVariableFacade INVALID_FACADE = new AspectVariableFacade(-1, null);
+    private static final AspectVariableFacade INVALID_FACADE = new AspectVariableFacade(false, -1, null);
 
     private Map<IPartType, Set<IAspect>> partAspects = Maps.newHashMap();
     private Map<IPartType, Set<IAspectRead>> partReadAspects = Maps.newHashMap();
@@ -140,7 +140,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public AspectVariableFacade getVariableFacade(NBTTagCompound tag) {
+    public AspectVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
         if(!tag.hasKey("partId", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())
                 || !tag.hasKey("aspectName", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
             return INVALID_FACADE;
@@ -150,7 +150,7 @@ public final class AspectRegistry implements IAspectRegistry {
         if(aspect == null) {
             return INVALID_FACADE;
         }
-        return new AspectVariableFacade(partId, aspect);
+        return new AspectVariableFacade(id, partId, aspect);
     }
 
     @Override

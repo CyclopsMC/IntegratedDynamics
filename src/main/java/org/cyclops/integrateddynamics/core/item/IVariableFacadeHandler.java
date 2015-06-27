@@ -16,10 +16,11 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
 
     /**
      * Get the variable facade for the given tag.
+     * @param id The id that was read and needs to be inserted into the variable facade.
      * @param tagCompound The tag containing information that can be read and used to form a variable facade.
      * @return The variable facade
      */
-    public F getVariableFacade(NBTTagCompound tagCompound);
+    public F getVariableFacade(int id, NBTTagCompound tagCompound);
 
     /**
      * Set the variable facade for the given tag.

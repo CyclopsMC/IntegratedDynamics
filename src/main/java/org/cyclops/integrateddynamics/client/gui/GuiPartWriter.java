@@ -72,7 +72,7 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
 
         // Render dummy target item
         // This could be cached if this would prove to be a bottleneck
-        ItemStack itemStack = container.writeAspectInfo(new ItemStack(ItemVariable.getInstance()), aspect);
+        ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(ItemVariable.getInstance()), aspect);
         Rectangle pos = getElementPosition(container, index, true);
         itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
 

@@ -19,6 +19,11 @@ import java.util.List;
 public interface IVariableFacade {
 
     /**
+     * @return The unique id for this facade.
+     */
+    public int getId();
+
+    /**
      * Get the variable.
      * @param network The object used to look for the variable.
      * @return The variable.

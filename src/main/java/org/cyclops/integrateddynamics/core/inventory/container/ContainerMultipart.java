@@ -130,13 +130,13 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         return true;
     }
 
-    public ItemStack writeAspectInfo(ItemStack itemStack, IAspect aspect) {
+    public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, IAspect aspect) {
         if(itemStack == null) {
             return null;
         }
         itemStack = itemStack.copy();
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
-        AspectVariableFacade variableFacade = new AspectVariableFacade(getPartState().getId(), aspect);
+        AspectVariableFacade variableFacade = new AspectVariableFacade(generateId, getPartState().getId(), aspect);
         IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).
                 write(tag, variableFacade, Aspects.REGISTRY);
         return itemStack;

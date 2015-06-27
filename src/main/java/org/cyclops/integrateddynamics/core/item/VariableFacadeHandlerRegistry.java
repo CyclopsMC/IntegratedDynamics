@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
@@ -46,10 +47,15 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         if(tagCompound == null) {
             return DUMMY_FACADE;
         }
+        if(!tagCompound.hasKey("_type", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())
+                || !tagCompound.hasKey("_id", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
+            return DUMMY_FACADE;
+        }
         String type = tagCompound.getString("_type");
+        int id = tagCompound.getInteger("_id");
         IVariableFacadeHandler handler = handlers.get(type);
         if(handler != null) {
-            return handler.getVariableFacade(tagCompound);
+            return handler.getVariableFacade(id, tagCompound);
         }
         return DUMMY_FACADE;
     }
@@ -57,13 +63,18 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     @Override
     public <F extends IVariableFacade> void write(NBTTagCompound tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
         tagCompound.setString("_type", handler.getTypeId());
+        tagCompound.setInteger("_id", variableFacade.getId());
         handler.setVariableFacade(tagCompound, variableFacade);
     }
 
     /**
      * Variable facade used for items that have no (valid) information on them.
      */
-    public static class DummyVariableFacade implements IVariableFacade {
+    public static class DummyVariableFacade extends VariableFacadeBase {
+
+        public DummyVariableFacade() {
+            super(false);
+        }
 
         @Override
         public <V extends IValue> IVariable<V> getVariable(Network network) {
