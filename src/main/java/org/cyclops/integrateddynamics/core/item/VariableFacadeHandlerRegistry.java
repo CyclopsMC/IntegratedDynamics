@@ -22,7 +22,7 @@ import java.util.Map;
 public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegistry {
 
     private static VariableFacadeHandlerRegistry INSTANCE = new VariableFacadeHandlerRegistry();
-    private static DummyVariableFacade DUMMY_FACADE = new DummyVariableFacade();
+    private static DummyVariableFacade DUMMY_FACADE = new DummyVariableFacade("variable.error.invalidItem");
 
     private final Map<String, IVariableFacadeHandler> handlers = Maps.newHashMap();
 
@@ -72,8 +72,11 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
      */
     public static class DummyVariableFacade extends VariableFacadeBase {
 
-        public DummyVariableFacade() {
+        private final String unlocalizedError;
+
+        public DummyVariableFacade(String unlocalizedError) {
             super(false);
+            this.unlocalizedError = unlocalizedError;
         }
 
         @Override
@@ -88,7 +91,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
         @Override
         public void validate(Network network, IPartStateWriter validator) {
-            validator.setError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidVariableItem"));
+            validator.setError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString(unlocalizedError));
         }
 
         @Override

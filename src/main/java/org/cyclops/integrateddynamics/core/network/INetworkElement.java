@@ -47,4 +47,17 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      */
     public void addDrops(List<ItemStack> itemStacks);
 
+    /**
+     * Called when this element is added to the network.
+     * @param network The network.
+     * @return If the addition succeeded.
+     */
+    public boolean onNetworkAddition(Network network);
+
+    /**
+     * Called when this element is removed from the network.
+     * @param network The network.
+     */
+    public void onNetworkRemoval(Network network);
+
 }

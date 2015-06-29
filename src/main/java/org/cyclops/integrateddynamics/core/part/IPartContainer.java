@@ -6,7 +6,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import java.util.Map;
 
 /**
- * A interface for containers that can hold {@link IPartType}s.
+ * An interface for containers that can hold {@link IPartType}s.
  * @author rubensworks
  */
 public interface IPartContainer {

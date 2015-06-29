@@ -43,7 +43,7 @@ public class AspectVariableFacade extends VariableFacadeBase {
     @Override
     public <V extends IValue> IVariable<V> getVariable(Network network) {
         if(isValid() && getAspect() instanceof IAspectRead && network.hasPart(getPartId())) {
-            return network.getVariable(getPartId(), (IAspectRead) getAspect());
+            return network.getPartVariable(getPartId(), (IAspectRead) getAspect());
         }
         return null;
     }

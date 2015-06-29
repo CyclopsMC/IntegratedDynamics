@@ -1,19 +1,23 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.Level;
+import org.cyclops.cyclopscore.datastructure.CompositeMap;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.item.IVariableContainerFacade;
+import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartPos;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
@@ -24,10 +28,7 @@ import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * A network instance that can hold a set of {@link org.cyclops.integrateddynamics.core.network.INetworkElement}s.
@@ -42,6 +43,8 @@ public class Network implements INBTSerializable {
     private TreeSet<INetworkElement> updateableElements = null;
     private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
     private Map<Integer, PartPos> partPositions = Maps.newHashMap();
+    private List<DimPos> variableContainerPositions = Lists.newLinkedList();
+    private Map<Integer, IVariableFacade> compositeVariableCache = null;
 
     private volatile boolean partsChanged = false;
     private volatile boolean killed = false;
@@ -74,7 +77,9 @@ public class Network implements INBTSerializable {
                 BlockPos pos = cable.getPosition().getBlockPos();
                 Block block = world.getBlockState(pos).getBlock();
                 if (block instanceof INetworkElementProvider) {
-                    elements.addAll(((INetworkElementProvider) block).createNetworkElements(world, pos));
+                    for(INetworkElement element : ((INetworkElementProvider) block).createNetworkElements(world, pos)) {
+                        addNetworkElement(element, true);
+                    }
                 }
                 if (block instanceof INetworkCarrier) {
                     INetworkCarrier networkCarrier = (INetworkCarrier) block;
@@ -87,13 +92,6 @@ public class Network implements INBTSerializable {
                     }
                     networkCarrier.resetCurrentNetwork(world, pos);
                     networkCarrier.setNetwork(this, world, pos);
-                }
-                if (block instanceof IPartContainerFacade) {
-                    IPartContainer partContainer = ((IPartContainerFacade) block).getPartContainer(world, pos);
-                    // Capture all parts in this container
-                    for(EnumFacing side : partContainer.getParts().keySet()) {
-                        addPart(partContainer.getPartState(side).getId(), PartPos.of(world, pos, side));
-                    }
                 }
             }
         }
@@ -139,13 +137,41 @@ public class Network implements INBTSerializable {
     }
 
     /**
+     * Add the position of a variable container.
+     * @param dimPos The variable container position.
+     * @return If the container did not exist in the network already.
+     */
+    public boolean addVariableContainer(DimPos dimPos) {
+        compositeVariableCache = null;
+        return variableContainerPositions.add(dimPos);
+    }
+
+    /**
+     * Remove the position of a variable container.
+     * @param dimPos The variable container position.
+     */
+    public void removeVariableContainer(DimPos dimPos) {
+        compositeVariableCache = null;
+        variableContainerPositions.remove(dimPos);
+    }
+
+    /**
      * Add a given network element to the network
      * Also checks if it can tick and will handle it accordingly.
      * @param element The network element.
+     * @param networkPreinit If the network is still in the process of being initialized.
+     * @return If the addition succeeded.
      */
-    public void addNetworkElement(INetworkElement element) {
+    public boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
         elements.add(element);
-        addNetworkElementUpdateable(element);
+        if(!element.onNetworkAddition(this)) {
+            elements.remove(element);
+            return false;
+        }
+        if(!networkPreinit) {
+            addNetworkElementUpdateable(element);
+        }
+        return true;
     }
 
     /**
@@ -166,6 +192,7 @@ public class Network implements INBTSerializable {
      */
     public void removeNetworkElement(INetworkElement element) {
         element.beforeNetworkKill(this);
+        element.onNetworkRemoval(this);
         elements.remove(element);
         removeNetworkElementUpdateable(element);
     }
@@ -345,7 +372,7 @@ public class Network implements INBTSerializable {
      * @return True if such a variable can be found. False if the given part is not present in the network or if the
      *         given aspect is not present at that part.
      */
-    public <V extends IValue> boolean hasVariable(int partId, IAspectRead<V, ?> aspect) {
+    public <V extends IValue> boolean hasPartVariable(int partId, IAspectRead<V, ?> aspect) {
         if(!hasPart(partId)) {
             return false;
         }
@@ -364,8 +391,47 @@ public class Network implements INBTSerializable {
      * @param <V> The value.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(int partId, IAspectRead<V, ?> aspect) {
+    public <V extends IValue> IVariable<V> getPartVariable(int partId, IAspectRead<V, ?> aspect) {
         return ((IPartStateReader) getPart(partId)).getVariable(aspect);
+    }
+
+    protected Map<Integer, IVariableFacade> getVariableCache() {
+        if(compositeVariableCache == null) {
+            // Create a new composite map view on the existing variable containers in this network.
+            CompositeMap<Integer, IVariableFacade> compositeMap = new CompositeMap<>();
+            for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
+                DimPos dimPos = it.next();
+                World world = dimPos.getWorld();
+                BlockPos pos = dimPos.getBlockPos();
+                Block block = world.getBlockState(pos).getBlock();
+                if(block instanceof IVariableContainerFacade) {
+                    compositeMap.addElement(((IVariableContainerFacade) block).getVariableContainer(world, pos).getVariableCache());
+                } else {
+                    IntegratedDynamics.clog(Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
+                    it.remove();
+                }
+            }
+            compositeVariableCache = compositeMap;
+        }
+        return compositeVariableCache;
+    }
+
+    /**
+     * Check if this network has access to the variable facade with given variable id.
+     * @param variableId The variable id.
+     * @return If this network has access to it.
+     */
+    public boolean hasVariableFacade(int variableId) {
+        return getVariableCache().containsKey(variableId);
+    }
+
+    /**
+     * Get the variable facade with given variable id.
+     * @param variableId The variable id.
+     * @return The variable facade.
+     */
+    public IVariableFacade getVariableFacade(int variableId) {
+        return getVariableCache().get(variableId);
     }
 
 }

@@ -76,6 +76,16 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         part.addDrops(getPartState(), itemStacks);
     }
 
+    @Override
+    public boolean onNetworkAddition(Network network) {
+        return network.addPart(getPartState().getId(), getTarget().getCenter());
+    }
+
+    @Override
+    public void onNetworkRemoval(Network network) {
+        network.removePart(getPartState().getId());
+    }
+
     public boolean equals(Object o) {
         return o instanceof PartNetworkElement && compareTo((INetworkElement) o) == 0;
     }

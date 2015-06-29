@@ -24,10 +24,12 @@ valuetype.valuetypes.integrateddynamics.integer.name=Integer
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 
+# Variables facades
+variable.error.invalidItem=The current variable can not be used in this aspect.
+
 # Aspects
 aspect.tooltip.aspectName=§eAspect: §r%s
 aspect.tooltip.valueTypeName=§eType: §r%s
-aspect.error.invalidVariableItem=The current variable can not be used in this aspect.
 aspect.error.partNotInNetwork=Part with id %s could not be found within the current network.
 aspect.error.invalidType=This aspect expects %s, but %s was given.
 

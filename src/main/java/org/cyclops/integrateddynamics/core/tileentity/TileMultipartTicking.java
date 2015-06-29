@@ -137,15 +137,16 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
     public void setPart(EnumFacing side, IPartType part, IPartState partState) {
         partData.put(side, PartStateHolder.of(part, partState));
         if(getNetwork() != null) {
-            getNetwork().addNetworkElement(part.createNetworkElement(
-                    (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side));
-            PartPos partPos = PartPos.of(getWorld(), getPos(), side);
-            if(!getNetwork().addPart(partState.getId(), partPos)) {
+            INetworkElement networkElement = part.createNetworkElement(
+                    (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side);
+            if(!getNetwork().addNetworkElement(networkElement, false)) {
+                // In this case, the addition failed because that part id is already present in the network,
+                // therefore we have to make a new state for that part (with a new id) and retry.
+                partState = part.getDefaultState();
+                partData.put(side, PartStateHolder.of(part, partState));
                 IntegratedDynamics.clog(Level.WARN, "A part already existed in the network, this is possibly a " +
                         "result from item duplication.");
-                partState = part.getDefaultState();
-                getNetwork().addPart(partState.getId(), partPos);
-                partData.put(side, PartStateHolder.of(part, partState));
+                getNetwork().addNetworkElement(networkElement, false);
             }
         }
         onPartsChanged();
@@ -181,13 +182,9 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
                     Block.spawnAsEntity(getWorld(), pos, itemStack);
                 }
 
-                // Remove the part data from the network
-                getNetwork().removePart(partStateHolder.getState().getId());
-
                 // Remove the element from the network.
                 getNetwork().removeNetworkElement(networkElement);
             }
-            // Remove the part data from the
             // Finally remove the part data from this tile.
             IPartType ret = partData.remove(side).getPart();
             onPartsChanged();
@@ -337,7 +334,7 @@ public class TileMultipartTicking extends TickingCyclopsTileEntity implements IP
 
     @Override
     public boolean isConnected(EnumFacing side) {
-        return connected.containsKey(side) && connected.get(side);
+        return connected.containsKey(side.ordinal()) && connected.get(side.ordinal());
     }
 
     @Override

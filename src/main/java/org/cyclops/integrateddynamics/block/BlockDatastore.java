@@ -14,11 +14,14 @@ import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
+import org.cyclops.integrateddynamics.core.item.IVariableContainer;
+import org.cyclops.integrateddynamics.core.item.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -33,7 +36,8 @@ import java.util.Collection;
  *
  * @author rubensworks
  */
-public class BlockDatastore extends ConfigurableBlockContainer implements ICableNetwork<CablePathElement>, INetworkElementProvider {
+public class BlockDatastore extends ConfigurableBlockContainer implements ICableNetwork<CablePathElement>,
+        INetworkElementProvider, IVariableContainerFacade {
 
     @BlockProperty
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
@@ -108,6 +112,11 @@ public class BlockDatastore extends ConfigurableBlockContainer implements ICable
     @Override
     public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
         return Sets.<INetworkElement>newHashSet(new DatastoreNetworkElement(DimPos.of(world, blockPos)));
+    }
+
+    @Override
+    public IVariableContainer getVariableContainer(World world, BlockPos pos) {
+        return TileHelpers.getSafeTile(world, pos, IVariableContainer.class);
     }
 
     /* --------------- Delegate to ICableNetwork<CablePathElement> --------------- */
