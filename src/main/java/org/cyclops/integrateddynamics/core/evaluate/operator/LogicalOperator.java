@@ -8,12 +8,17 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
  */
 public class LogicalOperator extends BaseOperator {
 
-    public LogicalOperator(String operatorName, IFunction function) {
-        this(operatorName, 2, function);
+    public LogicalOperator(String symbol, String operatorName, IFunction function) {
+        this(symbol, operatorName, 2, function);
     }
 
-    public LogicalOperator(String operatorName, int inputLength, IFunction function) {
-        super(operatorName, constructInputVariables(inputLength, ValueTypes.BOOLEAN), ValueTypes.BOOLEAN, function);
+    public LogicalOperator(String symbol, String operatorName, int inputLength, IFunction function) {
+        super(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.BOOLEAN), ValueTypes.BOOLEAN, function);
+    }
+
+    @Override
+    public String getUnlocalizedType() {
+        return "logical." + getOperatorName();
     }
 
 }

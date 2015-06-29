@@ -4,6 +4,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.init.IRegistry;
+import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 

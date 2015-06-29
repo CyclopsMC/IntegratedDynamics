@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.part.aspect;
+package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,8 +11,9 @@ import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.item.VariableFacadeBase;
 import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class AspectVariableFacade extends VariableFacadeBase {
 
     @Override
     public <V extends IValue> IVariable<V> getVariable(Network network) {
-        if(isValid() && getAspect() instanceof IAspectRead && network.hasPart(getPartId())) {
+        if(isValid() && getAspect() instanceof IAspectRead && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect())) {
             return network.getPartVariable(getPartId(), (IAspectRead) getAspect());
         }
         return null;
@@ -56,13 +57,13 @@ public class AspectVariableFacade extends VariableFacadeBase {
     @Override
     public void validate(Network network, IPartStateWriter validator) {
         if (getPartId() < 0) {
-            validator.setError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidVariableItem"));
+            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
         } else if (!(getAspect() instanceof IAspectRead
-                && network.hasPart(getPartId()))) {
-            validator.setError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
+                && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
+            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
                     Integer.toString(getPartId())));
         } else if (validator.getActiveAspect().getValueType() != getAspect().getValueType()) {
-            validator.setError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
+            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
                     new L10NHelpers.UnlocalizedString(validator.getActiveAspect().getValueType().getUnlocalizedName()),
                     new L10NHelpers.UnlocalizedString(getAspect().getValueType().getUnlocalizedName())));
         }
@@ -73,7 +74,7 @@ public class AspectVariableFacade extends VariableFacadeBase {
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {
         if(isValid()) {
             getAspect().loadTooltip(list, false);
-            list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.partId", getPartId()));
+            list.add(L10NHelpers.localize("aspect.tooltip.partId", getPartId()));
         }
         super.addInformation(list, entityPlayer);
     }

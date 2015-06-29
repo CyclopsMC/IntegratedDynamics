@@ -91,7 +91,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
         @Override
         public void validate(Network network, IPartStateWriter validator) {
-            validator.setError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString(unlocalizedError));
+            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString(unlocalizedError));
         }
 
         @Override

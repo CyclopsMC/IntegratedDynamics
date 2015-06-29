@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
@@ -24,9 +25,10 @@ import java.util.Map;
 
 /**
  * A tile entity used to store variables.
+ * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-public class TileDatastore extends CyclopsTileEntity implements ITileCableNetwork, IVariableContainer {
+public class TileDatastore extends CyclopsTileEntity implements ITileCableNetwork, IVariableContainer, IDirtyMarkListener {
 
     @NBTPersist
     private Map<Integer, Boolean> connected = Maps.newHashMap();
@@ -37,6 +39,10 @@ public class TileDatastore extends CyclopsTileEntity implements ITileCableNetwor
     @Getter
     private SimpleInventory inventory = new SimpleInventory(9 * 5, "variables", 1);
     private Map<Integer, IVariableFacade> variableCache = Maps.newHashMap();
+
+    public TileDatastore() {
+        inventory.addDirtyMarkListener(this);
+    }
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
@@ -81,26 +87,15 @@ public class TileDatastore extends CyclopsTileEntity implements ITileCableNetwor
         // Do nothing
     }
 
-    protected void addVariable(ItemStack itemStack) {
-        IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-        if(variableFacade.isValid()) {
-            variableCache.put(variableFacade.getId(), variableFacade);
-        }
-    }
-
-    protected void removeVariable(ItemStack itemStack) {
-        IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-        if(variableFacade.isValid()) {
-            variableCache.remove(variableFacade.getId());
-        }
-    }
-
     protected void refreshVariables(IInventory inventory) {
         variableCache.clear();
         for(int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
             if(itemStack != null) {
-                addVariable(itemStack);
+                IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
+                if(variableFacade.isValid()) {
+                    variableCache.put(variableFacade.getId(), variableFacade);
+                }
             }
         }
     }
@@ -113,6 +108,11 @@ public class TileDatastore extends CyclopsTileEntity implements ITileCableNetwor
     @Override
     public Map<Integer, IVariableFacade> getVariableCache() {
         return variableCache;
+    }
+
+    @Override
+    public void onDirty() {
+        refreshVariables(inventory);
     }
 
 }

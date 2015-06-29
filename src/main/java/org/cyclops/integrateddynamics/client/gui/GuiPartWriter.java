@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui;
 
+import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
@@ -56,11 +57,14 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
     @Override
     protected void drawAdditionalElementInfoForeground(ContainerMultipart<P, S, IAspectWrite> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
         // Render error tooltip
-        L10NHelpers.UnlocalizedString error = getPartState().getError(aspect);
-        if(error != null) {
+        List<L10NHelpers.UnlocalizedString> errors = getPartState().getErrors(aspect);
+        if(!errors.isEmpty()) {
             if(isPointInRegion(ERROR_X, ERROR_Y + index * container.getAspectBoxHeight(), ERROR_WIDTH, ERROR_HEIGHT, mouseX, mouseY)) {
-                List<String> lines = StringHelpers.splitLines(error.localize(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
-                        EnumChatFormatting.RED.toString());
+                List<String> lines = Lists.newLinkedList();
+                for(L10NHelpers.UnlocalizedString error : errors) {
+                    lines.addAll(StringHelpers.splitLines(error.localize(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
+                            EnumChatFormatting.RED.toString()));
+                }
                 drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
             }
         }
@@ -78,7 +82,7 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
 
         // Render error symbol
         mc.renderEngine.bindTexture(texture);
-        if(getPartState().getError(aspect) != null) {
+        if(!getPartState().getErrors(aspect).isEmpty()) {
             drawTexturedModalRect(guiLeft + offsetX + ERROR_X,
                     guiTop + offsetY + ERROR_Y + aspectBoxHeight * index, 195, 0, ERROR_WIDTH, ERROR_HEIGHT);
         } else if(getPartState().getActiveAspect() == aspect) {

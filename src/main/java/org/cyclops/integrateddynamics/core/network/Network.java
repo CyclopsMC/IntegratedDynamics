@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
+import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.item.IVariableContainerFacade;
@@ -35,7 +36,7 @@ import java.util.*;
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
  * @author rubensworks
  */
-public class Network implements INBTSerializable {
+public class Network implements INBTSerializable, LazyExpression.IValueCache {
 
     private Cluster<CablePathElement> baseCluster;
 
@@ -45,6 +46,7 @@ public class Network implements INBTSerializable {
     private Map<Integer, PartPos> partPositions = Maps.newHashMap();
     private List<DimPos> variableContainerPositions = Lists.newLinkedList();
     private Map<Integer, IVariableFacade> compositeVariableCache = null;
+    private Map<Integer, IValue> lazyExpressionValueCache = Maps.newHashMap();
 
     private volatile boolean partsChanged = false;
     private volatile boolean killed = false;
@@ -432,6 +434,21 @@ public class Network implements INBTSerializable {
      */
     public IVariableFacade getVariableFacade(int variableId) {
         return getVariableCache().get(variableId);
+    }
+
+    @Override
+    public void setValue(int id, IValue value) {
+        lazyExpressionValueCache.put(id, value);
+    }
+
+    @Override
+    public boolean hasValue(int id) {
+        return lazyExpressionValueCache.containsKey(id);
+    }
+
+    @Override
+    public IValue getValue(int id) {
+        return lazyExpressionValueCache.get(id);
     }
 
 }

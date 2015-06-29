@@ -1,11 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A basic abstract implementation of an operator.
@@ -13,13 +16,15 @@ import java.util.Arrays;
  */
 public abstract class BaseOperator implements IOperator {
 
+    private final String symbol;
     private final String operatorName;
     private final IValueType[] inputTypes;
     private final IValueType outputType;
     private final IFunction function;
 
-    protected BaseOperator(String operatorName, IValueType[] inputTypes, IValueType outputType,
+    protected BaseOperator(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                            IFunction function) {
+        this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
         this.outputType = outputType;
@@ -32,9 +37,36 @@ public abstract class BaseOperator implements IOperator {
         return values;
     }
 
+    protected abstract String getUnlocalizedType();
+
     @Override
-    public String getOperatorName() {
-        return operatorName;
+    public String getUnlocalizedName() {
+        return getUnlocalizedPrefix() + ".name";
+    }
+
+    protected String getUnlocalizedPrefix() {
+        return "operator.operators." + getModId() + "." + getUnlocalizedType();
+    }
+
+    protected String getOperatorName() {
+        return this.operatorName;
+    }
+
+    @Override
+    public String getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
+        String operatorName = L10NHelpers.localize(getUnlocalizedName());
+        String symbol = getSymbol();
+        String outputTypeName = L10NHelpers.localize(getOutputType().getUnlocalizedName());
+        lines.add(L10NHelpers.localize("operator.tooltip.aspectName", operatorName, symbol));
+        lines.add(L10NHelpers.localize("operator.tooltip.outputTypeName", outputTypeName));
+        if(appendOptionalInfo) {
+            L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
+        }
     }
 
     @Override
@@ -72,8 +104,35 @@ public abstract class BaseOperator implements IOperator {
     }
 
     @Override
+    public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input) {
+        // Input size checking
+        if(input.length != getInputTypes().length) {
+            return new L10NHelpers.UnlocalizedString("operator.error.wrongInputLength",
+                    this.getOperatorName(), input.length, getInputTypes().length);
+        }
+        // Input types checking
+        for(int i = 0; i < input.length; i++) {
+            IValueType inputType = input[i];
+            if(inputType == null) {
+                return new L10NHelpers.UnlocalizedString("operator.error.nullType", this.getOperatorName(), i);
+            }
+            if(getInputTypes()[i] != inputType) {
+                return new L10NHelpers.UnlocalizedString("operator.error.wrongType",
+                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
+                        i, new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
+            }
+            i++;
+        }
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "[Operator: " + getOperatorName() + "]";
+    }
+
+    protected String getModId() {
+        return Reference.MOD_ID;
     }
 
     public static interface IFunction {

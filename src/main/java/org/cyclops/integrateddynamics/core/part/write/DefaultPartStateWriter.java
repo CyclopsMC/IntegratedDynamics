@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.part.write;
 import com.google.common.collect.Maps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -18,6 +19,8 @@ import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +37,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     private String activeAspectName = null;
     private SimpleInventory inventory;
     @NBTPersist
-    private Map<String, L10NHelpers.UnlocalizedString> errorMessages = Maps.newHashMap();
+    private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
 
     public DefaultPartStateWriter(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
@@ -70,7 +73,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
         IAspectWrite activeAspect = getActiveAspect();
         if(activeAspect != null && activeAspect != newAspect) {
             activeAspect.onDeactivate(partType, target, this);
-            setError(activeAspect, null);
+            addError(activeAspect, null);
         }
         this.currentVariableFacade = null;
         this.activeAspectName = newAspect == null ? null : newAspect.getUnlocalizedName();
@@ -89,13 +92,21 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString getError(IAspectWrite aspect) {
-        return errorMessages.get(aspect.getUnlocalizedName());
+    public List<L10NHelpers.UnlocalizedString> getErrors(IAspectWrite aspect) {
+        List<L10NHelpers.UnlocalizedString> errors = errorMessages.get(aspect.getUnlocalizedName());
+        if(errors == null) {
+            return Collections.emptyList();
+        }
+        return errors;
     }
 
     @Override
-    public void setError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error) {
-        errorMessages.put(aspect.getUnlocalizedName(), error);
+    public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error) {
+        if(error == null) {
+            errorMessages.remove(aspect.getUnlocalizedName());
+        } else {
+            CollectionHelpers.addToMapList(errorMessages, aspect.getUnlocalizedName(), error);
+        }
         onDirty();
         sendUpdate(); // We want this error messages to be sent to the client(s).
     }

@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandler;
+import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
 import java.util.List;
 
@@ -9,7 +11,7 @@ import java.util.List;
  * Registry for {@link IOperator}
  * @author rubensworks
  */
-public interface IOperatorRegistry extends IRegistry {
+public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<OperatorVariableFacade> {
 
     /**
      * Register a new operator.
