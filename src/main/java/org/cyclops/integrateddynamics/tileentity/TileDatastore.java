@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.tileentity;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +10,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
+import org.cyclops.cyclopscore.tileentity.InventoryTileEntity;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.item.IVariableContainer;
@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -28,7 +29,10 @@ import java.util.Map;
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-public class TileDatastore extends CyclopsTileEntity implements ITileCableNetwork, IVariableContainer, IDirtyMarkListener {
+public class TileDatastore extends InventoryTileEntity implements ITileCableNetwork, IVariableContainer, IDirtyMarkListener {
+
+    public static final int ROWS = 5;
+    public static final int COLS = 9;
 
     @NBTPersist
     private Map<Integer, Boolean> connected = Maps.newHashMap();
@@ -36,24 +40,25 @@ public class TileDatastore extends CyclopsTileEntity implements ITileCableNetwor
     @Getter
     @Setter
     private Network network;
-    @Getter
-    private SimpleInventory inventory = new SimpleInventory(9 * 5, "variables", 1);
     private Map<Integer, IVariableFacade> variableCache = Maps.newHashMap();
 
     public TileDatastore() {
+        super(ROWS * COLS, "variables", 1);
         inventory.addDirtyMarkListener(this);
-    }
 
-    @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
-        inventory.writeToNBT(tag, "inventory");
+        // Make all sides active for all slots
+        Collection<Integer> slots = Lists.newArrayListWithCapacity(getInventory().getSizeInventory());
+        for(int i = 0; i < getInventory().getSizeInventory(); i++) {
+            slots.add(i);
+        }
+        for(EnumFacing side : EnumFacing.VALUES) {
+            addSlotsToSide(side, slots);
+        }
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        inventory.readFromNBT(tag, "inventory");
         refreshVariables(inventory);
     }
 

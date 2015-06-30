@@ -252,10 +252,16 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
         if(killIfEmpty() || killed) {
             NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
         } else {
+            // Reset lazy variable cache
+            lazyExpressionValueCache.clear();
+
+            // Signal parts of any changes
             if (partsChanged) {
                 this.partsChanged = false;
                 onPartsChanged();
             }
+
+            // Update updateable network elements
             for (INetworkElement element : updateableElements) {
                 if (updateableElementsTicks.get(element) <= 0) {
                     updateableElementsTicks.put(element, element.getUpdateInterval());

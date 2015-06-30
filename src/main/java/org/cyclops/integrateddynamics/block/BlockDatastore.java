@@ -4,17 +4,20 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
+import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainerGui;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.client.gui.GuiDatastore;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.block.cable.ICableNetwork;
@@ -26,6 +29,7 @@ import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
+import org.cyclops.integrateddynamics.inventory.container.ContainerDatastore;
 import org.cyclops.integrateddynamics.network.DatastoreNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileDatastore;
 
@@ -36,7 +40,7 @@ import java.util.Collection;
  *
  * @author rubensworks
  */
-public class BlockDatastore extends ConfigurableBlockContainer implements ICableNetwork<CablePathElement>,
+public class BlockDatastore extends ConfigurableBlockContainerGui implements ICableNetwork<CablePathElement>,
         INetworkElementProvider, IVariableContainerFacade {
 
     @BlockProperty
@@ -166,4 +170,13 @@ public class BlockDatastore extends ConfigurableBlockContainer implements ICable
         return cableNetworkComponent.createPathElement(world, blockPos);
     }
 
+    @Override
+    public Class<? extends Container> getContainer() {
+        return ContainerDatastore.class;
+    }
+
+    @Override
+    public Class<? extends GuiScreen> getGui() {
+        return GuiDatastore.class;
+    }
 }

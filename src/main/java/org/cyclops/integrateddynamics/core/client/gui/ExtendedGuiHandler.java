@@ -29,7 +29,7 @@ public class ExtendedGuiHandler extends GuiHandler {
     /**
      * Gui type for parts
      */
-    public static final GuiType<EnumFacing> PART = GuiType.create();
+    public static final GuiType<EnumFacing> PART = GuiType.create(true);
     static {
         PART.setContainerConstructor(new IContainerConstructor<EnumFacing>() {
             @Override
