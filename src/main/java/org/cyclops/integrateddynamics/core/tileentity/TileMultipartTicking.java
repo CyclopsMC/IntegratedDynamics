@@ -18,7 +18,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.cyclopscore.tileentity.TickingCyclopsTileEntity;
+import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
@@ -35,7 +35,7 @@ import java.util.Map;
  * A ticking tile entity which is made up of different parts.
  * @author Ruben Taelman
  */
-public class TileMultipartTicking extends TickingCyclopsTileEntity implements IPartContainer, ITileCableNetwork {
+public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTileEntity.ITickingTile, IPartContainer, ITileCableNetwork {
 
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
 
