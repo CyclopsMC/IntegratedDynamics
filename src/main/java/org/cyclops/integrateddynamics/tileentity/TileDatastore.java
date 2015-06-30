@@ -117,7 +117,9 @@ public class TileDatastore extends InventoryTileEntity implements ITileCableNetw
 
     @Override
     public void onDirty() {
-        refreshVariables(inventory);
+        if(!worldObj.isRemote) {
+            refreshVariables(inventory);
+        }
     }
 
 }
