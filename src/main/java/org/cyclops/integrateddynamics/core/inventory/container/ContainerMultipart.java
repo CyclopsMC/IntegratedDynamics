@@ -17,6 +17,7 @@ import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
+import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
@@ -131,14 +132,20 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     }
 
     public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, IAspect aspect) {
+        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         if(itemStack == null) {
             return null;
         }
         itemStack = itemStack.copy();
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
-        AspectVariableFacade variableFacade = new AspectVariableFacade(generateId, getPartState().getId(), aspect);
-        IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).
-                write(tag, variableFacade, Aspects.REGISTRY);
+        IVariableFacade previousVariableFacade = registry.handle(tag);
+        AspectVariableFacade variableFacade;
+        if(generateId && previousVariableFacade.getId() > -1) {
+            variableFacade = new AspectVariableFacade(previousVariableFacade.getId(), getPartState().getId(), aspect);
+        } else {
+            variableFacade = new AspectVariableFacade(generateId, getPartState().getId(), aspect);
+        }
+        registry.write(tag, variableFacade, Aspects.REGISTRY);
         return itemStack;
     }
 
