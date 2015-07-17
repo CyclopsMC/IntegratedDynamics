@@ -28,7 +28,9 @@ public class OperatorRegistry implements IOperatorRegistry {
     private final Map<IValueType, List<IOperator>> outputTypedOperators = Maps.newHashMap();
 
     private OperatorRegistry() {
-        IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
+        if(MinecraftHelpers.isModdedEnvironment()) {
+            IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
@@ -14,7 +15,16 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
  */
 public final class Operators {
 
-    public static final IOperatorRegistry REGISTRY = IntegratedDynamics._instance.getRegistryManager().getRegistry(IOperatorRegistry.class);
+    public static final IOperatorRegistry REGISTRY = constructRegistry();
+
+    private static IOperatorRegistry constructRegistry() {
+        // This also allows this registry to be used outside of a minecraft environment.
+        if(MinecraftHelpers.isModdedEnvironment()) {
+            return IntegratedDynamics._instance.getRegistryManager().getRegistry(IOperatorRegistry.class);
+        } else {
+            return OperatorRegistry.getInstance();
+        }
+    }
 
     /**
      * ----------------------------------- BOOLEAN OPERATORS -----------------------------------
