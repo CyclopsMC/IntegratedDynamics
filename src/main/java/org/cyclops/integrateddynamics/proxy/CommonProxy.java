@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 public class CommonProxy extends CommonProxyComponent {
 
     @Override
-    protected ModBase getMod() {
+    public ModBase getMod() {
         return IntegratedDynamics._instance;
     }
 

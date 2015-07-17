@@ -11,6 +11,7 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockItemConfigReference;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
@@ -67,6 +68,11 @@ public class IntegratedDynamics extends ModBase {
     @Override
     protected GuiHandler constructGuiHandler() {
         return new ExtendedGuiHandler(this);
+    }
+
+    @Override
+    protected RecipeHandler constructRecipeHandler() {
+        return null; // TODO
     }
 
     @Mod.EventHandler
