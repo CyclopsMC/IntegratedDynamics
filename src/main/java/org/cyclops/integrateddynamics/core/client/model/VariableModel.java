@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -83,16 +84,24 @@ public class VariableModel implements IModel {
 
         // Add aspects to baked model.
         for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
-            IModel model = ModelLoaderRegistry.getModel(Aspects.REGISTRY.getAspectModel(aspect));
-            IBakedModel bakedAspectModel = model.bake(state, format, bakedTextureGetter);
-            bakedModel.addAspectModel(aspect, bakedAspectModel);
+            try {
+                IModel model = ModelLoaderRegistry.getModel(Aspects.REGISTRY.getAspectModel(aspect));
+                IBakedModel bakedAspectModel = model.bake(state, format, bakedTextureGetter);
+                bakedModel.addAspectModel(aspect, bakedAspectModel);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         // Add value types to baked model.
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
-            IModel model = ModelLoaderRegistry.getModel(ValueTypes.REGISTRY.getValueTypeModel(valueType));
-            IBakedModel bakedValueTypeModel = model.bake(state, format, bakedTextureGetter);
-            bakedModel.addValueTypeModel(valueType, bakedValueTypeModel);
+            try {
+                IModel model = ModelLoaderRegistry.getModel(ValueTypes.REGISTRY.getValueTypeModel(valueType));
+                IBakedModel bakedValueTypeModel = model.bake(state, format, bakedTextureGetter);
+                bakedModel.addValueTypeModel(valueType, bakedValueTypeModel);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return bakedModel;
