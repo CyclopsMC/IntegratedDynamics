@@ -1,18 +1,26 @@
 apply plugin: "curseforge"
 apply plugin: 'maven'
 
-if(project.hasProperty("curseforge_key") && project.hasProperty("changelog")) {
-    curse {
-        apiKey = project.curseforge_key
-        projectId = "TODO" // my project url is http://minecraft.curseforge.com/mc-mods/TODO/
-        changelog = new File(project.changelog).text
-        releaseType = "release"
+curse {
+    dependsOn 'reobf'
+    projectId = "" // TODO: my project url is http://minecraft.curseforge.com/mc-mods/232758/
+    releaseType = project.config.release_type
 
-        additionalArtifact deobfJar
-        additionalArtifact apiJar
-        additionalArtifact sourceJar
-        additionalArtifact javadocJar
+    if (project.buildnumber.equals("RELEASE")) {
+        changelog = new File("resources/changelog/${project.version}.txt").text
+    } else {
+        changelog = ""
     }
+
+    if(project.hasProperty("curseforge_key") && project.hasProperty("changelog")) {
+        apiKey = project.curseforge_key
+    } else if(System.getenv().TRAVIS) {
+        apiKey = System.getenv().CURSEFORGE_KEY_SECRET
+    }
+
+    additionalArtifact deobfJar
+    additionalArtifact sourceJar
+    additionalArtifact javadocJar
 }
 
 configurations {
@@ -35,9 +43,14 @@ uploadArchives {
             repository(url: project.filesmaven_url) {
                 authentication(userName: project.filesmaven_username, password: project.filesmaven_key)
             }
+        } else if (System.getenv().MAVEN_URL) {
+            logger.info('Publishing to files server')
+            repository(url: System.getenv().MAVEN_URL) {
+                authentication(userName: System.getenv().MAVEN_USERNAME, password: System.getenv().MAVEN_KEY)
+            }
         } else {
             logger.info('Publishing to repo folder')
-            repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
+            repository(url: 'file://localhost/' + project.file('~/.m2/repository').getAbsolutePath())
         }
 
         pom {
@@ -48,24 +61,29 @@ uploadArchives {
         pom.project {
             name project.archivesBaseName
             packaging 'jar'
-            description 'An evil mod for Minecraft'
-            url 'https://github.com/rubensworks/EvilCraft'
+            description 'A Minecraft mod to take full and automated control of your appliances.'
+            url 'https://github.com/CyclopsMC/IntegratedDynamics'
 
             scm {
-                url 'https://github.com/rubensworks/EvilCraft'
-                connection 'scm:git:git://github.com/rubensworks/EvilCraft.git'
-                developerConnection 'scm:git:git@github.com:rubensworks/EvilCraft.git'
+                url 'https://github.com/CyclopsMC/IntegratedDynamics'
+                connection 'scm:git:git://github.com/CyclopsMC/IntegratedDynamics.git'
+                developerConnection 'scm:git:git@github.com:CyclopsMC/IntegratedDynamics.git'
             }
 
             issueManagement {
                 system 'github'
-                url 'https://github.com/rubensworks/EvilCraft/issues'
+                url 'https://github.com/CyclopsMC/IntegratedDynamics/issues'
             }
 
             developers {
                 developer {
                     id 'rubensworks'
                     name 'rubensworks'
+                    roles { role 'developer' }
+                }
+                developer {
+                    id 'immortaleeb'
+                    name 'immortaleeb'
                     roles { role 'developer' }
                 }
             }

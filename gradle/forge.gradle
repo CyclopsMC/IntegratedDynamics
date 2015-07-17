@@ -1,10 +1,19 @@
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        name "RubensWorks FS"
+        url "http://maven.rubensworks.net/"
+    }
 }
 
 dependencies {
-    compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
+    // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local CyclopsCore version.
+    if(project.hasProperty("cyclopscore_version_local")) {
+        compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${project.cyclopscore_version_local}:deobf"
+    } else {
+        compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
+    }
 
     // Project lombok
     compile "org.projectlombok:lombok:1.16.4"
@@ -29,7 +38,7 @@ minecraft {
     mappings = "snapshot_20150401"
 }
 
-if (System.getenv().RELEASE)
+if (project.buildnumber.equals("RELEASE"))
     version = "${config.minecraft_version}-${config.mod_version}"
 else
     version = "${config.minecraft_version}-${config.mod_version}-${buildnumber}"

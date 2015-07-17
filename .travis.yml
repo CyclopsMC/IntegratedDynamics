@@ -1,0 +1,35 @@
+language: java
+jdk: openjdk7
+notifications:
+  email: false
+  slack:
+    secure: cAZP5ZuJhlAfexOaPcd/zk6i0jndjPVt4O7XfwFoZvO0LQ/QAVkk4BxvBMpL7HINfiD1oeye5VAGyH9xrfoO/I21uU01yrPUyVxRS3hDHttELbeDKYOCT8V1637EKO2udo3m+HzoXqOC6M8Hs4W62VEweKpNPbcrIcHjpwhHZAc=
+
+env:
+  global:
+  - TERM=dumb
+install: ./gradlew setupCIWorkspace -S
+script: ./gradlew build -S
+
+deploy:
+- provider: script
+  script: ./gradlew curse -S
+  on:
+    all_branches: true
+    repo: CyclopsMC/IntegratedDynamics
+    condition: $TRAVIS_BRANCH =~ ^(master|release).*$
+    tags: true
+- provider: releases
+  api_key:
+    secure: Aq1SUNmakwKghY9aqwJSDR4n2u6zAUe72HdJVazTK4cM14IcafeQp33TRsToyheE45Bmn8IiXwgKxn1wYgfCymRwRCLMNCmiu91pT1lDUzs8oIifwdqd/Ai6SuJekSp0VblZUw9igneMbVgIGmCxMVdjSLmWu4Bvs8sDNTOUyY4=
+  on:
+    all_branches: true
+    repo: CyclopsMC/IntegratedDynamics
+    condition: $TRAVIS_BRANCH =~ ^(master|release).*$
+    tags: true
+- provider: script
+  script: ./gradlew uploadArchives -S
+  on:
+    all_branches: true
+    repo: CyclopsMC/IntegratedDynamics
+    condition: $TRAVIS_BRANCH =~ ^(master|release).*$
