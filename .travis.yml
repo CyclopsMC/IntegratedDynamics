@@ -17,7 +17,6 @@ deploy:
   on:
     all_branches: true
     repo: CyclopsMC/IntegratedDynamics
-    condition: $TRAVIS_BRANCH =~ ^(master|release).*$
     tags: true
 - provider: releases
   api_key:
@@ -25,7 +24,6 @@ deploy:
   on:
     all_branches: true
     repo: CyclopsMC/IntegratedDynamics
-    condition: $TRAVIS_BRANCH =~ ^(master|release).*$
     tags: true
 - provider: script
   script: ./gradlew uploadArchives -S

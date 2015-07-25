@@ -43,7 +43,7 @@ def loadProperties() {
     if (System.getenv().CI) {
         //project.buildnumber += "-DEV"
     }
-    if (System.getenv().RELEASE || (System.getenv().TRAVIS_BRANCH && System.getenv().TRAVIS_BRANCH.indexOf("release") > -1))
+    if (System.getenv().RELEASE || System.getenv().TRAVIS_TAG)
         project.buildnumber = "RELEASE"
     logger.lifecycle "BUILDING VERSION: " + project.buildnumber
 }
