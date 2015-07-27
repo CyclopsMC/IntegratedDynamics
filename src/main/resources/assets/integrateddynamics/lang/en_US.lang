@@ -4,6 +4,7 @@ itemGroup.integrateddynamics=Integrated Dynamics
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
 tile.blocks.integrateddynamics.datastore.name=Datastore
+tile.blocks.integrateddynamics.logicProgrammer.name=Logic Programmer
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s

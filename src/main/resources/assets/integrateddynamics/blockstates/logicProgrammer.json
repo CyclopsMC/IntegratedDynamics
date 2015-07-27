@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "facing=south": { "model": "integrateddynamics:logicProgrammer" },
+    "facing=west" : { "model": "integrateddynamics:logicProgrammer", "y": 90 },
+    "facing=north": { "model": "integrateddynamics:logicProgrammer", "y": 180 },
+    "facing=east" : { "model": "integrateddynamics:logicProgrammer", "y": 270 },
+    "inventory"   : { "model": "integrateddynamics:logicProgrammer" }
+  }
+}

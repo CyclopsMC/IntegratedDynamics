@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "particle": "integrateddynamics:blocks/logicProgrammer_top",
+        "down": "integrateddynamics:blocks/datastore_top",
+        "up": "integrateddynamics:blocks/logicProgrammer_top",
+        "north": "integrateddynamics:blocks/logicProgrammer_side",
+        "east": "integrateddynamics:blocks/logicProgrammer_side",
+        "south": "integrateddynamics:blocks/logicProgrammer_side",
+        "west": "integrateddynamics:blocks/logicProgrammer_side"
+    }
+}
