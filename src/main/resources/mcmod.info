@@ -1,6 +1,6 @@
 [
 {
-  "modid": "IntegratedDynamics",
+  "modid": "integrateddynamics",
   "name": "Integrated Dynamics",
   "description": "Take full and automated control of your appliances.",
   "version": "${version}",

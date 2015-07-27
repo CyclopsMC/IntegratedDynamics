@@ -10,7 +10,7 @@ import org.cyclops.cyclopscore.client.gui.GuiHandler;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockItemConfigReference;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
-import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
@@ -38,9 +38,10 @@ import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
      name = Reference.MOD_NAME,
      useMetadata = true,
      version = Reference.MOD_VERSION,
-     dependencies = Reference.MOD_DEPENDENCIES
+     dependencies = Reference.MOD_DEPENDENCIES,
+     guiFactory = "org.cyclops.integrateddynamics.GuiConfigOverview$ExtendedConfigGuiFactory"
 )
-public class IntegratedDynamics extends ModBase {
+public class IntegratedDynamics extends ModBaseVersionable {
 
     /**
      * The proxy of this mod, depending on 'side' a different proxy will be inside this field.
@@ -58,7 +59,7 @@ public class IntegratedDynamics extends ModBase {
     public static GlobalCounters globalCounters = null;
 
     public IntegratedDynamics() {
-        super(Reference.MOD_ID, Reference.MOD_NAME);
+        super(Reference.MOD_ID, Reference.MOD_NAME, Reference.MOD_VERSION);
 
         // Register world storages
         registerWorldStorage(NetworkWorldStorage.getInstance(this));

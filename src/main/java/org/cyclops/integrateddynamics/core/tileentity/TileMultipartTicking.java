@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Delegate;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,6 +39,8 @@ import java.util.Map;
 public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTileEntity.ITickingTile, IPartContainer, ITileCableNetwork {
 
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
+    @Delegate
+    protected final ITickingTile tickingTileComponent = new TickingTileComponent(this);
 
     @NBTPersist private boolean realCable = true;
     @NBTPersist private Map<Integer, Boolean> connected = Maps.newHashMap();

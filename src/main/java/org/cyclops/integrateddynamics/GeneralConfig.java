@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.DummyConfig;
+import org.cyclops.cyclopscore.tracking.Analytics;
+import org.cyclops.cyclopscore.tracking.Versions;
 
 /**
  * A config with general options for this mod.
@@ -17,6 +19,18 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "Config version for " + Reference.MOD_NAME +".\nDO NOT EDIT MANUALLY!")
     public static String version = Reference.MOD_VERSION;
+
+    /**
+     * If an anonymous mod startup analytics request may be sent to our analytics service.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If an anonymous mod startup analytics request may be sent to our analytics service.")
+    public static boolean analytics = true;
+
+    /**
+     * If the version checker should be enabled.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If the version checker should be enabled.")
+    public static boolean versionChecker = true;
     
     /**
      * Create a new instance.
@@ -30,6 +44,13 @@ public class GeneralConfig extends DummyConfig {
         // Check version of config file
         if(!version.equals(Reference.MOD_VERSION))
             System.err.println("The config file of " + Reference.MOD_NAME + " is out of date and might cause problems, please remove it so it can be regenerated.");
+
+        if(analytics) {
+            Analytics.registerMod(getMod(), Reference.GA_TRACKING_ID);
+        }
+        if(versionChecker) {
+            Versions.registerMod(getMod(), IntegratedDynamics._instance, Reference.VERSION_URL);
+        }
     }
     
     @Override
