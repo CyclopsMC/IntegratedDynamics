@@ -3,7 +3,9 @@ package org.cyclops.integrateddynamics.core.item;
 import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
@@ -65,6 +67,24 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         tagCompound.setString("_type", handler.getTypeId());
         tagCompound.setInteger("_id", variableFacade.getId());
         handler.setVariableFacade(tagCompound, variableFacade);
+    }
+
+    @Override
+    public <F extends IVariableFacade> ItemStack writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
+        if(itemStack == null) {
+            return null;
+        }
+        itemStack = itemStack.copy();
+        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        IVariableFacade previousVariableFacade = this.handle(tag);
+        F variableFacade;
+        if(generateId && previousVariableFacade.getId() > -1) {
+            variableFacade = variableFacadeFactory.create(previousVariableFacade.getId());
+        } else {
+            variableFacade = variableFacadeFactory.create(generateId);
+        }
+        this.write(tag, variableFacade, variableFacadeHandler);
+        return itemStack;
     }
 
     /**

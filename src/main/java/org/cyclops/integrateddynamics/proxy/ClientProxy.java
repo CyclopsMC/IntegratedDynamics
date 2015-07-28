@@ -12,6 +12,10 @@ import org.cyclops.integrateddynamics.core.client.model.VariableLoader;
  */
 public class ClientProxy extends ClientProxyComponent {
 
+    public ClientProxy() {
+        super(new CommonProxy());
+    }
+
     @Override
     public ModBase getMod() {
         return IntegratedDynamics._instance;

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.item;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.init.IRegistry;
 
@@ -29,5 +30,38 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @param <F> The type of variable facade.
      */
     public <F extends IVariableFacade> void write(NBTTagCompound tagCompound, F variableFacade, IVariableFacadeHandler<F> handler);
+
+    /**
+     * Write a new variable facade to the given itemstack.
+     * @param generateId If a new id should be generated. Otherwise the previous facade id will be used or -1 if non existing.
+     * @param itemStack The itemstack to write to.
+     * @param variableFacadeHandler The variable facade handler.
+     * @param variableFacadeFactory A factory for creating a variable facade.
+     * @return A copy of the given itemstack with the written variable facade.
+     * @param <F> The variable facade type.
+     */
+    public <F extends IVariableFacade> ItemStack writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory);
+
+    /**
+     * Factory for creating variable facades.
+     * @param <F> The variable facade type.
+     */
+    public static interface IVariableFacadeFactory<F extends IVariableFacade> {
+
+        /**
+         * Create a new variable facade.
+         * @param generateId If a new id should be generated, otherwise id -1
+         * @return The new variable facade.
+         */
+        public F create(boolean generateId);
+
+        /**
+         * Create a new variable facade.
+         * @param id The id the facade should use.
+         * @return The new variable facade.
+         */
+        public F create(int id);
+
+    }
 
 }

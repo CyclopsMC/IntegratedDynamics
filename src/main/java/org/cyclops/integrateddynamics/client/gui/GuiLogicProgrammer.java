@@ -10,12 +10,15 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateOperatorPacket;
 
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * Gui for the {@link org.cyclops.integrateddynamics.block.BlockLogicProgrammer}.
@@ -70,8 +73,8 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                 + BlockLogicProgrammerConfig._instance.getNamedId() + ".png";
     }
 
-    protected float colorSmoothener(float color) {
-        return 1F - ((1F - color) / 4F);
+    protected float colorSmoothener(float color, boolean hover) {
+        return 1F - ((1F - color) / (hover ? 2F : 4F));
     }
 
     @SuppressWarnings("unchecked")
@@ -93,8 +96,10 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
 
                 GlStateManager.disableAlpha();
                 Triple<Float, Float, Float> rgb = Helpers.intToRGB(operator.getOutputType().getDisplayColor());
-                GlStateManager.color(colorSmoothener(rgb.getLeft()), colorSmoothener(rgb.getMiddle()),
-                        colorSmoothener(rgb.getRight()), 1);
+                boolean hover = container.getActiveOperator() == operator
+                        || isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY));
+                GlStateManager.color(colorSmoothener(rgb.getLeft(), hover), colorSmoothener(rgb.getMiddle(), hover),
+                        colorSmoothener(rgb.getRight(), hover), 1);
 
                 // Background
                 mc.renderEngine.bindTexture(texture);
@@ -134,6 +139,22 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                 }
             }
         }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
+        for(int i = 0; i < container.getPageSize(); i++) {
+            if (container.isElementVisible(i)) {
+                IOperator operator = container.getVisibleElement(i);
+                if (isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
+                    container.setActiveOperator(operator);
+                    IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerActivateOperatorPacket(
+                            operator == null ? "" : operator.getUnlocalizedName()));
+                }
+            }
+        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
 }

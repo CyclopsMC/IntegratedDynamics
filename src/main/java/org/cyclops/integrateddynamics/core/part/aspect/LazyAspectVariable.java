@@ -24,7 +24,7 @@ public abstract class LazyAspectVariable<V extends IValue> implements IAspectVar
 
     @Override
     public boolean requiresUpdate() {
-        return true;
+        return value != null;
     }
 
     @Override

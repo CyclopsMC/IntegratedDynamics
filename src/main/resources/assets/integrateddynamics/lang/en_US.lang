@@ -51,7 +51,7 @@ aspect.aspects.integrateddynamics.write.integer.redstone.info=Outputs the value 
 
 # Operators
 operator.tooltip.operatorName=§eOperator: §r%s (%s)
-operator.tooltip.variableIds=§e§Variable IDs: §r§o%s
+operator.tooltip.variableIds=§e§oVariable IDs: §r§o%s
 operator.tooltip.inputTypeName=§eInput Type %s: §r%s
 operator.tooltip.outputTypeName=§eOutput Type: §r%s
 operator.error.wrongInputLength=The operator %s received an input of length %s while it needs a length of %s.

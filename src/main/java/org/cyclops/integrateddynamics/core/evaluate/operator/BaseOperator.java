@@ -119,7 +119,7 @@ public abstract class BaseOperator implements IOperator {
         for(int i = 0; i < input.length; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
-                return new L10NHelpers.UnlocalizedString("operator.error.nullType", this.getOperatorName(), i);
+                return new L10NHelpers.UnlocalizedString("operator.error.nullType", this.getOperatorName(), Integer.toString(i));
             }
             if(getInputTypes()[i] != inputType) {
                 return new L10NHelpers.UnlocalizedString("operator.error.wrongType",

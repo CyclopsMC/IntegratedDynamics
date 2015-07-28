@@ -6,10 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -17,7 +15,6 @@ import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
@@ -131,22 +128,19 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         return true;
     }
 
-    public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, IAspect aspect) {
+    public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        if(itemStack == null) {
-            return null;
-        }
-        itemStack = itemStack.copy();
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
-        IVariableFacade previousVariableFacade = registry.handle(tag);
-        AspectVariableFacade variableFacade;
-        if(generateId && previousVariableFacade.getId() > -1) {
-            variableFacade = new AspectVariableFacade(previousVariableFacade.getId(), getPartState().getId(), aspect);
-        } else {
-            variableFacade = new AspectVariableFacade(generateId, getPartState().getId(), aspect);
-        }
-        registry.write(tag, variableFacade, Aspects.REGISTRY);
-        return itemStack;
+        return registry.writeVariableFacade(generateId, itemStack, Aspects.REGISTRY, new IVariableFacadeHandlerRegistry.IVariableFacadeFactory<AspectVariableFacade>() {
+            @Override
+            public AspectVariableFacade create(boolean generateId) {
+                return new AspectVariableFacade(generateId, getPartState().getId(), aspect);
+            }
+
+            @Override
+            public AspectVariableFacade create(int id) {
+                return new AspectVariableFacade(id, getPartState().getId(), aspect);
+            }
+        });
     }
 
 }

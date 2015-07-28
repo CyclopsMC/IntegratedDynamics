@@ -152,12 +152,17 @@ public class BlockDatastore extends ConfigurableBlockContainerGui implements ICa
 
     @Override
     public void resetCurrentNetwork(World world, BlockPos pos) {
+        Network currentNetwork = getNetwork(world, pos);
+        if(currentNetwork != null) {
+            currentNetwork.removeVariableContainer(DimPos.of(world, pos));
+        }
         cableNetworkComponent.resetCurrentNetwork(world, pos);
     }
 
     @Override
     public void setNetwork(Network network, World world, BlockPos pos) {
         cableNetworkComponent.setNetwork(network, world, pos);
+        network.addVariableContainer(DimPos.of(world, pos));
     }
 
     @Override

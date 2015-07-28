@@ -1,16 +1,23 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
+import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
-import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
+import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.item.IVariableFacade;
+import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
+import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -29,7 +36,10 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         }
     };
 
-    private final SimpleInventory temporarySlots;
+    private final SimpleInventory writeSlot;
+    private IOperator activeOperator = null;
+    private IVariableFacade[] inputVariables = new IVariableFacade[0];
+    private SimpleInventory temporaryInputSlots = null;
 
     /**
      * Make a new instance.
@@ -37,12 +47,15 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
      */
     public ContainerLogicProgrammer(InventoryPlayer inventory) {
         super(inventory, BlockLogicProgrammer.getInstance(), getOperators(), FILTERER);
+        this.writeSlot = new SimpleInventory(1, "writeSlot", 1);
+        this.writeSlot.addDirtyMarkListener(this);
+        this.temporaryInputSlots = new SimpleInventory(0, "temporaryInput", 1);
+        initializeSlots();
+    }
 
-        this.temporarySlots = new SimpleInventory(1, "temporarySlots", 1);
-        this.temporarySlots.addDirtyMarkListener(this);
-        addSlotToContainer(new SlotRemoveOnly(temporarySlots, 0, 232, 110));
-
-        addPlayerInventory(inventory, 88, 131);
+    protected void initializeSlots() {
+        addSlotToContainer(new SlotSingleItem(writeSlot, 0, 232, 110, ItemVariable.getInstance()));
+        addPlayerInventory((InventoryPlayer) getPlayerIInventory(), 88, 131);
     }
 
     protected static List<IOperator> getOperators() {
@@ -64,14 +77,88 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         return true;
     }
 
+    public void setActiveOperator(IOperator activeOperator) {
+        this.activeOperator = activeOperator;
+        this.inputVariables = new IVariableFacade[activeOperator == null ? 0 : activeOperator.getInputTypes().length];
+
+        // This assumes that there is only one other slot, the remaining slots will be erased!
+        // (We can do this because they are all ghost slots)
+        inventoryItemStacks = Lists.newArrayList();
+        inventorySlots = Lists.newArrayList();
+        initializeSlots();
+        this.temporaryInputSlots.removeDirtyMarkListener(this);
+        this.temporaryInputSlots = new SimpleInventory(inputVariables.length, "temporaryInput", 1);
+        // Don't add 'this', or we'll have infinite loops
+        temporaryInputSlots.addDirtyMarkListener(this);
+        for(int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
+            SlotSingleItem slot = new SlotSingleItem(temporaryInputSlots, i, 100, 50 + i * (ITEMBOX + 10), ItemVariable.getInstance());
+            slot.setPhantom(true);
+            addSlotToContainer(slot);
+        }
+    }
+
+    public boolean canWriteActiveOperator() {
+        if(activeOperator != null) {
+            for (IVariableFacade inputVariable : inputVariables) {
+                if (inputVariable == null || !inputVariable.isValid()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public IOperator getActiveOperator() {
+        return activeOperator;
+    }
+
+    public ItemStack writeOperatorInfo(boolean generateId, ItemStack itemStack, IVariableFacade[] inputVariables, final IOperator operator) {
+        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+        final int[] variableIds = new int[inputVariables.length];
+        for(int i = 0; i < inputVariables.length; i++) {
+            variableIds[i] = inputVariables[i].getId();
+        }
+        return registry.writeVariableFacade(generateId, itemStack, Operators.REGISTRY, new IVariableFacadeHandlerRegistry.IVariableFacadeFactory<OperatorVariableFacade>() {
+            @Override
+            public OperatorVariableFacade create(boolean generateId) {
+                return new OperatorVariableFacade(generateId, operator, variableIds);
+            }
+
+            @Override
+            public OperatorVariableFacade create(int id) {
+                return new OperatorVariableFacade(id, operator, variableIds);
+            }
+        });
+    }
+
+    @Override
+    public void onContainerClosed(EntityPlayer player) {
+        super.onContainerClosed(player);
+        if (!player.worldObj.isRemote) {
+            ItemStack itemStack = writeSlot.getStackInSlot(0);
+            if(itemStack != null) {
+                player.dropPlayerItemWithRandomChoice(itemStack, false);
+            }
+        }
+    }
+
     @Override
     public void onDirty() {
-        for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            ItemStack itemStack = temporarySlots.getStackInSlot(i);
-            if(itemStack != null && temporarySlots.getStackInSlot(i) == null) {
-                // TODO: write operator to item
-                //ItemStack outputStack = writeAspectInfo(!getWorld().isRemote, itemStack.copy(), getUnfilteredItems().get(i));
+        for(int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
+            ItemStack itemStack = temporaryInputSlots.getStackInSlot(i);
+            if(itemStack != null) {
+                IVariableFacade variableFacade = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack.getTagCompound());
+                inputVariables[i] = variableFacade;
             }
+        }
+
+        ItemStack itemStack = writeSlot.getStackInSlot(0);
+        if(itemStack != null && canWriteActiveOperator()) {
+            ItemStack outputStack = writeOperatorInfo(!MinecraftHelpers.isClientSide(), itemStack.copy(), inputVariables, getActiveOperator());
+            writeSlot.removeDirtyMarkListener(this);
+            writeSlot.setInventorySlotContents(0, outputStack);
+            writeSlot.addDirtyMarkListener(this);
         }
     }
 
