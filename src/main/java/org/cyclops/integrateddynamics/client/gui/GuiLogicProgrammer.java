@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui;
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -14,11 +15,16 @@ import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 
+import java.awt.*;
+
 /**
  * Gui for the {@link org.cyclops.integrateddynamics.block.BlockLogicProgrammer}.
  * @author rubensworks
  */
 public class GuiLogicProgrammer extends ScrollingGuiContainer {
+
+    private static final int BOX_HEIGHT = 18;
+    private static final Rectangle ITEM_POSITION = new Rectangle(19, 18, 56, BOX_HEIGHT - 1);
 
     /**
      * Make a new instance.
@@ -78,9 +84,9 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         fontRenderer.drawString(L10NHelpers.localize(BlockLogicProgrammer.getInstance().getLocalizedName()),
                 this.guiLeft + offsetX + 87, this.guiTop + offsetY + 7, Helpers.RGBToInt(80, 80, 80));
 
-        // Draw aspects
+        // Draw operators
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
-        int boxHeight = 18;
+        int boxHeight = BOX_HEIGHT;
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
                 IOperator operator = container.getVisibleElement(i);
@@ -92,16 +98,40 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
 
                 // Background
                 mc.renderEngine.bindTexture(texture);
-                drawTexturedModalRect(guiLeft + offsetX + 19,
-                        guiTop + offsetY + 18 + boxHeight * i, 19, 18, 56, boxHeight - 1);
+                drawTexturedModalRect(guiLeft + offsetX + ITEM_POSITION.x,
+                        guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
 
-                // Aspect type info
-                // TODO: tooltips
+                // Operator info
                 String aspectName = L10NHelpers.localize(operator.getSymbol());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
                         this.guiLeft + offsetX + 18,
                         this.guiTop + offsetY + 26 + boxHeight * i,
                         60, Helpers.RGBToInt(40, 40, 40));
+            }
+        }
+    }
+
+    protected Rectangle getElementPosition(ContainerLogicProgrammer container, int i, boolean absolute) {
+        return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.guiLeft : 0),
+                ITEM_POSITION.y + BOX_HEIGHT * i + offsetY + (absolute ? this.guiTop : 0),
+                ITEM_POSITION.width, ITEM_POSITION.height
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        // Draw operator tooltips
+        ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
+        for(int i = 0; i < container.getPageSize(); i++) {
+            if(container.isElementVisible(i)) {
+                IOperator operator = container.getVisibleElement(i);
+                if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
+                    java.util.List<String> lines = Lists.newLinkedList();
+                    operator.loadTooltip(lines, true);
+                    drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
+                }
             }
         }
     }

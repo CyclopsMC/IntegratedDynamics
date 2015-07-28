@@ -62,7 +62,12 @@ public abstract class BaseOperator implements IOperator {
         String operatorName = L10NHelpers.localize(getUnlocalizedName());
         String symbol = getSymbol();
         String outputTypeName = L10NHelpers.localize(getOutputType().getUnlocalizedName());
-        lines.add(L10NHelpers.localize("operator.tooltip.aspectName", operatorName, symbol));
+        lines.add(L10NHelpers.localize("operator.tooltip.operatorName", operatorName, symbol));
+        IValueType[] inputTypes = getInputTypes();
+        for(int i = 0; i < inputTypes.length; i++) {
+            lines.add(L10NHelpers.localize("operator.tooltip.inputTypeName",
+                    i + 1, L10NHelpers.localize(inputTypes[i].getUnlocalizedName())));
+        }
         lines.add(L10NHelpers.localize("operator.tooltip.outputTypeName", outputTypeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());

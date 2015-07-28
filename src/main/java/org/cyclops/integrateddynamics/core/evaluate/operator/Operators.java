@@ -188,7 +188,7 @@ public final class Operators {
     /**
      * Arithmetic MIN operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MINIMUM = REGISTRY.register(new ArithmeticOperator("min", "mimumum", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MINIMUM = REGISTRY.register(new ArithmeticOperator("min", "minimum", new BaseOperator.IFunction() {
 
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {

@@ -17,8 +17,8 @@ item.items.integrateddynamics.variable.name=Variable Card
 item.items.integrateddynamics.variable.id=§e§oVariable ID: §r§o%s
 
 # Value types
-valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
-valuetype.valuetypes.integrateddynamics.integer.name=Integer
+valuetype.valuetypes.integrateddynamics.boolean.name=§9Boolean§r
+valuetype.valuetypes.integrateddynamics.integer.name=§6Integer§r
 
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
@@ -52,6 +52,7 @@ aspect.aspects.integrateddynamics.write.integer.redstone.info=Outputs the value 
 # Operators
 operator.tooltip.operatorName=§eOperator: §r%s (%s)
 operator.tooltip.variableIds=§e§Variable IDs: §r§o%s
+operator.tooltip.inputTypeName=§eInput Type %s: §r%s
 operator.tooltip.outputTypeName=§eOutput Type: §r%s
 operator.error.wrongInputLength=The operator %s received an input of length %s while it needs a length of %s.
 operator.error.nullType=The operator %s received an input with a null variable at position %s.
