@@ -56,4 +56,9 @@ public interface IOperator {
      */
     public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input);
 
+    /**
+     * @return The render pattern for this operator inside the logic programmer.
+     */
+    public IConfigRenderPattern getRenderPattern();
+
 }

@@ -42,7 +42,7 @@ public class LogicProgrammerActivateOperatorPacket extends PacketCodec {
 	@Override
 	public void actionServer(World world, EntityPlayerMP player) {
 		if(player.openContainer instanceof ContainerLogicProgrammer) {
-			((ContainerLogicProgrammer) player.openContainer).setActiveOperator(Operators.REGISTRY.getOperator(operatorName));
+			((ContainerLogicProgrammer) player.openContainer).setActiveOperator(Operators.REGISTRY.getOperator(operatorName), 0, 0);
 		}
 	}
 	

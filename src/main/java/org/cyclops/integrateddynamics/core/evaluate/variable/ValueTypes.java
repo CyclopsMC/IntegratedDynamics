@@ -23,4 +23,6 @@ public class ValueTypes {
         }
     }
 
+    public static void load() {}
+
 }

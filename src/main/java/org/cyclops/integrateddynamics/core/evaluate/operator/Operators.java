@@ -26,6 +26,8 @@ public final class Operators {
         }
     }
 
+    public static void load() {}
+
     /**
      * ----------------------------------- BOOLEAN OPERATORS -----------------------------------
      */
@@ -69,7 +71,7 @@ public final class Operators {
             boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
             return ValueTypeBoolean.ValueBoolean.of(!a);
         }
-    }));
+    }, IConfigRenderPattern.PREFIX_1));
 
     /**
      * ----------------------------------- INTEGER OPERATORS -----------------------------------
@@ -183,7 +185,7 @@ public final class Operators {
             int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
             return ValueTypeInteger.ValueInteger.of(Math.max(a, b));
         }
-    }));
+    }, IConfigRenderPattern.PREFIX_2));
 
     /**
      * Arithmetic MIN operator with two input integers and one output integer.
@@ -196,6 +198,6 @@ public final class Operators {
             int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
             return ValueTypeInteger.ValueInteger.of(Math.min(a, b));
         }
-    }));
+    }, IConfigRenderPattern.PREFIX_2));
 
 }

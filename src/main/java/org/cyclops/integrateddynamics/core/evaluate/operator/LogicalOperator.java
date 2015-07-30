@@ -9,11 +9,11 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 public class LogicalOperator extends BaseOperator {
 
     public LogicalOperator(String symbol, String operatorName, IFunction function) {
-        this(symbol, operatorName, 2, function);
+        this(symbol, operatorName, 2, function, IConfigRenderPattern.INFIX);
     }
 
-    public LogicalOperator(String symbol, String operatorName, int inputLength, IFunction function) {
-        super(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.BOOLEAN), ValueTypes.BOOLEAN, function);
+    public LogicalOperator(String symbol, String operatorName, int inputLength, IFunction function, IConfigRenderPattern renderPattern) {
+        super(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.BOOLEAN), ValueTypes.BOOLEAN, function, renderPattern);
     }
 
     @Override

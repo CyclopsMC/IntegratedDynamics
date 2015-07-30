@@ -19,15 +19,19 @@ import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.part.IPartTypeRegistry;
 import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
  * The main mod class of IntegratedDynamics.
@@ -84,6 +88,11 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getRegistryManager().addRegistry(IPartTypeRegistry.class, PartTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());
         getRegistryManager().addRegistry(IOperatorRegistry.class, OperatorRegistry.getInstance());
+
+        ValueTypes.load();
+        Operators.load();
+        Aspects.load();
+        PartTypes.load();
 
         super.preInit(event);
 

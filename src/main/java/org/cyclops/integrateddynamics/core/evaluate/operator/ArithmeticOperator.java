@@ -9,11 +9,15 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 public class ArithmeticOperator extends BaseOperator {
 
     public ArithmeticOperator(String symbol, String operatorName, IFunction function) {
-        this(symbol, operatorName, 2, function);
+        this(symbol, operatorName, 2, function, IConfigRenderPattern.INFIX);
     }
 
-    public ArithmeticOperator(String symbol, String operatorName, int inputLength, IFunction function) {
-        super(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.INTEGER), ValueTypes.INTEGER, function);
+    public ArithmeticOperator(String symbol, String operatorName, IFunction function, IConfigRenderPattern renderPattern) {
+        this(symbol, operatorName, 2, function, renderPattern);
+    }
+
+    public ArithmeticOperator(String symbol, String operatorName, int inputLength, IFunction function, IConfigRenderPattern renderPattern) {
+        super(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.INTEGER), ValueTypes.INTEGER, function, renderPattern);
     }
 
     @Override

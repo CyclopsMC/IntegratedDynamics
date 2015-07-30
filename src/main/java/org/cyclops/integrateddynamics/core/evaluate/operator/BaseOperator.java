@@ -21,14 +21,21 @@ public abstract class BaseOperator implements IOperator {
     private final IValueType[] inputTypes;
     private final IValueType outputType;
     private final IFunction function;
+    private final IConfigRenderPattern renderPattern;
 
     protected BaseOperator(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
-                           IFunction function) {
+                           IFunction function, IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
         this.outputType = outputType;
         this.function = function;
+        this.renderPattern = renderPattern;
+        if(renderPattern.getSlotPositions().length != inputTypes.length) {
+            throw new IllegalArgumentException(String.format("The given config render pattern with %s slots is not " +
+                    "compatible with the number of input types %s for %s",
+                    renderPattern.getSlotPositions().length, inputTypes.length, symbol));
+        }
     }
 
     protected static IValueType[] constructInputVariables(int length, IValueType defaultType) {
@@ -138,6 +145,11 @@ public abstract class BaseOperator implements IOperator {
 
     protected String getModId() {
         return Reference.MOD_ID;
+    }
+
+    @Override
+    public IConfigRenderPattern getRenderPattern() {
+        return renderPattern;
     }
 
     public static interface IFunction {

@@ -3,7 +3,9 @@ package org.cyclops.integrateddynamics.client.gui;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -13,6 +15,9 @@ import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
+import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
+import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
+import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateOperatorPacket;
@@ -28,6 +33,9 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
 
     private static final int BOX_HEIGHT = 18;
     private static final Rectangle ITEM_POSITION = new Rectangle(19, 18, 56, BOX_HEIGHT - 1);
+
+    protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
+    protected SubGuiConfigRenderPattern operatorConfigPattern = null;
 
     /**
      * Make a new instance.
@@ -81,6 +89,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerBackgroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRendererObj, partialTicks, mouseX, mouseY);
         FontRenderer fontRenderer = fontRendererObj;
 
         // Draw container name
@@ -105,6 +114,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                 mc.renderEngine.bindTexture(texture);
                 drawTexturedModalRect(guiLeft + offsetX + ITEM_POSITION.x,
                         guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
+                GlStateManager.color(1, 1, 1);
 
                 // Operator info
                 String aspectName = L10NHelpers.localize(operator.getSymbol());
@@ -127,6 +137,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRendererObj, mouseX, mouseY);
         // Draw operator tooltips
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
@@ -141,6 +152,15 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         }
     }
 
+    protected void onActivateOperator(IOperator operator) {
+        subGuiHolder.addSubGui(operatorConfigPattern = new SubGuiConfigRenderPattern(operator, 88, 18, 160, 87));
+        subGuiHolder.addSubGui(new SubGuiOperatorInfo(operator));
+    }
+
+    protected void onDeactivateOperator(IOperator operator) {
+        subGuiHolder.clear();
+    }
+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
@@ -148,13 +168,102 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             if (container.isElementVisible(i)) {
                 IOperator operator = container.getVisibleElement(i);
                 if (isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
-                    container.setActiveOperator(operator);
+                    IOperator newActive = null;
+                    onDeactivateOperator(operator);
+                    if(container.getActiveOperator() != operator) {
+                        newActive = operator;
+                        if(operator != null) {
+                            onActivateOperator(operator);
+                        }
+                    }
+                    container.setActiveOperator(newActive,
+                            operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
+                            operatorConfigPattern == null ? 0 : operatorConfigPattern.getY());
                     IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerActivateOperatorPacket(
-                            operator == null ? "" : operator.getUnlocalizedName()));
+                            newActive == null ? "" : operator.getUnlocalizedName()));
                 }
             }
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    public static class SubGuiConfigRenderPattern extends SubGuiBox {
+
+        private final IOperator operator;
+        private final int x, y;
+
+        public SubGuiConfigRenderPattern(IOperator operator, int baseX, int baseY, int maxWidth, int maxHeight) {
+            super(Box.LIGHT);
+            this.operator = operator;
+            IConfigRenderPattern configRenderPattern = operator.getRenderPattern();
+            this.x = baseX + (maxWidth  - configRenderPattern. getWidth()) / 2;
+            this.y = baseY + (maxHeight - configRenderPattern.getHeight()) / 2;
+        }
+
+        protected void drawSlot(int x, int y) {
+            this.drawTexturedModalRect(x, y, 3, 0, 18, 18);
+        }
+
+        @Override
+        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+            IConfigRenderPattern configRenderPattern = operator.getRenderPattern();
+
+            int baseX = getX() + guiLeft;
+            int baseY = getY() + guiTop;
+
+            for(Pair<Integer, Integer> slot : configRenderPattern.getSlotPositions()) {
+                drawSlot(baseX + slot.getLeft(), baseY + slot.getRight());
+            }
+
+            int width = fontRenderer.getStringWidth(operator.getSymbol());
+            RenderHelpers.drawScaledCenteredString(fontRenderer, operator.getSymbol(),
+                    baseX + configRenderPattern.getSymbolPosition().getLeft(),
+                    baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
+                    width, 1, operator.getOutputType().getDisplayColor());
+            GlStateManager.color(1, 1, 1);
+        }
+
+        @Override
+        protected int getX() {
+            return this.x;
+        }
+
+        @Override
+        protected int getY() {
+            return this.y;
+        }
+
+        @Override
+        protected int getWidth() {
+            return operator.getRenderPattern().getWidth();
+        }
+
+        @Override
+        protected int getHeight() {
+            return operator.getRenderPattern().getHeight();
+        }
+    }
+
+    public class SubGuiOperatorInfo extends SubGuiBox.Base {
+
+        private final IOperator operator;
+
+        public SubGuiOperatorInfo(IOperator operator) {
+            super(Box.DARK, 88, 106, 139, 20);
+            this.operator = operator;
+        }
+
+        @Override
+        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+
+            int x = guiLeft + getX();
+            int y = guiTop + getY();
+
+            fontRenderer.drawString(L10NHelpers.localize(operator.getUnlocalizedName()), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
+        }
+
     }
 
 }

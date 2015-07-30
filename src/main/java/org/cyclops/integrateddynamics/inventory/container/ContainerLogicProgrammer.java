@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -77,7 +78,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         return true;
     }
 
-    public void setActiveOperator(IOperator activeOperator) {
+    public void setActiveOperator(IOperator activeOperator, int baseX, int baseY) {
         this.activeOperator = activeOperator;
         this.inputVariables = new IVariableFacade[activeOperator == null ? 0 : activeOperator.getInputTypes().length];
 
@@ -90,10 +91,14 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         this.temporaryInputSlots = new SimpleInventory(inputVariables.length, "temporaryInput", 1);
         // Don't add 'this', or we'll have infinite loops
         temporaryInputSlots.addDirtyMarkListener(this);
-        for(int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
-            SlotSingleItem slot = new SlotSingleItem(temporaryInputSlots, i, 100, 50 + i * (ITEMBOX + 10), ItemVariable.getInstance());
-            slot.setPhantom(true);
-            addSlotToContainer(slot);
+        if(activeOperator != null) {
+            Pair<Integer, Integer>[] slotPositions = activeOperator.getRenderPattern().getSlotPositions();
+            for (int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
+                SlotSingleItem slot = new SlotSingleItem(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
+                        1 + baseY + slotPositions[i].getRight(), ItemVariable.getInstance());
+                slot.setPhantom(true);
+                addSlotToContainer(slot);
+            }
         }
     }
 
