@@ -131,7 +131,7 @@ public abstract class BaseOperator implements IOperator {
             if(getInputTypes()[i] != inputType) {
                 return new L10NHelpers.UnlocalizedString("operator.error.wrongType",
                         this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                        i, new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
+                        Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
             }
             i++;
         }

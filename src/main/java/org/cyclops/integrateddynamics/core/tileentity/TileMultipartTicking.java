@@ -61,8 +61,14 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             IPartState partState = entry.getValue().getState();
             partTag.setString("__partType", part.getName());
             partTag.setString("__side", entry.getKey().getName());
-            part.toNBT(partTag, partState);
-            partList.appendTag(partTag);
+            try {
+                part.toNBT(partTag, partState);
+                partList.appendTag(partTag);
+            } catch (Exception e) {
+                e.printStackTrace();
+                IntegratedDynamics.clog(Level.ERROR,  String.format("The part %s at position %s was errored " +
+                        "and is removed.", part.getName(), getPosition()));
+            }
         }
         tag.setTag("parts", partList);
     }

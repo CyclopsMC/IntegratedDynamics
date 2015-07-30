@@ -19,6 +19,7 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
     private final IOperator op;
     private final IVariable[] input;
     private final IValueCache valueCache;
+    private boolean errored = false;
 
     public LazyExpression(int id, IOperator op, IVariable[] input, IValueCache valueCache) {
         this.id = id;
@@ -38,6 +39,11 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
     }
 
     @Override
+    public boolean hasErrored() {
+        return errored;
+    }
+
+    @Override
     public IValueType<V> getType() {
         return op.getOutputType();
     }
@@ -48,6 +54,7 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
         try {
             value = evaluate();
         } catch (EvaluationException e) {
+            errored = true;
             e.printStackTrace(); // TODO: delegate to some error-log
             return getType().getDefault();
         }

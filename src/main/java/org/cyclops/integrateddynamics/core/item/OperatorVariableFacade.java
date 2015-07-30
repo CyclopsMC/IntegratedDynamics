@@ -47,7 +47,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     @Override
     public <V extends IValue> IVariable<V> getVariable(Network network) {
         if(isValid()) {
-            if(expression == null) {
+            if(expression == null || expression.hasErrored()) {
                 IVariable[] variables = new IVariable[variableIds.length];
                 for (int i = 0; i < variableIds.length; i++) {
                     int variableId = variableIds[i];
@@ -55,10 +55,13 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                         return null;
                     }
                     IVariableFacade variableFacade = network.getVariableFacade(variableId);
-                    if(!variableFacade.isValid()) {
+                    if(!variableFacade.isValid() || variableFacade == this) {
                         return null;
                     }
                     variables[i] = variableFacade.getVariable(network);
+                    if(variables[i] == this /* Cyclic reference */ || variables[i] == null) {
+                        return null;
+                    }
                 }
                 expression = new LazyExpression(getId(), operator, variables, network);
             }
@@ -92,7 +95,11 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                 } else {
                     // Check variable represented by this id is valid.
                     IVariableFacade variableFacade = network.getVariableFacade(variableId);
-                    if (variableFacade != null) {
+                    if(variableFacade == this) {
+                        validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("operator.error.cyclicReference",
+                                Integer.toString(variableId)));
+                        checkFurther = false;
+                    } else if (variableFacade != null) {
                         variableFacade.validate(network, validator);
                         if (variableFacade.isValid()) {
                             IVariable variable = variableFacade.getVariable(network);

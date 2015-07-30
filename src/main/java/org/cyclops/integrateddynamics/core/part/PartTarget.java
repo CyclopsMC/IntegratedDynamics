@@ -31,6 +31,15 @@ public class PartTarget {
 
     /**
      * Get the target from a center block that is targeted at another block.
+     * @param pos The central position that is referring to the target.
+     * @return The target referral.
+     */
+    public static PartTarget fromCenter(PartPos pos) {
+        return fromCenter(pos.getPos(), pos.getSide());
+    }
+
+    /**
+     * Get the target from a center block that is targeted at another block.
      * @param world The world.
      * @param pos The central position that is referring to the target.
      * @param side The side on the central position that points to the target.

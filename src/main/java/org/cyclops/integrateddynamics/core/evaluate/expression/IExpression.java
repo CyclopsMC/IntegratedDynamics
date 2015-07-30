@@ -16,4 +16,9 @@ public interface IExpression<V extends IValue> extends IVariable<V> {
      */
     public IValue evaluate() throws EvaluationException;
 
+    /**
+     * @return If this expression last evaluation resulted in an error.
+     */
+    public boolean hasErrored();
+
 }

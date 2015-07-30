@@ -58,6 +58,7 @@ operator.error.wrongInputLength=The operator %s received an input of length %s w
 operator.error.nullType=The operator %s received an input with a null variable at position %s.
 operator.error.wrongType=The operator %s received an input with type %s at position %s while the type %s was expected.
 operator.error.variableNotInNetwork=Variable with id %s could not be found within the current network.
+operator.error.cyclicReference=Variable with id %s depends on itself, infinite recursion.
 
 operator.operators.integrateddynamics.logical.and.name=Logical And
 operator.operators.integrateddynamics.logical.or.name=Logical Or
