@@ -436,13 +436,30 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
+    public void setAllowRedstoneInput(IBlockAccess world, BlockPos pos, EnumFacing side, boolean allow) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
+        if(tile != null) {
+            tile.setAllowRedstoneInput(side, allow);
+        }
+    }
+
+    @Override
+    public boolean isAllowRedstoneInput(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
+        if(tile != null) {
+            return tile.isAllowRedstoneInput(side);
+        }
+        return false;
+    }
+
+    @Override
     public boolean canProvidePower() {
         return true;
     }
 
     @Override
     public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return getRedstoneLevel(world, pos, side.getOpposite()) >= 0;
+        return getRedstoneLevel(world, pos, side.getOpposite()) >= 0 || isAllowRedstoneInput(world, pos, side.getOpposite());
     }
 
     @Override

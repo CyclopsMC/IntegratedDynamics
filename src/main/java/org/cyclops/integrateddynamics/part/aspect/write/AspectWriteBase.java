@@ -43,8 +43,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
     }
 
     @Override
-    public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onDeactivate(P partType,
-                                                                                              PartTarget target, S state) {
+    public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onDeactivate(P partType, PartTarget target, S state) {
 
     }
 

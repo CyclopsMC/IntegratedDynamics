@@ -141,6 +141,16 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public void onNetworkAddition(Network network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void onNetworkRemoval(Network network, PartTarget target, S state) {
+
+    }
+
+    @Override
     public void afterNetworkAlive(Network network, PartTarget target, S state) {
         System.out.println("alive " + state);
     }

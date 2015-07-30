@@ -3,18 +3,24 @@ package org.cyclops.integrateddynamics.part;
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
 import org.cyclops.integrateddynamics.block.ReaderConfig;
+import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
+import org.cyclops.integrateddynamics.part.aspect.read.IReadRedstoneComponent;
+import org.cyclops.integrateddynamics.part.aspect.read.ReadRedstoneComponent;
 
 /**
  * A redstone reader part.
  * @author rubensworks
  */
 public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneReader, DefaultPartStateReader<PartTypeRedstoneReader>> {
+
+    private static final IReadRedstoneComponent READ_REDSTONE_COMPONENT = new ReadRedstoneComponent();
 
     public PartTypeRedstoneReader(String name) {
         super(name);
@@ -39,6 +45,18 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     @Override
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick, int destroyStage) {
         return ReaderConfig._instance.getBlockInstance().getDefaultState();
+    }
+
+    @Override
+    public void onNetworkAddition(Network network, PartTarget target, DefaultPartStateReader<PartTypeRedstoneReader> state) {
+        super.onNetworkAddition(network, target, state);
+        READ_REDSTONE_COMPONENT.setAllowRedstoneInput(target, true);
+    }
+
+    @Override
+    public void onNetworkRemoval(Network network, PartTarget target, DefaultPartStateReader<PartTypeRedstoneReader> state) {
+        super.onNetworkRemoval(network, target, state);
+        READ_REDSTONE_COMPONENT.setAllowRedstoneInput(target, false);
     }
 
 }

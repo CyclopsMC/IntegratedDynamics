@@ -36,4 +36,22 @@ public interface IDynamicRedstoneBlock {
      */
     public int getRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side);
 
+    /**
+     * Set if this side allows redstone to be inputted.
+     * @param world The world.
+     * @param pos The position.
+     * @param side The side.
+     * @param allow If it allows input.
+     */
+    public void setAllowRedstoneInput(IBlockAccess world, BlockPos pos, EnumFacing side, boolean allow);
+
+    /**
+     * If this side allows redstone to be inputted.
+     * @param world The world.
+     * @param pos The position.
+     * @param side The side.
+     * @return If it allows input.
+     */
+    public boolean isAllowRedstoneInput(IBlockAccess world, BlockPos pos, EnumFacing side);
+
 }

@@ -46,6 +46,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @NBTPersist private Map<Integer, Boolean> connected = Maps.newHashMap();
     @NBTPersist private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
     @NBTPersist private Map<Integer, Integer> redstoneLevels = Maps.newHashMap();
+    @NBTPersist private Map<Integer, Boolean> redstoneInputs = Maps.newHashMap();
 
     @Getter
     @Setter
@@ -297,6 +298,17 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             return redstoneLevels.get(side.ordinal());
         }
         return -1;
+    }
+
+    public void setAllowRedstoneInput(EnumFacing side, boolean allow) {
+        redstoneInputs.put(side.ordinal(), allow);
+    }
+
+    public boolean isAllowRedstoneInput(EnumFacing side) {
+        if(redstoneInputs.containsKey(side.ordinal())) {
+            return redstoneInputs.get(side.ordinal());
+        }
+        return false;
     }
 
     public void disableRedstoneLevel(EnumFacing side) {

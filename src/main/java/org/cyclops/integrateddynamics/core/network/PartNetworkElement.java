@@ -78,12 +78,17 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public boolean onNetworkAddition(Network network) {
-        return network.addPart(getPartState().getId(), getTarget().getCenter());
+        boolean res = network.addPart(getPartState().getId(), getTarget().getCenter());
+        if(res) {
+            part.onNetworkAddition(network, target, getPartState());
+        }
+        return res;
     }
 
     @Override
     public void onNetworkRemoval(Network network) {
         network.removePart(getPartState().getId());
+        part.onNetworkRemoval(network, target, getPartState());
     }
 
     public boolean equals(Object o) {

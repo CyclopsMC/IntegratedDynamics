@@ -139,6 +139,22 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public void addDrops(S state, List<ItemStack> itemStacks);
 
     /**
+     * Called when this element is added to the network.
+     * @param network The network to update in.
+     * @param state The state
+     * @param target The target block.
+     */
+    public void onNetworkAddition(Network network, PartTarget target, S state);
+
+    /**
+     * Called when this element is removed from the network.
+     * @param network The network to update in.
+     * @param state The state
+     * @param target The target block.
+     */
+    public void onNetworkRemoval(Network network, PartTarget target, S state);
+
+    /**
      * Create a network element for this part type.
      * @param partContainerFacade The facade for reaching the container this part is/will be part of.
      * @param pos The position this network element is/will be placed at.
