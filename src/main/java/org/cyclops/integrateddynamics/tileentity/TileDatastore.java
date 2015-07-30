@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Delegate;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +13,7 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.InventoryTileEntity;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
@@ -29,10 +31,13 @@ import java.util.Map;
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-public class TileDatastore extends InventoryTileEntity implements ITileCableNetwork, IVariableContainer, IDirtyMarkListener {
+public class TileDatastore extends InventoryTileEntity implements ITileCableNetwork, IVariableContainer, IDirtyMarkListener, CyclopsTileEntity.ITickingTile {
 
     public static final int ROWS = 5;
     public static final int COLS = 9;
+
+    @Delegate
+    protected final ITickingTile tickingTileComponent = new TickingTileComponent(this);
 
     @NBTPersist
     private Map<Integer, Boolean> connected = Maps.newHashMap();
@@ -53,6 +58,15 @@ public class TileDatastore extends InventoryTileEntity implements ITileCableNetw
         }
         for(EnumFacing side : EnumFacing.VALUES) {
             addSlotsToSide(side, slots);
+        }
+    }
+
+    @Override
+    protected void updateTileEntity() {
+        super.updateTileEntity();
+        // If the connection data were reset, update the cable connections
+        if (connected.isEmpty()) {
+            updateConnections();
         }
     }
 

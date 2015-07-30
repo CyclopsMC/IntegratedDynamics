@@ -251,6 +251,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     protected void updateTileEntity() {
+        super.updateTileEntity();
         // If the connection data were reset, update the cable connections
         if(connected.isEmpty()) {
             updateConnections();
