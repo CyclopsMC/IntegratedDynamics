@@ -18,11 +18,10 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.item.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartState;
-import org.cyclops.integrateddynamics.core.part.PartPos;
+import org.cyclops.integrateddynamics.core.part.*;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
+import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
@@ -125,9 +124,19 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
      * @param partId The part state id.
      * @return The corresponding part state or null.
      */
-    public IPartState getPart(int partId) {
+    public IPartState getPartState(int partId) {
         PartPos partPos = partPositions.get(partId);
         return TileMultipartTicking.get(partPos.getPos()).getPartState(partPos.getSide());
+    }
+
+    /**
+     * Get the part by id from this network.
+     * @param partId The part state id.
+     * @return The corresponding part or null.
+     */
+    public IPartType getPartType(int partId) {
+        PartPos partPos = partPositions.get(partId);
+        return TileMultipartTicking.get(partPos.getPos()).getPart(partPos.getSide());
     }
 
     /**
@@ -384,11 +393,16 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
         if(!hasPart(partId)) {
             return false;
         }
-        IPartState partState = getPart(partId);
+        IPartState partState = getPartState(partId);
         if(!(partState instanceof IPartStateReader)) {
             return false;
         }
-        return ((IPartStateReader) partState).getVariable(aspect) != null;
+        IPartType partType = getPartType(partId);
+        if(!(partType instanceof IPartTypeReader)) {
+            return false;
+        }
+        return ((IPartTypeReader) getPartType(partId)).getVariable(
+                PartTarget.fromCenter(partPositions.get(partId)), (IPartStateReader) partState, aspect) != null;
     }
 
     /**
@@ -400,7 +414,7 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
      * @return The variable.
      */
     public <V extends IValue> IVariable<V> getPartVariable(int partId, IAspectRead<V, ?> aspect) {
-        return ((IPartStateReader) getPart(partId)).getVariable(aspect);
+        return ((IPartStateReader) getPartState(partId)).getVariable(aspect);
     }
 
     protected Map<Integer, IVariableFacade> getVariableCache() {
