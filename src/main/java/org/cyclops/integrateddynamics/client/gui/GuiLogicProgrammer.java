@@ -42,6 +42,8 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
      */
     public GuiLogicProgrammer(InventoryPlayer inventoryPlayer) {
         super(new ContainerLogicProgrammer(inventoryPlayer));
+        ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
+        container.setGui(this);
     }
 
     protected int getScrollX() {
@@ -161,6 +163,23 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         subGuiHolder.clear();
     }
 
+    public void handleOperatorActivation(IOperator operator) {
+        ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
+        IOperator newActive = null;
+        onDeactivateOperator(operator);
+        if(container.getActiveOperator() != operator) {
+            newActive = operator;
+            if(operator != null) {
+                onActivateOperator(operator);
+            }
+        }
+        container.setActiveOperator(newActive,
+                operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
+                operatorConfigPattern == null ? 0 : operatorConfigPattern.getY());
+        IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerActivateOperatorPacket(
+                newActive == null ? "" : operator.getUnlocalizedName()));
+    }
+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
@@ -168,19 +187,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             if (container.isElementVisible(i)) {
                 IOperator operator = container.getVisibleElement(i);
                 if (isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
-                    IOperator newActive = null;
-                    onDeactivateOperator(operator);
-                    if(container.getActiveOperator() != operator) {
-                        newActive = operator;
-                        if(operator != null) {
-                            onActivateOperator(operator);
-                        }
-                    }
-                    container.setActiveOperator(newActive,
-                            operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
-                            operatorConfigPattern == null ? 0 : operatorConfigPattern.getY());
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerActivateOperatorPacket(
-                            newActive == null ? "" : operator.getUnlocalizedName()));
+                    handleOperatorActivation(operator);
                 }
             }
         }

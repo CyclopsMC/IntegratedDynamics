@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -13,6 +15,7 @@ import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
@@ -42,6 +45,9 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
     private IVariableFacade[] inputVariables = new IVariableFacade[0];
     private SimpleInventory temporaryInputSlots = null;
 
+    @SideOnly(Side.CLIENT)
+    private GuiLogicProgrammer gui;
+
     /**
      * Make a new instance.
      * @param inventory   The player inventory.
@@ -50,8 +56,29 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         super(inventory, BlockLogicProgrammer.getInstance(), getOperators(), FILTERER);
         this.writeSlot = new SimpleInventory(1, "writeSlot", 1);
         this.writeSlot.addDirtyMarkListener(this);
+        this.writeSlot.addDirtyMarkListener(new IDirtyMarkListener() {
+            @Override
+            public void onDirty() {
+                if (temporaryInputSlots == null || temporaryInputSlots.isEmpty()) {
+                    ItemStack itemStack = writeSlot.getStackInSlot(0);
+                    if (itemStack != null) {
+                        ContainerLogicProgrammer.this.loadConfigFrom(itemStack);
+                    }
+                }
+            }
+        });
         this.temporaryInputSlots = new SimpleInventory(0, "temporaryInput", 1);
         initializeSlots();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setGui(GuiLogicProgrammer gui) {
+        this.gui = gui;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public GuiLogicProgrammer getGui() {
+        return this.gui;
     }
 
     protected void initializeSlots() {
@@ -78,6 +105,12 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         return true;
     }
 
+    /**
+     * Set the new active operator.
+     * @param activeOperator The new operator.
+     * @param baseX The slots X coordinate
+     * @param baseY The slots Y coordinate
+     */
     public void setActiveOperator(IOperator activeOperator, int baseX, int baseY) {
         this.activeOperator = activeOperator;
         this.inputVariables = new IVariableFacade[activeOperator == null ? 0 : activeOperator.getInputTypes().length];
@@ -164,6 +197,23 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
             writeSlot.removeDirtyMarkListener(this);
             writeSlot.setInventorySlotContents(0, outputStack);
             writeSlot.addDirtyMarkListener(this);
+        }
+    }
+
+    protected void loadConfigFrom(ItemStack itemStack) {
+        // Only do this client-side, a packet will be sent to do the same server-side.
+        if(MinecraftHelpers.isClientSide()) {
+            IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+            if (itemStack.hasTagCompound()) {
+                IVariableFacade variableFacade = registry.handle(itemStack.getTagCompound());
+                if (variableFacade instanceof OperatorVariableFacade) {
+                    OperatorVariableFacade operatorFacade = (OperatorVariableFacade) variableFacade;
+                    if (operatorFacade.isValid()) {
+                        IOperator operator = operatorFacade.getOperator();
+                        getGui().handleOperatorActivation(operator);
+                    }
+                }
+            }
         }
     }
 
