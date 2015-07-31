@@ -193,4 +193,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                         int destroyStage);
 
+    /**
+     * Called when this part should refresh its state.
+     * When for example some variables in the network are changed.
+     * @param network The network to update in.
+     * @param state The state
+     * @param target The target block.
+     */
+    public void refresh(Network network, PartTarget target, S state);
+
 }

@@ -41,6 +41,14 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
     public void triggerAspectInfoUpdate(P partType, PartTarget target, IAspectWrite newAspect);
 
     /**
+     * Called when this part should refresh its state.
+     * When for example some variables in the network are changed.
+     * @param partType The part type.
+     * @param target The target.
+     */
+    public void refresh(P partType, PartTarget target);
+
+    /**
      * @return The currently active aspect for this part, can be null.
      */
     public IAspectWrite getActiveAspect();

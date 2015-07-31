@@ -355,6 +355,19 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
     }
 
     /**
+     * Send a refresh to the given network elements types.
+     * Used to trigger a refresh in element states.
+     * @param type The types of network elements to send an update to.
+     */
+    public void refresh(Class<? extends INetworkElement> type) {
+        for(INetworkElement element : elements) {
+            if(type.isInstance(element)) {
+                element.refresh(this);
+            }
+        }
+    }
+
+    /**
      * Initiate a full network from the given start position.
      * @param connectable The cable to start the network from.
      * @param world The world.

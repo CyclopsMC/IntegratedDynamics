@@ -179,4 +179,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         return true;
     }
 
+    @Override
+    public void refresh(Network network, PartTarget target, S state) {
+
+    }
+
 }

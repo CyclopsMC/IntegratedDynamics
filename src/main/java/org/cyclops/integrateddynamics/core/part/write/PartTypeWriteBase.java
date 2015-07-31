@@ -87,6 +87,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
+    public void refresh(Network network, PartTarget target, S state) {
+        state.refresh((P) this, target);
+    }
+
+    @Override
     public Class<? extends Container> getContainer() {
         return ContainerPartWriter.class;
     }

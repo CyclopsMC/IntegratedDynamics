@@ -80,6 +80,17 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     }
 
     @Override
+    public void refresh(P partType, PartTarget target) {
+        // Resets the errors for this aspect
+        this.checkedForWriteVariable = false;
+        IAspectWrite activeAspect = getActiveAspect();
+        if(activeAspect != null) {
+            addError(activeAspect, null);
+        }
+        this.currentVariableFacade = null;
+    }
+
+    @Override
     public IAspectWrite getActiveAspect() {
         if(this.activeAspectName == null) {
             return null;

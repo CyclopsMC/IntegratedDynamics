@@ -91,6 +91,11 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         part.onNetworkRemoval(network, target, getPartState());
     }
 
+    @Override
+    public void refresh(Network network) {
+        part.refresh(network, target, getPartState());
+    }
+
     public boolean equals(Object o) {
         return o instanceof PartNetworkElement && compareTo((INetworkElement) o) == 0;
     }

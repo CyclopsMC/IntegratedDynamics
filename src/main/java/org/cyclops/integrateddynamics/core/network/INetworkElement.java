@@ -60,4 +60,10 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      */
     public void onNetworkRemoval(Network network);
 
+    /**
+     * Called when this element should refresh its state.
+     * @param network The network.
+     */
+    public void refresh(Network network);
+
 }
