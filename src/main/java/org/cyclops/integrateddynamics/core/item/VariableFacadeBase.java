@@ -5,6 +5,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 import java.util.List;
 
@@ -27,6 +28,20 @@ public abstract class VariableFacadeBase implements IVariableFacade {
     @Override
     public final int getId() {
         return this.id;
+    }
+
+    @Override
+    public String getLabel() {
+        return LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(getId());
+    }
+
+    protected String getReferenceDisplay(int variableId) {
+        String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableId);
+        if(label == null) {
+            return String.valueOf(variableId);
+        } else {
+            return String.format("%s:%s", label, variableId);
+        }
     }
 
     @SideOnly(Side.CLIENT)

@@ -185,10 +185,8 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
     public void onDirty() {
         for(int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
             ItemStack itemStack = temporaryInputSlots.getStackInSlot(i);
-            if(itemStack != null) {
-                IVariableFacade variableFacade = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack.getTagCompound());
-                inputVariables[i] = variableFacade;
-            }
+            IVariableFacade variableFacade = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack);
+            inputVariables[i] = variableFacade;
         }
 
         ItemStack itemStack = writeSlot.getStackInSlot(0);
@@ -204,14 +202,12 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         // Only do this client-side, a packet will be sent to do the same server-side.
         if(MinecraftHelpers.isClientSide()) {
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-            if (itemStack.hasTagCompound()) {
-                IVariableFacade variableFacade = registry.handle(itemStack.getTagCompound());
-                if (variableFacade instanceof OperatorVariableFacade) {
-                    OperatorVariableFacade operatorFacade = (OperatorVariableFacade) variableFacade;
-                    if (operatorFacade.isValid()) {
-                        IOperator operator = operatorFacade.getOperator();
-                        getGui().handleOperatorActivation(operator);
-                    }
+            IVariableFacade variableFacade = registry.handle(itemStack);
+            if (variableFacade instanceof OperatorVariableFacade) {
+                OperatorVariableFacade operatorFacade = (OperatorVariableFacade) variableFacade;
+                if (operatorFacade.isValid()) {
+                    IOperator operator = operatorFacade.getOperator();
+                    getGui().handleOperatorActivation(operator);
                 }
             }
         }

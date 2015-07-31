@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.expression.IExpression;
@@ -132,7 +131,18 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {
         if(isValid()) {
             getOperator().loadTooltip(list, false);
-            list.add(L10NHelpers.localize("operator.tooltip.variableIds", ArrayUtils.toString(getVariableIds())));
+            StringBuilder sb = new StringBuilder();
+            sb.append("{");
+            boolean first = true;
+            for(int variableId : getVariableIds()) {
+                if(!first) {
+                    sb.append(",");
+                }
+                sb.append(getReferenceDisplay(variableId));
+                first = false;
+            }
+            sb.append("}");
+            list.add(L10NHelpers.localize("operator.tooltip.variableIds", sb.toString()));
         }
         super.addInformation(list, entityPlayer);
     }

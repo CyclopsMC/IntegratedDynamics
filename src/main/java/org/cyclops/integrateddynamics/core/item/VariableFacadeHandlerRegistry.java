@@ -45,6 +45,14 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
+    public IVariableFacade handle(ItemStack itemStack) {
+        if(itemStack == null || !itemStack.hasTagCompound()) {
+            return DUMMY_FACADE;
+        }
+        return handle(itemStack.getTagCompound());
+    }
+
+    @Override
     public IVariableFacade handle(NBTTagCompound tagCompound) {
         if(tagCompound == null) {
             return DUMMY_FACADE;

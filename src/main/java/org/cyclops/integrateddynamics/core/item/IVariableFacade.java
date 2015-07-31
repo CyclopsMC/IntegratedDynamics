@@ -24,6 +24,11 @@ public interface IVariableFacade {
     public int getId();
 
     /**
+     * @return The optional label for this facade.
+     */
+    public String getLabel();
+
+    /**
      * Get the variable.
      * @param network The object used to look for the variable.
      * @return The variable.

@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
@@ -45,9 +46,19 @@ public class ItemVariable extends ConfigurableItem {
         super.addInformation(itemStack, entityPlayer, list, par4);
     }
 
+    @Override
+    public String getItemStackDisplayName(ItemStack itemStack) {
+        IVariableFacade variableFacade = getVariableFacade(itemStack);
+        String label;
+        if(variableFacade.isValid() && (label = variableFacade.getLabel()) != null) {
+            return EnumChatFormatting.ITALIC + label;
+        }
+        return super.getItemStackDisplayName(itemStack);
+    }
+
     public IVariableFacade getVariableFacade(ItemStack itemStack) {
-        return IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).
-                handle(itemStack.getTagCompound());
+        return IntegratedDynamics._instance.getRegistryManager().
+                getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack);
     }
 
 }

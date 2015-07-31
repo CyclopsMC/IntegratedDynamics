@@ -30,6 +30,7 @@ import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRegistry;
+import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -68,6 +69,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         // Register world storages
         registerWorldStorage(NetworkWorldStorage.getInstance(this));
         registerWorldStorage(globalCounters = new GlobalCounters(this));
+        registerWorldStorage(LabelsWorldStorage.getInstance(this));
     }
 
     @Override

@@ -62,7 +62,6 @@ public class NetworkWorldStorage extends WorldStorage {
      * @return A thread-safe copy of the current network set.
      */
     public synchronized Set<Network> getNetworks() {
-        //System.out.println(networks);
         return ImmutableSet.copyOf(networks);
     }
 

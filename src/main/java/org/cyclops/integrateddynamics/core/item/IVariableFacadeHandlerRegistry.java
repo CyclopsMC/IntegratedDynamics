@@ -18,6 +18,13 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
 
     /**
      * Checks the type of the given tag and uses the corresponding handler to retrieve its variable facade.
+     * @param itemStack The item containing information that can be read and used to form a variable facade.
+     * @return The variable facade handled by the appropriate handler.
+     */
+    public IVariableFacade handle(ItemStack itemStack);
+
+    /**
+     * Checks the type of the given tag and uses the corresponding handler to retrieve its variable facade.
      * @param tagCompound The tag containing information that can be read and used to form a variable facade.
      * @return The variable facade handled by the appropriate handler.
      */
