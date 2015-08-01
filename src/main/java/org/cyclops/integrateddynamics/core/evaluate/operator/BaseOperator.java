@@ -91,39 +91,39 @@ public abstract class BaseOperator implements IOperator {
         return outputType;
     }
 
+    protected IValueType[] getValueTypes(IVariable[] variables) {
+        IValueType[] valueTypes = new IValueType[variables.length];
+        for(int i = 0; i < valueTypes.length; i++) {
+            IVariable variable = variables[i];
+            valueTypes[i] = variable == null ? null : variable.getType();
+        }
+        return valueTypes;
+    }
+
     @Override
     public IValue evaluate(IVariable[] input) throws EvaluationException {
-        // Input size checking
-        if(input.length != getInputTypes().length) {
-            throw new EvaluationException(String.format("The operator %s received an input of length %s while it " +
-                    "needs a length of %s.", this, input.length, getInputTypes().length));
-        }
-        // Input types checking
-        for(int i = 0; i < input.length; i++) {
-            IVariable inputVar = input[i];
-            if(inputVar == null) {
-                throw new EvaluationException(String.format("The operator %s received an input with a null variable " +
-                        "at position %s.", this, i));
-            }
-            if(getInputTypes()[i] != inputVar.getType()) {
-                throw new EvaluationException(String.format("The operator %s received an input with type %s " +
-                        "at position %s while the type %s was expected.", this, inputVar.getType(), i,
-                        getInputTypes()[i]));
-            }
-            i++;
+        L10NHelpers.UnlocalizedString error = validateTypes(getValueTypes(input));
+        if(error != null) {
+            throw new EvaluationException(error.localize());
         }
         return function.evaluate(input);
     }
 
     @Override
+    public int getRequiredInputLength() {
+        return getInputTypes().length;
+    }
+
+    @Override
     public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input) {
         // Input size checking
-        if(input.length != getInputTypes().length) {
+        int requiredInputLength = getRequiredInputLength();
+        if(input.length != requiredInputLength) {
             return new L10NHelpers.UnlocalizedString("operator.error.wrongInputLength",
-                    this.getOperatorName(), input.length, getInputTypes().length);
+                    this.getOperatorName(), input.length, requiredInputLength);
         }
         // Input types checking
-        for(int i = 0; i < input.length; i++) {
+        for(int i = 0; i < requiredInputLength; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
                 return new L10NHelpers.UnlocalizedString("operator.error.nullType", this.getOperatorName(), Integer.toString(i));

@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import com.google.common.collect.Maps;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
@@ -35,6 +37,9 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     private IVariableFacade currentVariableFacade = null;
     @NBTPersist
     private String activeAspectName = null;
+    @Getter
+    @Setter
+    private boolean deactivated = false;
     private SimpleInventory inventory;
     @NBTPersist
     private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
@@ -77,6 +82,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
         }
         this.currentVariableFacade = null;
         this.activeAspectName = newAspect == null ? null : newAspect.getUnlocalizedName();
+        this.deactivated = false;
     }
 
     @Override
@@ -88,6 +94,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
             addError(activeAspect, null);
         }
         this.currentVariableFacade = null;
+        this.deactivated = false;
     }
 
     @Override

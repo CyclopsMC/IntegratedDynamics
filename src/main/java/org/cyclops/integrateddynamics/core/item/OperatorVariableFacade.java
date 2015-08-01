@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -99,7 +100,10 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                                 Integer.toString(variableId)));
                         checkFurther = false;
                     } else if (variableFacade != null) {
-                        variableFacade.validate(network, validator);
+                        // TODO
+                        // If required, we could down delegate to each of the sub-facade validators, but we'd have
+                        // to lookup their own respective partstatewriter, but get the error msgs in the current validator.
+                        //variableFacade.validate(network, validator);
                         if (variableFacade.isValid()) {
                             IVariable variable = variableFacade.getVariable(network);
                             if (variable != null) {
@@ -117,7 +121,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                     validator.addError(validator.getActiveAspect(), error);
                 }
                 // Check expected aspect type and operator output type
-                if (validator.getActiveAspect().getValueType() != op.getOutputType()) {
+                if (!validator.getActiveAspect().canUseValueType(op.getOutputType())) {
                     validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
                             new L10NHelpers.UnlocalizedString(validator.getActiveAspect().getValueType().getUnlocalizedName()),
                             new L10NHelpers.UnlocalizedString(op.getOutputType().getUnlocalizedName())));
@@ -153,7 +157,10 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     public void addModelOverlay(VariableModelBaked variableModelBaked, List<BakedQuad> quads) {
         if(isValid()) {
             IValueType valueType = getOperator().getOutputType();
-            quads.addAll(variableModelBaked.getValueTypeSubModels().get(valueType).getGeneralQuads());
+            IBakedModel bakedModel = variableModelBaked.getValueTypeSubModels().get(valueType);
+            if(bakedModel != null) {
+                quads.addAll(bakedModel.getGeneralQuads());
+            }
         }
     }
 

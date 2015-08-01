@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
@@ -96,9 +97,12 @@ public class VariableModel implements IModel {
         // Add value types to baked model.
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             try {
-                IModel model = ModelLoaderRegistry.getModel(ValueTypes.REGISTRY.getValueTypeModel(valueType));
-                IBakedModel bakedValueTypeModel = model.bake(state, format, bakedTextureGetter);
-                bakedModel.addValueTypeModel(valueType, bakedValueTypeModel);
+                ModelResourceLocation modelResourceLocation = ValueTypes.REGISTRY.getValueTypeModel(valueType);
+                if(modelResourceLocation != null) {
+                    IModel model = ModelLoaderRegistry.getModel(modelResourceLocation);
+                    IBakedModel bakedValueTypeModel = model.bake(state, format, bakedTextureGetter);
+                    bakedModel.addValueTypeModel(valueType, bakedValueTypeModel);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

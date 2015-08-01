@@ -74,6 +74,11 @@ public final class Operators {
     }, IConfigRenderPattern.PREFIX_1));
 
     /**
+     * Short-circuit logical AND operator with two input booleans and one output boolean.
+     */
+    public static final LogicalOperator LOGICAL_CHOICE = REGISTRY.register(new LogicalChoiceOperator("?", "choice"));
+
+    /**
      * ----------------------------------- INTEGER OPERATORS -----------------------------------
      */
 

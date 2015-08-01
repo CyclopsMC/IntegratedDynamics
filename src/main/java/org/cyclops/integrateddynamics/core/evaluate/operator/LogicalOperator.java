@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 /**
@@ -13,7 +14,12 @@ public class LogicalOperator extends BaseOperator {
     }
 
     public LogicalOperator(String symbol, String operatorName, int inputLength, IFunction function, IConfigRenderPattern renderPattern) {
-        super(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.BOOLEAN), ValueTypes.BOOLEAN, function, renderPattern);
+        this(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.BOOLEAN), ValueTypes.BOOLEAN, function, renderPattern);
+    }
+
+    protected LogicalOperator(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
+                           IFunction function, IConfigRenderPattern renderPattern) {
+        super(symbol, operatorName, inputTypes, outputType, function, renderPattern);
     }
 
     @Override

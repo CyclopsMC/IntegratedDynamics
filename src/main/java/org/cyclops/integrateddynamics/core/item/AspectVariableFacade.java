@@ -62,7 +62,7 @@ public class AspectVariableFacade extends VariableFacadeBase {
                 && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
             validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
                     Integer.toString(getPartId())));
-        } else if (validator.getActiveAspect().getValueType() != getAspect().getValueType()) {
+        } else if (!validator.getActiveAspect().canUseValueType(getAspect().getValueType())) {
             validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
                     new L10NHelpers.UnlocalizedString(validator.getActiveAspect().getValueType().getUnlocalizedName()),
                     new L10NHelpers.UnlocalizedString(getAspect().getValueType().getUnlocalizedName())));

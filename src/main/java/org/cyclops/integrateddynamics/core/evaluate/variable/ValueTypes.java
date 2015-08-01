@@ -11,6 +11,7 @@ public class ValueTypes {
 
     public static final IValueTypeRegistry REGISTRY = constructRegistry();
 
+    public static ValueTypeAny     ANY     = REGISTRY.register(new ValueTypeAny());
     public static ValueTypeBoolean BOOLEAN = REGISTRY.register(new ValueTypeBoolean());
     public static ValueTypeInteger INTEGER = REGISTRY.register(new ValueTypeInteger());
 

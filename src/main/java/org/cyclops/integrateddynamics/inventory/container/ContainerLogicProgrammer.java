@@ -113,7 +113,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
      */
     public void setActiveOperator(IOperator activeOperator, int baseX, int baseY) {
         this.activeOperator = activeOperator;
-        this.inputVariables = new IVariableFacade[activeOperator == null ? 0 : activeOperator.getInputTypes().length];
+        this.inputVariables = new IVariableFacade[activeOperator == null ? 0 : activeOperator.getRequiredInputLength()];
 
         // This assumes that there is only one other slot, the remaining slots will be erased!
         // (We can do this because they are all ghost slots)

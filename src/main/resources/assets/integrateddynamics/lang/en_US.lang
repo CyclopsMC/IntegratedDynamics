@@ -20,8 +20,9 @@ item.items.integrateddynamics.labeller.info=Labels your variables
 item.items.integrateddynamics.labeller.button.write=Write
 
 # Value types
-valuetype.valuetypes.integrateddynamics.boolean.name=§9Boolean§r
-valuetype.valuetypes.integrateddynamics.integer.name=§6Integer§r
+valuetype.valuetypes.integrateddynamics.any.name=Any
+valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
+valuetype.valuetypes.integrateddynamics.integer.name=Integer
 
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
@@ -66,6 +67,8 @@ operator.error.cyclicReference=Variable with id %s depends on itself, infinite r
 operator.operators.integrateddynamics.logical.and.name=Logical And
 operator.operators.integrateddynamics.logical.or.name=Logical Or
 operator.operators.integrateddynamics.logical.not.name=Logical Not
+operator.operators.integrateddynamics.logical.choice.name=Logical Choice
+operator.operators.integrateddynamics.logical.choice.info=If the first value is true, the second value is taken, otherwise the third value.\nType two and three must be equal.
 
 operator.operators.integrateddynamics.arithmetic.addition.name=Arithmetic Addition
 operator.operators.integrateddynamics.arithmetic.subtraction.name=Arithmetic Subtraction

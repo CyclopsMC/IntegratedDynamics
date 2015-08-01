@@ -50,6 +50,11 @@ public interface IOperator {
     public IValue evaluate(IVariable[] input) throws EvaluationException;
 
     /**
+     * @return The required input length.
+     */
+    public int getRequiredInputLength();
+
+    /**
      * Check the given input value types for this operator.
      * @param input The ordered input value types.
      * @return An error or null if valid.

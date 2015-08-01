@@ -67,4 +67,15 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      */
     public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error);
 
+    /**
+     * @return If this part has been deactivated.
+     */
+    public boolean isDeactivated();
+
+    /**
+     * Used to avoid calling deactivation logic more than once when updating aspects.
+     * @param deactivated If this part should be deactivated.
+     */
+    public void setDeactivated(boolean deactivated);
+
 }

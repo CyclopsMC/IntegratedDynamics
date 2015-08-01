@@ -7,6 +7,7 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
@@ -36,15 +37,23 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
         if(partType instanceof IPartTypeWriter && state instanceof IPartStateWriter
                 && ((IPartStateWriter) state).getActiveAspect() == this) {
             IVariable variable = ((IPartTypeWriter) partType).getActiveVariable(network, target, (IPartStateWriter) state);
-            if(variable != null && variable.getType() == ((IPartStateWriter) state).getActiveAspect().getValueType()) {
+            if(variable != null && ((IPartStateWriter) state).getActiveAspect().canUseValueType(variable.getType())) {
                 write((IPartTypeWriter) partType, target, (IPartStateWriter) state, variable);
+            } else if(!((IPartStateWriter) state).isDeactivated()) {
+                ((IPartStateWriter) state).getActiveAspect().onDeactivate((IPartTypeWriter) partType, target, (IPartStateWriter) state);
             }
         }
     }
 
     @Override
     public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onDeactivate(P partType, PartTarget target, S state) {
+        state.setDeactivated(true);
+    }
 
+    @Override
+    public boolean canUseValueType(IValueType valueType) {
+        T activeValueType = getValueType();
+        return activeValueType == ValueTypes.ANY || valueType == ValueTypes.ANY || activeValueType == valueType;
     }
 
     protected String getUnlocalizedType() {
