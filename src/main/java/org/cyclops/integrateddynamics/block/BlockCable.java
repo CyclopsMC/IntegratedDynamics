@@ -183,7 +183,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public boolean hasPart(World world, BlockPos pos, EnumFacing side) {
+    public boolean hasPart(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return BlockHelpers.getSafeBlockStateProperty(
                (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
                PART[side.ordinal()],
@@ -321,7 +321,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public IPartContainer getPartContainer(World world, BlockPos pos) {
+    public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
         return TileHelpers.getSafeTile(world, pos, IPartContainer.class);
     }
 
@@ -362,6 +362,17 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public boolean isNormalCube() {
         return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        if(hasPart(world, pos, side)) {
+            IPartContainer partContainer = getPartContainer(world, pos);
+            IPartType partType = partContainer.getPart(side);
+            return partType.isSolid(partContainer.getPartState(side));
+        }
+        return super.isSideSolid(world, pos, side);
     }
 
     @Override

@@ -51,6 +51,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public boolean isSolid(S state) {
+        return false;
+    }
+
+    @Override
     public String getUnlocalizedName() {
         return "parttype.parttypes." + Reference.MOD_ID + "." + getName() + ".name";
     }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 
 /**
  * Facade for a {@link org.cyclops.integrateddynamics.core.part.IPartContainer} at a certain position.
@@ -15,6 +15,6 @@ public interface IPartContainerFacade {
      * @param pos The position.
      * @return The part container.
      */
-    public IPartContainer getPartContainer(World world, BlockPos pos);
+    public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos);
 
 }

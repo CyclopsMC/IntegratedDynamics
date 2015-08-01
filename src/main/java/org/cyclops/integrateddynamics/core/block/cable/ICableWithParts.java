@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.block.cable;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 import org.cyclops.integrateddynamics.core.path.IPathElement;
 
 /**
@@ -18,6 +18,6 @@ public interface ICableWithParts<E extends IPathElement<E>> extends ICable<E> {
      * @param side The side to check a part for.
      * @return If this block has a part on the given side.
      */
-    public boolean hasPart(World world, BlockPos pos, EnumFacing side);
+    public boolean hasPart(IBlockAccess world, BlockPos pos, EnumFacing side);
 
 }

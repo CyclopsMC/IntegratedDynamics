@@ -56,6 +56,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public void setItem(Item item);
 
     /**
+     * @param state The state
+     * @return If this element is solid.
+     */
+    public boolean isSolid(S state);
+
+    /**
      * @return All possible aspects that can be used in this part type.
      */
     public Set<IAspect> getAspects();
