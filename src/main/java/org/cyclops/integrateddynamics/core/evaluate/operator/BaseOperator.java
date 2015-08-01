@@ -91,6 +91,11 @@ public abstract class BaseOperator implements IOperator {
         return outputType;
     }
 
+    @Override
+    public IValueType getConditionalOutputType(IVariable[] input) {
+        return outputType;
+    }
+
     protected IValueType[] getValueTypes(IVariable[] variables) {
         IValueType[] valueTypes = new IValueType[variables.length];
         for(int i = 0; i < valueTypes.length; i++) {

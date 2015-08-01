@@ -25,6 +25,11 @@ public class ValueTypeAny extends ValueTypeBase<ValueTypeAny.ValueAny> {
         return "any";
     }
 
+    @Override
+    public boolean correspondsTo(IValueType valueType) {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     protected void registerModelResourceLocation() {
         // Don't register a model

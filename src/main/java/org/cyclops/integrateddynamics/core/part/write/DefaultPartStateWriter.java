@@ -63,7 +63,8 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
                     this.currentVariableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
                     // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
                     if(getActiveAspect() != null) {
-                        this.currentVariableFacade.validate(network, this);
+                        this.currentVariableFacade.validate(network,
+                                new IVariableFacade.Validator(this, getActiveAspect()), getActiveAspect().getValueType());
                     }
                 }
             }

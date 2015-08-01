@@ -31,6 +31,11 @@ public interface IValueType<V extends IValue> {
     public int getDisplayColor();
 
     /**
+     * @return If the given value type can be used with this value type.
+     */
+    public boolean correspondsTo(IValueType valueType);
+
+    /**
      * Use this comparator for any comparisons with value types.
      */
     public static class ValueTypeComparator implements Comparator<IValueType> {

@@ -52,4 +52,9 @@ public class LogicalChoiceOperator extends LogicalOperator {
         return null;
     }
 
+    @Override
+    public IValueType getConditionalOutputType(IVariable[] input) {
+        return input[1].getType();
+    }
+
 }

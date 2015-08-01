@@ -10,9 +10,9 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 
 import java.util.List;
 import java.util.Map;
@@ -118,8 +118,8 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void validate(Network network, IPartStateWriter validator) {
-            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString(unlocalizedError));
+        public void validate(Network network, Validator validator, IValueType containingValueType) {
+            validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
         }
 
         @Override

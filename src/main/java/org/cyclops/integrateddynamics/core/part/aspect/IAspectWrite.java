@@ -36,9 +36,4 @@ public interface IAspectWrite<V extends IValue, T extends IValueType<V>> extends
     public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onDeactivate(P partType,
                                                                                               PartTarget target, S state);
 
-    /**
-     * @return If the given value type can be used with the currently active aspect.
-     */
-    public boolean canUseValueType(IValueType valueType);
-
 }

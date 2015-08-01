@@ -16,7 +16,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 
 import java.util.List;
 
@@ -76,9 +75,9 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     }
 
     @Override
-    public void validate(Network network, IPartStateWriter validator) {
+    public void validate(Network network, Validator validator, IValueType containingValueType) {
         if(this.variableIds == null) {
-            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
+            validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
         } else {
             IValueType[] valueTypes = new IValueType[variableIds.length];
             boolean checkFurther = true;
@@ -86,24 +85,22 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                 int variableId = variableIds[i];
                 // Check valid id
                 if (variableId < 0) {
-                    validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
+                    validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
                     checkFurther = false;
                 } else if (!network.hasVariableFacade(variableId)) { // Check id present in network
-                    validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("operator.error.variableNotInNetwork",
+                    validator.addError(new L10NHelpers.UnlocalizedString("operator.error.variableNotInNetwork",
                             Integer.toString(variableId)));
                     checkFurther = false;
                 } else {
                     // Check variable represented by this id is valid.
                     IVariableFacade variableFacade = network.getVariableFacade(variableId);
                     if(variableFacade == this) {
-                        validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("operator.error.cyclicReference",
+                        validator.addError(new L10NHelpers.UnlocalizedString("operator.error.cyclicReference",
                                 Integer.toString(variableId)));
                         checkFurther = false;
                     } else if (variableFacade != null) {
-                        // TODO
-                        // If required, we could down delegate to each of the sub-facade validators, but we'd have
-                        // to lookup their own respective partstatewriter, but get the error msgs in the current validator.
-                        //variableFacade.validate(network, validator);
+                        IValueType valueType = getOperator().getInputTypes()[i];
+                        variableFacade.validate(network, validator, valueType);
                         if (variableFacade.isValid()) {
                             IVariable variable = variableFacade.getVariable(network);
                             if (variable != null) {
@@ -118,12 +115,12 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                 IOperator op = getOperator();
                 L10NHelpers.UnlocalizedString error = op.validateTypes(valueTypes);
                 if (error != null) {
-                    validator.addError(validator.getActiveAspect(), error);
+                    validator.addError(error);
                 }
                 // Check expected aspect type and operator output type
-                if (!validator.getActiveAspect().canUseValueType(op.getOutputType())) {
-                    validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
-                            new L10NHelpers.UnlocalizedString(validator.getActiveAspect().getValueType().getUnlocalizedName()),
+                if (!op.getOutputType().correspondsTo(containingValueType)) {
+                    validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
+                            new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                             new L10NHelpers.UnlocalizedString(op.getOutputType().getUnlocalizedName())));
                 }
             }

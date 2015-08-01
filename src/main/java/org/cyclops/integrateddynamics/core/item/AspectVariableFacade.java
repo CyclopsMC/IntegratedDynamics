@@ -14,7 +14,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 
 import java.util.List;
 
@@ -55,16 +54,16 @@ public class AspectVariableFacade extends VariableFacadeBase {
     }
 
     @Override
-    public void validate(Network network, IPartStateWriter validator) {
+    public void validate(Network network, Validator validator, IValueType containingValueType) {
         if (getPartId() < 0) {
-            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
+            validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
         } else if (!(getAspect() instanceof IAspectRead
                 && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
-            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
+            validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
                     Integer.toString(getPartId())));
-        } else if (!validator.getActiveAspect().canUseValueType(getAspect().getValueType())) {
-            validator.addError(validator.getActiveAspect(), new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
-                    new L10NHelpers.UnlocalizedString(validator.getActiveAspect().getValueType().getUnlocalizedName()),
+        } else if (!containingValueType.correspondsTo(getAspect().getValueType())) {
+            validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
+                    new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                     new L10NHelpers.UnlocalizedString(getAspect().getValueType().getUnlocalizedName())));
         }
     }

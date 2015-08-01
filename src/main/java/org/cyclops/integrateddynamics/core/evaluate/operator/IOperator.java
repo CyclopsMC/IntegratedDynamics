@@ -42,6 +42,13 @@ public interface IOperator {
     public IValueType getOutputType();
 
     /**
+     * Get the output value type depending on the active input of the operator.
+     * @param input The input that would be given during evaluation.
+     * @return The type of value that is achieved when this operator is executed.
+     */
+    public IValueType getConditionalOutputType(IVariable[] input);
+
+    /**
      * Evaluate the given input values for this operator.
      * @param input The ordered input values.
      * @return The output value.

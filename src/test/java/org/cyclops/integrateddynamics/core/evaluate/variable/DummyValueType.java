@@ -30,6 +30,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
         return 0;
     }
 
+    @Override
+    public boolean correspondsTo(IValueType valueType) {
+        return false;
+    }
+
     @ToString
     public static class DummyValue extends BaseValue {
 

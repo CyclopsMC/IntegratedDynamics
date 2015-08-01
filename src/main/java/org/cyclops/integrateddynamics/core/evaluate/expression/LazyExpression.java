@@ -45,7 +45,7 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
 
     @Override
     public IValueType<V> getType() {
-        return op.getOutputType();
+        return op.getConditionalOutputType(input);
     }
 
     @Override

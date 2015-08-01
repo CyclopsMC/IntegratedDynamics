@@ -37,6 +37,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         return this.color;
     }
 
+    @Override
+    public boolean correspondsTo(IValueType valueType) {
+        return this == valueType;
+    }
+
     @SideOnly(Side.CLIENT)
     protected void registerModelResourceLocation() {
         ValueTypes.REGISTRY.registerValueTypeModel(this,
