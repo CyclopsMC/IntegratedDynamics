@@ -227,7 +227,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             RenderHelpers.drawScaledCenteredString(fontRenderer, operator.getSymbol(),
                     baseX + configRenderPattern.getSymbolPosition().getLeft(),
                     baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
-                    width, 1, operator.getOutputType().getDisplayColor());
+                    width, 1, 0);
             GlStateManager.color(1, 1, 1);
         }
 

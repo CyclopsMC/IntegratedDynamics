@@ -31,6 +31,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
+    public String getDisplayColorFormat() {
+        return "";
+    }
+
+    @Override
     public boolean correspondsTo(IValueType valueType) {
         return false;
     }

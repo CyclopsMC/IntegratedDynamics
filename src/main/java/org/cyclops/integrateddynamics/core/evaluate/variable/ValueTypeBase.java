@@ -14,10 +14,12 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     private final String typeName;
     private final int color;
+    private final String colorFormat;
 
-    public ValueTypeBase(String typeName, int color) {
+    public ValueTypeBase(String typeName, int color, String colorFormat) {
         this.typeName = typeName;
         this.color = color;
+        this.colorFormat = colorFormat;
         if(MinecraftHelpers.isModdedEnvironment() && MinecraftHelpers.isClientSide()) {
             registerModelResourceLocation();
         }
@@ -35,6 +37,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     @Override
     public int getDisplayColor() {
         return this.color;
+    }
+
+    @Override
+    public String getDisplayColorFormat() {
+        return this.colorFormat;
     }
 
     @Override

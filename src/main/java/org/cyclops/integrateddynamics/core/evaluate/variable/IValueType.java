@@ -31,6 +31,11 @@ public interface IValueType<V extends IValue> {
     public int getDisplayColor();
 
     /**
+     * @return The color that is used to identify this value type using MC formatting codes.
+     */
+    public String getDisplayColorFormat();
+
+    /**
      * @return If the given value type can be used with this value type.
      */
     public boolean correspondsTo(IValueType valueType);

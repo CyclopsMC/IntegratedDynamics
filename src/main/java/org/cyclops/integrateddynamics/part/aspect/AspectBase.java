@@ -30,7 +30,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         String aspectName = L10NHelpers.localize(getUnlocalizedName());
         String valueTypeName = L10NHelpers.localize(getValueType().getUnlocalizedName());
         lines.add(L10NHelpers.localize("aspect.tooltip.aspectName", aspectName));
-        lines.add(L10NHelpers.localize("aspect.tooltip.valueTypeName", valueTypeName));
+        lines.add(L10NHelpers.localize("aspect.tooltip.valueTypeName", getValueType().getDisplayColorFormat() + valueTypeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }

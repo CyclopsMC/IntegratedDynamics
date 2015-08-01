@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
+import net.minecraft.util.EnumChatFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 
 /**
@@ -10,7 +11,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueInteger> {
 
     public ValueTypeInteger() {
-        super("integer", Helpers.RGBToInt(243, 150, 4));
+        super("integer", Helpers.RGBToInt(243, 150, 4), EnumChatFormatting.GOLD.toString());
     }
 
     @Override

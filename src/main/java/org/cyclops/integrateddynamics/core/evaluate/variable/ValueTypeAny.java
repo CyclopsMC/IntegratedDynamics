@@ -12,7 +12,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 public class ValueTypeAny extends ValueTypeBase<ValueTypeAny.ValueAny> {
 
     public ValueTypeAny() {
-        super("any", Helpers.RGBToInt(240, 240, 240));
+        super("any", Helpers.RGBToInt(240, 240, 240), "");
     }
 
     @Override

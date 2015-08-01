@@ -73,9 +73,9 @@ public abstract class BaseOperator implements IOperator {
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
             lines.add(L10NHelpers.localize("operator.tooltip.inputTypeName",
-                    i + 1, L10NHelpers.localize(inputTypes[i].getUnlocalizedName())));
+                    i + 1, inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getUnlocalizedName())));
         }
-        lines.add(L10NHelpers.localize("operator.tooltip.outputTypeName", outputTypeName));
+        lines.add(L10NHelpers.localize("operator.tooltip.outputTypeName", getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
