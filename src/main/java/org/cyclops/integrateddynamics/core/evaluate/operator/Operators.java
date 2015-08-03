@@ -281,4 +281,91 @@ public final class Operators {
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_OR).apply(RELATIONAL_EQUALS, RELATIONAL_LT).build(
                     "<=", "le", IConfigRenderPattern.INFIX, "relational"));
 
+    /**
+     * ----------------------------------- BINARY OPERATORS -----------------------------------
+     */
+
+    /**
+     * Binary AND operator with two input integers and one output integers.
+     */
+    public static final BinaryOperator BINARY_AND = REGISTRY.register(new BinaryOperator("&", "and", new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a & b);
+        }
+    }));
+
+    /**
+     * Binary OR operator with two input integers and one output integers.
+     */
+    public static final BinaryOperator BINARY_OR = REGISTRY.register(new BinaryOperator("|", "or", new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a | b);
+        }
+    }));
+
+    /**
+     * Binary XOR operator with two input integers and one output integers.
+     */
+    public static final BinaryOperator BINARY_XOR = REGISTRY.register(new BinaryOperator("^", "xor", new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a ^ b);
+        }
+    }));
+
+    /**
+     * Binary COMPLEMENT operator with one input integers and one output integers.
+     */
+    public static final BinaryOperator BINARY_COMPLEMENT = REGISTRY.register(new BinaryOperator("~", "complement", 1, new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(~a);
+        }
+    }, IConfigRenderPattern.PREFIX_1));
+
+    /**
+     * Binary << operator with two input integers and one output integers.
+     */
+    public static final BinaryOperator BINARY_LSHIFT = REGISTRY.register(new BinaryOperator("<<", "lshift", new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a << b);
+        }
+    }));
+
+    /**
+     * Binary >> operator with two input integers and one output integers.
+     */
+    public static final BinaryOperator BINARY_RSHIFT = REGISTRY.register(new BinaryOperator(">>", "rshift", new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a >> b);
+        }
+    }));
+
+    /**
+     * Binary >>> operator with two input integers and one output integers.
+     */
+    public static final BinaryOperator BINARY_RZSHIFT = REGISTRY.register(new BinaryOperator(">>>", "rzshift", new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a >>> b);
+        }
+    }));
+
 }

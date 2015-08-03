@@ -97,3 +97,15 @@ operator.operators.integrateddynamics.relational.notequals.name=Not Equals
 operator.operators.integrateddynamics.relational.notequals.info=Type one and two must be equal.
 operator.operators.integrateddynamics.relational.ge.name=Greater Than or Equal
 operator.operators.integrateddynamics.relational.le.name=Less Than or Equal
+
+operator.operators.integrateddynamics.binary.name=Binary
+operator.operators.integrateddynamics.binary.basename=Binary %s
+operator.operators.integrateddynamics.binary.and.name=And
+operator.operators.integrateddynamics.binary.or.name=Or
+operator.operators.integrateddynamics.binary.xor.name=Xor
+operator.operators.integrateddynamics.binary.complement.name=Complement
+operator.operators.integrateddynamics.binary.rshift.name=Right Shift
+operator.operators.integrateddynamics.binary.rshift.info=Right Shift with ones fill
+operator.operators.integrateddynamics.binary.lshift.name=Left Shift
+operator.operators.integrateddynamics.binary.rzshift.name=Right Zero Shift
+operator.operators.integrateddynamics.binary.rzshift.info=Right Shift with zeros fill
