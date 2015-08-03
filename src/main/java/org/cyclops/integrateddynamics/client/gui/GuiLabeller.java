@@ -1,9 +1,13 @@
 package org.cyclops.integrateddynamics.client.gui;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.client.C17PacketCustomPayload;
+import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.client.gui.component.GuiButtonExtended;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -13,6 +17,7 @@ import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
+import org.cyclops.integrateddynamics.network.packet.ItemStackRenamePacket;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
@@ -103,8 +108,13 @@ public class GuiLabeller extends GuiContainerExtended {
             IVariableFacade variableFacade = registry.handle(itemStack);
             if(variableFacade.isValid()) {
                 int variableId = variableFacade.getId();
-                String label = searchField.getText().isEmpty() ? "" : searchField.getText();
+                String label = StringUtils.isBlank(searchField.getText()) ? "" : searchField.getText();
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableId, label);
+            } else if(itemStack != null) {
+                this.mc.thePlayer.sendQueue.addToSendQueue(new C17PacketCustomPayload("MC|ItemName", (new PacketBuffer(Unpooled.buffer())).writeString(searchField.getText())));
+                String name = searchField.getText();
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(new ItemStackRenamePacket(name));
+                ((ContainerLabeller) getContainer()).setItemStackName(name);
             }
         }
     }
