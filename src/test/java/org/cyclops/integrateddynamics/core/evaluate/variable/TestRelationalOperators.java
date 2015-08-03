@@ -65,11 +65,6 @@ public class TestRelationalOperators {
         Operators.RELATIONAL_EQUALS.evaluate(new IVariable[]{i0});
     }
 
-    @Test(expected = EvaluationException.class)
-    public void testInvalidRelationalEqualsDifferentTypes() throws EvaluationException {
-        Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{i1, DUMMY_VARIABLE});
-    }
-
     /**
      * ----------------------------------- GT -----------------------------------
      */
@@ -177,11 +172,6 @@ public class TestRelationalOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeNotEqualsSmall() throws EvaluationException {
         Operators.RELATIONAL_NOTEQUALS.evaluate(new IVariable[]{i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidRelationalNotEqualsDifferentTypes() throws EvaluationException {
-        Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{i1, DUMMY_VARIABLE});
     }
 
     /**

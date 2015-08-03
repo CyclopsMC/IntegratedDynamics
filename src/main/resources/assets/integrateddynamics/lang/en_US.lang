@@ -70,8 +70,6 @@ operator.operators.integrateddynamics.logical.basename=Logical %s
 operator.operators.integrateddynamics.logical.and.name=And
 operator.operators.integrateddynamics.logical.or.name=Or
 operator.operators.integrateddynamics.logical.not.name=Not
-operator.operators.integrateddynamics.logical.choice.name=Choice
-operator.operators.integrateddynamics.logical.choice.info=If the first value is true, the second value is taken, otherwise the third value.\nType two and three must be equal.
 
 operator.operators.integrateddynamics.arithmetic.name=Arithmetic
 operator.operators.integrateddynamics.arithmetic.basename=Arithmetic %s
@@ -109,3 +107,10 @@ operator.operators.integrateddynamics.binary.rshift.info=Right Shift with ones f
 operator.operators.integrateddynamics.binary.lshift.name=Left Shift
 operator.operators.integrateddynamics.binary.rzshift.name=Right Zero Shift
 operator.operators.integrateddynamics.binary.rzshift.info=Right Shift with zeros fill
+
+operator.operators.integrateddynamics.general.name=General
+operator.operators.integrateddynamics.general.basename=%s
+operator.operators.integrateddynamics.general.choice.name=Choice
+operator.operators.integrateddynamics.general.choice.info=If the first value is true, the second value is taken, otherwise the third value.\nType two and three must be equal.
+operator.operators.integrateddynamics.general.identity.name=Identity
+operator.operators.integrateddynamics.general.identity.info=A copy of the input value.

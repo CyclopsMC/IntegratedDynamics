@@ -6,12 +6,12 @@ import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 
 /**
- * A logical choice operator.
+ * A general choice operator.
  * @author rubensworks
  */
-public class LogicalChoiceOperator extends LogicalOperator {
+public class GeneralChoiceOperator extends GeneralOperator {
 
-    public LogicalChoiceOperator(String symbol, String operatorName) {
+    public GeneralChoiceOperator(String symbol, String operatorName) {
         super(symbol, operatorName, new IValueType[]{ValueTypes.BOOLEAN, ValueTypes.ANY, ValueTypes.ANY}, ValueTypes.ANY, new BaseOperator.IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {

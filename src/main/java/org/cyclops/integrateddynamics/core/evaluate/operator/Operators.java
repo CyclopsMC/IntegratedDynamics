@@ -74,11 +74,6 @@ public final class Operators {
     }, IConfigRenderPattern.PREFIX_1));
 
     /**
-     * Short-circuit logical AND operator with two input booleans and one output boolean.
-     */
-    public static final LogicalOperator LOGICAL_CHOICE = REGISTRY.register(new LogicalChoiceOperator("?", "choice"));
-
-    /**
      * ----------------------------------- ARITHMETIC OPERATORS -----------------------------------
      */
 
@@ -367,5 +362,19 @@ public final class Operators {
             return ValueTypeInteger.ValueInteger.of(a >>> b);
         }
     }));
+
+    /**
+     * ----------------------------------- GENERAL OPERATORS -----------------------------------
+     */
+
+    /**
+     * Choice operator with one boolean input, two any inputs and one output any.
+     */
+    public static final GeneralOperator GENERAL_CHOICE = REGISTRY.register(new GeneralChoiceOperator("?", "choice"));
+
+    /**
+     * Identity operator with one any input and one any output
+     */
+    public static final GeneralOperator GENERAL_IDENTITY = REGISTRY.register(new GeneralIdentityOperator("id", "identity"));
 
 }

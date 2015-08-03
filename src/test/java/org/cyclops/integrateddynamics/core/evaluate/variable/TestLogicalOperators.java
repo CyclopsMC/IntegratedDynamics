@@ -141,42 +141,4 @@ public class TestLogicalOperators {
         Operators.LOGICAL_NOT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
-    /**
-     * ----------------------------------- CHOICE -----------------------------------
-     */
-
-    @Test
-    public void testLogicalChoice() throws EvaluationException {
-        DummyVariableInteger i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
-        DummyVariableInteger i2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2));
-
-        IValue res1 = Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{bTrue, i1, i2});
-        assertThat("result is 1", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("true ? 1 : 2 = 1", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
-
-        IValue res2 = Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{bFalse, i1, i2});
-        assertThat("false ? 1 : 2 = 1", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(2));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeChoiceLarge() throws EvaluationException {
-        Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{bTrue, bTrue, bTrue, bTrue});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeChoiceSmall() throws EvaluationException {
-        Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{bTrue, bTrue});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeChoice() throws EvaluationException {
-        Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidLogicalChoiceDifferentTypes() throws EvaluationException {
-        DummyVariableInteger i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
-        Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{bFalse, i1, DUMMY_VARIABLE});
-    }
-
 }
