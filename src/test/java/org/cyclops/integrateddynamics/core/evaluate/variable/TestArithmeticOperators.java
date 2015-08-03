@@ -319,4 +319,68 @@ public class TestArithmeticOperators {
         Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- INCREMENT -----------------------------------
+     */
+
+    @Test
+    public void testArithmeticIncrement() throws EvaluationException {
+        IValue res1 = Operators.ARITHMETIC_INCREMENT.evaluate(new IVariable[]{i10});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("10++ = 11", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(11));
+
+        IValue res2 = Operators.ARITHMETIC_INCREMENT.evaluate(new IVariable[]{i0});
+        assertThat("0++ = 1", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(1));
+
+        IValue res3 = Operators.ARITHMETIC_INCREMENT.evaluate(new IVariable[]{im10});
+        assertThat("-10++ = -9", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(-9));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIncrementLarge() throws EvaluationException {
+        Operators.ARITHMETIC_INCREMENT.evaluate(new IVariable[]{i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIncrementSmall() throws EvaluationException {
+        Operators.ARITHMETIC_INCREMENT.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeIncrement() throws EvaluationException {
+        Operators.ARITHMETIC_INCREMENT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- DECREMENT -----------------------------------
+     */
+
+    @Test
+    public void testArithmeticDecrement() throws EvaluationException {
+        IValue res1 = Operators.ARITHMETIC_DECREMENT.evaluate(new IVariable[]{i10});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("10-- = 9", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(9));
+
+        IValue res2 = Operators.ARITHMETIC_DECREMENT.evaluate(new IVariable[]{i0});
+        assertThat("0-- = -1", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(-1));
+
+        IValue res3 = Operators.ARITHMETIC_DECREMENT.evaluate(new IVariable[]{im10});
+        assertThat("-10-- = -11", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(-11));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeDecrementLarge() throws EvaluationException {
+        Operators.ARITHMETIC_DECREMENT.evaluate(new IVariable[]{i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeDecrementSmall() throws EvaluationException {
+        Operators.ARITHMETIC_DECREMENT.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeDecrement() throws EvaluationException {
+        Operators.ARITHMETIC_DECREMENT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
 }

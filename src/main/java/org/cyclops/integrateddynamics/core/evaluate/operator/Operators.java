@@ -206,6 +206,28 @@ public final class Operators {
     }, IConfigRenderPattern.PREFIX_2));
 
     /**
+     * Arithmetic INCREMENT operator with one input integers and one output integer.
+     */
+    public static final ArithmeticOperator ARITHMETIC_INCREMENT = REGISTRY.register(new ArithmeticOperator("++", "increment", 1, new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a + 1);
+        }
+    }, IConfigRenderPattern.SUFFIX_1));
+
+    /**
+     * Arithmetic INCREMENT operator with one input integers and one output integer.
+     */
+    public static final ArithmeticOperator ARITHMETIC_DECREMENT = REGISTRY.register(new ArithmeticOperator("--", "decrement", 1, new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a - 1);
+        }
+    }, IConfigRenderPattern.SUFFIX_1));
+
+    /**
      * ----------------------------------- RELATIONAL OPERATORS -----------------------------------
      */
 

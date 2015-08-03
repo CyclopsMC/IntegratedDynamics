@@ -79,6 +79,8 @@ operator.operators.integrateddynamics.arithmetic.maximum.name=Arithmetic Maximum
 operator.operators.integrateddynamics.arithmetic.maximum.info=Takes the largest of two values.
 operator.operators.integrateddynamics.arithmetic.minimum.name=Arithmetic Minimum
 operator.operators.integrateddynamics.arithmetic.minimum.info=Takes the smallest of two values.
+operator.operators.integrateddynamics.arithmetic.increment.name=Arithmetic Increment
+operator.operators.integrateddynamics.arithmetic.decrement.name=Arithmetic Decrement
 
 operator.operators.integrateddynamics.relational.equals.name=Relational Equals
 operator.operators.integrateddynamics.relational.equals.info=Type one and two must be equal.
