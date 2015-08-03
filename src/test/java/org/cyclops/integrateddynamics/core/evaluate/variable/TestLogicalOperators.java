@@ -28,6 +28,10 @@ public class TestLogicalOperators {
         bFalse = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(false));
     }
 
+    /**
+     * ----------------------------------- AND -----------------------------------
+     */
+
     @Test
     public void testLogicalAnd() throws EvaluationException {
         IValue res1 = Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue, bTrue});
@@ -43,6 +47,32 @@ public class TestLogicalOperators {
         IValue res4 = Operators.LOGICAL_AND.evaluate(new IVariable[]{bFalse, bFalse});
         assertThat("false && false = false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
     }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAndLarge() throws EvaluationException {
+        Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAndSmall() throws EvaluationException {
+        Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeAnd() throws EvaluationException {
+        Operators.LOGICAL_AND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    @Test
+    public void testShortCircuitingAnd() throws EvaluationException {
+        Operators.LOGICAL_AND.evaluate(new IVariable[]{bFalse, bTrue});
+        assertThat("first variable was called", bFalse.isFetched(), is(true));
+        assertThat("second variable was not called", bTrue.isFetched(), is(false));
+    }
+
+    /**
+     * ----------------------------------- OR -----------------------------------
+     */
 
     @Test
     public void testLogicalOr() throws EvaluationException {
@@ -60,6 +90,32 @@ public class TestLogicalOperators {
         assertThat("false || false = false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
     }
 
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeOrLarge() throws EvaluationException {
+        Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeOrSmall() throws EvaluationException {
+        Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeOr() throws EvaluationException {
+        Operators.LOGICAL_OR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    @Test
+    public void testShortCircuitingOr() throws EvaluationException {
+        Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue, bFalse});
+        assertThat("first variable was called", bTrue.isFetched(), is(true));
+        assertThat("second variable was not called", bFalse.isFetched(), is(false));
+    }
+
+    /**
+     * ----------------------------------- NOT -----------------------------------
+     */
+
     @Test
     public void testLogicalNot() throws EvaluationException {
         IValue res1 = Operators.LOGICAL_NOT.evaluate(new IVariable[]{bTrue});
@@ -69,6 +125,25 @@ public class TestLogicalOperators {
         IValue res2 = Operators.LOGICAL_NOT.evaluate(new IVariable[]{bFalse});
         assertThat("!false = true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
     }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNotLarge() throws EvaluationException {
+        Operators.LOGICAL_NOT.evaluate(new IVariable[]{bTrue, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNotSmall() throws EvaluationException {
+        Operators.LOGICAL_NOT.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNot() throws EvaluationException {
+        Operators.LOGICAL_NOT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- CHOICE -----------------------------------
+     */
 
     @Test
     public void testLogicalChoice() throws EvaluationException {
@@ -84,36 +159,6 @@ public class TestLogicalOperators {
     }
 
     @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeAndLarge() throws EvaluationException {
-        Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeAndSmall() throws EvaluationException {
-        Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeOrLarge() throws EvaluationException {
-        Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeOrSmall() throws EvaluationException {
-        Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeNotLarge() throws EvaluationException {
-        Operators.LOGICAL_NOT.evaluate(new IVariable[]{bTrue, bTrue});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeNotSmall() throws EvaluationException {
-        Operators.LOGICAL_NOT.evaluate(new IVariable[]{});
-    }
-
-    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeChoiceLarge() throws EvaluationException {
         Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{bTrue, bTrue, bTrue, bTrue});
     }
@@ -124,37 +169,8 @@ public class TestLogicalOperators {
     }
 
     @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeAnd() throws EvaluationException {
-        Operators.LOGICAL_AND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeOR() throws EvaluationException {
-        Operators.LOGICAL_OR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeNot() throws EvaluationException {
-        Operators.LOGICAL_NOT.evaluate(new IVariable[]{DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeChoice() throws EvaluationException {
         Operators.LOGICAL_CHOICE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test
-    public void testShortCircuitingAnd() throws EvaluationException {
-        Operators.LOGICAL_AND.evaluate(new IVariable[]{bFalse, bTrue});
-        assertThat("first variable was called", bFalse.isFetched(), is(true));
-        assertThat("second variable was not called", bTrue.isFetched(), is(false));
-    }
-
-    @Test
-    public void testShortCircuitingOr() throws EvaluationException {
-        Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue, bFalse});
-        assertThat("first variable was called", bTrue.isFetched(), is(true));
-        assertThat("second variable was not called", bFalse.isFetched(), is(false));
     }
 
     @Test(expected = EvaluationException.class)

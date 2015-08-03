@@ -34,6 +34,10 @@ public class TestArithmeticOperators {
         i15  = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(15 ));
     }
 
+    /**
+     * ----------------------------------- ADD -----------------------------------
+     */
+
     @Test
     public void testArithmeticAdd() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i10, i10});
@@ -53,6 +57,25 @@ public class TestArithmeticOperators {
         assertThat("10 + -10 = 0", ((ValueTypeInteger.ValueInteger) res5).getRawValue(), is(0));
     }
 
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAddLarge() throws EvaluationException {
+        Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0, i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAddSmall() throws EvaluationException {
+        Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeAdd() throws EvaluationException {
+        Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MINUS -----------------------------------
+     */
+
     @Test
     public void testArithmeticMinus() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_SUBTRACTION.evaluate(new IVariable[]{i10, i10});
@@ -71,6 +94,25 @@ public class TestArithmeticOperators {
         IValue res5 = Operators.ARITHMETIC_SUBTRACTION.evaluate(new IVariable[]{i10, im10});
         assertThat("10 - -10 = 20", ((ValueTypeInteger.ValueInteger) res5).getRawValue(), is(20));
     }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeMinusLarge() throws EvaluationException {
+        Operators.ARITHMETIC_SUBTRACTION.evaluate(new IVariable[]{i0, i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeMinusSmall() throws EvaluationException {
+        Operators.ARITHMETIC_SUBTRACTION.evaluate(new IVariable[]{i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeMinus() throws EvaluationException {
+        Operators.ARITHMETIC_SUBTRACTION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MULTIPLY -----------------------------------
+     */
 
     @Test
     public void testArithmeticMultiply() throws EvaluationException {
@@ -93,6 +135,25 @@ public class TestArithmeticOperators {
         IValue res6 = Operators.ARITHMETIC_MULTIPLICATION.evaluate(new IVariable[]{im10, i10});
         assertThat("-10 * 10 = -100", ((ValueTypeInteger.ValueInteger) res6).getRawValue(), is(-100));
     }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeMultiplyLarge() throws EvaluationException {
+        Operators.ARITHMETIC_MULTIPLICATION.evaluate(new IVariable[]{i0, i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeMultiplySmall() throws EvaluationException {
+        Operators.ARITHMETIC_MULTIPLICATION.evaluate(new IVariable[]{i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeMultiply() throws EvaluationException {
+        Operators.ARITHMETIC_MULTIPLICATION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- DIVIDE -----------------------------------
+     */
 
     @Test
     public void testArithmeticDivide() throws EvaluationException {
@@ -121,6 +182,25 @@ public class TestArithmeticOperators {
         Operators.ARITHMETIC_DIVISION.evaluate(new IVariable[]{i10, i0});
     }
 
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeDivideLarge() throws EvaluationException {
+        Operators.ARITHMETIC_DIVISION.evaluate(new IVariable[]{i0, i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeDivideSmall() throws EvaluationException {
+        Operators.ARITHMETIC_DIVISION.evaluate(new IVariable[]{i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeDivide() throws EvaluationException {
+        Operators.ARITHMETIC_DIVISION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MODULO -----------------------------------
+     */
+
     @Test
     public void testArithmeticModulo() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_MODULUS.evaluate(new IVariable[]{i10, i10});
@@ -148,6 +228,25 @@ public class TestArithmeticOperators {
         Operators.ARITHMETIC_MODULUS.evaluate(new IVariable[]{i10, i0});
     }
 
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeModuloLarge() throws EvaluationException {
+        Operators.ARITHMETIC_MODULUS.evaluate(new IVariable[]{i0, i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeModuloSmall() throws EvaluationException {
+        Operators.ARITHMETIC_MODULUS.evaluate(new IVariable[]{i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeModulo() throws EvaluationException {
+        Operators.ARITHMETIC_MODULUS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MAX -----------------------------------
+     */
+
     @Test
     public void testArithmeticMax() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_MAXIMUM.evaluate(new IVariable[]{i10, i10});
@@ -167,6 +266,25 @@ public class TestArithmeticOperators {
         assertThat("max(-10, 0) = 0", ((ValueTypeInteger.ValueInteger) res5).getRawValue(), is(0));
     }
 
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeMaxLarge() throws EvaluationException {
+        Operators.ARITHMETIC_MAXIMUM.evaluate(new IVariable[]{i0, i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeMaxSmall() throws EvaluationException {
+        Operators.ARITHMETIC_MAXIMUM.evaluate(new IVariable[]{i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeMax() throws EvaluationException {
+        Operators.ARITHMETIC_MAXIMUM.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MIN -----------------------------------
+     */
+
     @Test
     public void testArithmeticMin() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i10, i10});
@@ -184,96 +302,6 @@ public class TestArithmeticOperators {
 
         IValue res5 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{im10, i0});
         assertThat("max(-10, 0) = 0", ((ValueTypeInteger.ValueInteger) res5).getRawValue(), is(-10));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeAddLarge() throws EvaluationException {
-        Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0, i0, i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeAddSmall() throws EvaluationException {
-        Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeAdd() throws EvaluationException {
-        Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeMinusLarge() throws EvaluationException {
-        Operators.ARITHMETIC_SUBTRACTION.evaluate(new IVariable[]{i0, i0, i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeMinusSmall() throws EvaluationException {
-        Operators.ARITHMETIC_SUBTRACTION.evaluate(new IVariable[]{i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeMinus() throws EvaluationException {
-        Operators.ARITHMETIC_SUBTRACTION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeMultiplyLarge() throws EvaluationException {
-        Operators.ARITHMETIC_MULTIPLICATION.evaluate(new IVariable[]{i0, i0, i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeMultiplySmall() throws EvaluationException {
-        Operators.ARITHMETIC_MULTIPLICATION.evaluate(new IVariable[]{i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeMultiply() throws EvaluationException {
-        Operators.ARITHMETIC_MULTIPLICATION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeDivideLarge() throws EvaluationException {
-        Operators.ARITHMETIC_DIVISION.evaluate(new IVariable[]{i0, i0, i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeDivideSmall() throws EvaluationException {
-        Operators.ARITHMETIC_DIVISION.evaluate(new IVariable[]{i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeDivide() throws EvaluationException {
-        Operators.ARITHMETIC_DIVISION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeModuloLarge() throws EvaluationException {
-        Operators.ARITHMETIC_MODULUS.evaluate(new IVariable[]{i0, i0, i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeModuloSmall() throws EvaluationException {
-        Operators.ARITHMETIC_MODULUS.evaluate(new IVariable[]{i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeModulo() throws EvaluationException {
-        Operators.ARITHMETIC_MODULUS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeMaxLarge() throws EvaluationException {
-        Operators.ARITHMETIC_MAXIMUM.evaluate(new IVariable[]{i0, i0, i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeMaxSmall() throws EvaluationException {
-        Operators.ARITHMETIC_MAXIMUM.evaluate(new IVariable[]{i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeMax() throws EvaluationException {
-        Operators.ARITHMETIC_MAXIMUM.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
     @Test(expected = EvaluationException.class)
