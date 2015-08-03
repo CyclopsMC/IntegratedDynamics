@@ -22,7 +22,7 @@ public class CompositionalOperator extends BaseOperator {
 
     @Override
     protected String getUnlocalizedType() {
-        return unlocalizedType + "." + getOperatorName();
+        return unlocalizedType;
     }
 
     public static class AppliedOperatorBuilder {

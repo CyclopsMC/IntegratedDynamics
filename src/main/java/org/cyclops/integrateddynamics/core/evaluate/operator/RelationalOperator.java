@@ -24,7 +24,7 @@ public class RelationalOperator extends BaseOperator {
 
     @Override
     public String getUnlocalizedType() {
-        return "relational." + getOperatorName();
+        return "relational";
     }
 
 }

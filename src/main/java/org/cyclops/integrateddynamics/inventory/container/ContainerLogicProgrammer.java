@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
@@ -36,7 +35,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
 
         @Override
         public boolean apply(IOperator item, Pattern pattern) {
-            return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName()).toLowerCase()).matches();
+            return pattern.matcher(item.getLocalizedNameFull().toLowerCase()).matches();
         }
     };
 

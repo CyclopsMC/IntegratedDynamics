@@ -24,7 +24,7 @@ public class LogicalOperator extends BaseOperator {
 
     @Override
     public String getUnlocalizedType() {
-        return "logical." + getOperatorName();
+        return "logical";
     }
 
 }

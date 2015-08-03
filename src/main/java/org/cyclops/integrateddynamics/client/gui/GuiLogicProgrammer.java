@@ -268,7 +268,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             int x = guiLeft + getX();
             int y = guiTop + getY();
 
-            fontRenderer.drawString(L10NHelpers.localize(operator.getUnlocalizedName()), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
+            fontRenderer.drawString(operator.getLocalizedNameFull(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
         }
 
     }

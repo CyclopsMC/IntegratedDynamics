@@ -22,7 +22,7 @@ public class ArithmeticOperator extends BaseOperator {
 
     @Override
     public String getUnlocalizedType() {
-        return "arithmetic." + getOperatorName();
+        return "arithmetic";
     }
 
 }

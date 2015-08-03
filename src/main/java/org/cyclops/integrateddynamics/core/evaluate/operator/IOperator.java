@@ -20,9 +20,19 @@ public interface IOperator {
     public String getSymbol();
 
     /**
-     * @return The unique unlocalized name for this aspect.
+     * @return The unique unlocalized name for this operator.
      */
     public String getUnlocalizedName();
+
+    /**
+     * @return The unique unlocalized category name for this operator.
+     */
+    public String getUnlocalizedCategoryName();
+
+    /**
+     * @return The localized full name for this operator, includes category name
+     */
+    public String getLocalizedNameFull();
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.

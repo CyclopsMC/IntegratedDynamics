@@ -51,7 +51,21 @@ public abstract class BaseOperator implements IOperator {
         return getUnlocalizedPrefix() + ".name";
     }
 
+    @Override
+    public String getUnlocalizedCategoryName() {
+        return getUnlocalizedCategoryPrefix() + ".name";
+    }
+
+    @Override
+    public String getLocalizedNameFull() {
+        return L10NHelpers.localize(getUnlocalizedCategoryPrefix() + ".basename", L10NHelpers.localize(getUnlocalizedName()));
+    }
+
     protected String getUnlocalizedPrefix() {
+        return "operator.operators." + getModId() + "." + getUnlocalizedType() + "." + getOperatorName();
+    }
+
+    protected String getUnlocalizedCategoryPrefix() {
         return "operator.operators." + getModId() + "." + getUnlocalizedType();
     }
 
@@ -67,9 +81,11 @@ public abstract class BaseOperator implements IOperator {
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
         String operatorName = L10NHelpers.localize(getUnlocalizedName());
+        String categoryName = L10NHelpers.localize(getUnlocalizedCategoryName());
         String symbol = getSymbol();
         String outputTypeName = L10NHelpers.localize(getOutputType().getUnlocalizedName());
         lines.add(L10NHelpers.localize("operator.tooltip.operatorName", operatorName, symbol));
+        lines.add(L10NHelpers.localize("operator.tooltip.operatorCategory", categoryName));
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
             lines.add(L10NHelpers.localize("operator.tooltip.inputTypeName",
