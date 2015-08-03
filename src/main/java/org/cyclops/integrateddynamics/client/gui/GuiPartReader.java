@@ -6,6 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
+import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
@@ -65,7 +67,14 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
 
         // Current aspect value
         IAspectVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspect);
-        String value = variable.getType().toCompactString(variable.getValue());
+
+        String value;
+        try {
+            IValue valueObj = variable.getValue();
+            value = variable.getType().toCompactString(valueObj);
+        } catch (EvaluationException e) {
+            value = "ERROR";
+        }
         fontRenderer.drawString(value, this.guiLeft + offsetX + 16,
                 this.guiTop + offsetY + 35 + container.getAspectBoxHeight() * index,
                 variable.getType().getDisplayColor());

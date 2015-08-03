@@ -41,6 +41,11 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
         public boolean getRawValue() {
             return value;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof ValueBoolean && ((ValueBoolean) o).value == this.value;
+        }
     }
 
 }

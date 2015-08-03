@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
+import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
@@ -22,8 +24,13 @@ public class AspectWriteIntegerRedstone extends AspectWriteIntegerBase {
     @Override
     public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void write(P partType, PartTarget target,
                                                                                        S state, IVariable<ValueTypeInteger.ValueInteger> variable) {
-        ValueTypeInteger.ValueInteger value = variable.getValue();
-        WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, value.getRawValue());
+        try {
+            ValueTypeInteger.ValueInteger value = variable.getValue();
+            WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, value.getRawValue());
+        } catch (EvaluationException e) {
+            state.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
+            state.setDeactivated(true);
+        }
     }
 
     @Override

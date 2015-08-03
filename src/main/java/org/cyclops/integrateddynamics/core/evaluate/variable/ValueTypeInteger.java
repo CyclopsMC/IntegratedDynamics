@@ -41,6 +41,11 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
         public int getRawValue() {
             return value;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof ValueInteger && ((ValueInteger) o).value == this.value;
+        }
     }
 
 }

@@ -29,7 +29,7 @@ public final class Operators {
     public static void load() {}
 
     /**
-     * ----------------------------------- BOOLEAN OPERATORS -----------------------------------
+     * ----------------------------------- LOGICAL OPERATORS -----------------------------------
      */
 
     /**
@@ -37,7 +37,7 @@ public final class Operators {
      */
     public static final LogicalOperator LOGICAL_AND = REGISTRY.register(new LogicalOperator("&&", "and", new BaseOperator.IFunction() {
         @Override
-        public IValue evaluate(IVariable... variables) {
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
             boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
             if (!a) {
                 return ValueTypeBoolean.ValueBoolean.of(false);
@@ -52,7 +52,7 @@ public final class Operators {
      */
     public static final LogicalOperator LOGICAL_OR = REGISTRY.register(new LogicalOperator("||", "or", new BaseOperator.IFunction() {
         @Override
-        public IValue evaluate(IVariable... variables) {
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
             boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
             if (a) {
                 return ValueTypeBoolean.ValueBoolean.of(true);
@@ -67,7 +67,7 @@ public final class Operators {
      */
     public static final LogicalOperator LOGICAL_NOT = REGISTRY.register(new LogicalOperator("!", "not", 1, new BaseOperator.IFunction() {
         @Override
-        public IValue evaluate(IVariable... variables) {
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
             boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
             return ValueTypeBoolean.ValueBoolean.of(!a);
         }
@@ -79,7 +79,7 @@ public final class Operators {
     public static final LogicalOperator LOGICAL_CHOICE = REGISTRY.register(new LogicalChoiceOperator("?", "choice"));
 
     /**
-     * ----------------------------------- INTEGER OPERATORS -----------------------------------
+     * ----------------------------------- ARITHMETIC OPERATORS -----------------------------------
      */
 
     private static final ValueTypeInteger.ValueInteger ZERO = ValueTypeInteger.ValueInteger.of(0);
@@ -89,7 +89,7 @@ public final class Operators {
      */
     public static final ArithmeticOperator ARITHMETIC_ADDITION = REGISTRY.register(new ArithmeticOperator("+", "addition", new BaseOperator.IFunction() {
         @Override
-        public IValue evaluate(IVariable... variables) {
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
             if (a == 0) { // If a is neutral element for addition
                 return variables[1].getValue();
@@ -109,7 +109,7 @@ public final class Operators {
      */
     public static final ArithmeticOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(new ArithmeticOperator("-", "subtraction", new BaseOperator.IFunction() {
         @Override
-        public IValue evaluate(IVariable... variables) {
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
             int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
             if (b == 0) { // If b is neutral element for subtraction
                 return variables[0].getValue();
@@ -125,7 +125,7 @@ public final class Operators {
      */
     public static final ArithmeticOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(new ArithmeticOperator("*", "multiplication", new BaseOperator.IFunction() {
         @Override
-        public IValue evaluate(IVariable... variables) {
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
             if (a == 0) { // If a is absorbtion element for multiplication
                 return variables[0].getValue();
@@ -204,5 +204,59 @@ public final class Operators {
             return ValueTypeInteger.ValueInteger.of(Math.min(a, b));
         }
     }, IConfigRenderPattern.PREFIX_2));
+
+    /**
+     * ----------------------------------- RELATIONAL OPERATORS -----------------------------------
+     */
+
+    /**
+     * Relational == operator with two inputs of any type (but equal) and one output boolean.
+     */
+    public static final RelationalOperator RELATIONAL_EQUALS = REGISTRY.register(new RelationalEqualsOperator("==", "equals"));
+
+    /**
+     * Relational > operator with two input integers and one output boolean.
+     */
+    public static final RelationalOperator RELATIONAL_GT = REGISTRY.register(new RelationalOperator(">", "gt", new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return ValueTypeBoolean.ValueBoolean.of(a > b);
+        }
+    }));
+
+    /**
+     * Relational > operator with two input integers and one output boolean.
+     */
+    public static final RelationalOperator RELATIONAL_LT = REGISTRY.register(new RelationalOperator(">", "lt", new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return ValueTypeBoolean.ValueBoolean.of(a < b);
+        }
+    }));
+
+    /**
+     * Relational != operator with two inputs of any type (but equal) and one output boolean.
+     */
+    public static final IOperator RELATIONAL_NOTEQUALS = REGISTRY.register(
+            new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT).apply(RELATIONAL_EQUALS).build(
+                    "!=", "notequals", IConfigRenderPattern.INFIX, "relational"));
+
+    /**
+     * Relational >= operator with two inputs of any type (but equal) and one output boolean.
+     */
+    public static final IOperator RELATIONAL_GE = REGISTRY.register(
+            new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_OR).apply(RELATIONAL_EQUALS, RELATIONAL_GT).build(
+                    ">=", "ge", IConfigRenderPattern.INFIX, "relational"));
+
+    /**
+     * Relational <= operator with two inputs of any type (but equal) and one output boolean.
+     */
+    public static final IOperator RELATIONAL_LE = REGISTRY.register(
+            new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_OR).apply(RELATIONAL_EQUALS, RELATIONAL_LT).build(
+                    "<=", "le", IConfigRenderPattern.INFIX, "relational"));
 
 }

@@ -1,24 +1,22 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 
 /**
- * A logical choice operator.
+ * A relational equals operator.
  * @author rubensworks
  */
-public class LogicalChoiceOperator extends LogicalOperator {
+public class RelationalEqualsOperator extends RelationalOperator {
 
-    public LogicalChoiceOperator(String symbol, String operatorName) {
-        super(symbol, operatorName, new IValueType[]{ValueTypes.BOOLEAN, ValueTypes.ANY, ValueTypes.ANY}, ValueTypes.ANY, new BaseOperator.IFunction() {
+    public RelationalEqualsOperator(String symbol, String operatorName) {
+        super(symbol, operatorName, new IValueType[]{ValueTypes.ANY, ValueTypes.ANY}, ValueTypes.BOOLEAN, new IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
-                boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
-                return a ? variables[1].getValue() : variables[2].getValue();
+                return ValueTypeBoolean.ValueBoolean.of(variables[0].getValue().equals(variables[1].getValue()));
             }
-        }, new IConfigRenderPattern.Base(100, 22, new Pair[]{Pair.of(6, 2), Pair.of(60, 2) , Pair.of(80, 2)}, Pair.of(40, 2)));
+        }, IConfigRenderPattern.INFIX);
     }
 
     @Override
@@ -36,13 +34,9 @@ public class LogicalChoiceOperator extends LogicalOperator {
             if(inputType == null) {
                 return new L10NHelpers.UnlocalizedString("operator.error.nullType", this.getOperatorName(), Integer.toString(i));
             }
-            if(i == 0 && getInputTypes()[i] != inputType) {
-                return new L10NHelpers.UnlocalizedString("operator.error.wrongType",
-                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                        Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
-            } else if(i == 1) {
+            if(i == 0) {
                 temporarySecondInputType = inputType;
-            } else if(i == 2) {
+            } else if(i == 1) {
                 if(temporarySecondInputType != inputType) {
                     return new L10NHelpers.UnlocalizedString("operator.error.wrongType",
                             this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
@@ -51,11 +45,6 @@ public class LogicalChoiceOperator extends LogicalOperator {
             }
         }
         return null;
-    }
-
-    @Override
-    public IValueType getConditionalOutputType(IVariable[] input) {
-        return input[1].getType();
     }
 
 }

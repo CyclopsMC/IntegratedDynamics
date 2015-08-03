@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
+
 /**
  * Facade through which a value can be retrieved.
  * @author rubensworks
@@ -14,6 +16,6 @@ public interface IVariable<V extends IValue> {
     /**
      * @return The current value of this variable.
      */
-    public V getValue();
+    public V getValue() throws EvaluationException;
 
 }

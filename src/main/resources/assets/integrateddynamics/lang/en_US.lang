@@ -79,3 +79,12 @@ operator.operators.integrateddynamics.arithmetic.maximum.name=Arithmetic Maximum
 operator.operators.integrateddynamics.arithmetic.maximum.info=Takes the largest of two values.
 operator.operators.integrateddynamics.arithmetic.minimum.name=Arithmetic Minimum
 operator.operators.integrateddynamics.arithmetic.minimum.info=Takes the smallest of two values.
+
+operator.operators.integrateddynamics.relational.equals.name=Relational Equals
+operator.operators.integrateddynamics.relational.equals.info=Type one and two must be equal.
+operator.operators.integrateddynamics.relational.gt.name=Relational Greater Than
+operator.operators.integrateddynamics.relational.lt.name=Relational Less Than
+operator.operators.integrateddynamics.relational.notequals.name=Relational Not Equals
+operator.operators.integrateddynamics.relational.notequals.info=Type one and two must be equal.
+operator.operators.integrateddynamics.relational.ge.name=Relational Greater Than or Equal
+operator.operators.integrateddynamics.relational.le.name=Relational Less Than or Equal
