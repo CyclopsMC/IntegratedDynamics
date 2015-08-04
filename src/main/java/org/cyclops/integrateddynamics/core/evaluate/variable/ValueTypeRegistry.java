@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 
 import java.util.Collection;
 import java.util.Map;
@@ -18,10 +19,12 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     private Map<String, IValueType> valueTypes = Maps.newHashMap();
     @SideOnly(Side.CLIENT)
-    private Map<IValueType, ModelResourceLocation> valueTypeModels = Maps.newHashMap();
+    private Map<IValueType, ModelResourceLocation> valueTypeModels;
 
     private ValueTypeRegistry() {
-
+        if(MinecraftHelpers.isClientSide()) {
+            valueTypeModels = Maps.newHashMap();
+        }
     }
 
     /**

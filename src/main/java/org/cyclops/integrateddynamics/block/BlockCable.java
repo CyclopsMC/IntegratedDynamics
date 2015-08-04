@@ -29,6 +29,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MatrixHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
@@ -148,6 +149,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     private static BlockCable _instance = null;
 
+    @SideOnly(Side.CLIENT)
     @Icon(location = "blocks/cable")
     public TextureAtlasSprite texture;
     @Setter
@@ -170,7 +172,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
         setHardness(3.0F);
         setStepSound(soundTypeMetal);
-        eConfig.getMod().getIconProvider().registerIconHolderObject(this);
+        if(MinecraftHelpers.isClientSide()) {
+            eConfig.getMod().getIconProvider().registerIconHolderObject(this);
+        }
     }
 
     @Override

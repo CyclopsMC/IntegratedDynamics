@@ -34,10 +34,13 @@ public final class AspectRegistry implements IAspectRegistry {
     private Map<String, IAspectRead> unlocalizedReadAspects = Maps.newHashMap();
     private Map<String, IAspectWrite> unlocalizedWriteAspects = Maps.newHashMap();
     @SideOnly(Side.CLIENT)
-    private Map<IAspect, ModelResourceLocation> aspectModels = Maps.newHashMap();
+    private Map<IAspect, ModelResourceLocation> aspectModels;
 
     private AspectRegistry() {
         IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
+        if(MinecraftHelpers.isClientSide()) {
+            aspectModels = Maps.newHashMap();
+        }
     }
 
     /**
