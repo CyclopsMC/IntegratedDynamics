@@ -90,7 +90,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                 // Background
                 mc.renderEngine.bindTexture(texture);
                 drawTexturedModalRect(guiLeft + offsetX + 9,
-                        guiTop + offsetY + 18 + aspectBoxHeight * i, 0, 213, 160, aspectBoxHeight - 1);
+                        guiTop + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1);
 
                 // Aspect type info
                 String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());

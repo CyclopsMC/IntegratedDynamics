@@ -91,6 +91,15 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+        ContainerPartWriter container = (ContainerPartWriter) getContainer();
+        fontRendererObj.drawString(container.getWriteValue(), this.guiLeft + offsetX + 53,
+                this.guiTop + offsetY + 128, container.getWriteValueColor());
+    }
+
     @Override
     protected int getBaseXSize() {
         return 195;
@@ -98,6 +107,6 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
 
     @Override
     protected int getBaseYSize() {
-        return 213;
+        return 222;
     }
 }
