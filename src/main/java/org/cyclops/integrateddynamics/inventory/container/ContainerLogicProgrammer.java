@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
@@ -17,6 +18,7 @@ import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
@@ -43,6 +45,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
     private IOperator activeOperator = null;
     private IVariableFacade[] inputVariables = new IVariableFacade[0];
     private SimpleInventory temporaryInputSlots = null;
+    private L10NHelpers.UnlocalizedString lastError;
 
     @SideOnly(Side.CLIENT)
     private GuiLogicProgrammer gui;
@@ -111,6 +114,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
      * @param baseY The slots Y coordinate
      */
     public void setActiveOperator(IOperator activeOperator, int baseX, int baseY) {
+        this.lastError = null;
         this.activeOperator = activeOperator;
         this.inputVariables = new IVariableFacade[activeOperator == null ? 0 : activeOperator.getRequiredInputLength()];
 
@@ -134,7 +138,15 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         }
     }
 
-    public boolean canWriteActiveOperator() {
+    protected int[] getVariableIds(IVariableFacade[] inputVariables) {
+        int[] variableIds = new int[inputVariables.length];
+        for(int i = 0; i < inputVariables.length; i++) {
+            variableIds[i] = inputVariables[i].getId();
+        }
+        return variableIds;
+    }
+
+    public boolean canWriteActiveOperatorPre() {
         if(activeOperator != null) {
             for (IVariableFacade inputVariable : inputVariables) {
                 if (inputVariable == null || !inputVariable.isValid()) {
@@ -146,27 +158,22 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         return false;
     }
 
+    public boolean canWriteActiveOperator() {
+        if(!canWriteActiveOperatorPre()) {
+            return false;
+        }
+        lastError = activeOperator.validateTypes(ValueTypes.from(inputVariables));
+        return lastError == null;
+    }
+
     public IOperator getActiveOperator() {
         return activeOperator;
     }
 
-    public ItemStack writeOperatorInfo(boolean generateId, ItemStack itemStack, IVariableFacade[] inputVariables, final IOperator operator) {
+    public ItemStack writeOperatorInfo(boolean generateId, ItemStack itemStack, IVariableFacade[] inputVariables, IOperator operator) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        final int[] variableIds = new int[inputVariables.length];
-        for(int i = 0; i < inputVariables.length; i++) {
-            variableIds[i] = inputVariables[i].getId();
-        }
-        return registry.writeVariableFacade(generateId, itemStack, Operators.REGISTRY, new IVariableFacadeHandlerRegistry.IVariableFacadeFactory<OperatorVariableFacade>() {
-            @Override
-            public OperatorVariableFacade create(boolean generateId) {
-                return new OperatorVariableFacade(generateId, operator, variableIds);
-            }
-
-            @Override
-            public OperatorVariableFacade create(int id) {
-                return new OperatorVariableFacade(id, operator, variableIds);
-            }
-        });
+        int[] variableIds = getVariableIds(inputVariables);
+        return registry.writeVariableFacadeItem(generateId, itemStack, Operators.REGISTRY, new OperatorVariableFacadeFactory(operator, variableIds));
     }
 
     @Override
@@ -180,6 +187,11 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         }
     }
 
+    protected ItemStack writeOperatorInfo() {
+        ItemStack itemStack = writeSlot.getStackInSlot(0);
+        return writeOperatorInfo(!MinecraftHelpers.isClientSide(), itemStack.copy(), inputVariables, getActiveOperator());
+    }
+
     @Override
     public void onDirty() {
         for(int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
@@ -189,8 +201,8 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
         }
 
         ItemStack itemStack = writeSlot.getStackInSlot(0);
-        if(itemStack != null && canWriteActiveOperator()) {
-            ItemStack outputStack = writeOperatorInfo(!MinecraftHelpers.isClientSide(), itemStack.copy(), inputVariables, getActiveOperator());
+        if(canWriteActiveOperator() && itemStack != null) {
+            ItemStack outputStack = writeOperatorInfo();
             writeSlot.removeDirtyMarkListener(this);
             writeSlot.setInventorySlotContents(0, outputStack);
             writeSlot.addDirtyMarkListener(this);
@@ -209,6 +221,31 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
                     getGui().handleOperatorActivation(operator);
                 }
             }
+        }
+    }
+
+    public L10NHelpers.UnlocalizedString getLastError() {
+        return this.lastError;
+    }
+
+    protected static class OperatorVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<OperatorVariableFacade> {
+
+        private final IOperator operator;
+        private final int[] variableIds;
+
+        public OperatorVariableFacadeFactory(IOperator operator, int[] variableIds) {
+            this.operator = operator;
+            this.variableIds = variableIds;
+        }
+
+        @Override
+        public OperatorVariableFacade create(boolean generateId) {
+            return new OperatorVariableFacade(generateId, operator, variableIds);
+        }
+
+        @Override
+        public OperatorVariableFacade create(int id) {
+            return new OperatorVariableFacade(id, operator, variableIds);
         }
     }
 

@@ -68,6 +68,11 @@ public class AspectVariableFacade extends VariableFacadeBase {
         }
     }
 
+    @Override
+    public IValueType getOutputType() {
+        return getAspect().getValueType();
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {

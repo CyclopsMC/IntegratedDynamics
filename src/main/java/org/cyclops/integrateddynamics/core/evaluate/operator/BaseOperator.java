@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import java.util.Arrays;
 import java.util.List;
@@ -112,18 +113,9 @@ public abstract class BaseOperator implements IOperator {
         return outputType;
     }
 
-    protected IValueType[] getValueTypes(IVariable[] variables) {
-        IValueType[] valueTypes = new IValueType[variables.length];
-        for(int i = 0; i < valueTypes.length; i++) {
-            IVariable variable = variables[i];
-            valueTypes[i] = variable == null ? null : variable.getType();
-        }
-        return valueTypes;
-    }
-
     @Override
     public IValue evaluate(IVariable[] input) throws EvaluationException {
-        L10NHelpers.UnlocalizedString error = validateTypes(getValueTypes(input));
+        L10NHelpers.UnlocalizedString error = validateTypes(ValueTypes.from(input));
         if(error != null) {
             throw new EvaluationException(error.localize());
         }
@@ -149,12 +141,11 @@ public abstract class BaseOperator implements IOperator {
             if(inputType == null) {
                 return new L10NHelpers.UnlocalizedString("operator.error.nullType", this.getOperatorName(), Integer.toString(i));
             }
-            if(getInputTypes()[i] != inputType) {
+            if(!getInputTypes()[i].correspondsTo(inputType)) {
                 return new L10NHelpers.UnlocalizedString("operator.error.wrongType",
                         this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                        Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
+                        Integer.toString(i + 1), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
             }
-            i++;
         }
         return null;
     }

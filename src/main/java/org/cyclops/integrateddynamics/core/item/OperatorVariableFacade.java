@@ -127,6 +127,11 @@ public class OperatorVariableFacade extends VariableFacadeBase {
         }
     }
 
+    @Override
+    public IValueType getOutputType() {
+        return getOperator().getOutputType();
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {

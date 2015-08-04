@@ -5,12 +5,14 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.EnumChatFormatting;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
@@ -24,12 +26,18 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateOper
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Gui for the {@link org.cyclops.integrateddynamics.block.BlockLogicProgrammer}.
  * @author rubensworks
  */
 public class GuiLogicProgrammer extends ScrollingGuiContainer {
+
+    private static final int ERROR_WIDTH = 13;
+    private static final int ERROR_HEIGHT = 13;
+    private static final int OK_WIDTH = 14;
+    private static final int OK_HEIGHT = 12;
 
     private static final int BOX_HEIGHT = 18;
     private static final Rectangle ITEM_POSITION = new Rectangle(19, 18, 56, BOX_HEIGHT - 1);
@@ -269,6 +277,34 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             int y = guiTop + getY();
 
             fontRenderer.drawString(operator.getLocalizedNameFull(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
+
+            ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
+            if(container.canWriteActiveOperatorPre()) {
+                L10NHelpers.UnlocalizedString lastError = container.getLastError();
+                mc.renderEngine.bindTexture(texture);
+                if (lastError != null) {
+                    drawTexturedModalRect(x + 120, y + 3, 0, 231, ERROR_WIDTH, ERROR_HEIGHT);
+                } else {
+                    drawTexturedModalRect(x + 120, y + 5, 0, 244, OK_WIDTH, OK_HEIGHT);
+                }
+            }
+        }
+
+        @Override
+        public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+            int x = getX();
+            int y = getY();
+
+            ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
+            if(container.canWriteActiveOperatorPre()) {
+                L10NHelpers.UnlocalizedString lastError = container.getLastError();
+                if (lastError != null && isPointInRegion(x + 120, y + 3, ERROR_WIDTH, ERROR_HEIGHT, mouseX, mouseY)) {
+                    List<String> lines = Lists.newLinkedList();
+                    lines.addAll(StringHelpers.splitLines(lastError.localize(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
+                            EnumChatFormatting.RED.toString()));
+                    drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
+                }
+            }
         }
 
     }

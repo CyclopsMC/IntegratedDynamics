@@ -52,6 +52,11 @@ public interface IVariableFacade {
     public void validate(Network network, Validator validator, IValueType containingValueType);
 
     /**
+     * @return The output type of this variable facade.
+     */
+    public IValueType getOutputType();
+
+    /**
      * Add information about this variable facade to the list.
      * @param list The list to add lines to.
      * @param entityPlayer The player that will see the information.

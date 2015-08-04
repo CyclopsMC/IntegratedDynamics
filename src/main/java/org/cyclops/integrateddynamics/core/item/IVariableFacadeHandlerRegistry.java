@@ -47,7 +47,18 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @return A copy of the given itemstack with the written variable facade.
      * @param <F> The variable facade type.
      */
-    public <F extends IVariableFacade> ItemStack writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory);
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory);
+
+    /**
+     * Create a new variable facade..
+     * @param generateId If a new id should be generated. Otherwise the previous facade id will be used or -1 if non existing.
+     * @param itemStack The itemstack to write to.
+     * @param variableFacadeHandler The variable facade handler.
+     * @param variableFacadeFactory A factory for creating a variable facade.
+     * @return The resulting variable facade.
+     * @param <F> The variable facade type.
+     */
+    public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory);
 
     /**
      * Factory for creating variable facades.

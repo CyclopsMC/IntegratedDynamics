@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
@@ -78,11 +79,22 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public <F extends IVariableFacade> ItemStack writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
         if(itemStack == null) {
             return null;
         }
         itemStack = itemStack.copy();
+        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        F variableFacade = writeVariableFacade(generateId, itemStack, variableFacadeHandler, variableFacadeFactory);
+        this.write(tag, variableFacade, variableFacadeHandler);
+        return itemStack;
+    }
+
+    @Override
+    public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
+        if(itemStack == null) {
+            return null;
+        }
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
         IVariableFacade previousVariableFacade = this.handle(tag);
         F variableFacade;
@@ -91,8 +103,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         } else {
             variableFacade = variableFacadeFactory.create(generateId);
         }
-        this.write(tag, variableFacade, variableFacadeHandler);
-        return itemStack;
+        return variableFacade;
     }
 
     /**
@@ -120,6 +131,11 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         @Override
         public void validate(Network network, Validator validator, IValueType containingValueType) {
             validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
+        }
+
+        @Override
+        public IValueType getOutputType() {
+            return ValueTypes.ANY;
         }
 
         @Override

@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 
 /**
  * Collection of variable types.
@@ -25,5 +26,23 @@ public class ValueTypes {
     }
 
     public static void load() {}
+
+    public static IValueType[] from(IVariable[] variables) {
+        IValueType[] valueTypes = new IValueType[variables.length];
+        for(int i = 0; i < valueTypes.length; i++) {
+            IVariable variable = variables[i];
+            valueTypes[i] = variable == null ? null : variable.getType();
+        }
+        return valueTypes;
+    }
+
+    public static IValueType[] from(IVariableFacade[] variableFacades) {
+        IValueType[] valueTypes = new IValueType[variableFacades.length];
+        for(int i = 0; i < valueTypes.length; i++) {
+            IVariableFacade variableFacade = variableFacades[i];
+            valueTypes[i] = variableFacade == null ? null : variableFacade.getOutputType();
+        }
+        return valueTypes;
+    }
 
 }

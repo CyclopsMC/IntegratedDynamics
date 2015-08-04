@@ -130,7 +130,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
 
     public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        return registry.writeVariableFacade(generateId, itemStack, Aspects.REGISTRY, new IVariableFacadeHandlerRegistry.IVariableFacadeFactory<AspectVariableFacade>() {
+        return registry.writeVariableFacadeItem(generateId, itemStack, Aspects.REGISTRY, new IVariableFacadeHandlerRegistry.IVariableFacadeFactory<AspectVariableFacade>() {
             @Override
             public AspectVariableFacade create(boolean generateId) {
                 return new AspectVariableFacade(generateId, getPartState().getId(), aspect);
