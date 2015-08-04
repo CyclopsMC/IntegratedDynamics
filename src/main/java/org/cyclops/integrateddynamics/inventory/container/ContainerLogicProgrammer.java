@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -32,6 +33,9 @@ import java.util.regex.Pattern;
  * @author rubensworks
  */
 public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOperator> implements IDirtyMarkListener {
+
+    public static final int OUTPUT_X = 232;
+    public static final int OUTPUT_Y = 110;
 
     protected static final IItemPredicate<IOperator> FILTERER = new IItemPredicate<IOperator>(){
 
@@ -84,7 +88,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
     }
 
     protected void initializeSlots() {
-        addSlotToContainer(new SlotSingleItem(writeSlot, 0, 232, 110, ItemVariable.getInstance()));
+        addSlotToContainer(new SlotSingleItem(writeSlot, 0, OUTPUT_X, OUTPUT_Y, ItemVariable.getInstance()));
         addPlayerInventory((InventoryPlayer) getPlayerIInventory(), 88, 131);
     }
 
@@ -226,6 +230,14 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<IOpera
 
     public L10NHelpers.UnlocalizedString getLastError() {
         return this.lastError;
+    }
+
+    public IInventory getTemporaryInputSlots() {
+        return this.temporaryInputSlots;
+    }
+
+    public boolean hasWriteItemInSlot() {
+        return this.writeSlot.getStackInSlot(0) != null;
     }
 
     protected static class OperatorVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<OperatorVariableFacade> {

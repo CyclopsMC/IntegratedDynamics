@@ -5,6 +5,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.util.EnumChatFormatting;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -21,6 +22,7 @@ import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateOperatorPacket;
 
@@ -202,7 +204,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    public static class SubGuiConfigRenderPattern extends SubGuiBox {
+    public class SubGuiConfigRenderPattern extends SubGuiBox {
 
         private final IOperator operator;
         private final int x, y;
@@ -237,6 +239,40 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                     baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
                     width, 1, 0);
             GlStateManager.color(1, 1, 1);
+        }
+
+        @Override
+        public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+            super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+            IConfigRenderPattern configRenderPattern = operator.getRenderPattern();
+            ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
+
+            // Input type tooltips
+            IValueType[] valueTypes = operator.getInputTypes();
+            for(int i = 0; i < valueTypes.length; i++) {
+                IValueType valueType = valueTypes[i];
+                IInventory temporaryInputSlots = container.getTemporaryInputSlots();
+                if(temporaryInputSlots.getStackInSlot(i) == null) {
+                    Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
+                    if(isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
+                            BOX_HEIGHT, BOX_HEIGHT, mouseX, mouseY)) {
+                        List<String> lines = Lists.newLinkedList();
+                        lines.add(valueType.getDisplayColorFormat() + L10NHelpers.localize(valueType.getUnlocalizedName()));
+                        drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
+                    }
+                }
+            }
+
+            // Output type tooltip
+            IValueType outputType = operator.getOutputType();
+            if(!container.hasWriteItemInSlot()) {
+                if(isPointInRegion(ContainerLogicProgrammer.OUTPUT_X, ContainerLogicProgrammer.OUTPUT_Y,
+                        BOX_HEIGHT, BOX_HEIGHT, mouseX, mouseY)) {
+                    List<String> lines = Lists.newLinkedList();
+                    lines.add(outputType.getDisplayColorFormat() + L10NHelpers.localize(outputType.getUnlocalizedName()));
+                    drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
+                }
+            }
         }
 
         @Override
@@ -292,6 +328,8 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
 
         @Override
         public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+            super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+
             int x = getX();
             int y = getY();
 
