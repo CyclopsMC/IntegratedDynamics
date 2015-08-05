@@ -80,6 +80,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
             validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
         } else {
             IValueType[] valueTypes = new IValueType[variableIds.length];
+            IVariable[] variables = new IVariable[variableIds.length];
             boolean checkFurther = true;
             for (int i = 0; i < variableIds.length; i++) {
                 int variableId = variableIds[i];
@@ -104,6 +105,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                         if (variableFacade.isValid()) {
                             IVariable variable = variableFacade.getVariable(network);
                             if (variable != null) {
+                                variables [i] = variable;
                                 valueTypes[i] = variable.getType();
                             }
                         }
@@ -118,10 +120,11 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                     validator.addError(error);
                 }
                 // Check expected aspect type and operator output type
-                if (!op.getOutputType().correspondsTo(containingValueType)) {
+                IValueType outputType = op.getConditionalOutputType(variables);
+                if (!outputType.correspondsTo(containingValueType)) {
                     validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
                             new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                            new L10NHelpers.UnlocalizedString(op.getOutputType().getUnlocalizedName())));
+                            new L10NHelpers.UnlocalizedString(outputType.getUnlocalizedName())));
                 }
             }
         }

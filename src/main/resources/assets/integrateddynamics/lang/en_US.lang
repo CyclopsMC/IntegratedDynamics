@@ -109,7 +109,7 @@ operator.operators.integrateddynamics.binary.rzshift.name=Right Zero Shift
 operator.operators.integrateddynamics.binary.rzshift.info=Right Shift with zeros fill
 
 operator.operators.integrateddynamics.general.name=General
-operator.operators.integrateddynamics.general.basename=%s
+operator.operators.integrateddynamics.general.basename=General %s
 operator.operators.integrateddynamics.general.choice.name=Choice
 operator.operators.integrateddynamics.general.choice.info=If the first value is true, the second value is taken, otherwise the third value.\nType two and three must be equal.
 operator.operators.integrateddynamics.general.identity.name=Identity
