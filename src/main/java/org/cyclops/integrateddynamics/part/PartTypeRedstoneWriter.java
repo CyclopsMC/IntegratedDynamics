@@ -2,10 +2,15 @@ package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
 import org.cyclops.integrateddynamics.block.WriterConfig;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.core.part.write.DefaultPartStateWriter;
+import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.core.part.write.PartTypeWriteBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -35,8 +40,20 @@ public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWr
     }
 
     @Override
-    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick, int destroyStage) {
-        return WriterConfig._instance.getBlockInstance().getDefaultState();
+    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+                                     int destroyStage, EnumFacing side) {
+        IPartStateWriter state = (IPartStateWriter) tile.getPartState(side);
+        IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
+        IAspectWrite aspectWrite = state.getActiveAspect();
+        if(aspectWrite != null) {
+            if(state.getErrors(aspectWrite).isEmpty()) {
+                status = IgnoredBlockStatus.Status.ACTIVE;
+            } else {
+                status = IgnoredBlockStatus.Status.ERROR;
+            }
+        }
+        return WriterConfig._instance.getBlockInstance().getDefaultState().withProperty(IgnoredBlock.FACING, side).
+                withProperty(IgnoredBlockStatus.STATUS, status);
     }
 
 }

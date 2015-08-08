@@ -2,7 +2,9 @@ package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
 import org.cyclops.integrateddynamics.block.ReaderConfig;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
@@ -48,8 +50,9 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     }
 
     @Override
-    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick, int destroyStage) {
-        return ReaderConfig._instance.getBlockInstance().getDefaultState();
+    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+                                     int destroyStage, EnumFacing side) {
+        return ReaderConfig._instance.getBlockInstance().getDefaultState().withProperty(IgnoredBlock.FACING, side);
     }
 
     @Override

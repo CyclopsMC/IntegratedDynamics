@@ -1,5 +1,9 @@
 {
   "parent": "integrateddynamics:block/reader",
+  "textures": {
+    "back" : "integrateddynamics:blocks/reader_back",
+    "front": "integrateddynamics:blocks/reader_front"
+  },
   "display": {
     "thirdperson": {
       "rotation": [ 10, -45, 170 ],

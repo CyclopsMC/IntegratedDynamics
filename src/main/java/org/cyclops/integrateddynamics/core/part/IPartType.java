@@ -194,10 +194,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      * @param z Z
      * @param partialTick The partial tick
      * @param destroyStage The stage of the block destruction.
+     * @param side The position of the part.
      * @return The block state to render with.
      */
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
-                                        int destroyStage);
+                                     int destroyStage, EnumFacing side);
 
     /**
      * Called when this part should refresh its state.
