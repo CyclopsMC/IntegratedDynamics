@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.Helpers;
 
 /**
@@ -28,11 +26,6 @@ public class ValueTypeAny extends ValueTypeBase<ValueTypeAny.ValueAny> {
     @Override
     public boolean correspondsTo(IValueType valueType) {
         return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    protected void registerModelResourceLocation() {
-        // Don't register a model
     }
 
     @ToString
