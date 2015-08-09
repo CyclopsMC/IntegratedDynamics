@@ -27,10 +27,7 @@ import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.MatrixHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
@@ -235,7 +232,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
                         // Remove part from cable
                         if(player.isSneaking()) {
-                            getPartContainer(world, pos).removePart(positionHit);
+                            getPartContainer(world, pos).removePart(positionHit, player);
                             ItemBlockCable.playBreakSound(world, pos, state);
                             // Remove full cable block if this was the last part and if it was already an unreal cable.
                             if(!isRealCable(world, pos) && !getPartContainer(world, pos).hasParts()) {
@@ -261,7 +258,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                             // Mark cable as unavailable.
                             setRealCable(world, pos, false);
                             ItemBlockCable.playBreakSound(world, pos, state);
-                            Block.spawnAsEntity(world, pos, new ItemStack(BlockCable.getInstance()));
+                            ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
                         }
                     } else if(rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT) {
                         // Disconnect cable side

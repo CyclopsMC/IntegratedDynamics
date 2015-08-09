@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -16,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -174,7 +176,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     @Override
-    public IPartType removePart(EnumFacing side) {
+    public IPartType removePart(EnumFacing side, EntityPlayer player) {
         PartStateHolder<?, ?> partStateHolder = partData.get(side); // Don't remove the state just yet! We might need it in network removal.
         if(partStateHolder == null) {
             IntegratedDynamics.clog(Level.WARN, "Attempted to remove a part at a side where no part was.");
@@ -189,7 +191,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 List<ItemStack> itemStacks = Lists.newLinkedList();
                 networkElement.addDrops(itemStacks);
                 for(ItemStack itemStack : itemStacks) {
-                    Block.spawnAsEntity(getWorld(), pos, itemStack);
+                    if(player != null) {
+                        ItemStackHelpers.spawnItemStackToPlayer(getWorld(), pos, itemStack, player);
+                    } else {
+                        Block.spawnAsEntity(getWorld(), pos, itemStack);
+                    }
                 }
 
                 // Remove the element from the network.

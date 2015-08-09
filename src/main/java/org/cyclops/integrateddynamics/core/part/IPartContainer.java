@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
@@ -53,9 +54,10 @@ public interface IPartContainer {
     /**
      * Remove the part from a side, can return null if there was no part on that side.
      * @param side The side.
+     * @param player The player removing the part.
      * @return The removed part or null.
      */
-    public IPartType removePart(EnumFacing side);
+    public IPartType removePart(EnumFacing side, EntityPlayer player);
 
     /**
      * Set the state of a part.
