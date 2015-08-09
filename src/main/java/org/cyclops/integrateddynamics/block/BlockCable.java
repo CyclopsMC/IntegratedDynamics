@@ -255,7 +255,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     if(player.isSneaking()) {
                         if(!getPartContainer(world, pos).hasParts()) {
                             // Remove full cable
-                            world.destroyBlock(pos, !player.capabilities.isCreativeMode);
+                            world.destroyBlock(pos, true);
                         } else {
                             // Mark cable as unavailable.
                             setRealCable(world, pos, false);
