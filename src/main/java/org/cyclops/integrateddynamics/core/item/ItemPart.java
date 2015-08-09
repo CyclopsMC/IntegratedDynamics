@@ -53,6 +53,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 if(!partContainer.hasPart(side)) {
                     partContainer.setPart(side, getPart(), getPart().getState(itemStack));
                     System.out.println("Setting part " + getPart());
+                    ItemBlockCable.playPlaceSound(world, pos);
                 } else {
                     System.out.println("Side occupied!");
                 }
@@ -67,6 +68,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     if(partContainer != null) {
                         partContainer.setPart(side.getOpposite(), getPart(), getPart().getState(itemStack));
                         System.out.println("Setting part " + getPart());
+                        ItemBlockCable.playPlaceSound(world, pos);
                     }
                     BlockCable.getInstance().setRealCable(world, target, false);
                     return true;

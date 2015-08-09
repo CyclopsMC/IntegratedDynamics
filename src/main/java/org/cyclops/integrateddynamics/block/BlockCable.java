@@ -46,6 +46,7 @@ import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.*;
 
@@ -208,7 +209,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.setRealCable(realCable);
-            // TODO: place/break sound
             if(realCable) {
                 cableNetworkComponent.addToNetwork(world, pos);
             } else {
@@ -236,6 +236,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                         // Remove part from cable
                         if(player.isSneaking()) {
                             getPartContainer(world, pos).removePart(positionHit);
+                            ItemBlockCable.playBreakSound(world, pos, state);
                             // Remove full cable block if this was the last part and if it was already an unreal cable.
                             if(!isRealCable(world, pos) && !getPartContainer(world, pos).hasParts()) {
                                 world.destroyBlock(pos, !player.capabilities.isCreativeMode);
@@ -259,6 +260,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                         } else {
                             // Mark cable as unavailable.
                             setRealCable(world, pos, false);
+                            ItemBlockCable.playBreakSound(world, pos, state);
+                            Block.spawnAsEntity(world, pos, new ItemStack(BlockCable.getInstance()));
                         }
                     } else if(rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT) {
                         // Disconnect cable side
