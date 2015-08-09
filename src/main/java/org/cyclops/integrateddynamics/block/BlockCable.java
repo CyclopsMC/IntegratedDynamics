@@ -304,7 +304,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        networkElementProviderComponent.onPreBlockDestroyed(world, pos);
+        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos);
         cableNetworkComponent.onPreBlockDestroyed(world, pos);
         super.onPreBlockDestroyed(world, pos);
     }

@@ -76,6 +76,11 @@ public class DatastoreNetworkElement implements INetworkElement {
     }
 
     @Override
+    public void onPreRemoved(Network network) {
+
+    }
+
+    @Override
     public int compareTo(INetworkElement o) {
         if(o instanceof DatastoreNetworkElement) {
             return getPos().compareTo(((DatastoreNetworkElement) o).getPos());

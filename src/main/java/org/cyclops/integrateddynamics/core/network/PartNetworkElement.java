@@ -73,7 +73,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void addDrops(List<ItemStack> itemStacks) {
-        part.addDrops(getPartState(), itemStacks);
+        part.addDrops(getTarget(), getPartState(), itemStacks);
     }
 
     @Override
@@ -94,6 +94,11 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     @Override
     public void refresh(Network network) {
         part.refresh(network, target, getPartState());
+    }
+
+    @Override
+    public void onPreRemoved(Network network) {
+        part.onPreRemoved(network, target, getPartState());
     }
 
     public boolean equals(Object o) {

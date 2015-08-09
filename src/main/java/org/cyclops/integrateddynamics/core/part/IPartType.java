@@ -139,10 +139,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
 
     /**
      * Add the itemstacks to drop when this element is removed.
+     * @param target The target.
      * @param state The state
      * @param itemStacks The itemstack list to add to.
      */
-    public void addDrops(S state, List<ItemStack> itemStacks);
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks);
 
     /**
      * Called when this element is added to the network.
@@ -208,5 +209,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      * @param target The target block.
      */
     public void refresh(Network network, PartTarget target, S state);
+
+    /**
+     * Called when this element is about to be removed.
+     * @param network The network.
+     * @param state The state
+     * @param target The target block.
+     */
+    public void onPreRemoved(Network network, PartTarget target, S state);
 
 }

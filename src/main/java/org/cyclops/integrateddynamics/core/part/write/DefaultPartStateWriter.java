@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
@@ -69,6 +71,13 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
                 }
             }
             this.checkedForWriteVariable = true;
+        }
+        if(currentVariableFacade == null) {
+            IntegratedDynamics.clog(Level.WARN, "A corrupted part state was found at, repairing...");
+            this.activeAspectName = null;
+            this.checkedForWriteVariable = false;
+            this.deactivated = true;
+            return null;
         }
         return currentVariableFacade.getVariable(network);
     }

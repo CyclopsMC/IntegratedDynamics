@@ -104,7 +104,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void addDrops(S state, List<ItemStack> itemStacks) {
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks) {
         itemStacks.add(getItemStack(state));
     }
 
@@ -186,6 +186,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public void refresh(Network network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void onPreRemoved(Network network, PartTarget target, S state) {
 
     }
 
