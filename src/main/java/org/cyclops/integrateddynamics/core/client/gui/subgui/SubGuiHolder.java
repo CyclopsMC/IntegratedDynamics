@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -27,6 +28,13 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
+    public void initGui(int guiLeft, int guiTop) {
+        for(ISubGui subGui : subGuis) {
+            subGui.initGui(guiLeft, guiTop);
+        }
+    }
+
+    @Override
     public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         for(ISubGui subGui : subGuis) {
             subGui.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
@@ -37,6 +45,23 @@ public class SubGuiHolder implements ISubGui {
     public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
         for(ISubGui subGui : subGuis) {
             subGui.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+        }
+    }
+
+    @Override
+    public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException {
+        for(ISubGui subGui : subGuis) {
+            if(subGui.keyTyped(checkHotbarKeys, typedChar, keyCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        for(ISubGui subGui : subGuis) {
+            subGui.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 }

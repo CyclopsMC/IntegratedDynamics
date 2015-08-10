@@ -5,9 +5,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.EnumChatFormatting;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -20,11 +18,11 @@ import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElement;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElementType;
+import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
-import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateOperatorPacket;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
 
 import java.awt.*;
 import java.io.IOException;
@@ -41,7 +39,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
     private static final int OK_WIDTH = 14;
     private static final int OK_HEIGHT = 12;
 
-    private static final int BOX_HEIGHT = 18;
+    public static final int BOX_HEIGHT = 18;
     private static final Rectangle ITEM_POSITION = new Rectangle(19, 18, 56, BOX_HEIGHT - 1);
 
     protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
@@ -54,6 +52,12 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         super(new ContainerLogicProgrammer(inventoryPlayer));
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
         container.setGui(this);
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        subGuiHolder.initGui(this.guiLeft, this.guiTop);
     }
 
     protected int getScrollX() {
@@ -113,11 +117,11 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         int boxHeight = BOX_HEIGHT;
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
-                IOperator operator = container.getVisibleElement(i);
+                ILogicProgrammerElement element = container.getVisibleElement(i);
 
                 GlStateManager.disableAlpha();
-                Triple<Float, Float, Float> rgb = Helpers.intToRGB(operator.getOutputType().getDisplayColor());
-                boolean hover = container.getActiveOperator() == operator
+                Triple<Float, Float, Float> rgb = Helpers.intToRGB(element.getColor());
+                boolean hover = container.getActiveElement() == element
                         || isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY));
                 GlStateManager.color(colorSmoothener(rgb.getLeft(), hover), colorSmoothener(rgb.getMiddle(), hover),
                         colorSmoothener(rgb.getRight(), hover), 1);
@@ -129,7 +133,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                 GlStateManager.color(1, 1, 1);
 
                 // Operator info
-                String aspectName = L10NHelpers.localize(operator.getSymbol());
+                String aspectName = L10NHelpers.localize(element.getSymbol());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
                         this.guiLeft + offsetX + 18,
                         this.guiTop + offsetY + 26 + boxHeight * i,
@@ -154,155 +158,78 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
-                IOperator operator = container.getVisibleElement(i);
+                ILogicProgrammerElement element = container.getVisibleElement(i);
                 if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
-                    java.util.List<String> lines = Lists.newLinkedList();
-                    operator.loadTooltip(lines, true);
+                    List<String> lines = Lists.newLinkedList();
+                    element.loadTooltip(lines);
                     drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
                 }
             }
         }
     }
 
-    protected void onActivateOperator(IOperator operator) {
-        subGuiHolder.addSubGui(operatorConfigPattern = new SubGuiConfigRenderPattern(operator, 88, 18, 160, 87));
-        subGuiHolder.addSubGui(new SubGuiOperatorInfo(operator));
+    protected void onActivateElement(ILogicProgrammerElement element) {
+        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammer) getContainer()));
+        operatorConfigPattern.initGui(guiLeft, guiTop);
+        subGuiHolder.addSubGui(new SubGuiOperatorInfo(element));
     }
 
-    protected void onDeactivateOperator(IOperator operator) {
+    protected void onDeactivateElement(ILogicProgrammerElement element) {
         subGuiHolder.clear();
     }
 
-    public void handleOperatorActivation(IOperator operator) {
+    public void handleElementActivation(ILogicProgrammerElement element) {
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
-        IOperator newActive = null;
-        onDeactivateOperator(operator);
-        if(container.getActiveOperator() != operator) {
-            newActive = operator;
-            if(operator != null) {
-                onActivateOperator(operator);
+        ILogicProgrammerElement newActive = null;
+        onDeactivateElement(element);
+        if(container.getActiveElement() != element) {
+            newActive = element;
+            if(element != null) {
+                onActivateElement(element);
             }
         }
-        container.setActiveOperator(newActive,
+        container.setActiveElement(newActive,
                 operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
                 operatorConfigPattern == null ? 0 : operatorConfigPattern.getY());
-        IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerActivateOperatorPacket(
-                newActive == null ? "" : operator.getUnlocalizedName()));
+        if(newActive != null) {
+            ILogicProgrammerElementType type = newActive.getType();
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                    new LogicProgrammerActivateElementPacket(type.getName(), type.getName(newActive)));
+        } else {
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                    new LogicProgrammerActivateElementPacket("", ""));
+        }
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if(!subGuiHolder.keyTyped(this.checkHotbarKeys(keyCode), typedChar, keyCode)) {
+            super.keyTyped(typedChar, keyCode);
+        }
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton);
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
             if (container.isElementVisible(i)) {
-                IOperator operator = container.getVisibleElement(i);
+                ILogicProgrammerElement element = container.getVisibleElement(i);
                 if (isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
-                    handleOperatorActivation(operator);
+                    handleElementActivation(element);
                 }
             }
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    public class SubGuiConfigRenderPattern extends SubGuiBox {
-
-        private final IOperator operator;
-        private final int x, y;
-
-        public SubGuiConfigRenderPattern(IOperator operator, int baseX, int baseY, int maxWidth, int maxHeight) {
-            super(Box.LIGHT);
-            this.operator = operator;
-            IConfigRenderPattern configRenderPattern = operator.getRenderPattern();
-            this.x = baseX + (maxWidth  - configRenderPattern. getWidth()) / 2;
-            this.y = baseY + (maxHeight - configRenderPattern.getHeight()) / 2;
-        }
-
-        protected void drawSlot(int x, int y) {
-            this.drawTexturedModalRect(x, y, 3, 0, 18, 18);
-        }
-
-        @Override
-        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-            IConfigRenderPattern configRenderPattern = operator.getRenderPattern();
-
-            int baseX = getX() + guiLeft;
-            int baseY = getY() + guiTop;
-
-            for(Pair<Integer, Integer> slot : configRenderPattern.getSlotPositions()) {
-                drawSlot(baseX + slot.getLeft(), baseY + slot.getRight());
-            }
-
-            int width = fontRenderer.getStringWidth(operator.getSymbol());
-            RenderHelpers.drawScaledCenteredString(fontRenderer, operator.getSymbol(),
-                    baseX + configRenderPattern.getSymbolPosition().getLeft(),
-                    baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
-                    width, 1, 0);
-            GlStateManager.color(1, 1, 1);
-        }
-
-        @Override
-        public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-            IConfigRenderPattern configRenderPattern = operator.getRenderPattern();
-            ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
-
-            // Input type tooltips
-            IValueType[] valueTypes = operator.getInputTypes();
-            for(int i = 0; i < valueTypes.length; i++) {
-                IValueType valueType = valueTypes[i];
-                IInventory temporaryInputSlots = container.getTemporaryInputSlots();
-                if(temporaryInputSlots.getStackInSlot(i) == null) {
-                    Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
-                    if(isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
-                            BOX_HEIGHT, BOX_HEIGHT, mouseX, mouseY)) {
-                        List<String> lines = Lists.newLinkedList();
-                        lines.add(valueType.getDisplayColorFormat() + L10NHelpers.localize(valueType.getUnlocalizedName()));
-                        drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
-                    }
-                }
-            }
-
-            // Output type tooltip
-            IValueType outputType = operator.getOutputType();
-            if(!container.hasWriteItemInSlot()) {
-                if(isPointInRegion(ContainerLogicProgrammer.OUTPUT_X, ContainerLogicProgrammer.OUTPUT_Y,
-                        BOX_HEIGHT, BOX_HEIGHT, mouseX, mouseY)) {
-                    List<String> lines = Lists.newLinkedList();
-                    lines.add(outputType.getDisplayColorFormat() + L10NHelpers.localize(outputType.getUnlocalizedName()));
-                    drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
-                }
-            }
-        }
-
-        @Override
-        protected int getX() {
-            return this.x;
-        }
-
-        @Override
-        protected int getY() {
-            return this.y;
-        }
-
-        @Override
-        protected int getWidth() {
-            return operator.getRenderPattern().getWidth();
-        }
-
-        @Override
-        protected int getHeight() {
-            return operator.getRenderPattern().getHeight();
-        }
-    }
-
     public class SubGuiOperatorInfo extends SubGuiBox.Base {
 
-        private final IOperator operator;
+        private final ILogicProgrammerElement element;
 
-        public SubGuiOperatorInfo(IOperator operator) {
+        public SubGuiOperatorInfo(ILogicProgrammerElement element) {
             super(Box.DARK, 88, 106, 139, 20);
-            this.operator = operator;
+            this.element = element;
         }
 
         @Override
@@ -312,10 +239,10 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             int x = guiLeft + getX();
             int y = guiTop + getY();
 
-            fontRenderer.drawString(operator.getLocalizedNameFull(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
+            fontRenderer.drawString(element.getLocalizedNameFull(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
 
             ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
-            if(container.canWriteActiveOperatorPre()) {
+            if(container.canWriteActiveElementPre()) {
                 L10NHelpers.UnlocalizedString lastError = container.getLastError();
                 mc.renderEngine.bindTexture(texture);
                 if (lastError != null) {
@@ -334,7 +261,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             int y = getY();
 
             ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
-            if(container.canWriteActiveOperatorPre()) {
+            if(container.canWriteActiveElementPre()) {
                 L10NHelpers.UnlocalizedString lastError = container.getLastError();
                 if (lastError != null && isPointInRegion(x + 120, y + 3, ERROR_WIDTH, ERROR_HEIGHT, mouseX, mouseY)) {
                     List<String> lines = Lists.newLinkedList();

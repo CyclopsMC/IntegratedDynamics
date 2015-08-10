@@ -24,6 +24,16 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
         return Integer.toString(value.getRawValue());
     }
 
+    @Override
+    public String serialize(ValueInteger value) {
+        return Integer.toString(value.getRawValue());
+    }
+
+    @Override
+    public ValueInteger deserialize(String value) {
+        return ValueInteger.of(Integer.parseInt(value));
+    }
+
     @ToString
     public static class ValueInteger extends BaseValue {
 

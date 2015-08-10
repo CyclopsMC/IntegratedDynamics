@@ -20,7 +20,12 @@ item.items.integrateddynamics.labeller.info=Labels your variables
 item.items.integrateddynamics.labeller.button.write=Write
 
 # Value types
+valuetype.tooltip.typeName=§eType: §r%s
+valuetype.tooltip.value=§e§oValue: §r%s
+valuetype.error.invalidInput=The input "%s" could not be parsed for this value type.
+
 valuetype.valuetypes.integrateddynamics.any.name=Any
+valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
 

@@ -10,6 +10,8 @@ import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 
+import java.io.IOException;
+
 /**
  * A sub gui that simply renders a box.
  * @author rubensworks
@@ -65,6 +67,16 @@ public abstract class SubGuiBox extends Gui implements ISubGui {
 
     }
 
+    @Override
+    public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException {
+        return false;
+    }
+
+    @Override
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+
+    }
+
     protected abstract int getX();
     protected abstract int getY();
     protected abstract int getWidth();
@@ -104,6 +116,21 @@ public abstract class SubGuiBox extends Gui implements ISubGui {
             this.y = y;
             this.width = width;
             this.height = height;
+        }
+
+        @Override
+        public void initGui(int guiLeft, int guiTop) {
+
+        }
+
+        @Override
+        public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException {
+            return false;
+        }
+
+        @Override
+        public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+
         }
 
     }

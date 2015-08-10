@@ -7,7 +7,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
-import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 
 /**
@@ -15,17 +14,20 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * @author rubensworks
  *
  */
-public class LogicProgrammerActivateOperatorPacket extends PacketCodec {
+public class LogicProgrammerActivateElementPacket extends PacketCodec {
 
+	@CodecField
+	private String typeId;
     @CodecField
-    private String operatorName;
+    private String elementId;
 
-    public LogicProgrammerActivateOperatorPacket() {
+    public LogicProgrammerActivateElementPacket() {
 
     }
 
-    public LogicProgrammerActivateOperatorPacket(String operatorName) {
-        this.operatorName = operatorName;
+    public LogicProgrammerActivateElementPacket(String typeId, String elementId) {
+		this.typeId = typeId;
+        this.elementId = elementId;
     }
 
 	@Override
@@ -42,7 +44,7 @@ public class LogicProgrammerActivateOperatorPacket extends PacketCodec {
 	@Override
 	public void actionServer(World world, EntityPlayerMP player) {
 		if(player.openContainer instanceof ContainerLogicProgrammer) {
-			((ContainerLogicProgrammer) player.openContainer).setActiveOperator(Operators.REGISTRY.getOperator(operatorName), 0, 0);
+			((ContainerLogicProgrammer) player.openContainer).setActiveElementById(typeId, elementId);
 		}
 	}
 	

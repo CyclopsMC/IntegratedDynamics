@@ -28,6 +28,16 @@ public class ValueTypeAny extends ValueTypeBase<ValueTypeAny.ValueAny> {
         return true;
     }
 
+    @Override
+    public String serialize(ValueAny value) {
+        return null;
+    }
+
+    @Override
+    public ValueAny deserialize(String value) {
+        return null;
+    }
+
     @ToString
     public static class ValueAny extends BaseValue {
 

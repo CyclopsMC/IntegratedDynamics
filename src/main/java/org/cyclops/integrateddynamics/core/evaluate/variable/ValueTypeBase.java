@@ -3,8 +3,11 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.Reference;
+
+import java.util.List;
 
 /**
  * Base implementation of a value type.
@@ -25,9 +28,13 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         }
     }
 
+    protected String getUnlocalizedPrefix() {
+        return "valuetype.valuetypes." + getModId() + "." + getTypeName();
+    }
+
     @Override
     public String getUnlocalizedName() {
-        return "valuetype.valuetypes." + getModId() + "." + getTypeName() + ".name";
+        return getUnlocalizedPrefix() + ".name";
     }
 
     protected String getTypeName() {
@@ -53,6 +60,25 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     protected void registerModelResourceLocation() {
         ValueTypes.REGISTRY.registerValueTypeModel(this,
                 new ModelResourceLocation(getModId() + ":valuetype/" + getTypeName()));
+    }
+
+    @Override
+    public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
+        String typeName = L10NHelpers.localize(getUnlocalizedName());
+        lines.add(L10NHelpers.localize("valuetype.tooltip.typeName", getDisplayColorFormat() + typeName));
+        if(appendOptionalInfo) {
+            L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
+        }
+    }
+
+    @Override
+    public L10NHelpers.UnlocalizedString canDeserialize(String value) {
+        try {
+            deserialize(value);
+            return null;
+        } catch (IllegalArgumentException e) {
+            return new L10NHelpers.UnlocalizedString("valuetype.error.invalidInput", value);
+        }
     }
 
     protected String getModId() {

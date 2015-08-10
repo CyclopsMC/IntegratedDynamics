@@ -24,6 +24,16 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
         return Boolean.toString(value.getRawValue());
     }
 
+    @Override
+    public String serialize(ValueBoolean value) {
+        return Boolean.toString(value.getRawValue());
+    }
+
+    @Override
+    public ValueBoolean deserialize(String value) {
+        return ValueBoolean.of(Boolean.parseBoolean(value));
+    }
+
     @ToString
     public static class ValueBoolean extends BaseValue {
 
