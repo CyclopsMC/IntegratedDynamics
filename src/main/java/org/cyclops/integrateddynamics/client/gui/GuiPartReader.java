@@ -1,18 +1,15 @@
 package org.cyclops.integrateddynamics.client.gui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
-import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
@@ -26,8 +23,6 @@ import java.awt.*;
  */
 public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvider, S extends IPartStateReader<P>>
         extends GuiMultipart<P, S, IAspectRead> {
-
-    private long lastUpdate = -1;
 
     /**
      * Make a new instance.
@@ -50,34 +45,19 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
 
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        // Client-side, so we need to do a manual part update, but not every frame refresh.
-        if(Minecraft.getMinecraft().theWorld.getWorldTime() > lastUpdate) {
-            lastUpdate = Minecraft.getMinecraft().theWorld.getWorldTime();
-            getPartType().update(null, getTarget(), getPartState());
-        }
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-    }
-
     @Override
     protected void drawAdditionalElementInfo(ContainerMultipart container, int index, IAspectRead aspect) {
         FontRenderer fontRenderer = fontRendererObj;
 
-        // Current aspect value
-        IAspectVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspect);
+        // Get current aspect value
+        ContainerPartReader reader = (ContainerPartReader) container;
 
-        String value;
-        try {
-            IValue valueObj = variable.getValue();
-            value = variable.getType().toCompactString(valueObj);
-        } catch (EvaluationException e) {
-            value = "ERROR";
+        Pair<String, Integer> readValues = reader.getReadValue(aspect);
+        if(readValues != null) {
+            fontRenderer.drawString(readValues.getLeft(), this.guiLeft + offsetX + 16,
+                    this.guiTop + offsetY + 35 + container.getAspectBoxHeight() * index,
+                    readValues.getRight());
         }
-        fontRenderer.drawString(value, this.guiLeft + offsetX + 16,
-                this.guiTop + offsetY + 35 + container.getAspectBoxHeight() * index,
-                variable.getType().getDisplayColor());
 
         // Render target item
         // This could be cached if this would prove to be a bottleneck

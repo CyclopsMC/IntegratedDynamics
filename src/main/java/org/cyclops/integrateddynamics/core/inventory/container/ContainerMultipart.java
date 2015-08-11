@@ -44,6 +44,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     private final BlockPos pos;
 
     protected final IInventory inputSlots;
+    protected final EntityPlayer player;
 
     /**
      * Make a new instance.
@@ -68,6 +69,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         this.pos = player.getPosition();
 
         this.inputSlots = constructInputSlotsInventory();
+        this.player = player;
     }
 
     @SuppressWarnings("unchecked")

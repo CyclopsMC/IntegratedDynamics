@@ -36,7 +36,6 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     private static final int SLOT_X = 131;
     private static final int SLOT_Y = 18;
 
-    private final EntityPlayer player;
     @Getter
     @Setter
     private String writeValue = "";
@@ -53,7 +52,6 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
      */
     public ContainerPartWriter(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType) {
         super(player, partTarget, partContainer, partType, partType.getWriteAspects());
-        this.player = player;
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
             addSlotToContainer(new SlotSingleItem(inputSlots, i, SLOT_X, SLOT_Y + getAspectBoxHeight() * i, ItemVariable.getInstance()));
             disableSlot(i);

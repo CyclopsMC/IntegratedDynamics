@@ -1,20 +1,33 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
+import com.google.common.collect.Maps;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
+import org.cyclops.integrateddynamics.core.network.packet.PartReaderValuePacket;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.item.ItemVariable;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
+
+import java.util.Map;
 
 /**
  * Container for reader parts.
@@ -30,6 +43,8 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     private static final int SLOT_OUT_Y = 27;
 
     private final IInventory outputSlots;
+    private Map<IAspectRead, Pair<String, Integer>> readValues = Maps.newHashMap();
+    private Map<IAspectRead, String> lastReadValues = Maps.newHashMap();
 
     /**
      * Make a new instance.
@@ -128,6 +143,46 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
                 inputSlots.decrStackSize(i, 1);
             }
         }
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+
+        if(!MinecraftHelpers.isClientSide()) {
+            for (IAspectRead aspectRead : getUnfilteredItems()) {
+                String readValue = "";
+                int readValueColor = 0;
+                IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
+                if(variable != null) {
+                    try {
+                        IValue value = variable.getValue();
+                        readValue = value.getType().toCompactString(value);
+                        readValueColor = variable.getType().getDisplayColor();
+                    } catch (EvaluationException e) {
+                        readValue = "ERROR";
+                        readValueColor = Helpers.RGBToInt(255, 0, 0);
+                    }
+                }
+
+                if(!readValue.equals(lastReadValues.get(aspectRead))) {
+                    lastReadValues.put(aspectRead, readValue);
+                    IntegratedDynamics._instance.getPacketHandler().sendToPlayer(
+                            new PartReaderValuePacket(aspectRead.getUnlocalizedName(), readValue, readValueColor), player);
+                }
+            }
+        }
+    }
+
+    public void setReadValue(String aspectName, Pair<String, Integer> readValue) {
+        IAspect aspect = Aspects.REGISTRY.getAspect(aspectName);
+        if(aspect instanceof IAspectRead) {
+            readValues.put((IAspectRead) aspect, readValue);
+        }
+    }
+
+    public Pair<String, Integer> getReadValue(IAspectRead aspect) {
+        return readValues.get(aspect);
     }
 
 }
