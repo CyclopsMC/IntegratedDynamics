@@ -6,24 +6,24 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 
 /**
- * Config for a reader.
+ * Config for a redstone reader.
  * @author rubensworks
  */
-public class ReaderConfig extends BlockConfig {
+public class RedstoneReaderConfig extends BlockConfig {
 
     /**
      * The unique instance.
      */
-    public static ReaderConfig _instance;
+    public static RedstoneReaderConfig _instance;
 
     /**
      * Make a new instance.
      */
-    public ReaderConfig() {
+    public RedstoneReaderConfig() {
         super(
             IntegratedDynamics._instance,
             true,
-            "reader",
+            "redstoneReader",
             null,
             null
         );

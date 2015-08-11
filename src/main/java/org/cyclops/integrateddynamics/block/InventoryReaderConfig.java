@@ -3,27 +3,27 @@ package org.cyclops.integrateddynamics.block;
 import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 
 /**
- * Config for a writer.
+ * Config for an inventory reader.
  * @author rubensworks
  */
-public class WriterConfig extends BlockConfig {
+public class InventoryReaderConfig extends BlockConfig {
 
     /**
      * The unique instance.
      */
-    public static WriterConfig _instance;
+    public static InventoryReaderConfig _instance;
 
     /**
      * Make a new instance.
      */
-    public WriterConfig() {
+    public InventoryReaderConfig() {
         super(
             IntegratedDynamics._instance,
             true,
-            "writer",
+            "inventoryReader",
             null,
             null
         );
@@ -31,7 +31,7 @@ public class WriterConfig extends BlockConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return new IgnoredBlockStatus(this);
+        return new IgnoredBlock(this);
     }
 
 }

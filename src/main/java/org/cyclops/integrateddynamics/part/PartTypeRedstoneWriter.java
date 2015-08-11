@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.part;
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
-import org.cyclops.integrateddynamics.block.WriterConfig;
+import org.cyclops.integrateddynamics.block.RedstoneWriterConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
@@ -52,7 +52,7 @@ public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWr
                 status = IgnoredBlockStatus.Status.ERROR;
             }
         }
-        return WriterConfig._instance.getBlockInstance().getDefaultState().withProperty(IgnoredBlock.FACING, side).
+        return RedstoneWriterConfig._instance.getBlockInstance().getDefaultState().withProperty(IgnoredBlock.FACING, side).
                 withProperty(IgnoredBlockStatus.STATUS, status);
     }
 

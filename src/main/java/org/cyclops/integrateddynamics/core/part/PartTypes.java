@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.part.PartTypeInventoryReader;
 import org.cyclops.integrateddynamics.part.PartTypeRedstoneReader;
 import org.cyclops.integrateddynamics.part.PartTypeRedstoneWriter;
 
@@ -14,7 +15,11 @@ public final class PartTypes {
 
     public static void load() {}
 
+    // Readers
     public static final PartTypeRedstoneReader REDSTONE_READER = REGISTRY.register(new PartTypeRedstoneReader("redstoneReader"));
+    public static final PartTypeInventoryReader INVENTORY_READER = REGISTRY.register(new PartTypeInventoryReader("inventoryReader"));
+
+    // Writers
     public static final PartTypeRedstoneWriter REDSTONE_WRITER = REGISTRY.register(new PartTypeRedstoneWriter("redstoneWriter"));
 
 }

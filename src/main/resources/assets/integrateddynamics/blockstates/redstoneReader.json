@@ -3,8 +3,8 @@
   "defaults": {
     "model": "integrateddynamics:reader",
     "textures": {
-      "back" : "integrateddynamics:blocks/reader_back",
-      "front": "integrateddynamics:blocks/reader_front"
+      "back" : "integrateddynamics:blocks/redstoneReader_back",
+      "front": "integrateddynamics:blocks/redstoneReader_front"
     }
   },
   "variants": {
@@ -15,6 +15,9 @@
       "west" : { "y": 90 },
       "up"   : { "x": 90 },
       "down" : { "x": 270 }
+    },
+    "inventory": {
+      "model": "integrateddynamics:reader"
     }
   }
 }

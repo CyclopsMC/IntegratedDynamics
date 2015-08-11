@@ -18,8 +18,9 @@ public class Configs {
         configHandler.add(new BlockLogicProgrammerConfig());
 
         // Part blocks
-        configHandler.add(new ReaderConfig());
-        configHandler.add(new WriterConfig());
+        configHandler.add(new RedstoneReaderConfig());
+        configHandler.add(new RedstoneWriterConfig());
+        configHandler.add(new InventoryReaderConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());
@@ -29,6 +30,7 @@ public class Configs {
         // Part items
         configHandler.add(new ItemPartRedstoneReaderConfig());
         configHandler.add(new ItemPartRedstoneWriterConfig());
+        configHandler.add(new ItemPartInventoryReaderConfig());
 
     }
 
