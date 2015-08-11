@@ -31,7 +31,15 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
 
     @Override
     public ValueBoolean deserialize(String value) {
-        return ValueBoolean.of(Boolean.parseBoolean(value));
+        boolean b;
+        if("true".equalsIgnoreCase(value) || "1".equals(value)) {
+            b = true;
+        } else if("false".equalsIgnoreCase(value) || "0".equals(value)) {
+            b = false;
+        } else {
+            throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a boolean.", value));
+        }
+        return ValueBoolean.of(b);
     }
 
     @ToString
