@@ -105,14 +105,15 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
     }
 
     public void setActiveElementById(String typeId, String elementId) {
-        if(getActiveElement() == null || !(getActiveElement().getType().getName().equals(typeId) && getActiveElement().getType().getName(getActiveElement()).equals(elementId))) {
-            ILogicProgrammerElementType type = LogicProgrammerElementTypes.REGISTRY.getType(typeId);
-            if (type != null) {
-                ILogicProgrammerElement element = type.getByName(elementId);
+        ILogicProgrammerElementType type = LogicProgrammerElementTypes.REGISTRY.getType(typeId);
+        if (type != null) {
+            ILogicProgrammerElement element = type.getByName(elementId);
+            if(!LogicProgrammerElementTypes.areEqual(getActiveElement(), element)) {
                 setActiveElement(element, 0, 0);
-            } else {
-                setActiveElement(null, 0, 0);
+                onDirty();
             }
+        } else {
+            setActiveElement(null, 0, 0);
         }
     }
 
@@ -234,13 +235,15 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
 
         @Override
         public void onDirty() {
-            if ((temporaryInputSlots == null || temporaryInputSlots.isEmpty())
+            // Currently disabled, this requires quite complex negotiation between C and S, not too mention
+            // any other players having the gui open!
+            /*if ((temporaryInputSlots == null || temporaryInputSlots.isEmpty())
                     && (activeElement == null || activeElement.canCurrentlyReadFromOtherItem())) {
                 ItemStack itemStack = writeSlot.getStackInSlot(0);
-                if (itemStack != null && !ItemStack.areItemStacksEqual(itemStack, writeSlot.getStackInSlot(0))) {
+                if (itemStack != null) {
                     ContainerLogicProgrammer.this.loadConfigFrom(itemStack);
                 }
-            }
+            }*/
         }
 
     }

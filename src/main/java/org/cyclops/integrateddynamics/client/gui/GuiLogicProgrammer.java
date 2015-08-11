@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElementType;
+import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
@@ -121,7 +122,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
 
                 GlStateManager.disableAlpha();
                 Triple<Float, Float, Float> rgb = Helpers.intToRGB(element.getColor());
-                boolean hover = container.getActiveElement() == element
+                boolean hover = LogicProgrammerElementTypes.areEqual(container.getActiveElement(), element)
                         || isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY));
                 GlStateManager.color(colorSmoothener(rgb.getLeft(), hover), colorSmoothener(rgb.getMiddle(), hover),
                         colorSmoothener(rgb.getRight(), hover), 1);
