@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.part.aspect.read;
+package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
 import net.minecraft.block.Block;
 import org.cyclops.cyclopscore.datastructure.DimPos;

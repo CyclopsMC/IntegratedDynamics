@@ -63,6 +63,15 @@ aspect.aspects.integrateddynamics.write.integer.redstone.name=Redstone
 aspect.aspects.integrateddynamics.write.integer.redstone.info=Outputs the value as exact redstone signal
 
 ## Inventory aspects
+aspect.aspects.integrateddynamics.read.boolean.inventory.full.name=Inventory Full
+aspect.aspects.integrateddynamics.read.boolean.inventory.full.info=If all slots have at least one item
+aspect.aspects.integrateddynamics.read.boolean.inventory.empty.name=Inventory Empty
+aspect.aspects.integrateddynamics.read.boolean.inventory.empty.info=If all slots are empty
+aspect.aspects.integrateddynamics.read.boolean.inventory.nonempty.name=Inventory Not Empty
+aspect.aspects.integrateddynamics.read.boolean.inventory.nonempty.info=If there is at least one item
+aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.name=Is Inventory
+aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.info=If the target has an inventory
+
 aspect.aspects.integrateddynamics.read.integer.inventory.name=Inventory Count
 aspect.aspects.integrateddynamics.read.integer.inventory.info=Get the total amount of items
 

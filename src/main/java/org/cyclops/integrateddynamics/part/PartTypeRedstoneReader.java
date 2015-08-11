@@ -13,8 +13,8 @@ import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
-import org.cyclops.integrateddynamics.part.aspect.read.IReadRedstoneComponent;
-import org.cyclops.integrateddynamics.part.aspect.read.ReadRedstoneComponent;
+import org.cyclops.integrateddynamics.part.aspect.read.redstone.IReadRedstoneComponent;
+import org.cyclops.integrateddynamics.part.aspect.read.redstone.ReadRedstoneComponent;
 
 /**
  * A redstone reader part.

@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.part.aspect.read;
+package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
 /**
  * Aspect that can detect when a redstone level is non-zero.

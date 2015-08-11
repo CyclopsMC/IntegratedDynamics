@@ -1,8 +1,9 @@
-package org.cyclops.integrateddynamics.part.aspect.read;
+package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.part.aspect.read.AspectReadIntegerBase;
 
 /**
  * Aspect that can retrieve the redstone level.

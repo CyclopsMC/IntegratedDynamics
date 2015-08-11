@@ -2,7 +2,11 @@ package org.cyclops.integrateddynamics.part.aspect;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRegistry;
-import org.cyclops.integrateddynamics.part.aspect.read.*;
+import org.cyclops.integrateddynamics.part.aspect.read.inventory.*;
+import org.cyclops.integrateddynamics.part.aspect.read.redstone.AspectReadBooleanRedstoneHigh;
+import org.cyclops.integrateddynamics.part.aspect.read.redstone.AspectReadBooleanRedstoneLow;
+import org.cyclops.integrateddynamics.part.aspect.read.redstone.AspectReadBooleanRedstoneNonLow;
+import org.cyclops.integrateddynamics.part.aspect.read.redstone.AspectReadIntegerRedstone;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteIntegerRedstone;
 
@@ -22,6 +26,11 @@ public class Aspects {
     public static final AspectReadBooleanRedstoneHigh READ_BOOLEAN_REDSTONE_HIGH = new AspectReadBooleanRedstoneHigh();
 
     public static final AspectReadIntegerRedstone READ_INTEGER_REDSTONE = new AspectReadIntegerRedstone();
+
+    public static final AspectReadBooleanInventoryFull READ_BOOLEAN_INVENTORY_FULL = new AspectReadBooleanInventoryFull();
+    public static final AspectReadBooleanInventoryEmpty READ_BOOLEAN_INVENTORY_EMPTY = new AspectReadBooleanInventoryEmpty();
+    public static final AspectReadBooleanInventoryNonEmpty READ_BOOLEAN_INVENTORY_NONEMPTY = new AspectReadBooleanInventoryNonEmpty();
+    public static final AspectReadBooleanInventoryApplicable READ_BOOLEAN_INVENTORY_APPLICABLE = new AspectReadBooleanInventoryApplicable();
 
     public static final AspectReadIntegerInventory READ_INTEGER_INVENTORY_COUNT = new AspectReadIntegerInventory();
 
