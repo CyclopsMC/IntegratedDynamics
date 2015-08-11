@@ -131,12 +131,20 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                 mc.renderEngine.bindTexture(texture);
                 drawTexturedModalRect(guiLeft + offsetX + ITEM_POSITION.x,
                         guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
+
+                GlStateManager.enableAlpha();
+                // Arrow
+                if(hover) {
+                    drawTexturedModalRect(guiLeft + offsetX + ITEM_POSITION.x,
+                            guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 14, 240, 3, 16);
+                }
+                GlStateManager.disableAlpha();
                 GlStateManager.color(1, 1, 1);
 
                 // Operator info
                 String aspectName = L10NHelpers.localize(element.getSymbol());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
-                        this.guiLeft + offsetX + 18,
+                        this.guiLeft + offsetX + (hover ? 20 : 18),
                         this.guiTop + offsetY + 26 + boxHeight * i,
                         60, Helpers.RGBToInt(40, 40, 40));
             }
