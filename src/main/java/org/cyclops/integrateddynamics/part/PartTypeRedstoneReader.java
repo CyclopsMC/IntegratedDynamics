@@ -45,11 +45,6 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     }
 
     @Override
-    public int getUpdateInterval(DefaultPartStateReader<PartTypeRedstoneReader> state) {
-        return 10;
-    }
-
-    @Override
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side) {
         return RedstoneReaderConfig._instance.getBlockInstance().getDefaultState().withProperty(IgnoredBlock.FACING, side);

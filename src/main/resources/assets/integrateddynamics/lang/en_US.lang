@@ -1,6 +1,10 @@
 # General
 itemGroup.integrateddynamics=Integrated Dynamics
 
+# Gui
+gui.integrateddynamics.button.save=Save
+gui.integrateddynamics.partsettings.updateInterval=Freq.
+
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
 tile.blocks.integrateddynamics.datastore.name=Datastore

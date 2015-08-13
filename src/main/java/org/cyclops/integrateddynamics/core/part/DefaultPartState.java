@@ -6,6 +6,7 @@ import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.nbt.NBTProviderComponent;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -19,6 +20,8 @@ public abstract class DefaultPartState<P extends IPartType> implements IPartStat
     private boolean update = false;
     @Delegate
     private INBTProvider nbtProviderComponent = new NBTProviderComponent(this);
+    @NBTPersist
+    private int updateInterval = GeneralConfig.defaultPartUpdateFreq;
     @NBTPersist
     private int id = -1;
 
@@ -40,6 +43,16 @@ public abstract class DefaultPartState<P extends IPartType> implements IPartStat
     @Override
     public int getId() {
         return this.id;
+    }
+
+    @Override
+    public void setUpdateInterval(int updateInterval) {
+        this.updateInterval = updateInterval;
+    }
+
+    @Override
+    public int getUpdateInterval() {
+        return updateInterval;
     }
 
     @Override

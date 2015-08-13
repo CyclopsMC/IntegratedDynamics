@@ -40,11 +40,6 @@ public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryR
     }
 
     @Override
-    public int getUpdateInterval(DefaultPartStateReader<PartTypeInventoryReader> state) {
-        return 10;
-    }
-
-    @Override
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side) {
         return InventoryReaderConfig._instance.getBlockInstance().getDefaultState().withProperty(IgnoredBlock.FACING, side);

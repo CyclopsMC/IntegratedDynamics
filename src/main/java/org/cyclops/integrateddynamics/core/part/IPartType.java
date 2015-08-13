@@ -88,6 +88,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public S getDefaultState();
 
     /**
+     * Set the update interval for this part.
+     * @param state The state
+     * @param updateInterval The tick interval to update this element.
+     */
+    public void setUpdateInterval(S state, int updateInterval);
+
+    /**
      * @param state The state
      * @return The tick interval to update this element.
      */

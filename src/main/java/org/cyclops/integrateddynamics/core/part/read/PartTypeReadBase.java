@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.client.gui.GuiPartReader;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.PartTypeBase;
+import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
@@ -21,7 +21,7 @@ import java.util.List;
  * @author rubensworks
  */
 public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extends IPartStateReader<P>>
-        extends PartTypeBase<P, S> implements IPartTypeReader<P, S> {
+        extends PartTypeConfigurable<P, S> implements IPartTypeReader<P, S> {
 
     public PartTypeReadBase(String name) {
         super(name);

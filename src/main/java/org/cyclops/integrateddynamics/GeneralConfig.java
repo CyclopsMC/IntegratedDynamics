@@ -31,6 +31,12 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If the version checker should be enabled.")
     public static boolean versionChecker = true;
+
+    /**
+     * The default update frequency in ticks to use for new parts.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default update frequency in ticks to use for new parts.")
+    public static int defaultPartUpdateFreq = 1;
     
     /**
      * Create a new instance.

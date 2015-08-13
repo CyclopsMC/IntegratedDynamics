@@ -39,9 +39,16 @@ public class ExtendedGuiHandler extends GuiHandler {
                     Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
                             new BlockPos(x, y, z), side);
                     if(data == null) return null;
-                    Constructor<? extends Container> containerConstructor = containerClass.getConstructor(
-                            EntityPlayer.class, PartTarget.class, IPartContainer.class,
-                            data.getRight().getPartTypeClass());
+                    Constructor<? extends Container> containerConstructor;
+                    try {
+                        containerConstructor = containerClass.getConstructor(
+                                EntityPlayer.class, PartTarget.class, IPartContainer.class,
+                                data.getRight().getPartTypeClass());
+                    } catch(NoSuchMethodException e ) {
+                        containerConstructor = containerClass.getConstructor(
+                                EntityPlayer.class, PartTarget.class, IPartContainer.class,
+                                IPartType.class);
+                    }
                     return containerConstructor.newInstance(player,
                            PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(), data.getRight());
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException
@@ -60,9 +67,16 @@ public class ExtendedGuiHandler extends GuiHandler {
                         Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
                                 new BlockPos(x, y, z), side);
                         if(data == null) return null;
-                        Constructor<? extends GuiScreen> guiConstructor = guiClass.getConstructor(
-                                EntityPlayer.class, PartTarget.class, IPartContainer.class,
-                                data.getRight().getPartTypeClass());
+                        Constructor<? extends GuiScreen> guiConstructor;
+                        try {
+                            guiConstructor = guiClass.getConstructor(
+                                    EntityPlayer.class, PartTarget.class, IPartContainer.class,
+                                    data.getRight().getPartTypeClass());
+                        } catch (NoSuchMethodException e) {
+                            guiConstructor = guiClass.getConstructor(
+                                    EntityPlayer.class, PartTarget.class, IPartContainer.class,
+                                    IPartType.class);
+                        }
                         return guiConstructor.newInstance(player,
                                PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(),
                                data.getRight());

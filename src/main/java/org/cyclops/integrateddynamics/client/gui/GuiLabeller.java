@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import org.apache.commons.lang3.StringUtils;
-import org.cyclops.cyclopscore.client.gui.component.GuiButtonExtended;
+import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
@@ -47,7 +47,7 @@ public class GuiLabeller extends GuiContainerExtended {
     public void initGui() {
         super.initGui();
         String write = L10NHelpers.localize("item.items.integrateddynamics.labeller.button.write");
-        buttonList.add(new GuiButtonExtended(BUTTON_WRITE, this.guiLeft + 133,  this.guiTop + 8, fontRendererObj.getStringWidth(write) + 6, 16 , write));
+        buttonList.add(new GuiButtonText(BUTTON_WRITE, this.guiLeft + 133,  this.guiTop + 8, fontRendererObj.getStringWidth(write) + 6, 16 , write, true));
 
         Keyboard.enableRepeatEvents(true);
         int searchWidth = 87;

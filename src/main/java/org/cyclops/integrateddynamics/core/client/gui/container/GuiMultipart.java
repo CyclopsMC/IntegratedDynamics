@@ -6,17 +6,16 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonImage;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
+import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
-import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartState;
-import org.cyclops.integrateddynamics.core.part.IPartType;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.*;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 
 import java.awt.*;
@@ -46,6 +45,14 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         this.target = container.getTarget();
         this.partContainer = container.getPartContainer();
         this.partType = container.getPartType();
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        if(getPartType() instanceof PartTypeConfigurable && ((PartTypeConfigurable) getPartType()).hasSettings()) {
+            buttonList.add(new GuiButtonImage(ContainerMultipart.BUTTON_SETTINGS, this.guiLeft + 174, this.guiTop + 4, 15, 15, Images.CONFIG_BOARD, -2, -3, true));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -115,6 +122,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         ContainerMultipart<P, S, A> container = (ContainerMultipart) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {

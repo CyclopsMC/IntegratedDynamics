@@ -45,6 +45,17 @@ public interface IPartState<P extends IPartType> {
     public int getId();
 
     /**
+     * Set the update interval for this state.
+     * @param updateInterval The tick interval to update this element.
+     */
+    public void setUpdateInterval(int updateInterval);
+
+    /**
+     * @return The tick interval to update this element.
+     */
+    public int getUpdateInterval();
+
+    /**
      * Check if dirty and reset the dirty state.
      * @return If this state has changed since the last time and needs to be persisted to NBT eventually.
      */

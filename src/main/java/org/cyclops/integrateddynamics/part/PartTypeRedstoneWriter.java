@@ -35,11 +35,6 @@ public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWr
     }
 
     @Override
-    public int getUpdateInterval(DefaultPartStateWriter<PartTypeRedstoneWriter> state) {
-        return 10;
-    }
-
-    @Override
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side) {
         IPartStateWriter state = (IPartStateWriter) tile.getPartState(side);

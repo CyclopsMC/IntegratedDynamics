@@ -141,6 +141,16 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public void setUpdateInterval(S state, int updateInterval) {
+        state.setUpdateInterval(updateInterval);
+    }
+
+    @Override
+    public int getUpdateInterval(S state) {
+        return state.getUpdateInterval();
+    }
+
+    @Override
     public void beforeNetworkKill(Network network, PartTarget target, S state) {
         System.out.println("killing " + state);
     }
@@ -177,11 +187,14 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             return false;
         }
 
-        getMod().getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, side); // Pass the side as extra data to the gui
-        if(!world.isRemote && hasGui()) {
-            player.openGui(getMod().getModId(), getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
+        if(hasGui()) {
+            getMod().getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, side); // Pass the side as extra data to the gui
+            if (!world.isRemote && hasGui()) {
+                player.openGui(getMod().getModId(), getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
