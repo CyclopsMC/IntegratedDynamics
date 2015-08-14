@@ -10,9 +10,9 @@ public abstract class AspectReadBooleanInventoryBase extends AspectReadBooleanBa
 
     @Override
     protected String getUnlocalizedBooleanType() {
-        return "inventory." + getUnlocalizedBooleanRedstoneType();
+        return "inventory." + getUnlocalizedBooleanWorldType();
     }
 
-    protected abstract String getUnlocalizedBooleanRedstoneType();
+    protected abstract String getUnlocalizedBooleanWorldType();
 
 }

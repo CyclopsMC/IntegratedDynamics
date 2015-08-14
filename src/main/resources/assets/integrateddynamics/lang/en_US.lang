@@ -16,6 +16,8 @@ item.items.integrateddynamics.partReaderRedstone.name=Redstone Reader Part
 item.items.integrateddynamics.partReaderRedstone.info=A reader for redstone
 item.items.integrateddynamics.partReaderInventory.name=Inventory Reader Part
 item.items.integrateddynamics.partReaderInventory.info=A reader for inventories
+item.items.integrateddynamics.partReaderWorld.name=World Reader Part
+item.items.integrateddynamics.partReaderWorld.info=A reader for the world
 item.items.integrateddynamics.partWriterRedstone.name=Redstone Writer Part
 item.items.integrateddynamics.partWriterRedstone.info=A writer for redstone
 item.items.integrateddynamics.wrench.name=Wrench
@@ -38,6 +40,7 @@ valuetype.valuetypes.integrateddynamics.integer.name=Integer
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
 parttype.parttypes.integrateddynamics.inventoryReader.name=Inventory Reader
+parttype.parttypes.integrateddynamics.worldReader.name=World Reader
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 
 # Variables facades
@@ -78,6 +81,21 @@ aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.info=If the 
 
 aspect.aspects.integrateddynamics.read.integer.inventory.name=Inventory Count
 aspect.aspects.integrateddynamics.read.integer.inventory.info=Get the total amount of items
+
+## World aspects
+aspect.aspects.integrateddynamics.read.boolean.world.block.name=Has Block
+aspect.aspects.integrateddynamics.read.boolean.world.block.info=If the target space has a block
+aspect.aspects.integrateddynamics.read.boolean.world.entity.name=Has Entity
+aspect.aspects.integrateddynamics.read.boolean.world.entity.info=If the target space has an entity
+aspect.aspects.integrateddynamics.read.boolean.world.mob.name=Has Mob
+aspect.aspects.integrateddynamics.read.boolean.world.mob.info=If the target space has a mob
+aspect.aspects.integrateddynamics.read.boolean.world.player.name=Has Player
+aspect.aspects.integrateddynamics.read.boolean.world.player.info=If the target space has a player
+aspect.aspects.integrateddynamics.read.boolean.world.item.name=Has Item
+aspect.aspects.integrateddynamics.read.boolean.world.item.info=If the target space has an item
+
+aspect.aspects.integrateddynamics.read.integer.world.entity.name=Entities
+aspect.aspects.integrateddynamics.read.integer.world.entity.info=The amount of entities at the target space
 
 # Operators
 operator.tooltip.operatorName=§eOperator: §r%s (%s)

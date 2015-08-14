@@ -21,6 +21,7 @@ public class Configs {
         configHandler.add(new RedstoneReaderConfig());
         configHandler.add(new RedstoneWriterConfig());
         configHandler.add(new InventoryReaderConfig());
+        configHandler.add(new WorldReaderConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());
@@ -31,6 +32,7 @@ public class Configs {
         configHandler.add(new ItemPartRedstoneReaderConfig());
         configHandler.add(new ItemPartRedstoneWriterConfig());
         configHandler.add(new ItemPartInventoryReaderConfig());
+        configHandler.add(new ItemPartWorldReaderConfig());
 
     }
 

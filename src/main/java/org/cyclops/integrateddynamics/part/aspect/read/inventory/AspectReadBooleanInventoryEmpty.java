@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.core.part.PartTarget;
 public class AspectReadBooleanInventoryEmpty extends AspectReadBooleanInventoryBase {
 
     @Override
-    protected String getUnlocalizedBooleanRedstoneType() {
+    protected String getUnlocalizedBooleanWorldType() {
         return "empty";
     }
 

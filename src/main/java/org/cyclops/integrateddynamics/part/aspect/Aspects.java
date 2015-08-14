@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.part.aspect.read.redstone.AspectReadBoolea
 import org.cyclops.integrateddynamics.part.aspect.read.redstone.AspectReadBooleanRedstoneLow;
 import org.cyclops.integrateddynamics.part.aspect.read.redstone.AspectReadBooleanRedstoneNonLow;
 import org.cyclops.integrateddynamics.part.aspect.read.redstone.AspectReadIntegerRedstone;
+import org.cyclops.integrateddynamics.part.aspect.read.world.*;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteIntegerRedstone;
 
@@ -33,6 +34,14 @@ public class Aspects {
     public static final AspectReadBooleanInventoryApplicable READ_BOOLEAN_INVENTORY_APPLICABLE = new AspectReadBooleanInventoryApplicable();
 
     public static final AspectReadIntegerInventory READ_INTEGER_INVENTORY_COUNT = new AspectReadIntegerInventory();
+
+    public static final AspectReadBooleanWorldBlock READ_BOOLEAN_WORLD_BLOCK = new AspectReadBooleanWorldBlock();
+    public static final AspectReadBooleanWorldEntity READ_BOOLEAN_WORLD_ENTITY = new AspectReadBooleanWorldEntity();
+    public static final AspectReadBooleanWorldMob READ_BOOLEAN_WORLD_MOB = new AspectReadBooleanWorldMob();
+    public static final AspectReadBooleanWorldPlayer READ_BOOLEAN_WORLD_PLAYER = new AspectReadBooleanWorldPlayer();
+    public static final AspectReadBooleanWorldItem READ_BOOLEAN_WORLD_ITEM = new AspectReadBooleanWorldItem();
+
+    public static final AspectReadIntegerWorldEntity READ_INTEGER_WORLD_ENTITY = new AspectReadIntegerWorldEntity();
 
     // --------------- Write ---------------
     public static final AspectWriteBooleanRedstone WRITE_BOOLEAN_REDSTONE = new AspectWriteBooleanRedstone();

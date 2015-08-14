@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.core.part.PartTarget;
 public class AspectReadBooleanInventoryApplicable extends AspectReadBooleanInventoryBase {
 
     @Override
-    protected String getUnlocalizedBooleanRedstoneType() {
+    protected String getUnlocalizedBooleanWorldType() {
         return "applicable";
     }
 
