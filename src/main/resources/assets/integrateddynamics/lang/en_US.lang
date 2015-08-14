@@ -18,6 +18,8 @@ item.items.integrateddynamics.partReaderInventory.name=Inventory Reader Part
 item.items.integrateddynamics.partReaderInventory.info=A reader for inventories
 item.items.integrateddynamics.partReaderWorld.name=World Reader Part
 item.items.integrateddynamics.partReaderWorld.info=A reader for the world
+item.items.integrateddynamics.partReaderFluid.name=Fluid Reader Part
+item.items.integrateddynamics.partReaderFluid.info=A reader for fluid tanks
 item.items.integrateddynamics.partWriterRedstone.name=Redstone Writer Part
 item.items.integrateddynamics.partWriterRedstone.info=A writer for redstone
 item.items.integrateddynamics.wrench.name=Wrench
@@ -41,6 +43,7 @@ valuetype.valuetypes.integrateddynamics.integer.name=Integer
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
 parttype.parttypes.integrateddynamics.inventoryReader.name=Inventory Reader
 parttype.parttypes.integrateddynamics.worldReader.name=World Reader
+parttype.parttypes.integrateddynamics.fluidReader.name=Fluid Reader
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 
 # Variables facades
@@ -100,6 +103,33 @@ aspect.aspects.integrateddynamics.read.integer.world.time.name=Time
 aspect.aspects.integrateddynamics.read.integer.world.time.info=The world time dependent of the set time command
 aspect.aspects.integrateddynamics.read.integer.world.totaltime.name=Total Time
 aspect.aspects.integrateddynamics.read.integer.world.totaltime.info=The world time independent of the set time command
+
+## Fluid aspects
+aspect.aspects.integrateddynamics.read.boolean.fluid.empty.name=Tank Empty
+aspect.aspects.integrateddynamics.read.boolean.fluid.empty.info=If the target fluid tank is empty
+aspect.aspects.integrateddynamics.read.boolean.fluid.full.name=Tank Full
+aspect.aspects.integrateddynamics.read.boolean.fluid.full.info=If the target fluid tank is full
+aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.name=Tank Not Empty
+aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.info=If the target fluid tank has something in it
+aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.name=Is Tank
+aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.info=If the target has is a fluid tank
+aspect.aspects.integrateddynamics.read.boolean.fluid.gaseous.name=Fluid Gaseous
+aspect.aspects.integrateddynamics.read.boolean.fluid.gaseous.info=If the active tank has a gaseous fluid
+
+aspect.aspects.integrateddynamics.read.integer.fluid.amount.name=Fluid Amount
+aspect.aspects.integrateddynamics.read.integer.fluid.amount.info=The total amount of fluid in mB
+aspect.aspects.integrateddynamics.read.integer.fluid.capacity.name=Fluid Capacity
+aspect.aspects.integrateddynamics.read.integer.fluid.capacity.info=Total capacity of the tank
+aspect.aspects.integrateddynamics.read.integer.fluid.tanks.name=Tanks
+aspect.aspects.integrateddynamics.read.integer.fluid.tanks.info=The amount of tanks found at the target
+aspect.aspects.integrateddynamics.read.integer.fluid.density.name=Fluid Density
+aspect.aspects.integrateddynamics.read.integer.fluid.density.info=The density of the fluid in the active tank
+aspect.aspects.integrateddynamics.read.integer.fluid.luminosity.name=Fluid Luminosity
+aspect.aspects.integrateddynamics.read.integer.fluid.luminosity.info=The luminosity of the fluid in the active tank
+aspect.aspects.integrateddynamics.read.integer.fluid.temperature.name=Fluid Temperature
+aspect.aspects.integrateddynamics.read.integer.fluid.temperature.info=The temperature of the fluid in the active tank
+aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.name=Fluid Viscosity
+aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.info=The viscosity of the fluid in the active tank
 
 # Operators
 operator.tooltip.operatorName=§eOperator: §r%s (%s)

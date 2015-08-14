@@ -1,10 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.part.PartTypeInventoryReader;
-import org.cyclops.integrateddynamics.part.PartTypeRedstoneReader;
-import org.cyclops.integrateddynamics.part.PartTypeRedstoneWriter;
-import org.cyclops.integrateddynamics.part.PartTypeWorldReader;
+import org.cyclops.integrateddynamics.part.*;
 
 /**
  * Collection of parts types.
@@ -20,6 +17,7 @@ public final class PartTypes {
     public static final PartTypeRedstoneReader REDSTONE_READER = REGISTRY.register(new PartTypeRedstoneReader("redstoneReader"));
     public static final PartTypeInventoryReader INVENTORY_READER = REGISTRY.register(new PartTypeInventoryReader("inventoryReader"));
     public static final PartTypeWorldReader WORLD_READER = REGISTRY.register(new PartTypeWorldReader("worldReader"));
+    public static final PartTypeFluidReader FLUID_READER = REGISTRY.register(new PartTypeFluidReader("fluidReader"));
 
     // Writers
     public static final PartTypeRedstoneWriter REDSTONE_WRITER = REGISTRY.register(new PartTypeRedstoneWriter("redstoneWriter"));
