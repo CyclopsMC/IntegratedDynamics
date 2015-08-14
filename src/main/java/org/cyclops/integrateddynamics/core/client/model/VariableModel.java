@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -113,7 +112,7 @@ public class VariableModel implements IModel {
 
     @Override
     public IModelState getDefaultState() {
-        return ModelRotation.X0_Y0;
+        return ModelHelpers.DEFAULT_ITEM_STATE;
     }
 
 }

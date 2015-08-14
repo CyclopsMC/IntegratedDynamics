@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
@@ -11,10 +12,9 @@ import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.Attributes;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.ITransformation;
+import net.minecraftforge.client.model.*;
 
+import javax.vecmath.Vector3f;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -37,6 +37,23 @@ public final class ModelHelpers {
         for(int i = 0; i < 6; i++) {
             EMPTY_FACE_QUADS.add(Collections.<BakedQuad>emptyList());
         }
+    }
+    public static final IPerspectiveState DEFAULT_ITEM_STATE = createDefaultItemState();
+
+    private static IPerspectiveState createDefaultItemState() {
+        IModelState thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                new Vector3f(0, 1f / 16, -3f / 16),
+                TRSRTransformation.quatFromYXZDegrees(new Vector3f(-90, 0, 0)),
+                new Vector3f(0.55f, 0.55f, 0.55f),
+                null));
+        IModelState firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                new Vector3f(0, 4f / 16, 2f / 16),
+                TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 25)),
+                new Vector3f(1.7f, 1.7f, 1.7f),
+                null));
+        return new IPerspectiveState.Impl(TRSRTransformation.identity(), ImmutableMap
+                .of(ItemCameraTransforms.TransformType.THIRD_PERSON, thirdperson,
+                        ItemCameraTransforms.TransformType.FIRST_PERSON, firstperson));
     }
 
     /**
