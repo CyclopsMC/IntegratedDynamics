@@ -26,7 +26,9 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, D
                 Aspects.READ_BOOLEAN_WORLD_MOB,
                 Aspects.READ_BOOLEAN_WORLD_PLAYER,
                 Aspects.READ_BOOLEAN_WORLD_ITEM,
-                Aspects.READ_INTEGER_WORLD_ENTITY
+                Aspects.READ_INTEGER_WORLD_ENTITY,
+                Aspects.READ_INTEGER_WORLD_TIME,
+                Aspects.READ_INTEGER_WORLD_TOTALTIME
         ));
     }
 

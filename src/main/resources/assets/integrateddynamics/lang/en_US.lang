@@ -96,6 +96,10 @@ aspect.aspects.integrateddynamics.read.boolean.world.item.info=If the target spa
 
 aspect.aspects.integrateddynamics.read.integer.world.entity.name=Entities
 aspect.aspects.integrateddynamics.read.integer.world.entity.info=The amount of entities at the target space
+aspect.aspects.integrateddynamics.read.integer.world.time.name=Time
+aspect.aspects.integrateddynamics.read.integer.world.time.info=The world time dependent of the set time command
+aspect.aspects.integrateddynamics.read.integer.world.totaltime.name=Total Time
+aspect.aspects.integrateddynamics.read.integer.world.totaltime.info=The world time independent of the set time command
 
 # Operators
 operator.tooltip.operatorName=§eOperator: §r%s (%s)

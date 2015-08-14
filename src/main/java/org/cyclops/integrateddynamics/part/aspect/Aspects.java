@@ -42,6 +42,8 @@ public class Aspects {
     public static final AspectReadBooleanWorldItem READ_BOOLEAN_WORLD_ITEM = new AspectReadBooleanWorldItem();
 
     public static final AspectReadIntegerWorldEntity READ_INTEGER_WORLD_ENTITY = new AspectReadIntegerWorldEntity();
+    public static final AspectReadIntegerWorldTime READ_INTEGER_WORLD_TIME = new AspectReadIntegerWorldTime();
+    public static final AspectReadIntegerWorldTotalTime READ_INTEGER_WORLD_TOTALTIME = new AspectReadIntegerWorldTotalTime();
 
     // --------------- Write ---------------
     public static final AspectWriteBooleanRedstone WRITE_BOOLEAN_REDSTONE = new AspectWriteBooleanRedstone();
