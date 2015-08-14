@@ -1,21 +1,18 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
-import org.cyclops.integrateddynamics.core.network.packet.PartWriterValuePacket;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
@@ -36,12 +33,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     private static final int SLOT_X = 131;
     private static final int SLOT_Y = 18;
 
-    @Getter
-    @Setter
-    private String writeValue = "";
-    @Getter
-    @Setter
-    private int writeValueColor = 0;
+    private final int valueId, colorId;
 
     /**
      * Make a new instance.
@@ -58,6 +50,9 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
         }
 
         addPlayerInventory(player.inventory, 9, 140);
+
+        this.valueId = getNextValueId();
+        this.colorId = getNextValueId();
     }
 
     @Override
@@ -92,9 +87,10 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        String lastValue = this.writeValue;
 
         if(!MinecraftHelpers.isClientSide()) {
+            String writeValue = "";
+            int writeValueColor = 0;
             if(getPartContainer() instanceof ITileCableNetwork && getPartState().getActiveAspect() != null &&
                     getPartState().getErrors(getPartState().getActiveAspect()).isEmpty()) {
                 IVariable variable = getPartState().getVariable(((ITileCableNetwork) getPartContainer()).getNetwork());
@@ -111,11 +107,32 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
             } else {
                 writeValue = "";
             }
+            setWriteValue(writeValue, writeValueColor);
         }
+    }
 
-        if (!lastValue.equals(writeValue)) {
-            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(
-                    new PartWriterValuePacket(writeValue, writeValueColor), player);
+    public void setWriteValue(String writeValue, int writeColor) {
+        NBTTagCompound tagValue = new NBTTagCompound();
+        tagValue.setString("value", writeValue);
+        NBTTagCompound tagColor = new NBTTagCompound();
+        tagColor.setInteger("value", writeColor);
+        setValue(valueId, tagValue);
+        setValue(colorId, tagColor);
+    }
+
+    public String getWriteValue() {
+        try {
+            return getValue(valueId).getString("value");
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+
+    public int getWriteValueColor() {
+        try {
+            return getValue(colorId).getInteger("value");
+        } catch (NullPointerException e) {
+            return 0;
         }
     }
 

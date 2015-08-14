@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.GuiNumberField;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
@@ -30,8 +31,6 @@ import java.io.IOException;
 public class GuiPartSettings extends GuiContainerExtended {
 
     private static final int BUTTON_SAVE = 0;
-
-    public static int LAST_UPDATE_INTERVAL = -1;
 
     private final PartTarget target;
     private final IPartContainer partContainer;
@@ -70,10 +69,6 @@ public class GuiPartSettings extends GuiContainerExtended {
         numberField.setVisible(true);
         numberField.setTextColor(16777215);
         numberField.setCanLoseFocus(true);
-        if(LAST_UPDATE_INTERVAL > -1) {
-            numberField.setText(Integer.toString(LAST_UPDATE_INTERVAL));
-            LAST_UPDATE_INTERVAL = -1;
-        }
 
         String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
         buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 140,  this.guiTop + 8, fontRendererObj.getStringWidth(save) + 6, 16 , save, true));
@@ -110,6 +105,11 @@ public class GuiPartSettings extends GuiContainerExtended {
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(new ActionSetUpdateIntervalPacket(updateInterval));
             } catch (NumberFormatException e) { }
         }
+    }
+
+    @Override
+    public void onUpdate(int valueId, NBTTagCompound value) {
+        numberField.setText(Integer.toString(((ContainerPartSettings) getContainer()).getLastUpdateValue()));
     }
 
 }

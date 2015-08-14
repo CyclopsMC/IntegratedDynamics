@@ -3,13 +3,11 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.network.packet.ActionGetUpdateIntervalPacket;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
@@ -32,6 +30,8 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     private final World world;
     private final BlockPos pos;
 
+    private final int lastUpdateValueId;
+
     /**
      * Make a new instance.
      * @param target The target.
@@ -49,10 +49,18 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
 
         addPlayerInventory(player.inventory, 8, 31);
 
-        if(!MinecraftHelpers.isClientSide()) {
-            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(
-                    new ActionGetUpdateIntervalPacket(getPartType().getUpdateInterval(getPartState())), player);
-        }
+        lastUpdateValueId = getNextValueId();
+    }
+
+    @Override
+    protected void initializeValues() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("value", getPartType().getUpdateInterval(getPartState()));
+        setValue(lastUpdateValueId, tag);
+    }
+
+    public int getLastUpdateValue() {
+        return getValue(lastUpdateValueId).getInteger("value");
     }
 
     @SuppressWarnings("unchecked")

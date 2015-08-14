@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -12,22 +14,16 @@ import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
-import org.cyclops.integrateddynamics.core.network.packet.PartReaderValuePacket;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.item.ItemVariable;
-import org.cyclops.integrateddynamics.part.aspect.Aspects;
-
-import java.util.Map;
 
 /**
  * Container for reader parts.
@@ -43,8 +39,8 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     private static final int SLOT_OUT_Y = 27;
 
     private final IInventory outputSlots;
-    private Map<IAspectRead, Pair<String, Integer>> readValues = Maps.newHashMap();
-    private Map<IAspectRead, String> lastReadValues = Maps.newHashMap();
+    private final BiMap<Integer, IAspectRead> readValueIds = HashBiMap.create();
+    private final BiMap<Integer, IAspectRead> readColorIds = HashBiMap.create();
 
     /**
      * Make a new instance.
@@ -68,6 +64,11 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
         }
 
         addPlayerInventory(player.inventory, 9, 131);
+
+        for(IAspectRead aspectRead : getUnfilteredItems()) {
+            readValueIds.put(getNextValueId(), aspectRead);
+            readColorIds.put(getNextValueId(), aspectRead);
+        }
     }
 
     @Override
@@ -165,24 +166,30 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
                     }
                 }
 
-                if(!readValue.equals(lastReadValues.get(aspectRead))) {
-                    lastReadValues.put(aspectRead, readValue);
-                    IntegratedDynamics._instance.getPacketHandler().sendToPlayer(
-                            new PartReaderValuePacket(aspectRead.getUnlocalizedName(), readValue, readValueColor), player);
-                }
+                setReadValue(aspectRead, Pair.of(readValue, readValueColor));
             }
         }
     }
 
-    public void setReadValue(String aspectName, Pair<String, Integer> readValue) {
-        IAspect aspect = Aspects.REGISTRY.getAspect(aspectName);
-        if(aspect instanceof IAspectRead) {
-            readValues.put((IAspectRead) aspect, readValue);
-        }
+    public void setReadValue(IAspectRead aspectRead, Pair<String, Integer> readValue) {
+        int valueId = readValueIds.inverse().get(aspectRead);
+        int colorId = readColorIds.inverse().get(aspectRead);
+        NBTTagCompound tagValue = new NBTTagCompound();
+        tagValue.setString("value", readValue.getLeft());
+        NBTTagCompound tagColor = new NBTTagCompound();
+        tagColor.setInteger("value", readValue.getRight());
+        setValue(valueId, tagValue);
+        setValue(colorId, tagColor);
     }
 
     public Pair<String, Integer> getReadValue(IAspectRead aspect) {
-        return readValues.get(aspect);
+        int valueId = readValueIds.inverse().get(aspect);
+        int colorId = readColorIds.inverse().get(aspect);
+        try {
+            return Pair.of(getValue(valueId).getString("value"), getValue(colorId).getInteger("value"));
+        } catch(NullPointerException e) {
+            return null;
+        }
     }
 
 }
