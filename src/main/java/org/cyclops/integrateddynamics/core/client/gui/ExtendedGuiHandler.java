@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +31,10 @@ public class ExtendedGuiHandler extends GuiHandler {
      * Gui type for parts
      */
     public static final GuiType<EnumFacing> PART = GuiType.create(true);
+    /**
+     * Gui type for part aspects
+     */
+    public static final GuiType<Pair<EnumFacing, IAspect>> ASPECT = GuiType.create(true);
     static {
         PART.setContainerConstructor(new IContainerConstructor<EnumFacing>() {
             @Override
@@ -80,6 +85,48 @@ public class ExtendedGuiHandler extends GuiHandler {
                         return guiConstructor.newInstance(player,
                                PartTarget.fromCenter(world, new BlockPos(x, y, z), side), data.getLeft(),
                                data.getRight());
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            });
+        }
+        ASPECT.setContainerConstructor(new IContainerConstructor<Pair<EnumFacing, IAspect>>() {
+            @Override
+            public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z,
+                                              Class<? extends Container> containerClass, Pair<EnumFacing, IAspect> dataIn) {
+                try {
+                    Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
+                            new BlockPos(x, y, z), dataIn.getLeft());
+                    if(data == null) return null;
+                    Constructor<? extends Container> containerConstructor = containerClass.getConstructor(
+                                EntityPlayer.class, PartTarget.class, IPartContainer.class,
+                                IPartType.class, IAspect.class);
+                    return containerConstructor.newInstance(player,
+                            PartTarget.fromCenter(world, new BlockPos(x, y, z), dataIn.getLeft()), data.getLeft(), data.getRight(), dataIn.getRight());
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException
+                        | NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
+        if(MinecraftHelpers.isClientSide()) {
+            ASPECT.setGuiConstructor(new IGuiConstructor<Pair<EnumFacing, IAspect>>() {
+                @Override
+                public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z,
+                                                  Class<? extends GuiScreen> guiClass, Pair<EnumFacing, IAspect> dataIn) {
+                    try {
+                        Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
+                                new BlockPos(x, y, z), dataIn.getLeft());
+                        if(data == null) return null;
+                        Constructor<? extends GuiScreen> guiConstructor = guiClass.getConstructor(
+                                    EntityPlayer.class, PartTarget.class, IPartContainer.class,
+                                    IPartType.class, IAspect.class);
+                        return guiConstructor.newInstance(player,
+                                PartTarget.fromCenter(world, new BlockPos(x, y, z), dataIn.getLeft()), data.getLeft(),
+                                data.getRight(), dataIn.getRight());
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         e.printStackTrace();
                     }

@@ -1,16 +1,27 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
+import lombok.Data;
+import lombok.Getter;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.inventory.Container;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.client.gui.container.GuiAspectSettings;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,9 +31,21 @@ import java.util.List;
 public abstract class AspectBase<V extends IValue, T extends IValueType<V>> implements IAspect<V, T> {
 
     private final AspectProperties defaultProperties;
+    @Getter
+    private final IGuiContainerProvider propertiesGuiProvider;
 
     public AspectBase() {
         this.defaultProperties = createDefaultProperties();
+        if(hasProperties()) {
+            int guiIDSettings = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
+            getMod().getGuiHandler().registerGUI((propertiesGuiProvider = constructSettingsGuiProvider(guiIDSettings)), ExtendedGuiHandler.ASPECT);
+        } else {
+            propertiesGuiProvider = null;
+        }
+    }
+
+    protected IGuiContainerProvider constructSettingsGuiProvider(int guiId) {
+        return new GuiProviderSettings(guiId, getMod());
     }
 
     @Override
@@ -53,22 +76,29 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     }
 
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>> AspectProperties getProperties(Network network, P partType, PartTarget target, S state) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>> AspectProperties getProperties(P partType, PartTarget target, S state) {
         AspectProperties properties = state.getAspectProperties(this);
         if(properties == null) {
             properties = getDefaultProperties().clone();
         }
-        setProperties(network, partType, target, state, properties);
+        setProperties(partType, target, state, properties);
         return properties;
     }
 
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void setProperties(Network network, P partType, PartTarget target, S state, AspectProperties properties) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void setProperties(P partType, PartTarget target, S state, AspectProperties properties) {
         state.setAspectProperties(this, properties);
     }
 
+    @Override
     public final AspectProperties getDefaultProperties() {
         return defaultProperties;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public Collection<AspectPropertyTypeInstance> getPropertyTypes() {
+        return getDefaultProperties().getTypes();
     }
 
     /**
@@ -79,8 +109,29 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         return null;
     }
 
+    protected ModBase getMod() {
+        return IntegratedDynamics._instance;
+    }
+
     protected String getModId() {
-        return Reference.MOD_ID;
+        return getMod().getModId();
+    }
+
+    @Data
+    public static class GuiProviderSettings implements IGuiContainerProvider {
+
+        private final int guiID;
+        private final ModBase mod;
+
+        @Override
+        public Class<? extends Container> getContainer() {
+            return ContainerAspectSettings.class;
+        }
+
+        @Override
+        public Class<? extends GuiScreen> getGui() {
+            return GuiAspectSettings.class;
+        }
     }
 
 }

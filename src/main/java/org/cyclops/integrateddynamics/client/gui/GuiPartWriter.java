@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
@@ -30,13 +31,8 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
 
     private static final int ERROR_X = 152;
     private static final int ERROR_Y = 20;
-    private static final int ERROR_WIDTH = 13;
-    private static final int ERROR_HEIGHT = 13;
-
     private static final int OK_X = 152;
     private static final int OK_Y = 20;
-    private static final int OK_WIDTH = 14;
-    private static final int OK_HEIGHT = 14;
 
     /**
      * Make a new instance.
@@ -59,7 +55,7 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
         // Render error tooltip
         List<L10NHelpers.UnlocalizedString> errors = getPartState().getErrors(aspect);
         if(!errors.isEmpty()) {
-            if(isPointInRegion(ERROR_X, ERROR_Y + index * container.getAspectBoxHeight(), ERROR_WIDTH, ERROR_HEIGHT, mouseX, mouseY)) {
+            if(isPointInRegion(ERROR_X, ERROR_Y + index * container.getAspectBoxHeight(), Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
                 List<String> lines = Lists.newLinkedList();
                 for(L10NHelpers.UnlocalizedString error : errors) {
                     lines.addAll(StringHelpers.splitLines(error.localize(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
@@ -83,11 +79,11 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
         // Render error symbol
         mc.renderEngine.bindTexture(texture);
         if(!getPartState().getErrors(aspect).isEmpty()) {
-            drawTexturedModalRect(guiLeft + offsetX + ERROR_X,
-                    guiTop + offsetY + ERROR_Y + aspectBoxHeight * index, 195, 0, ERROR_WIDTH, ERROR_HEIGHT);
+            Images.ERROR.draw(this, guiLeft + offsetX + ERROR_X,
+                    guiTop + offsetY + ERROR_Y + aspectBoxHeight * index);
         } else if(getPartState().getActiveAspect() == aspect) {
-            drawTexturedModalRect(guiLeft + offsetX + OK_X,
-                    guiTop + offsetY + OK_Y + aspectBoxHeight * index, 195, 13, OK_WIDTH, OK_HEIGHT);
+            Images.OK.draw(this, guiLeft + offsetX + OK_X,
+                    guiTop + offsetY + OK_Y + aspectBoxHeight * index);
         }
     }
 

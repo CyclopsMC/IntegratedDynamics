@@ -1,12 +1,14 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonImage;
+import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -20,6 +22,8 @@ import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Gui for parts.
@@ -36,6 +40,8 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
     private final IPartContainer partContainer;
     private final P partType;
 
+    private Map<IAspect, GuiButtonText> aspectPropertyButtons = Maps.newHashMap();
+
     /**
      * Make a new instance.
      * @param container The container to make the GUI for.
@@ -49,9 +55,15 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
 
     @Override
     public void initGui() {
+        buttonList.clear();
         super.initGui();
         if(getPartType() instanceof PartTypeConfigurable && ((PartTypeConfigurable) getPartType()).hasSettings()) {
             buttonList.add(new GuiButtonImage(ContainerMultipart.BUTTON_SETTINGS, this.guiLeft + 174, this.guiTop + 4, 15, 15, Images.CONFIG_BOARD, -2, -3, true));
+        }
+        for(Map.Entry<IAspect, Integer> entry : (Set<Map.Entry<IAspect, Integer>>) ((ContainerMultipart) getContainer()).getAspectPropertyButtons().entrySet()) {
+            GuiButtonText button = new GuiButtonText(entry.getValue(), -20, -20, 10, 10, "+", true);
+            aspectPropertyButtons.put(entry.getKey(), button);
+            buttonList.add(button);
         }
     }
 
@@ -77,6 +89,12 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         FontRenderer fontRenderer = fontRendererObj;
+
+        // Reset button positions
+        for(Map.Entry<IAspect, GuiButtonText> entry : this.aspectPropertyButtons.entrySet()) {
+            entry.getValue().xPosition = -20;
+            entry.getValue().yPosition = -20;
+        }
 
         // Draw part name
         RenderHelpers.drawScaledCenteredString(fontRenderer, L10NHelpers.localize(getPartType().getUnlocalizedName()),
@@ -107,6 +125,12 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
                         60, Helpers.RGBToInt(40, 40, 40));
 
                 drawAdditionalElementInfo(container, i, aspect);
+
+                if(aspectPropertyButtons.containsKey(aspect)) {
+                    GuiButtonText button = aspectPropertyButtons.get(aspect);
+                    button.xPosition = this.guiLeft + offsetX + 116;
+                    button.yPosition = this.guiTop + offsetY + 20 + aspectBoxHeight * i;
+                }
             }
         }
     }

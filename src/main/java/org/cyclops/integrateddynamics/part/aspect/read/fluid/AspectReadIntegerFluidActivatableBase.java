@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect.read.fluid;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import net.minecraftforge.fluids.FluidTankInfo;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -33,7 +33,7 @@ public abstract class AspectReadIntegerFluidActivatableBase extends AspectReadIn
 
     @Override
     protected AspectProperties createDefaultProperties() {
-        AspectProperties properties = new AspectProperties(Sets.<AspectPropertyTypeInstance>newHashSet(
+        AspectProperties properties = new AspectProperties(Lists.<AspectPropertyTypeInstance>newArrayList(
                 PROP_TANKID
         ));
         properties.setValue(PROP_TANKID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.

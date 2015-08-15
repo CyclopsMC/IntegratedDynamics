@@ -3,19 +3,16 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
-
-import java.util.List;
 
 /**
  * An element inside the logic programmer.
  * @author rubensworks
  */
-public interface ILogicProgrammerElement {
+public interface ILogicProgrammerElement extends IGuiInputElement<GuiLogicProgrammer, ContainerLogicProgrammer> {
 
     /**
      * @return The element type.
@@ -26,21 +23,6 @@ public interface ILogicProgrammerElement {
      * @return The string used to match regex searching.
      */
     public String getMatchString();
-
-    /**
-     * @return Localized name used for rendering.
-     */
-    public String getLocalizedNameFull();
-
-    /**
-     * @param lines The list to add tooltip lines to.
-     */
-    public void loadTooltip(List<String> lines);
-
-    /**
-     * @return The render pattern.
-     */
-    public IConfigRenderPattern getRenderPattern();
 
     /**
      * Called when an input item slot has been updated.
@@ -67,32 +49,6 @@ public interface ILogicProgrammerElement {
      * @return If this element can be deactivated.
      */
     public boolean canCurrentlyReadFromOtherItem();
-
-    /**
-     * Called when this element is activated.
-     */
-    public void activate();
-
-    /**
-     * Called when this element is deactivated.
-     */
-    public void deactivate();
-
-    /**
-     * Validates the current state of the element.
-     * @return An error or null.
-     */
-    public L10NHelpers.UnlocalizedString validate();
-
-    /**
-     * @return The color used to identify this element.
-     */
-    public int getColor();
-
-    /**
-     * @return The symbol used to identify this element.
-     */
-    public String getSymbol();
 
     /**
      * @param variableFacade A variable facade

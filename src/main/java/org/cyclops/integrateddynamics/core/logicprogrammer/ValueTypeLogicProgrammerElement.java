@@ -1,10 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
-import lombok.Data;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -15,34 +12,23 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
-import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeValueChangedPacket;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
  * Element for value type.
  * @author rubensworks
  */
-@Data
-public class ValueTypeElement implements ILogicProgrammerElement {
+public class ValueTypeLogicProgrammerElement extends ValueTypeGuiElement<GuiLogicProgrammer, ContainerLogicProgrammer> implements ILogicProgrammerElement {
 
-    private final IValueType valueType;
-    private final String defaultInputString;
-    private String inputString;
-
-    public ValueTypeElement(IValueType valueType) {
-        this.valueType = valueType;
-        defaultInputString = getValueType().toCompactString(getValueType().getDefault());
-    }
-
-    public void setInputString(String inputString) {
-        this.inputString = inputString;
+    public ValueTypeLogicProgrammerElement(IValueType valueType) {
+        super(valueType);
     }
 
     @Override
@@ -61,11 +47,6 @@ public class ValueTypeElement implements ILogicProgrammerElement {
     }
 
     @Override
-    public void loadTooltip(List<String> lines) {
-        getValueType().loadTooltip(lines, true);
-    }
-
-    @Override
     public IConfigRenderPattern getRenderPattern() {
         return IConfigRenderPattern.NONE;
     }
@@ -77,41 +58,33 @@ public class ValueTypeElement implements ILogicProgrammerElement {
 
     @Override
     public boolean canWriteElementPre() {
-        return inputString != null && !inputString.isEmpty();
-    }
-
-    protected int[] getVariableIds(IVariableFacade[] inputVariables) {
-        int[] variableIds = new int[inputVariables.length];
-        for(int i = 0; i < inputVariables.length; i++) {
-            variableIds[i] = inputVariables[i].getId();
-        }
-        return variableIds;
+        return getInputString() != null && !getInputString().isEmpty();
     }
 
     @Override
     public ItemStack writeElement(ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY, new ValueTypeVariableFacadeFactory(valueType, inputString));
+        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY, new ValueTypeVariableFacadeFactory(getValueType(), getInputString()));
     }
 
     @Override
     public boolean canCurrentlyReadFromOtherItem() {
-        return this.inputString == null || this.inputString.equals(defaultInputString);
+        return this.getInputString() == null || this.getInputString().equals(getDefaultInputString());
     }
 
     @Override
     public void activate() {
-        this.inputString = new String(defaultInputString);
+        setInputString(new String(getDefaultInputString()));
     }
 
     @Override
     public void deactivate() {
-        this.inputString = null;
+        setInputString(null);
     }
 
     @Override
     public L10NHelpers.UnlocalizedString validate() {
-        return getValueType().canDeserialize(inputString);
+        return getValueType().canDeserialize(getInputString());
     }
 
     @Override
@@ -137,7 +110,7 @@ public class ValueTypeElement implements ILogicProgrammerElement {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public SubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
         return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
@@ -164,42 +137,11 @@ public class ValueTypeElement implements ILogicProgrammerElement {
     }
 
     @SideOnly(Side.CLIENT)
-    protected class SubGuiRenderPattern extends SubGuiConfigRenderPattern<ValueTypeElement> {
+    protected class SubGuiRenderPattern extends ValueTypeGuiElement<GuiLogicProgrammer, ContainerLogicProgrammer>.SubGuiRenderPattern {
 
-        private GuiTextField searchField = null;
-
-        public SubGuiRenderPattern(ValueTypeElement element, int baseX, int baseY, int maxWidth, int maxHeight,
+        public SubGuiRenderPattern(ValueTypeLogicProgrammerElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                    GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-        }
-
-        @Override
-        public void initGui(int guiLeft, int guiTop) {
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-            int searchWidth = 71;
-            int searchX = getX() + 14;
-            int searchY = getY() + 6;
-            this.searchField = new GuiTextField(0, fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth, fontRenderer.FONT_HEIGHT);
-            this.searchField.setMaxStringLength(64);
-            this.searchField.setMaxStringLength(15);
-            this.searchField.setEnableBackgroundDrawing(false);
-            this.searchField.setVisible(true);
-            this.searchField.setTextColor(16777215);
-            this.searchField.setCanLoseFocus(true);
-            this.searchField.setText(getValueType().toCompactString(getValueType().getDefault()));
-            inputString = searchField.getText();
-            this.searchField.width = searchWidth;
-            this.searchField.xPosition = guiLeft + (searchX + searchWidth) - this.searchField.width;
-        }
-
-        @Override
-        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-
-            textureManager.bindTexture(TEXTURE);
-            this.drawTexturedModalRect(searchField.xPosition - 1, searchField.yPosition - 1, 21, 0, searchField.width + 1, 12);
-            // Textbox
-            searchField.drawTextBox();
         }
 
         @Override
@@ -216,26 +158,6 @@ public class ValueTypeElement implements ILogicProgrammerElement {
                     gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
                 }
             }
-        }
-
-        @Override
-        public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException {
-            if (!checkHotbarKeys) {
-                if (searchField.textboxKeyTyped(typedChar, keyCode)) {
-                    inputString = searchField.getText();
-                    container.onDirty();
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                            new LogicProgrammerValueTypeValueChangedPacket(inputString));
-                    return true;
-                }
-            }
-            return super.keyTyped(checkHotbarKeys, typedChar, keyCode);
-        }
-
-        @Override
-        public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-            searchField.mouseClicked(mouseX, mouseY, mouseButton);
-            super.mouseClicked(mouseX, mouseY, mouseButton);
         }
 
     }

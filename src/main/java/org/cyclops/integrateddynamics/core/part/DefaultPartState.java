@@ -96,6 +96,7 @@ public abstract class DefaultPartState<P extends IPartType> implements IPartStat
     @Override
     public void setAspectProperties(IAspect aspect, AspectProperties properties) {
         aspectProperties.put(aspect.getUnlocalizedName(), properties);
+        sendUpdate();
     }
 
 }

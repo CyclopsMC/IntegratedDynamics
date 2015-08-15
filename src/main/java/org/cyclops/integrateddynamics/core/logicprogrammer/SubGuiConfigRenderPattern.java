@@ -1,28 +1,29 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.inventory.Container;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
+import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 
 /**
  * Sub gui for logic programmer elements.
  * @author rubensworks
  */
-public class SubGuiConfigRenderPattern<E extends ILogicProgrammerElement> extends SubGuiBox {
+public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui, C extends Container> extends SubGuiBox {
 
     protected final E element;
     private final int x, y;
-    protected final GuiLogicProgrammer gui;
-    protected final ContainerLogicProgrammer container;
+    protected final G gui;
+    protected final C container;
 
     public SubGuiConfigRenderPattern(E element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                     GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+                                     G gui, C container) {
         super(SubGuiBox.Box.LIGHT);
         this.element = element;
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();

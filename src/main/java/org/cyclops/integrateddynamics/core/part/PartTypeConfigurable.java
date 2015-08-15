@@ -22,8 +22,12 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
 
     public PartTypeConfigurable(String name) {
         super(name);
-        int guiIDSettings = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
-        getMod().getGuiHandler().registerGUI((settingsGuiProvider = constructSettingsGuiProvider(guiIDSettings)), ExtendedGuiHandler.PART);
+        if(hasSettings()) {
+            int guiIDSettings = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
+            getMod().getGuiHandler().registerGUI((settingsGuiProvider = constructSettingsGuiProvider(guiIDSettings)), ExtendedGuiHandler.PART);
+        } else {
+            settingsGuiProvider = null;
+        }
     }
 
     protected IGuiContainerProvider constructSettingsGuiProvider(int guiId) {

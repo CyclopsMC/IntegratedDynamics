@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
+import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,6 +9,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
@@ -24,7 +26,9 @@ import org.cyclops.integrateddynamics.core.part.*;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -44,6 +48,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
     private final P partType;
     private final World world;
     private final BlockPos pos;
+    private final Map<IAspect, Integer> aspectPropertyButtons = Maps.newHashMap();
 
     protected final IInventory inputSlots;
     protected final EntityPlayer player;
@@ -85,6 +90,30 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
                 }
             }
         });
+
+        int nextButtonId = 2;
+        for(final IAspect aspect : getUnfilteredItems()) {
+            if(aspect.hasProperties()) {
+                aspectPropertyButtons.put(aspect, nextButtonId);
+                putButtonAction(nextButtonId, new IButtonActionServer<InventoryContainer>() {
+                    @Override
+                    public void onAction(int buttonId, InventoryContainer container) {
+                        IGuiContainerProvider gui = aspect.getPropertiesGuiProvider();
+                        IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.ASPECT, Pair.of(getTarget().getCenter().getSide(), aspect));
+                        if (!MinecraftHelpers.isClientSide()) {
+                            BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
+                            ContainerMultipart.this.player.openGui(gui.getMod(), gui.getGuiID(),
+                                    world, cPos.getX(), cPos.getY(), cPos.getZ());
+                        }
+                    }
+                });
+                nextButtonId++;
+            }
+        }
+    }
+
+    public Map<IAspect, Integer> getAspectPropertyButtons() {
+        return Collections.unmodifiableMap(this.aspectPropertyButtons);
     }
 
     @SuppressWarnings("unchecked")

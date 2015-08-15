@@ -56,7 +56,7 @@ public abstract class LazyAspectVariable<V extends IValue> implements IAspectVar
             Pair<IPartType, IPartState> partData = PartPos.getPartData(pos);
             Network network = PartPos.getNetwork(pos);
             if (partData != null && network != null) {
-                cachedProperties = getAspect().getProperties(network, partData.getLeft(), getTarget(), partData.getRight());
+                cachedProperties = getAspect().getProperties(partData.getLeft(), getTarget(), partData.getRight());
             }
         }
         return cachedProperties;

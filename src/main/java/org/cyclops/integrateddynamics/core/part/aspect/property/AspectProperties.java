@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,8 +35,19 @@ public class AspectProperties implements INBTSerializable {
     }
 
     /**
+     * Only called for NBT serialization
+     */
+    public AspectProperties() {
+
+    }
+
+    /**
+     * Use this with caution!
+     * Better to use {@link IAspect#getPropertyTypes()} instead because this object might hold deprecated elements.
+     * @deprecated Use {@link IAspect#getPropertyTypes()}.
      * @return The types.
      */
+    @Deprecated
     public Collection<AspectPropertyTypeInstance> getTypes() {
         return Collections.unmodifiableCollection(values.keySet());
     }
@@ -103,7 +115,7 @@ public class AspectProperties implements INBTSerializable {
     /**
      * @return A deep copy of the properties.
      */
-    @SuppressWarnings("CloneDoesntCallSuperClone")
+    @SuppressWarnings({"CloneDoesntCallSuperClone", "deprecation"})
     public AspectProperties clone() {
         AspectProperties clone = new AspectProperties(getTypes());
         for(AspectPropertyTypeInstance type : getTypes()) {
