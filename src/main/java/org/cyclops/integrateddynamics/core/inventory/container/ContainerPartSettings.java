@@ -6,6 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
@@ -52,15 +54,17 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         lastUpdateValueId = getNextValueId();
     }
 
+    public int getLastUpdateValueId() {
+        return lastUpdateValueId;
+    }
+
     @Override
     protected void initializeValues() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setInteger("value", getPartType().getUpdateInterval(getPartState()));
-        setValue(lastUpdateValueId, tag);
+        ValueNotifierHelpers.setValue(this, lastUpdateValueId, getPartType().getUpdateInterval(getPartState()));
     }
 
     public int getLastUpdateValue() {
-        return getValue(lastUpdateValueId).getInteger("value");
+        return ValueNotifierHelpers.getValueInt(this, lastUpdateValueId);
     }
 
     @SuppressWarnings("unchecked")
@@ -76,5 +80,13 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     @Override
     protected int getSizeInventory() {
         return 0;
+    }
+
+    @Override
+    public void onUpdate(int valueId, NBTTagCompound value) {
+        super.onUpdate(valueId, value);
+        if(!MinecraftHelpers.isClientSide()) {
+            getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
+        }
     }
 }

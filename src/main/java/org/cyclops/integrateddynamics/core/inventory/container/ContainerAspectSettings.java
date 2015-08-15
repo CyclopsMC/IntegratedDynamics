@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
@@ -90,9 +91,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
     }
 
     public void setValue(AspectPropertyTypeInstance property, IValue value) {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("value", property.getType().serialize(value));
-        setValue(propertyIds.inverse().get(property), tag);
+        ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), property.getType().serialize(value));
     }
 
     @SuppressWarnings("unchecked")
@@ -112,10 +111,8 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
 
     public <T extends IValueType<V>, V extends IValue> V getPropertyValue(AspectPropertyTypeInstance<T, V> property) {
         if(propertyIds.containsValue(property)) {
-            int propertyId = propertyIds.inverse().get(property);
-            NBTTagCompound tag = getValue(propertyId);
-            if (tag != null) {
-                String value = tag.getString("value");
+            String value = ValueNotifierHelpers.getValueString(this, propertyIds.inverse().get(property));
+            if(value != null) {
                 return property.getType().deserialize(value);
             }
         }
@@ -130,7 +127,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
             if (property != null) {
                 AspectProperties aspectProperties = getAspect().getProperties(getPartType(), getTarget(), getPartState());
                 aspectProperties = aspectProperties.clone();
-                IValue trueValue = property.getType().deserialize(value.getString("value"));
+                IValue trueValue = property.getType().deserialize(value.getString(ValueNotifierHelpers.KEY));
                 aspectProperties.setValue(property, trueValue);
                 getAspect().setProperties(getPartType(), getTarget(), getPartState(), aspectProperties);
             }

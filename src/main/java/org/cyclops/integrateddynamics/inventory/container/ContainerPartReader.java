@@ -6,10 +6,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
@@ -174,19 +174,15 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     public void setReadValue(IAspectRead aspectRead, Pair<String, Integer> readValue) {
         int valueId = readValueIds.inverse().get(aspectRead);
         int colorId = readColorIds.inverse().get(aspectRead);
-        NBTTagCompound tagValue = new NBTTagCompound();
-        tagValue.setString("value", readValue.getLeft());
-        NBTTagCompound tagColor = new NBTTagCompound();
-        tagColor.setInteger("value", readValue.getRight());
-        setValue(valueId, tagValue);
-        setValue(colorId, tagColor);
+        ValueNotifierHelpers.setValue(this, valueId, readValue.getLeft());
+        ValueNotifierHelpers.setValue(this, colorId, readValue.getRight());
     }
 
     public Pair<String, Integer> getReadValue(IAspectRead aspect) {
         int valueId = readValueIds.inverse().get(aspect);
         int colorId = readColorIds.inverse().get(aspect);
         try {
-            return Pair.of(getValue(valueId).getString("value"), getValue(colorId).getInteger("value"));
+            return Pair.of(ValueNotifierHelpers.getValueString(this, valueId), ValueNotifierHelpers.getValueInt(this, colorId));
         } catch(NullPointerException e) {
             return null;
         }

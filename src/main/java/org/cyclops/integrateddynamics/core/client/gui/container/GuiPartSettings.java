@@ -11,10 +11,9 @@ import org.cyclops.cyclopscore.client.gui.component.input.GuiNumberField;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
-import org.cyclops.integrateddynamics.core.network.packet.ActionSetUpdateIntervalPacket;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
@@ -102,7 +101,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         if(guibutton.id == BUTTON_SAVE) {
             try {
                 int updateInterval = numberField.getInt();
-                IntegratedDynamics._instance.getPacketHandler().sendToServer(new ActionSetUpdateIntervalPacket(updateInterval));
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
             } catch (NumberFormatException e) { }
         }
     }
