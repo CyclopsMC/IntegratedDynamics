@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.read.fluid;
 
 import net.minecraftforge.fluids.FluidTankInfo;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**
  * Aspect that checks if the target tank is empty.
@@ -14,7 +15,7 @@ public class AspectReadBooleanFluidNonEmpty extends AspectReadBooleanFluidBase {
     }
 
     @Override
-    protected boolean getValue(FluidTankInfo[] tankInfo) {
+    protected boolean getValue(FluidTankInfo[] tankInfo, AspectProperties properties) {
         boolean hasFluid = false;
         for(FluidTankInfo tank : tankInfo) {
             if(tank.fluid != null && tank.fluid.amount > 0) {

@@ -46,7 +46,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
         }
         IAspectVariable<V> variable = partState.getVariable(aspect);
         if(variable == null) {
-            variable = aspect.createNewVariable(target);
+            variable = aspect.createNewVariable(target, aspect);
             partState.setVariable(aspect, variable);
         }
         return variable;

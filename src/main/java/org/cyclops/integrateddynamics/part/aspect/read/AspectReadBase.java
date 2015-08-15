@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.core.part.aspect.LazyAspectVariable;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.part.aspect.AspectBase;
@@ -55,16 +56,17 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
     /**
      * This is only called lazy.
      * @param target The target to get the value for.
+     * @param properties The optional properties for this aspect.
      * @return The value that will be inserted into a variable so it can be used elsewhere.
      */
-    protected abstract V getValue(PartTarget target);
+    protected abstract V getValue(PartTarget target, AspectProperties properties);
 
     @Override
-    public IAspectVariable<V> createNewVariable(final PartTarget target) {
-        return new LazyAspectVariable<V>(getValueType(), target) {
+    public IAspectVariable<V> createNewVariable(final PartTarget target, final IAspectRead<V, T> aspect) {
+        return new LazyAspectVariable<V>(getValueType(), target, aspect) {
             @Override
             public V getValueLazy() {
-                return AspectReadBase.this.getValue(target);
+                return AspectReadBase.this.getValue(target, getAspectProperties());
             }
         };
     }

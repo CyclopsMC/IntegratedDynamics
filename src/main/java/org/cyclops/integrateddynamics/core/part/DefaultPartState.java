@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import com.google.common.collect.Maps;
 import lombok.experimental.Delegate;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
@@ -8,6 +9,10 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.nbt.NBTProviderComponent;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+
+import java.util.Map;
 
 /**
  * A default implementation of the {@link org.cyclops.integrateddynamics.core.part.IPartState} with auto-persistence
@@ -24,6 +29,8 @@ public abstract class DefaultPartState<P extends IPartType> implements IPartStat
     private int updateInterval = GeneralConfig.defaultPartUpdateFreq;
     @NBTPersist
     private int id = -1;
+    @NBTPersist
+    private Map<String, AspectProperties> aspectProperties = Maps.newHashMap();
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
@@ -79,6 +86,16 @@ public abstract class DefaultPartState<P extends IPartType> implements IPartStat
      */
     public void sendUpdate() {
         this.update = true;
+    }
+
+    @Override
+    public AspectProperties getAspectProperties(IAspect aspect) {
+        return aspectProperties.get(aspect.getUnlocalizedName());
+    }
+
+    @Override
+    public void setAspectProperties(IAspect aspect, AspectProperties properties) {
+        aspectProperties.put(aspect.getUnlocalizedName(), properties);
     }
 
 }

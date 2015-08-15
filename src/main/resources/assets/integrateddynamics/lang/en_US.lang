@@ -131,6 +131,9 @@ aspect.aspects.integrateddynamics.read.integer.fluid.temperature.info=The temper
 aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.name=Fluid Viscosity
 aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.info=The viscosity of the fluid in the active tank
 
+# Aspect property types
+aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
+
 # Operators
 operator.tooltip.operatorName=§eOperator: §r%s (%s)
 operator.tooltip.operatorCategory=§eCategory: §r%s

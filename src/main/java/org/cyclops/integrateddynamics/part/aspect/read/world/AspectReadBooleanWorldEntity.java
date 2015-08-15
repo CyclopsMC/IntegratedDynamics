@@ -7,6 +7,7 @@ import net.minecraft.util.AxisAlignedBB;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class AspectReadBooleanWorldEntity extends AspectReadBooleanWorldBase {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target) {
+    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target, AspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
                 new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), Predicate());

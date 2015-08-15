@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 import java.util.Comparator;
 import java.util.List;
@@ -45,6 +46,40 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * @param <S> The part state.
      */
     public <P extends IPartType<P, S>, S extends IPartState<P>> void update(Network network, P partType, PartTarget target, S state);
+
+    /**
+     * @return If this aspect supports additional properties.
+     */
+    public <P extends IPartType<P, S>, S extends IPartState<P>> boolean hasProperties();
+
+    /**
+     * Get the current properties of this aspect in the given part.
+     * * @param network The network to update in.
+     * @param partType The part type.
+     * @param target The position that is targeted by the given part.
+     * @param state The current state of the given part.
+     * @param <P> The part type type.
+     * @param <S> The part state.
+     * @return The current properties.
+     */
+    public <P extends IPartType<P, S>, S extends IPartState<P>> AspectProperties getProperties(Network network, P partType, PartTarget target, S state);
+
+    /**
+     * Set the new properties of this aspect in the given part.
+     * @param network The network to update in.
+     * @param partType The part type.
+     * @param target The position that is targeted by the given part.
+     * @param state The current state of the given part.
+     * @param <P> The part type type.
+     * @param <S> The part state.
+     * @param properties The new properties.
+     */
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void setProperties(Network network, P partType, PartTarget target, S state, AspectProperties properties);
+
+    /**
+     * @return The default properties for this aspect.
+     */
+    public AspectProperties getDefaultProperties();
 
     /**
      * Use this comparator for any comparisons with aspects.

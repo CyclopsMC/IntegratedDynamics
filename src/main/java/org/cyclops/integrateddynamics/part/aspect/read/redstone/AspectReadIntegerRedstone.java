@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadIntegerBase;
 
 /**
@@ -17,7 +18,7 @@ public class AspectReadIntegerRedstone extends AspectReadIntegerBase {
     }
 
     @Override
-    protected ValueTypeInteger.ValueInteger getValue(PartTarget target) {
+    protected ValueTypeInteger.ValueInteger getValue(PartTarget target, AspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         int value = dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), target.getCenter().getSide());
         return ValueTypeInteger.ValueInteger.of(value);

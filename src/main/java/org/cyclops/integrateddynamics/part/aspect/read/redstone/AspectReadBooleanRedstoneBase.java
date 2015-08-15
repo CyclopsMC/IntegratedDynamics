@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBooleanBase;
 
 /**
@@ -19,7 +20,7 @@ public abstract class AspectReadBooleanRedstoneBase extends AspectReadBooleanBas
     protected abstract String getUnlocalizedBooleanRedstoneType();
 
     @Override
-    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target) {
+    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target, AspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         boolean value = AspectReadBooleanRedstoneBase.this.getValue(dimPos.getWorld().getRedstonePower(
                 dimPos.getBlockPos(), target.getCenter().getSide()));

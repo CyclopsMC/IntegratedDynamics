@@ -5,6 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**
  * Aspect that checks if the target is an inventory.
@@ -18,7 +19,7 @@ public class AspectReadBooleanInventoryApplicable extends AspectReadBooleanInven
     }
 
     @Override
-    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target) {
+    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target, AspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         return ValueTypeBoolean.ValueBoolean.of(tile instanceof IInventory);

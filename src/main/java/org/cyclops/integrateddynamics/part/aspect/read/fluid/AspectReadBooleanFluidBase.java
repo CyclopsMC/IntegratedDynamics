@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBooleanBase;
 
 /**
@@ -21,20 +22,20 @@ public abstract class AspectReadBooleanFluidBase extends AspectReadBooleanBase {
 
     protected abstract String getUnlocalizedBooleanFluidType();
 
-    protected abstract boolean getValue(FluidTankInfo[] tankInfo);
+    protected abstract boolean getValue(FluidTankInfo[] tankInfo, AspectProperties properties);
 
     protected boolean getDefaultValue() {
         return false;
     }
 
     @Override
-    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target) {
+    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target, AspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         if(tile instanceof IFluidHandler) {
             IFluidHandler fluidHandler = (IFluidHandler) tile;
             FluidTankInfo[] tankInfo = fluidHandler.getTankInfo(target.getTarget().getSide());
-            return ValueTypeBoolean.ValueBoolean.of(getValue(tankInfo));
+            return ValueTypeBoolean.ValueBoolean.of(getValue(tankInfo, properties));
         }
         return ValueTypeBoolean.ValueBoolean.of(getDefaultValue());
     }

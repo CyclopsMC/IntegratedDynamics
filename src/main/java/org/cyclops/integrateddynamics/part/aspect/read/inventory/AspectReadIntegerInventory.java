@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadIntegerBase;
 
 /**
@@ -20,7 +21,7 @@ public class AspectReadIntegerInventory extends AspectReadIntegerBase {
     }
 
     @Override
-    protected ValueTypeInteger.ValueInteger getValue(PartTarget target) {
+    protected ValueTypeInteger.ValueInteger getValue(PartTarget target, AspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         int value = 0;

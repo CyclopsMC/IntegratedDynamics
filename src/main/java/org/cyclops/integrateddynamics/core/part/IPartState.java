@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**
  * A value holder for an {@link IPartType}.
@@ -66,5 +69,21 @@ public interface IPartState<P extends IPartType> {
      * @return If this state has changed since the last time and needs to be updated to the client.
      */
     public boolean isUpdateAndReset();
+
+    /**
+     * Get the properties for the given aspect.
+     * This will only retrieve the already saved properties, so this could be null if not set before.
+     * It is better to call the {@link IAspect#getProperties(Network, IPartType, PartTarget, IPartState)} method instead.
+     * @param aspect The aspect to get the properties from.
+     * @return The properties, this can be null if still the default.
+     */
+    public AspectProperties getAspectProperties(IAspect aspect);
+
+    /**
+     * Set the properties for the given aspect.
+     * @param aspect The aspect to get the properties from.
+     * @param properties The properties, this can be null if still the default.
+     */
+    public void setAspectProperties(IAspect aspect, AspectProperties properties);
 
 }

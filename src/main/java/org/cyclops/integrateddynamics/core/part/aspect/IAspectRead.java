@@ -13,8 +13,9 @@ public interface IAspectRead<V extends IValue, T extends IValueType<V>> extends 
     /**
      * Creates a new variable for this aspect.
      * @param target The target for this aspect.
+     * @param aspect The aspect.
      * @return The variable pointing to the given target.
      */
-    public IAspectVariable<V> createNewVariable(PartTarget target);
+    public IAspectVariable<V> createNewVariable(PartTarget target, IAspectRead<V, T> aspect);
 
 }
