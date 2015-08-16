@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.EnumChatFormatting;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonImage;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
@@ -19,6 +20,7 @@ import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.part.*;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 
 import java.awt.*;
 import java.util.List;
@@ -150,12 +152,29 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         ContainerMultipart<P, S, A> container = (ContainerMultipart) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
+                // Item icon tooltip
                 if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
                     List<String> lines = Lists.newLinkedList();
                     container.getVisibleElement(i).loadTooltip(lines, true);
                     drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
                 }
                 drawAdditionalElementInfoForeground(container, i, container.getVisibleElement(i), mouseX, mouseY);
+
+                // Optional aspect properties tooltip
+                IAspect aspect = container.getVisibleElement(i);
+                if(aspectPropertyButtons.containsKey(aspect)) {
+                    GuiButtonText button = aspectPropertyButtons.get(aspect);
+                    int x = button.xPosition - guiLeft;
+                    int y = button.yPosition - guiTop;
+                    if(isPointInRegion(x, y, button.width, button.height, mouseX, mouseY)) {
+                        List<String> lines = Lists.newLinkedList();
+                        lines.add(EnumChatFormatting.WHITE + L10NHelpers.localize("gui.integrateddynamics.part.properties"));
+                        for(AspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
+                            lines.add("-" + EnumChatFormatting.YELLOW + L10NHelpers.localize(property.getUnlocalizedName()));
+                        }
+                        drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
+                    }
+                }
             }
         }
     }

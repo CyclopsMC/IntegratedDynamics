@@ -4,6 +4,7 @@ itemGroup.integrateddynamics=Integrated Dynamics
 # Gui
 gui.integrateddynamics.button.save=Save
 gui.integrateddynamics.partsettings.updateInterval=Freq.
+gui.integrateddynamics.part.properties=Properties:
 
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
