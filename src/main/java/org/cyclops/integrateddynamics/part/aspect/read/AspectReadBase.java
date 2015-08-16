@@ -62,8 +62,8 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
     protected abstract V getValue(PartTarget target, AspectProperties properties);
 
     @Override
-    public IAspectVariable<V> createNewVariable(final PartTarget target, final IAspectRead<V, T> aspect) {
-        return new LazyAspectVariable<V>(getValueType(), target, aspect) {
+    public IAspectVariable<V> createNewVariable(final PartTarget target) {
+        return new LazyAspectVariable<V>(getValueType(), target, this) {
             @Override
             public V getValueLazy() {
                 return AspectReadBase.this.getValue(target, getAspectProperties());

@@ -5,7 +5,6 @@ import lombok.NonNull;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartPos;
@@ -54,8 +53,7 @@ public abstract class LazyAspectVariable<V extends IValue> implements IAspectVar
         if(cachedProperties == null && getAspect().hasProperties()) {
             PartPos pos = getTarget().getCenter();
             Pair<IPartType, IPartState> partData = PartPos.getPartData(pos);
-            Network network = PartPos.getNetwork(pos);
-            if (partData != null && network != null) {
+            if (partData != null) {
                 cachedProperties = getAspect().getProperties(partData.getLeft(), getTarget(), partData.getRight());
             }
         }
