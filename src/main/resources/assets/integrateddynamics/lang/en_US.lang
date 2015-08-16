@@ -118,9 +118,13 @@ aspect.aspects.integrateddynamics.read.boolean.fluid.gaseous.name=Fluid Gaseous
 aspect.aspects.integrateddynamics.read.boolean.fluid.gaseous.info=If the active tank has a gaseous fluid
 
 aspect.aspects.integrateddynamics.read.integer.fluid.amount.name=Fluid Amount
-aspect.aspects.integrateddynamics.read.integer.fluid.amount.info=The total amount of fluid in mB
+aspect.aspects.integrateddynamics.read.integer.fluid.amount.info=The amount of fluid in mB in the active tank
+aspect.aspects.integrateddynamics.read.integer.fluid.totalamount.name=Total Fluid Amount
+aspect.aspects.integrateddynamics.read.integer.fluid.totalamount.info=The total amount of fluid in mB
 aspect.aspects.integrateddynamics.read.integer.fluid.capacity.name=Fluid Capacity
-aspect.aspects.integrateddynamics.read.integer.fluid.capacity.info=Total capacity of the tank
+aspect.aspects.integrateddynamics.read.integer.fluid.capacity.info=Total capacity of the active tank
+aspect.aspects.integrateddynamics.read.integer.fluid.totalcapacity.name=Total Fluid Capacity
+aspect.aspects.integrateddynamics.read.integer.fluid.totalcapacity.info=Total capacity of the tank
 aspect.aspects.integrateddynamics.read.integer.fluid.tanks.name=Tanks
 aspect.aspects.integrateddynamics.read.integer.fluid.tanks.info=The amount of tanks found at the target
 aspect.aspects.integrateddynamics.read.integer.fluid.density.name=Fluid Density

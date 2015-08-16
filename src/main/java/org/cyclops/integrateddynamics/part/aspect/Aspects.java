@@ -57,7 +57,9 @@ public class Aspects {
     public static final AspectReadBooleanFluidGaseous READ_BOOLEAN_FLUID_GASEOUS = new AspectReadBooleanFluidGaseous();
 
     public static final AspectReadIntegerFluidAmount READ_INTEGER_FLUID_AMOUNT = new AspectReadIntegerFluidAmount();
+    public static final AspectReadIntegerFluidAmountTotal READ_INTEGER_FLUID_AMOUNTTOTAL = new AspectReadIntegerFluidAmountTotal();
     public static final AspectReadIntegerFluidCapacity READ_INTEGER_FLUID_CAPACITY = new AspectReadIntegerFluidCapacity();
+    public static final AspectReadIntegerFluidCapacityTotal READ_INTEGER_FLUID_CAPACITYTOTAL = new AspectReadIntegerFluidCapacityTotal();
     public static final AspectReadIntegerFluidTanks READ_INTEGER_FLUID_TANKS = new AspectReadIntegerFluidTanks();
     public static final AspectReadIntegerFluidDensity READ_INTEGER_FLUID_DENSITY = new AspectReadIntegerFluidDensity();
     public static final AspectReadIntegerFluidLuminosity READ_INTEGER_FLUID_LUMINOSITY = new AspectReadIntegerFluidLuminosity();

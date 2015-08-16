@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.part.aspect.read.fluid;
 
-import net.minecraftforge.fluids.FluidTankInfo;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 /**
- * Aspect that checks the target tank total amount.
+ * Aspect that checks the target tank amount.
  * @author rubensworks
  */
-public class AspectReadIntegerFluidAmount extends AspectReadIntegerFluidBase {
+public class AspectReadIntegerFluidAmount extends AspectReadIntegerFluidActivatableFluidBase {
 
     @Override
     protected String getUnlocalizedIntegerFluidType() {
@@ -15,14 +15,7 @@ public class AspectReadIntegerFluidAmount extends AspectReadIntegerFluidBase {
     }
 
     @Override
-    protected int getValue(FluidTankInfo[] tankInfo, AspectProperties properties) {
-        int amount = 0;
-        for(FluidTankInfo tank : tankInfo) {
-            if(tank.fluid != null) {
-                amount += tank.fluid.amount;
-            }
-        }
-        return amount;
+    protected int getValue(Fluid fluid, FluidStack fluidStack) {
+        return fluidStack.amount;
     }
-
 }
