@@ -59,6 +59,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
     protected SubGuiValueTypeInfo propertyInfo = null;
     private GuiButtonText buttonLeft = null;
     private GuiButtonText buttonRight = null;
+    private GuiButtonText buttonExit = null;
     private L10NHelpers.UnlocalizedString lastError;
 
     /**
@@ -78,6 +79,20 @@ public class GuiAspectSettings extends GuiContainerExtended {
         aspect.getProperties(getPartType(), getTarget(), ((ContainerAspectSettings) container).getPartState());
         this.propertyTypes = Lists.newArrayList(aspect.getDefaultProperties().getTypes());
 
+        putButtonAction(BUTTON_SAVE, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
+            @Override
+            public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
+                if(guiElement != null && lastError == null) {
+                    ContainerAspectSettings aspectContainer = (ContainerAspectSettings) container;
+                    aspectContainer.setValue(getActiveProperty(), guiElement.getValueType().deserialize(guiElement.getInputString()));
+                    try {
+                        actionPerformed(buttonExit);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
         putButtonAction(BUTTON_LEFT, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
             @Override
             public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
@@ -118,7 +133,11 @@ public class GuiAspectSettings extends GuiContainerExtended {
     public void initGui() {
         super.initGui();
         subGuiHolder.initGui(this.guiLeft, this.guiTop);
-        buttonList.add(new GuiButtonText(BUTTON_EXIT, guiLeft + 7, guiTop + 5, 12, 10, "<<", true));
+        GuiButtonText buttonSave;
+        buttonList.add(buttonSave = new GuiButtonText(BUTTON_SAVE, this.guiLeft,  this.guiTop + 88,
+                L10NHelpers.localize("item.items.integrateddynamics.labeller.button.write")));
+        buttonSave.xPosition += this.getBaseXSize() - buttonSave.width - 9;
+        buttonList.add(buttonExit = new GuiButtonText(BUTTON_EXIT, guiLeft + 7, guiTop + 5, 12, 10, "<<", true));
         buttonList.add(buttonLeft = new GuiButtonText(BUTTON_LEFT, guiLeft + 21, guiTop + 5, 10, 10, "<", true));
         buttonList.add(buttonRight = new GuiButtonText(BUTTON_RIGHT, guiLeft + 159, guiTop + 5, 10, 10, ">", true));
         refreshButtonEnabled();
@@ -164,11 +183,6 @@ public class GuiAspectSettings extends GuiContainerExtended {
 
     protected void onValueChanged() {
         lastError = guiElement.validate();
-
-        if(lastError == null) {
-            ContainerAspectSettings container = (ContainerAspectSettings) this.container;
-            container.setValue(getActiveProperty(), guiElement.getValueType().deserialize(guiElement.getInputString()));
-        }
     }
 
     protected AspectPropertyTypeInstance getActiveProperty() {

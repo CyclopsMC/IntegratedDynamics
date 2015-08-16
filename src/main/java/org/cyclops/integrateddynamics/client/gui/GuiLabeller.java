@@ -46,8 +46,8 @@ public class GuiLabeller extends GuiContainerExtended {
     @Override
     public void initGui() {
         super.initGui();
-        String write = L10NHelpers.localize("item.items.integrateddynamics.labeller.button.write");
-        buttonList.add(new GuiButtonText(BUTTON_WRITE, this.guiLeft + 133,  this.guiTop + 8, fontRendererObj.getStringWidth(write) + 6, 16 , write, true));
+        buttonList.add(new GuiButtonText(BUTTON_WRITE, this.guiLeft + 133,  this.guiTop + 8,
+                L10NHelpers.localize("item.items.integrateddynamics.labeller.button.write")));
 
         Keyboard.enableRepeatEvents(true);
         int searchWidth = 87;
