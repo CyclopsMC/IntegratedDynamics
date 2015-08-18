@@ -9,6 +9,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
@@ -39,7 +40,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public String getName();
 
     /**
-     * @return The unlocalized name of this part.
+     * @return The unlocalized base name of this part.
+     */
+    public String getUnlocalizedNameBase();
+
+    /**
+     * @return The unlocalized name of this part. (With the .name suffix)
      */
     public String getUnlocalizedName();
 
@@ -47,13 +53,6 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      * @return The item associated with this part type.
      */
     public Item getItem();
-
-    /**
-     * Set the item associated with this part type.
-     * Can only be called once per type.
-     * @param item The item associated with this part type.
-     */
-    public void setItem(Item item);
 
     /**
      * @param state The state
@@ -65,6 +64,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      * @return All possible aspects that can be used in this part type.
      */
     public Set<IAspect> getAspects();
+
+    /**
+     * Called on the Integrated Dynamics mod initialization steps.
+     * @param initStep The init step.
+     */
+    public void onInit(IInitListener.Step initStep);
 
     /**
      * Write the properties of this part to NBT.

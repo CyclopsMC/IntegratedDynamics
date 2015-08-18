@@ -47,6 +47,13 @@ public final class PartTypeRegistry implements IPartTypeRegistry {
         return partTypes.get(partName);
     }
 
+    @Override
+    public void onInit(Step initStep) {
+        for(IPartType partType : getPartTypes()) {
+            partType.onInit(initStep);
+        }
+    }
+
     public static class DuplicatePartTypeException extends RuntimeException {
 
         public DuplicatePartTypeException(String msg) {

@@ -1,15 +1,10 @@
 package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
-import org.cyclops.integrateddynamics.block.InventoryReaderConfig;
-import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
@@ -37,12 +32,6 @@ public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryR
     @Override
     public DefaultPartStateReader<PartTypeInventoryReader> constructDefaultState() {
         return new DefaultPartStateReader<PartTypeInventoryReader>();
-    }
-
-    @Override
-    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side) {
-        return InventoryReaderConfig._instance.getBlockInstance().getDefaultState().withProperty(IgnoredBlock.FACING, side);
     }
 
 }

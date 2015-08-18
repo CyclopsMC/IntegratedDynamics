@@ -95,6 +95,8 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getRegistryManager().addRegistry(IOperatorRegistry.class, OperatorRegistry.getInstance());
         getRegistryManager().addRegistry(ILogicProgrammerElementTypeRegistry.class, LogicProgrammerElementTypeRegistry.getInstance());
 
+        addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
+
         ValueTypes.load();
         Operators.load();
         Aspects.load();

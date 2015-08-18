@@ -1,15 +1,10 @@
 package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
-import org.cyclops.integrateddynamics.block.FluidReaderConfig;
-import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
@@ -46,12 +41,6 @@ public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, D
     @Override
     public DefaultPartStateReader<PartTypeFluidReader> constructDefaultState() {
         return new DefaultPartStateReader<PartTypeFluidReader>();
-    }
-
-    @Override
-    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side) {
-        return FluidReaderConfig._instance.getBlockInstance().getDefaultState().withProperty(IgnoredBlock.FACING, side);
     }
 
 }

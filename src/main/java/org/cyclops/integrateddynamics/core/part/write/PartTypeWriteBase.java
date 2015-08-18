@@ -1,17 +1,24 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.client.gui.GuiPartWriter;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -26,6 +33,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     public PartTypeWriteBase(String name) {
         super(name);
+    }
+
+    @Override
+    protected Block createBlock(BlockConfig blockConfig) {
+        return new IgnoredBlockStatus(blockConfig);
     }
 
     @Override
@@ -91,6 +103,23 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @Override
     public void refresh(Network network, PartTarget target, S state) {
         state.refresh((P) this, target);
+    }
+
+    @Override
+    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+                                     int destroyStage, EnumFacing side) {
+        IPartStateWriter state = (IPartStateWriter) tile.getPartState(side);
+        IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
+        IAspectWrite aspectWrite = state.getActiveAspect();
+        if(aspectWrite != null) {
+            if(state.getErrors(aspectWrite).isEmpty()) {
+                status = IgnoredBlockStatus.Status.ACTIVE;
+            } else {
+                status = IgnoredBlockStatus.Status.ERROR;
+            }
+        }
+        return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).
+                withProperty(IgnoredBlockStatus.STATUS, status);
     }
 
     @Override

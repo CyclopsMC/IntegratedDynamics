@@ -1,8 +1,12 @@
 package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
-import org.cyclops.integrateddynamics.block.*;
-import org.cyclops.integrateddynamics.item.*;
+import org.cyclops.integrateddynamics.block.BlockCableConfig;
+import org.cyclops.integrateddynamics.block.BlockDatastoreConfig;
+import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
+import org.cyclops.integrateddynamics.item.ItemLabellerConfig;
+import org.cyclops.integrateddynamics.item.ItemVariableConfig;
+import org.cyclops.integrateddynamics.item.ItemWrenchConfig;
 
 /**
  * This class holds a set of all the configs that need to be registered.
@@ -17,24 +21,10 @@ public class Configs {
         configHandler.add(new BlockDatastoreConfig());
         configHandler.add(new BlockLogicProgrammerConfig());
 
-        // Part blocks
-        configHandler.add(new RedstoneReaderConfig());
-        configHandler.add(new RedstoneWriterConfig());
-        configHandler.add(new InventoryReaderConfig());
-        configHandler.add(new WorldReaderConfig());
-        configHandler.add(new FluidReaderConfig());
-
         // Items
         configHandler.add(new ItemWrenchConfig());
         configHandler.add(new ItemVariableConfig());
         configHandler.add(new ItemLabellerConfig());
-
-        // Part items
-        configHandler.add(new ItemPartRedstoneReaderConfig());
-        configHandler.add(new ItemPartRedstoneWriterConfig());
-        configHandler.add(new ItemPartInventoryReaderConfig());
-        configHandler.add(new ItemPartWorldReaderConfig());
-        configHandler.add(new ItemPartFluidReaderConfig());
 
     }
 

@@ -13,16 +13,6 @@ tile.blocks.integrateddynamics.logicProgrammer.name=Logic Programmer
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
-item.items.integrateddynamics.partReaderRedstone.name=Redstone Reader Part
-item.items.integrateddynamics.partReaderRedstone.info=A reader for redstone
-item.items.integrateddynamics.partReaderInventory.name=Inventory Reader Part
-item.items.integrateddynamics.partReaderInventory.info=A reader for inventories
-item.items.integrateddynamics.partReaderWorld.name=World Reader Part
-item.items.integrateddynamics.partReaderWorld.info=A reader for the world
-item.items.integrateddynamics.partReaderFluid.name=Fluid Reader Part
-item.items.integrateddynamics.partReaderFluid.info=A reader for fluid tanks
-item.items.integrateddynamics.partWriterRedstone.name=Redstone Writer Part
-item.items.integrateddynamics.partWriterRedstone.info=A writer for redstone
 item.items.integrateddynamics.wrench.name=Wrench
 item.items.integrateddynamics.variable.name=Variable Card
 item.items.integrateddynamics.variable.id=§e§oVariable ID: §r§o%s
@@ -42,10 +32,15 @@ valuetype.valuetypes.integrateddynamics.integer.name=Integer
 
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
+parttype.parttypes.integrateddynamics.redstoneReader.info=Reads redstone values
 parttype.parttypes.integrateddynamics.inventoryReader.name=Inventory Reader
+parttype.parttypes.integrateddynamics.inventoryReader.info=Reads data from inventories
 parttype.parttypes.integrateddynamics.worldReader.name=World Reader
+parttype.parttypes.integrateddynamics.worldReader.info=Reads things related to the world, blocks and entities
 parttype.parttypes.integrateddynamics.fluidReader.name=Fluid Reader
+parttype.parttypes.integrateddynamics.fluidReader.info=Reads fluid tanks
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
+parttype.parttypes.integrateddynamics.redstoneWriter.info=Writes to redstone
 
 # Variables facades
 variable.error.invalidItem=The current variable can not be used in this aspect.

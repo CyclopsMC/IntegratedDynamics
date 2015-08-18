@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import lombok.Getter;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -9,17 +10,25 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import org.cyclops.cyclopscore.config.configurabletypeaction.BlockAction;
+import org.cyclops.cyclopscore.config.configurabletypeaction.ItemAction;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.List;
@@ -34,7 +43,10 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         IGuiContainerProvider {
 
     @Getter
-    private Item item = null;
+    private final Item item;
+    private ItemConfig itemConfig;
+    @Getter
+    private final Block block;
     @Getter
     private final int guiID;
     @Getter
@@ -48,6 +60,60 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             this.guiID = -1;
         }
         this.name = name;
+        this.block = registerBlock();
+        this.item = registerItem();
+    }
+
+    /**
+     * Factory method for creating a block instance.
+     * @param blockConfig The config to register the block for.
+     * @return The block instance.
+     */
+    protected Block createBlock(BlockConfig blockConfig) {
+        return new IgnoredBlock(blockConfig);
+    }
+
+    /**
+     * Creates and registers a block instance for this part type.
+     * This is mainly used for the block model.
+     * @return The corresponding block.
+     */
+    protected Block registerBlock() {
+        BlockConfig blockConfig = new BlockConfig(getMod(), true, "part_" + getName() + "Block", null, null) {
+            @Override
+            public boolean isDisableable() {
+                return false;
+            }
+        };
+        Block block = createBlock(blockConfig);
+        BlockAction.register(block, blockConfig.getSubUniqueName(), blockConfig.getTargetTab());
+        return block;
+    }
+
+    /**
+     * Factory method for creating a item instance.
+     * @param itemConfig The config to register the item for.
+     * @return The item instance.
+     */
+    protected Item createItem(ItemConfig itemConfig) {
+        return new ItemPart<P, S>(itemConfig, this);
+    }
+
+    /**
+     * Creates and registers a item instance for this part type.
+     * This is the item used to place the part with and obtained when broken.
+     * @return The corresponding item.
+     */
+    protected Item registerItem() {
+        itemConfig = new ItemConfig(getMod(), true, "part_" + getName() + "Item", null, null) {
+            @Override
+            public boolean isDisableable() {
+                return false;
+            }
+        };
+        Item item = createItem(itemConfig);
+        ItemAction.register(item, itemConfig.getSubUniqueName(), itemConfig.getTargetTab());
+        return item;
     }
 
     @Override
@@ -56,13 +122,25 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public String getUnlocalizedNameBase() {
+        return "parttype.parttypes." + getMod().getModId() + "." + getName();
+    }
+
+    @Override
     public String getUnlocalizedName() {
-        return "parttype.parttypes." + Reference.MOD_ID + "." + getName() + ".name";
+        return getUnlocalizedNameBase() + ".name";
     }
 
     @Override
     public Set<IAspect> getAspects() {
         return Aspects.REGISTRY.getAspects(this);
+    }
+
+    @Override
+    public void onInit(IInitListener.Step initStep) {
+        if(MinecraftHelpers.isClientSide() && initStep == IInitListener.Step.INIT) {
+            ItemAction.handleItemModel(getItem(), itemConfig.getNamedId(), itemConfig.getTargetTab(), getMod().getModId(), itemConfig);
+        }
     }
 
     @Override
@@ -106,14 +184,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks) {
         itemStacks.add(getItemStack(state));
-    }
-
-    public void setItem(Item item) {
-        if(this.item != null) {
-            throw new IllegalStateException(String.format("Could not set the new item %s in %s with the already set " +
-                    "item %s.", this.item, this, item));
-        }
-        this.item = item;
     }
 
     @Override
@@ -205,6 +275,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public void onPreRemoved(Network network, PartTarget target, S state) {
 
+    }
+
+    @Override
+    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+                                     int destroyStage, EnumFacing side) {
+        return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side);
     }
 
 }

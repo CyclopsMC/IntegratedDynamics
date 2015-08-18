@@ -40,7 +40,11 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     public ItemPart(ExtendedConfig eConfig, IPartType<P, S> part) {
         super(eConfig);
         this.part = part;
-        part.setItem(this);
+    }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        return L10NHelpers.localize(part.getUnlocalizedName());
     }
 
     @Override
@@ -86,6 +90,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             int id = itemStack.getTagCompound().getInteger("id");
             list.add(L10NHelpers.localize("item.items.integrateddynamics.general.id", id));
         }
+        L10NHelpers.addOptionalInfo(list, getPart().getUnlocalizedNameBase());
         super.addInformation(itemStack, entityPlayer, list, par4);
     }
 
