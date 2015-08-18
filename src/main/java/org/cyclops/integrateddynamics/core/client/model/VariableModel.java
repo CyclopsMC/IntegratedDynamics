@@ -36,6 +36,11 @@ public class VariableModel implements IModel {
         this.base = base;
     }
 
+    public static void addAdditionalModels(ImmutableSet.Builder<ResourceLocation> builder) {
+        builder.addAll(Aspects.REGISTRY.getAspectModels());
+        builder.addAll(ValueTypes.REGISTRY.getValueTypeModels());
+    }
+
     @Override
     public Collection<ResourceLocation> getDependencies() {
         if(base.getParentLocation() == null || base.getParentLocation().getResourcePath().startsWith("builtin/")) {
@@ -43,8 +48,7 @@ public class VariableModel implements IModel {
         }
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
         builder.add(base.getParentLocation());
-        builder.addAll(Aspects.REGISTRY.getAspectModels());
-        builder.addAll(ValueTypes.REGISTRY.getValueTypeModels());
+        addAdditionalModels(builder);
         return builder.build();
     }
 
