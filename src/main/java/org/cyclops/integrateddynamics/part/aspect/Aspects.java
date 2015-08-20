@@ -49,6 +49,8 @@ public class Aspects {
     public static final AspectReadIntegerWorldTime READ_INTEGER_WORLD_TIME = new AspectReadIntegerWorldTime();
     public static final AspectReadIntegerWorldTotalTime READ_INTEGER_WORLD_TOTALTIME = new AspectReadIntegerWorldTotalTime();
 
+    public static final AspectReadStringWorldBlockName READ_STRING_WORLD_BLOCKNAME = new AspectReadStringWorldBlockName();
+
     // --- Fluid ---
     public static final AspectReadBooleanFluidFull READ_BOOLEAN_FLUID_FULL = new AspectReadBooleanFluidFull();
     public static final AspectReadBooleanFluidEmpty READ_BOOLEAN_FLUID_EMPTY = new AspectReadBooleanFluidEmpty();
@@ -65,6 +67,10 @@ public class Aspects {
     public static final AspectReadIntegerFluidLuminosity READ_INTEGER_FLUID_LUMINOSITY = new AspectReadIntegerFluidLuminosity();
     public static final AspectReadIntegerFluidTemperature READ_INTEGER_FLUID_TEMPERATURE = new AspectReadIntegerFluidTemperature();
     public static final AspectReadIntegerFluidViscosity READ_INTEGER_FLUID_VISCOSITY = new AspectReadIntegerFluidViscosity();
+
+    public static final AspectReadStringFluidName READ_STRING_FLUID_NAME = new AspectReadStringFluidName();
+    public static final AspectReadStringFluidBlockName READ_STRING_FLUID_BLOCKNAME = new AspectReadStringFluidBlockName();
+    public static final AspectReadStringFluidRarity READ_STRING_FLUID_RARITY = new AspectReadStringFluidRarity();
 
     // --------------- Write ---------------
     public static final AspectWriteBooleanRedstone WRITE_BOOLEAN_REDSTONE = new AspectWriteBooleanRedstone();

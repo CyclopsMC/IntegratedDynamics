@@ -29,6 +29,7 @@ valuetype.valuetypes.integrateddynamics.any.name=Any
 valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
+valuetype.valuetypes.integrateddynamics.string.name=String
 
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
@@ -100,6 +101,9 @@ aspect.aspects.integrateddynamics.read.integer.world.time.info=The world time de
 aspect.aspects.integrateddynamics.read.integer.world.totaltime.name=Total Time
 aspect.aspects.integrateddynamics.read.integer.world.totaltime.info=The world time independent of the set time command
 
+aspect.aspects.integrateddynamics.read.string.world.blockname.name=Block Name
+aspect.aspects.integrateddynamics.read.string.world.blockname.info=The target block name
+
 ## Fluid aspects
 aspect.aspects.integrateddynamics.read.boolean.fluid.empty.name=Tank Empty
 aspect.aspects.integrateddynamics.read.boolean.fluid.empty.info=If the target fluid tank is empty
@@ -130,6 +134,13 @@ aspect.aspects.integrateddynamics.read.integer.fluid.temperature.name=Fluid Temp
 aspect.aspects.integrateddynamics.read.integer.fluid.temperature.info=The temperature of the fluid in the active tank
 aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.name=Fluid Viscosity
 aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.info=The viscosity of the fluid in the active tank
+
+aspect.aspects.integrateddynamics.read.string.fluid.name.name=Fluid Name
+aspect.aspects.integrateddynamics.read.string.fluid.name.info=The name of fluid in the active tank
+aspect.aspects.integrateddynamics.read.string.fluid.blockname.name=Fluid Block Name
+aspect.aspects.integrateddynamics.read.string.fluid.blockname.info=The name of the fluid block in the active tank
+aspect.aspects.integrateddynamics.read.string.fluid.rarity.name=Fluid Rarity
+aspect.aspects.integrateddynamics.read.string.fluid.rarity.info=The rarity of fluid in the active tank
 
 # Aspect property types
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
@@ -188,6 +199,9 @@ operator.operators.integrateddynamics.binary.rshift.info=Right Shift with ones f
 operator.operators.integrateddynamics.binary.lshift.name=Left Shift
 operator.operators.integrateddynamics.binary.rzshift.name=Right Zero Shift
 operator.operators.integrateddynamics.binary.rzshift.info=Right Shift with zeros fill
+
+operator.operators.integrateddynamics.string.length.name=Length
+operator.operators.integrateddynamics.string.length.info=The length of the given String
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

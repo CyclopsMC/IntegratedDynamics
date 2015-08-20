@@ -15,6 +15,7 @@ public class ValueTypes {
     public static ValueTypeAny     ANY     = REGISTRY.register(new ValueTypeAny());
     public static ValueTypeBoolean BOOLEAN = REGISTRY.register(new ValueTypeBoolean());
     public static ValueTypeInteger INTEGER = REGISTRY.register(new ValueTypeInteger());
+    public static ValueTypeString  STRING  = REGISTRY.register(new ValueTypeString());
 
     private static IValueTypeRegistry constructRegistry() {
         // This also allows this registry to be used outside of a minecraft environment.

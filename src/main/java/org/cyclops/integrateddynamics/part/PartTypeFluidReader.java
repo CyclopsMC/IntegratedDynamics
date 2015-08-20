@@ -29,7 +29,10 @@ public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, D
                 Aspects.READ_INTEGER_FLUID_LUMINOSITY,
                 Aspects.READ_INTEGER_FLUID_TEMPERATURE,
                 Aspects.READ_INTEGER_FLUID_VISCOSITY,
-                Aspects.READ_BOOLEAN_FLUID_GASEOUS
+                Aspects.READ_BOOLEAN_FLUID_GASEOUS,
+                Aspects.READ_STRING_FLUID_NAME,
+                Aspects.READ_STRING_FLUID_BLOCKNAME,
+                Aspects.READ_STRING_FLUID_RARITY
         ));
     }
 

@@ -59,4 +59,24 @@ public class TestVariables {
         assertThat("deserializing 0 returns 0", i0.getType().deserialize("0"), is(i0.getValue()));
     }
 
+    @Test
+    public void testStringType() {
+        DummyVariableString s0 = new DummyVariableString(ValueTypeString.ValueString.of("0"));
+        assertThat("0 value is 0", s0.getValue().getRawValue(), is("0"));
+
+        DummyVariableString sm10 = new DummyVariableString(ValueTypeString.ValueString.of("-10"));
+        assertThat("-10 value is -10", sm10.getValue().getRawValue(), is("-10"));
+
+        DummyVariableString s10 = new DummyVariableString(ValueTypeString.ValueString.of("10"));
+        assertThat("10 value is 10", s10.getValue().getRawValue(), is("10"));
+
+        assertThat("serializing 10 returns 10", s10.getType().serialize(s10.getValue()), is("10"));
+        assertThat("serializing -10 returns -10", sm10.getType().serialize(sm10.getValue()), is("-10"));
+        assertThat("serializing 0 returns 0", s0.getType().serialize(s0.getValue()), is("0"));
+
+        assertThat("deserializing 10 returns 10", s10.getType().deserialize("10"), is(s10.getValue()));
+        assertThat("deserializing -10 returns -10", sm10.getType().deserialize("-10"), is(sm10.getValue()));
+        assertThat("deserializing 0 returns 0", s0.getType().deserialize("0"), is(s0.getValue()));
+    }
+
 }

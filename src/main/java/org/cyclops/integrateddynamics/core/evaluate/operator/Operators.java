@@ -3,10 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 
 /**
  * Collection of available operators.
@@ -362,6 +359,21 @@ public final class Operators {
             return ValueTypeInteger.ValueInteger.of(a >>> b);
         }
     }));
+
+    /**
+     * ----------------------------------- STRING OPERATORS -----------------------------------
+     */
+
+    /**
+     * Binary >>> operator with two input integers and one output integers.
+     */
+    public static final StringOperator STRING_LENGTH = REGISTRY.register(new StringOperator("len", "length", new IValueType[]{ValueTypes.STRING}, ValueTypes.INTEGER, new BaseOperator.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            String a = ((ValueTypeString.ValueString) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a.length());
+        }
+    }, IConfigRenderPattern.PREFIX_1));
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
