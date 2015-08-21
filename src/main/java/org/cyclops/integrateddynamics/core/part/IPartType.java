@@ -61,6 +61,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
     public boolean isSolid(S state);
 
     /**
+     * @return The factor of block width this part occupies, used to calculate the required render length of the cable.
+     */
+    public float getWidthFactor();
+
+    /**
      * @return All possible aspects that can be used in this part type.
      */
     public Set<IAspect> getAspects();

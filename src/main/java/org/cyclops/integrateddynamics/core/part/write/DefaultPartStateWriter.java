@@ -1,26 +1,16 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import com.google.common.collect.Maps;
-import lombok.Getter;
-import lombok.Setter;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.DefaultPartState;
+import org.cyclops.integrateddynamics.core.part.DefaultPartStateActiveVariable;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
-import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Collections;
@@ -33,78 +23,49 @@ import java.util.Map;
  * @author rubensworks
  */
 public class DefaultPartStateWriter<P extends IPartTypeWriter>
-        extends DefaultPartState<P> implements IPartStateWriter<P> {
-
-    private boolean checkedForWriteVariable = false;
-    private IVariableFacade currentVariableFacade = null;
+        extends DefaultPartStateActiveVariable<P> implements IPartStateWriter<P> {
     @NBTPersist
     private String activeAspectName = null;
-    @Getter
-    @Setter
-    private boolean deactivated = false;
-    private SimpleInventory inventory;
     @NBTPersist
     private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
 
     public DefaultPartStateWriter(int inventorySize) {
-        this.inventory = new SingularInventory(inventorySize);
-        this.inventory.addDirtyMarkListener(this); // No need to remove myself eventually. If I am removed, inv is also removed.
+        super(inventorySize);
     }
 
     @Override
-    public SimpleInventory getInventory() {
-        return this.inventory;
+    protected void validate(Network network) {
+        // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
+        if(getActiveAspect() != null) {
+            this.currentVariableFacade.validate(network,
+                    new DefaultPartStateWriter.Validator(this, getActiveAspect()), getActiveAspect().getValueType());
+        }
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getVariable(Network network) {
-        if(!checkedForWriteVariable) {
-            for(int slot = 0; slot < getInventory().getSizeInventory(); slot++) {
-                ItemStack itemStack = getInventory().getStackInSlot(slot);
-                if(itemStack != null) {
-                    this.currentVariableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-                    // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
-                    if(getActiveAspect() != null) {
-                        this.currentVariableFacade.validate(network,
-                                new IVariableFacade.Validator(this, getActiveAspect()), getActiveAspect().getValueType());
-                    }
-                }
-            }
-            this.checkedForWriteVariable = true;
-        }
-        if(currentVariableFacade == null) {
-            IntegratedDynamics.clog(Level.WARN, "A corrupted part state was found at, repairing...");
-            this.activeAspectName = null;
-            this.checkedForWriteVariable = false;
-            this.deactivated = true;
-            return null;
-        }
-        return currentVariableFacade.getVariable(network);
+    protected void onCorruptedState() {
+        super.onCorruptedState();
+        this.activeAspectName = null;
     }
 
     @Override
     public void triggerAspectInfoUpdate(P partType, PartTarget target, IAspectWrite newAspect) {
-        this.checkedForWriteVariable = false;
+        refresh(partType, target);
         IAspectWrite activeAspect = getActiveAspect();
         if(activeAspect != null && activeAspect != newAspect) {
             activeAspect.onDeactivate(partType, target, this);
-            addError(activeAspect, null);
         }
-        this.currentVariableFacade = null;
         this.activeAspectName = newAspect == null ? null : newAspect.getUnlocalizedName();
-        this.deactivated = false;
     }
 
     @Override
     public void refresh(P partType, PartTarget target) {
         // Resets the errors for this aspect
-        this.checkedForWriteVariable = false;
+        super.refresh(partType, target);
         IAspectWrite activeAspect = getActiveAspect();
         if(activeAspect != null) {
             addError(activeAspect, null);
         }
-        this.currentVariableFacade = null;
-        this.deactivated = false;
     }
 
     @Override
@@ -144,44 +105,24 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
         return IPartStateWriter.class;
     }
 
-    @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
-        inventory.writeToNBT(tag);
-    }
+    public static class Validator implements IVariableFacade.IValidator {
 
-    @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        inventory.readFromNBT(tag);
-    }
-
-    /**
-     * An inventory that can only hold one filled slot at a time.
-     */
-    public static class SingularInventory extends SimpleInventory {
+        private final IPartStateWriter state;
+        private final IAspectWrite aspect;
 
         /**
-         * Make a new instance.
-         *
-         * @param size The amount of slots in the inventory.
+         * Make a new instance
+         * @param state The part state.
+         * @param aspect The aspect to set the error for.
          */
-        public SingularInventory(int size) {
-            super(size, "stateInventory", 1);
-        }
-
-        protected boolean canInsert() {
-            for (int i = 0; i < getSizeInventory(); i++) {
-                if (getStackInSlot(i) != null) {
-                    return false;
-                }
-            }
-            return true;
+        public Validator(IPartStateWriter state, IAspectWrite aspect) {
+            this.state = state;
+            this.aspect = aspect;
         }
 
         @Override
-        public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-            return canInsert() && super.isItemValidForSlot(i, itemstack);
+        public void addError(L10NHelpers.UnlocalizedString error) {
+            this.state.addError(aspect, error);
         }
 
     }

@@ -70,7 +70,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     }
 
     @Override
-    public void validate(Network network, Validator validator, IValueType containingValueType) {
+    public void validate(Network network, IValidator validator, IValueType containingValueType) {
         if(this.value == null) {
             validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
         } else {

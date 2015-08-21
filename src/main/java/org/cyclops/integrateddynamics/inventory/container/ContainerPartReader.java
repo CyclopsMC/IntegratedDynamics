@@ -17,7 +17,7 @@ import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
@@ -30,7 +30,7 @@ import org.cyclops.integrateddynamics.item.ItemVariable;
  * @author rubensworks
  */
 public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvider, S extends IPartStateReader<P>>
-        extends ContainerMultipart<P, S, IAspectRead> {
+        extends ContainerMultipartAspects<P, S, IAspectRead> {
 
     public static final int ASPECT_BOX_HEIGHT = 36;
     private static final int SLOT_IN_X = 96;

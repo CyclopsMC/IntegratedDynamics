@@ -75,7 +75,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     }
 
     @Override
-    public void validate(Network network, Validator validator, IValueType containingValueType) {
+    public void validate(Network network, IValidator validator, IValueType containingValueType) {
         if(this.variableIds == null) {
             validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
         } else {

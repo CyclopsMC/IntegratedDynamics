@@ -5,8 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
-import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
-import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
+import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipartAspects;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
@@ -22,7 +22,7 @@ import java.awt.*;
  * @author rubensworks
  */
 public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvider, S extends IPartStateReader<P>>
-        extends GuiMultipart<P, S, IAspectRead> {
+        extends GuiMultipartAspects<P, S, IAspectRead> {
 
     /**
      * Make a new instance.
@@ -41,12 +41,12 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
     }
 
     @Override
-    protected void drawAdditionalElementInfoForeground(ContainerMultipart<P, S, IAspectRead> container, int index, IAspectRead aspect, int mouseX, int mouseY) {
+    protected void drawAdditionalElementInfoForeground(ContainerMultipartAspects<P, S, IAspectRead> container, int index, IAspectRead aspect, int mouseX, int mouseY) {
 
     }
 
     @Override
-    protected void drawAdditionalElementInfo(ContainerMultipart container, int index, IAspectRead aspect) {
+    protected void drawAdditionalElementInfo(ContainerMultipartAspects container, int index, IAspectRead aspect) {
         FontRenderer fontRenderer = fontRendererObj;
 
         // Get current aspect value

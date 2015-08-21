@@ -23,6 +23,7 @@ import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
+import org.cyclops.cyclopscore.block.property.UnlistedProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
@@ -64,10 +65,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     public static final IUnlistedProperty<Boolean>[] CONNECTED = new IUnlistedProperty[6];
     @BlockProperty
     public static final IUnlistedProperty<Boolean>[] PART = new IUnlistedProperty[6];
+    @BlockProperty
+    public static final IUnlistedProperty<Float>[] PART_WIDTH_FACTOR = new IUnlistedProperty[6];
     static {
         for(EnumFacing side : EnumFacing.values()) {
             CONNECTED[side.ordinal()] = Properties.toUnlisted(PropertyBool.create("connect-" + side.getName()));
             PART[side.ordinal()] = Properties.toUnlisted(PropertyBool.create("part-" + side.getName()));
+            PART_WIDTH_FACTOR[side.ordinal()] = new UnlistedProperty<>("partWidthFactor-" + side.getName(), Float.class);
         }
     }
 

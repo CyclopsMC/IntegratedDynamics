@@ -1,0 +1,37 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "integrateddynamics:display",
+    "textures": {
+      "back" : "integrateddynamics:blocks/display_back",
+      "front": "integrateddynamics:blocks/display_front"
+    }
+  },
+  "variants": {
+    "status": {
+      "active": {"textures": {
+        "back" : "integrateddynamics:blocks/display_back",
+        "front": "integrateddynamics:blocks/display_front"
+      }},
+      "inactive": {"textures": {
+        "back" : "integrateddynamics:blocks/display_back",
+        "front": "integrateddynamics:blocks/display_front"
+      }},
+      "error": {"textures": {
+        "back" : "integrateddynamics:blocks/display_back",
+        "front": "integrateddynamics:blocks/display_front"
+      }}
+    },
+    "facing": {
+      "north": { "y": 180 },
+      "east" : { "y": 270 },
+      "south": {},
+      "west" : { "y": 90 },
+      "up"   : { "x": 90 },
+      "down" : { "x": 270 }
+    },
+    "inventory": {
+      "model": "integrateddynamics:display"
+    }
+  }
+}

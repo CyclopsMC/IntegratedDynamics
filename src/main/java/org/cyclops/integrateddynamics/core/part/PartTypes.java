@@ -22,4 +22,7 @@ public final class PartTypes {
     // Writers
     public static final PartTypeRedstoneWriter REDSTONE_WRITER = REGISTRY.register(new PartTypeRedstoneWriter("redstoneWriter"));
 
+    // Misc
+    public static final PartTypeDisplay DISPLAY = REGISTRY.register(new PartTypeDisplay("display"));
+
 }

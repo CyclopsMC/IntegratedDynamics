@@ -36,6 +36,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
+    public float getWidthFactor() {
+        return 0.3125F;
+    }
+
+    @Override
     protected Block createBlock(BlockConfig blockConfig) {
         return new IgnoredBlockStatus(blockConfig);
     }

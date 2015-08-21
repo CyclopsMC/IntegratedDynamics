@@ -28,6 +28,11 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
+    public float getWidthFactor() {
+        return 0.3125F;
+    }
+
+    @Override
     public Class<? super P> getPartTypeClass() {
         return IPartTypeReader.class;
     }

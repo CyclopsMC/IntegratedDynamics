@@ -32,7 +32,7 @@ public class CableModel extends DynamicModel {
     public static final float MAX = 1.0F - MIN;
 
     private float[][][] quadVertexes = makeQuadVertexes(MIN, MAX, 1.00F);
-    private float[][][] quadVertexesLimited = makeQuadVertexes(MIN, MAX, 0.6875F);
+    //private float[][][] quadVertexesLimited = makeQuadVertexes(MIN, MAX, 0.6875F);
 
     public CableModel(IExtendedBlockState state, boolean isItemStack) {
         super(state, isItemStack);
@@ -98,7 +98,12 @@ public class CableModel extends DynamicModel {
                         BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PART[side.ordinal()], false);
                 if (isConnected || hasPart) {
                     int i = 0;
-                    for (float[][] v : hasPart ? quadVertexesLimited : quadVertexes) {
+                    float[][][] quadVertexes = this.quadVertexes;
+                    if(hasPart) {
+                        quadVertexes = makeQuadVertexes(MIN, MAX, 1F - BlockHelpers.getSafeBlockStateProperty(getState(),
+                                BlockCable.PART_WIDTH_FACTOR[side.ordinal()], 0F));
+                    }
+                    for (float[][] v : quadVertexes) {
                         Vec3 v1 = rotate(new Vec3(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
                         Vec3 v2 = rotate(new Vec3(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).addVector(.5, .5, .5);
                         Vec3 v3 = rotate(new Vec3(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);

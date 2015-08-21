@@ -42,6 +42,8 @@ parttype.parttypes.integrateddynamics.fluidReader.name=Fluid Reader
 parttype.parttypes.integrateddynamics.fluidReader.info=Reads fluid tanks
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 parttype.parttypes.integrateddynamics.redstoneWriter.info=Writes to redstone
+parttype.parttypes.integrateddynamics.display.name=Display
+parttype.parttypes.integrateddynamics.display.info=Visually display a variable value in the world
 
 # Variables facades
 variable.error.invalidItem=The current variable can not be used in this aspect.
@@ -200,6 +202,7 @@ operator.operators.integrateddynamics.binary.lshift.name=Left Shift
 operator.operators.integrateddynamics.binary.rzshift.name=Right Zero Shift
 operator.operators.integrateddynamics.binary.rzshift.info=Right Shift with zeros fill
 
+operator.operators.integrateddynamics.string.name=String
 operator.operators.integrateddynamics.string.length.name=Length
 operator.operators.integrateddynamics.string.length.info=The length of the given String
 

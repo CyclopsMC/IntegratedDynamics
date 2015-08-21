@@ -129,7 +129,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void validate(Network network, Validator validator, IValueType containingValueType) {
+        public void validate(Network network, IValidator validator, IValueType containingValueType) {
             validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
         }
 

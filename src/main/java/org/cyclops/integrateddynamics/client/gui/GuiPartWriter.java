@@ -8,8 +8,8 @@ import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
-import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
-import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
+import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipartAspects;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
@@ -27,7 +27,7 @@ import java.util.List;
  * @author rubensworks
  */
 public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvider, S extends IPartStateWriter<P>>
-        extends GuiMultipart<P, S, IAspectWrite> {
+        extends GuiMultipartAspects<P, S, IAspectWrite> {
 
     private static final int ERROR_X = 152;
     private static final int ERROR_Y = 20;
@@ -51,7 +51,7 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
     }
 
     @Override
-    protected void drawAdditionalElementInfoForeground(ContainerMultipart<P, S, IAspectWrite> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
+    protected void drawAdditionalElementInfoForeground(ContainerMultipartAspects<P, S, IAspectWrite> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
         // Render error tooltip
         List<L10NHelpers.UnlocalizedString> errors = getPartState().getErrors(aspect);
         if(!errors.isEmpty()) {
@@ -67,7 +67,7 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
     }
 
     @Override
-    protected void drawAdditionalElementInfo(ContainerMultipart container, int index, IAspectWrite aspect) {
+    protected void drawAdditionalElementInfo(ContainerMultipartAspects container, int index, IAspectWrite aspect) {
         int aspectBoxHeight = container.getAspectBoxHeight();
 
         // Render dummy target item
