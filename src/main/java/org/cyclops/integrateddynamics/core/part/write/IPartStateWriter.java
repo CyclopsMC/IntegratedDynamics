@@ -25,6 +25,11 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
     public SimpleInventory getInventory();
 
     /**
+     * @return If there is an active variable present for this state.
+     */
+    public boolean hasVariable();
+
+    /**
      * Get the current target variable.
      * @return The active variable to read from.
      * @param network The network this part belongs to.

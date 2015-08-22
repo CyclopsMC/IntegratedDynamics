@@ -1,12 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui;
 
-import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import org.cyclops.cyclopscore.client.gui.image.Images;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
@@ -19,7 +14,6 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.awt.*;
-import java.util.List;
 
 
 /**
@@ -53,17 +47,7 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
     @Override
     protected void drawAdditionalElementInfoForeground(ContainerMultipartAspects<P, S, IAspectWrite> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
         // Render error tooltip
-        List<L10NHelpers.UnlocalizedString> errors = getPartState().getErrors(aspect);
-        if(!errors.isEmpty()) {
-            if(isPointInRegion(ERROR_X, ERROR_Y + index * container.getAspectBoxHeight(), Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
-                List<String> lines = Lists.newLinkedList();
-                for(L10NHelpers.UnlocalizedString error : errors) {
-                    lines.addAll(StringHelpers.splitLines(error.localize(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
-                            EnumChatFormatting.RED.toString()));
-                }
-                drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
-            }
-        }
+        displayErrors.drawForeground(getPartState().getErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.guiLeft, this.guiTop);
     }
 
     @Override
@@ -77,14 +61,8 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
         itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
 
         // Render error symbol
-        mc.renderEngine.bindTexture(texture);
-        if(!getPartState().getErrors(aspect).isEmpty()) {
-            Images.ERROR.draw(this, guiLeft + offsetX + ERROR_X,
-                    guiTop + offsetY + ERROR_Y + aspectBoxHeight * index);
-        } else if(getPartState().getActiveAspect() == aspect) {
-            Images.OK.draw(this, guiLeft + offsetX + OK_X,
-                    guiTop + offsetY + OK_Y + aspectBoxHeight * index);
-        }
+        displayErrors.drawBackground(getPartState().getErrors(aspect), ERROR_X, ERROR_Y + aspectBoxHeight * index, OK_X, OK_Y + aspectBoxHeight * index, this,
+                this.guiLeft, this.guiTop, getPartState().getActiveAspect() == aspect);
     }
 
     @SuppressWarnings("unchecked")

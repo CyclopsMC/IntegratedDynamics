@@ -17,7 +17,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPatter
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
@@ -108,7 +108,7 @@ public class OperatorElement implements ILogicProgrammerElement {
 
     @Override
     public L10NHelpers.UnlocalizedString validate() {
-        return getOperator().validateTypes(ValueTypes.from(inputVariables));
+        return getOperator().validateTypes(ValueHelpers.from(inputVariables));
     }
 
     @Override

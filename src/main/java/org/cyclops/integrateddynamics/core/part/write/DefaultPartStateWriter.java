@@ -49,6 +49,11 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
     }
 
     @Override
+    public boolean hasVariable() {
+        return getActiveAspect() != null && getErrors(getActiveAspect()).isEmpty() && super.hasVariable();
+    }
+
+    @Override
     public void triggerAspectInfoUpdate(P partType, PartTarget target, IAspectWrite newAspect) {
         refresh(partType, target);
         IAspectWrite activeAspect = getActiveAspect();

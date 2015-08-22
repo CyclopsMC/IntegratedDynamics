@@ -59,6 +59,13 @@ public abstract class DefaultPartStateActiveVariable<P extends IPartType>
     }
 
     /**
+     * @return If there is an active variable present for this state.
+     */
+    public boolean hasVariable() {
+        return getGlobalErrors().isEmpty() && !getInventory().isEmpty();
+    }
+
+    /**
      * Get the active variable in this state.
      * @param network The network.
      * @param <V> The variable value type.

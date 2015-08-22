@@ -6,7 +6,7 @@ import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -115,7 +115,7 @@ public abstract class BaseOperator implements IOperator {
 
     @Override
     public IValue evaluate(IVariable[] input) throws EvaluationException {
-        L10NHelpers.UnlocalizedString error = validateTypes(ValueTypes.from(input));
+        L10NHelpers.UnlocalizedString error = validateTypes(ValueHelpers.from(input));
         if(error != null) {
             throw new EvaluationException(error.localize());
         }

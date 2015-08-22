@@ -38,6 +38,7 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
 
     private static final Rectangle ITEM_POSITION = new Rectangle(8, 17, 18, 18);
 
+    protected final DisplayErrorsComponent displayErrors = new DisplayErrorsComponent();
     private final PartTarget target;
     private final IPartContainer partContainer;
     private final P partType;

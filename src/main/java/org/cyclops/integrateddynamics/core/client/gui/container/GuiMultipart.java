@@ -8,7 +8,6 @@ import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
@@ -28,6 +27,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
 
     private static final Rectangle ITEM_POSITION = new Rectangle(8, 17, 18, 18);
 
+    protected final DisplayErrorsComponent displayErrors = new DisplayErrorsComponent();
     private final PartTarget target;
     private final IPartContainer partContainer;
     private final P partType;
@@ -76,8 +76,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         FontRenderer fontRenderer = fontRendererObj;
 
         // Draw part name
-        RenderHelpers.drawScaledCenteredString(fontRenderer, L10NHelpers.localize(getPartType().getUnlocalizedName()),
-                this.guiLeft + offsetX + 6, this.guiTop + offsetY + 10, 70, Helpers.RGBToInt(0, 0, 0));
+        fontRenderer.drawString(L10NHelpers.localize(getPartType().getUnlocalizedName()), guiLeft + 8, guiTop + 6, Helpers.RGBToInt(0, 0, 0));
     }
 
 }

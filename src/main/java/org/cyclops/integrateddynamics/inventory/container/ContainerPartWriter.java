@@ -92,8 +92,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
         if(!MinecraftHelpers.isClientSide()) {
             String writeValue = "";
             int writeValueColor = 0;
-            if(getPartContainer() instanceof ITileCableNetwork && getPartState().getActiveAspect() != null &&
-                    getPartState().getErrors(getPartState().getActiveAspect()).isEmpty()) {
+            if(getPartContainer() instanceof ITileCableNetwork && getPartState().hasVariable()) {
                 IVariable variable = getPartState().getVariable(((ITileCableNetwork) getPartContainer()).getNetwork());
                 if (variable != null) {
                     try {
