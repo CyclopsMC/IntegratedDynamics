@@ -9,12 +9,19 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.client.gui.GuiHandler;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockItemConfigReference;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
+import org.cyclops.integrateddynamics.client.render.part.IPartOverlayRendererRegistry;
+import org.cyclops.integrateddynamics.client.render.part.PartOverlayRendererRegistry;
+import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
+import org.cyclops.integrateddynamics.client.render.valuetype.IValueTypeWorldRendererRegistry;
+import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRendererRegistry;
+import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperatorRegistry;
@@ -94,6 +101,10 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());
         getRegistryManager().addRegistry(IOperatorRegistry.class, OperatorRegistry.getInstance());
         getRegistryManager().addRegistry(ILogicProgrammerElementTypeRegistry.class, LogicProgrammerElementTypeRegistry.getInstance());
+        if(MinecraftHelpers.isClientSide()) {
+            getRegistryManager().addRegistry(IPartOverlayRendererRegistry.class, PartOverlayRendererRegistry.getInstance());
+            getRegistryManager().addRegistry(IValueTypeWorldRendererRegistry.class, ValueTypeWorldRendererRegistry.getInstance());
+        }
 
         addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
 
@@ -102,6 +113,10 @@ public class IntegratedDynamics extends ModBaseVersionable {
         Aspects.load();
         PartTypes.load();
         LogicProgrammerElementTypes.load();
+        if(MinecraftHelpers.isClientSide()) {
+            PartOverlayRenderers.load();
+            ValueTypeWorldRenderers.load();
+        }
 
         super.preInit(event);
 

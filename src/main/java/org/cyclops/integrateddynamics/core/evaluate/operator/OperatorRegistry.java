@@ -1,15 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import net.minecraft.nbt.NBTTagCompound;
-import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class OperatorRegistry implements IOperatorRegistry {
 
     private final List<IOperator> operators = Lists.newLinkedList();
     private final Map<String, IOperator> namedOperators = Maps.newHashMap();
-    private final Map<IValueType, List<IOperator>> outputTypedOperators = Maps.newHashMap();
+    private final Multimap<IValueType, IOperator> outputTypedOperators = HashMultimap.create();
 
     private OperatorRegistry() {
         if(MinecraftHelpers.isModdedEnvironment()) {
@@ -44,12 +46,12 @@ public class OperatorRegistry implements IOperatorRegistry {
     public <O extends IOperator> O register(O operator) {
         operators.add(operator);
         namedOperators.put(operator.getUnlocalizedName(), operator);
-        CollectionHelpers.addToMapList(outputTypedOperators, operator.getOutputType(), operator);
+        outputTypedOperators.put(operator.getOutputType(), operator);
         return operator;
     }
 
     @Override
-    public List<IOperator> getOperators() {
+    public Collection<IOperator> getOperators() {
         return Collections.unmodifiableList(operators);
     }
 
@@ -59,10 +61,8 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public List<IOperator> getOperatorsWithOutputType(IValueType valueType) {
-        return Collections.unmodifiableList(outputTypedOperators.containsKey(valueType)
-                ? outputTypedOperators.get(valueType)
-                : Collections.<IOperator>emptyList());
+    public Collection<IOperator> getOperatorsWithOutputType(IValueType valueType) {
+        return outputTypedOperators.get(valueType);
     }
 
     @Override

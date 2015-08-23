@@ -77,6 +77,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
                 IVariable variable = state.getVariable(network);
                 if(variable != null) {
                     newValue = variable.getValue();
+
                 }
             } catch (EvaluationException e) {
                 state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
@@ -84,7 +85,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
         }
         if(!ValueHelpers.areValuesEqual(lastValue, newValue)) {
             state.setDisplayValue(newValue);
-            state.onDirty();
+            state.sendUpdate();
         }
     }
 

@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -22,7 +23,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     private static ValueTypeRegistry INSTANCE = new ValueTypeRegistry();
     private static final ValueTypeVariableFacade INVALID_FACADE = new ValueTypeVariableFacade(false, null, (IValue) null);
 
-    private Map<String, IValueType> valueTypes = Maps.newHashMap();
+    private final Map<String, IValueType> valueTypes = Maps.newHashMap();
     @SideOnly(Side.CLIENT)
     private Map<IValueType, ModelResourceLocation> valueTypeModels;
 
@@ -68,12 +69,12 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     @SideOnly(Side.CLIENT)
     @Override
     public Collection<ModelResourceLocation> getValueTypeModels() {
-        return valueTypeModels.values();
+        return Collections.unmodifiableCollection(valueTypeModels.values());
     }
 
     @Override
     public Collection<IValueType> getValueTypes() {
-        return valueTypes.values();
+        return Collections.unmodifiableCollection(valueTypes.values());
     }
 
     @Override

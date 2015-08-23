@@ -5,7 +5,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Registry for {@link IOperator}
@@ -24,7 +24,7 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<Ope
     /**
      * @return All registered operators.
      */
-    public List<IOperator> getOperators();
+    public Collection<IOperator> getOperators();
 
     /**
      * Get the operator with the given name.
@@ -38,6 +38,6 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<Ope
      * @param valueType The output value type.
      * @return The corresponding operators.
      */
-    public List<IOperator> getOperatorsWithOutputType(IValueType valueType);
+    public Collection<IOperator> getOperatorsWithOutputType(IValueType valueType);
 
 }

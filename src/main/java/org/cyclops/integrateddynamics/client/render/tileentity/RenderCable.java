@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.client.render.tileentity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.client.render.tileentity.RenderTileEntityBakedModel;
+import org.cyclops.integrateddynamics.client.render.part.IPartOverlayRenderer;
+import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
@@ -21,6 +23,9 @@ public class RenderCable extends RenderTileEntityBakedModel<TileMultipartTicking
         for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : tile.getParts().entrySet()) {
             tempBlockState = entry.getValue().getBlockState(tile, x, y, z, partialTick, destroyStage, entry.getKey());
             super.renderTileEntityAt(tile, x, y, z, partialTick, destroyStage);
+            for(IPartOverlayRenderer renderer: PartOverlayRenderers.REGISTRY.getRenderers(entry.getValue())) {
+                renderer.renderPartOverlay(tile, x, y, z, partialTick, destroyStage, entry.getKey(), entry.getValue(), rendererDispatcher);
+            }
         }
     }
 
