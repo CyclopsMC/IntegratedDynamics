@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.integrateddynamics.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
@@ -75,7 +76,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
             }
             renderer.renderValue(partContainer, x, y, z, partialTick, destroyStage, direction, partType, value, rendererDispatcher);
         } else {
-            // TODO: render cross
+            Images.ERROR.drawWorld(rendererDispatcher.renderEngine, 12.5F, 12.5F);
         }
 
         GlStateManager.popAttrib();
