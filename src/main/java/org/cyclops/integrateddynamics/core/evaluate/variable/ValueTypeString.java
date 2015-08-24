@@ -35,7 +35,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString> 
     }
 
     @ToString
-    public static class ValueString extends BaseValue {
+    public static class ValueString extends ValueBase {
 
         private final String value;
 

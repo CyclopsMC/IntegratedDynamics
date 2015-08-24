@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 public class GeneralChoiceOperator extends GeneralOperator {
 
     public GeneralChoiceOperator(String symbol, String operatorName) {
-        super(symbol, operatorName, new IValueType[]{ValueTypes.BOOLEAN, ValueTypes.ANY, ValueTypes.ANY}, ValueTypes.ANY, new BaseOperator.IFunction() {
+        super(symbol, operatorName, new IValueType[]{ValueTypes.BOOLEAN, ValueTypes.ANY, ValueTypes.ANY}, ValueTypes.ANY, new OperatorBase.IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
                 boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();

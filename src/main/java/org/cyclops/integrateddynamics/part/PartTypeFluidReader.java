@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.part;
 import com.google.common.collect.Sets;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
+import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
  * An fluid reader part.
  * @author rubensworks
  */
-public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, DefaultPartStateReader<PartTypeFluidReader>> {
+public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, PartStateReaderBase<PartTypeFluidReader>> {
 
     public PartTypeFluidReader(String name) {
         super(name);
@@ -37,13 +37,13 @@ public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, D
     }
 
     @Override
-    public boolean isSolid(DefaultPartStateReader<PartTypeFluidReader> state) {
+    public boolean isSolid(PartStateReaderBase<PartTypeFluidReader> state) {
         return true;
     }
 
     @Override
-    public DefaultPartStateReader<PartTypeFluidReader> constructDefaultState() {
-        return new DefaultPartStateReader<PartTypeFluidReader>();
+    public PartStateReaderBase<PartTypeFluidReader> constructDefaultState() {
+        return new PartStateReaderBase<PartTypeFluidReader>();
     }
 
 }

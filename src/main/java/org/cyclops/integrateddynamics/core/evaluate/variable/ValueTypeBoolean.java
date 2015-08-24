@@ -43,7 +43,7 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
     }
 
     @ToString
-    public static class ValueBoolean extends BaseValue {
+    public static class ValueBoolean extends ValueBase {
 
         private final boolean value;
 

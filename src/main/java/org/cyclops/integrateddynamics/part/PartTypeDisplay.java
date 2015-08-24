@@ -17,8 +17,8 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.DefaultPartStateActiveVariable;
 import org.cyclops.integrateddynamics.core.part.IPartState;
+import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
@@ -117,7 +117,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
         }
     }
 
-    public static class State extends DefaultPartStateActiveVariable<PartTypeDisplay> {
+    public static class State extends PartStateActiveVariableBase<PartTypeDisplay> {
 
         @Getter
         @Setter

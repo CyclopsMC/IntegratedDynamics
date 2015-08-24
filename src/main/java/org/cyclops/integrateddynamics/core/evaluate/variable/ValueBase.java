@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.core.evaluate.InvalidValueTypeException;
  * @author rubensworks
  */
 @Data
-public abstract class BaseValue implements IValue {
+public abstract class ValueBase implements IValue {
 
     private final IValueType type;
 

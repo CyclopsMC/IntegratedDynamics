@@ -22,8 +22,8 @@ import java.util.List;
  * An abstract part state with a focus on activatable variables.
  * @author rubensworks
  */
-public abstract class DefaultPartStateActiveVariable<P extends IPartType>
-        extends DefaultPartState<P> {
+public abstract class PartStateActiveVariableBase<P extends IPartType>
+        extends PartStateBase<P> {
 
     private boolean checkedForWriteVariable = false;
     protected IVariableFacade currentVariableFacade = null;
@@ -34,7 +34,7 @@ public abstract class DefaultPartStateActiveVariable<P extends IPartType>
     @NBTPersist
     private List<L10NHelpers.UnlocalizedString> globalErrorMessages = Lists.newLinkedList();
 
-    public DefaultPartStateActiveVariable(int inventorySize) {
+    public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
         this.inventory.addDirtyMarkListener(this); // No need to remove myself eventually. If I am removed, inv is also removed.
     }
@@ -49,7 +49,7 @@ public abstract class DefaultPartStateActiveVariable<P extends IPartType>
     protected void validate(Network network) {
         // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
         this.currentVariableFacade.validate(network,
-                new DefaultPartStateActiveVariable.Validator(this), currentVariableFacade.getOutputType());
+                new PartStateActiveVariableBase.Validator(this), currentVariableFacade.getOutputType());
     }
 
     protected void onCorruptedState() {
@@ -172,13 +172,13 @@ public abstract class DefaultPartStateActiveVariable<P extends IPartType>
 
     public static class Validator implements IVariableFacade.IValidator {
 
-        private final DefaultPartStateActiveVariable state;
+        private final PartStateActiveVariableBase state;
 
         /**
          * Make a new instance
          * @param state The part state.
          */
-        public Validator(DefaultPartStateActiveVariable state) {
+        public Validator(PartStateActiveVariableBase state) {
             this.state = state;
         }
 

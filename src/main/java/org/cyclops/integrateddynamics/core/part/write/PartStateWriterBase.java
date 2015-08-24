@@ -6,8 +6,8 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.DefaultPartStateActiveVariable;
 import org.cyclops.integrateddynamics.core.part.IPartState;
+import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
@@ -22,14 +22,14 @@ import java.util.Map;
  * of fields annotated with {@link org.cyclops.cyclopscore.persist.nbt.NBTPersist}.
  * @author rubensworks
  */
-public class DefaultPartStateWriter<P extends IPartTypeWriter>
-        extends DefaultPartStateActiveVariable<P> implements IPartStateWriter<P> {
+public class PartStateWriterBase<P extends IPartTypeWriter>
+        extends PartStateActiveVariableBase<P> implements IPartStateWriter<P> {
     @NBTPersist
     private String activeAspectName = null;
     @NBTPersist
     private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
 
-    public DefaultPartStateWriter(int inventorySize) {
+    public PartStateWriterBase(int inventorySize) {
         super(inventorySize);
     }
 
@@ -38,7 +38,7 @@ public class DefaultPartStateWriter<P extends IPartTypeWriter>
         // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
         if(getActiveAspect() != null) {
             this.currentVariableFacade.validate(network,
-                    new DefaultPartStateWriter.Validator(this, getActiveAspect()), getActiveAspect().getValueType());
+                    new PartStateWriterBase.Validator(this, getActiveAspect()), getActiveAspect().getValueType());
         }
     }
 

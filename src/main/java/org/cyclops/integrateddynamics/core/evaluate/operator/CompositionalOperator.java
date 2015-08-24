@@ -10,7 +10,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
  * An operator composed of a number of other operators.
  * @author rubensworks
  */
-public class CompositionalOperator extends BaseOperator {
+public class CompositionalOperator extends OperatorBase {
 
     private final String unlocalizedType;
 

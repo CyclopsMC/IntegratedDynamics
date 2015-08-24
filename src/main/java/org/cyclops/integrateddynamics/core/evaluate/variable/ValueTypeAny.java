@@ -39,7 +39,7 @@ public class ValueTypeAny extends ValueTypeBase<ValueTypeAny.ValueAny> {
     }
 
     @ToString
-    public static class ValueAny extends BaseValue {
+    public static class ValueAny extends ValueBase {
 
         private ValueAny() {
             super(ValueTypes.ANY);

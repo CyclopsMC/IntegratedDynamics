@@ -15,7 +15,7 @@ import java.util.List;
  * A basic abstract implementation of an operator.
  * @author rubensworks
  */
-public abstract class BaseOperator implements IOperator {
+public abstract class OperatorBase implements IOperator {
 
     private final String symbol;
     private final String operatorName;
@@ -24,7 +24,7 @@ public abstract class BaseOperator implements IOperator {
     private final IFunction function;
     private final IConfigRenderPattern renderPattern;
 
-    protected BaseOperator(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
+    protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                            IFunction function, IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
         this.operatorName = operatorName;

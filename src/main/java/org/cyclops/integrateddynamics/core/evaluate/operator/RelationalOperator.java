@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
  * Base class for relational operators.
  * @author rubensworks
  */
-public class RelationalOperator extends BaseOperator {
+public class RelationalOperator extends OperatorBase {
 
     public RelationalOperator(String symbol, String operatorName, IFunction function) {
         this(symbol, operatorName, 2, function, IConfigRenderPattern.INFIX);

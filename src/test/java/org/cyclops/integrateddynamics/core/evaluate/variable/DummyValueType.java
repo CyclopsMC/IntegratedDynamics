@@ -64,7 +64,7 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @ToString
-    public static class DummyValue extends BaseValue {
+    public static class DummyValue extends ValueBase {
 
         private DummyValue() {
             super(TYPE);

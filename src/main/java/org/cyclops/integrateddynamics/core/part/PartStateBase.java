@@ -19,7 +19,7 @@ import java.util.Map;
  * of fields annotated with {@link org.cyclops.cyclopscore.persist.nbt.NBTPersist}.
  * @author rubensworks
  */
-public abstract class DefaultPartState<P extends IPartType> implements IPartState<P>, INBTProvider, IDirtyMarkListener {
+public abstract class PartStateBase<P extends IPartType> implements IPartState<P>, INBTProvider, IDirtyMarkListener {
 
     private boolean dirty = false;
     private boolean update = false;

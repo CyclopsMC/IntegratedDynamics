@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
  * Base class for string operators.
  * @author rubensworks
  */
-public class StringOperator extends BaseOperator {
+public class StringOperator extends OperatorBase {
 
     public StringOperator(String symbol, String operatorName, IFunction function) {
         this(symbol, operatorName, 1, function, IConfigRenderPattern.INFIX);

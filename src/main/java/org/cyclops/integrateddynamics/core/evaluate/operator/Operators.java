@@ -32,7 +32,7 @@ public final class Operators {
     /**
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_AND = REGISTRY.register(new LogicalOperator("&&", "and", new BaseOperator.IFunction() {
+    public static final LogicalOperator LOGICAL_AND = REGISTRY.register(new LogicalOperator("&&", "and", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
@@ -47,7 +47,7 @@ public final class Operators {
     /**
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_OR = REGISTRY.register(new LogicalOperator("||", "or", new BaseOperator.IFunction() {
+    public static final LogicalOperator LOGICAL_OR = REGISTRY.register(new LogicalOperator("||", "or", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
@@ -62,7 +62,7 @@ public final class Operators {
     /**
      * Logical NOT operator with one input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_NOT = REGISTRY.register(new LogicalOperator("!", "not", 1, new BaseOperator.IFunction() {
+    public static final LogicalOperator LOGICAL_NOT = REGISTRY.register(new LogicalOperator("!", "not", 1, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
@@ -79,7 +79,7 @@ public final class Operators {
     /**
      * Arithmetic ADD operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_ADDITION = REGISTRY.register(new ArithmeticOperator("+", "addition", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_ADDITION = REGISTRY.register(new ArithmeticOperator("+", "addition", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -99,7 +99,7 @@ public final class Operators {
     /**
      * Arithmetic MINUS operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(new ArithmeticOperator("-", "subtraction", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(new ArithmeticOperator("-", "subtraction", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
@@ -115,7 +115,7 @@ public final class Operators {
     /**
      * Arithmetic MULTIPLY operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(new ArithmeticOperator("*", "multiplication", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(new ArithmeticOperator("*", "multiplication", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -137,7 +137,7 @@ public final class Operators {
     /**
      * Arithmetic DIVIDE operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_DIVISION = REGISTRY.register(new ArithmeticOperator("/", "division", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_DIVISION = REGISTRY.register(new ArithmeticOperator("/", "division", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
@@ -155,7 +155,7 @@ public final class Operators {
     /**
      * Arithmetic MODULO operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MODULUS = REGISTRY.register(new ArithmeticOperator("%", "modulus", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MODULUS = REGISTRY.register(new ArithmeticOperator("%", "modulus", new OperatorBase.IFunction() {
 
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
@@ -174,7 +174,7 @@ public final class Operators {
     /**
      * Arithmetic MAX operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MAXIMUM = REGISTRY.register(new ArithmeticOperator("max", "maximum", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MAXIMUM = REGISTRY.register(new ArithmeticOperator("max", "maximum", new OperatorBase.IFunction() {
 
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
@@ -187,7 +187,7 @@ public final class Operators {
     /**
      * Arithmetic MIN operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MINIMUM = REGISTRY.register(new ArithmeticOperator("min", "minimum", new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MINIMUM = REGISTRY.register(new ArithmeticOperator("min", "minimum", new OperatorBase.IFunction() {
 
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
@@ -200,7 +200,7 @@ public final class Operators {
     /**
      * Arithmetic INCREMENT operator with one input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_INCREMENT = REGISTRY.register(new ArithmeticOperator("++", "increment", 1, new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_INCREMENT = REGISTRY.register(new ArithmeticOperator("++", "increment", 1, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -211,7 +211,7 @@ public final class Operators {
     /**
      * Arithmetic INCREMENT operator with one input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_DECREMENT = REGISTRY.register(new ArithmeticOperator("--", "decrement", 1, new BaseOperator.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_DECREMENT = REGISTRY.register(new ArithmeticOperator("--", "decrement", 1, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -231,7 +231,7 @@ public final class Operators {
     /**
      * Relational > operator with two input integers and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_GT = REGISTRY.register(new RelationalOperator(">", "gt", new BaseOperator.IFunction() {
+    public static final RelationalOperator RELATIONAL_GT = REGISTRY.register(new RelationalOperator(">", "gt", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -243,7 +243,7 @@ public final class Operators {
     /**
      * Relational > operator with two input integers and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_LT = REGISTRY.register(new RelationalOperator(">", "lt", new BaseOperator.IFunction() {
+    public static final RelationalOperator RELATIONAL_LT = REGISTRY.register(new RelationalOperator(">", "lt", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -280,7 +280,7 @@ public final class Operators {
     /**
      * Binary AND operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_AND = REGISTRY.register(new BinaryOperator("&", "and", new BaseOperator.IFunction() {
+    public static final BinaryOperator BINARY_AND = REGISTRY.register(new BinaryOperator("&", "and", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -292,7 +292,7 @@ public final class Operators {
     /**
      * Binary OR operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_OR = REGISTRY.register(new BinaryOperator("|", "or", new BaseOperator.IFunction() {
+    public static final BinaryOperator BINARY_OR = REGISTRY.register(new BinaryOperator("|", "or", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -304,7 +304,7 @@ public final class Operators {
     /**
      * Binary XOR operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_XOR = REGISTRY.register(new BinaryOperator("^", "xor", new BaseOperator.IFunction() {
+    public static final BinaryOperator BINARY_XOR = REGISTRY.register(new BinaryOperator("^", "xor", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -316,7 +316,7 @@ public final class Operators {
     /**
      * Binary COMPLEMENT operator with one input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_COMPLEMENT = REGISTRY.register(new BinaryOperator("~", "complement", 1, new BaseOperator.IFunction() {
+    public static final BinaryOperator BINARY_COMPLEMENT = REGISTRY.register(new BinaryOperator("~", "complement", 1, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -327,7 +327,7 @@ public final class Operators {
     /**
      * Binary << operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_LSHIFT = REGISTRY.register(new BinaryOperator("<<", "lshift", new BaseOperator.IFunction() {
+    public static final BinaryOperator BINARY_LSHIFT = REGISTRY.register(new BinaryOperator("<<", "lshift", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -339,7 +339,7 @@ public final class Operators {
     /**
      * Binary >> operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_RSHIFT = REGISTRY.register(new BinaryOperator(">>", "rshift", new BaseOperator.IFunction() {
+    public static final BinaryOperator BINARY_RSHIFT = REGISTRY.register(new BinaryOperator(">>", "rshift", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -351,7 +351,7 @@ public final class Operators {
     /**
      * Binary >>> operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_RZSHIFT = REGISTRY.register(new BinaryOperator(">>>", "rzshift", new BaseOperator.IFunction() {
+    public static final BinaryOperator BINARY_RZSHIFT = REGISTRY.register(new BinaryOperator(">>>", "rzshift", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -367,7 +367,7 @@ public final class Operators {
     /**
      * Binary >>> operator with two input integers and one output integers.
      */
-    public static final StringOperator STRING_LENGTH = REGISTRY.register(new StringOperator("len", "length", new IValueType[]{ValueTypes.STRING}, ValueTypes.INTEGER, new BaseOperator.IFunction() {
+    public static final StringOperator STRING_LENGTH = REGISTRY.register(new StringOperator("len", "length", new IValueType[]{ValueTypes.STRING}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             String a = ((ValueTypeString.ValueString) variables[0].getValue()).getRawValue();

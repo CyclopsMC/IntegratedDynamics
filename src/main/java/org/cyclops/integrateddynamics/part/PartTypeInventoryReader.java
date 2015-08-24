@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.part;
 import com.google.common.collect.Sets;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
+import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
  * An inventory reader part.
  * @author rubensworks
  */
-public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryReader, DefaultPartStateReader<PartTypeInventoryReader>> {
+public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryReader, PartStateReaderBase<PartTypeInventoryReader>> {
 
     public PartTypeInventoryReader(String name) {
         super(name);
@@ -25,13 +25,13 @@ public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryR
     }
 
     @Override
-    public boolean isSolid(DefaultPartStateReader<PartTypeInventoryReader> state) {
+    public boolean isSolid(PartStateReaderBase<PartTypeInventoryReader> state) {
         return true;
     }
 
     @Override
-    public DefaultPartStateReader<PartTypeInventoryReader> constructDefaultState() {
-        return new DefaultPartStateReader<PartTypeInventoryReader>();
+    public PartStateReaderBase<PartTypeInventoryReader> constructDefaultState() {
+        return new PartStateReaderBase<PartTypeInventoryReader>();
     }
 
 }

@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.part;
 import com.google.common.collect.Sets;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.read.DefaultPartStateReader;
+import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
  * An world reader part.
  * @author rubensworks
  */
-public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, DefaultPartStateReader<PartTypeWorldReader>> {
+public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, PartStateReaderBase<PartTypeWorldReader>> {
 
     public PartTypeWorldReader(String name) {
         super(name);
@@ -29,13 +29,13 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, D
     }
 
     @Override
-    public boolean isSolid(DefaultPartStateReader<PartTypeWorldReader> state) {
+    public boolean isSolid(PartStateReaderBase<PartTypeWorldReader> state) {
         return true;
     }
 
     @Override
-    public DefaultPartStateReader<PartTypeWorldReader> constructDefaultState() {
-        return new DefaultPartStateReader<PartTypeWorldReader>();
+    public PartStateReaderBase<PartTypeWorldReader> constructDefaultState() {
+        return new PartStateReaderBase<PartTypeWorldReader>();
     }
 
 }

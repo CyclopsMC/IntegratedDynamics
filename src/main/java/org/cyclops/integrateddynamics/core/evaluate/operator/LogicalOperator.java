@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
  * Base class for logical operators.
  * @author rubensworks
  */
-public class LogicalOperator extends BaseOperator {
+public class LogicalOperator extends OperatorBase {
 
     public LogicalOperator(String symbol, String operatorName, IFunction function) {
         this(symbol, operatorName, 2, function, IConfigRenderPattern.INFIX);

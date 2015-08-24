@@ -35,7 +35,7 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @ToString
-    public static class ValueInteger extends BaseValue {
+    public static class ValueInteger extends ValueBase {
 
         private final int value;
 

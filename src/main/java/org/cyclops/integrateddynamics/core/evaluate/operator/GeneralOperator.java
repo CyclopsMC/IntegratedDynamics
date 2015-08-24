@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
  * Base class for general operators.
  * @author rubensworks
  */
-public class GeneralOperator extends BaseOperator {
+public class GeneralOperator extends OperatorBase {
 
     public GeneralOperator(String symbol, String operatorName, IFunction function) {
         this(symbol, operatorName, 2, function, IConfigRenderPattern.INFIX);

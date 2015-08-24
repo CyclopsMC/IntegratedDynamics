@@ -6,7 +6,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
  * Base class for integer operators.
  * @author rubensworks
  */
-public class ArithmeticOperator extends BaseOperator {
+public class ArithmeticOperator extends OperatorBase {
 
     public ArithmeticOperator(String symbol, String operatorName, IFunction function) {
         this(symbol, operatorName, 2, function, IConfigRenderPattern.INFIX);

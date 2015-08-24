@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
  * Base class for binary operators.
  * @author rubensworks
  */
-public class BinaryOperator extends BaseOperator {
+public class BinaryOperator extends OperatorBase {
 
     public BinaryOperator(String symbol, String operatorName, IFunction function) {
         this(symbol, operatorName, 2, function, IConfigRenderPattern.INFIX);
