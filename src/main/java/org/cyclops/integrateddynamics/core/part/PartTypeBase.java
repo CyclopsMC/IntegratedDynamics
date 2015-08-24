@@ -27,12 +27,9 @@ import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
-import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * An abstract {@link org.cyclops.integrateddynamics.core.part.IPartType} with a default implementation for creating
@@ -132,11 +129,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public Set<IAspect> getAspects() {
-        return Aspects.REGISTRY.getAspects(this);
-    }
-
-    @Override
     public void onInit(IInitListener.Step initStep) {
         if(MinecraftHelpers.isClientSide() && initStep == IInitListener.Step.INIT) {
             ItemAction.handleItemModel(getItem(), itemConfig.getNamedId(), itemConfig.getTargetTab(), getMod().getModId(), itemConfig);
@@ -159,14 +151,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public boolean isUpdate(S state) {
-        return !getAspects().isEmpty();
+        return false;
     }
 
     @Override
     public void update(Network network, PartTarget target, S state) {
-        for(IAspect aspect : getAspects()) {
-            aspect.update(network, this, target, state);
-        }
+
     }
 
     @Override

@@ -16,7 +16,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
+import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
@@ -29,7 +29,7 @@ import java.util.List;
  * @author rubensworks
  */
 public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>>
-        extends PartTypeConfigurable<P, S> implements IPartTypeWriter<P, S> {
+        extends PartTypeAspects<P, S> implements IPartTypeWriter<P, S> {
 
     public PartTypeWriteBase(String name) {
         super(name);

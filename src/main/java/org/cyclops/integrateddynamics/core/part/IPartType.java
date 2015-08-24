@@ -12,11 +12,9 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * A type of part that can be inserted into a
@@ -64,11 +62,6 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      * @return The factor of block width this part occupies, used to calculate the required render length of the cable.
      */
     public float getWidthFactor();
-
-    /**
-     * @return All possible aspects that can be used in this part type.
-     */
-    public Set<IAspect> getAspects();
 
     /**
      * Called on the Integrated Dynamics mod initialization steps.
