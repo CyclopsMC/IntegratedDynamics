@@ -30,12 +30,13 @@ public class CablePathElement implements IPathElement<CablePathElement> {
         BlockPos pos = getPosition().getBlockPos();
         for(EnumFacing side : EnumFacing.VALUES) {
             if(cable.isConnected(world, pos, side)) {
-                Block block = world.getBlockState(pos).getBlock();
+                BlockPos posOffset = pos.offset(side);
+                Block block = world.getBlockState(posOffset).getBlock();
                 if(!(block instanceof ICable)) {
                     IntegratedDynamics.clog(Level.ERROR, String.format("The position at %s was incorrectly marked " +
                             "as reachable as cable by %s.", pos, getCable()));
                 } else {
-                    elements.add(((ICable<CablePathElement>) block).createPathElement(world, pos.offset(side)));
+                    elements.add(((ICable<CablePathElement>) block).createPathElement(world, posOffset));
                 }
             }
         }

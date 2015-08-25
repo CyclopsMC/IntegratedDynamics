@@ -4,8 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.tileentity.ITileCable;
@@ -74,6 +76,9 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
     public void setNetwork(Network network, World world, BlockPos pos) {
         ITileCableNetwork tile = TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
         if(tile != null) {
+            if(tile.getNetwork() != null) {
+                IntegratedDynamics.clog(Level.WARN, "Tried to set a new network for a tile without the previous one being removed.");
+            }
             tile.setNetwork(network);
         }
     }
