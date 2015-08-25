@@ -53,6 +53,6 @@ public class CablePathElement implements IPathElement<CablePathElement> {
         if(cable.hashCode() == o.cable.hashCode()) {
             return position.compareTo(o.position);
         }
-        return Integer.compare(cable.hashCode(), o.hashCode());
+        return Integer.compare(cable.hashCode(), o.cable.hashCode());
     }
 }

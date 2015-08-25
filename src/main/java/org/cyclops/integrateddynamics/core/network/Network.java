@@ -299,13 +299,16 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
      * @param cable The actual cable instance.
      */
     public void removeCable(Block block, CablePathElement cable) {
-        baseCluster.remove(cable);
-        if(block instanceof INetworkElementProvider) {
-            Collection<INetworkElement> networkElements = ((INetworkElementProvider) block).
-                    createNetworkElements(cable.getPosition().getWorld(), cable.getPosition().getBlockPos());
-            for(INetworkElement networkElement : networkElements) {
-                removeNetworkElement(networkElement);
+        if(baseCluster.remove(cable)) {
+            if (block instanceof INetworkElementProvider) {
+                Collection<INetworkElement> networkElements = ((INetworkElementProvider) block).
+                        createNetworkElements(cable.getPosition().getWorld(), cable.getPosition().getBlockPos());
+                for (INetworkElement networkElement : networkElements) {
+                    removeNetworkElement(networkElement);
+                }
             }
+        } else {
+            IntegratedDynamics.clog(Level.WARN, "Tried to remove a cable from a network it was not present in.");
         }
     }
 
