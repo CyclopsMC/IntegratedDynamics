@@ -75,7 +75,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
                 renderer = ValueTypeWorldRenderers.DEFAULT;
             }
             renderer.renderValue(partContainer, x, y, z, partialTick, destroyStage, direction, partType, value, rendererDispatcher);
-        } else {
+        } else if(!partState.getInventory().isEmpty()) {
             Images.ERROR.drawWorld(rendererDispatcher.renderEngine, 12.5F, 12.5F);
         }
 

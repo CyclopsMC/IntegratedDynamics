@@ -3,16 +3,19 @@ package org.cyclops.integrateddynamics.part;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.gui.GuiPartDisplay;
+import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
@@ -21,6 +24,7 @@ import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
 
 import java.util.List;
@@ -115,6 +119,22 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
             state.setDisplayValue(newValue);
             state.sendUpdate();
         }
+    }
+
+    @Override
+    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+                                     int destroyStage, EnumFacing side) {
+        PartTypeDisplay.State state = (PartTypeDisplay.State) tile.getPartState(side);
+        IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
+        if(!state.getInventory().isEmpty()) {
+            if(state.hasVariable()) {
+                status = IgnoredBlockStatus.Status.ACTIVE;
+            } else {
+                status = IgnoredBlockStatus.Status.ERROR;
+            }
+        }
+        return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).
+                withProperty(IgnoredBlockStatus.STATUS, status);
     }
 
     public static class State extends PartStateActiveVariableBase<PartTypeDisplay> {
