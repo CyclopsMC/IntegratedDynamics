@@ -255,8 +255,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     public boolean isForceDisconnected(EnumFacing side) {
-        if(!isRealCable()) return true;
-        if(hasPart(side)) return true;
+        if(!isRealCable() || hasPart(side)) return true;
         if(!forceDisconnected.containsKey(side.ordinal())) return false;
         return forceDisconnected.get(side.ordinal());
     }
