@@ -260,11 +260,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                             world.destroyBlock(pos, true);
                         } else {
                             // Mark cable as unavailable.
-                            cableNetworkComponent.onPreBlockDestroyed(world, pos);
                             setRealCable(world, pos, false);
                             ItemBlockCable.playBreakSound(world, pos, state);
                             ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
-                            cableNetworkComponent.onPostBlockDestroyed(world, pos);
                         }
                     } else if(rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT) {
                         // Disconnect cable side
@@ -311,7 +309,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
         networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos);
-        cableNetworkComponent.onPreBlockDestroyed(world, pos);
+        if(isRealCable(world, pos)) {
+            cableNetworkComponent.onPreBlockDestroyed(world, pos);
+        }
         super.onPreBlockDestroyed(world, pos);
     }
 
