@@ -12,11 +12,11 @@ import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.block.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.item.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.part.*;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
@@ -43,7 +43,7 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
     private TreeSet<INetworkElement> updateableElements = null;
     private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
     private Map<Integer, PartPos> partPositions = Maps.newHashMap();
-    private List<DimPos> variableContainerPositions = Lists.newLinkedList();
+    private final List<DimPos> variableContainerPositions = Lists.newLinkedList();
     private Map<Integer, IVariableFacade> compositeVariableCache = null;
     private Map<Integer, IValue> lazyExpressionValueCache = Maps.newHashMap();
 

@@ -1,6 +1,7 @@
-package org.cyclops.integrateddynamics.core.item;
+package org.cyclops.integrateddynamics.core.block;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 
 import java.util.Map;
 

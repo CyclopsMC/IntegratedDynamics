@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.item;
+package org.cyclops.integrateddynamics.core.block;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;

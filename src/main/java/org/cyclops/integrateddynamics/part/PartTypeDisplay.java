@@ -137,6 +137,11 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
                 withProperty(IgnoredBlockStatus.STATUS, status);
     }
 
+    @Override
+    public void refresh(Network network, PartTarget target, PartTypeDisplay.State state) {
+        state.refresh(this, target);
+    }
+
     public static class State extends PartStateActiveVariableBase<PartTypeDisplay> {
 
         @Getter

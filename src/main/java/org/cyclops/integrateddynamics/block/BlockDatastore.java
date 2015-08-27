@@ -18,13 +18,13 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.client.gui.GuiDatastore;
+import org.cyclops.integrateddynamics.core.block.IVariableContainer;
+import org.cyclops.integrateddynamics.core.block.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
-import org.cyclops.integrateddynamics.core.item.IVariableContainer;
-import org.cyclops.integrateddynamics.core.item.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -152,17 +152,12 @@ public class BlockDatastore extends ConfigurableBlockContainerGui implements ICa
 
     @Override
     public void resetCurrentNetwork(World world, BlockPos pos) {
-        Network currentNetwork = getNetwork(world, pos);
-        if(currentNetwork != null) {
-            currentNetwork.removeVariableContainer(DimPos.of(world, pos));
-        }
         cableNetworkComponent.resetCurrentNetwork(world, pos);
     }
 
     @Override
     public void setNetwork(Network network, World world, BlockPos pos) {
         cableNetworkComponent.setNetwork(network, world, pos);
-        network.addVariableContainer(DimPos.of(world, pos));
     }
 
     @Override
