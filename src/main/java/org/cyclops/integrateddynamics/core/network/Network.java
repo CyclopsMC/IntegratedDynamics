@@ -18,6 +18,9 @@ import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
+import org.cyclops.integrateddynamics.core.network.event.IEventListenableNetworkElement;
+import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
+import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
 import org.cyclops.integrateddynamics.core.part.*;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
@@ -39,6 +42,7 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
 
     private Cluster<CablePathElement> baseCluster;
 
+    private final NetworkEventBus eventBus = new NetworkEventBus();
     private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
     private TreeSet<INetworkElement> updateableElements = null;
     private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
@@ -96,6 +100,13 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
                 }
             }
         }
+    }
+
+    /**
+     * @return The event bus for this network.
+     */
+    public NetworkEventBus getEventBus() {
+        return this.eventBus;
     }
 
     /**
@@ -182,6 +193,15 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
         if(!networkPreinit) {
             addNetworkElementUpdateable(element);
         }
+        if(element instanceof IEventListenableNetworkElement) {
+            IEventListenableNetworkElement listenableElement = (IEventListenableNetworkElement) element;
+            INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
+            if (listener != null && listener.hasEventSubscriptions()) {
+                for (Class<? extends NetworkEvent> eventType : listener.getSubscribedEvents()) {
+                    getEventBus().register(listenableElement, eventType);
+                }
+            }
+        }
         return true;
     }
 
@@ -202,6 +222,13 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
      * @param element The network element.
      */
     public void removeNetworkElement(INetworkElement element) {
+        if(element instanceof IEventListenableNetworkElement) {
+            IEventListenableNetworkElement listenableElement = (IEventListenableNetworkElement) element;
+            INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
+            if (listener != null && listener.hasEventSubscriptions()) {
+                getEventBus().unregister(listenableElement);
+            }
+        }
         element.beforeNetworkKill(this);
         element.onNetworkRemoval(this);
         elements.remove(element);
@@ -355,19 +382,6 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
      */
     public void beforeServerStop() {
 
-    }
-
-    /**
-     * Send a refresh to the given network elements types.
-     * Used to trigger a refresh in element states.
-     * @param type The types of network elements to send an update to.
-     */
-    public void refresh(Class<? extends INetworkElement> type) {
-        for(INetworkElement element : elements) {
-            if(type.isInstance(element)) {
-                element.refresh(this);
-            }
-        }
     }
 
     /**

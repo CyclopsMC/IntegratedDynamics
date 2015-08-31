@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -27,9 +28,12 @@ import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
+import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An abstract {@link org.cyclops.integrateddynamics.core.part.IPartType} with a default implementation for creating
@@ -48,6 +52,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     private final int guiID;
     @Getter
     private final String name;
+    private final Map<Class<? extends NetworkEvent>, IEventAction> networkEventActions;
 
     public PartTypeBase(String name) {
         if(hasGui()) {
@@ -59,6 +64,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         this.name = name;
         this.block = registerBlock();
         this.item = registerItem();
+
+        networkEventActions = constructNetworkEventActions();
     }
 
     /**
@@ -111,6 +118,30 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         Item item = createItem(itemConfig);
         ItemAction.register(item, itemConfig.getSubUniqueName(), itemConfig.getTargetTab());
         return item;
+    }
+
+    /**
+     * Override this to register your network event actions.
+     * @return The event actions.
+     */
+    protected Map<Class<? extends NetworkEvent>, IEventAction> constructNetworkEventActions() {
+        return Maps.newHashMap();
+    }
+
+    @Override
+    public final boolean hasEventSubscriptions() {
+        return !networkEventActions.isEmpty();
+    }
+
+    @Override
+    public final Set<Class<? extends NetworkEvent>> getSubscribedEvents() {
+        return networkEventActions.keySet();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final void onEvent(NetworkEvent event, PartNetworkElement<P, S> networkElement) {
+        networkEventActions.get(event.getClass()).onAction(event.getNetwork(), networkElement.getTarget(), networkElement.getPartState(), event);
     }
 
     @Override
@@ -216,6 +247,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public void afterNetworkAlive(Network network, PartTarget target, S state) {
+        System.out.println("alive " + state);
+    }
+
+    @Override
     public void onNetworkAddition(Network network, PartTarget target, S state) {
 
     }
@@ -223,11 +259,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public void onNetworkRemoval(Network network, PartTarget target, S state) {
 
-    }
-
-    @Override
-    public void afterNetworkAlive(Network network, PartTarget target, S state) {
-        System.out.println("alive " + state);
     }
 
     protected boolean hasGui() {
@@ -258,11 +289,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void refresh(Network network, PartTarget target, S state) {
-
-    }
-
-    @Override
     public void onPreRemoved(Network network, PartTarget target, S state) {
 
     }
@@ -271,6 +297,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side) {
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side);
+    }
+
+    public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends NetworkEvent> {
+
+        public void onAction(Network network, PartTarget target, S state, E event);
+
     }
 
 }

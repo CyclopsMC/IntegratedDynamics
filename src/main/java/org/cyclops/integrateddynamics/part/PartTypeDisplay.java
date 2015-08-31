@@ -20,6 +20,8 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
+import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
@@ -28,6 +30,7 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A part that can display variables..
@@ -37,6 +40,18 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
 
     public PartTypeDisplay(String name) {
         super(name);
+    }
+
+    @Override
+    protected Map<Class<? extends NetworkEvent>, IEventAction> constructNetworkEventActions() {
+        Map<Class<? extends NetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
+        actions.put(VariableContentsUpdatedEvent.class, new IEventAction<PartTypeDisplay, PartTypeDisplay.State, VariableContentsUpdatedEvent>() {
+            @Override
+            public void onAction(Network network, PartTarget target, PartTypeDisplay.State state, VariableContentsUpdatedEvent event) {
+                onVariableContentsUpdated(event.getNetwork(), target, state);
+            }
+        });
+        return actions;
     }
 
     @Override
@@ -53,20 +68,20 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
             }
         }
         state.getInventory().clear();
-        state.refresh(this, target);
+        state.onVariableContentsUpdated(this, target);
         super.addDrops(target, state, itemStacks);
     }
 
     @Override
     public void beforeNetworkKill(Network network, PartTarget target, PartTypeDisplay.State state) {
         super.beforeNetworkKill(network, target, state);
-        state.refresh(this, target);
+        state.onVariableContentsUpdated(this, target);
     }
 
     @Override
     public void afterNetworkAlive(Network network, PartTarget target, PartTypeDisplay.State state) {
         super.afterNetworkAlive(network, target, state);
-        state.refresh(this, target);
+        state.onVariableContentsUpdated(this, target);
     }
 
     @Override
@@ -137,9 +152,8 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
                 withProperty(IgnoredBlockStatus.STATUS, status);
     }
 
-    @Override
-    public void refresh(Network network, PartTarget target, PartTypeDisplay.State state) {
-        state.refresh(this, target);
+    protected void onVariableContentsUpdated(Network network, PartTarget target, PartTypeDisplay.State state) {
+        state.onVariableContentsUpdated(this, target);
     }
 
     public static class State extends PartStateActiveVariableBase<PartTypeDisplay> {
@@ -184,7 +198,6 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
                 setDisplayValue(null);
             }
         }
-
     }
 
 }

@@ -15,6 +15,8 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
+import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
@@ -23,6 +25,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * An abstract {@link org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter}.
@@ -33,6 +36,18 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     public PartTypeWriteBase(String name) {
         super(name);
+    }
+
+    @Override
+    protected Map<Class<? extends NetworkEvent>, IEventAction> constructNetworkEventActions() {
+        Map<Class<? extends NetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
+        actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
+            @Override
+            public void onAction(Network network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
+                onVariableContentsUpdated(event.getNetwork(), target, state);
+            }
+        });
+        return actions;
     }
 
     @Override
@@ -105,9 +120,8 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         partState.triggerAspectInfoUpdate((P) this, target, aspect);
     }
 
-    @Override
-    public void refresh(Network network, PartTarget target, S state) {
-        state.refresh((P) this, target);
+    protected void onVariableContentsUpdated(Network network, PartTarget target, S state) {
+        state.onVariableContentsUpdated((P) this, target);
     }
 
     @Override

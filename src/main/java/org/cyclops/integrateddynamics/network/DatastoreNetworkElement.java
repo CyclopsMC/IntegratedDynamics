@@ -71,11 +71,6 @@ public class DatastoreNetworkElement implements INetworkElement {
     }
 
     @Override
-    public void refresh(Network network) {
-
-    }
-
-    @Override
     public void onPreRemoved(Network network) {
 
     }

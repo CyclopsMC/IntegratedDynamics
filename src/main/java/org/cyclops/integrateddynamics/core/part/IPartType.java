@@ -11,7 +11,9 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
+import org.cyclops.integrateddynamics.core.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.List;
  * {@link org.cyclops.integrateddynamics.core.part.IPartState}.
  * @author rubensworks
  */
-public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
+public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> extends INetworkEventListener<PartNetworkElement<P, S>> {
 
     /**
      * Get the part type class.
@@ -210,15 +212,6 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> {
      */
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side);
-
-    /**
-     * Called when this part should refresh its state.
-     * When for example some variables in the network are changed.
-     * @param network The network to update in.
-     * @param state The state
-     * @param target The target block.
-     */
-    public void refresh(Network network, PartTarget target, S state);
 
     /**
      * Called when this element is about to be removed.

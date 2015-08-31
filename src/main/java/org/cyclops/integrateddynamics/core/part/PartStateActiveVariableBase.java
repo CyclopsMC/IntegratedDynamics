@@ -94,7 +94,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
      * @param partType The corresponding part type.
      * @param target The target of the part.
      */
-    public void refresh(P partType, PartTarget target) {
+    public void onVariableContentsUpdated(P partType, PartTarget target) {
         // Resets the errors for this aspect
         this.checkedForWriteVariable = false;
         addGlobalError(null);

@@ -4,6 +4,7 @@ import lombok.Data;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.core.network.event.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements INetworkElement {
+public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IEventListenableNetworkElement<P> {
 
     private final P part;
     private final IPartContainerFacade partContainerFacade;
@@ -92,13 +93,13 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void refresh(Network network) {
-        part.refresh(network, target, getPartState());
+    public void onPreRemoved(Network network) {
+        part.onPreRemoved(network, target, getPartState());
     }
 
     @Override
-    public void onPreRemoved(Network network) {
-        part.onPreRemoved(network, target, getPartState());
+    public P getNetworkEventListener() {
+        return getPart();
     }
 
     public boolean equals(Object o) {

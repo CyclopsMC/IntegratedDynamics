@@ -51,7 +51,7 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      * @param partType The part type.
      * @param target The target.
      */
-    public void refresh(P partType, PartTarget target);
+    public void onVariableContentsUpdated(P partType, PartTarget target);
 
     /**
      * @return The currently active aspect for this part, can be null.

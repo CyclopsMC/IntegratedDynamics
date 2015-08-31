@@ -55,7 +55,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
 
     @Override
     public void triggerAspectInfoUpdate(P partType, PartTarget target, IAspectWrite newAspect) {
-        refresh(partType, target);
+        onVariableContentsUpdated(partType, target);
         IAspectWrite activeAspect = getActiveAspect();
         if(activeAspect != null && activeAspect != newAspect) {
             activeAspect.onDeactivate(partType, target, this);
@@ -64,9 +64,9 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public void refresh(P partType, PartTarget target) {
+    public void onVariableContentsUpdated(P partType, PartTarget target) {
         // Resets the errors for this aspect
-        super.refresh(partType, target);
+        super.onVariableContentsUpdated(partType, target);
         IAspectWrite activeAspect = getActiveAspect();
         if(activeAspect != null) {
             addError(activeAspect, null);

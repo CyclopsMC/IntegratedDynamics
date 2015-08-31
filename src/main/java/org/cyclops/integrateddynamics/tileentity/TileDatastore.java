@@ -20,7 +20,7 @@ import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
+import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
@@ -118,8 +118,9 @@ public class TileDatastore extends InventoryTileEntity implements ITileCableNetw
                 }
             }
         }
-        if(getNetwork() != null) {
-            getNetwork().refresh(PartNetworkElement.class);
+        Network network = getNetwork();
+        if(network != null) {
+            network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }
     }
 

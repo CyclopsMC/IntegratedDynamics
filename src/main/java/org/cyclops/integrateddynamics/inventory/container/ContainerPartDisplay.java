@@ -41,7 +41,7 @@ public class ContainerPartDisplay extends ContainerMultipart<PartTypeDisplay, Pa
     @Override
     public void onDirty() {
         if(!MinecraftHelpers.isClientSide()) {
-            getPartState().refresh(getPartType(), getTarget());
+            getPartState().onVariableContentsUpdated(getPartType(), getTarget());
         }
     }
 
