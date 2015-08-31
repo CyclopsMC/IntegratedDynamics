@@ -54,9 +54,11 @@ public class NetworkEventBus {
      * @param event The event to post.
      */
     public void post(NetworkEvent event) {
-        Set<IEventListenableNetworkElement<?>> listeners = this.listeners.getOrDefault(event.getClass(), Collections.<IEventListenableNetworkElement<?>>emptySet());
-        for (IEventListenableNetworkElement listener : listeners) {
-            listener.getNetworkEventListener().onEvent(event, listener);
+        Set<IEventListenableNetworkElement<?>> listeners = this.listeners.get(event.getClass());
+        if(listeners != null) {
+            for (IEventListenableNetworkElement listener : listeners) {
+                listener.getNetworkEventListener().onEvent(event, listener);
+            }
         }
     }
 
