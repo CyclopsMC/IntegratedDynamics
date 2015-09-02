@@ -44,10 +44,14 @@ public class Aspects {
     public static final AspectReadBooleanWorldMob READ_BOOLEAN_WORLD_MOB = new AspectReadBooleanWorldMob();
     public static final AspectReadBooleanWorldPlayer READ_BOOLEAN_WORLD_PLAYER = new AspectReadBooleanWorldPlayer();
     public static final AspectReadBooleanWorldItem READ_BOOLEAN_WORLD_ITEM = new AspectReadBooleanWorldItem();
+    public static final AspectReadBooleanWorldWeatherClear READ_BOOLEAN_WORLD_WEATHER_CLEAR = new AspectReadBooleanWorldWeatherClear();
+    public static final AspectReadBooleanWorldWeatherRaining READ_BOOLEAN_WORLD_WEATHER_RAINING = new AspectReadBooleanWorldWeatherRaining();
+    public static final AspectReadBooleanWorldWeatherThunder READ_BOOLEAN_WORLD_WEATHER_THUNDER = new AspectReadBooleanWorldWeatherThunder();
 
     public static final AspectReadIntegerWorldEntity READ_INTEGER_WORLD_ENTITY = new AspectReadIntegerWorldEntity();
     public static final AspectReadIntegerWorldTime READ_INTEGER_WORLD_TIME = new AspectReadIntegerWorldTime();
     public static final AspectReadIntegerWorldTotalTime READ_INTEGER_WORLD_TOTALTIME = new AspectReadIntegerWorldTotalTime();
+    public static final AspectReadIntegerWorldRainCountdown READ_INTEGER_WORLD_RAINCOUNTDOWN = new AspectReadIntegerWorldRainCountdown();
 
     public static final AspectReadStringWorldBlockName READ_STRING_WORLD_BLOCKNAME = new AspectReadStringWorldBlockName();
 

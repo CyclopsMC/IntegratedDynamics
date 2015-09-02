@@ -21,9 +21,13 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.READ_BOOLEAN_WORLD_MOB,
                 Aspects.READ_BOOLEAN_WORLD_PLAYER,
                 Aspects.READ_BOOLEAN_WORLD_ITEM,
+                Aspects.READ_BOOLEAN_WORLD_WEATHER_CLEAR,
+                Aspects.READ_BOOLEAN_WORLD_WEATHER_RAINING,
+                Aspects.READ_BOOLEAN_WORLD_WEATHER_THUNDER,
                 Aspects.READ_INTEGER_WORLD_ENTITY,
                 Aspects.READ_INTEGER_WORLD_TIME,
                 Aspects.READ_INTEGER_WORLD_TOTALTIME,
+                Aspects.READ_INTEGER_WORLD_RAINCOUNTDOWN,
                 Aspects.READ_STRING_WORLD_BLOCKNAME
         ));
     }
