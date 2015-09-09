@@ -62,8 +62,10 @@ aspect.aspects.integrateddynamics.read.boolean.redstone.low.name=Redstone Low
 aspect.aspects.integrateddynamics.read.boolean.redstone.low.info=If there is no redstone level
 aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.name=Redstone
 aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.info=If there is a redstone level
-aspect.aspects.integrateddynamics.read.integer.redstone.name=Redstone
-aspect.aspects.integrateddynamics.read.integer.redstone.info=Get the exact redstone level
+aspect.aspects.integrateddynamics.read.integer.redstone.value.name=Redstone
+aspect.aspects.integrateddynamics.read.integer.redstone.value.info=Get the exact redstone level
+aspect.aspects.integrateddynamics.read.integer.redstone.comparator.name=Comparator
+aspect.aspects.integrateddynamics.read.integer.redstone.comparator.info=Get the comparator value
 
 aspect.aspects.integrateddynamics.write.boolean.redstone.name=Redstone
 aspect.aspects.integrateddynamics.write.boolean.redstone.info=Outputs a full redstone signal if true

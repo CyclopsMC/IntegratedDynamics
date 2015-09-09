@@ -1,27 +1,28 @@
 package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
-import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadIntegerBase;
 
 /**
- * Aspect that can retrieve the redstone level.
+ * Base class for integer redstone aspects.
  * @author rubensworks
  */
-public class AspectReadIntegerRedstone extends AspectReadIntegerBase {
+public abstract class AspectReadIntegerRedstoneBase extends AspectReadIntegerBase {
 
     @Override
     protected String getUnlocalizedIntegerType() {
-        return "redstone";
+        return "redstone." + getUnlocalizedIntegerRedstoneType();
     }
+
+    protected abstract String getUnlocalizedIntegerRedstoneType();
 
     @Override
     protected ValueTypeInteger.ValueInteger getValue(PartTarget target, AspectProperties properties) {
-        DimPos dimPos = target.getTarget().getPos();
-        int value = dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), target.getCenter().getSide());
-        return ValueTypeInteger.ValueInteger.of(value);
+        return ValueTypeInteger.ValueInteger.of(getValue(target));
     }
+
+    protected abstract int getValue(PartTarget target);
 
 }
