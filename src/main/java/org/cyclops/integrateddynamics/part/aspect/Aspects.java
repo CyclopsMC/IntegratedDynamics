@@ -43,6 +43,7 @@ public class Aspects {
     public static final AspectReadBooleanWorldMob READ_BOOLEAN_WORLD_MOB = new AspectReadBooleanWorldMob();
     public static final AspectReadBooleanWorldPlayer READ_BOOLEAN_WORLD_PLAYER = new AspectReadBooleanWorldPlayer();
     public static final AspectReadBooleanWorldItem READ_BOOLEAN_WORLD_ITEM = new AspectReadBooleanWorldItem();
+    public static final AspectReadBooleanWorldAnimal READ_BOOLEAN_WORLD_ANIMAL = new AspectReadBooleanWorldAnimal();
     public static final AspectReadBooleanWorldWeatherClear READ_BOOLEAN_WORLD_WEATHER_CLEAR = new AspectReadBooleanWorldWeatherClear();
     public static final AspectReadBooleanWorldWeatherRaining READ_BOOLEAN_WORLD_WEATHER_RAINING = new AspectReadBooleanWorldWeatherRaining();
     public static final AspectReadBooleanWorldWeatherThunder READ_BOOLEAN_WORLD_WEATHER_THUNDER = new AspectReadBooleanWorldWeatherThunder();
