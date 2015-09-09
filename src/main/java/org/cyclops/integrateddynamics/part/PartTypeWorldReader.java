@@ -29,6 +29,7 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.READ_INTEGER_WORLD_TIME,
                 Aspects.READ_INTEGER_WORLD_TOTALTIME,
                 Aspects.READ_INTEGER_WORLD_RAINCOUNTDOWN,
+                Aspects.READ_INTEGER_WORLD_TICKTIME,
                 Aspects.READ_STRING_WORLD_BLOCKNAME
         ));
     }

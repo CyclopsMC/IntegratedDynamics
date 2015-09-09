@@ -4,6 +4,9 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.part.aspect.read.fluid.*;
 import org.cyclops.integrateddynamics.part.aspect.read.inventory.*;
+import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftPlayerCount;
+import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftRandom;
+import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftTicktime;
 import org.cyclops.integrateddynamics.part.aspect.read.redstone.*;
 import org.cyclops.integrateddynamics.part.aspect.read.world.*;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
@@ -52,6 +55,7 @@ public class Aspects {
     public static final AspectReadIntegerWorldTime READ_INTEGER_WORLD_TIME = new AspectReadIntegerWorldTime();
     public static final AspectReadIntegerWorldTotalTime READ_INTEGER_WORLD_TOTALTIME = new AspectReadIntegerWorldTotalTime();
     public static final AspectReadIntegerWorldRainCountdown READ_INTEGER_WORLD_RAINCOUNTDOWN = new AspectReadIntegerWorldRainCountdown();
+    public static final AspectReadIntegerWorldTicktime READ_INTEGER_WORLD_TICKTIME = new AspectReadIntegerWorldTicktime();
 
     public static final AspectReadStringWorldBlockName READ_STRING_WORLD_BLOCKNAME = new AspectReadStringWorldBlockName();
 
@@ -75,6 +79,11 @@ public class Aspects {
     public static final AspectReadStringFluidName READ_STRING_FLUID_NAME = new AspectReadStringFluidName();
     public static final AspectReadStringFluidBlockName READ_STRING_FLUID_BLOCKNAME = new AspectReadStringFluidBlockName();
     public static final AspectReadStringFluidRarity READ_STRING_FLUID_RARITY = new AspectReadStringFluidRarity();
+
+    // --- Minecraft ---
+    public static final AspectReadIntegerMinecraftRandom READ_INTEGER_MINECRAFT_RANDOM = new AspectReadIntegerMinecraftRandom();
+    public static final AspectReadIntegerMinecraftPlayerCount READ_INTEGER_MINECRAFT_PLAYERCOUNT = new AspectReadIntegerMinecraftPlayerCount();
+    public static final AspectReadIntegerMinecraftTicktime READ_INTEGER_MINECRAFT_TICKTIME = new AspectReadIntegerMinecraftTicktime();
 
     // --------------- Write ---------------
     public static final AspectWriteBooleanRedstone WRITE_BOOLEAN_REDSTONE = new AspectWriteBooleanRedstone();
