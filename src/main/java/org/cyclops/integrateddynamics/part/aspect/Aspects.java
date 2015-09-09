@@ -34,7 +34,8 @@ public class Aspects {
     public static final AspectReadBooleanInventoryNonEmpty READ_BOOLEAN_INVENTORY_NONEMPTY = new AspectReadBooleanInventoryNonEmpty();
     public static final AspectReadBooleanInventoryApplicable READ_BOOLEAN_INVENTORY_APPLICABLE = new AspectReadBooleanInventoryApplicable();
 
-    public static final AspectReadIntegerInventory READ_INTEGER_INVENTORY_COUNT = new AspectReadIntegerInventory();
+    public static final AspectReadIntegerInventoryCount READ_INTEGER_INVENTORY_COUNT = new AspectReadIntegerInventoryCount();
+    public static final AspectReadIntegerInventoryCountSlot READ_INTEGER_INVENTORY_COUNT_SLOT = new AspectReadIntegerInventoryCountSlot();
 
     // --- World ---
     public static final AspectReadBooleanWorldBlock READ_BOOLEAN_WORLD_BLOCK = new AspectReadBooleanWorldBlock();

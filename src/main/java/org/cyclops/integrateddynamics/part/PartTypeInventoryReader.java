@@ -20,7 +20,8 @@ public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryR
                 Aspects.READ_BOOLEAN_INVENTORY_EMPTY,
                 Aspects.READ_BOOLEAN_INVENTORY_NONEMPTY,
                 Aspects.READ_BOOLEAN_INVENTORY_APPLICABLE,
-                Aspects.READ_INTEGER_INVENTORY_COUNT
+                Aspects.READ_INTEGER_INVENTORY_COUNT,
+                Aspects.READ_INTEGER_INVENTORY_COUNT_SLOT
         ));
     }
 

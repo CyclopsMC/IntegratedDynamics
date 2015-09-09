@@ -7,17 +7,16 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
-import org.cyclops.integrateddynamics.part.aspect.read.AspectReadIntegerBase;
 
 /**
  * Aspect that can count the amount of items in an inventory
  * @author rubensworks
  */
-public class AspectReadIntegerInventory extends AspectReadIntegerBase {
+public class AspectReadIntegerInventoryCount extends AspectReadIntegerInventoryBase {
 
     @Override
-    protected String getUnlocalizedIntegerType() {
-        return "inventory";
+    protected String getUnlocalizedIntegerWorldType() {
+        return "count";
     }
 
     @Override

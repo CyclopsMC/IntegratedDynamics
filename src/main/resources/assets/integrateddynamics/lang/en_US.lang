@@ -83,8 +83,10 @@ aspect.aspects.integrateddynamics.read.boolean.inventory.nonempty.info=If there 
 aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.name=Is Inventory
 aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.info=If the target has an inventory
 
-aspect.aspects.integrateddynamics.read.integer.inventory.name=Inventory Count
-aspect.aspects.integrateddynamics.read.integer.inventory.info=Get the total amount of items
+aspect.aspects.integrateddynamics.read.integer.inventory.count.name=Inventory Count
+aspect.aspects.integrateddynamics.read.integer.inventory.count.info=Get the total amount of items
+aspect.aspects.integrateddynamics.read.integer.inventory.countslot.name=Slot Stacksize
+aspect.aspects.integrateddynamics.read.integer.inventory.countslot.info=Get the stack size in the active slot
 
 ## World aspects
 aspect.aspects.integrateddynamics.read.boolean.world.block.name=Has Block
@@ -156,6 +158,7 @@ aspect.aspects.integrateddynamics.read.string.fluid.rarity.info=The rarity of fl
 
 # Aspect property types
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
+aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
 
 # Operators
 operator.tooltip.operatorName=§eOperator: §r%s (%s)
