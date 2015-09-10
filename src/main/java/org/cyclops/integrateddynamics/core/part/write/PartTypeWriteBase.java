@@ -35,7 +35,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         extends PartTypeAspects<P, S> implements IPartTypeWriter<P, S> {
 
     public PartTypeWriteBase(String name) {
-        super(name);
+        super(name, RenderPosition.of(0.3125F, 0.25F, 0.25F));
     }
 
     @Override
@@ -48,11 +48,6 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
             }
         });
         return actions;
-    }
-
-    @Override
-    public float getWidthFactor() {
-        return 0.3125F;
     }
 
     @Override

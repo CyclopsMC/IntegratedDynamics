@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import lombok.Data;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -61,9 +62,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public boolean isSolid(S state);
 
     /**
-     * @return The factor of block width this part occupies, used to calculate the required render length of the cable.
+     * @return The position part occupies, used to calculate the required render lengths.
+     *         This part is assumed to be aligned at the edge of the block for the depth, while centered on width and height.
      */
-    public float getWidthFactor();
+    public RenderPosition getRenderPosition();
 
     /**
      * Called on the Integrated Dynamics mod initialization steps.
@@ -220,5 +222,14 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target block.
      */
     public void onPreRemoved(Network network, PartTarget target, S state);
+
+    @Data(staticConstructor = "of")
+    public static class RenderPosition {
+
+        public static final RenderPosition NONE = RenderPosition.of(-1, -1, -1);
+
+        private final float depthFactor, widthFactor, heightFactor;
+
+    }
 
 }

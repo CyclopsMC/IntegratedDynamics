@@ -1,5 +1,6 @@
 # General
 itemGroup.integrateddynamics=Integrated Dynamics
+general.integrateddynamics.info.none=None
 
 # Gui
 gui.integrateddynamics.button.save=Save
@@ -19,6 +20,8 @@ item.items.integrateddynamics.variable.id=§e§oVariable ID: §r§o%s
 item.items.integrateddynamics.labeller.name=Labeller
 item.items.integrateddynamics.labeller.info=Labels your variables
 item.items.integrateddynamics.labeller.button.write=Write
+item.items.integrateddynamics.facade.name=Facade
+item.items.integrateddynamics.facade.info=Combine with a block in crafting table
 
 # Value types
 valuetype.tooltip.typeName=§eType: §r%s

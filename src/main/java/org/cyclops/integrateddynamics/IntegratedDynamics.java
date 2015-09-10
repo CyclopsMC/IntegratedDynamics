@@ -89,7 +89,9 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
     @Override
     protected RecipeHandler constructRecipeHandler() {
-        return null; // TODO
+        return new ExtendedRecipeHandler(this
+                // TODO
+        );
     }
 
     @Mod.EventHandler

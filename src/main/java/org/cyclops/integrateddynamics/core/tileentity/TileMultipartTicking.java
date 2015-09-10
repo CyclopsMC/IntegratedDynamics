@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,8 +17,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -38,7 +42,8 @@ import java.util.Map;
  * A ticking tile entity which is made up of different parts.
  * @author Ruben Taelman
  */
-public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTileEntity.ITickingTile, IPartContainer, ITileCableNetwork {
+public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTileEntity.ITickingTile,
+        IPartContainer, ITileCableNetwork, ITileCableFacadeable {
 
     private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
     @Delegate
@@ -49,6 +54,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @NBTPersist private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
     @NBTPersist private Map<Integer, Integer> redstoneLevels = Maps.newHashMap();
     @NBTPersist private Map<Integer, Boolean> redstoneInputs = Maps.newHashMap();
+    @NBTPersist private String facadeBlockName = null;
+    @NBTPersist private int facadeMeta = 0;
 
     @Getter
     @Setter
@@ -230,6 +237,32 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     @Override
+    public boolean hasFacade() {
+        return facadeBlockName != null && !facadeBlockName.isEmpty();
+    }
+
+    @Override
+    public IBlockState getFacade() {
+        if(!hasFacade()) {
+            return null;
+        }
+        return BlockHelpers.deserializeBlockState(Pair.of(this.facadeBlockName, this.facadeMeta));
+    }
+
+    @Override
+    public void setFacade(@Nullable IBlockState blockState) {
+        if(blockState == null) {
+            this.facadeMeta = 0;
+            this.facadeBlockName = null;
+        } else {
+            Pair<String, Integer> serializedBlockState = BlockHelpers.serializeBlockState(blockState);
+            this.facadeMeta = serializedBlockState.getRight();
+            this.facadeBlockName = serializedBlockState.getLeft();
+        }
+        sendUpdate();
+    }
+
+    @Override
     public void onUpdateReceived() {
         getWorld().markBlockRangeForRenderUpdate(pos, pos);
     }
@@ -246,11 +279,12 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             boolean hasPart = hasPart(side);
             extendedState = extendedState.withProperty(BlockCable.PART[side.ordinal()], hasPart);
             if(hasPart) {
-                extendedState = extendedState.withProperty(BlockCable.PART_WIDTH_FACTOR[side.ordinal()], getPart(side).getWidthFactor());
+                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
             } else {
-                extendedState = extendedState.withProperty(BlockCable.PART_WIDTH_FACTOR[side.ordinal()], 0F);
+                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
             }
         }
+        extendedState = extendedState.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
         return extendedState;
     }
 

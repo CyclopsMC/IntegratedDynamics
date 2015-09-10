@@ -52,9 +52,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     private final int guiID;
     @Getter
     private final String name;
+    @Getter
+    private final RenderPosition renderPosition;
     private final Map<Class<? extends NetworkEvent>, IEventAction> networkEventActions;
 
-    public PartTypeBase(String name) {
+    public PartTypeBase(String name, RenderPosition renderPosition) {
         if(hasGui()) {
             this.guiID = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
             getMod().getGuiHandler().registerGUI(this, ExtendedGuiHandler.PART);
@@ -64,6 +66,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         this.name = name;
         this.block = registerBlock();
         this.item = registerItem();
+        this.renderPosition = renderPosition;
 
         networkEventActions = constructNetworkEventActions();
     }

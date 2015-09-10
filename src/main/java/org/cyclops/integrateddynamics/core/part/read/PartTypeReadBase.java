@@ -24,12 +24,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
         extends PartTypeAspects<P, S> implements IPartTypeReader<P, S> {
 
     public PartTypeReadBase(String name) {
-        super(name);
-    }
-
-    @Override
-    public float getWidthFactor() {
-        return 0.3125F;
+        super(name, RenderPosition.of(0.3125F, 0.625F, 0.625F));
     }
 
     @Override

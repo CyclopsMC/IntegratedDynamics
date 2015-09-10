@@ -4,6 +4,7 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.block.BlockDatastoreConfig;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
+import org.cyclops.integrateddynamics.item.ItemFacadeConfig;
 import org.cyclops.integrateddynamics.item.ItemLabellerConfig;
 import org.cyclops.integrateddynamics.item.ItemVariableConfig;
 import org.cyclops.integrateddynamics.item.ItemWrenchConfig;
@@ -25,6 +26,7 @@ public class Configs {
         configHandler.add(new ItemWrenchConfig());
         configHandler.add(new ItemVariableConfig());
         configHandler.add(new ItemLabellerConfig());
+        configHandler.add(new ItemFacadeConfig());
 
     }
 

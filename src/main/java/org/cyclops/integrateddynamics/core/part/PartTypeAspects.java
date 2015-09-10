@@ -12,8 +12,8 @@ import java.util.Set;
  */
 public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPartState<P>> extends PartTypeConfigurable<P, S> {
 
-    public PartTypeAspects(String name) {
-        super(name);
+    public PartTypeAspects(String name, RenderPosition renderPosition) {
+        super(name, renderPosition);
     }
 
     /**

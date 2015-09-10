@@ -39,7 +39,7 @@ import java.util.Map;
 public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDisplay.State> {
 
     public PartTypeDisplay(String name) {
-        super(name);
+        super(name, RenderPosition.of(0.1875F, 0.625F, 0.625F));
     }
 
     @Override
@@ -82,11 +82,6 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
     public void afterNetworkAlive(Network network, PartTarget target, PartTypeDisplay.State state) {
         super.afterNetworkAlive(network, target, state);
         state.onVariableContentsUpdated(this, target);
-    }
-
-    @Override
-    public float getWidthFactor() {
-        return 0.1875F;
     }
 
     @Override
