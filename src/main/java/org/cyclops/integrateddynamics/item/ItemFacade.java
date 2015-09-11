@@ -8,8 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,7 +21,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.integrateddynamics.client.render.model.ModelFacade;
+import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
 import org.cyclops.integrateddynamics.core.tileentity.ITileCableFacadeable;
 
 /**
@@ -75,7 +78,7 @@ public class ItemFacade extends ConfigurableItem {
 
     @Override
     public String getItemStackDisplayName(ItemStack itemStack) {
-        String suffix = L10NHelpers.localize("general.integrateddynamics.info.none");
+        String suffix = EnumChatFormatting.ITALIC + L10NHelpers.localize("general.integrateddynamics.info.none");
         ItemStack itemStackInner = getFacadeBlockItem(itemStack);
         if(itemStackInner != null) {
             suffix = getFacadeBlockItem(itemStack).getDisplayName();
@@ -110,7 +113,16 @@ public class ItemFacade extends ConfigurableItem {
     @SideOnly(Side.CLIENT)
     @Override
     public IBakedModel createDynamicModel() {
-        return new ModelFacade();
+        return new FacadeModel();
+    }
+
+    @SubscribeEvent
+    @Override
+    public void onModelBakeEvent(ModelBakeEvent event){
+        // Don't throw away the original model, but use if for displaying an unbound facade item.
+        IBakedModel oldModel = (IBakedModel) event.modelRegistry.getObject(eConfig.dynamicItemVariantLocation);
+        FacadeModel.emptyModel = oldModel;
+        super.onModelBakeEvent(event);
     }
 
 }

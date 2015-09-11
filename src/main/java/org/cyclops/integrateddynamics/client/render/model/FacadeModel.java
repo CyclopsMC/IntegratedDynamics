@@ -17,15 +17,17 @@ import java.util.List;
  * Dynamic model for facade items.
  * @author rubensworks
  */
-public class ModelFacade extends DynamicModel {
+public class FacadeModel extends DynamicModel {
+
+    public static IBakedModel emptyModel;
 
     private final IBakedModel baseModel;
 
-    public ModelFacade() {
+    public FacadeModel() {
         this.baseModel = null;
     }
 
-    public ModelFacade(IBakedModel baseModel) {
+    public FacadeModel(IBakedModel baseModel) {
         this.baseModel = baseModel;
     }
 
@@ -50,9 +52,9 @@ public class ModelFacade extends DynamicModel {
     public IBakedModel handleItemState(ItemStack stack) {
         IBlockState blockState = ItemFacade.getInstance().getFacadeBlock(stack);
         if(blockState == null) {
-            blockState = Blocks.stone.getDefaultState();
+            return new FacadeModel(emptyModel);
         }
-        return new ModelFacade(RenderHelpers.getBakedModel(blockState));
+        return new FacadeModel(RenderHelpers.getBakedModel(blockState));
     }
 
     @Override
