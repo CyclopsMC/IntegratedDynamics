@@ -39,7 +39,7 @@ import java.util.Map;
 public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDisplay.State> {
 
     public PartTypeDisplay(String name) {
-        super(name, RenderPosition.of(0.1875F, 0.625F, 0.625F));
+        super(name, new RenderPosition(0.1875F, 0.625F, 0.625F));
     }
 
     @Override

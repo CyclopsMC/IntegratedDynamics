@@ -223,10 +223,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      */
     public void onPreRemoved(Network network, PartTarget target, S state);
 
-    @Data(staticConstructor = "of")
+    @Data
     public static class RenderPosition {
 
-        public static final RenderPosition NONE = RenderPosition.of(-1, -1, -1);
+        public static final RenderPosition NONE = new RenderPosition(-1, -1, -1);
 
         private final float depthFactor, widthFactor, heightFactor;
 

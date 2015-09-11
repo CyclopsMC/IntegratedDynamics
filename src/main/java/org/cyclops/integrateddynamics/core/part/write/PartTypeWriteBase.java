@@ -35,7 +35,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         extends PartTypeAspects<P, S> implements IPartTypeWriter<P, S> {
 
     public PartTypeWriteBase(String name) {
-        super(name, RenderPosition.of(0.3125F, 0.25F, 0.25F));
+        super(name, new RenderPosition(0.3125F, 0.25F, 0.25F));
     }
 
     @Override

@@ -33,7 +33,7 @@ public class CableModel extends DynamicModel {
     private static final int INV_LENGTH_CONNECTION = TEXTURE_SIZE - LENGTH_CONNECTION;
     public static final float MIN = (float) LENGTH_CONNECTION / (float) TEXTURE_SIZE;
     public static final float MAX = 1.0F - MIN;
-    private static final IPartType.RenderPosition CABLE_RENDERPOSITION = IPartType.RenderPosition.of(
+    private static final IPartType.RenderPosition CABLE_RENDERPOSITION = new IPartType.RenderPosition(
             (((float) TEXTURE_SIZE - (float) RADIUS) / 2 / (float) TEXTURE_SIZE),
             (float) RADIUS / (float) TEXTURE_SIZE, (float) RADIUS / (float) TEXTURE_SIZE);
 
