@@ -266,7 +266,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                         ItemFacade.getInstance().writeFacadeBlock(itemStack, blockState);
                         setFacade(world, pos, null);
                         ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
-                        // TODO: notify neighbour blocks
+                        world.notifyNeighborsOfStateChange(pos, this);
                         return true;
                     }
                     return false;
@@ -275,7 +275,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                         // Remove part from cable
                         if(player.isSneaking()) {
                             getPartContainer(world, pos).removePart(positionHit, player);
-                            // TODO: notify neighbour blocks
+                            world.notifyNeighborsOfStateChange(pos, this);
                             ItemBlockCable.playBreakSound(world, pos, state);
                             // Remove full cable block if this was the last part and if it was already an unreal cable.
                             if(!isRealCable(world, pos) && !getPartContainer(world, pos).hasParts()) {
