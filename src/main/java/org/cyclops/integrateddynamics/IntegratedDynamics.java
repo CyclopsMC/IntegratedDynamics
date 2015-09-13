@@ -27,9 +27,7 @@ import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IOperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueTypeRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElementTypeRegistry;
@@ -99,6 +97,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
     public final void preInit(FMLPreInitializationEvent event) {
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());
+        getRegistryManager().addRegistry(IValueCastRegistry.class, ValueCastRegistry.getInstance());
         getRegistryManager().addRegistry(IPartTypeRegistry.class, PartTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());
         getRegistryManager().addRegistry(IOperatorRegistry.class, OperatorRegistry.getInstance());
@@ -111,6 +110,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
 
         ValueTypes.load();
+        ValueCastMappings.load();
         Operators.load();
         Aspects.load();
         PartTypes.load();

@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 public class GeneralIdentityOperator extends GeneralOperator {
 
     public GeneralIdentityOperator(String symbol, String operatorName) {
-        super(symbol, operatorName, new IValueType[]{ValueTypes.ANY}, ValueTypes.ANY, new IFunction() {
+        super(symbol, operatorName, new IValueType[]{ValueTypes.CATEGORY_ANY}, ValueTypes.CATEGORY_ANY, new IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
                 return variables[0].getValue();

@@ -30,8 +30,12 @@ valuetype.error.invalidInput=The input "%s" could not be parsed for this value t
 
 valuetype.valuetypes.integrateddynamics.any.name=Any
 valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
+valuetype.valuetypes.integrateddynamics.number.name=Number
+valuetype.valuetypes.integrateddynamics.number.info=Accepts all number types.
+
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
+valuetype.valuetypes.integrateddynamics.double.name=Double
 valuetype.valuetypes.integrateddynamics.string.name=String
 
 # Part types

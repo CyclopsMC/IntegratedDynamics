@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
@@ -61,7 +62,7 @@ public class AspectVariableFacade extends VariableFacadeBase {
                 && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
             validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
                     Integer.toString(getPartId())));
-        } else if (!containingValueType.correspondsTo(getAspect().getValueType())) {
+        } else if (!ValueHelpers.correspondsTo(containingValueType, getAspect().getValueType())) {
             validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
                     new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                     new L10NHelpers.UnlocalizedString(getAspect().getValueType().getUnlocalizedName())));

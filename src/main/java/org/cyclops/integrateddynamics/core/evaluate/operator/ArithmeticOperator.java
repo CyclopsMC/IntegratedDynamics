@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 
 /**
- * Base class for integer operators.
+ * Base class for arithmetic operators.
  * @author rubensworks
  */
 public class ArithmeticOperator extends OperatorBase {
@@ -17,12 +17,22 @@ public class ArithmeticOperator extends OperatorBase {
     }
 
     public ArithmeticOperator(String symbol, String operatorName, int inputLength, IFunction function, IConfigRenderPattern renderPattern) {
-        super(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.INTEGER), ValueTypes.INTEGER, function, renderPattern);
+        super(symbol, operatorName, constructInputVariables(inputLength, ValueTypes.CATEGORY_NUMBER), ValueTypes.CATEGORY_NUMBER, function, renderPattern);
     }
 
     @Override
     public String getUnlocalizedType() {
         return "arithmetic";
+    }
+
+    @Override
+    public IValueType getConditionalOutputType(IVariable[] input) {
+        IValueType[] original = ValueHelpers.from(input);
+        IValueTypeNumber[] types = new IValueTypeNumber[original.length];
+        for(int i = 0; i < original.length; i++) {
+            types[i] = (IValueTypeNumber) original[i];
+        }
+        return ValueTypes.CATEGORY_NUMBER.getLowestType(types);
     }
 
 }

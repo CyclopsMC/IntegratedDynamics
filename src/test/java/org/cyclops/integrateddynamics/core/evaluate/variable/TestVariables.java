@@ -60,6 +60,26 @@ public class TestVariables {
     }
 
     @Test
+    public void testDoubleType() {
+        DummyVariableDouble d0 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.1));
+        assertThat("0.1 value is 0.1", d0.getValue().getRawValue(), is(0.1));
+
+        DummyVariableDouble dm10 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(-10.1));
+        assertThat("-10.1 value is -10.1", dm10.getValue().getRawValue(), is(-10.1));
+
+        DummyVariableDouble d10 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(10.1));
+        assertThat("10.1 value is 10.1", d10.getValue().getRawValue(), is(10.1));
+
+        assertThat("serializing 10.1 returns 10.1", d10.getType().serialize(d10.getValue()), is("10.1"));
+        assertThat("serializing -10.1 returns -10.1", dm10.getType().serialize(dm10.getValue()), is("-10.1"));
+        assertThat("serializing 0.1 returns 0.1", d0.getType().serialize(d0.getValue()), is("0.1"));
+
+        assertThat("deserializing 10.1 returns 10.1", d10.getType().deserialize("10.1"), is(d10.getValue()));
+        assertThat("deserializing -10.1 returns -10.1", dm10.getType().deserialize("-10.1"), is(dm10.getValue()));
+        assertThat("deserializing 0.1 returns 0.1", d0.getType().deserialize("0.1"), is(d0.getValue()));
+    }
+
+    @Test
     public void testStringType() {
         DummyVariableString s0 = new DummyVariableString(ValueTypeString.ValueString.of("0"));
         assertThat("0 value is 0", s0.getValue().getRawValue(), is("0"));

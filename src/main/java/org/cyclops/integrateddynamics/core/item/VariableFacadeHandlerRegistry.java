@@ -135,7 +135,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
         @Override
         public IValueType getOutputType() {
-            return ValueTypes.ANY;
+            return ValueTypes.CATEGORY_ANY;
         }
 
         @Override

@@ -9,10 +9,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
@@ -75,7 +72,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
             validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
         } else {
             // Check expected aspect type and operator output type
-            if (!getValueType().correspondsTo(containingValueType)) {
+            if (!ValueHelpers.correspondsTo(getValueType(), containingValueType)) {
                 validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
                         new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                         new L10NHelpers.UnlocalizedString(getValueType().getUnlocalizedName())));

@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 public class RelationalEqualsOperator extends RelationalOperator {
 
     public RelationalEqualsOperator(String symbol, String operatorName) {
-        super(symbol, operatorName, new IValueType[]{ValueTypes.ANY, ValueTypes.ANY}, ValueTypes.BOOLEAN, new IFunction() {
+        super(symbol, operatorName, new IValueType[]{ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}, ValueTypes.BOOLEAN, new IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
                 return ValueTypeBoolean.ValueBoolean.of(variables[0].getValue().equals(variables[1].getValue()));

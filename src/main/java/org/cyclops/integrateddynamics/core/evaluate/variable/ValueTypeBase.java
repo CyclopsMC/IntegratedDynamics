@@ -28,6 +28,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         }
     }
 
+    @Override
+    public boolean isCategory() {
+        return false;
+    }
+
     protected String getUnlocalizedPrefix() {
         return "valuetype.valuetypes." + getModId() + "." + getTypeName();
     }

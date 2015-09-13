@@ -6,10 +6,15 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Type of variable
+ * Type of value
  * @author rubensworks
  */
 public interface IValueType<V extends IValue> {
+
+    /**
+     * @return If this type is a category and should be handled accordingly.
+     */
+    public boolean isCategory();
 
     /**
      * Create an immutable default value.

@@ -25,6 +25,16 @@ public interface IValueTypeRegistry extends IRegistry, IVariableFacadeHandler<Va
     public <V extends IValue, T extends IValueType<V>> T register(T valueType);
 
     /**
+     * Register a new value category.
+     * This registration can be overwritten, so only the last registered category is remembered.
+     * @param category The category.
+     * @param <V> The value type.
+     * @param <T> The value type type.
+     * @return The registered category.
+     */
+    public <V extends IValue, T extends IValueTypeCategory<V>> T registerCategory(T category);
+
+    /**
      * Get the value type by name.
      * @param name The unique name.
      * @return The value type or null if not found.

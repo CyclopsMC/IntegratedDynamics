@@ -51,4 +51,14 @@ public class ValueHelpers {
         return v1 == null && v2 == null || (!(v1 == null || v2 == null) && v1.equals(v2));
     }
 
+    /**
+     * Bidirectional checking of correspondence.
+     * @param t1 First type.
+     * @param t2 Second type.
+     * @return If they correspond to each other in some direction.
+     */
+    public static boolean correspondsTo(IValueType t1, IValueType t2) {
+        return t1.correspondsTo(t2) || t2.correspondsTo(t1);
+    }
+
 }

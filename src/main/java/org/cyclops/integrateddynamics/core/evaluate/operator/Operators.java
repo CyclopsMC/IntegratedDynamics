@@ -82,17 +82,7 @@ public final class Operators {
     public static final ArithmeticOperator ARITHMETIC_ADDITION = REGISTRY.register(new ArithmeticOperator("+", "addition", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            if (a == 0) { // If a is neutral element for addition
-                return variables[1].getValue();
-            } else {
-                int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-                if (b == 0) { // If b is neutral element for addition
-                    return variables[0].getValue();
-                } else {
-                    return ValueTypeInteger.ValueInteger.of(a + b);
-                }
-            }
+            return ValueTypes.CATEGORY_NUMBER.add(variables[0], variables[1]);
         }
     }));
 
@@ -102,13 +92,7 @@ public final class Operators {
     public static final ArithmeticOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(new ArithmeticOperator("-", "subtraction", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            if (b == 0) { // If b is neutral element for subtraction
-                return variables[0].getValue();
-            } else {
-                int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-                return ValueTypeInteger.ValueInteger.of(a - b);
-            }
+            return ValueTypes.CATEGORY_NUMBER.subtract(variables[0], variables[1]);
         }
     }));
 
@@ -118,19 +102,7 @@ public final class Operators {
     public static final ArithmeticOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(new ArithmeticOperator("*", "multiplication", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            if (a == 0) { // If a is absorbtion element for multiplication
-                return variables[0].getValue();
-            } else if (a == 1) { // If a is neutral element for multiplication
-                return variables[1].getValue();
-            } else {
-                int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-                if (b == 1) { // If b is neutral element for multiplication
-                    return variables[0].getValue();
-                } else {
-                    return ValueTypeInteger.ValueInteger.of(a * b);
-                }
-            }
+            return ValueTypes.CATEGORY_NUMBER.multiply(variables[0], variables[1]);
         }
     }));
 
@@ -140,22 +112,42 @@ public final class Operators {
     public static final ArithmeticOperator ARITHMETIC_DIVISION = REGISTRY.register(new ArithmeticOperator("/", "division", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            if (b == 0) { // You can not divide by zero
-                throw new EvaluationException("Division by zero");
-            } else if (b == 1) { // If b is neutral element for division
-                return variables[0].getValue();
-            } else {
-                int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-                return ValueTypeInteger.ValueInteger.of(a / b);
-            }
+            return ValueTypes.CATEGORY_NUMBER.divide(variables[0], variables[1]);
         }
     }));
 
     /**
-     * Arithmetic MODULO operator with two input integers and one output integer.
+     * Arithmetic MAX operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MODULUS = REGISTRY.register(new ArithmeticOperator("%", "modulus", new OperatorBase.IFunction() {
+    public static final ArithmeticOperator ARITHMETIC_MAXIMUM = REGISTRY.register(new ArithmeticOperator("max", "maximum", new OperatorBase.IFunction() {
+
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            return ValueTypes.CATEGORY_NUMBER.max(variables[0], variables[1]);
+        }
+    }, IConfigRenderPattern.PREFIX_2));
+
+    /**
+     * Arithmetic MIN operator with two input integers and one output integer.
+     */
+    public static final ArithmeticOperator ARITHMETIC_MINIMUM = REGISTRY.register(new ArithmeticOperator("min", "minimum", new OperatorBase.IFunction() {
+
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            return ValueTypes.CATEGORY_NUMBER.min(variables[0], variables[1]);
+        }
+    }, IConfigRenderPattern.PREFIX_2));
+
+
+
+    /**
+     * ----------------------------------- INTEGER OPERATORS -----------------------------------
+     */
+
+    /**
+     * Integer MODULO operator with two input integers and one output integer.
+     */
+    public static final IntegerOperator INTEGER_MODULUS = REGISTRY.register(new IntegerOperator("%", "modulus", new OperatorBase.IFunction() {
 
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
@@ -172,35 +164,9 @@ public final class Operators {
     }));
 
     /**
-     * Arithmetic MAX operator with two input integers and one output integer.
+     * Integer INCREMENT operator with one input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MAXIMUM = REGISTRY.register(new ArithmeticOperator("max", "maximum", new OperatorBase.IFunction() {
-
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(Math.max(a, b));
-        }
-    }, IConfigRenderPattern.PREFIX_2));
-
-    /**
-     * Arithmetic MIN operator with two input integers and one output integer.
-     */
-    public static final ArithmeticOperator ARITHMETIC_MINIMUM = REGISTRY.register(new ArithmeticOperator("min", "minimum", new OperatorBase.IFunction() {
-
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(Math.min(a, b));
-        }
-    }, IConfigRenderPattern.PREFIX_2));
-
-    /**
-     * Arithmetic INCREMENT operator with one input integers and one output integer.
-     */
-    public static final ArithmeticOperator ARITHMETIC_INCREMENT = REGISTRY.register(new ArithmeticOperator("++", "increment", 1, new OperatorBase.IFunction() {
+    public static final IntegerOperator INTEGER_INCREMENT = REGISTRY.register(new IntegerOperator("++", "increment", 1, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
@@ -209,9 +175,9 @@ public final class Operators {
     }, IConfigRenderPattern.SUFFIX_1));
 
     /**
-     * Arithmetic INCREMENT operator with one input integers and one output integer.
+     * Integer INCREMENT operator with one input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_DECREMENT = REGISTRY.register(new ArithmeticOperator("--", "decrement", 1, new OperatorBase.IFunction() {
+    public static final IntegerOperator INTEGER_DECREMENT = REGISTRY.register(new IntegerOperator("--", "decrement", 1, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();

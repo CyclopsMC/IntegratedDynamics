@@ -14,6 +14,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     public static final DummyValueType TYPE = new DummyValueType();
 
     @Override
+    public boolean isCategory() {
+        return false;
+    }
+
+    @Override
     public DummyValue getDefault() {
         return null;
     }

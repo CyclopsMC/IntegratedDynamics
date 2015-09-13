@@ -50,6 +50,11 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
+    public <V extends IValue, T extends IValueTypeCategory<V>> T registerCategory(T category) {
+        return register(category);
+    }
+
+    @Override
     public IValueType getValueType(String name) {
         return valueTypes.get(name);
     }

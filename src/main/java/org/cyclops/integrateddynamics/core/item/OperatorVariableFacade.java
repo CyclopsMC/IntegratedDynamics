@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
@@ -121,7 +122,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                 }
                 // Check expected aspect type and operator output type
                 IValueType outputType = op.getConditionalOutputType(variables);
-                if (!outputType.correspondsTo(containingValueType)) {
+                if (!ValueHelpers.correspondsTo(outputType, containingValueType)) {
                     validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
                             new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                             new L10NHelpers.UnlocalizedString(outputType.getUnlocalizedName())));
