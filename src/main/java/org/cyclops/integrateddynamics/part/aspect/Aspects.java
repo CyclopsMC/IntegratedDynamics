@@ -50,14 +50,25 @@ public class Aspects {
     public static final AspectReadBooleanWorldWeatherClear READ_BOOLEAN_WORLD_WEATHER_CLEAR = new AspectReadBooleanWorldWeatherClear();
     public static final AspectReadBooleanWorldWeatherRaining READ_BOOLEAN_WORLD_WEATHER_RAINING = new AspectReadBooleanWorldWeatherRaining();
     public static final AspectReadBooleanWorldWeatherThunder READ_BOOLEAN_WORLD_WEATHER_THUNDER = new AspectReadBooleanWorldWeatherThunder();
+    public static final AspectReadBooleanWorldIsDay READ_BOOLEAN_WORLD_ISDAY = new AspectReadBooleanWorldIsDay();
+    public static final AspectReadBooleanWorldIsNight READ_BOOLEAN_WORLD_ISNIGHT = new AspectReadBooleanWorldIsNight();
+    public static final AspectReadBooleanWorldBlockOpaque READ_BOOLEAN_WORLD_BLOCK_OPAQUE = new AspectReadBooleanWorldBlockOpaque();
 
     public static final AspectReadIntegerWorldEntity READ_INTEGER_WORLD_ENTITY = new AspectReadIntegerWorldEntity();
     public static final AspectReadIntegerWorldTime READ_INTEGER_WORLD_TIME = new AspectReadIntegerWorldTime();
     public static final AspectReadIntegerWorldTotalTime READ_INTEGER_WORLD_TOTALTIME = new AspectReadIntegerWorldTotalTime();
     public static final AspectReadIntegerWorldRainCountdown READ_INTEGER_WORLD_RAINCOUNTDOWN = new AspectReadIntegerWorldRainCountdown();
     public static final AspectReadIntegerWorldTicktime READ_INTEGER_WORLD_TICKTIME = new AspectReadIntegerWorldTicktime();
+    public static final AspectReadIntegerWorldDayTime READ_INTEGER_WORLD_DAYTIME = new AspectReadIntegerWorldDayTime();
+    public static final AspectReadIntegerWorldLightLevel READ_INTEGER_WORLD_LIGHT_LEVEL = new AspectReadIntegerWorldLightLevel();
+    public static final AspectReadIntegerWorldPlayerCount READ_INTEGER_WORLD_PLAYERCOUNT = new AspectReadIntegerWorldPlayerCount();
+    public static final AspectReadIntegerWorldDimension READ_INTEGER_WORLD_DIMENSION = new AspectReadIntegerWorldDimension();
+    public static final AspectReadIntegerWorldPosX READ_INTEGER_WORLD_POSX = new AspectReadIntegerWorldPosX();
+    public static final AspectReadIntegerWorldPosY READ_INTEGER_WORLD_POSY = new AspectReadIntegerWorldPosY();
+    public static final AspectReadIntegerWorldPosZ READ_INTEGER_WORLD_POSZ = new AspectReadIntegerWorldPosZ();
 
     public static final AspectReadStringWorldBlockName READ_STRING_WORLD_BLOCKNAME = new AspectReadStringWorldBlockName();
+    public static final AspectReadStringWorldName READ_STRING_WORLD_NAME = new AspectReadStringWorldName();
 
     // --- Fluid ---
     public static final AspectReadBooleanFluidFull READ_BOOLEAN_FLUID_FULL = new AspectReadBooleanFluidFull();

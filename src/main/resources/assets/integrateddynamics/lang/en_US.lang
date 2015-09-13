@@ -112,6 +112,12 @@ aspect.aspects.integrateddynamics.read.boolean.world.weather.raining.name=Weathe
 aspect.aspects.integrateddynamics.read.boolean.world.weather.raining.info=If there it is raining in the world
 aspect.aspects.integrateddynamics.read.boolean.world.weather.thunder.name=Weather: Thunder
 aspect.aspects.integrateddynamics.read.boolean.world.weather.thunder.info=If there is a thunderstorm in the world
+aspect.aspects.integrateddynamics.read.boolean.world.isday.name=Is Day
+aspect.aspects.integrateddynamics.read.boolean.world.isday.info=If it is day in the target world
+aspect.aspects.integrateddynamics.read.boolean.world.isnight.name=Is Night
+aspect.aspects.integrateddynamics.read.boolean.world.isnight.info=If it is night in the target world
+aspect.aspects.integrateddynamics.read.boolean.world.blockopaque.name=Block Opaque
+aspect.aspects.integrateddynamics.read.boolean.world.blockopaque.info=If the target block is opaque
 
 aspect.aspects.integrateddynamics.read.integer.world.entity.name=Entities
 aspect.aspects.integrateddynamics.read.integer.world.entity.info=The amount of entities at the target space
@@ -120,12 +126,28 @@ aspect.aspects.integrateddynamics.read.integer.world.time.info=The world time de
 aspect.aspects.integrateddynamics.read.integer.world.totaltime.name=Total Time
 aspect.aspects.integrateddynamics.read.integer.world.totaltime.info=The world time independent of the set time command
 aspect.aspects.integrateddynamics.read.integer.world.raincountdown.name=Rain Countdown
-aspect.aspects.integrateddynamics.read.integer.world.raincountdown.info=The amount of ticks until it will rain in this world.
+aspect.aspects.integrateddynamics.read.integer.world.raincountdown.info=The amount of ticks until it will rain in this world
 aspect.aspects.integrateddynamics.read.integer.world.ticktime.name=Tick time
 aspect.aspects.integrateddynamics.read.integer.world.ticktime.info=The average tick time in milliseconds for this world
+aspect.aspects.integrateddynamics.read.integer.world.daytime.name=Day Time
+aspect.aspects.integrateddynamics.read.integer.world.daytime.info=The time that has passed in the target world day
+aspect.aspects.integrateddynamics.read.integer.world.lightlevel.name=Light Level
+aspect.aspects.integrateddynamics.read.integer.world.lightlevel.info=The light level at the target
+aspect.aspects.integrateddynamics.read.integer.world.playercount.name=Player Count
+aspect.aspects.integrateddynamics.read.integer.world.playercount.info=The amount of players in the world
+aspect.aspects.integrateddynamics.read.integer.world.dimension.name=Dimension
+aspect.aspects.integrateddynamics.read.integer.world.dimension.info=The id of the target world dimension
+aspect.aspects.integrateddynamics.read.integer.world.posx.name=X Coordinate
+aspect.aspects.integrateddynamics.read.integer.world.posx.info=The X coordinate of the target
+aspect.aspects.integrateddynamics.read.integer.world.posy.name=Y Coordinate
+aspect.aspects.integrateddynamics.read.integer.world.posy.info=The Y coordinate of the target
+aspect.aspects.integrateddynamics.read.integer.world.posz.name=Z Coordinate
+aspect.aspects.integrateddynamics.read.integer.world.posz.info=The Z coordinate of the target
 
 aspect.aspects.integrateddynamics.read.string.world.blockname.name=Block Name
 aspect.aspects.integrateddynamics.read.string.world.blockname.info=The target block name
+aspect.aspects.integrateddynamics.read.string.world.worldname.name=World Name
+aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target world name
 
 ## Fluid aspects
 aspect.aspects.integrateddynamics.read.boolean.fluid.empty.name=Tank Empty
