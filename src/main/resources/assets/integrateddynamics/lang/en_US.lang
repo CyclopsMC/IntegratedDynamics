@@ -262,6 +262,14 @@ operator.operators.integrateddynamics.string.name=String
 operator.operators.integrateddynamics.string.length.name=Length
 operator.operators.integrateddynamics.string.length.info=The length of the given String
 
+operator.operators.integrateddynamics.double.name=Double
+operator.operators.integrateddynamics.double.round.name=Round
+operator.operators.integrateddynamics.double.round.info=Round to the nearest Integer
+operator.operators.integrateddynamics.double.ceil.name=Ceil
+operator.operators.integrateddynamics.double.ceil.info=Round up to the nearest Integer
+operator.operators.integrateddynamics.double.floor.name=Floor
+operator.operators.integrateddynamics.double.floor.info=Round down to the nearest Integer
+
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
 operator.operators.integrateddynamics.general.choice.name=Choice

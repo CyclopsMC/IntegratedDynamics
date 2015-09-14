@@ -342,6 +342,43 @@ public final class Operators {
     }, IConfigRenderPattern.PREFIX_1));
 
     /**
+     * ----------------------------------- DOUBLE OPERATORS -----------------------------------
+     */
+
+    /**
+     * Double round operator with one input double and one output integers.
+     */
+    public static final DoubleOperator DOUBLE_ROUND = REGISTRY.register(new DoubleOperator("|| ||", "round", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of((int) Math.round(a));
+        }
+    }, IConfigRenderPattern.PREFIX_1));
+
+    /**
+     * Double ceil operator with one input double and one output integers.
+     */
+    public static final DoubleOperator DOUBLE_CEIL = REGISTRY.register(new DoubleOperator("⌈ ⌉", "ceil", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of((int) Math.ceil(a));
+        }
+    }, IConfigRenderPattern.PREFIX_1));
+
+    /**
+     * Double floor operator with one input double and one output integers.
+     */
+    public static final DoubleOperator DOUBLE_FLOOR = REGISTRY.register(new DoubleOperator("⌊ ⌋", "floor", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of((int) Math.floor(a));
+        }
+    }, IConfigRenderPattern.PREFIX_1));
+
+    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 
