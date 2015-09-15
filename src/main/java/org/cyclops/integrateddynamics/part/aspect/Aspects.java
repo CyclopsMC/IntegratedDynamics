@@ -87,6 +87,8 @@ public class Aspects {
     public static final AspectReadIntegerFluidTemperature READ_INTEGER_FLUID_TEMPERATURE = new AspectReadIntegerFluidTemperature();
     public static final AspectReadIntegerFluidViscosity READ_INTEGER_FLUID_VISCOSITY = new AspectReadIntegerFluidViscosity();
 
+    public static final AspectReadDoubleFluidFillRatio READ_DOUBLE_FLUID_FILLRATIO = new AspectReadDoubleFluidFillRatio();
+
     public static final AspectReadStringFluidName READ_STRING_FLUID_NAME = new AspectReadStringFluidName();
     public static final AspectReadStringFluidBlockName READ_STRING_FLUID_BLOCKNAME = new AspectReadStringFluidBlockName();
     public static final AspectReadStringFluidRarity READ_STRING_FLUID_RARITY = new AspectReadStringFluidRarity();
