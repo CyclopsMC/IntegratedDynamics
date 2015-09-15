@@ -184,7 +184,7 @@ aspect.aspects.integrateddynamics.read.integer.fluid.temperature.info=The temper
 aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.name=Fluid Viscosity
 aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.info=The viscosity of the fluid in the active tank
 
-aspect.aspects.integrateddynamics.read.double.fluid.fillratio.name=The fill ratio of the active tank
+aspect.aspects.integrateddynamics.read.double.fluid.fillratio.name=Fluid Fill Ratio
 aspect.aspects.integrateddynamics.read.double.fluid.fillratio.info=The amount of fluid in the active tank divided by its capacity
 
 aspect.aspects.integrateddynamics.read.string.fluid.name.name=Fluid Name
