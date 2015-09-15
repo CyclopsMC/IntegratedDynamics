@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
  * An operator composed of a number of other operators.
@@ -122,7 +123,7 @@ public class CompositionalOperator extends OperatorBase {
                 return this.base.validateTypes(input);
             } else {
                 if(input.length != getRequiredInputLength()) {
-                    return new L10NHelpers.UnlocalizedString("operator.error.wrongInputLength",
+                    return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                             new L10NHelpers.UnlocalizedString(unlocalizedOperatorName),
                             input.length, getRequiredInputLength());
                 }

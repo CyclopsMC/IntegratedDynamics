@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
@@ -57,13 +58,13 @@ public class AspectVariableFacade extends VariableFacadeBase {
     @Override
     public void validate(Network network, IValidator validator, IValueType containingValueType) {
         if (getPartId() < 0) {
-            validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else if (!(getAspect() instanceof IAspectRead
                 && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
-            validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.partNotInNetwork",
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_PARTNOTINNETWORK,
                     Integer.toString(getPartId())));
         } else if (!ValueHelpers.correspondsTo(containingValueType, getAspect().getValueType())) {
-            validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDTYPE,
                     new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                     new L10NHelpers.UnlocalizedString(getAspect().getValueType().getUnlocalizedName())));
         }
@@ -79,7 +80,7 @@ public class AspectVariableFacade extends VariableFacadeBase {
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {
         if(isValid()) {
             getAspect().loadTooltip(list, false);
-            list.add(L10NHelpers.localize("aspect.tooltip.partId", getPartId()));
+            list.add(L10NHelpers.localize(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
         }
         super.addInformation(list, entityPlayer);
     }

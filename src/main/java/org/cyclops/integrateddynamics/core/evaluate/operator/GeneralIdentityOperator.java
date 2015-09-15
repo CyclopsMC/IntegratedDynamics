@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
  * A general identity operator.
@@ -27,14 +28,14 @@ public class GeneralIdentityOperator extends GeneralOperator {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {
-            return new L10NHelpers.UnlocalizedString("operator.error.wrongInputLength",
+            return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                     this.getOperatorName(), input.length, requiredInputLength);
         }
         // Input types checking
         for(int i = 0; i < requiredInputLength; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
-                return new L10NHelpers.UnlocalizedString("operator.error.nullType", this.getOperatorName(), Integer.toString(i));
+                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
         }
         return null;

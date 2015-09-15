@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiAspectSettings;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.IPartType;
@@ -63,8 +64,8 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
         String aspectName = L10NHelpers.localize(getUnlocalizedName());
         String valueTypeName = L10NHelpers.localize(getValueType().getUnlocalizedName());
-        lines.add(L10NHelpers.localize("aspect.tooltip.aspectName", aspectName));
-        lines.add(L10NHelpers.localize("aspect.tooltip.valueTypeName", getValueType().getDisplayColorFormat() + valueTypeName));
+        lines.add(L10NHelpers.localize(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
+        lines.add(L10NHelpers.localize(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, getValueType().getDisplayColorFormat() + valueTypeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }

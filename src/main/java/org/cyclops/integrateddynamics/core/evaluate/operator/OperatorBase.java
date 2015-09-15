@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.Arrays;
 import java.util.List;
@@ -90,14 +91,14 @@ public abstract class OperatorBase implements IOperator {
         String categoryName = L10NHelpers.localize(getUnlocalizedCategoryName());
         String symbol = getSymbol();
         String outputTypeName = L10NHelpers.localize(getOutputType().getUnlocalizedName());
-        lines.add(L10NHelpers.localize("operator.tooltip.operatorName", operatorName, symbol));
-        lines.add(L10NHelpers.localize("operator.tooltip.operatorCategory", categoryName));
+        lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
+        lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
-            lines.add(L10NHelpers.localize("operator.tooltip.inputTypeName",
+            lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME,
                     i + 1, inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getUnlocalizedName())));
         }
-        lines.add(L10NHelpers.localize("operator.tooltip.outputTypeName", getOutputType().getDisplayColorFormat() + outputTypeName));
+        lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
@@ -137,17 +138,17 @@ public abstract class OperatorBase implements IOperator {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {
-            return new L10NHelpers.UnlocalizedString("operator.error.wrongInputLength",
+            return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                     this.getOperatorName(), input.length, requiredInputLength);
         }
         // Input types checking
         for(int i = 0; i < requiredInputLength; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
-                return new L10NHelpers.UnlocalizedString("operator.error.nullType", this.getOperatorName(), Integer.toString(i));
+                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
             if(!getInputTypes()[i].correspondsTo(inputType)) {
-                return new L10NHelpers.UnlocalizedString("operator.error.wrongType",
+                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
                         Integer.toString(i + 1), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
             }

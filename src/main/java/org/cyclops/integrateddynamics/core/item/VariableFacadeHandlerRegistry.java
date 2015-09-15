@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.Map;
 public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegistry {
 
     private static VariableFacadeHandlerRegistry INSTANCE = new VariableFacadeHandlerRegistry();
-    private static DummyVariableFacade DUMMY_FACADE = new DummyVariableFacade("variable.error.invalidItem");
+    private static DummyVariableFacade DUMMY_FACADE = new DummyVariableFacade(L10NValues.VARIABLE_ERROR_INVALIDITEM);
 
     private final Map<String, IVariableFacadeHandler> handlers = Maps.newHashMap();
 

@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
@@ -78,7 +79,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     @Override
     public void validate(Network network, IValidator validator, IValueType containingValueType) {
         if(this.variableIds == null) {
-            validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
             IValueType[] valueTypes = new IValueType[variableIds.length];
             IVariable[] variables = new IVariable[variableIds.length];
@@ -87,17 +88,17 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                 int variableId = variableIds[i];
                 // Check valid id
                 if (variableId < 0) {
-                    validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
+                    validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
                     checkFurther = false;
                 } else if (!network.hasVariableFacade(variableId)) { // Check id present in network
-                    validator.addError(new L10NHelpers.UnlocalizedString("operator.error.variableNotInNetwork",
+                    validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_VARIABLENOTINNETWORK,
                             Integer.toString(variableId)));
                     checkFurther = false;
                 } else {
                     // Check variable represented by this id is valid.
                     IVariableFacade variableFacade = network.getVariableFacade(variableId);
                     if(variableFacade == this) {
-                        validator.addError(new L10NHelpers.UnlocalizedString("operator.error.cyclicReference",
+                        validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_CYCLICREFERENCE,
                                 Integer.toString(variableId)));
                         checkFurther = false;
                     } else if (variableFacade != null) {
@@ -123,7 +124,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                 // Check expected aspect type and operator output type
                 IValueType outputType = op.getConditionalOutputType(variables);
                 if (!ValueHelpers.correspondsTo(outputType, containingValueType)) {
-                    validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
+                    validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
                             new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                             new L10NHelpers.UnlocalizedString(outputType.getUnlocalizedName())));
                 }
@@ -152,7 +153,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
                 first = false;
             }
             sb.append("}");
-            list.add(L10NHelpers.localize("operator.tooltip.variableIds", sb.toString()));
+            list.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_VARIABLEIDS, sb.toString()));
         }
         super.addInformation(list, entityPlayer);
     }

@@ -24,9 +24,9 @@ item.items.integrateddynamics.facade.name=Facade
 item.items.integrateddynamics.facade.info=Combine with a block in crafting table
 
 # Value types
-valuetype.tooltip.typeName=§eType: §r%s
-valuetype.tooltip.value=§e§oValue: §r%s
-valuetype.error.invalidInput=The input "%s" could not be parsed for this value type.
+valuetype.integrateddynamics.tooltip.typeName=§eType: §r%s
+valuetype.integrateddynamics.tooltip.value=§e§oValue: §r%s
+valuetype.integrateddynamics.error.invalidInput=The input "%s" could not be parsed for this value type.
 
 valuetype.valuetypes.integrateddynamics.any.name=Any
 valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
@@ -55,14 +55,14 @@ parttype.parttypes.integrateddynamics.display.name=Display
 parttype.parttypes.integrateddynamics.display.info=Visually display a variable value in the world
 
 # Variables facades
-variable.error.invalidItem=The current variable can not be used in this aspect.
+variable.integrateddynamics.error.invalidItem=The current variable can not be used in this aspect.
 
 # Aspects
-aspect.tooltip.aspectName=§eAspect: §r%s
-aspect.tooltip.valueTypeName=§eType: §r%s
-aspect.tooltip.partId=§e§oPart ID: §r§o%s
-aspect.error.partNotInNetwork=Part with id %s could not be found within the current network.
-aspect.error.invalidType=This aspect expects %s, but %s was given.
+aspect.integrateddynamics.tooltip.aspectName=§eAspect: §r%s
+aspect.integrateddynamics.tooltip.valueTypeName=§eType: §r%s
+aspect.integrateddynamics.tooltip.partId=§e§oPart ID: §r§o%s
+aspect.integrateddynamics.error.partNotInNetwork=Part with id %s could not be found within the current network.
+aspect.integrateddynamics.error.invalidType=This aspect expects %s, but %s was given.
 
 ## Redstone aspects
 aspect.aspects.integrateddynamics.read.boolean.redstone.high.name=Redstone High
@@ -207,16 +207,16 @@ aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
 
 # Operators
-operator.tooltip.operatorName=§eOperator: §r%s (%s)
-operator.tooltip.operatorCategory=§eCategory: §r%s
-operator.tooltip.variableIds=§e§oVariable IDs: §r§o%s
-operator.tooltip.inputTypeName=§eInput Type %s: §r%s
-operator.tooltip.outputTypeName=§eOutput Type: §r%s
-operator.error.wrongInputLength=The operator %s received an input of length %s while it needs a length of %s.
-operator.error.nullType=The operator %s received an input with a null variable at position %s.
-operator.error.wrongType=The operator %s received an input with type %s at position %s while the type %s was expected.
-operator.error.variableNotInNetwork=Variable with id %s could not be found within the current network.
-operator.error.cyclicReference=Variable with id %s depends on itself, infinite recursion.
+operator.integrateddynamics.tooltip.operatorName=§eOperator: §r%s (%s)
+operator.integrateddynamics.tooltip.operatorCategory=§eCategory: §r%s
+operator.integrateddynamics.tooltip.variableIds=§e§oVariable IDs: §r§o%s
+operator.integrateddynamics.tooltip.inputTypeName=§eInput Type %s: §r%s
+operator.integrateddynamics.tooltip.outputTypeName=§eOutput Type: §r%s
+operator.integrateddynamics.error.wrongInputLength=The operator %s received an input of length %s while it needs a length of %s.
+operator.integrateddynamics.error.nullType=The operator %s received an input with a null variable at position %s.
+operator.integrateddynamics.error.wrongType=The operator %s received an input with type %s at position %s while the type %s was expected.
+operator.integrateddynamics.error.variableNotInNetwork=Variable with id %s could not be found within the current network.
+operator.integrateddynamics.error.cyclicReference=Variable with id %s depends on itself, infinite recursion.
 
 operator.operators.integrateddynamics.logical.name=Logical
 operator.operators.integrateddynamics.logical.basename=Logical %s

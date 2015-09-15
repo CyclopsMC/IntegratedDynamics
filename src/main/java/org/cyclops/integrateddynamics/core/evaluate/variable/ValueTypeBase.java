@@ -6,6 +6,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 
@@ -70,7 +71,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
         String typeName = L10NHelpers.localize(getUnlocalizedName());
-        lines.add(L10NHelpers.localize("valuetype.tooltip.typeName", getDisplayColorFormat() + typeName));
+        lines.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
@@ -82,7 +83,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
             deserialize(value);
             return null;
         } catch (IllegalArgumentException e) {
-            return new L10NHelpers.UnlocalizedString("valuetype.error.invalidInput", value);
+            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);
         }
     }
 

@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
@@ -69,11 +70,11 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     @Override
     public void validate(Network network, IValidator validator, IValueType containingValueType) {
         if(this.value == null) {
-            validator.addError(new L10NHelpers.UnlocalizedString("variable.error.invalidItem"));
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
             // Check expected aspect type and operator output type
             if (!ValueHelpers.correspondsTo(getValueType(), containingValueType)) {
-                validator.addError(new L10NHelpers.UnlocalizedString("aspect.error.invalidType",
+                validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
                         new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                         new L10NHelpers.UnlocalizedString(getValueType().getUnlocalizedName())));
             }
@@ -90,7 +91,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {
         if(isValid()) {
             getValueType().loadTooltip(list, false);
-            list.add(L10NHelpers.localize("valuetype.tooltip.value", getValueType().toCompactString(getValue())));
+            list.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(getValue())));
         }
         super.addInformation(list, entityPlayer);
     }
