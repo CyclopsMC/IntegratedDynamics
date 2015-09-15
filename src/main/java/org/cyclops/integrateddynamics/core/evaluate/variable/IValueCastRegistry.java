@@ -25,6 +25,8 @@ public interface IValueCastRegistry extends IRegistry {
 
     /**
      * Cast the given value to the given type.
+     * This will automatically register a new cast operator for the given mapping to the
+     * {@link org.cyclops.integrateddynamics.core.evaluate.operator.IOperatorRegistry}.
      * @param target The target type.
      * @param value The value to cast.
      * @param <T1> The source type type.
