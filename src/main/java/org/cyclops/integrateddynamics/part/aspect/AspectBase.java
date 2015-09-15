@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
@@ -129,6 +131,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
             return ContainerAspectSettings.class;
         }
 
+        @SideOnly(Side.CLIENT)
         @Override
         public Class<? extends GuiScreen> getGui() {
             return GuiAspectSettings.class;
