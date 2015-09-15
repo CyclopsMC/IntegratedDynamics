@@ -48,6 +48,11 @@ public abstract class OperatorBase implements IOperator {
     protected abstract String getUnlocalizedType();
 
     @Override
+    public String getUniqueName() {
+        return getUnlocalizedName();
+    }
+
+    @Override
     public String getUnlocalizedName() {
         return getUnlocalizedPrefix() + ".name";
     }

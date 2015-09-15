@@ -19,7 +19,7 @@ public class OperatorElementType implements ILogicProgrammerElementType<Operator
 
     @Override
     public String getName(OperatorElement element) {
-        return element.getOperator().getUnlocalizedName();
+        return element.getOperator().getUniqueName();
     }
 
     @Override

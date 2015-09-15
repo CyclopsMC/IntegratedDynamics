@@ -20,6 +20,11 @@ public interface IOperator {
     public String getSymbol();
 
     /**
+     * @return The unique name for this operator, only used for internal storage.
+     */
+    public String getUniqueName();
+
+    /**
      * @return The unique unlocalized name for this operator.
      */
     public String getUnlocalizedName();

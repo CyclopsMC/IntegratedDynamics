@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.core.evaluate.operator.CastOperator;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 import java.util.Map;
 
@@ -29,6 +31,7 @@ public final class ValueCastRegistry implements IValueCastRegistry {
     @Override
     public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> void register(T1 from, T2 to, IMapping<T1, T2, V1, V2> mapping) {
         mappings.put(Pair.<IValueType, IValueType>of(from, to), mapping);
+        Operators.REGISTRY.register(new CastOperator<>(from, to, mapping));
     }
 
     @SuppressWarnings("unchecked")

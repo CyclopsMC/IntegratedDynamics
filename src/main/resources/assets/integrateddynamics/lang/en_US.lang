@@ -276,3 +276,7 @@ operator.operators.integrateddynamics.general.choice.name=Choice
 operator.operators.integrateddynamics.general.choice.info=If the first value is true, the second value is taken, otherwise the third value.\nType two and three must be equal.
 operator.operators.integrateddynamics.general.identity.name=Identity
 operator.operators.integrateddynamics.general.identity.info=A copy of the input value.
+
+operator.operators.integrateddynamics.cast.name=Cast
+operator.operators.integrateddynamics.binary.basename=Cast
+operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s

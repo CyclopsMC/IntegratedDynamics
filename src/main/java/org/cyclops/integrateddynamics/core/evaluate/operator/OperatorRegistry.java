@@ -45,7 +45,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     @Override
     public <O extends IOperator> O register(O operator) {
         operators.add(operator);
-        namedOperators.put(operator.getUnlocalizedName(), operator);
+        namedOperators.put(operator.getUniqueName(), operator);
         outputTypedOperators.put(operator.getOutputType(), operator);
         return operator;
     }
@@ -56,8 +56,8 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public IOperator getOperator(String unlocalizedName) {
-        return namedOperators.get(unlocalizedName);
+    public IOperator getOperator(String uniqueName) {
+        return namedOperators.get(uniqueName);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class OperatorRegistry implements IOperatorRegistry {
 
     @Override
     public void setVariableFacade(NBTTagCompound tag, OperatorVariableFacade variableFacade) {
-        tag.setString("operatorName", variableFacade.getOperator().getUnlocalizedName());
+        tag.setString("operatorName", variableFacade.getOperator().getUniqueName());
         tag.setIntArray("variableIds", variableFacade.getVariableIds());
     }
 }
