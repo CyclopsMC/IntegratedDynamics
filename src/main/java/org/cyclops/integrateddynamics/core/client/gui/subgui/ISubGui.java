@@ -24,7 +24,7 @@ public interface ISubGui {
      * @param typedChar The character typed
      * @param keyCode The keycode of the character typed
      * @return True if all next actions should be skipped
-     * @throws IOException
+     * @throws IOException An exception with IO.
      */
     public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException;
 

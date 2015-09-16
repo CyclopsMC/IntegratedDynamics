@@ -32,6 +32,7 @@ public interface IVariableFacade {
     /**
      * Get the variable.
      * @param network The object used to look for the variable.
+     * @param <V> The value type.
      * @return The variable.
      */
     public <V extends IValue> IVariable<V> getVariable(Network network);

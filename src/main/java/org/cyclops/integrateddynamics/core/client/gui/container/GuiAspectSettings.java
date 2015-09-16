@@ -68,6 +68,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
      * @param player The player.
      * @param partContainer The part container.
      * @param partType The part type.
+     * @param aspect The aspect.
      */
     public GuiAspectSettings(EntityPlayer player, PartTarget target, IPartContainer partContainer, IPartType partType, IAspect aspect) {
         super(new ContainerAspectSettings(player, target, partContainer, partType, aspect));

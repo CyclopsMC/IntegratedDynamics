@@ -27,6 +27,9 @@ public interface INetworkCarrier {
 
     /**
      * Get the current container network. Can be null.
+     * @param world The world.
+     * @param pos The position.
+     * @return The network.
      */
     public Network getNetwork(World world, BlockPos pos);
 

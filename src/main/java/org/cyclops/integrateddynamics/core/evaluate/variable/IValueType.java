@@ -51,6 +51,9 @@ public interface IValueType<V extends IValue> {
     public String getDisplayColorFormat();
 
     /**
+     * Check if the given type corresponds with this type.
+     * To check bidirectional, use {@link ValueHelpers#correspondsTo(IValueType, IValueType)}.
+     * @param valueType The value type to check correspondence with.
      * @return If the given value type can be used with this value type.
      */
     public boolean correspondsTo(IValueType valueType);

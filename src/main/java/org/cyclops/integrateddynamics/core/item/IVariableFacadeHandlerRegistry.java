@@ -34,6 +34,7 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * Set the type of the given tag and uses the corresponding handler to write the variable facade.
      * @param tagCompound The tag that is used to write variable facade information to.
      * @param variableFacade The facade to write.
+     * @param handler The handler for writing the facade.
      * @param <F> The type of variable facade.
      */
     public <F extends IVariableFacade> void write(NBTTagCompound tagCompound, F variableFacade, IVariableFacadeHandler<F> handler);

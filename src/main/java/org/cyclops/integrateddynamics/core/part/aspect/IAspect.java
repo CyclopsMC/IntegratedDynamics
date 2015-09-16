@@ -52,6 +52,8 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
     /**
      * @return If this aspect supports additional properties.
+     * @param <P> The part type type
+     * @param <S> The part state type
      */
     public <P extends IPartType<P, S>, S extends IPartState<P>> boolean hasProperties();
 

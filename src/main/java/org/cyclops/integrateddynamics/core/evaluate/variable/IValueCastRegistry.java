@@ -34,6 +34,7 @@ public interface IValueCastRegistry extends IRegistry {
      * @param <V1> The source type.
      * @param <V2> The target type.
      * @return The cast value
+     * @throws ValueCastException If casting failed because the type mapping did not exist.
      */
     public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 cast(T1 target, V1 value) throws ValueCastException;
 

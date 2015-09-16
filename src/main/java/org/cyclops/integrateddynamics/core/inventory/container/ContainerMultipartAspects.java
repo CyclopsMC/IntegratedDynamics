@@ -59,6 +59,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
      * @param player The player.
      * @param partContainer The part container.
      * @param partType The part type.
+     * @param items The items.
      */
     public ContainerMultipartAspects(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType, List<A> items) {
         super(player.inventory, partType, items, new IItemPredicate<A>() {

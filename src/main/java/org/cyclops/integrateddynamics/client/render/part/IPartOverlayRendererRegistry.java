@@ -19,6 +19,7 @@ public interface IPartOverlayRendererRegistry extends IRegistry {
      * Multiple renderers can be added per part type.
      * @param partType The part type
      * @param renderer The renderer.
+     * @param <R> The renderer type.
      * @return The registered renderer.
      */
     public <R extends IPartOverlayRenderer> R register(IPartType<?, ?> partType, R renderer);

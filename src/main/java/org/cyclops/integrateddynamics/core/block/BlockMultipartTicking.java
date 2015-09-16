@@ -15,6 +15,7 @@ public abstract class BlockMultipartTicking extends ConfigurableBlockContainer {
     /**
      * Make a new block instance.
      * @param eConfig Config for this block.
+     * @param material The material for this block.
      */
     public BlockMultipartTicking(ExtendedConfig eConfig, Material material) {
         super(eConfig, material, TileMultipartTicking.class);

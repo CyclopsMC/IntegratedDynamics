@@ -50,20 +50,31 @@ public class IgnoredBlockStatus extends IgnoredBlock {
 
         /**
          * Create a new PropertyStatus with all Enum constants of the given class.
+         * @param name The property name.
+         * @param clazz The property class.
+         * @return The property
          */
         public static PropertyStatus create(String name, Class clazz) {
             return create(name, clazz, Predicates.alwaysTrue());
         }
 
         /**
-         * Create a new PropertyStatus with all Enum constants of the given class that match the given Predicate.
+         * Create a new PropertyStatus with all Enum constants of the given class.
+         * @param name The property name.
+         * @param clazz The property class.
+         * @param filter The filter for checking property values.
+         * @return The property
          */
         public static PropertyStatus create(String name, Class clazz, Predicate filter) {
             return create(name, clazz, Collections2.filter(Lists.newArrayList(clazz.getEnumConstants()), filter));
         }
 
         /**
-         * Create a new PropertyStatus for the given values
+         * Create a new PropertyStatus with all Enum constants of the given class.
+         * @param name The property name.
+         * @param clazz The property class.
+         * @param values The possible property values.
+         * @return The property
          */
         public static PropertyStatus create(String name, Class clazz, Collection values) {
             return new PropertyStatus(name, values);

@@ -15,6 +15,7 @@ public interface IVariable<V extends IValue> {
 
     /**
      * @return The current value of this variable.
+     * @throws EvaluationException If something went wrong while evaluating
      */
     public V getValue() throws EvaluationException;
 

@@ -22,6 +22,7 @@ public interface ITileCableNetwork extends ITileCable {
 
     /**
      * Get the current container network. Can be null.
+     * @return The network.
      */
     public Network getNetwork();
 

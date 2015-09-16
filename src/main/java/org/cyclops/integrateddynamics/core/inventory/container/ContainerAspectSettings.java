@@ -53,6 +53,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
      * @param player The player.
      * @param partContainer The part container.
      * @param partType The part type.
+     * @param aspect The aspect.
      */
     public ContainerAspectSettings(final EntityPlayer player, PartTarget target, IPartContainer partContainer, IPartType partType, IAspect aspect) {
         super(player.inventory, (IGuiContainerProvider) partType);

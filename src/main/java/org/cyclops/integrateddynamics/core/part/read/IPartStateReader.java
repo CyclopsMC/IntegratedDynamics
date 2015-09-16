@@ -20,6 +20,8 @@ public interface IPartStateReader<P extends IPartTypeReader> extends IPartState<
      * This only retrieves the previously stored state.
      * Better to call {@link org.cyclops.integrateddynamics.core.part.read.IPartTypeReader#getVariable(org.cyclops.integrateddynamics.core.part.PartTarget, org.cyclops.integrateddynamics.core.part.read.IPartStateReader, org.cyclops.integrateddynamics.core.part.aspect.IAspectRead)}.
      * @param aspect The aspect from the part of this state.
+     * @param <V> The value type
+     * @param <T> The value type type
      * @return The variable that exists only once for an aspect in this part state.
      */
     public <V extends IValue, T extends IValueType<V>> IAspectVariable<V> getVariable(IAspectRead<V, T> aspect);

@@ -195,7 +195,7 @@ public final class Operators {
     public static final RelationalOperator RELATIONAL_EQUALS = REGISTRY.register(new RelationalEqualsOperator("==", "equals"));
 
     /**
-     * Relational > operator with two input integers and one output boolean.
+     * Relational &gt; operator with two input integers and one output boolean.
      */
     public static final RelationalOperator RELATIONAL_GT = REGISTRY.register(new RelationalOperator(">", "gt", new OperatorBase.IFunction() {
         @Override
@@ -207,7 +207,7 @@ public final class Operators {
     }));
 
     /**
-     * Relational > operator with two input integers and one output boolean.
+     * Relational &gt; operator with two input integers and one output boolean.
      */
     public static final RelationalOperator RELATIONAL_LT = REGISTRY.register(new RelationalOperator(">", "lt", new OperatorBase.IFunction() {
         @Override
@@ -226,14 +226,14 @@ public final class Operators {
                     "!=", "notequals", IConfigRenderPattern.INFIX, "relational"));
 
     /**
-     * Relational >= operator with two inputs of any type (but equal) and one output boolean.
+     * Relational &gt;= operator with two inputs of any type (but equal) and one output boolean.
      */
     public static final IOperator RELATIONAL_GE = REGISTRY.register(
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_OR).apply(RELATIONAL_EQUALS, RELATIONAL_GT).build(
                     ">=", "ge", IConfigRenderPattern.INFIX, "relational"));
 
     /**
-     * Relational <= operator with two inputs of any type (but equal) and one output boolean.
+     * Relational &lt;= operator with two inputs of any type (but equal) and one output boolean.
      */
     public static final IOperator RELATIONAL_LE = REGISTRY.register(
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_OR).apply(RELATIONAL_EQUALS, RELATIONAL_LT).build(
@@ -291,7 +291,7 @@ public final class Operators {
     }, IConfigRenderPattern.PREFIX_1));
 
     /**
-     * Binary << operator with two input integers and one output integers.
+     * Binary &lt;&lt; operator with two input integers and one output integers.
      */
     public static final BinaryOperator BINARY_LSHIFT = REGISTRY.register(new BinaryOperator("<<", "lshift", new OperatorBase.IFunction() {
         @Override
@@ -303,7 +303,7 @@ public final class Operators {
     }));
 
     /**
-     * Binary >> operator with two input integers and one output integers.
+     * Binary &gt;&gt; operator with two input integers and one output integers.
      */
     public static final BinaryOperator BINARY_RSHIFT = REGISTRY.register(new BinaryOperator(">>", "rshift", new OperatorBase.IFunction() {
         @Override
@@ -315,7 +315,7 @@ public final class Operators {
     }));
 
     /**
-     * Binary >>> operator with two input integers and one output integers.
+     * Binary &gt;&gt;&gt; operator with two input integers and one output integers.
      */
     public static final BinaryOperator BINARY_RZSHIFT = REGISTRY.register(new BinaryOperator(">>>", "rzshift", new OperatorBase.IFunction() {
         @Override
@@ -331,7 +331,7 @@ public final class Operators {
      */
 
     /**
-     * Binary >>> operator with two input integers and one output integers.
+     * String length operator with one input string and one output integer.
      */
     public static final StringOperator STRING_LENGTH = REGISTRY.register(new StringOperator("len", "length", new IValueType[]{ValueTypes.STRING}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
         @Override

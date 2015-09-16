@@ -18,6 +18,7 @@ public interface IValueTypeWorldRendererRegistry extends IRegistry {
      * Set the renderer for the given value type.
      * @param valueType The value type
      * @param renderer The renderer.
+     * @param <R> The renderer type.
      * @return The registered renderer.
      */
     public <R extends IValueTypeWorldRenderer> R register(IValueType<?> valueType, R renderer);
