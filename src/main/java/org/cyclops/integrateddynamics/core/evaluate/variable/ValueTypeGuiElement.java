@@ -160,6 +160,7 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
 
     }
 
+    @SideOnly(Side.CLIENT)
     public abstract static class SubGuiValueTypeInfo<G extends GuiContainerExtended, C extends Container> extends SubGuiBox.Base {
 
         private final IGuiInputElement element;
