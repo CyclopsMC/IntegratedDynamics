@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElement;
-import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLogicProgrammerElement;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeElement;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 
 /**
@@ -44,8 +44,8 @@ public class LogicProgrammerValueTypeValueChangedPacket extends PacketCodec {
 	public void actionServer(World world, EntityPlayerMP player) {
 		if(player.openContainer instanceof ContainerLogicProgrammer) {
 			ILogicProgrammerElement element = ((ContainerLogicProgrammer) player.openContainer).getActiveElement();
-			if(element instanceof ValueTypeLogicProgrammerElement) {
-				((ValueTypeLogicProgrammerElement) element).setInputString(value);
+			if(element instanceof ValueTypeElement) {
+				((ValueTypeElement) element).getInnerGuiElement().setInputString(value);
                 ((ContainerLogicProgrammer) player.openContainer).onDirty();
 			}
 		}

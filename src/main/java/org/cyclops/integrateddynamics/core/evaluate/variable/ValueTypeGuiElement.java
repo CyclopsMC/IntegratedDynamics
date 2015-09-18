@@ -2,10 +2,10 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
-import net.minecraft.client.Minecraft;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumChatFormatting;
@@ -17,15 +17,11 @@ import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
-import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
-import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeValueChangedPacket;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -37,6 +33,8 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
 
     private final IValueType valueType;
     private final String defaultInputString;
+    @Getter
+    @Setter
     private String inputString;
 
     public ValueTypeGuiElement(IValueType valueType) {
@@ -44,10 +42,10 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
         defaultInputString = getValueType().toCompactString(getValueType().getDefault());
     }
 
-    public void setInputString(String inputString, SubGuiRenderPattern subGui) {
+    public void setInputString(String inputString, ValueTypeSubGuiRenderPattern subGui) {
         this.inputString = inputString;
         if(subGui != null) {
-            subGui.searchField.setText(inputString);
+            subGui.getSearchField().setText(inputString);
         }
     }
 
@@ -91,73 +89,11 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
         return L10NHelpers.localize(getValueType().getUnlocalizedName());
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
-    public SubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   G gui, C container) {
-        return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public class SubGuiRenderPattern extends SubGuiConfigRenderPattern<ValueTypeGuiElement, G, C> {
-
-        private GuiTextField searchField = null;
-
-        public SubGuiRenderPattern(ValueTypeGuiElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                   G gui, C container) {
-            super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-        }
-
-        @Override
-        public void initGui(int guiLeft, int guiTop) {
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-            int searchWidth = 71;
-            int searchX = getX() + 14;
-            int searchY = getY() + 6;
-            this.searchField = new GuiTextField(0, fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth, fontRenderer.FONT_HEIGHT);
-            this.searchField.setMaxStringLength(64);
-            this.searchField.setMaxStringLength(15);
-            this.searchField.setEnableBackgroundDrawing(false);
-            this.searchField.setVisible(true);
-            this.searchField.setTextColor(16777215);
-            this.searchField.setCanLoseFocus(true);
-            this.searchField.setText(getValueType().toCompactString(getValueType().getDefault()));
-            inputString = searchField.getText();
-            this.searchField.width = searchWidth;
-            this.searchField.xPosition = guiLeft + (searchX + searchWidth) - this.searchField.width;
-        }
-
-        @Override
-        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-
-            textureManager.bindTexture(TEXTURE);
-            this.drawTexturedModalRect(searchField.xPosition - 1, searchField.yPosition - 1, 21, 0, searchField.width + 1, 12);
-            // Textbox
-            searchField.drawTextBox();
-        }
-
-        @Override
-        public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException {
-            if (!checkHotbarKeys) {
-                if (searchField.textboxKeyTyped(typedChar, keyCode)) {
-                    inputString = searchField.getText();
-                    if(container instanceof IDirtyMarkListener) {
-                        ((IDirtyMarkListener) container).onDirty();
-                    }
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                            new LogicProgrammerValueTypeValueChangedPacket(inputString));
-                    return true;
-                }
-            }
-            return super.keyTyped(checkHotbarKeys, typedChar, keyCode);
-        }
-
-        @Override
-        public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-            searchField.mouseClicked(mouseX, mouseY, mouseButton);
-            super.mouseClicked(mouseX, mouseY, mouseButton);
-        }
-
+        return new ValueTypeSubGuiRenderPattern<G, C>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     @SideOnly(Side.CLIENT)

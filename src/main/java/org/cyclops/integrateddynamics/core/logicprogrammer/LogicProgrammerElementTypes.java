@@ -12,7 +12,7 @@ public class LogicProgrammerElementTypes {
 
     public static void load() {}
 
-    public static final OperatorElementType OPERATOR = REGISTRY.addType(new OperatorElementType());
+    public static final OperatorElementType  OPERATOR  = REGISTRY.addType(new OperatorElementType());
     public static final ValueTypeElementType VALUETYPE = REGISTRY.addType(new ValueTypeElementType());
 
     public static boolean areEqual(ILogicProgrammerElement e1, ILogicProgrammerElement e2) {

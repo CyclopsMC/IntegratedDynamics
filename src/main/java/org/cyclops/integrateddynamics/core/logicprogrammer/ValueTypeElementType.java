@@ -10,16 +10,16 @@ import java.util.List;
  * Value type element type.
  * @author rubensworks
  */
-public class ValueTypeElementType implements ILogicProgrammerElementType<ValueTypeLogicProgrammerElement> {
+public class ValueTypeElementType implements ILogicProgrammerElementType<ValueTypeElement> {
 
     @Override
-    public ValueTypeLogicProgrammerElement getByName(String name) {
-        return new ValueTypeLogicProgrammerElement(ValueTypes.REGISTRY.getValueType(name));
+    public ValueTypeElement getByName(String name) {
+        return new ValueTypeElement(ValueTypes.REGISTRY.getValueType(name));
     }
 
     @Override
-    public String getName(ValueTypeLogicProgrammerElement element) {
-        return element.getValueType().getUnlocalizedName();
+    public String getName(ValueTypeElement element) {
+        return element.getInnerGuiElement().getValueType().getUnlocalizedName();
     }
 
     @Override
@@ -28,11 +28,11 @@ public class ValueTypeElementType implements ILogicProgrammerElementType<ValueTy
     }
 
     @Override
-    public List<ValueTypeLogicProgrammerElement> createElements() {
-        List<ValueTypeLogicProgrammerElement> elements = Lists.newLinkedList();
+    public List<ValueTypeElement> createElements() {
+        List<ValueTypeElement> elements = Lists.newLinkedList();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             if(!valueType.isCategory()) {
-                elements.add(new ValueTypeLogicProgrammerElement(valueType));
+                elements.add(new ValueTypeElement(valueType));
             }
         }
         return elements;

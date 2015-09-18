@@ -6,6 +6,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -16,6 +18,7 @@ import java.io.IOException;
  * A sub gui that simply renders a box.
  * @author rubensworks
  */
+@SideOnly(Side.CLIENT)
 public abstract class SubGuiBox extends Gui implements ISubGui {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID,

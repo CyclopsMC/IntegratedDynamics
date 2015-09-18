@@ -5,6 +5,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.Container;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
@@ -15,6 +17,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPatter
  * Sub gui for logic programmer elements.
  * @author rubensworks
  */
+@SideOnly(Side.CLIENT)
 public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui, C extends Container> extends SubGuiBox {
 
     protected final E element;

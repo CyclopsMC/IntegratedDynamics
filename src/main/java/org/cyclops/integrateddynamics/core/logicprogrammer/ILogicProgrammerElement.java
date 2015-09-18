@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
@@ -55,18 +53,5 @@ public interface ILogicProgrammerElement extends IGuiInputElement<GuiLogicProgra
      * @return If this element corresponds to the given variable facade.
      */
     public boolean isFor(IVariableFacade variableFacade);
-
-    /**
-     * @param baseX Base x
-     * @param baseY Base y
-     * @param maxWidth Max width
-     * @param maxHeight Max height
-     * @param gui The parent gui
-     * @param container The parent container
-     * @return A subgui that is shown when activated.
-     */
-    @SideOnly(Side.CLIENT)
-    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammer gui, ContainerLogicProgrammer container);
 
 }

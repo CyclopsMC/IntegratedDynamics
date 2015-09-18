@@ -136,7 +136,7 @@ public class OperatorElement implements ILogicProgrammerElement {
     @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
-        return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, (GuiLogicProgrammer) gui, (ContainerLogicProgrammer) container);
+        return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     protected static class OperatorVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<OperatorVariableFacade> {

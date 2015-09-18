@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.client.gui.subgui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -10,6 +12,7 @@ import java.util.Comparator;
  * A gui part that can be rendered withing another gui.
  * @author rubensworks
  */
+@SideOnly(Side.CLIENT)
 public interface ISubGui {
 
     public void initGui(int guiLeft, int guiTop);

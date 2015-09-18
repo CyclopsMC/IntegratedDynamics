@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartType;
@@ -55,7 +56,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
     protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
     protected ValueTypeGuiElement<GuiAspectSettings, ContainerAspectSettings> guiElement = null;
     protected int activePropertyIndex = 0;
-    protected ValueTypeGuiElement.SubGuiRenderPattern propertyConfigPattern = null;
+    protected ValueTypeSubGuiRenderPattern propertyConfigPattern = null;
     protected SubGuiValueTypeInfo propertyInfo = null;
     private GuiButtonText buttonLeft = null;
     private GuiButtonText buttonRight = null;
@@ -201,7 +202,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
             subGuiHolder.removeSubGui(propertyInfo);
         }
         guiElement = new ValueTypeGuiElement<>(property.getType());
-        subGuiHolder.addSubGui(propertyConfigPattern = guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getContainer()));
+        subGuiHolder.addSubGui(propertyConfigPattern = (ValueTypeSubGuiRenderPattern) guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getContainer()));
         subGuiHolder.addSubGui(propertyInfo = new SubGuiValueTypeInfo(guiElement));
         propertyConfigPattern.initGui(guiLeft, guiTop);
         guiElement.activate();

@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.google.common.collect.Lists;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.texture.TextureManager;
+import lombok.Getter;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,10 +23,13 @@ import java.util.List;
  * Element for value type.
  * @author rubensworks
  */
-public class ValueTypeLogicProgrammerElement extends ValueTypeGuiElement<GuiLogicProgrammer, ContainerLogicProgrammer> implements ILogicProgrammerElement {
+public class ValueTypeElement implements ILogicProgrammerElement {
 
-    public ValueTypeLogicProgrammerElement(IValueType valueType) {
-        super(valueType);
+    @Getter
+    private ValueTypeGuiElement<GuiLogicProgrammer, ContainerLogicProgrammer> innerGuiElement;
+
+    public ValueTypeElement(IValueType valueType) {
+        innerGuiElement = new ValueTypeGuiElement<>(valueType);
     }
 
     @Override
@@ -43,7 +44,12 @@ public class ValueTypeLogicProgrammerElement extends ValueTypeGuiElement<GuiLogi
 
     @Override
     public String getLocalizedNameFull() {
-        return L10NHelpers.localize(getValueType().getUnlocalizedName());
+        return L10NHelpers.localize(getInnerGuiElement().getValueType().getUnlocalizedName());
+    }
+
+    @Override
+    public void loadTooltip(List<String> lines) {
+        getInnerGuiElement().loadTooltip(lines);
     }
 
     @Override
@@ -58,43 +64,43 @@ public class ValueTypeLogicProgrammerElement extends ValueTypeGuiElement<GuiLogi
 
     @Override
     public boolean canWriteElementPre() {
-        return getInputString() != null && !getInputString().isEmpty();
+        return getInnerGuiElement().getInputString() != null && !getInnerGuiElement().getInputString().isEmpty();
     }
 
     @Override
     public ItemStack writeElement(ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY, new ValueTypeVariableFacadeFactory(getValueType(), getInputString()));
+        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY, new ValueTypeVariableFacadeFactory(innerGuiElement.getValueType(), innerGuiElement.getInputString()));
     }
 
     @Override
     public boolean canCurrentlyReadFromOtherItem() {
-        return this.getInputString() == null || this.getInputString().equals(getDefaultInputString());
+        return this.getInnerGuiElement().getInputString() == null || this.getInnerGuiElement().getInputString().equals(getInnerGuiElement().getDefaultInputString());
     }
 
     @Override
     public void activate() {
-        setInputString(new String(getDefaultInputString()));
+        getInnerGuiElement().setInputString(new String(innerGuiElement.getDefaultInputString()));
     }
 
     @Override
     public void deactivate() {
-        setInputString(null);
+        getInnerGuiElement().setInputString(null);
     }
 
     @Override
     public L10NHelpers.UnlocalizedString validate() {
-        return getValueType().canDeserialize(getInputString());
+        return getInnerGuiElement().getValueType().canDeserialize(getInnerGuiElement().getInputString());
     }
 
     @Override
     public int getColor() {
-        return getValueType().getDisplayColor();
+        return getInnerGuiElement().getValueType().getDisplayColor();
     }
 
     @Override
     public String getSymbol() {
-        return L10NHelpers.localize(getValueType().getUnlocalizedName());
+        return L10NHelpers.localize(getInnerGuiElement().getValueType().getUnlocalizedName());
     }
 
     @Override
@@ -102,7 +108,7 @@ public class ValueTypeLogicProgrammerElement extends ValueTypeGuiElement<GuiLogi
         if (variableFacade instanceof ValueTypeVariableFacade) {
             ValueTypeVariableFacade valueTypeFacade = (ValueTypeVariableFacade) variableFacade;
             if (valueTypeFacade.isValid()) {
-                return getValueType() == valueTypeFacade.getValueType();
+                return getInnerGuiElement().getValueType() == valueTypeFacade.getValueType();
             }
         }
         return false;
@@ -110,9 +116,9 @@ public class ValueTypeLogicProgrammerElement extends ValueTypeGuiElement<GuiLogi
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
-        return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+        return new ValueTypeElementSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<ValueTypeVariableFacade> {
@@ -134,32 +140,6 @@ public class ValueTypeLogicProgrammerElement extends ValueTypeGuiElement<GuiLogi
         public ValueTypeVariableFacade create(int id) {
             return new ValueTypeVariableFacade(id, valueType, value);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    protected class SubGuiRenderPattern extends ValueTypeGuiElement<GuiLogicProgrammer, ContainerLogicProgrammer>.SubGuiRenderPattern {
-
-        public SubGuiRenderPattern(ValueTypeLogicProgrammerElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                   GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
-            super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-        }
-
-        @Override
-        public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-            IValueType valueType = element.getValueType();
-
-            // Output type tooltip
-            if(!container.hasWriteItemInSlot()) {
-                if(gui.isPointInRegion(ContainerLogicProgrammer.OUTPUT_X, ContainerLogicProgrammer.OUTPUT_Y,
-                        GuiLogicProgrammer.BOX_HEIGHT, GuiLogicProgrammer.BOX_HEIGHT, mouseX, mouseY)) {
-                    List<String> lines = Lists.newLinkedList();
-                    lines.add(valueType.getDisplayColorFormat() + L10NHelpers.localize(valueType.getUnlocalizedName()));
-                    gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
-                }
-            }
-        }
-
     }
 
 }
