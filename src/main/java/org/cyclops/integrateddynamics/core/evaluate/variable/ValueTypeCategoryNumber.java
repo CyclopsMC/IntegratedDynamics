@@ -37,7 +37,10 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> {
             if(types[i] != first) {
                 int maxIndex = -1;
                 for(int j = 0; j < types.length; j++) {
-                    maxIndex = Math.max(maxIndex, INVERTED_ELEMENTS.get(types[j]));
+                    IValueTypeNumber v = types[j];
+                    if(v != null) {
+                        maxIndex = Math.max(maxIndex, INVERTED_ELEMENTS.get(v));
+                    }
                 }
                 return ELEMENTS[maxIndex];
             }
