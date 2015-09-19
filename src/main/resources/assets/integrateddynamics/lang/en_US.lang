@@ -56,12 +56,12 @@ parttype.parttypes.integrateddynamics.display.info=Visually display a variable v
 
 # Variables facades
 variable.integrateddynamics.error.invalidItem=The current variable can not be used in this aspect.
+variable.integrateddynamics.error.partNotInNetwork=Part with id %s could not be found within the current network.
 
 # Aspects
 aspect.integrateddynamics.tooltip.aspectName=§eAspect: §r%s
 aspect.integrateddynamics.tooltip.valueTypeName=§eType: §r%s
 aspect.integrateddynamics.tooltip.partId=§e§oPart ID: §r§o%s
-aspect.integrateddynamics.error.partNotInNetwork=Part with id %s could not be found within the current network.
 aspect.integrateddynamics.error.invalidType=This aspect expects %s, but %s was given.
 
 ## Redstone aspects
@@ -230,13 +230,16 @@ operator.operators.integrateddynamics.arithmetic.addition.name=Addition
 operator.operators.integrateddynamics.arithmetic.subtraction.name=Subtraction
 operator.operators.integrateddynamics.arithmetic.multiplication.name=Multiplication
 operator.operators.integrateddynamics.arithmetic.division.name=Division
-operator.operators.integrateddynamics.arithmetic.modulus.name=Modulus
 operator.operators.integrateddynamics.arithmetic.maximum.name=Maximum
 operator.operators.integrateddynamics.arithmetic.maximum.info=Takes the largest of two values.
 operator.operators.integrateddynamics.arithmetic.minimum.name=Minimum
 operator.operators.integrateddynamics.arithmetic.minimum.info=Takes the smallest of two values.
-operator.operators.integrateddynamics.arithmetic.increment.name=Increment
-operator.operators.integrateddynamics.arithmetic.decrement.name=Decrement
+
+operator.operators.integrateddynamics.integer.name=Integer
+operator.operators.integrateddynamics.integer.basename=Integer %s
+operator.operators.integrateddynamics.integer.modulus.name=Modulus
+operator.operators.integrateddynamics.integer.increment.name=Increment
+operator.operators.integrateddynamics.integer.decrement.name=Decrement
 
 operator.operators.integrateddynamics.relational.name=Relational
 operator.operators.integrateddynamics.relational.basename=Relational %s

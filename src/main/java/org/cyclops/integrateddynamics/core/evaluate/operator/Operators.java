@@ -209,7 +209,7 @@ public final class Operators {
     /**
      * Relational &gt; operator with two input integers and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_LT = REGISTRY.register(new RelationalOperator(">", "lt", new OperatorBase.IFunction() {
+    public static final RelationalOperator RELATIONAL_LT = REGISTRY.register(new RelationalOperator("<", "lt", new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
