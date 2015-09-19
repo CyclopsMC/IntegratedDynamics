@@ -31,13 +31,15 @@ public class NetworkElementProviderComponent {
      */
     public void onPreBlockDestroyed(Network network, World world, BlockPos pos) {
         // Drop all parts types as item.
-        List<ItemStack> itemStacks = Lists.newLinkedList();
-        for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-            networkElement.addDrops(itemStacks);
-            networkElement.onPreRemoved(network);
-        }
-        for(ItemStack itemStack : itemStacks) {
-            Block.spawnAsEntity(world, pos, itemStack);
+        if(!world.isRemote) {
+            List<ItemStack> itemStacks = Lists.newLinkedList();
+            for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
+                networkElement.addDrops(itemStacks);
+                networkElement.onPreRemoved(network);
+            }
+            for (ItemStack itemStack : itemStacks) {
+                Block.spawnAsEntity(world, pos, itemStack);
+            }
         }
     }
 

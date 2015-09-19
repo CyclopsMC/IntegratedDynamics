@@ -171,7 +171,9 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
      * @param pos The position.
      */
     public void onPreBlockDestroyed(World world, BlockPos pos) {
-        removeFromNetwork(world, pos, true);
+        if(!world.isRemote) {
+            removeFromNetwork(world, pos, true);
+        }
     }
 
     /**
@@ -180,7 +182,9 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
      * @param pos The position.
      */
     public void onPostBlockDestroyed(World world, BlockPos pos) {
-        removeFromNetwork(world, pos, false);
+        if(!world.isRemote) {
+            removeFromNetwork(world, pos, false);
+        }
     }
 
     /**
