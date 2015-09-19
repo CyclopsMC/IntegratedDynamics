@@ -21,6 +21,6 @@ public class AspectReadStringWorldBlockName extends AspectReadStringWorldBase {
     protected ValueTypeString.ValueString getValue(PartTarget target, AspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
-        return ValueTypeString.ValueString.of(block.getLocalizedName());
+        return ValueTypeString.ValueString.of(block.isAir(dimPos.getWorld(), dimPos.getBlockPos()) ? "" : block.getLocalizedName());
     }
 }
