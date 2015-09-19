@@ -147,7 +147,7 @@ public abstract class OperatorBase implements IOperator {
             if(inputType == null) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
-            if(!getInputTypes()[i].correspondsTo(inputType)) {
+            if(!ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
                         Integer.toString(i + 1), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
