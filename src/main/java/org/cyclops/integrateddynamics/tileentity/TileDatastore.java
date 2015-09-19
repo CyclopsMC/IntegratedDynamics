@@ -107,6 +107,11 @@ public class TileDatastore extends InventoryTileEntity implements ITileCableNetw
         // Do nothing
     }
 
+    @Override
+    public void reconnect(EnumFacing side) {
+        // Do nothing
+    }
+
     protected void refreshVariables(IInventory inventory) {
         variableCache.clear();
         for(int i = 0; i < inventory.getSizeInventory(); i++) {

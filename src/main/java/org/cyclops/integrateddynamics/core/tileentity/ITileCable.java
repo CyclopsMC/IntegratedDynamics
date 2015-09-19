@@ -35,4 +35,11 @@ public interface ITileCable {
      */
     public void disconnect(EnumFacing side);
 
+    /**
+     * Reconnect the cable connection for a side.
+     * Will only do something if the cable was previously disconnected.
+     * @param side The side to remake the connection for.
+     */
+    public void reconnect(EnumFacing side);
+
 }

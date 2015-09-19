@@ -321,6 +321,29 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                                 ((ICableNetwork<CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
                             }
                             return true;
+                        } else if (rayTraceResult.getCollisionType() == CENTER_COMPONENT) {
+                            // Reconnect cable side
+                            BlockPos neighbourPos = pos.offset(side);
+                            Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
+                            if(neighbourBlock instanceof ICable && !isConnected(world, pos, side) &&
+                                    (canConnect(world, pos, this, side) || ((ICable) neighbourBlock).canConnect(world, neighbourPos, this, side.getOpposite()))
+                                    ) {
+                                // Notify the reconnection in the tile entity of this and the neighbour block,
+                                // since we don't know in which one the disconnection was made.
+                                reconnect(world, pos, side);
+                                ((ICable) neighbourBlock).reconnect(world, neighbourPos, side.getOpposite());
+
+                                // Signal changes
+                                updateConnections(world, pos);
+                                cableNetworkComponent.triggerNeighbourConnections(world, pos);
+
+                                // Reinit the networks for this block and the connected neighbour.
+                                initNetwork(world, pos);
+                                if (neighbourBlock instanceof ICableNetwork) {
+                                    ((ICableNetwork<CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
+                                }
+                            }
+                            return true;
                         }
                         return true;
                     }
@@ -581,6 +604,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public void disconnect(World world, BlockPos pos, EnumFacing side) {
         cableNetworkComponent.disconnect(world, pos, side);
+    }
+
+    @Override
+    public void reconnect(World world, BlockPos pos, EnumFacing side) {
+        cableNetworkComponent.reconnect(world, pos, side);
     }
 
     @Override

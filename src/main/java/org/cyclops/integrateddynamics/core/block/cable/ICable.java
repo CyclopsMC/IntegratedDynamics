@@ -46,4 +46,13 @@ public interface ICable<E extends IPathElement<E>> extends IPathElementProvider<
      */
     public void disconnect(World world, BlockPos pos, EnumFacing side);
 
+    /**
+     * Reconnect the cable connection for a side.
+     * Will only do something if the cable was previously disconnected.
+     * @param world The world.
+     * @param pos The position of this block.
+     * @param side The side to remake the connection for.
+     */
+    public void reconnect(World world, BlockPos pos, EnumFacing side);
+
 }

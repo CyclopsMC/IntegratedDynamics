@@ -151,6 +151,11 @@ public class BlockDatastore extends ConfigurableBlockContainerGui implements ICa
     }
 
     @Override
+    public void reconnect(World world, BlockPos pos, EnumFacing side) {
+        cableNetworkComponent.reconnect(world, pos, side);
+    }
+
+    @Override
     public void resetCurrentNetwork(World world, BlockPos pos) {
         cableNetworkComponent.resetCurrentNetwork(world, pos);
     }

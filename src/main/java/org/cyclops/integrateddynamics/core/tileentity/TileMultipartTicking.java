@@ -409,6 +409,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         forceDisconnected.put(side.ordinal(), true);
     }
 
+    @Override
+    public void reconnect(EnumFacing side) {
+        forceDisconnected.remove(side.ordinal());
+    }
+
     @Data
     private static class PartStateHolder<P extends IPartType<P, S>, S extends IPartState<P>> {
 
