@@ -262,8 +262,11 @@ operator.operators.integrateddynamics.binary.rzshift.name=Right Zero Shift
 operator.operators.integrateddynamics.binary.rzshift.info=Right Shift with zeros fill
 
 operator.operators.integrateddynamics.string.name=String
+operator.operators.integrateddynamics.string.basename=String %s
 operator.operators.integrateddynamics.string.length.name=Length
 operator.operators.integrateddynamics.string.length.info=The length of the given String
+operator.operators.integrateddynamics.string.concat.name=Concat
+operator.operators.integrateddynamics.string.concat.info=Concatenate the two given Strings to one
 
 operator.operators.integrateddynamics.double.name=Double
 operator.operators.integrateddynamics.double.round.name=Round

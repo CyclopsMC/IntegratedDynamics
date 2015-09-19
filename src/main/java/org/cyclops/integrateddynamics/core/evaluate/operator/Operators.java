@@ -342,6 +342,18 @@ public final class Operators {
     }, IConfigRenderPattern.PREFIX_1));
 
     /**
+     * String concat operator with two input strings and one output string.
+     */
+    public static final StringOperator STRING_CONCAT = REGISTRY.register(new StringOperator("+", "concat", 2, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            String a = ((ValueTypeString.ValueString) variables[0].getValue()).getRawValue();
+            String b = ((ValueTypeString.ValueString) variables[1].getValue()).getRawValue();
+            return ValueTypeString.ValueString.of(a + b);
+        }
+    }, IConfigRenderPattern.INFIX));
+
+    /**
      * ----------------------------------- DOUBLE OPERATORS -----------------------------------
      */
 
