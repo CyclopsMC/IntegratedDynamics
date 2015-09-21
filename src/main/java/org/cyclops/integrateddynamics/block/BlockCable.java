@@ -371,6 +371,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player) {
+        return new ItemStack(getItem(world, pos), 1, getDamageValue(world, pos));
+    }
+
+    @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
         networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos);
         if(isRealCable(world, pos)) {
