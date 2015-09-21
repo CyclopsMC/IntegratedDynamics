@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
-import org.cyclops.integrateddynamics.block.BlockDatastoreConfig;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
+import org.cyclops.integrateddynamics.block.BlockVariablestoreConfig;
 import org.cyclops.integrateddynamics.item.ItemFacadeConfig;
 import org.cyclops.integrateddynamics.item.ItemLabellerConfig;
 import org.cyclops.integrateddynamics.item.ItemVariableConfig;
@@ -19,7 +19,7 @@ public class Configs {
 
         // Blocks
         configHandler.add(new BlockCableConfig());
-        configHandler.add(new BlockDatastoreConfig());
+        configHandler.add(new BlockVariablestoreConfig());
         configHandler.add(new BlockLogicProgrammerConfig());
 
         // Items

@@ -6,23 +6,23 @@ import net.minecraft.inventory.Slot;
 import org.cyclops.cyclopscore.inventory.container.TileInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.item.ItemVariable;
-import org.cyclops.integrateddynamics.tileentity.TileDatastore;
+import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 /**
- * Container for the datastore.
+ * Container for the variablestore.
  * @author rubensworks
  */
-public class ContainerDatastore extends TileInventoryContainer<TileDatastore> {
+public class ContainerVariablestore extends TileInventoryContainer<TileVariablestore> {
 
     /**
      * Make a new instance.
      * @param inventory The player inventory.
      * @param tile The tile.
      */
-    public ContainerDatastore(InventoryPlayer inventory, TileDatastore tile) {
+    public ContainerVariablestore(InventoryPlayer inventory, TileVariablestore tile) {
         super(inventory, tile);
-        addInventory(tile, 0, offsetX + 8, offsetY + 18, TileDatastore.ROWS, TileDatastore.COLS);
-        addPlayerInventory(inventory, offsetX + 8, offsetY + 14 + TileDatastore.ROWS * 18 + 17);
+        addInventory(tile, 0, offsetX + 8, offsetY + 18, TileVariablestore.ROWS, TileVariablestore.COLS);
+        addPlayerInventory(inventory, offsetX + 8, offsetY + 14 + TileVariablestore.ROWS * 18 + 17);
     }
 
     @Override

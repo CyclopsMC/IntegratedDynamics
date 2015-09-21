@@ -32,7 +32,7 @@ import java.util.Map;
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-public class TileDatastore extends InventoryTileEntity implements ITileCableNetwork, IVariableContainer, IDirtyMarkListener, CyclopsTileEntity.ITickingTile {
+public class TileVariablestore extends InventoryTileEntity implements ITileCableNetwork, IVariableContainer, IDirtyMarkListener, CyclopsTileEntity.ITickingTile {
 
     public static final int ROWS = 5;
     public static final int COLS = 9;
@@ -48,7 +48,7 @@ public class TileDatastore extends InventoryTileEntity implements ITileCableNetw
     private Network network;
     private Map<Integer, IVariableFacade> variableCache = Maps.newHashMap();
 
-    public TileDatastore() {
+    public TileVariablestore() {
         super(ROWS * COLS, "variables", 1);
         inventory.addDirtyMarkListener(this);
 

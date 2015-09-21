@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "facing=south": { "model": "integrateddynamics:variablestore" },
+    "facing=west" : { "model": "integrateddynamics:variablestore", "y": 90 },
+    "facing=north": { "model": "integrateddynamics:variablestore", "y": 180 },
+    "facing=east" : { "model": "integrateddynamics:variablestore", "y": 270 },
+    "inventory"   : { "model": "integrateddynamics:variablestore" }
+  }
+}

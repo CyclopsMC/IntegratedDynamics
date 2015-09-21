@@ -4,26 +4,26 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
- * Config for {@link BlockDatastore}.
+ * Config for {@link BlockVariablestore}.
  * @author rubensworks
  */
-public class BlockDatastoreConfig extends BlockContainerConfig {
+public class BlockVariablestoreConfig extends BlockContainerConfig {
 
     /**
      * The unique instance.
      */
-    public static BlockDatastoreConfig _instance;
+    public static BlockVariablestoreConfig _instance;
 
     /**
      * Make a new instance.
      */
-    public BlockDatastoreConfig() {
+    public BlockVariablestoreConfig() {
         super(
             IntegratedDynamics._instance,
             true,
-            "datastore",
+            "variablestore",
             null,
-            BlockDatastore.class
+            BlockVariablestore.class
         );
     }
 

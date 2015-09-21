@@ -17,7 +17,7 @@ import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainerGui
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.client.gui.GuiDatastore;
+import org.cyclops.integrateddynamics.client.gui.GuiVariablestore;
 import org.cyclops.integrateddynamics.core.block.IVariableContainer;
 import org.cyclops.integrateddynamics.core.block.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
@@ -29,9 +29,9 @@ import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
-import org.cyclops.integrateddynamics.inventory.container.ContainerDatastore;
-import org.cyclops.integrateddynamics.network.DatastoreNetworkElement;
-import org.cyclops.integrateddynamics.tileentity.TileDatastore;
+import org.cyclops.integrateddynamics.inventory.container.ContainerVariablestore;
+import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
+import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 import java.util.Collection;
 
@@ -40,16 +40,16 @@ import java.util.Collection;
  *
  * @author rubensworks
  */
-public class BlockDatastore extends ConfigurableBlockContainerGui implements ICableNetwork<CablePathElement>,
+public class BlockVariablestore extends ConfigurableBlockContainerGui implements ICableNetwork<CablePathElement>,
         INetworkElementProvider, IVariableContainerFacade {
 
     @BlockProperty
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    private static BlockDatastore _instance = null;
+    private static BlockVariablestore _instance = null;
 
     //@Delegate <- Lombok can't handle delegations with generics, so we'll have to do it manually...
-    private CableNetworkComponent<BlockDatastore> cableNetworkComponent = new CableNetworkComponent<>(this);
+    private CableNetworkComponent<BlockVariablestore> cableNetworkComponent = new CableNetworkComponent<>(this);
     private NetworkElementProviderComponent networkElementProviderComponent = new NetworkElementProviderComponent(this);
 
     /**
@@ -57,7 +57,7 @@ public class BlockDatastore extends ConfigurableBlockContainerGui implements ICa
      *
      * @return The instance.
      */
-    public static BlockDatastore getInstance() {
+    public static BlockVariablestore getInstance() {
         return _instance;
     }
 
@@ -66,8 +66,8 @@ public class BlockDatastore extends ConfigurableBlockContainerGui implements ICa
      *
      * @param eConfig Config for this block.
      */
-    public BlockDatastore(ExtendedConfig eConfig) {
-        super(eConfig, Material.glass, TileDatastore.class);
+    public BlockVariablestore(ExtendedConfig eConfig) {
+        super(eConfig, Material.glass, TileVariablestore.class);
 
         setHardness(3.0F);
         setStepSound(soundTypeMetal);
@@ -115,7 +115,7 @@ public class BlockDatastore extends ConfigurableBlockContainerGui implements ICa
 
     @Override
     public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
-        return Sets.<INetworkElement>newHashSet(new DatastoreNetworkElement(DimPos.of(world, blockPos)));
+        return Sets.<INetworkElement>newHashSet(new VariablestoreNetworkElement(DimPos.of(world, blockPos)));
     }
 
     @Override
@@ -177,11 +177,11 @@ public class BlockDatastore extends ConfigurableBlockContainerGui implements ICa
 
     @Override
     public Class<? extends Container> getContainer() {
-        return ContainerDatastore.class;
+        return ContainerVariablestore.class;
     }
 
     @Override
     public Class<? extends GuiScreen> getGui() {
-        return GuiDatastore.class;
+        return GuiVariablestore.class;
     }
 }

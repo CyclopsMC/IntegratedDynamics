@@ -8,22 +8,22 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.tileentity.TileDatastore;
+import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Network element for data stores.
+ * Network element for variable stores.
  * @author rubensworks
  */
 @Data
-public class DatastoreNetworkElement implements INetworkElement {
+public class VariablestoreNetworkElement implements INetworkElement {
 
     private final DimPos pos;
 
-    protected TileDatastore getTile() {
-        return TileHelpers.getSafeTile(getPos().getWorld(), getPos().getBlockPos(), TileDatastore.class);
+    protected TileVariablestore getTile() {
+        return TileHelpers.getSafeTile(getPos().getWorld(), getPos().getBlockPos(), TileVariablestore.class);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class DatastoreNetworkElement implements INetworkElement {
 
     @Override
     public void addDrops(List<ItemStack> itemStacks) {
-        TileDatastore tile = getTile();
+        TileVariablestore tile = getTile();
         if(tile != null) {
             InventoryHelper.dropInventoryItems(getPos().getWorld(), getPos().getBlockPos(), tile.getInventory());
         }
@@ -77,8 +77,8 @@ public class DatastoreNetworkElement implements INetworkElement {
 
     @Override
     public int compareTo(INetworkElement o) {
-        if(o instanceof DatastoreNetworkElement) {
-            return getPos().compareTo(((DatastoreNetworkElement) o).getPos());
+        if(o instanceof VariablestoreNetworkElement) {
+            return getPos().compareTo(((VariablestoreNetworkElement) o).getPos());
         }
         return Integer.compare(hashCode(), o.hashCode());
     }
