@@ -3,7 +3,7 @@ apply plugin: 'maven'
 
 curse {
     dependsOn 'reobf'
-    projectId = "" // TODO: my project url is http://minecraft.curseforge.com/mc-mods/232758/
+    projectId = "236307" // my project url is http://minecraft.curseforge.com/mc-mods/236307/
     releaseType = project.config.release_type
     relatedProject 'cyclops-core': 'requiredLibrary'
 
@@ -79,11 +79,6 @@ uploadArchives {
                 developer {
                     id 'rubensworks'
                     name 'rubensworks'
-                    roles { role 'developer' }
-                }
-                developer {
-                    id 'immortaleeb'
-                    name 'immortaleeb'
                     roles { role 'developer' }
                 }
             }
