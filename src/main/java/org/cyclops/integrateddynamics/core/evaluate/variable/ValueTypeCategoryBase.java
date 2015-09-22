@@ -58,7 +58,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
 
     @Override
     public boolean correspondsTo(IValueType valueType) {
-        return elements == null ? true : elements.contains(valueType);
+        return valueType == this || elements == null ? true : elements.contains(valueType);
     }
 
     @Override
