@@ -1,1 +1,3 @@
-initial release
+Initial alpha release
+Don't use this in your survival world, things can and will break!
+It is not guaranteed that your world will remain usable when updating this mod while in alpha.
