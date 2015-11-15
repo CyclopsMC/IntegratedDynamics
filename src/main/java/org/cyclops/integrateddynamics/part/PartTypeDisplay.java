@@ -5,10 +5,13 @@ import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -19,6 +22,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
@@ -151,11 +155,29 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
         state.onVariableContentsUpdated(this, target);
     }
 
+    @Override
+    public boolean onPartActivated(World world, BlockPos pos, IBlockState state, final State partState, EntityPlayer player,
+                                   EnumFacing side, float hitX, float hitY, float hitZ) {
+        if(WrenchHelpers.isWrench(player, pos)) {
+            WrenchHelpers.wrench(player, pos, new WrenchHelpers.IWrenchAction<Void>() {
+                @Override
+                public void onWrench(EntityPlayer player, BlockPos pos, Void parameter) {
+                    partState.setFacingRotation(partState.getFacingRotation().rotateAround(EnumFacing.Axis.Y));
+                }
+            });
+            return true;
+        }
+        return super.onPartActivated(world, pos, state, partState, player, side, hitX, hitY, hitZ);
+    }
+
     public static class State extends PartStateActiveVariableBase<PartTypeDisplay> {
 
         @Getter
         @Setter
         private IValue displayValue;
+        @Getter
+        @Setter
+        private EnumFacing facingRotation = EnumFacing.NORTH;
 
         public State(int inventorySize) {
             super(inventorySize);
@@ -174,6 +196,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
                 tag.setString("displayValueType", value.getType().getUnlocalizedName());
                 tag.setString("displayValue", value.getType().serialize(value));
             }
+            tag.setInteger("facingRotation", facingRotation.ordinal());
         }
 
         @Override
@@ -192,6 +215,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
             } else {
                 setDisplayValue(null);
             }
+            facingRotation = EnumFacing.values()[Math.max(2, tag.getInteger("facingRotation"))];
         }
     }
 
