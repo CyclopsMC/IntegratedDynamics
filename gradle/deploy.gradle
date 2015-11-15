@@ -1,26 +1,30 @@
-apply plugin: "curseforge"
 apply plugin: 'maven'
 
-curse {
-    dependsOn 'reobf'
-    projectId = "236307" // my project url is http://minecraft.curseforge.com/mc-mods/236307/
-    releaseType = project.config.release_type
-    relatedProject 'cyclops-core': 'requiredLibrary'
-
-    changelog = ""
-    if(new File("resources/changelog/${project.version}.txt").exists()) {
-        changelog = new File("resources/changelog/${project.version}.txt").text
-    }
-
+curseforge {
     if(project.hasProperty("curseforge_key") && project.hasProperty("changelog")) {
         apiKey = project.curseforge_key
     } else if(System.getenv().TRAVIS) {
         apiKey = System.getenv().CURSEFORGE_KEY_SECRET
     }
 
-    additionalArtifact deobfJar
-    additionalArtifact sourceJar
-    additionalArtifact javadocJar
+    project {
+        id = "236307" // my project url is http://minecraft.curseforge.com/mc-mods/236307/
+        releaseType = project.config.release_type
+        mainArtifact(jar) {
+            relations {
+                requiredLibrary 'cyclops-core'
+            }
+        }
+
+        changelog = ""
+        if (new File("resources/changelog/${project.version}.txt").exists()) {
+            changelog = new File("resources/changelog/${project.version}.txt").text
+        }
+
+        addArtifact deobfJar
+        addArtifact sourceJar
+        addArtifact javadocJar
+    }
 }
 
 configurations {

@@ -13,7 +13,7 @@ script: ./gradlew build -S
 
 deploy:
 - provider: script
-  script: ./gradlew curse -S
+  script: ./gradlew curseforge -S
   on:
     all_branches: true
     repo: CyclopsMC/IntegratedDynamics
