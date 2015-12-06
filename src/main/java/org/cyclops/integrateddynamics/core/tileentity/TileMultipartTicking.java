@@ -54,6 +54,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @NBTPersist private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
     @NBTPersist private Map<Integer, Integer> redstoneLevels = Maps.newHashMap();
     @NBTPersist private Map<Integer, Boolean> redstoneInputs = Maps.newHashMap();
+    @NBTPersist private Map<Integer, Integer> lightLevels = Maps.newHashMap();
+    private Map<Integer, Integer> previousLightLevels;
     @NBTPersist private String facadeBlockName = null;
     @NBTPersist private int facadeMeta = 0;
 
@@ -89,7 +91,14 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         NBTTagList partList = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
         for(int i = 0; i < partList.tagCount(); i++) {
             NBTTagCompound partTag = partList.getCompoundTagAt(i);
-            IPartType partType = PartTypes.REGISTRY.getPartType(partTag.getString("__partType"));
+            String partTypeName = partTag.getString("__partType");
+            IPartType partType = PartTypes.REGISTRY.getPartType(partTypeName);
+            if(partType == null) { // TODO: Throw a nice event
+                if("display".equals(partTypeName)) {
+                    System.out.println("CONVERTED"); // TODO
+                    partType = PartTypes.REGISTRY.getPartType("displayPanel");
+                }
+            }
             if(partType != null) {
                 EnumFacing side = EnumFacing.byName(partTag.getString("__side"));
                 if(side != null) {
@@ -102,7 +111,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 }
             } else {
                 IntegratedDynamics.clog(Level.WARN, String.format("The part %s at position %s was unknown and removed.",
-                        partTag.getString("__partType"), getPosition()));
+                        partTypeName, getPosition()));
             }
         }
         super.readFromNBT(tag);
@@ -265,6 +274,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Override
     public void onUpdateReceived() {
         getWorld().markBlockRangeForRenderUpdate(pos, pos);
+        if(!lightLevels.equals(previousLightLevels)) {
+            previousLightLevels = lightLevels;
+            getWorld().checkLight(getPos());
+        }
+
     }
 
     public IExtendedBlockState getConnectionState() {
@@ -362,6 +376,35 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             redstoneLevels.remove(side.ordinal());
             updateRedstoneInfo(side);
         }
+    }
+
+    protected void updateLightInfo(EnumFacing side) {
+        sendUpdate();
+    }
+
+    public void setLightLevel(EnumFacing side, int level) {
+        if(!getWorld().isRemote) {
+            boolean sendUpdate = false;
+            if(lightLevels.containsKey(side.ordinal())) {
+                if(lightLevels.get(side.ordinal()) != level) {
+                    sendUpdate = true;
+                    lightLevels.put(side.ordinal(), level);
+                }
+            } else {
+                sendUpdate = true;
+                lightLevels.put(side.ordinal(), level);
+            }
+            if(sendUpdate) {
+                updateLightInfo(side);
+            }
+        }
+    }
+
+    public int getLightLevel(EnumFacing side) {
+        if(lightLevels.containsKey(side.ordinal())) {
+            return lightLevels.get(side.ordinal());
+        }
+        return 0;
     }
 
     /**

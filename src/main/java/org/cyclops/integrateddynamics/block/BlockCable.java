@@ -32,10 +32,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.client.model.CableModel;
-import org.cyclops.integrateddynamics.core.block.CollidableComponent;
-import org.cyclops.integrateddynamics.core.block.ICollidable;
-import org.cyclops.integrateddynamics.core.block.ICollidableParent;
-import org.cyclops.integrateddynamics.core.block.IDynamicRedstoneBlock;
+import org.cyclops.integrateddynamics.core.block.*;
 import org.cyclops.integrateddynamics.core.block.cable.*;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.INetworkElement;
@@ -61,7 +58,7 @@ import java.util.*;
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<CablePathElement>,
         ICableFakeable<CablePathElement>, ICableWithParts<CablePathElement>, ICableFacadeable<CablePathElement>, INetworkElementProvider,
-        IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock {
+        IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
 
     // Properties
     @BlockProperty
@@ -578,6 +575,34 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return getRedstoneLevel(world, pos, side.getOpposite());
     }
 
+    /* --------------- Start IDynamicLightBlock --------------- */
+
+    @Override
+    public void setLightLevel(IBlockAccess world, BlockPos pos, EnumFacing side, int level) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
+        if(tile != null) {
+            tile.setLightLevel(side, level);
+        }
+    }
+
+    @Override
+    public int getLightLevel(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
+        if(tile != null) {
+            return tile.getLightLevel(side);
+        }
+        return 0;
+    }
+
+    @Override
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
+        int light = 0;
+        for(EnumFacing side : EnumFacing.values()) {
+            light = Math.max(light, getLightLevel(world, pos, side));
+        }
+        return light;
+    }
+
     /* --------------- Delegate to ICableNetwork<CablePathElement> --------------- */
 
     @Override
@@ -650,4 +675,5 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     public CablePathElement createPathElement(World world, BlockPos blockPos) {
         return cableNetworkComponent.createPathElement(world, blockPos);
     }
+
 }

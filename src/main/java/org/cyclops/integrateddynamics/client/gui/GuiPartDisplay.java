@@ -7,14 +7,14 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
-import org.cyclops.integrateddynamics.part.PartTypeDisplay;
+import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 
 
 /**
  * Gui for a writer part.
  * @author rubensworks
  */
-public class GuiPartDisplay extends GuiMultipart<PartTypeDisplay, PartTypeDisplay.State> {
+public class GuiPartDisplay extends GuiMultipart<PartTypePanelDisplay, PartTypePanelDisplay.State> {
 
     private static final int ERROR_X = 104;
     private static final int ERROR_Y = 16;
@@ -28,7 +28,7 @@ public class GuiPartDisplay extends GuiMultipart<PartTypeDisplay, PartTypeDispla
      * @param partContainer The part container.
      * @param partType The targeted part type.
      */
-    public GuiPartDisplay(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, PartTypeDisplay partType) {
+    public GuiPartDisplay(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, PartTypePanelDisplay partType) {
         super(new ContainerPartDisplay(player, partTarget, partContainer, partType));
     }
 

@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartType;
-import org.cyclops.integrateddynamics.part.PartTypeDisplay;
+import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 
 /**
  * Overlay renderer for the display part to display values on the part.
@@ -66,7 +66,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         GlStateManager.scale(1, -1, 1);
         GlStateManager.disableRescaleNormal();
 
-        PartTypeDisplay.State partState = (PartTypeDisplay.State) partContainer.getPartState(direction);
+        PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) partContainer.getPartState(direction);
 
         int rotation = partState.getFacingRotation().ordinal() - 2;
         GlStateManager.translate(6, 6, 0);

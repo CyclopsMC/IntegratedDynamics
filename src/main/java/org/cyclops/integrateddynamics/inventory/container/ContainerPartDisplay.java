@@ -8,7 +8,7 @@ import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.part.PartTypeDisplay;
+import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 
 /**
  * Container for writer parts.
@@ -16,7 +16,7 @@ import org.cyclops.integrateddynamics.part.PartTypeDisplay;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class ContainerPartDisplay extends ContainerMultipart<PartTypeDisplay, PartTypeDisplay.State> {
+public class ContainerPartDisplay extends ContainerMultipart<PartTypePanelDisplay, PartTypePanelDisplay.State> {
 
     private static final int SLOT_X = 79;
     private static final int SLOT_Y = 8;
@@ -28,7 +28,7 @@ public class ContainerPartDisplay extends ContainerMultipart<PartTypeDisplay, Pa
      * @param partContainer The part container.
      * @param partType      The part type.
      */
-    public ContainerPartDisplay(EntityPlayer player, PartTarget target, IPartContainer partContainer, PartTypeDisplay partType) {
+    public ContainerPartDisplay(EntityPlayer player, PartTarget target, IPartContainer partContainer, PartTypePanelDisplay partType) {
         super(player, target, partContainer, partType);
 
         SimpleInventory inventory = getPartState().getInventory();

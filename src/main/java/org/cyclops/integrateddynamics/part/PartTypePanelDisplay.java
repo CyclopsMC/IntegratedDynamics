@@ -29,7 +29,6 @@ import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdated
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
 
@@ -37,21 +36,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A part that can display variables..
+ * A part that can display variables.
  * @author rubensworks
  */
-public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDisplay.State> {
+public class PartTypePanelDisplay extends PartTypePanel<PartTypePanelDisplay, PartTypePanelDisplay.State> {
 
-    public PartTypeDisplay(String name) {
-        super(name, new RenderPosition(0.1875F, 0.625F, 0.625F));
+    public PartTypePanelDisplay(String name) {
+        super(name);
     }
 
     @Override
     protected Map<Class<? extends NetworkEvent>, IEventAction> constructNetworkEventActions() {
         Map<Class<? extends NetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
-        actions.put(VariableContentsUpdatedEvent.class, new IEventAction<PartTypeDisplay, PartTypeDisplay.State, VariableContentsUpdatedEvent>() {
+        actions.put(VariableContentsUpdatedEvent.class, new IEventAction<PartTypePanelDisplay, PartTypePanelDisplay.State, VariableContentsUpdatedEvent>() {
             @Override
-            public void onAction(Network network, PartTarget target, PartTypeDisplay.State state, VariableContentsUpdatedEvent event) {
+            public void onAction(Network network, PartTarget target, PartTypePanelDisplay.State state, VariableContentsUpdatedEvent event) {
                 onVariableContentsUpdated(event.getNetwork(), target, state);
             }
         });
@@ -59,12 +58,12 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
     }
 
     @Override
-    public Class<? super PartTypeDisplay> getPartTypeClass() {
-        return PartTypeDisplay.class;
+    public Class<? super PartTypePanelDisplay> getPartTypeClass() {
+        return PartTypePanelDisplay.class;
     }
 
     @Override
-    public void addDrops(PartTarget target, PartTypeDisplay.State state, List<ItemStack> itemStacks) {
+    public void addDrops(PartTarget target, PartTypePanelDisplay.State state, List<ItemStack> itemStacks) {
         for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
             ItemStack itemStack = state.getInventory().getStackInSlot(i);
             if(itemStack != null) {
@@ -77,13 +76,13 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
     }
 
     @Override
-    public void beforeNetworkKill(Network network, PartTarget target, PartTypeDisplay.State state) {
+    public void beforeNetworkKill(Network network, PartTarget target, PartTypePanelDisplay.State state) {
         super.beforeNetworkKill(network, target, state);
         state.onVariableContentsUpdated(this, target);
     }
 
     @Override
-    public void afterNetworkAlive(Network network, PartTarget target, PartTypeDisplay.State state) {
+    public void afterNetworkAlive(Network network, PartTarget target, PartTypePanelDisplay.State state) {
         super.afterNetworkAlive(network, target, state);
         state.onVariableContentsUpdated(this, target);
     }
@@ -94,8 +93,8 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
     }
 
     @Override
-    public PartTypeDisplay.State constructDefaultState() {
-        return new PartTypeDisplay.State(1);
+    public PartTypePanelDisplay.State constructDefaultState() {
+        return new PartTypePanelDisplay.State(1);
     }
 
     @Override
@@ -109,12 +108,12 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
     }
 
     @Override
-    public boolean isUpdate(PartTypeDisplay.State state) {
+    public boolean isUpdate(PartTypePanelDisplay.State state) {
         return true;
     }
 
     @Override
-    public void update(Network network, PartTarget target, PartTypeDisplay.State state) {
+    public void update(Network network, PartTarget target, PartTypePanelDisplay.State state) {
         super.update(network, target, state);
         IValue lastValue = state.getDisplayValue();
         IValue newValue = null;
@@ -138,7 +137,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
     @Override
     public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side) {
-        PartTypeDisplay.State state = (PartTypeDisplay.State) tile.getPartState(side);
+        PartTypePanelDisplay.State state = (PartTypePanelDisplay.State) tile.getPartState(side);
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
         if(!state.getInventory().isEmpty()) {
             if(state.hasVariable()) {
@@ -151,7 +150,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
                 withProperty(IgnoredBlockStatus.STATUS, status);
     }
 
-    protected void onVariableContentsUpdated(Network network, PartTarget target, PartTypeDisplay.State state) {
+    protected void onVariableContentsUpdated(Network network, PartTarget target, PartTypePanelDisplay.State state) {
         state.onVariableContentsUpdated(this, target);
     }
 
@@ -170,7 +169,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
         return super.onPartActivated(world, pos, state, partState, player, side, hitX, hitY, hitZ);
     }
 
-    public static class State extends PartStateActiveVariableBase<PartTypeDisplay> {
+    public static class State extends PartStateActiveVariableBase<PartTypePanelDisplay> {
 
         @Getter
         @Setter
@@ -185,7 +184,7 @@ public class PartTypeDisplay extends PartTypeBase<PartTypeDisplay, PartTypeDispl
 
         @Override
         public Class<? extends IPartState> getPartStateClass() {
-            return PartTypeDisplay.State.class;
+            return PartTypePanelDisplay.State.class;
         }
 
         @Override
