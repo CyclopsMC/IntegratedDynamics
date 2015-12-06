@@ -16,9 +16,9 @@ import org.cyclops.integrateddynamics.core.part.PartTarget;
  * A panel part that simply emits light.
  * @author rubensworks
  */
-public class PartTypePanelLight extends PartTypePanel<PartTypePanelLight, PartStateEmpty<PartTypePanelLight>> {
+public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightStatic, PartStateEmpty<PartTypePanelLightStatic>> {
 
-    public PartTypePanelLight(String name) {
+    public PartTypePanelLightStatic(String name) {
         super(name);
     }
 
@@ -28,13 +28,13 @@ public class PartTypePanelLight extends PartTypePanel<PartTypePanelLight, PartSt
     }
 
     @Override
-    public Class<? super PartTypePanelLight> getPartTypeClass() {
-        return PartTypePanelLight.class;
+    public Class<? super PartTypePanelLightStatic> getPartTypeClass() {
+        return PartTypePanelLightStatic.class;
     }
 
     @Override
-    public PartStateEmpty<PartTypePanelLight> constructDefaultState() {
-        return new PartStateEmpty<PartTypePanelLight>();
+    public PartStateEmpty<PartTypePanelLightStatic> constructDefaultState() {
+        return new PartStateEmpty<PartTypePanelLightStatic>();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class PartTypePanelLight extends PartTypePanel<PartTypePanelLight, PartSt
     }
 
     @Override
-    public void onNetworkAddition(Network network, PartTarget target, PartStateEmpty<PartTypePanelLight> state) {
+    public void onNetworkAddition(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
         super.onNetworkAddition(network, target, state);
         IBlockAccess world = target.getCenter().getPos().getWorld();
         BlockPos pos = target.getCenter().getPos().getBlockPos();
@@ -64,7 +64,7 @@ public class PartTypePanelLight extends PartTypePanel<PartTypePanelLight, PartSt
     }
 
     @Override
-    public void onNetworkRemoval(Network network, PartTarget target, PartStateEmpty<PartTypePanelLight> state) {
+    public void onNetworkRemoval(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
         super.onNetworkRemoval(network, target, state);
         IBlockAccess world = target.getCenter().getPos().getWorld();
         BlockPos pos = target.getCenter().getPos().getBlockPos();

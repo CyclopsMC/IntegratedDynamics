@@ -24,7 +24,8 @@ public final class PartTypes {
     public static final PartTypeRedstoneWriter REDSTONE_WRITER = REGISTRY.register(new PartTypeRedstoneWriter("redstoneWriter"));
 
     // Panels
-    public static final PartTypePanelLight LIGHT = REGISTRY.register(new PartTypePanelLight("lightPanel"));
-    public static final PartTypePanelDisplay DISPLAY = REGISTRY.register(new PartTypePanelDisplay("displayPanel"));
+    public static final PartTypePanelLightStatic STATIC_LIGHT_PANEL = REGISTRY.register(new PartTypePanelLightStatic("staticLightPanel"));
+    public static final PartTypePanelLightDynamic DYNAMIC_LIGHT_PANEL = REGISTRY.register(new PartTypePanelLightDynamic("dynamicLightPanel"));
+    public static final PartTypePanelDisplay DISPLAY_PANEL = REGISTRY.register(new PartTypePanelDisplay("displayPanel"));
 
 }

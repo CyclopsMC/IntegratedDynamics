@@ -51,10 +51,13 @@ parttype.parttypes.integrateddynamics.minecraftReader.name=Minecraft Reader
 parttype.parttypes.integrateddynamics.minecraftReader.info=Reads Minecraft system properties
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 parttype.parttypes.integrateddynamics.redstoneWriter.info=Writes to redstone
-parttype.parttypes.integrateddynamics.lightPanel.name=Light Panel
-parttype.parttypes.integrateddynamics.lightPanel.info=A simply light panel that is always active
+parttype.parttypes.integrateddynamics.dataDrivenPanel.error.invalidType=This panel does not accept a %s.
+parttype.parttypes.integrateddynamics.staticLightPanel.name=Static Light Panel
+parttype.parttypes.integrateddynamics.staticLightPanel.info=A simply light panel that is always active
+parttype.parttypes.integrateddynamics.dynamicLightPanel.name=Dynamic Light Panel
+parttype.parttypes.integrateddynamics.dynamicLightPanel.info=Visually display a variable value in the world as light value
 parttype.parttypes.integrateddynamics.displayPanel.name=Display Panel
-parttype.parttypes.integrateddynamics.displayPanel.info=Visually display a variable value in the world
+parttype.parttypes.integrateddynamics.displayPanel.info=Visually display a variable value in the world as text
 
 # Variables facades
 variable.integrateddynamics.error.invalidItem=The current variable can not be used in this aspect.

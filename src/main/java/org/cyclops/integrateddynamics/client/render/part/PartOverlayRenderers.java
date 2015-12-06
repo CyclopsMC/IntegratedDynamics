@@ -11,7 +11,7 @@ public class PartOverlayRenderers {
 
     public static final IPartOverlayRendererRegistry REGISTRY = IntegratedDynamics._instance.getRegistryManager().getRegistry(IPartOverlayRendererRegistry.class);
 
-    public static final DisplayPartOverlayRenderer DISPLAY = REGISTRY.register(PartTypes.DISPLAY, new DisplayPartOverlayRenderer());
+    public static final DisplayPartOverlayRenderer DISPLAY = REGISTRY.register(PartTypes.DISPLAY_PANEL, new DisplayPartOverlayRenderer());
 
     public static void load() {}
 

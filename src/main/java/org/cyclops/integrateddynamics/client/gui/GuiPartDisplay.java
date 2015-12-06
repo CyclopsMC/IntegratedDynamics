@@ -5,16 +5,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
+import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
-import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
+import org.cyclops.integrateddynamics.part.PartTypePanelVariableDriven;
 
 
 /**
  * Gui for a writer part.
  * @author rubensworks
  */
-public class GuiPartDisplay extends GuiMultipart<PartTypePanelDisplay, PartTypePanelDisplay.State> {
+public class GuiPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends GuiMultipart<P, S> {
 
     private static final int ERROR_X = 104;
     private static final int ERROR_Y = 16;
@@ -28,7 +29,7 @@ public class GuiPartDisplay extends GuiMultipart<PartTypePanelDisplay, PartTypeP
      * @param partContainer The part container.
      * @param partType The targeted part type.
      */
-    public GuiPartDisplay(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, PartTypePanelDisplay partType) {
+    public GuiPartDisplay(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, IPartType partType) {
         super(new ContainerPartDisplay(player, partTarget, partContainer, partType));
     }
 

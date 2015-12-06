@@ -98,6 +98,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IValueCastRegistry.class, ValueCastRegistry.getInstance());
+        getRegistryManager().addRegistry(IValueTypeLightLevelRegistry.class, ValueTypeLightLevelRegistry.getInstance());
         getRegistryManager().addRegistry(IPartTypeRegistry.class, PartTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());
         getRegistryManager().addRegistry(IOperatorRegistry.class, OperatorRegistry.getInstance());
@@ -111,6 +112,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
         ValueTypes.load();
         ValueCastMappings.load();
+        ValueTypeLightLevels.load();
         Operators.load();
         Aspects.load();
         PartTypes.load();
