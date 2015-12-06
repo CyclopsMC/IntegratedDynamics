@@ -56,7 +56,7 @@ public class VariableModelBaked extends IFlexibleBakedModel.Wrapper implements I
         variableFacade.addModelOverlay(this, quads);
 
         return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.isGui3d(),
-                this.getTexture(), this.getItemCameraTransforms());
+                this.getParticleTexture(), this.getItemCameraTransforms());
     }
 
 }

@@ -122,11 +122,11 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
         if (!getWorld().isRemote) {
             for (int i = 0; i < getUnfilteredItemCount(); ++i) {
                 ItemStack itemstack;
-                itemstack = inputSlots.getStackInSlotOnClosing(i);
+                itemstack = inputSlots.removeStackFromSlot(i);
                 if (itemstack != null) {
                     player.dropPlayerItemWithRandomChoice(itemstack, false);
                 }
-                itemstack = outputSlots.getStackInSlotOnClosing(i);
+                itemstack = outputSlots.removeStackFromSlot(i);
                 if (itemstack != null) {
                     player.dropPlayerItemWithRandomChoice(itemstack, false);
                 }

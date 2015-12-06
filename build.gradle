@@ -1,14 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-    }
-}
-
-/*
-// For those who want the bleeding edge
-buildscript {
-    repositories {
-    mavenCentral()
         jcenter()
         maven {
             name = "forge"
@@ -16,17 +8,18 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-*/
 
-// for people who want stable
 plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
+    // For people who want stable
+    //id "net.minecraftforge.gradle.forge" version "2.0.2"
     id 'com.matthewprenger.cursegradle' version '1.0.4'
 }
+
+// For those who want the bleeding edge
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 loadProperties()
 

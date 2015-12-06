@@ -91,7 +91,7 @@ public class CableModel extends DynamicModel {
     public List<BakedQuad> getFacadeQuads(IBlockState blockState, EnumFacing side, IPartType.RenderPosition renderPosition) {
         List<BakedQuad> ret = Lists.newLinkedList();
         IBakedModel model = RenderHelpers.getBakedModel(blockState);
-        TextureAtlasSprite texture = model.getTexture();
+        TextureAtlasSprite texture = model.getParticleTexture();
         if(renderPosition == IPartType.RenderPosition.NONE) {
             addBakedQuad(ret, 0, 1, 0, 1, 1, texture, side);
         } else {
@@ -137,7 +137,7 @@ public class CableModel extends DynamicModel {
     @Override
     public List<BakedQuad> getGeneralQuads() {
         List<BakedQuad> ret = Lists.newLinkedList();
-        TextureAtlasSprite texture = getTexture();
+        TextureAtlasSprite texture = getParticleTexture();
         boolean realCable = isItemStack() || BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.REALCABLE, true);
 
         if(realCable) {
@@ -205,7 +205,7 @@ public class CableModel extends DynamicModel {
     }
 
     @Override
-    public TextureAtlasSprite getTexture() {
+    public TextureAtlasSprite getParticleTexture() {
         return BlockCable.getInstance().texture;
     }
 

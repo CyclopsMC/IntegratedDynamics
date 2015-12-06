@@ -58,7 +58,7 @@ public class FacadeModel extends DynamicModel {
     }
 
     @Override
-    public TextureAtlasSprite getTexture() {
-        return RenderHelpers.getBakedModel(Blocks.stone.getDefaultState()).getTexture();
+    public TextureAtlasSprite getParticleTexture() {
+        return RenderHelpers.getBakedModel(Blocks.stone.getDefaultState()).getParticleTexture();
     }
 }

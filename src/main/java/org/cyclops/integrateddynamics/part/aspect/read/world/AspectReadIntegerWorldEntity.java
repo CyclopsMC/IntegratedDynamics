@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.part.aspect.read.world;
 
 import com.google.common.base.Predicate;
-import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EntitySelectors;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
@@ -23,7 +23,7 @@ public class AspectReadIntegerWorldEntity extends AspectReadIntegerWorldBase {
     }
 
     protected Predicate Predicate() {
-        return IEntitySelector.selectAnything;
+        return EntitySelectors.selectAnything;
     }
 
     @SuppressWarnings("unchecked")

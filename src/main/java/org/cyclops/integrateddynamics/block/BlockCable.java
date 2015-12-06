@@ -569,12 +569,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public int isProvidingStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+    public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
         return 0;
     }
 
     @Override
-    public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+    public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
         return getRedstoneLevel(world, pos, side.getOpposite());
     }
 
