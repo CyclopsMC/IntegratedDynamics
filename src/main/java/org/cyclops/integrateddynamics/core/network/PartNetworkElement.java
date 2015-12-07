@@ -1,8 +1,10 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Data;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.network.event.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
@@ -95,6 +97,11 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     @Override
     public void onPreRemoved(Network network) {
         part.onPreRemoved(network, target, getPartState());
+    }
+
+    @Override
+    public void onNeighborBlockChange(Network network, IBlockAccess world, Block neighborBlock) {
+        part.onBlockNeighborChange(network, target, getPartState(), world, neighborBlock);
     }
 
     @Override

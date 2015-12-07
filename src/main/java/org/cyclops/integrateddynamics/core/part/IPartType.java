@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import lombok.Data;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -8,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.init.IInitListener;
@@ -222,6 +224,17 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target block.
      */
     public void onPreRemoved(Network network, PartTarget target, S state);
+
+    /**
+     * Called when a neighbouring block is updated, more specifically when
+     * {@link net.minecraft.block.Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} is called.
+     * @param network The network to update in.
+     * @param state The state
+     * @param target The target block.
+     * @param world The world in which the neighbour was updated.
+     * @param neighborBlock The block type of the neighbour that was updated.
+     */
+    public void onBlockNeighborChange(Network network, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
 
     @Data
     public static class RenderPosition {

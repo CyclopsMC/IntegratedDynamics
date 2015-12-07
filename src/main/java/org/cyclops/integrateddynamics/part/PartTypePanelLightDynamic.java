@@ -73,17 +73,10 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         PartTypePanelLightDynamic.setLightLevel(target, 0);
     }
 
-    // The update methods are only required in the case of BlockInvisibleLight
-    // TODO: on block update
     @Override
-    public void update(Network network, PartTarget target, State state) {
-        super.update(network, target, state);
+    public void onBlockNeighborChange(Network network, PartTarget target, State state, IBlockAccess world, Block neighborBlock) {
+        super.onBlockNeighborChange(network, target, state, world, neighborBlock);
         setLightLevel(target, state.getDisplayValue() == null ? 0: getLightLevel(state, state.getDisplayValue()));
-    }
-
-    @Override
-    public boolean isUpdate(State state) {
-        return ConfigHandler.isEnabled(BlockInvisibleLightConfig.class);
     }
 
     public static void setLightLevel(PartTarget target, int lightLevel) {

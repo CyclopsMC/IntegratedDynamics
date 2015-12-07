@@ -1,8 +1,10 @@
 package org.cyclops.integrateddynamics.network;
 
 import lombok.Data;
+import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.core.item.IVariableFacade;
@@ -72,6 +74,11 @@ public class VariablestoreNetworkElement implements INetworkElement {
 
     @Override
     public void onPreRemoved(Network network) {
+
+    }
+
+    @Override
+    public void onNeighborBlockChange(Network network, IBlockAccess world, Block neighborBlock) {
 
     }
 

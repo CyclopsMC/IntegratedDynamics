@@ -3,9 +3,8 @@ package org.cyclops.integrateddynamics.part;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
-import org.cyclops.cyclopscore.config.ConfigHandler;
+import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.PartStateEmpty;
@@ -60,17 +59,10 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
         PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
     }
 
-    // The update methods are only required in the case of BlockInvisibleLight
-
     @Override
-    public void update(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
-        super.update(network, target, state);
+    public void onBlockNeighborChange(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state, IBlockAccess world, Block neighborBlock) {
+        super.onBlockNeighborChange(network, target, state, world, neighborBlock);
         PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
-    }
-
-    @Override
-    public boolean isUpdate(PartStateEmpty<PartTypePanelLightStatic> state) {
-        return ConfigHandler.isEnabled(BlockInvisibleLightConfig.class);
     }
 
     @Override

@@ -1,6 +1,11 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -65,5 +70,14 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * @param network The network.
      */
     public void onPreRemoved(Network network);
+
+    /**
+     * Called when a neighbouring block is updated, more specifically when
+     * {@link net.minecraft.block.Block#onNeighborBlockChange(World, BlockPos, IBlockState, Block)} is called.
+     * @param network The network to update in.
+     * @param world The world in which the neighbour was updated.
+     * @param neighborBlock block type of the neighbour that was updated.
+     */
+    public void onNeighborBlockChange(Network network, IBlockAccess world, Block neighborBlock);
 
 }

@@ -681,4 +681,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return cableNetworkComponent.createPathElement(world, blockPos);
     }
 
+    @Override
+    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
+        super.onNeighborBlockChange(world, pos, state, neighborBlock);
+        networkElementProviderComponent.onBlockNeighborChange(getNetwork(world, pos), world, pos, neighborBlock);
+    }
 }

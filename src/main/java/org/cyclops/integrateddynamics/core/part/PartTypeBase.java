@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurabletypeaction.BlockAction;
 import org.cyclops.cyclopscore.config.configurabletypeaction.ItemAction;
@@ -293,6 +294,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public void onPreRemoved(Network network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void onBlockNeighborChange(Network network, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
 
     }
 
