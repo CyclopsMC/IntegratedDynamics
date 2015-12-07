@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
 /**
  * A part that can display variables.

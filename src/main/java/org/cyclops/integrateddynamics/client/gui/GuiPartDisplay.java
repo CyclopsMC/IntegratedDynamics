@@ -7,8 +7,8 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
-import org.cyclops.integrateddynamics.part.PartTypePanelVariableDriven;
 
 
 /**

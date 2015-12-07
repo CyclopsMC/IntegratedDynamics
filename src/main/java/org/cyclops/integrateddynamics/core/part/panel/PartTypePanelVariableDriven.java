@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.part;
+package org.cyclops.integrateddynamics.core.part.panel;
 
 import lombok.Getter;
 import lombok.Setter;

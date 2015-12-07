@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.part;
+package org.cyclops.integrateddynamics.core.part.panel;
 
 import net.minecraft.block.Block;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;

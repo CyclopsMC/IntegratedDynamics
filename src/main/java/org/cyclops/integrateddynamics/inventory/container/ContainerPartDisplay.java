@@ -9,7 +9,7 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipar
 import org.cyclops.integrateddynamics.core.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.part.PartTypePanelVariableDriven;
+import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
 /**
  * Container for writer parts.
