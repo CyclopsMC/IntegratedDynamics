@@ -18,8 +18,16 @@ public interface IValue {
      * @param valueType The type of value to cast to.
      * @param <V> The actual value type.
      * @return The downcasted value.
-     * @throws org.cyclops.integrateddynamics.core.evaluate.InvalidValueTypeException If this value could not be cast to the given type.
+     * @throws ValueCastException If this value could not be cast to the given type.
      */
-    public <V extends IValue> V cast(IValueType<V> valueType) throws InvalidValueTypeException;
+    public <V extends IValue> V cast(IValueType<V> valueType) throws IValueCastRegistry.ValueCastException;
+
+    /**
+     * Safely downcast this value.
+     * @param valueType The type of value to cast to.
+     * @param <V> The actual value type.
+     * @return If the
+     */
+    public <V extends IValue> boolean canCast(IValueType<V> valueType) throws InvalidValueTypeException;
 
 }

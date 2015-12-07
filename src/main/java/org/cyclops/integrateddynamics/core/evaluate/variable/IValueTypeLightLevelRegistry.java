@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.cyclopscore.init.IRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.InvalidValueTypeException;
 
 /**
  * Registry for mapping value types to their light level calculator.
@@ -24,6 +25,14 @@ public interface IValueTypeLightLevelRegistry extends IRegistry {
      * @return The registered light level calculator.
      */
     public <V extends IValue> ILightLevelCalculator<V> getLightLevelCalculator(IValueType<V> valueType);
+
+    /**
+     * Get the light level calculator for the given value.
+     * @param value The value
+     * @return The registered light level calculator.
+     * @throws InvalidValueTypeException If an error occured while autocasting.
+     */
+    public <V extends IValue> int getLightLevel(V value) throws InvalidValueTypeException;
 
     public static interface ILightLevelCalculator<V extends IValue> {
 

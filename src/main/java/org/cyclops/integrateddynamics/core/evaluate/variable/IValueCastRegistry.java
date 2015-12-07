@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.cyclopscore.init.IRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.core.evaluate.InvalidValueTypeException;
 
 /**
  * Registry for casting {@link IValue}.
@@ -25,8 +25,6 @@ public interface IValueCastRegistry extends IRegistry {
 
     /**
      * Cast the given value to the given type.
-     * This will automatically register a new cast operator for the given mapping to the
-     * {@link org.cyclops.integrateddynamics.core.evaluate.operator.IOperatorRegistry}.
      * @param target The target type.
      * @param value The value to cast.
      * @param <T1> The source type type.
@@ -36,7 +34,19 @@ public interface IValueCastRegistry extends IRegistry {
      * @return The cast value
      * @throws ValueCastException If casting failed because the type mapping did not exist.
      */
-    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 cast(T1 target, V1 value) throws ValueCastException;
+    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 cast(T2 target, V1 value) throws ValueCastException;
+
+    /**
+     * Check if the the given value can be cast to the given type.
+     * @param target The target type.
+     * @param value The value to cast.
+     * @param <T1> The source type type.
+     * @param <T2> The target type type.
+     * @param <V1> The source type.
+     * @param <V2> The target type.
+     * @return If the value can be cast to the given type.
+     */
+    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> boolean canCast(T2 target, V1 value);
 
     public static interface IMapping<T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> {
 
@@ -44,7 +54,7 @@ public interface IValueCastRegistry extends IRegistry {
 
     }
 
-    public static class ValueCastException extends EvaluationException {
+    public static class ValueCastException extends InvalidValueTypeException {
 
         public ValueCastException(IValueType from, IValueType to) {
             super(String.format("No cast mapping exists from %s to %s", from, to));

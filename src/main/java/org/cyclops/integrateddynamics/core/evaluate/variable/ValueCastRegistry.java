@@ -36,11 +36,16 @@ public final class ValueCastRegistry implements IValueCastRegistry {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 cast(T1 target, V1 value) throws ValueCastException {
+    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 cast(T2 target, V1 value) throws ValueCastException {
         IMapping mapping = mappings.get(Pair.<IValueType, IValueType>of(value.getType(), target));
         if(mapping == null) {
             throw new ValueCastException(value.getType(), target);
         }
         return ((IMapping<T1, T2, V1, V2>) mapping).cast(value);
+    }
+
+    @Override
+    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> boolean canCast(T2 target, V1 value) {
+        return mappings.containsKey(Pair.<IValueType, IValueType>of(value.getType(), target));
     }
 }

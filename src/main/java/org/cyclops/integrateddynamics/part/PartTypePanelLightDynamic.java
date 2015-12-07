@@ -11,8 +11,8 @@ import org.cyclops.integrateddynamics.block.BlockInvisibleLight;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
 import org.cyclops.integrateddynamics.core.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
+import org.cyclops.integrateddynamics.core.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueTypeLightLevelRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -56,13 +56,11 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     protected int getLightLevel(State state, IValue value) {
-        IValueTypeLightLevelRegistry.ILightLevelCalculator lightLevelCalculator = ValueTypeLightLevels.REGISTRY.
-                getLightLevelCalculator(value.getType());
-        if(lightLevelCalculator == null) {
+        try {
+            return ValueTypeLightLevels.REGISTRY.getLightLevel(value);
+        } catch (InvalidValueTypeException e) {
             state.addGlobalError(new L10NHelpers.UnlocalizedString(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
                     new L10NHelpers.UnlocalizedString(value.getType().getUnlocalizedName())));
-        } else {
-            return lightLevelCalculator.getLightLevel(value);
         }
         return 0;
     }
@@ -76,7 +74,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     @Override
     public void onBlockNeighborChange(Network network, PartTarget target, State state, IBlockAccess world, Block neighborBlock) {
         super.onBlockNeighborChange(network, target, state, world, neighborBlock);
-        setLightLevel(target, state.getDisplayValue() == null ? 0: getLightLevel(state, state.getDisplayValue()));
+        setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }
 
     public static void setLightLevel(PartTarget target, int lightLevel) {
