@@ -3,8 +3,12 @@ package org.cyclops.integrateddynamics.part;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.block.BlockInvisibleLight;
+import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
 import org.cyclops.integrateddynamics.core.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
@@ -53,13 +57,30 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
                         new L10NHelpers.UnlocalizedString(newValue.getType().getUnlocalizedName())));
             } else {
                 int lightLevel = lightLevelCalculator.getLightLevel(newValue);
-                IBlockAccess world = target.getCenter().getPos().getWorld();
-                BlockPos pos = target.getCenter().getPos().getBlockPos();
-                Block block = world.getBlockState(pos).getBlock();
-                if(block instanceof IDynamicLightBlock) {
-                    ((IDynamicLightBlock) block).setLightLevel(world, pos, target.getCenter().getSide(), lightLevel);
-                }
+                setLightLevel(target, lightLevel);
                 state.sendUpdate();
+            }
+        }
+    }
+
+    public static void setLightLevel(PartTarget target, int lightLevel) {
+        if(ConfigHandler.isEnabled(BlockInvisibleLightConfig.class)) {
+            World world = target.getTarget().getPos().getWorld();
+            BlockPos pos = target.getTarget().getPos().getBlockPos();
+            if(world.isAirBlock(pos)) {
+                if(lightLevel > 0) {
+                    world.setBlockState(pos, BlockInvisibleLight.getInstance().getDefaultState().
+                            withProperty(BlockInvisibleLight.LIGHT, lightLevel));
+                } else {
+                    world.setBlockToAir(pos);
+                }
+            }
+        } else {
+            IBlockAccess world = target.getCenter().getPos().getWorld();
+            BlockPos pos = target.getCenter().getPos().getBlockPos();
+            Block block = world.getBlockState(pos).getBlock();
+            if(block instanceof IDynamicLightBlock) {
+                ((IDynamicLightBlock) block).setLightLevel(world, pos, target.getCenter().getSide(), lightLevel);
             }
         }
     }

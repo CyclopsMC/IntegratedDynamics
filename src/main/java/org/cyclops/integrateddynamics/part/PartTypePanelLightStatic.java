@@ -56,12 +56,7 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     @Override
     public void onNetworkAddition(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
         super.onNetworkAddition(network, target, state);
-        IBlockAccess world = target.getCenter().getPos().getWorld();
-        BlockPos pos = target.getCenter().getPos().getBlockPos();
-        Block block = world.getBlockState(pos).getBlock();
-        if(block instanceof IDynamicLightBlock) {
-            ((IDynamicLightBlock) block).setLightLevel(world, pos, target.getCenter().getSide(), 15);
-        }
+        PartTypePanelLightDynamic.setLightLevel(target, 15);
     }
 
     @Override
