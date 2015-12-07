@@ -49,10 +49,12 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     @Override
     protected void onValueChanged(Network network, PartTarget target, State state, IValue lastValue, IValue newValue) {
         super.onValueChanged(network, target, state, lastValue, newValue);
+        int lightLevel = 0;
         if(newValue != null) {
-            setLightLevel(target, getLightLevel(state, newValue));
-            state.sendUpdate();
+            lightLevel = getLightLevel(state, newValue);
         }
+        setLightLevel(target, lightLevel);
+        state.sendUpdate();
     }
 
     protected int getLightLevel(State state, IValue value) {

@@ -18,7 +18,7 @@ public interface IValue {
      * @param valueType The type of value to cast to.
      * @param <V> The actual value type.
      * @return The downcasted value.
-     * @throws ValueCastException If this value could not be cast to the given type.
+     * @throws IValueCastRegistry.ValueCastException If this value could not be cast to the given type.
      */
     public <V extends IValue> V cast(IValueType<V> valueType) throws IValueCastRegistry.ValueCastException;
 
