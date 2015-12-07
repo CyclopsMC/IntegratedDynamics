@@ -50,17 +50,40 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     protected void onValueChanged(Network network, PartTarget target, State state, IValue lastValue, IValue newValue) {
         super.onValueChanged(network, target, state, lastValue, newValue);
         if(newValue != null) {
-            IValueTypeLightLevelRegistry.ILightLevelCalculator lightLevelCalculator = ValueTypeLightLevels.REGISTRY.
-                    getLightLevelCalculator(newValue.getType());
-            if(lightLevelCalculator == null) {
-                state.addGlobalError(new L10NHelpers.UnlocalizedString(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
-                        new L10NHelpers.UnlocalizedString(newValue.getType().getUnlocalizedName())));
-            } else {
-                int lightLevel = lightLevelCalculator.getLightLevel(newValue);
-                setLightLevel(target, lightLevel);
-                state.sendUpdate();
-            }
+            setLightLevel(target, getLightLevel(state, newValue));
+            state.sendUpdate();
         }
+    }
+
+    protected int getLightLevel(State state, IValue value) {
+        IValueTypeLightLevelRegistry.ILightLevelCalculator lightLevelCalculator = ValueTypeLightLevels.REGISTRY.
+                getLightLevelCalculator(value.getType());
+        if(lightLevelCalculator == null) {
+            state.addGlobalError(new L10NHelpers.UnlocalizedString(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
+                    new L10NHelpers.UnlocalizedString(value.getType().getUnlocalizedName())));
+        } else {
+            return lightLevelCalculator.getLightLevel(value);
+        }
+        return 0;
+    }
+
+    @Override
+    public void onNetworkRemoval(Network network, PartTarget target, State state) {
+        super.onNetworkRemoval(network, target, state);
+        PartTypePanelLightDynamic.setLightLevel(target, 0);
+    }
+
+    // The update methods are only required in the case of BlockInvisibleLight
+    // TODO: on block update
+    @Override
+    public void update(Network network, PartTarget target, State state) {
+        super.update(network, target, state);
+        setLightLevel(target, state.getDisplayValue() == null ? 0: getLightLevel(state, state.getDisplayValue()));
+    }
+
+    @Override
+    public boolean isUpdate(State state) {
+        return ConfigHandler.isEnabled(BlockInvisibleLightConfig.class);
     }
 
     public static void setLightLevel(PartTarget target, int lightLevel) {

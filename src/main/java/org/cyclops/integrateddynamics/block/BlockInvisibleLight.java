@@ -93,11 +93,6 @@ public class BlockInvisibleLight extends ConfigurableBlock {
         return null;
     }
 
-    /*@Override
-    public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos blockPos) {
-        return AxisAlignedBB.fromBounds(0, 0, 0, 0, 0, 0);
-    }*/
-
     @Override
     public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         // Do not appear in creative tab
@@ -106,5 +101,10 @@ public class BlockInvisibleLight extends ConfigurableBlock {
     @Override
     public int getLightValue(IBlockAccess world, BlockPos pos) {
         return world.getBlockState(pos).getValue(LIGHT);
+    }
+
+    @Override
+    public int getLightValue() {
+        return 15; // Required for light update when this block is removed
     }
 }

@@ -410,6 +410,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
+    public int getLightOpacity(IBlockAccess world, BlockPos pos) {
+        return hasFacade(world, pos) ? 255 : 0;
+    }
+
+    @Override
     public int getRenderType() {
         return 3;
     }

@@ -3,10 +3,9 @@ package org.cyclops.integrateddynamics.part;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.integrateddynamics.core.block.IDynamicLightBlock;
+import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.PartStateEmpty;
@@ -18,6 +17,8 @@ import org.cyclops.integrateddynamics.core.part.panel.PartTypePanel;
  * @author rubensworks
  */
 public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightStatic, PartStateEmpty<PartTypePanelLightStatic>> {
+
+    public static final int LIGHT_LEVEL = 15;
 
     public PartTypePanelLightStatic(String name) {
         super(name);
@@ -56,17 +57,25 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     @Override
     public void onNetworkAddition(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
         super.onNetworkAddition(network, target, state);
-        PartTypePanelLightDynamic.setLightLevel(target, 15);
+        PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
+    }
+
+    // The update methods are only required in the case of BlockInvisibleLight
+
+    @Override
+    public void update(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
+        super.update(network, target, state);
+        PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
+    }
+
+    @Override
+    public boolean isUpdate(PartStateEmpty<PartTypePanelLightStatic> state) {
+        return ConfigHandler.isEnabled(BlockInvisibleLightConfig.class);
     }
 
     @Override
     public void onNetworkRemoval(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
         super.onNetworkRemoval(network, target, state);
-        IBlockAccess world = target.getCenter().getPos().getWorld();
-        BlockPos pos = target.getCenter().getPos().getBlockPos();
-        Block block = world.getBlockState(pos).getBlock();
-        if(block instanceof IDynamicLightBlock) {
-            ((IDynamicLightBlock) block).setLightLevel(world, pos, target.getCenter().getSide(), 0);
-        }
+        PartTypePanelLightDynamic.setLightLevel(target, 0);
     }
 }
