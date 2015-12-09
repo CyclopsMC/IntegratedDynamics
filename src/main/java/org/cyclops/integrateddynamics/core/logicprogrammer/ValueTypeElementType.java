@@ -31,7 +31,7 @@ public class ValueTypeElementType implements ILogicProgrammerElementType<ValueTy
     public List<ValueTypeElement> createElements() {
         List<ValueTypeElement> elements = Lists.newLinkedList();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
-            if(!valueType.isCategory()) {
+            if(!valueType.isCategory() && !valueType.isObject()) {
                 elements.add(new ValueTypeElement(valueType));
             }
         }
