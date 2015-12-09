@@ -17,12 +17,13 @@ public class ValueTypes {
     public static ValueTypeDouble  DOUBLE  = REGISTRY.register(new ValueTypeDouble());
     public static ValueTypeString  STRING  = REGISTRY.register(new ValueTypeString());
 
+    // Object types
+    public static ValueObjectTypeBlock OBJECT_BLOCK = REGISTRY.register(new ValueObjectTypeBlock());
+
     // Categories
     public static ValueTypeCategoryAny    CATEGORY_ANY    = REGISTRY.registerCategory(new ValueTypeCategoryAny());
     public static ValueTypeCategoryNumber CATEGORY_NUMBER = REGISTRY.registerCategory(new ValueTypeCategoryNumber());
-
-    // Object types
-    public static ValueObjectTypeBlock OBJECT_BLOCK = REGISTRY.register(new ValueObjectTypeBlock());
+    public static ValueTypeCategoryNamed  CATEGORY_NAMED  = REGISTRY.registerCategory(new ValueTypeCategoryNamed());
 
     private static IValueTypeRegistry constructRegistry() {
         // This also allows this registry to be used outside of a minecraft environment.

@@ -32,6 +32,8 @@ valuetype.valuetypes.integrateddynamics.any.name=Any
 valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
 valuetype.valuetypes.integrateddynamics.number.name=Number
 valuetype.valuetypes.integrateddynamics.number.info=Accepts all number types.
+valuetype.valuetypes.integrateddynamics.named.name=Named
+valuetype.valuetypes.integrateddynamics.named.info=Accepts all value types that have a name.
 
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
@@ -155,8 +157,6 @@ aspect.aspects.integrateddynamics.read.integer.world.posy.info=The Y coordinate 
 aspect.aspects.integrateddynamics.read.integer.world.posz.name=Z Coordinate
 aspect.aspects.integrateddynamics.read.integer.world.posz.info=The Z coordinate of the target
 
-aspect.aspects.integrateddynamics.read.string.world.blockname.name=Block Name
-aspect.aspects.integrateddynamics.read.string.world.blockname.info=The target block name
 aspect.aspects.integrateddynamics.read.string.world.worldname.name=World Name
 aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target world name
 
@@ -280,6 +280,8 @@ operator.operators.integrateddynamics.string.length.name=Length
 operator.operators.integrateddynamics.string.length.info=The length of the given String
 operator.operators.integrateddynamics.string.concat.name=Concat
 operator.operators.integrateddynamics.string.concat.info=Concatenate the two given Strings to one
+operator.operators.integrateddynamics.string.name.name=Name
+operator.operators.integrateddynamics.string.name.info=Get the name of a named object
 
 operator.operators.integrateddynamics.double.name=Double
 operator.operators.integrateddynamics.double.round.name=Round

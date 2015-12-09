@@ -10,7 +10,7 @@ import org.cyclops.cyclopscore.helper.BlockHelpers;
  * Value type with values that are blocks (these are internally stored as blockstates).
  * @author rubensworks
  */
-public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlock.ValueBlock> {
+public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlock.ValueBlock> implements IValueTypeNamed<ValueObjectTypeBlock.ValueBlock> {
 
     public ValueObjectTypeBlock() {
         super("block");
@@ -38,6 +38,11 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         return ValueBlock.of(BlockHelpers.deserializeBlockState(
                 Pair.of(parts[0], Integer.parseInt(parts[1]))
         ));
+    }
+
+    @Override
+    public String getName(ValueBlock a) {
+        return a.getRawValue().getBlock().getLocalizedName();
     }
 
     @ToString

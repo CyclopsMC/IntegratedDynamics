@@ -43,5 +43,6 @@ public interface IConfigRenderPattern {
     public static final IConfigRenderPattern PREFIX_1 = new IConfigRenderPattern.Base(40, 22, new Pair[]{Pair.of(20, 2)}, Pair.of(6, 2));
     public static final IConfigRenderPattern PREFIX_2 = new IConfigRenderPattern.Base(80, 22, new Pair[]{Pair.of(40, 2), Pair.of(60, 2)}, Pair.of(6, 2));
     public static final IConfigRenderPattern SUFFIX_1 = new IConfigRenderPattern.Base(40, 22, new Pair[]{Pair.of(6, 2)}, Pair.of(26, 2));
+    public static final IConfigRenderPattern SUFFIX_1_LONG = new IConfigRenderPattern.Base(80, 22, new Pair[]{Pair.of(6, 2)}, Pair.of(26, 2));
 
 }

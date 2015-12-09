@@ -67,7 +67,6 @@ public class Aspects {
     public static final AspectReadIntegerWorldPosY READ_INTEGER_WORLD_POSY = new AspectReadIntegerWorldPosY();
     public static final AspectReadIntegerWorldPosZ READ_INTEGER_WORLD_POSZ = new AspectReadIntegerWorldPosZ();
 
-    public static final AspectReadStringWorldBlockName READ_STRING_WORLD_BLOCKNAME = new AspectReadStringWorldBlockName();
     public static final AspectReadStringWorldName READ_STRING_WORLD_NAME = new AspectReadStringWorldName();
 
     public static final AspectReadObjectBlockWorld READ_OBJECT_BLOCK_WORLD_BLOCK = new AspectReadObjectBlockWorld();

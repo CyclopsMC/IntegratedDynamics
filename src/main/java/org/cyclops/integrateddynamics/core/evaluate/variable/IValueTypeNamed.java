@@ -1,0 +1,11 @@
+package org.cyclops.integrateddynamics.core.evaluate.variable;
+
+/**
+ * A value type that has a name, mostly this type instance is an object.
+ * @author rubensworks
+ */
+public interface IValueTypeNamed<V extends IValue> extends IValueType<V> {
+
+    public String getName(V a);
+
+}

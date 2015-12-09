@@ -354,6 +354,16 @@ public final class Operators {
     }, IConfigRenderPattern.INFIX));
 
     /**
+     * Get a name value type name.
+     */
+    public static final StringOperator NAMED_NAME = REGISTRY.register(new StringOperator("name", "name", new IValueType[]{ValueTypes.CATEGORY_NAMED}, ValueTypes.STRING, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            return ValueTypeString.ValueString.of(ValueTypes.CATEGORY_NAMED.getName(variables[0]));
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
      * ----------------------------------- DOUBLE OPERATORS -----------------------------------
      */
 
@@ -389,6 +399,12 @@ public final class Operators {
             return ValueTypeInteger.ValueInteger.of((int) Math.floor(a));
         }
     }, IConfigRenderPattern.PREFIX_1));
+
+    /**
+     * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
+     */
+
+    // TODO
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
