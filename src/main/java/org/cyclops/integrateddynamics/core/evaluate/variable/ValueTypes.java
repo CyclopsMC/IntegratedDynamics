@@ -18,7 +18,8 @@ public class ValueTypes {
     public static ValueTypeString  STRING  = REGISTRY.register(new ValueTypeString());
 
     // Object types
-    public static ValueObjectTypeBlock OBJECT_BLOCK = REGISTRY.register(new ValueObjectTypeBlock());
+    public static ValueObjectTypeBlock     OBJECT_BLOCK     = REGISTRY.register(new ValueObjectTypeBlock());
+    public static ValueObjectTypeItemStack OBJECT_ITEMSTACK = REGISTRY.register(new ValueObjectTypeItemStack());
 
     // Categories
     public static ValueTypeCategoryAny    CATEGORY_ANY    = REGISTRY.registerCategory(new ValueTypeCategoryAny());
