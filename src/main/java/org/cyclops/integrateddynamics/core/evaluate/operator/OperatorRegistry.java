@@ -27,6 +27,7 @@ public class OperatorRegistry implements IOperatorRegistry {
 
     private final List<IOperator> operators = Lists.newLinkedList();
     private final Map<String, IOperator> namedOperators = Maps.newHashMap();
+    private final Multimap<List<IValueType>, IOperator> inputTypedOperators = HashMultimap.create();
     private final Multimap<IValueType, IOperator> outputTypedOperators = HashMultimap.create();
 
     private OperatorRegistry() {
@@ -46,6 +47,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     public <O extends IOperator> O register(O operator) {
         operators.add(operator);
         namedOperators.put(operator.getUniqueName(), operator);
+        inputTypedOperators.put(Lists.newArrayList(operator.getInputTypes()), operator);
         outputTypedOperators.put(operator.getOutputType(), operator);
         return operator;
     }
@@ -58,6 +60,11 @@ public class OperatorRegistry implements IOperatorRegistry {
     @Override
     public IOperator getOperator(String uniqueName) {
         return namedOperators.get(uniqueName);
+    }
+
+    @Override
+    public Collection<IOperator> getOperatorsWithInputTypes(IValueType... valueTypes) {
+        return inputTypedOperators.get(Lists.newArrayList(valueTypes));
     }
 
     @Override

@@ -34,6 +34,13 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<Ope
     public IOperator getOperator(String operatorName);
 
     /**
+     * Get the operators with the given input value types in that specific order.
+     * @param valueTypes The input value types.
+     * @return The corresponding operators.
+     */
+    public Collection<IOperator> getOperatorsWithInputTypes(IValueType... valueTypes);
+
+    /**
      * Get the operators with the given output value type.
      * @param valueType The output value type.
      * @return The corresponding operators.
