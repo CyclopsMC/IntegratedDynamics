@@ -17,6 +17,11 @@ public interface IValueType<V extends IValue> {
     public boolean isCategory();
 
     /**
+     * @return If this type is an object type, otherwise it is a raw type.
+     */
+    public boolean isObject();
+
+    /**
      * Create an immutable default value.
      * @return The default value of this type.
      */

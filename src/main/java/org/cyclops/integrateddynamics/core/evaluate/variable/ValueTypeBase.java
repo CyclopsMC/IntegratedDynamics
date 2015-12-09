@@ -34,8 +34,17 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         return false;
     }
 
+    @Override
+    public boolean isObject() {
+        return false;
+    }
+
     protected String getUnlocalizedPrefix() {
-        return "valuetype.valuetypes." + getModId() + "." + getTypeName();
+        return "valuetype.valuetypes." + getModId() + getTypeNamespace() + getTypeName();
+    }
+
+    protected String getTypeNamespace() {
+        return ".";
     }
 
     @Override
@@ -65,7 +74,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     @SideOnly(Side.CLIENT)
     protected void registerModelResourceLocation() {
         ValueTypes.REGISTRY.registerValueTypeModel(this,
-                new ModelResourceLocation(getModId() + ":valuetype/" + getTypeName()));
+                new ModelResourceLocation(getModId() + ":valuetype" + getTypeNamespace().replace('.', '/') + getTypeName()));
     }
 
     @Override

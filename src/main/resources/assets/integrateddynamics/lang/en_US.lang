@@ -38,6 +38,8 @@ valuetype.valuetypes.integrateddynamics.integer.name=Integer
 valuetype.valuetypes.integrateddynamics.double.name=Double
 valuetype.valuetypes.integrateddynamics.string.name=String
 
+valuetype.valuetypes.integrateddynamics.object.block.name=Block
+
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
 parttype.parttypes.integrateddynamics.redstoneReader.info=Reads redstone values
@@ -157,6 +159,9 @@ aspect.aspects.integrateddynamics.read.string.world.blockname.name=Block Name
 aspect.aspects.integrateddynamics.read.string.world.blockname.info=The target block name
 aspect.aspects.integrateddynamics.read.string.world.worldname.name=World Name
 aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target world name
+
+aspect.aspects.integrateddynamics.read.object.block.world.name=Block
+aspect.aspects.integrateddynamics.read.object.block.world.info=The target block
 
 ## Fluid aspects
 aspect.aspects.integrateddynamics.read.boolean.fluid.empty.name=Tank Empty

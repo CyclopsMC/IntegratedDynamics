@@ -11,13 +11,18 @@ public class ValueTypes {
 
     public static final IValueTypeRegistry REGISTRY = constructRegistry();
 
+    // Raw value types
     public static ValueTypeBoolean BOOLEAN = REGISTRY.register(new ValueTypeBoolean());
     public static ValueTypeInteger INTEGER = REGISTRY.register(new ValueTypeInteger());
     public static ValueTypeDouble  DOUBLE  = REGISTRY.register(new ValueTypeDouble());
     public static ValueTypeString  STRING  = REGISTRY.register(new ValueTypeString());
 
+    // Categories
     public static ValueTypeCategoryAny    CATEGORY_ANY    = REGISTRY.registerCategory(new ValueTypeCategoryAny());
     public static ValueTypeCategoryNumber CATEGORY_NUMBER = REGISTRY.registerCategory(new ValueTypeCategoryNumber());
+
+    // Object types
+    public static ValueObjectTypeBlock OBJECT_BLOCK = REGISTRY.register(new ValueObjectTypeBlock());
 
     private static IValueTypeRegistry constructRegistry() {
         // This also allows this registry to be used outside of a minecraft environment.

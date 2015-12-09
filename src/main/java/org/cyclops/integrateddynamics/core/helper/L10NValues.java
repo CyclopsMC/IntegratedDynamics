@@ -24,7 +24,6 @@ public class L10NValues {
 
     public static final String VARIABLE_ERROR_INVALIDITEM = "variable." + NS + ".error.invalidItem";
     public static final String VARIABLE_ERROR_PARTNOTINNETWORK = "variable." + NS + ".error.partNotInNetwork";
-    public static final String VARIABLE_ERROR_INVALIDTYPE = "variable." + NS + ".error.invalidType";
 
     public static final String OPERATOR_TOOLTIP_OPERATORNAME = "operator." + NS + ".tooltip.operatorName";
     public static final String OPERATOR_TOOLTIP_OPERATORCATEGORY = "operator." + NS + ".tooltip.operatorCategory";

@@ -64,7 +64,7 @@ public class AspectVariableFacade extends VariableFacadeBase {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_PARTNOTINNETWORK,
                     Integer.toString(getPartId())));
         } else if (!ValueHelpers.correspondsTo(containingValueType, getAspect().getValueType())) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDTYPE,
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
                     new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                     new L10NHelpers.UnlocalizedString(getAspect().getValueType().getUnlocalizedName())));
         }

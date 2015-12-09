@@ -19,6 +19,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
+    public boolean isObject() {
+        return false;
+    }
+
+    @Override
     public DummyValue getDefault() {
         return null;
     }
