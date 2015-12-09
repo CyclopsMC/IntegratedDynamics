@@ -57,7 +57,7 @@ public class AspectVariableFacade extends VariableFacadeBase {
 
     @Override
     public void validate(Network network, IValidator validator, IValueType containingValueType) {
-        if (getPartId() < 0) {
+        if (!isValid()) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else if (!(getAspect() instanceof IAspectRead
                 && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {

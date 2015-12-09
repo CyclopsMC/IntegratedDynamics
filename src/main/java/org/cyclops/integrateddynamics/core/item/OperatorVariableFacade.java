@@ -78,7 +78,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
 
     @Override
     public void validate(Network network, IValidator validator, IValueType containingValueType) {
-        if(this.variableIds == null) {
+        if(!isValid()) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
             IValueType[] valueTypes = new IValueType[variableIds.length];
@@ -134,7 +134,9 @@ public class OperatorVariableFacade extends VariableFacadeBase {
 
     @Override
     public IValueType getOutputType() {
-        return getOperator().getOutputType();
+        IOperator operator = getOperator();
+        if(operator == null) return null;
+        return operator.getOutputType();
     }
 
     @SideOnly(Side.CLIENT)

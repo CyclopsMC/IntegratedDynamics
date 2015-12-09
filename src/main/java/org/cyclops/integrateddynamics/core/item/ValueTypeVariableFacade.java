@@ -69,7 +69,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
 
     @Override
     public void validate(Network network, IValidator validator, IValueType containingValueType) {
-        if(this.value == null) {
+        if(!isValid()) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
             // Check expected aspect type and operator output type
