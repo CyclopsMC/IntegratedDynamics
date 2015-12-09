@@ -6,6 +6,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 
 /**
  * Value type with values that are integers.
+ * The raw value is nullable.
  * @author rubensworks
  */
 public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueInteger> implements IValueTypeNumber<ValueTypeInteger.ValueInteger> {

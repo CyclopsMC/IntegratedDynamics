@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
@@ -415,6 +416,135 @@ public final class Operators {
             return ValueTypeBoolean.ValueBoolean.of(a.getBlock().isOpaqueCube());
         }
     }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
+     */
+
+    /**
+     * Item Stack size operator with one input itemstack and one output integer.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_SIZE = REGISTRY.register(ObjectItemStackOperator.toInt("size", new ObjectItemStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.stackSize;
+        }
+    }));
+
+    /**
+     * Item Stack maxsize operator with one input itemstack and one output integer.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_MAXSIZE = REGISTRY.register(ObjectItemStackOperator.toInt("maxsize", new ObjectItemStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.getMaxStackSize();
+        }
+    }));
+
+    /**
+     * Item Stack isstackable operator with one input itemstack and one output boolean.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISSTACKABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("stackable", new ObjectItemStackOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.isStackable();
+        }
+    }));
+
+    /**
+     * Item Stack isdamageable operator with one input itemstack and one output boolean.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISDAMAGEABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("damageable", new ObjectItemStackOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.isItemStackDamageable();
+        }
+    }));
+
+    /**
+     * Item Stack damage operator with one input itemstack and one output integer.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_DAMAGE = REGISTRY.register(ObjectItemStackOperator.toInt("damage", new ObjectItemStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.getItemDamage();
+        }
+    }));
+
+    /**
+     * Item Stack maxdamage operator with one input itemstack and one output integer.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_MAXDAMAGE = REGISTRY.register(ObjectItemStackOperator.toInt("maxdamage", new ObjectItemStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.getMaxDamage();
+        }
+    }));
+
+    /**
+     * Item Stack isenchanted operator with one input itemstack and one output boolean.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(ObjectItemStackOperator.toBoolean("enchanted", new ObjectItemStackOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.isItemEnchanted();
+        }
+    }));
+
+    /**
+     * Item Stack isenchantable operator with one input itemstack and one output boolean.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("enchantable", new ObjectItemStackOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.isItemEnchantable();
+        }
+    }));
+
+    /**
+     * Item Stack repair cost with one input itemstack and one output integer.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_REPAIRCOST = REGISTRY.register(ObjectItemStackOperator.toInt("repaircost", new ObjectItemStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(ItemStack itemStack) throws EvaluationException {
+            return itemStack.getRepairCost();
+        }
+    }));
+
+    /**
+     * Get the rarity of an itemstack.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(new ObjectItemStackOperator("rarity", "rarity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            return ValueTypeString.ValueString.of(a == null ? "": a.getRarity().rarityName);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * Get the strength of an itemstack against a block as a double.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(new ObjectItemStackOperator("strength", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.DOUBLE, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            IBlockState b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
+            return ValueTypeDouble.ValueDouble.of(a == null ? 0 : a.getStrVsBlock(b.getBlock()));
+        }
+    }, IConfigRenderPattern.INFIX));
+
+    /**
+     * If the given itemstack can be used to harvest the given block.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(new ObjectItemStackOperator("canharvest", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            IBlockState b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
+            return ValueTypeBoolean.ValueBoolean.of(a == null ? false : a.canHarvestBlock(b.getBlock()));
+        }
+    }, IConfigRenderPattern.INFIX));
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

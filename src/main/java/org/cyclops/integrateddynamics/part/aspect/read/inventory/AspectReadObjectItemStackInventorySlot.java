@@ -7,6 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
@@ -17,6 +18,9 @@ import org.cyclops.integrateddynamics.part.aspect.read.AspectReadObjectItemStack
  * @author rubensworks
  */
 public class AspectReadObjectItemStackInventorySlot extends AspectReadObjectItemStackBase {
+
+    public static final AspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_SLOTID =
+            new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid.name");
 
     @Override
     protected String getUnlocalizedItemStackType() {
@@ -29,7 +33,7 @@ public class AspectReadObjectItemStackInventorySlot extends AspectReadObjectItem
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         ItemStack value = null;
         if(tile instanceof IInventory) {
-            value = countInventoryItems((IInventory) tile, properties.getValue(AspectReadIntegerInventoryCountSlot.PROP_SLOTID).getRawValue());
+            value = countInventoryItems((IInventory) tile, properties.getValue(PROP_SLOTID).getRawValue());
         }
         return ValueObjectTypeItemStack.ValueItemStack.of(value);
     }
@@ -44,9 +48,9 @@ public class AspectReadObjectItemStackInventorySlot extends AspectReadObjectItem
     @Override
     protected AspectProperties createDefaultProperties() {
         AspectProperties properties = new AspectProperties(Sets.<AspectPropertyTypeInstance>newHashSet(
-                AspectReadIntegerInventoryCountSlot.PROP_SLOTID
+                PROP_SLOTID
         ));
-        properties.setValue(AspectReadIntegerInventoryCountSlot.PROP_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
+        properties.setValue(PROP_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         return properties;
     }
 
