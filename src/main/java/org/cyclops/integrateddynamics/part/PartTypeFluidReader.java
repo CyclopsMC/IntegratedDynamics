@@ -32,8 +32,8 @@ public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, P
                 Aspects.READ_INTEGER_FLUID_VISCOSITY,
                 Aspects.READ_DOUBLE_FLUID_FILLRATIO,
                 Aspects.READ_STRING_FLUID_NAME,
-                Aspects.READ_STRING_FLUID_BLOCKNAME,
-                Aspects.READ_STRING_FLUID_RARITY
+                Aspects.READ_STRING_FLUID_RARITY,
+                Aspects.READ_BLOCK_FLUID_BLOCK
         ));
     }
 

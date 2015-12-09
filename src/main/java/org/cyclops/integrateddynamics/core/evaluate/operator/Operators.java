@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.block.state.IBlockState;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
@@ -404,7 +405,16 @@ public final class Operators {
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 
-    // TODO
+    /**
+     * Block isOpaque operator with one input block and one output boolean.
+     */
+    public static final ObjectBlockOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(new ObjectBlockOperator("opaque", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            IBlockState a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
+            return ValueTypeBoolean.ValueBoolean.of(a.getBlock().isOpaqueCube());
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

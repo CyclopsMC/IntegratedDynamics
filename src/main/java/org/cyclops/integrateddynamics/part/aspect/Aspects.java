@@ -52,7 +52,6 @@ public class Aspects {
     public static final AspectReadBooleanWorldWeatherThunder READ_BOOLEAN_WORLD_WEATHER_THUNDER = new AspectReadBooleanWorldWeatherThunder();
     public static final AspectReadBooleanWorldIsDay READ_BOOLEAN_WORLD_ISDAY = new AspectReadBooleanWorldIsDay();
     public static final AspectReadBooleanWorldIsNight READ_BOOLEAN_WORLD_ISNIGHT = new AspectReadBooleanWorldIsNight();
-    public static final AspectReadBooleanWorldBlockOpaque READ_BOOLEAN_WORLD_BLOCK_OPAQUE = new AspectReadBooleanWorldBlockOpaque();
 
     public static final AspectReadIntegerWorldEntity READ_INTEGER_WORLD_ENTITY = new AspectReadIntegerWorldEntity();
     public static final AspectReadIntegerWorldTime READ_INTEGER_WORLD_TIME = new AspectReadIntegerWorldTime();
@@ -91,8 +90,9 @@ public class Aspects {
     public static final AspectReadDoubleFluidFillRatio READ_DOUBLE_FLUID_FILLRATIO = new AspectReadDoubleFluidFillRatio();
 
     public static final AspectReadStringFluidName READ_STRING_FLUID_NAME = new AspectReadStringFluidName();
-    public static final AspectReadStringFluidBlockName READ_STRING_FLUID_BLOCKNAME = new AspectReadStringFluidBlockName();
     public static final AspectReadStringFluidRarity READ_STRING_FLUID_RARITY = new AspectReadStringFluidRarity();
+
+    public static final AspectReadObjectBlockFluid READ_BLOCK_FLUID_BLOCK = new AspectReadObjectBlockFluid();
 
     // --- Minecraft ---
     public static final AspectReadIntegerMinecraftRandom READ_INTEGER_MINECRAFT_RANDOM = new AspectReadIntegerMinecraftRandom();

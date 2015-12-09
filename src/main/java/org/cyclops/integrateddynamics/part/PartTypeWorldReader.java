@@ -27,7 +27,6 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.READ_BOOLEAN_WORLD_WEATHER_THUNDER,
                 Aspects.READ_BOOLEAN_WORLD_ISDAY,
                 Aspects.READ_BOOLEAN_WORLD_ISNIGHT,
-                Aspects.READ_BOOLEAN_WORLD_BLOCK_OPAQUE,
                 Aspects.READ_INTEGER_WORLD_ENTITY,
                 Aspects.READ_INTEGER_WORLD_TIME,
                 Aspects.READ_INTEGER_WORLD_TOTALTIME,

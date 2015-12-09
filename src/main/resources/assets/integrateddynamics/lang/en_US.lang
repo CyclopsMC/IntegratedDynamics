@@ -129,8 +129,6 @@ aspect.aspects.integrateddynamics.read.boolean.world.isday.name=Is Day
 aspect.aspects.integrateddynamics.read.boolean.world.isday.info=If it is day in the target world
 aspect.aspects.integrateddynamics.read.boolean.world.isnight.name=Is Night
 aspect.aspects.integrateddynamics.read.boolean.world.isnight.info=If it is night in the target world
-aspect.aspects.integrateddynamics.read.boolean.world.blockopaque.name=Block Opaque
-aspect.aspects.integrateddynamics.read.boolean.world.blockopaque.info=If the target block is opaque
 
 aspect.aspects.integrateddynamics.read.integer.world.entity.name=Entities
 aspect.aspects.integrateddynamics.read.integer.world.entity.info=The amount of entities at the target space
@@ -199,8 +197,8 @@ aspect.aspects.integrateddynamics.read.double.fluid.fillratio.info=The amount of
 
 aspect.aspects.integrateddynamics.read.string.fluid.name.name=Fluid Name
 aspect.aspects.integrateddynamics.read.string.fluid.name.info=The name of fluid in the active tank
-aspect.aspects.integrateddynamics.read.string.fluid.blockname.name=Fluid Block Name
-aspect.aspects.integrateddynamics.read.string.fluid.blockname.info=The name of the fluid block in the active tank
+aspect.aspects.integrateddynamics.read.object.block.fluid.name=Fluid Block
+aspect.aspects.integrateddynamics.read.object.block.fluid.info=The block corresponding to the fluid
 aspect.aspects.integrateddynamics.read.string.fluid.rarity.name=Fluid Rarity
 aspect.aspects.integrateddynamics.read.string.fluid.rarity.info=The rarity of fluid in the active tank
 
@@ -290,6 +288,11 @@ operator.operators.integrateddynamics.double.ceil.name=Ceil
 operator.operators.integrateddynamics.double.ceil.info=Round up to the nearest Integer
 operator.operators.integrateddynamics.double.floor.name=Floor
 operator.operators.integrateddynamics.double.floor.info=Round down to the nearest Integer
+
+operator.operators.integrateddynamics.object.block.name=Block
+operator.operators.integrateddynamics.object.block.basename=Block %s
+operator.operators.integrateddynamics.object.block.opaque.name=Opaque
+operator.operators.integrateddynamics.object.block.opaque.info=If the given block is opaque, non-transparent
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
