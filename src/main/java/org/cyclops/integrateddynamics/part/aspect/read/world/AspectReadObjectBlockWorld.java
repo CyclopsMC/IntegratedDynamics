@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.part.aspect.read.world;
 
 import net.minecraft.block.state.IBlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadObjectBlockBase;
 

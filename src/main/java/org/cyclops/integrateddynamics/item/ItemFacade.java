@@ -21,8 +21,8 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
-import org.cyclops.integrateddynamics.core.tileentity.ITileCableFacadeable;
 
 /**
  * An item that represents a facade of a certain type.

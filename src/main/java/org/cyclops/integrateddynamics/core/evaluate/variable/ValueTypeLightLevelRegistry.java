@@ -1,7 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
-import org.cyclops.integrateddynamics.core.evaluate.InvalidValueTypeException;
+import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeLightLevelRegistry;
 
 import java.util.Map;
 

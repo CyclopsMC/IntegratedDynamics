@@ -7,7 +7,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeRegistry;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 
 import java.util.Collection;
@@ -15,7 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Registry for {@link org.cyclops.integrateddynamics.core.evaluate.variable.IValueType}.
+ * Registry for {@link IValueType}.
  * @author rubensworks
  */
 public final class ValueTypeRegistry implements IValueTypeRegistry {

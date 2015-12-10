@@ -11,10 +11,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
-import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 
 import java.util.List;
 

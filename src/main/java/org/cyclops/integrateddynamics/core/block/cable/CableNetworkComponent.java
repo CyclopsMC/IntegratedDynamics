@@ -8,10 +8,12 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
-import org.cyclops.integrateddynamics.core.tileentity.ITileCable;
-import org.cyclops.integrateddynamics.core.tileentity.ITileCableNetwork;
 
 /**
  * A component for {@link ICableNetwork}.

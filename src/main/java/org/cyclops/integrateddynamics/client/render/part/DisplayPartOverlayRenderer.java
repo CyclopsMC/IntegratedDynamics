@@ -6,12 +6,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.client.gui.image.Images;
-import org.cyclops.integrateddynamics.client.render.valuetype.IValueTypeWorldRenderer;
+import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 
 /**

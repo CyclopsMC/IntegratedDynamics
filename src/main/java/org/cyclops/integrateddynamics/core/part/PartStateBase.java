@@ -9,13 +9,15 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.nbt.NBTProviderComponent;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 import java.util.Map;
 
 /**
- * A default implementation of the {@link org.cyclops.integrateddynamics.core.part.IPartState} with auto-persistence
+ * A default implementation of the {@link IPartState} with auto-persistence
  * of fields annotated with {@link org.cyclops.cyclopscore.persist.nbt.NBTPersist}.
  * @author rubensworks
  */

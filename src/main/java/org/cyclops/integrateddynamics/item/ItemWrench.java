@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.core.item.IWrench;
+import org.cyclops.integrateddynamics.api.item.IWrench;
 
 /**
  * The default wrench for this mod.

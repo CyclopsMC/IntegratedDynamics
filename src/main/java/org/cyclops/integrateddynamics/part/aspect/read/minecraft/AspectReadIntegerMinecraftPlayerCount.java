@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.read.minecraft;
 
 import net.minecraft.server.MinecraftServer;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 /**
  * Aspect that can check the current amount of players in the server.

@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.part.aspect.read.world;
 
 import com.google.common.math.DoubleMath;
 import net.minecraft.server.MinecraftServer;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**

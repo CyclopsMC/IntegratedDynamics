@@ -6,6 +6,7 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 
 /**
  * Value type with values that are itemstacks.

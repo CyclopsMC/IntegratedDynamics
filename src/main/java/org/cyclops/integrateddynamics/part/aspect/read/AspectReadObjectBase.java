@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 /**
  * Base class for object read aspects.

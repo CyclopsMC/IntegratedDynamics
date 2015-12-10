@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 /**

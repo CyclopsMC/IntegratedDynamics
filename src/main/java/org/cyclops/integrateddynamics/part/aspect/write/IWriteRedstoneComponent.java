@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.core.block.IDynamicRedstoneBlock;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 /**
  * Interface for redstone writing the component.

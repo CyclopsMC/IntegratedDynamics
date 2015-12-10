@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.part.aspect.property;
 
 import lombok.Data;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 /**
  * An instance of a property type with a label.

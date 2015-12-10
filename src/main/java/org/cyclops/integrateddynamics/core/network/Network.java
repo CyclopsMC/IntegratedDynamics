@@ -12,19 +12,19 @@ import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.block.IVariableContainerFacade;
-import org.cyclops.integrateddynamics.core.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.block.IVariableContainerFacade;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.api.part.*;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
+import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
+import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.network.event.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
-import org.cyclops.integrateddynamics.core.part.*;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
-import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
@@ -34,7 +34,7 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import java.util.*;
 
 /**
- * A network instance that can hold a set of {@link org.cyclops.integrateddynamics.core.network.INetworkElement}s.
+ * A network instance that can hold a set of {@link INetworkElement}s.
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
  * @author rubensworks
  */
@@ -65,7 +65,7 @@ public class Network implements INBTSerializable, LazyExpression.IValueCache {
      * Create a new network from a given cluster of cables.
      * Each cable will be checked if it is an instance of {@link INetworkElementProvider} and will add all its
      * elements to the network in that case.
-     * Each cable that is an instance of {@link org.cyclops.integrateddynamics.core.part.IPartContainerFacade}
+     * Each cable that is an instance of {@link IPartContainerFacade}
      * will have the network stored in its part container.
      * @param cables The cables that make up the connections in the network which can potentially provide network
      *               elements.

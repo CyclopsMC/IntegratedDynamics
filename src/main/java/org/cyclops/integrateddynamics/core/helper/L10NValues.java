@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.helper;
 
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.APIReference;
 
 /**
  * Collection of generic L10N entries.
@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class L10NValues {
 
-    public static final String NS = Reference.MOD_ID;
+    public static final String NS = APIReference.API_OWNER;
 
     public static final String PART_PANEL_ERROR_INVALIDTYPE = "parttype.parttypes." + NS + ".dataDrivenPanel.error.invalidType";
 

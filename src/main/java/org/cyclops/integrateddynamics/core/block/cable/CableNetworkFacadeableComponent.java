@@ -6,8 +6,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.block.cable.ICableFacadeable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
-import org.cyclops.integrateddynamics.core.tileentity.ITileCableFacadeable;
 
 import javax.annotation.Nullable;
 

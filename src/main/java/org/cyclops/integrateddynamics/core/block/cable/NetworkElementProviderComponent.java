@@ -6,8 +6,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.integrateddynamics.core.network.INetworkElement;
-import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;

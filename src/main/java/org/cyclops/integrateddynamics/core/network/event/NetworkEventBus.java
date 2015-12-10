@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.core.network.event;
 import com.google.common.collect.Maps;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
+import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
 
 import java.util.Collections;
 import java.util.Map;
@@ -10,7 +12,7 @@ import java.util.Set;
 
 /**
  * An event bus for {@link org.cyclops.integrateddynamics.core.network.Network} events where
- * {@link org.cyclops.integrateddynamics.core.network.INetworkElement} instances can listen to.
+ * {@link INetworkElement} instances can listen to.
  *
  * Partially based on Minecraft Forge's {@link EventBus} implementation.
  *

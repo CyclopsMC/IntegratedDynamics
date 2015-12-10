@@ -2,6 +2,9 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CastOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 

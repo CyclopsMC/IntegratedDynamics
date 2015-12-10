@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementTypeRegistry;
 
 import java.util.Collections;
 import java.util.List;

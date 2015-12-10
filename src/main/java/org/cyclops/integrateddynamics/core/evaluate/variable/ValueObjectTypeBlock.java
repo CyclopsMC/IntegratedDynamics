@@ -5,6 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 
 /**
  * Value type with values that are blocks (these are internally stored as blockstates).

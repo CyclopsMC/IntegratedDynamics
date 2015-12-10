@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRendererRegistry;
 
 /**
  * A collection of all value type world renderers.

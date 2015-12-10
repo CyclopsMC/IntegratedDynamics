@@ -25,7 +25,9 @@ minecraft {
     runDir = "run"
     
     replaceIn "Reference.java"
+    replaceIn "APIReference.java"
     replace "@VERSION@", project.version
+    replace "@API_VERSION@", project.config.api_version
     replace "@MC_VERSION@", project.config.minecraft_version
     replace "@FORGE_VERSION@", project.config.forge_version
     replace "@BUILD_NUMBER@", project.buildnumber

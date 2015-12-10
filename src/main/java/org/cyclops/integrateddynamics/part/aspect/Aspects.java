@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRegistry;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.part.aspect.read.fluid.*;
 import org.cyclops.integrateddynamics.part.aspect.read.inventory.*;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftPlayerCount;

@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 
 import javax.annotation.Nullable;
 
