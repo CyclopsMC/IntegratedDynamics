@@ -5,11 +5,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 
 import java.util.List;
 
@@ -69,7 +69,7 @@ public interface IVariableFacade {
      * @param quads The quads that can be added to.
      */
     @SideOnly(Side.CLIENT)
-    public void addModelOverlay(VariableModelBaked variableModelBaked, List<BakedQuad> quads);
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads);
 
     public static interface IValidator {
 
