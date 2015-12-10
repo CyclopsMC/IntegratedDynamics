@@ -4,8 +4,8 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.init.IRegistry;
+import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
-import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 
 import java.util.Collection;
 
@@ -13,7 +13,7 @@ import java.util.Collection;
  * Registry for {@link IValueType}
  * @author rubensworks
  */
-public interface IValueTypeRegistry extends IRegistry, IVariableFacadeHandler<ValueTypeVariableFacade> {
+public interface IValueTypeRegistry extends IRegistry, IVariableFacadeHandler<IValueTypeVariableFacade> {
 
     /**
      * Register a new value type.

@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -108,8 +109,8 @@ public class ValueTypeElement implements ILogicProgrammerElement {
 
     @Override
     public boolean isFor(IVariableFacade variableFacade) {
-        if (variableFacade instanceof ValueTypeVariableFacade) {
-            ValueTypeVariableFacade valueTypeFacade = (ValueTypeVariableFacade) variableFacade;
+        if (variableFacade instanceof IValueTypeVariableFacade) {
+            IValueTypeVariableFacade valueTypeFacade = (IValueTypeVariableFacade) variableFacade;
             if (valueTypeFacade.isValid()) {
                 return getInnerGuiElement().getValueType() == valueTypeFacade.getValueType();
             }
@@ -129,7 +130,7 @@ public class ValueTypeElement implements ILogicProgrammerElement {
         return new ValueTypeElementSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
-    protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<ValueTypeVariableFacade> {
+    protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IValueTypeVariableFacade> {
 
         private final IValueType valueType;
         private final String value;
@@ -140,12 +141,12 @@ public class ValueTypeElement implements ILogicProgrammerElement {
         }
 
         @Override
-        public ValueTypeVariableFacade create(boolean generateId) {
+        public IValueTypeVariableFacade create(boolean generateId) {
             return new ValueTypeVariableFacade(generateId, valueType, value);
         }
 
         @Override
-        public ValueTypeVariableFacade create(int id) {
+        public IValueTypeVariableFacade create(int id) {
             return new ValueTypeVariableFacade(id, valueType, value);
         }
     }

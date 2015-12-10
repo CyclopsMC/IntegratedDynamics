@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -125,8 +126,8 @@ public class OperatorElement implements ILogicProgrammerElement {
 
     @Override
     public boolean isFor(IVariableFacade variableFacade) {
-        if (variableFacade instanceof OperatorVariableFacade) {
-            OperatorVariableFacade operatorFacade = (OperatorVariableFacade) variableFacade;
+        if (variableFacade instanceof IOperatorVariableFacade) {
+            IOperatorVariableFacade operatorFacade = (IOperatorVariableFacade) variableFacade;
             if (operatorFacade.isValid()) {
                 return getOperator() == operatorFacade.getOperator();
             }
@@ -146,7 +147,7 @@ public class OperatorElement implements ILogicProgrammerElement {
         return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
-    protected static class OperatorVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<OperatorVariableFacade> {
+    protected static class OperatorVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IOperatorVariableFacade> {
 
         private final IOperator operator;
         private final int[] variableIds;
@@ -157,12 +158,12 @@ public class OperatorElement implements ILogicProgrammerElement {
         }
 
         @Override
-        public OperatorVariableFacade create(boolean generateId) {
+        public IOperatorVariableFacade create(boolean generateId) {
             return new OperatorVariableFacade(generateId, operator, variableIds);
         }
 
         @Override
-        public OperatorVariableFacade create(int id) {
+        public IOperatorVariableFacade create(int id) {
             return new OperatorVariableFacade(id, operator, variableIds);
         }
     }

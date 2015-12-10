@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -27,7 +28,7 @@ import java.util.*;
 public final class AspectRegistry implements IAspectRegistry {
 
     private static AspectRegistry INSTANCE = new AspectRegistry();
-    private static final AspectVariableFacade INVALID_FACADE = new AspectVariableFacade(false, -1, null);
+    private static final IAspectVariableFacade INVALID_FACADE = new AspectVariableFacade(false, -1, null);
 
     private Map<IPartType, Set<IAspect>> partAspects = Maps.newHashMap();
     private Map<IPartType, Set<IAspectRead>> partReadAspects = Maps.newHashMap();
@@ -148,7 +149,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public AspectVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
+    public IAspectVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
         if(!tag.hasKey("partId", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())
                 || !tag.hasKey("aspectName", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
             return INVALID_FACADE;
@@ -162,7 +163,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public void setVariableFacade(NBTTagCompound tag, AspectVariableFacade variableFacade) {
+    public void setVariableFacade(NBTTagCompound tag, IAspectVariableFacade variableFacade) {
         tag.setInteger("partId", variableFacade.getPartId());
         tag.setString("aspectName", variableFacade.getAspect().getUnlocalizedName());
     }

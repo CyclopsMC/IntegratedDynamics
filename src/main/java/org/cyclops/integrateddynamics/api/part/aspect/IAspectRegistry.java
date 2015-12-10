@@ -4,9 +4,9 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.init.IRegistry;
+import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.Set;
  * Registry for {@link IAspect}.
  * @author rubensworks
  */
-public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<AspectVariableFacade> {
+public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<IAspectVariableFacade> {
 
     /**
      * Register a new aspect for a given part type.

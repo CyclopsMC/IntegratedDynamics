@@ -11,6 +11,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -25,7 +26,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBase {
+public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBase implements IValueTypeVariableFacade<V> {
 
     private final IValueType<V> valueType;
     private final V value;
