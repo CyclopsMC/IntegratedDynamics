@@ -6,12 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
 
 /**
- * Objects that can be an element of a {@link org.cyclops.integrateddynamics.core.network.Network}.
+ * Objects that can be an element of a {@link INetwork}.
  * Multiple instances for the same 'element' can be created, so the comparator implementation must
  * make sure that these instances are considered equal.
  * These instances are used as a simple way of referring to these elements.
@@ -33,19 +32,19 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * Update at the tick interval specified.
      * @param network The network to update in.
      */
-    public void update(Network network);
+    public void update(INetwork network);
 
     /**
      * Called right before the network is terminated or will be reset.
      * @param network The network to update in.
      */
-    public void beforeNetworkKill(Network network);
+    public void beforeNetworkKill(INetwork network);
 
     /**
      * Called right after this network is initialized.
      * @param network The network to update in.
      */
-    public void afterNetworkAlive(Network network);
+    public void afterNetworkAlive(INetwork network);
 
     /**
      * Add the itemstacks to drop when this element is removed.
@@ -58,19 +57,19 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * @param network The network.
      * @return If the addition succeeded.
      */
-    public boolean onNetworkAddition(Network network);
+    public boolean onNetworkAddition(INetwork network);
 
     /**
      * Called when this element is removed from the network.
      * @param network The network.
      */
-    public void onNetworkRemoval(Network network);
+    public void onNetworkRemoval(INetwork network);
 
     /**
      * Called when this element is about to be removed.
      * @param network The network.
      */
-    public void onPreRemoved(Network network);
+    public void onPreRemoved(INetwork network);
 
     /**
      * Called when a neighbouring block is updated, more specifically when
@@ -79,6 +78,6 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock block type of the neighbour that was updated.
      */
-    public void onNeighborBlockChange(Network network, IBlockAccess world, Block neighborBlock);
+    public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighborBlock);
 
 }

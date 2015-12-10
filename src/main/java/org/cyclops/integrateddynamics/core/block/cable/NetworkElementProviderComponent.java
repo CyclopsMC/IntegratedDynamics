@@ -6,9 +6,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class NetworkElementProviderComponent {
      * @param world The world.
      * @param pos The position.
      */
-    public void onPreBlockDestroyed(Network network, World world, BlockPos pos) {
+    public void onPreBlockDestroyed(INetwork network, World world, BlockPos pos) {
         // Drop all parts types as item.
         if(!world.isRemote) {
             List<ItemStack> itemStacks = Lists.newLinkedList();
@@ -48,11 +48,11 @@ public class NetworkElementProviderComponent {
      * Called when a neighbouring block is updated, more specifically when
      * {@link net.minecraft.block.Block#onNeighborBlockChange(World, BlockPos, IBlockState, Block)} is called.
      * @param network The network to update in.
-     * @param pos The position of the center block.
      * @param world The world in which the neighbour was updated.
+     * @param pos The position of the center block.
      * @param neighborBlock The block type of the neighbour that was updated.
      */
-    public void onBlockNeighborChange(Network network, World world, BlockPos pos, Block neighborBlock) {
+    public void onBlockNeighborChange(INetwork network, World world, BlockPos pos, Block neighborBlock) {
         if (!world.isRemote) {
             for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                 networkElement.onNeighborBlockChange(network, world, neighborBlock);

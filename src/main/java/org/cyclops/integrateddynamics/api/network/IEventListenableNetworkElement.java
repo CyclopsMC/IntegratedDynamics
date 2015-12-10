@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
-
 import javax.annotation.Nullable;
 
 /**
- * Network elements that can delegate to elements that are automatically subscribed to the {@link NetworkEventBus}.
+ * Network elements that can delegate to elements that are automatically subscribed to the
+ * {@link org.cyclops.integrateddynamics.api.network.event.INetworkEventBus}.
  * @param <D> The type of delegate that will be used as event listener for this network. Could be self or null.
  * @author rubensworks
  */

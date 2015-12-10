@@ -34,6 +34,7 @@ import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
 import org.cyclops.integrateddynamics.api.block.cable.*;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -46,7 +47,6 @@ import org.cyclops.integrateddynamics.core.block.ICollidableParent;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkFacadeableComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
-import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
@@ -673,12 +673,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public void setNetwork(Network network, World world, BlockPos pos) {
+    public void setNetwork(INetwork network, World world, BlockPos pos) {
         cableNetworkComponent.setNetwork(network, world, pos);
     }
 
     @Override
-    public Network getNetwork(World world, BlockPos pos) {
+    public INetwork getNetwork(World world, BlockPos pos) {
         return cableNetworkComponent.getNetwork(world, pos);
     }
 

@@ -1,20 +1,22 @@
 package org.cyclops.integrateddynamics.core.network.event;
 
-import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 
 /**
- * An event posted in the {@link org.cyclops.integrateddynamics.core.network.Network} event bus.
+ * An event posted in the {@link INetwork} event bus.
  * @author rubensworks
  */
-public class NetworkEvent {
+public class NetworkEvent implements INetworkEvent {
 
-    private final Network network;
+    private final INetwork network;
 
-    public NetworkEvent(Network network) {
+    public NetworkEvent(INetwork network) {
         this.network = network;
     }
 
-    public Network getNetwork() {
+    @Override
+    public INetwork getNetwork() {
         return this.network;
     }
 

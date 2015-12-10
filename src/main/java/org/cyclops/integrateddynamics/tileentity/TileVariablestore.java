@@ -18,9 +18,9 @@ import org.cyclops.cyclopscore.tileentity.InventoryTileEntity;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
-import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
@@ -45,7 +45,7 @@ public class TileVariablestore extends InventoryTileEntity implements ITileCable
 
     @Getter
     @Setter
-    private Network network;
+    private INetwork network;
     private Map<Integer, IVariableFacade> variableCache = Maps.newHashMap();
 
     public TileVariablestore() {
@@ -123,7 +123,7 @@ public class TileVariablestore extends InventoryTileEntity implements ITileCable
                 }
             }
         }
-        Network network = getNetwork();
+        INetwork network = getNetwork();
         if(network != null) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }

@@ -10,6 +10,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -83,7 +84,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
     }
 
     @Override
-    public void setNetwork(Network network, World world, BlockPos pos) {
+    public void setNetwork(INetwork network, World world, BlockPos pos) {
         ITileCableNetwork tile = TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
         if(tile != null) {
             if(tile.getNetwork() != null) {
@@ -94,7 +95,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
     }
 
     @Override
-    public Network getNetwork(World world, BlockPos pos) {
+    public INetwork getNetwork(World world, BlockPos pos) {
         ITileCableNetwork tile = TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
         if(tile != null) {
             return tile.getNetwork();
@@ -156,7 +157,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
     public void removeFromNetwork(World world, BlockPos pos, boolean preDestroy) {
         if(preDestroy) {
             // Remove the cable from this network if it exists
-            Network network = getNetwork(world, pos);
+            INetwork network = getNetwork(world, pos);
             if(network != null) {
                 network.removeCable(cable, createPathElement(world, pos));
             }

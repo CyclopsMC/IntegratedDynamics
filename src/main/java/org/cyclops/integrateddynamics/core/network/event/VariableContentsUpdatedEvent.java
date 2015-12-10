@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.network.event;
 
-import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 
 /**
  * An event used to signal network elements of updated variables inside the network.
@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.core.network.Network;
  */
 public class VariableContentsUpdatedEvent extends NetworkEvent {
 
-    public VariableContentsUpdatedEvent(Network network) {
+    public VariableContentsUpdatedEvent(INetwork network) {
         super(network);
     }
 

@@ -10,6 +10,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLight;
@@ -17,7 +18,6 @@ import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
 /**
@@ -47,7 +47,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void onValueChanged(Network network, PartTarget target, State state, IValue lastValue, IValue newValue) {
+    protected void onValueChanged(INetwork network, PartTarget target, State state, IValue lastValue, IValue newValue) {
         super.onValueChanged(network, target, state, lastValue, newValue);
         int lightLevel = 0;
         if(newValue != null) {
@@ -68,13 +68,13 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
-    public void onNetworkRemoval(Network network, PartTarget target, State state) {
+    public void onNetworkRemoval(INetwork network, PartTarget target, State state) {
         super.onNetworkRemoval(network, target, state);
         PartTypePanelLightDynamic.setLightLevel(target, 0);
     }
 
     @Override
-    public void onBlockNeighborChange(Network network, PartTarget target, State state, IBlockAccess world, Block neighborBlock) {
+    public void onBlockNeighborChange(INetwork network, PartTarget target, State state, IBlockAccess world, Block neighborBlock) {
         super.onBlockNeighborChange(network, target, state, world, neighborBlock);
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }

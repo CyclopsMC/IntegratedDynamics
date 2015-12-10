@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 import java.util.List;
@@ -39,17 +39,17 @@ public class VariablestoreNetworkElement implements INetworkElement {
     }
 
     @Override
-    public void update(Network network) {
+    public void update(INetwork network) {
 
     }
 
     @Override
-    public void beforeNetworkKill(Network network) {
+    public void beforeNetworkKill(INetwork network) {
 
     }
 
     @Override
-    public void afterNetworkAlive(Network network) {
+    public void afterNetworkAlive(INetwork network) {
 
     }
 
@@ -62,23 +62,23 @@ public class VariablestoreNetworkElement implements INetworkElement {
     }
 
     @Override
-    public boolean onNetworkAddition(Network network) {
+    public boolean onNetworkAddition(INetwork network) {
         network.addVariableContainer(getPos());
         return true; // No reason this could fail.
     }
 
     @Override
-    public void onNetworkRemoval(Network network) {
+    public void onNetworkRemoval(INetwork network) {
         network.removeVariableContainer(getPos());
     }
 
     @Override
-    public void onPreRemoved(Network network) {
+    public void onPreRemoved(INetwork network) {
 
     }
 
     @Override
-    public void onNeighborBlockChange(Network network, IBlockAccess world, Block neighborBlock) {
+    public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighborBlock) {
 
     }
 

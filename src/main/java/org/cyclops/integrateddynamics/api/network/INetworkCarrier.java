@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.api.network;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.integrateddynamics.core.network.Network;
 
 /**
  * Interface for blocks that are network-aware.
@@ -24,7 +23,7 @@ public interface INetworkCarrier {
      * @param world The world.
      * @param pos The position.
      */
-    public void setNetwork(Network network, World world, BlockPos pos);
+    public void setNetwork(INetwork network, World world, BlockPos pos);
 
     /**
      * Get the current container network. Can be null.
@@ -32,6 +31,6 @@ public interface INetworkCarrier {
      * @param pos The position.
      * @return The network.
      */
-    public Network getNetwork(World world, BlockPos pos);
+    public INetwork getNetwork(World world, BlockPos pos);
 
 }

@@ -11,6 +11,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
@@ -18,8 +20,6 @@ import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.client.gui.GuiPartWriter;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
-import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -41,11 +41,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    protected Map<Class<? extends NetworkEvent>, IEventAction> constructNetworkEventActions() {
-        Map<Class<? extends NetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
+    protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
+        Map<Class<? extends INetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
         actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
             @Override
-            public void onAction(Network network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
+            public void onAction(INetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
                 onVariableContentsUpdated(event.getNetwork(), target, state);
             }
         });
@@ -76,13 +76,13 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void beforeNetworkKill(Network network, PartTarget target, S state) {
+    public void beforeNetworkKill(INetwork network, PartTarget target, S state) {
         super.beforeNetworkKill(network, target, state);
         state.triggerAspectInfoUpdate((P) this, target, null);
     }
 
     @Override
-    public void afterNetworkAlive(Network network, PartTarget target, S state) {
+    public void afterNetworkAlive(INetwork network, PartTarget target, S state) {
         super.afterNetworkAlive(network, target, state);
         updateActivation(target, state);
     }
@@ -94,7 +94,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     @SuppressWarnings("unchecked")
     @Override
-    public <V extends IValue> IVariable<V> getActiveVariable(Network network, PartTarget target, S partState) {
+    public <V extends IValue> IVariable<V> getActiveVariable(INetwork network, PartTarget target, S partState) {
         return partState.getVariable(network);
     }
 
@@ -117,7 +117,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         partState.triggerAspectInfoUpdate((P) this, target, aspect);
     }
 
-    protected void onVariableContentsUpdated(Network network, PartTarget target, S state) {
+    protected void onVariableContentsUpdated(INetwork network, PartTarget target, S state) {
         state.onVariableContentsUpdated((P) this, target);
     }
 

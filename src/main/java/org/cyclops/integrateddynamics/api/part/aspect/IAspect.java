@@ -3,10 +3,10 @@ package org.cyclops.integrateddynamics.api.part.aspect;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 
@@ -41,14 +41,14 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
     /**
      * Called inside part types for updating a part on a block.
+     * @param <P> The part type type.
+     * @param <S> The part state.
      * @param network The network to update in.
      * @param partType The part type.
      * @param target The position that is targeted by the given part.
      * @param state The current state of the given part.
-     * @param <P> The part type type.
-     * @param <S> The part state.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(Network network, P partType, PartTarget target, S state);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(INetwork network, P partType, PartTarget target, S state);
 
     /**
      * @return If this aspect supports additional properties.

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 
 import java.util.Set;
 
@@ -18,14 +18,14 @@ public interface INetworkEventListener<E> {
     /**
      * @return The static set of events this listener should be subscribed to.
      */
-    public Set<Class<? extends NetworkEvent>> getSubscribedEvents();
+    public Set<Class<? extends INetworkEvent>> getSubscribedEvents();
 
     /**
-     * Can be called at any time by the {@link org.cyclops.integrateddynamics.core.network.event.NetworkEventBus}.
+     * Can be called at any time by the {@link org.cyclops.integrateddynamics.api.network.event.INetworkEventBus}.
      * Only events in the set from {@link INetworkEventListener#getSubscribedEvents()} will be received.
      * @param event The received event.
      * @param networkElement The network element.
      */
-    public void onEvent(NetworkEvent event, E networkElement);
+    public void onEvent(INetworkEvent event, E networkElement);
 
 }

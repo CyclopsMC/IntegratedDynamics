@@ -2,10 +2,10 @@ package org.cyclops.integrateddynamics.api.part.write;
 
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
-import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
 
@@ -22,13 +22,13 @@ public interface IPartTypeWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     /**
      * Get the variable that is currently active for this part, the value in this variable will be used to write something.
+     * @param <V> The value type.
      * @param network The network this part belongs to.
      * @param target The target block.
      * @param partState The state of this part.
-     * @param <V> The value type.
      * @return The variable reference to some other value that needs to be written by this part.
      */
-    public <V extends IValue> IVariable<V> getActiveVariable(Network network, PartTarget target, S partState);
+    public <V extends IValue> IVariable<V> getActiveVariable(INetwork network, PartTarget target, S partState);
 
     /**
      * Get the aspect that is currently active in this part, can be null.
