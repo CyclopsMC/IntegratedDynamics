@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -8,10 +9,14 @@ import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+
+import java.util.List;
 
 /**
  * Sub gui for logic programmer elements.
@@ -85,6 +90,12 @@ public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui
     @Override
     protected int getHeight() {
         return element.getRenderPattern().getHeight();
+    }
+
+    protected List<String> getValueTypeTooltip(IValueType<?> valueType) {
+        List<String> lines = Lists.newLinkedList();
+        lines.add(valueType.getDisplayColorFormat() + L10NHelpers.localize(valueType.getUnlocalizedName()));
+        return lines;
     }
 
 }

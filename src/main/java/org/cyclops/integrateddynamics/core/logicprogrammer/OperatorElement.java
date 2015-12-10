@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.google.common.collect.Lists;
 import lombok.Data;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -22,6 +21,7 @@ import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
 
@@ -133,6 +133,11 @@ public class OperatorElement implements ILogicProgrammerElement {
     }
 
     @Override
+    public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
+        return itemStack.getItem() == ItemVariable.getInstance();
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
@@ -183,9 +188,7 @@ public class OperatorElement implements ILogicProgrammerElement {
                     Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
                     if(gui.isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
                             GuiLogicProgrammer.BOX_HEIGHT, GuiLogicProgrammer.BOX_HEIGHT, mouseX, mouseY)) {
-                        List<String> lines = Lists.newLinkedList();
-                        lines.add(valueType.getDisplayColorFormat() + L10NHelpers.localize(valueType.getUnlocalizedName()));
-                        gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
+                        gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
                     }
                 }
             }
@@ -195,9 +198,7 @@ public class OperatorElement implements ILogicProgrammerElement {
             if(!container.hasWriteItemInSlot()) {
                 if(gui.isPointInRegion(ContainerLogicProgrammer.OUTPUT_X, ContainerLogicProgrammer.OUTPUT_Y,
                         GuiLogicProgrammer.BOX_HEIGHT, GuiLogicProgrammer.BOX_HEIGHT, mouseX, mouseY)) {
-                    List<String> lines = Lists.newLinkedList();
-                    lines.add(outputType.getDisplayColorFormat() + L10NHelpers.localize(outputType.getUnlocalizedName()));
-                    gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
+                    gui.drawTooltip(getValueTypeTooltip(outputType), mouseX - guiLeft, mouseY - guiTop);
                 }
             }
         }

@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.core.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
 
@@ -112,6 +113,11 @@ public class ValueTypeElement implements ILogicProgrammerElement {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
+        return itemStack.getItem() == ItemVariable.getInstance();
     }
 
     @Override

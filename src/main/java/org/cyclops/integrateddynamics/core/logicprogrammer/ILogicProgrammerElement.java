@@ -54,4 +54,12 @@ public interface ILogicProgrammerElement extends IGuiInputElement<GuiLogicProgra
      */
     public boolean isFor(IVariableFacade variableFacade);
 
+    /**
+     * Check if the given item can be inserted into the given slot.
+     * @param slotId The slot id.
+     * @param itemStack The item that will be inserted.
+     * @return If it can be inserted.
+     */
+    public boolean isItemValidForSlot(int slotId, ItemStack itemStack);
+
 }
