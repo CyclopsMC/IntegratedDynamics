@@ -37,10 +37,10 @@ import java.util.Map;
  */
 public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
 
-    private Map<Integer, PartPos> partPositions = Maps.newHashMap();
-    private final List<DimPos> variableContainerPositions = Lists.newLinkedList();
-    private Map<Integer, IVariableFacade> compositeVariableCache = null;
-    private Map<Integer, IValue> lazyExpressionValueCache = Maps.newHashMap();
+    private Map<Integer, PartPos> partPositions;
+    private List<DimPos> variableContainerPositions;
+    private Map<Integer, IVariableFacade> compositeVariableCache;
+    private Map<Integer, IValue> lazyExpressionValueCache;
 
     private volatile boolean partsChanged = false;
 
@@ -62,6 +62,15 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
      */
     public PartNetwork(Cluster<ICablePathElement> cables) {
         super(cables);
+    }
+
+    @Override
+    protected void onConstruct() {
+        super.onConstruct();
+        partPositions = Maps.newHashMap();
+        variableContainerPositions = Lists.newLinkedList();
+        compositeVariableCache = null;
+        lazyExpressionValueCache = Maps.newHashMap();
     }
 
     @Override
