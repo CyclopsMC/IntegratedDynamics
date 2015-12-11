@@ -45,6 +45,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
      */
     public Network() {
         this.baseCluster = new Cluster<ICablePathElement>();
+        onConstruct();
     }
 
     /**
@@ -58,7 +59,12 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
      */
     public Network(Cluster<ICablePathElement> cables) {
         this.baseCluster = cables;
+        onConstruct();
         deriveNetworkElements(baseCluster);
+    }
+
+    protected void onConstruct() {
+
     }
 
     protected N getMaterializedThis() {
