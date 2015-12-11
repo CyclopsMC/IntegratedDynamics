@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics.modcompat.charset;
 
 import com.google.common.collect.Sets;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
+import org.cyclops.integrateddynamics.modcompat.charset.aspect.read.AspectReadBooleanCharsetPipesPipeHasContents;
+import org.cyclops.integrateddynamics.modcompat.charset.aspect.read.AspectReadItemStackCharsetPipesPipeContents;
 
 /**
  * A charset reader part.
@@ -15,7 +17,8 @@ public class PartTypeCharsetReader extends PartTypeReadBase<PartTypeCharsetReade
     public PartTypeCharsetReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-
+                new AspectReadBooleanCharsetPipesPipeHasContents(),
+                new AspectReadItemStackCharsetPipesPipeContents()
         ));
     }
 

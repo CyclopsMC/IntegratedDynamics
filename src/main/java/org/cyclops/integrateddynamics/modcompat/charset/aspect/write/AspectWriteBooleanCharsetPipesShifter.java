@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.modcompat.charset.aspect.write;
 
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
+import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
-import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanBase;
 
 /**
