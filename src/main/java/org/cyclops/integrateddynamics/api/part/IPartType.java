@@ -16,8 +16,7 @@ import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 
 import java.util.List;
 
@@ -25,9 +24,11 @@ import java.util.List;
  * A type of part that can be inserted into a {@link IPartContainer}.
  * Only one unique instance for each part should exist, the values are stored inside an
  * {@link IPartState}.
+ * @param <P> The part type.
+ * @param <S> The part state type.
  * @author rubensworks
  */
-public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> extends INetworkEventListener<IPartNetwork, PartNetworkElement<P, S>> {
+public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> extends INetworkEventListener<IPartNetwork, IPartNetworkElement<P, S>> {
 
     /**
      * Get the part type class.
@@ -204,7 +205,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * Get the base block state that will be rendered for this part.
      * An appropriate {@link org.cyclops.integrateddynamics.core.block.IgnoredBlock#FACING} property will be set.
-     * @param tile The tile entity.
+     * @param partContainer The tile entity.
      * @param x X
      * @param y Y
      * @param z Z
@@ -213,7 +214,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param side The position of the part.
      * @return The block state to render with.
      */
-    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side);
 
     /**
