@@ -15,13 +15,13 @@ import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.InventoryTileEntity;
-import org.cyclops.integrateddynamics.core.block.IVariableContainer;
+import org.cyclops.integrateddynamics.api.block.IVariableContainer;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
-import org.cyclops.integrateddynamics.core.block.cable.ICable;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
-import org.cyclops.integrateddynamics.core.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.Collection;
@@ -45,7 +45,7 @@ public class TileVariablestore extends InventoryTileEntity implements ITileCable
 
     @Getter
     @Setter
-    private Network network;
+    private IPartNetwork network;
     private Map<Integer, IVariableFacade> variableCache = Maps.newHashMap();
 
     public TileVariablestore() {
@@ -123,7 +123,7 @@ public class TileVariablestore extends InventoryTileEntity implements ITileCable
                 }
             }
         }
-        Network network = getNetwork();
+        IPartNetwork network = getNetwork();
         if(network != null) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }

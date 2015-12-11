@@ -11,18 +11,18 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiAspectSettings;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
-import org.cyclops.integrateddynamics.core.part.IPartState;
-import org.cyclops.integrateddynamics.core.part.IPartType;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
  */
 public abstract class AspectBase<V extends IValue, T extends IValueType<V>> implements IAspect<V, T> {
 
-    private final AspectProperties defaultProperties;
+    private final IAspectProperties defaultProperties;
     @Getter
     private final IGuiContainerProvider propertiesGuiProvider;
 
@@ -79,8 +79,8 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     }
 
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>> AspectProperties getProperties(P partType, PartTarget target, S state) {
-        AspectProperties properties = state.getAspectProperties(this);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> IAspectProperties getProperties(P partType, PartTarget target, S state) {
+        IAspectProperties properties = state.getAspectProperties(this);
         if(properties == null) {
             properties = getDefaultProperties().clone();
         }
@@ -89,18 +89,18 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     }
 
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void setProperties(P partType, PartTarget target, S state, AspectProperties properties) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void setProperties(P partType, PartTarget target, S state, IAspectProperties properties) {
         state.setAspectProperties(this, properties);
     }
 
     @Override
-    public final AspectProperties getDefaultProperties() {
+    public final IAspectProperties getDefaultProperties() {
         return defaultProperties;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public Collection<AspectPropertyTypeInstance> getPropertyTypes() {
+    public Collection<IAspectPropertyTypeInstance> getPropertyTypes() {
         return getDefaultProperties().getTypes();
     }
 
@@ -108,7 +108,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
      * Creates the default properties for this aspect, only called once.
      * @return The default properties.
      */
-    protected AspectProperties createDefaultProperties() {
+    protected IAspectProperties createDefaultProperties() {
         return null;
     }
 

@@ -17,10 +17,14 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
-import org.cyclops.integrateddynamics.core.part.*;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
+import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
 
 import java.awt.*;
 import java.util.List;
@@ -170,7 +174,7 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
                     if(isPointInRegion(x, y, button.width, button.height, mouseX, mouseY)) {
                         List<String> lines = Lists.newLinkedList();
                         lines.add(EnumChatFormatting.WHITE + L10NHelpers.localize("gui.integrateddynamics.part.properties"));
-                        for(AspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
+                        for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                             lines.add("-" + EnumChatFormatting.YELLOW + L10NHelpers.localize(property.getUnlocalizedName()));
                         }
                         drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);

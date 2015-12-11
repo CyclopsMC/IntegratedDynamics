@@ -11,9 +11,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ISmartItemModel;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class VariableModelBaked extends IFlexibleBakedModel.Wrapper implements ISmartItemModel {
+public class VariableModelBaked extends IFlexibleBakedModel.Wrapper implements ISmartItemModel, IVariableModelBaked {
 
     private final IBakedModel parent;
     private final Map<IValueType, IBakedModel> valueTypeSubModels = Maps.newHashMap();
@@ -36,10 +37,12 @@ public class VariableModelBaked extends IFlexibleBakedModel.Wrapper implements I
         this.parent = parent;
     }
 
+    @Override
     public void addValueTypeModel(IValueType valueType, IBakedModel bakedModel) {
         valueTypeSubModels.put(valueType, bakedModel);
     }
 
+    @Override
     public void addAspectModel(IAspect aspect, IBakedModel bakedModel) {
         aspectSubModels.put(aspect, bakedModel);
     }

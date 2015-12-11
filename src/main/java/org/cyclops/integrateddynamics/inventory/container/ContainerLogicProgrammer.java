@@ -12,15 +12,16 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
+import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElement;
-import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
@@ -123,7 +124,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
      * @param baseX The slots X coordinate
      * @param baseY The slots Y coordinate
      */
-    public void setActiveElement(ILogicProgrammerElement activeElement, int baseX, int baseY) {
+    public void setActiveElement(final ILogicProgrammerElement activeElement, int baseX, int baseY) {
         this.lastError = null;
         if(this.activeElement != null) {
             this.activeElement.deactivate();
@@ -144,8 +145,14 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
         if(activeElement != null) {
             Pair<Integer, Integer>[] slotPositions = activeElement.getRenderPattern().getSlotPositions();
             for (int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
-                SlotSingleItem slot = new SlotSingleItem(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
-                        1 + baseY + slotPositions[i].getRight(), ItemVariable.getInstance());
+                final int slotId = i;
+                SlotExtended slot = new SlotExtended(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
+                        1 + baseY + slotPositions[i].getRight()) {
+                    @Override
+                    public boolean isItemValid(ItemStack itemStack) {
+                        return activeElement.isItemValidForSlot(slotId, itemStack);
+                    }
+                };
                 slot.setPhantom(true);
                 addSlotToContainer(slot);
             }

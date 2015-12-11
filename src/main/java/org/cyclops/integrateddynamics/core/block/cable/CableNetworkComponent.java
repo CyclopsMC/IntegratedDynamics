@@ -8,16 +8,20 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
+import org.cyclops.integrateddynamics.core.network.PartNetwork;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
-import org.cyclops.integrateddynamics.core.tileentity.ITileCable;
-import org.cyclops.integrateddynamics.core.tileentity.ITileCableNetwork;
 
 /**
  * A component for {@link ICableNetwork}.
  * @author rubensworks
  */
-public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElement>> implements ICableNetwork<CablePathElement> {
+public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork, ICablePathElement>> implements ICableNetwork<IPartNetwork, ICablePathElement> {
 
     private final C cable;
 
@@ -32,7 +36,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
 
     @Override
     public void initNetwork(World world, BlockPos pos) {
-        Network.initiateNetworkSetup(cable, world, pos).initialize();
+        PartNetwork.initiateNetworkSetup(cable, world, pos).initialize();
     }
 
     @Override
@@ -81,7 +85,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
     }
 
     @Override
-    public void setNetwork(Network network, World world, BlockPos pos) {
+    public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
         ITileCableNetwork tile = TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
         if(tile != null) {
             if(tile.getNetwork() != null) {
@@ -92,7 +96,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
     }
 
     @Override
-    public Network getNetwork(World world, BlockPos pos) {
+    public IPartNetwork getNetwork(World world, BlockPos pos) {
         ITileCableNetwork tile = TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
         if(tile != null) {
             return tile.getNetwork();
@@ -139,10 +143,10 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
      * Remove this block from its current network.
      * @param world The world.
      * @param pos The position.
+     * @return If the cable was removed.
      */
-    public void removeFromNetwork(World world, BlockPos pos) {
-        removeFromNetwork(world, pos, true);
-        removeFromNetwork(world, pos, false);
+    public boolean removeFromNetwork(World world, BlockPos pos) {
+        return removeFromNetwork(world, pos, true) && removeFromNetwork(world, pos, false);
     }
 
     /**
@@ -150,13 +154,14 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
      * @param world The world.
      * @param pos The position.
      * @param preDestroy At which stage of the block destruction this is being called.
+     * @return If the cable was removed from the network.
      */
-    public void removeFromNetwork(World world, BlockPos pos, boolean preDestroy) {
+    public boolean removeFromNetwork(World world, BlockPos pos, boolean preDestroy) {
         if(preDestroy) {
             // Remove the cable from this network if it exists
-            Network network = getNetwork(world, pos);
+            IPartNetwork network = getNetwork(world, pos);
             if(network != null) {
-                network.removeCable(cable, createPathElement(world, pos));
+                return network.removeCable(cable, createPathElement(world, pos));
             }
         } else {
             triggerNeighbourConnections(world, pos);
@@ -166,33 +171,38 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
                     BlockPos sidePos = pos.offset(side);
                     Block block = world.getBlockState(sidePos).getBlock();
                     if(block instanceof ICableNetwork) {
-                        ((ICableNetwork<CablePathElement>) block).initNetwork(world, sidePos);
+                        ((ICableNetwork<IPartNetwork, ICablePathElement>) block).initNetwork(world, sidePos);
                     }
                 }
             }
         }
+        return true;
     }
 
     /**
      * Called before this block is destroyed.
      * @param world The world.
      * @param pos The position.
+     * @return If the cable can be removed.
      */
-    public void onPreBlockDestroyed(World world, BlockPos pos) {
+    public boolean onPreBlockDestroyed(World world, BlockPos pos) {
         if(!world.isRemote) {
-            removeFromNetwork(world, pos, true);
+            return removeFromNetwork(world, pos, true);
         }
+        return true;
     }
 
     /**
      * Called before after block is destroyed.
      * @param world The world.
      * @param pos The position.
+     * @return If the cable was removed.
      */
-    public void onPostBlockDestroyed(World world, BlockPos pos) {
+    public boolean onPostBlockDestroyed(World world, BlockPos pos) {
         if(!world.isRemote) {
-            removeFromNetwork(world, pos, false);
+            return removeFromNetwork(world, pos, false);
         }
+        return true;
     }
 
     /**

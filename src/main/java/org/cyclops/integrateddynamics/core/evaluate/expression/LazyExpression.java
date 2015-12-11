@@ -2,11 +2,13 @@ package org.cyclops.integrateddynamics.core.evaluate.expression;
 
 import org.apache.logging.log4j.Level;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.expression.IExpression;
+import org.cyclops.integrateddynamics.api.evaluate.expression.ILazyExpressionValueCache;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 
 /**
  * A generic expression with arbitrarily nested binary operations.
@@ -18,10 +20,10 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
     private final int id;
     private final IOperator op;
     private final IVariable[] input;
-    private final IValueCache valueCache;
+    private final ILazyExpressionValueCache valueCache;
     private boolean errored = false;
 
-    public LazyExpression(int id, IOperator op, IVariable[] input, IValueCache valueCache) {
+    public LazyExpression(int id, IOperator op, IVariable[] input, ILazyExpressionValueCache valueCache) {
         this.id = id;
         this.op = op;
         this.input = input;
@@ -65,18 +67,6 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
                     "the expected %s.", op, value.getType(), op.getOutputType()));
             return null;
         }
-    }
-
-    /**
-     * Cache object that is responsible for storing values of this expression.
-     * This cache object is responsible for determining when the values need to be ejected from the cache.
-     */
-    public static interface IValueCache {
-
-        public void setValue(int id, IValue value);
-        public boolean hasValue(int id);
-        public IValue getValue(int id);
-
     }
 
 }

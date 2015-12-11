@@ -4,7 +4,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.integrateddynamics.core.part.IPartType;
+import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
+import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendererRegistry;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 
 import java.util.Collection;
 

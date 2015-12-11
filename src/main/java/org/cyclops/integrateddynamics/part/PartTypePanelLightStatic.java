@@ -5,10 +5,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
-import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.part.PartStateEmpty;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanel;
 
 /**
@@ -54,19 +54,19 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     }
 
     @Override
-    public void onNetworkAddition(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
+    public void onNetworkAddition(IPartNetwork network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
         super.onNetworkAddition(network, target, state);
         PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
     }
 
     @Override
-    public void onBlockNeighborChange(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state, IBlockAccess world, Block neighborBlock) {
+    public void onBlockNeighborChange(IPartNetwork network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state, IBlockAccess world, Block neighborBlock) {
         super.onBlockNeighborChange(network, target, state, world, neighborBlock);
         PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
     }
 
     @Override
-    public void onNetworkRemoval(Network network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
+    public void onNetworkRemoval(IPartNetwork network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state) {
         super.onNetworkRemoval(network, target, state);
         PartTypePanelLightDynamic.setLightLevel(target, 0);
     }

@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 import java.util.List;

@@ -27,12 +27,19 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
+import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
-import org.cyclops.integrateddynamics.core.block.cable.ICable;
-import org.cyclops.integrateddynamics.core.network.INetworkElement;
-import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.*;
+import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -61,7 +68,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Getter
     @Setter
-    private Network network;
+    private IPartNetwork network;
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {this.markDirty();
@@ -85,6 +92,16 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         tag.setTag("parts", partList);
     }
 
+    protected IPartType validatePartType(String partTypeName, IPartType partType) {
+        if(partType == null) {
+            IPartNetwork network = getNetwork();
+            UnknownPartEvent event = new UnknownPartEvent(network, partTypeName);
+            network.getEventBus().post(event);
+            partType = event.getPartType();
+        }
+        return partType;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         partData.clear(); // We only want the new data.
@@ -92,13 +109,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         for(int i = 0; i < partList.tagCount(); i++) {
             NBTTagCompound partTag = partList.getCompoundTagAt(i);
             String partTypeName = partTag.getString("__partType");
-            IPartType partType = PartTypes.REGISTRY.getPartType(partTypeName);
-            if(partType == null) { // TODO: Throw a nice event
-                if("display".equals(partTypeName)) {
-                    System.out.println("CONVERTED"); // TODO
-                    partType = PartTypes.REGISTRY.getPartType("displayPanel");
-                }
-            }
+            IPartType partType = validatePartType(partTypeName, PartTypes.REGISTRY.getPartType(partTypeName));
             if(partType != null) {
                 EnumFacing side = EnumFacing.byName(partTag.getString("__side"));
                 if(side != null) {
@@ -202,6 +213,9 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             if (getNetwork() != null) {
                 INetworkElement networkElement = removed.createNetworkElement(
                         (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side);
+                if(!getNetwork().removeNetworkElementPre(networkElement)) {
+                    return null;
+                }
 
                 // Drop all parts types as item.
                 List<ItemStack> itemStacks = Lists.newLinkedList();
@@ -215,7 +229,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 }
 
                 // Remove the element from the network.
-                getNetwork().removeNetworkElement(networkElement);
+                getNetwork().removeNetworkElementPost(networkElement);
             }
             // Finally remove the part data from this tile.
             IPartType ret = partData.remove(side).getPart();

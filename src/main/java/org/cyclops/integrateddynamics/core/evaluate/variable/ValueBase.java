@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.Data;
-import org.cyclops.integrateddynamics.core.evaluate.InvalidValueTypeException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 /**
  * Base implementation of a variable.
@@ -27,7 +29,7 @@ public abstract class ValueBase implements IValue {
     }
 
     @Override
-    public <V extends IValue> boolean canCast(IValueType<V> valueType) throws InvalidValueTypeException {
+    public <V extends IValue> boolean canCast(IValueType<V> valueType) {
         return getValueCastRegistry().canCast(valueType, this);
     }
 }

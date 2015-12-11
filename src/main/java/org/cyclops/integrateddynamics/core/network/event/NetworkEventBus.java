@@ -3,63 +3,62 @@ package org.cyclops.integrateddynamics.core.network.event;
 import com.google.common.collect.Maps;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
+import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.event.ICancelableNetworkEvent;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * An event bus for {@link org.cyclops.integrateddynamics.core.network.Network} events where
- * {@link org.cyclops.integrateddynamics.core.network.INetworkElement} instances can listen to.
+ * An event bus for {@link IPartNetwork} events where
+ * {@link INetworkElement} instances can listen to.
  *
  * Partially based on Minecraft Forge's {@link EventBus} implementation.
  *
  * @author rubensworks
  */
-public class NetworkEventBus {
+public class NetworkEventBus<N extends INetwork<N>> implements INetworkEventBus<N> {
 
-    private final Map<Class<? extends NetworkEvent>, Set<IEventListenableNetworkElement<?>>> listeners = Collections.synchronizedMap(Maps.<Class<? extends NetworkEvent>, Set<IEventListenableNetworkElement<?>>>newHashMap());
+    private final Map<Class<? extends INetworkEvent<N>>, Set<IEventListenableNetworkElement<N, ?>>> listeners = Collections.synchronizedMap(Maps.<Class<? extends INetworkEvent<N>>, Set<IEventListenableNetworkElement<N, ?>>>newHashMap());
 
-    /**
-     * Register a network element for the given event type.
-     * @param target The element that will be called once the event bus receives the given event.
-     * @param eventType The event type.
-     */
-    public void register(IEventListenableNetworkElement<?> target, Class<? extends NetworkEvent> eventType) {
+    @Override
+    public void register(IEventListenableNetworkElement<N, ?> target, Class<? extends INetworkEvent<N>> eventType) {
         CollectionHelpers.addToMapSet(this.listeners, eventType, target);
     }
 
-    /**
-     * Unregister a network element for the given event type.
-     * @param target The element that would be called once the event bus receives the given event.
-     * @param eventType The event type.
-     */
-    public void unregister(IEventListenableNetworkElement<?> target, Class<? extends NetworkEvent> eventType) {
-        Set<IEventListenableNetworkElement<?>> listeners = this.listeners.get(eventType);
+    @Override
+    public void unregister(IEventListenableNetworkElement<N, ?> target, Class<? extends INetworkEvent<N>> eventType) {
+        Set<IEventListenableNetworkElement<N, ?>> listeners = this.listeners.get(eventType);
         listeners.remove(target);
     }
 
-    /**
-     * Unregister all events for the given network element.
-     * @param target The element that would be called once the event bus receives events.
-     */
-    public void unregister(IEventListenableNetworkElement<?> target) {
-        for(Class<? extends NetworkEvent> eventType : target.getNetworkEventListener().getSubscribedEvents()) {
+    @Override
+    public void unregister(IEventListenableNetworkElement<N, ?> target) {
+        for(Class<? extends INetworkEvent<N>> eventType : target.getNetworkEventListener().getSubscribedEvents()) {
             unregister(target, eventType);
         }
     }
 
-    /**
-     * Post the given event to the events bus.
-     * @param event The event to post.
-     */
-    public void post(NetworkEvent event) {
-        Set<IEventListenableNetworkElement<?>> listeners = this.listeners.get(event.getClass());
+    @Override
+    public void post(INetworkEvent<N> event) {
+        Set<IEventListenableNetworkElement<N, ?>> listeners = this.listeners.get(event.getClass());
         if(listeners != null) {
             for (IEventListenableNetworkElement listener : listeners) {
                 listener.getNetworkEventListener().onEvent(event, listener);
             }
         }
+    }
+
+    @Override
+    public boolean postCancelable(ICancelableNetworkEvent<N> event) {
+        post(event);
+        return !event.isCanceled();
     }
 
 }

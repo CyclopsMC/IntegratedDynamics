@@ -7,8 +7,11 @@ import com.google.common.collect.Multimap;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
 import java.util.Collection;
@@ -23,7 +26,7 @@ import java.util.Map;
 public class OperatorRegistry implements IOperatorRegistry {
 
     private static OperatorRegistry INSTANCE = new OperatorRegistry();
-    private static final OperatorVariableFacade INVALID_FACADE = new OperatorVariableFacade(false, null, null);
+    private static final IOperatorVariableFacade INVALID_FACADE = new OperatorVariableFacade(false, null, null);
 
     private final List<IOperator> operators = Lists.newLinkedList();
     private final Map<String, IOperator> namedOperators = Maps.newHashMap();
@@ -78,7 +81,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public OperatorVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
+    public IOperatorVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
         if(!tag.hasKey("operatorName", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())
                 || !tag.hasKey("variableIds", MinecraftHelpers.NBTTag_Types.NBTTagIntArray.ordinal())) {
             return INVALID_FACADE;
@@ -92,7 +95,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public void setVariableFacade(NBTTagCompound tag, OperatorVariableFacade variableFacade) {
+    public void setVariableFacade(NBTTagCompound tag, IOperatorVariableFacade variableFacade) {
         tag.setString("operatorName", variableFacade.getOperator().getUniqueName());
         tag.setIntArray("variableIds", variableFacade.getVariableIds());
     }

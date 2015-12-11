@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 
 /**
  * Base class for object operators.

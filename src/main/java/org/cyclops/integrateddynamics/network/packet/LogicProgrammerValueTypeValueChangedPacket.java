@@ -7,7 +7,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
-import org.cyclops.integrateddynamics.core.logicprogrammer.ILogicProgrammerElement;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeElement;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 

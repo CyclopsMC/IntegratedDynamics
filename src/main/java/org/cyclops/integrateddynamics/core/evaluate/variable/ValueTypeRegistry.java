@@ -7,7 +7,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeRegistry;
+import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 
 import java.util.Collection;
@@ -15,13 +20,13 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Registry for {@link org.cyclops.integrateddynamics.core.evaluate.variable.IValueType}.
+ * Registry for {@link IValueType}.
  * @author rubensworks
  */
 public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     private static ValueTypeRegistry INSTANCE = new ValueTypeRegistry();
-    private static final ValueTypeVariableFacade INVALID_FACADE = new ValueTypeVariableFacade(false, null, (IValue) null);
+    private static final IValueTypeVariableFacade INVALID_FACADE = new ValueTypeVariableFacade(false, null, (IValue) null);
 
     private final Map<String, IValueType> valueTypes = Maps.newHashMap();
     @SideOnly(Side.CLIENT)
@@ -88,7 +93,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public ValueTypeVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
+    public IValueTypeVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
         if(!tag.hasKey("typeName", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())
                 || !tag.hasKey("value", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
             return INVALID_FACADE;
@@ -102,7 +107,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public void setVariableFacade(NBTTagCompound tag, ValueTypeVariableFacade variableFacade) {
+    public void setVariableFacade(NBTTagCompound tag, IValueTypeVariableFacade variableFacade) {
         tag.setString("typeName", variableFacade.getValueType().getUnlocalizedName());
         tag.setString("value", variableFacade.getValue().getType().serialize(variableFacade.getValue()));
     }

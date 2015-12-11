@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.helper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
-import org.cyclops.integrateddynamics.core.item.IWrench;
+import org.cyclops.integrateddynamics.api.item.IWrench;
 
 /**
  * Helper methods related to items.

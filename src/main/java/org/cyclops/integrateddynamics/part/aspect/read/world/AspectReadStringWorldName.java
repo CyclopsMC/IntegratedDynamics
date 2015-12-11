@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.part.aspect.read.world;
 
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**
  * Aspect that takes the target world name.
@@ -16,7 +16,7 @@ public class AspectReadStringWorldName extends AspectReadStringWorldBase {
     }
 
     @Override
-    protected ValueTypeString.ValueString getValue(PartTarget target, AspectProperties properties) {
+    protected ValueTypeString.ValueString getValue(PartTarget target, IAspectProperties properties) {
         return ValueTypeString.ValueString.of(target.getTarget().getPos().getWorld().getWorldInfo().getWorldName());
     }
 }

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;
 import org.cyclops.integrateddynamics.part.*;
 
 /**

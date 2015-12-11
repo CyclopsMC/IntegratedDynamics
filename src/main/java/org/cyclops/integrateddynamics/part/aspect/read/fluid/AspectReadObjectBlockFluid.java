@@ -7,12 +7,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadObjectBlockBase;
 
 /**
@@ -26,7 +27,7 @@ public class AspectReadObjectBlockFluid extends AspectReadObjectBlockBase {
         return "fluid";
     }
 
-    protected IBlockState getValue(FluidTankInfo[] tankInfo, AspectProperties properties) {
+    protected IBlockState getValue(FluidTankInfo[] tankInfo, IAspectProperties properties) {
         int i = getActiveTank(properties);
         if(i < tankInfo.length) {
             return getValue(tankInfo[i]);
@@ -43,13 +44,13 @@ public class AspectReadObjectBlockFluid extends AspectReadObjectBlockBase {
         return value;
     }
 
-    protected int getActiveTank(AspectProperties properties) {
+    protected int getActiveTank(IAspectProperties properties) {
         return properties.getValue(AspectReadIntegerFluidActivatableBase.PROP_TANKID).getRawValue();
     }
 
     @Override
-    protected AspectProperties createDefaultProperties() {
-        AspectProperties properties = new AspectProperties(Sets.<AspectPropertyTypeInstance>newHashSet(
+    protected IAspectProperties createDefaultProperties() {
+        IAspectProperties properties = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
                 AspectReadIntegerFluidActivatableBase.PROP_TANKID
         ));
         properties.setValue(AspectReadIntegerFluidActivatableBase.PROP_TANKID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
@@ -57,7 +58,7 @@ public class AspectReadObjectBlockFluid extends AspectReadObjectBlockBase {
     }
 
     @Override
-    protected ValueObjectTypeBlock.ValueBlock getValue(PartTarget target, AspectProperties properties) {
+    protected ValueObjectTypeBlock.ValueBlock getValue(PartTarget target, IAspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         if(tile instanceof IFluidHandler) {

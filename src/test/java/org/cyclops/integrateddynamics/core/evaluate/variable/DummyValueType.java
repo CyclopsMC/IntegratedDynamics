@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 /**
  * Aspect that can retrieve the comparator value.

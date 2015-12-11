@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
-import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 
 import java.util.Set;
 
@@ -18,7 +18,7 @@ public class NetworkWorldStorage extends WorldStorage {
     private static NetworkWorldStorage INSTANCE = null;
 
     @NBTPersist
-    private Set<Network> networks = Sets.newHashSet();
+    private Set<INetwork<?>> networks = Sets.newHashSet();
 
     private NetworkWorldStorage(ModBase mod) {
         super(mod);
@@ -45,7 +45,7 @@ public class NetworkWorldStorage extends WorldStorage {
      * Add a network that needs persistence.
      * @param network The network.
      */
-    public synchronized void addNewNetwork(Network network) {
+    public synchronized void addNewNetwork(INetwork<?> network) {
         networks.add(network);
     }
 
@@ -54,27 +54,27 @@ public class NetworkWorldStorage extends WorldStorage {
      * This is allowed to be called if the network was already removed.
      * @param network The network.
      */
-    public synchronized void removeInvalidatedNetwork(Network network) {
+    public synchronized void removeInvalidatedNetwork(INetwork<?> network) {
         networks.remove(network);
     }
 
     /**
      * @return A thread-safe copy of the current network set.
      */
-    public synchronized Set<Network> getNetworks() {
+    public synchronized Set<INetwork<?>> getNetworks() {
         return ImmutableSet.copyOf(networks);
     }
 
     @Override
     public void afterLoad() {
-        for(Network network : networks) {
+        for(INetwork<?> network : networks) {
             network.afterServerLoad();
         }
     }
 
     @Override
     public void beforeSave() {
-        for(Network network : networks) {
+        for(INetwork<?> network : networks) {
             network.beforeServerStop();
         }
     }

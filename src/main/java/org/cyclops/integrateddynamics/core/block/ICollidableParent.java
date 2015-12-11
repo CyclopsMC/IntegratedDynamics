@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 /**
- * Interface used to access the parent methods from a {@link org.cyclops.integrateddynamics.core.block.ICollidable}.
+ * Interface used to access the parent methods from a {@link ICollidable}.
  * @author rubensworks
  */
 public interface ICollidableParent {

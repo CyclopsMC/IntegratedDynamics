@@ -4,9 +4,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.client.render.tileentity.RenderTileEntityBakedModel;
-import org.cyclops.integrateddynamics.client.render.part.IPartOverlayRenderer;
+import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
-import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.Map;

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.part.aspect.read.world;
 
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**
  * Aspect that checks if it is night in the target world.
@@ -17,7 +17,7 @@ public class AspectReadBooleanWorldIsNight extends AspectReadBooleanWorldBase {
     }
 
     @Override
-    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target, AspectProperties properties) {
+    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target, IAspectProperties properties) {
         return ValueTypeBoolean.ValueBoolean.of(!MinecraftHelpers.isDay(target.getTarget().getPos().getWorld()));
     }
 }

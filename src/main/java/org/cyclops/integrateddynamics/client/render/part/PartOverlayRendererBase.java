@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.client.render.part;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumFacing;
+import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 
 /**
  * Base class for part overlay renderers.

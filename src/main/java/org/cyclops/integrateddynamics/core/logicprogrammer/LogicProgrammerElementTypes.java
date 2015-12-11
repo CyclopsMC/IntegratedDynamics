@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementTypeRegistry;
 
 /**
  * All types of logic programmer element types.
@@ -12,8 +14,13 @@ public class LogicProgrammerElementTypes {
 
     public static void load() {}
 
+    // General types
     public static final OperatorElementType  OPERATOR  = REGISTRY.addType(new OperatorElementType());
     public static final ValueTypeElementType VALUETYPE = REGISTRY.addType(new ValueTypeElementType());
+
+    // Specific types
+    public static final ValueObjectTypeBlockElementType     OBJECT_BLOCK_TYPE     = REGISTRY.addType(new ValueObjectTypeBlockElementType());
+    public static final ValueObjectTypeItemStackElementType OBJECT_ITEMSTACK_TYPE = REGISTRY.addType(new ValueObjectTypeItemStackElementType());
 
     public static boolean areEqual(ILogicProgrammerElement e1, ILogicProgrammerElement e2) {
         if(e1 == null) {

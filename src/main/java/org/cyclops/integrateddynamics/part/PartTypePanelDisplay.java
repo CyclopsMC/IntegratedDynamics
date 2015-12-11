@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.block.Block;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
-import org.cyclops.integrateddynamics.core.part.IPartState;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
 /**

@@ -1,3 +1,12 @@
+task apiJar(type: Jar, dependsOn: 'sourceMainJava') {
+    from (sourceSets.main.output) {
+        include "**/api/**/*"
+    }
+    includeEmptyDirs = false
+    version = "${project.config.api_version}"
+    classifier = "api"
+}
+
 task deobfJar(type: Jar) {
     from sourceSets.main.output
     classifier = 'deobf'
@@ -9,6 +18,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
+    archives apiJar
     archives deobfJar
     archives sourceJar
     archives javadocJar

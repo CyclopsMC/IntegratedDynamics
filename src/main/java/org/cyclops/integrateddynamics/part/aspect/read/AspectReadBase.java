@@ -4,18 +4,18 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.IPartState;
-import org.cyclops.integrateddynamics.core.part.IPartType;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
+import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.core.part.aspect.LazyAspectVariable;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
-import org.cyclops.integrateddynamics.core.part.read.IPartStateReader;
-import org.cyclops.integrateddynamics.core.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.part.aspect.AspectBase;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -34,7 +34,7 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
 
     @SuppressWarnings("unchecked")
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(Network network, P partType, PartTarget target, S state) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
         if(partType instanceof IPartTypeReader && state instanceof IPartStateReader) {
             IAspectVariable variable = ((IPartTypeReader) partType).getVariable(target, (IPartStateReader) state, this);
             if (variable.requiresUpdate()) {
@@ -59,7 +59,7 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
      * @param properties The optional properties for this aspect.
      * @return The value that will be inserted into a variable so it can be used elsewhere.
      */
-    protected abstract V getValue(PartTarget target, AspectProperties properties);
+    protected abstract V getValue(PartTarget target, IAspectProperties properties);
 
     @Override
     public IAspectVariable<V> createNewVariable(final PartTarget target) {

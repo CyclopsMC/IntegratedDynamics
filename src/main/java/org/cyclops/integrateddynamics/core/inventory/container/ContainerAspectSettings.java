@@ -15,17 +15,17 @@ import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.button.IButtonActionServer;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiAspectSettings;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartState;
-import org.cyclops.integrateddynamics.core.part.IPartType;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 
 /**
  * Container for aspect settings.
@@ -45,7 +45,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
     private final BlockPos pos;
     private final IAspect aspect;
 
-    private final BiMap<Integer, AspectPropertyTypeInstance> propertyIds = HashBiMap.create();
+    private final BiMap<Integer, IAspectPropertyTypeInstance> propertyIds = HashBiMap.create();
 
     /**
      * Make a new instance.
@@ -66,7 +66,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
 
         addPlayerInventory(player.inventory, 8, 131);
 
-        for(AspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
+        for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
             propertyIds.put(getNextValueId(), property);
         }
 
@@ -85,13 +85,13 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
     @Override
     protected void initializeValues() {
         super.initializeValues();
-        AspectProperties properties = aspect.getProperties(getPartType(), getTarget(), getPartState());
-        for(AspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
+        IAspectProperties properties = aspect.getProperties(getPartType(), getTarget(), getPartState());
+        for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
             setValue(property, properties.getValue(property));
         }
     }
 
-    public void setValue(AspectPropertyTypeInstance property, IValue value) {
+    public void setValue(IAspectPropertyTypeInstance property, IValue value) {
         ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), property.getType().serialize(value));
     }
 
@@ -110,7 +110,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
         return 0;
     }
 
-    public <T extends IValueType<V>, V extends IValue> V getPropertyValue(AspectPropertyTypeInstance<T, V> property) {
+    public <T extends IValueType<V>, V extends IValue> V getPropertyValue(IAspectPropertyTypeInstance<T, V> property) {
         if(propertyIds.containsValue(property)) {
             String value = ValueNotifierHelpers.getValueString(this, propertyIds.inverse().get(property));
             if(value != null) {
@@ -124,9 +124,9 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
     public void onUpdate(int valueId, NBTTagCompound value) {
         super.onUpdate(valueId, value);
         if(!MinecraftHelpers.isClientSide()) {
-            AspectPropertyTypeInstance property = propertyIds.get(valueId);
+            IAspectPropertyTypeInstance property = propertyIds.get(valueId);
             if (property != null) {
-                AspectProperties aspectProperties = getAspect().getProperties(getPartType(), getTarget(), getPartState());
+                IAspectProperties aspectProperties = getAspect().getProperties(getPartType(), getTarget(), getPartState());
                 aspectProperties = aspectProperties.clone();
                 IValue trueValue = property.getType().deserialize(value.getString(ValueNotifierHelpers.KEY));
                 aspectProperties.setValue(property, trueValue);

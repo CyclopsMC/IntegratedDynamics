@@ -10,10 +10,13 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
@@ -46,7 +49,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
         return this.inventory;
     }
 
-    protected void validate(Network network) {
+    protected void validate(IPartNetwork network) {
         // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
         this.currentVariableFacade.validate(network,
                 new PartStateActiveVariableBase.Validator(this), currentVariableFacade.getOutputType());
@@ -67,11 +70,11 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
 
     /**
      * Get the active variable in this state.
-     * @param network The network.
      * @param <V> The variable value type.
+     * @param network The network.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(Network network) {
+    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(!checkedForWriteVariable) {
             for(int slot = 0; slot < getInventory().getSizeInventory(); slot++) {
                 ItemStack itemStack = getInventory().getStackInSlot(slot);

@@ -3,13 +3,13 @@ package org.cyclops.integrateddynamics.client.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
+import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
-import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
-import org.cyclops.integrateddynamics.core.part.write.IPartStateWriter;
-import org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 

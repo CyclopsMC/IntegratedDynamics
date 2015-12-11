@@ -2,12 +2,13 @@ package org.cyclops.integrateddynamics.core.path;
 
 import com.google.common.collect.Sets;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.path.IPathElement;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Algorithm to construct paths/clusters of {@link org.cyclops.integrateddynamics.core.path.IPathElement}s.
+ * Algorithm to construct paths/clusters of {@link IPathElement}s.
  * @author rubensworks
  */
 public final class PathFinder {

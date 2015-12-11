@@ -9,18 +9,20 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
+import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.client.gui.GuiPartWriter;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -28,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An abstract {@link org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter}.
+ * An abstract {@link IPartTypeWriter}.
  * @author rubensworks
  */
 public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>>
@@ -39,11 +41,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    protected Map<Class<? extends NetworkEvent>, IEventAction> constructNetworkEventActions() {
-        Map<Class<? extends NetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
+    protected Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> constructNetworkEventActions() {
+        Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> actions = super.constructNetworkEventActions();
         actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
             @Override
-            public void onAction(Network network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
+            public void onAction(IPartNetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
                 onVariableContentsUpdated(event.getNetwork(), target, state);
             }
         });
@@ -74,13 +76,13 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void beforeNetworkKill(Network network, PartTarget target, S state) {
+    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state) {
         super.beforeNetworkKill(network, target, state);
         state.triggerAspectInfoUpdate((P) this, target, null);
     }
 
     @Override
-    public void afterNetworkAlive(Network network, PartTarget target, S state) {
+    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state) {
         super.afterNetworkAlive(network, target, state);
         updateActivation(target, state);
     }
@@ -92,7 +94,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     @SuppressWarnings("unchecked")
     @Override
-    public <V extends IValue> IVariable<V> getActiveVariable(Network network, PartTarget target, S partState) {
+    public <V extends IValue> IVariable<V> getActiveVariable(IPartNetwork network, PartTarget target, S partState) {
         return partState.getVariable(network);
     }
 
@@ -115,14 +117,14 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         partState.triggerAspectInfoUpdate((P) this, target, aspect);
     }
 
-    protected void onVariableContentsUpdated(Network network, PartTarget target, S state) {
+    protected void onVariableContentsUpdated(IPartNetwork network, PartTarget target, S state) {
         state.onVariableContentsUpdated((P) this, target);
     }
 
     @Override
-    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side) {
-        IPartStateWriter state = (IPartStateWriter) tile.getPartState(side);
+        IPartStateWriter state = (IPartStateWriter) partContainer.getPartState(side);
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
         IAspectWrite aspectWrite = state.getActiveAspect();
         if(aspectWrite != null) {

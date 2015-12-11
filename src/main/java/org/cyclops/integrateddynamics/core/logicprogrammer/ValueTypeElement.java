@@ -7,15 +7,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
 
@@ -105,13 +109,18 @@ public class ValueTypeElement implements ILogicProgrammerElement {
 
     @Override
     public boolean isFor(IVariableFacade variableFacade) {
-        if (variableFacade instanceof ValueTypeVariableFacade) {
-            ValueTypeVariableFacade valueTypeFacade = (ValueTypeVariableFacade) variableFacade;
+        if (variableFacade instanceof IValueTypeVariableFacade) {
+            IValueTypeVariableFacade valueTypeFacade = (IValueTypeVariableFacade) variableFacade;
             if (valueTypeFacade.isValid()) {
                 return getInnerGuiElement().getValueType() == valueTypeFacade.getValueType();
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
+        return itemStack.getItem() == ItemVariable.getInstance();
     }
 
     @Override
@@ -121,7 +130,7 @@ public class ValueTypeElement implements ILogicProgrammerElement {
         return new ValueTypeElementSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
-    protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<ValueTypeVariableFacade> {
+    protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IValueTypeVariableFacade> {
 
         private final IValueType valueType;
         private final String value;
@@ -132,12 +141,12 @@ public class ValueTypeElement implements ILogicProgrammerElement {
         }
 
         @Override
-        public ValueTypeVariableFacade create(boolean generateId) {
+        public IValueTypeVariableFacade create(boolean generateId) {
             return new ValueTypeVariableFacade(generateId, valueType, value);
         }
 
         @Override
-        public ValueTypeVariableFacade create(int id) {
+        public IValueTypeVariableFacade create(int id) {
             return new ValueTypeVariableFacade(id, valueType, value);
         }
     }

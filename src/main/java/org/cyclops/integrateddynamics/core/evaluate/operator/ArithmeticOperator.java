@@ -1,6 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 /**
  * Base class for arithmetic operators.

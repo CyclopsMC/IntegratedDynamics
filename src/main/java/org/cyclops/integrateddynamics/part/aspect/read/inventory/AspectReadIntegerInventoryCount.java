@@ -4,9 +4,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**
  * Aspect that can count the amount of items in an inventory
@@ -20,7 +20,7 @@ public class AspectReadIntegerInventoryCount extends AspectReadIntegerInventoryB
     }
 
     @Override
-    protected ValueTypeInteger.ValueInteger getValue(PartTarget target, AspectProperties properties) {
+    protected ValueTypeInteger.ValueInteger getValue(PartTarget target, IAspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         int value = 0;

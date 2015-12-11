@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.part.aspect.read.world;
 
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**
  * Aspect that displays the time for the current day.
@@ -18,7 +18,7 @@ public class AspectReadIntegerWorldDayTime extends AspectReadIntegerWorldBase {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected ValueTypeInteger.ValueInteger getValue(PartTarget target, AspectProperties properties) {
+    protected ValueTypeInteger.ValueInteger getValue(PartTarget target, IAspectProperties properties) {
         return ValueTypeInteger.ValueInteger.of((int) target.getTarget().getPos().getWorld().getWorldTime() % MinecraftHelpers.MINECRAFT_DAY);
     }
 }

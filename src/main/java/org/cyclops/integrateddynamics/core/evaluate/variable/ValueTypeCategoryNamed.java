@@ -3,7 +3,11 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Sets;
 import net.minecraft.util.EnumChatFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 
 /**
  * Value type category with values that have a name.

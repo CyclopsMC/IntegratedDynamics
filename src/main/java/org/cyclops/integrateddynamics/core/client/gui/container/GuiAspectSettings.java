@@ -14,17 +14,17 @@ import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.button.IButtonActionClient;
-import org.cyclops.integrateddynamics.core.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
-import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartType;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,7 +52,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
     private final IPartType partType;
     private final IAspect aspect;
 
-    private final List<AspectPropertyTypeInstance> propertyTypes;
+    private final List<IAspectPropertyTypeInstance> propertyTypes;
     protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
     protected ValueTypeGuiElement<GuiAspectSettings, ContainerAspectSettings> guiElement = null;
     protected int activePropertyIndex = 0;
@@ -158,7 +158,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRendererObj, mouseX, mouseY);
 
-        AspectPropertyTypeInstance activeProperty = getActiveProperty();
+        IAspectPropertyTypeInstance activeProperty = getActiveProperty();
         if(activeProperty != null) {
             String label = L10NHelpers.localize(activeProperty.getUnlocalizedName());
             RenderHelpers.drawScaledCenteredString(fontRendererObj, label, 88, 10, 0,
@@ -187,7 +187,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
         lastError = guiElement.validate();
     }
 
-    protected AspectPropertyTypeInstance getActiveProperty() {
+    protected IAspectPropertyTypeInstance getActiveProperty() {
         return propertyTypes.get(Math.max(0, Math.min(propertyTypes.size() - 1, activePropertyIndex)));
     }
 
@@ -195,7 +195,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
         onActivateElement(propertyTypes.get(activePropertyIndex = index));
     }
 
-    protected void onActivateElement(AspectPropertyTypeInstance property) {
+    protected void onActivateElement(IAspectPropertyTypeInstance property) {
         if(guiElement != null) {
             guiElement.deactivate();
             subGuiHolder.removeSubGui(propertyConfigPattern);
@@ -211,7 +211,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
     }
 
     protected void syncInputValue() {
-        AspectPropertyTypeInstance property = getActiveProperty();
+        IAspectPropertyTypeInstance property = getActiveProperty();
         IValue value = ((ContainerAspectSettings) container).getPropertyValue(property);
         if(value != null) {
             guiElement.setInputString(property.getType().toCompactString(value), propertyConfigPattern);
@@ -222,7 +222,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
     @Override
     public void onUpdate(int valueId, NBTTagCompound value) {
         super.onUpdate(valueId, value);
-        AspectPropertyTypeInstance property = ((ContainerAspectSettings) container).getPropertyIds().get(valueId);
+        IAspectPropertyTypeInstance property = ((ContainerAspectSettings) container).getPropertyIds().get(valueId);
         if(property != null && getActiveProperty() == property) {
             syncInputValue();
         }

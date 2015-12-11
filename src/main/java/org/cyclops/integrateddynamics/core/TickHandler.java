@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 /**
@@ -28,7 +28,7 @@ public final class TickHandler {
     @SubscribeEvent
     public void onTick(TickEvent event) {
         if(event.type == TickEvent.Type.SERVER && event.phase == TickEvent.Phase.END) {
-            for(Network network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+            for(INetwork<?> network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                 network.update();
             }
         }

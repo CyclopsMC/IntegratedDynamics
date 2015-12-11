@@ -1,12 +1,15 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Maps;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;
 
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * Registry for {@link org.cyclops.integrateddynamics.core.part.IPartType}.
+ * Registry for {@link IPartType}.
  * @author rubensworks
  */
 public final class PartTypeRegistry implements IPartTypeRegistry {

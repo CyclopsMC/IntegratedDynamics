@@ -8,16 +8,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.integrateddynamics.core.client.model.VariableModelBaked;
-import org.cyclops.integrateddynamics.core.evaluate.expression.IExpression;
+import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
+import org.cyclops.integrateddynamics.api.evaluate.expression.IExpression;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IOperator;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.List;
 
@@ -27,7 +29,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class OperatorVariableFacade extends VariableFacadeBase {
+public class OperatorVariableFacade extends VariableFacadeBase implements IOperatorVariableFacade {
 
     private final IOperator operator;
     private final int[] variableIds;
@@ -46,7 +48,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getVariable(Network network) {
+    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(isValid()) {
             if(expression == null || expression.hasErrored()) {
                 IVariable[] variables = new IVariable[variableIds.length];
@@ -77,7 +79,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     }
 
     @Override
-    public void validate(Network network, IValidator validator, IValueType containingValueType) {
+    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
@@ -163,7 +165,7 @@ public class OperatorVariableFacade extends VariableFacadeBase {
     @SuppressWarnings("unchecked")
     @SideOnly(Side.CLIENT)
     @Override
-    public void addModelOverlay(VariableModelBaked variableModelBaked, List<BakedQuad> quads) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads) {
         if(isValid()) {
             IValueType valueType = getOperator().getOutputType();
             IBakedModel bakedModel = variableModelBaked.getValueTypeSubModels().get(valueType);

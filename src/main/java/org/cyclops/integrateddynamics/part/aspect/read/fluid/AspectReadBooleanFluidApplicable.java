@@ -4,9 +4,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 /**
  * Aspect that checks if the target is a fluid tank.
@@ -20,12 +20,12 @@ public class AspectReadBooleanFluidApplicable extends AspectReadBooleanFluidBase
     }
 
     @Override
-    protected boolean getValue(FluidTankInfo[] tankInfo, AspectProperties properties) {
+    protected boolean getValue(FluidTankInfo[] tankInfo, IAspectProperties properties) {
         return false; // Not called here
     }
 
     @Override
-    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target, AspectProperties properties) {
+    protected ValueTypeBoolean.ValueBoolean getValue(PartTarget target, IAspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         return ValueTypeBoolean.ValueBoolean.of(tile instanceof IFluidHandler);

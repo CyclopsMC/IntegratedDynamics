@@ -17,18 +17,22 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.client.gui.GuiPartDisplay;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
-import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
-import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.network.event.NetworkEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
 
 import java.util.List;
@@ -50,11 +54,11 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    protected Map<Class<? extends NetworkEvent>, IEventAction> constructNetworkEventActions() {
-        Map<Class<? extends NetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
+    protected Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> constructNetworkEventActions() {
+        Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> actions = super.constructNetworkEventActions();
         actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
             @Override
-            public void onAction(Network network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
+            public void onAction(IPartNetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
                 onVariableContentsUpdated(event.getNetwork(), target, state);
             }
         });
@@ -75,13 +79,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void beforeNetworkKill(Network network, PartTarget target, S state) {
+    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state) {
         super.beforeNetworkKill(network, target, state);
         state.onVariableContentsUpdated((P) this, target);
     }
 
     @Override
-    public void afterNetworkAlive(Network network, PartTarget target, S state) {
+    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state) {
         super.afterNetworkAlive(network, target, state);
         state.onVariableContentsUpdated((P) this, target);
     }
@@ -92,7 +96,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void update(Network network, PartTarget target, S state) {
+    public void update(IPartNetwork network, PartTarget target, S state) {
         super.update(network, target, state);
         IValue lastValue = state.getDisplayValue();
         IValue newValue = null;
@@ -113,7 +117,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
     }
 
-    protected void onValueChanged(Network network, PartTarget target, S state, IValue lastValue, IValue newValue) {
+    protected void onValueChanged(IPartNetwork network, PartTarget target, S state, IValue lastValue, IValue newValue) {
         state.setDisplayValue(newValue);
     }
 
@@ -133,9 +137,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public IBlockState getBlockState(TileMultipartTicking tile, double x, double y, double z, float partialTick,
+    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
                                      int destroyStage, EnumFacing side) {
-        PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) tile.getPartState(side);
+        PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) partContainer.getPartState(side);
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
         if(!state.getInventory().isEmpty()) {
             if(state.hasVariable()) {
@@ -148,7 +152,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 withProperty(IgnoredBlockStatus.STATUS, status);
     }
 
-    protected void onVariableContentsUpdated(Network network, PartTarget target, S state) {
+    protected void onVariableContentsUpdated(IPartNetwork network, PartTarget target, S state) {
         state.onVariableContentsUpdated((P) this, target);
     }
 

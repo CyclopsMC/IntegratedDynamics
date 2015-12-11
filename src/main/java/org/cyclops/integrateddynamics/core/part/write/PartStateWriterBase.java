@@ -4,13 +4,15 @@ import com.google.common.collect.Maps;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.IPartState;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
+import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Collections;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A default implementation of the {@link org.cyclops.integrateddynamics.core.part.write.IPartTypeWriter} with auto-persistence
+ * A default implementation of the {@link IPartTypeWriter} with auto-persistence
  * of fields annotated with {@link org.cyclops.cyclopscore.persist.nbt.NBTPersist}.
  * @author rubensworks
  */
@@ -34,7 +36,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    protected void validate(Network network) {
+    protected void validate(IPartNetwork network) {
         // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
         if(getActiveAspect() != null) {
             this.currentVariableFacade.validate(network,

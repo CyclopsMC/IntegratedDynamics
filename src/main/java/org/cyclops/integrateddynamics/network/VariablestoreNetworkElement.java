@@ -7,9 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.core.item.IVariableFacade;
-import org.cyclops.integrateddynamics.core.network.INetworkElement;
-import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @author rubensworks
  */
 @Data
-public class VariablestoreNetworkElement implements INetworkElement {
+public class VariablestoreNetworkElement implements INetworkElement<IPartNetwork> {
 
     private final DimPos pos;
 
@@ -39,17 +39,17 @@ public class VariablestoreNetworkElement implements INetworkElement {
     }
 
     @Override
-    public void update(Network network) {
+    public void update(IPartNetwork network) {
 
     }
 
     @Override
-    public void beforeNetworkKill(Network network) {
+    public void beforeNetworkKill(IPartNetwork network) {
 
     }
 
     @Override
-    public void afterNetworkAlive(Network network) {
+    public void afterNetworkAlive(IPartNetwork network) {
 
     }
 
@@ -62,23 +62,23 @@ public class VariablestoreNetworkElement implements INetworkElement {
     }
 
     @Override
-    public boolean onNetworkAddition(Network network) {
+    public boolean onNetworkAddition(IPartNetwork network) {
         network.addVariableContainer(getPos());
         return true; // No reason this could fail.
     }
 
     @Override
-    public void onNetworkRemoval(Network network) {
+    public void onNetworkRemoval(IPartNetwork network) {
         network.removeVariableContainer(getPos());
     }
 
     @Override
-    public void onPreRemoved(Network network) {
+    public void onPreRemoved(IPartNetwork network) {
 
     }
 
     @Override
-    public void onNeighborBlockChange(Network network, IBlockAccess world, Block neighborBlock) {
+    public void onNeighborBlockChange(IPartNetwork network, IBlockAccess world, Block neighborBlock) {
 
     }
 

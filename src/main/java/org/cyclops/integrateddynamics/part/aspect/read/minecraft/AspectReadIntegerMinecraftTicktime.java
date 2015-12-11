@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.part.aspect.read.minecraft;
 
 import com.google.common.math.DoubleMath;
 import net.minecraft.server.MinecraftServer;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 /**
  * Aspect that can check the average tick time on the server.

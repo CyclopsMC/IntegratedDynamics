@@ -4,7 +4,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.util.EnumChatFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.integrateddynamics.core.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 
 import java.util.Collections;
 import java.util.Map;

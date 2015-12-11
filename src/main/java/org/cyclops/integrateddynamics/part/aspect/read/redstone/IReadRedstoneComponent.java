@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.core.block.IDynamicRedstoneBlock;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 /**
  * Interface for redstone reading the component.

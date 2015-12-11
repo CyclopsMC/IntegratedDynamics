@@ -6,11 +6,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.core.network.event.IEventListenableNetworkElement;
-import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
-import org.cyclops.integrateddynamics.core.part.IPartState;
-import org.cyclops.integrateddynamics.core.part.IPartType;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 import java.util.List;
 
@@ -19,34 +21,32 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IEventListenableNetworkElement<P> {
+public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartNetworkElement<P, S> {
 
     private final P part;
     private final IPartContainerFacade partContainerFacade;
     private final PartTarget target;
 
-    protected final DimPos getCenterPos() {
-        return getTarget().getCenter().getPos();
+    protected static DimPos getCenterPos(PartTarget target) {
+        return target.getCenter().getPos();
     }
 
-    protected final EnumFacing getCenterSide() {
-        return getTarget().getCenter().getSide();
+    protected static EnumFacing getCenterSide(PartTarget target) {
+        return target.getCenter().getSide();
     }
 
-    protected final DimPos getTargetPos() {
-        return getTarget().getTarget().getPos();
+    protected static DimPos getTargetPos(PartTarget target) {
+        return target.getTarget().getPos();
     }
 
-    protected final EnumFacing getTargetSide() {
-        return getTarget().getTarget().getSide();
+    protected static EnumFacing getTargetSide(PartTarget target) {
+        return target.getTarget().getSide();
     }
 
-    /**
-     * @return The state for this part.
-     */
+    @Override
     public S getPartState() {
-        return (S) partContainerFacade.getPartContainer(getCenterPos().getWorld(), getCenterPos().getBlockPos()).
-               getPartState(getCenterSide());
+        return (S) partContainerFacade.getPartContainer(getCenterPos(getTarget()).getWorld(), getCenterPos(getTarget()).getBlockPos()).
+               getPartState(getCenterSide(getTarget()));
     }
 
     @Override
@@ -60,17 +60,17 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void update(Network network) {
+    public void update(IPartNetwork network) {
         part.update(network, getTarget(), getPartState());
     }
 
     @Override
-    public void beforeNetworkKill(Network network) {
+    public void beforeNetworkKill(IPartNetwork network) {
         part.beforeNetworkKill(network, target, getPartState());
     }
 
     @Override
-    public void afterNetworkAlive(Network network) {
+    public void afterNetworkAlive(IPartNetwork network) {
         part.afterNetworkAlive(network, target, getPartState());
     }
 
@@ -80,7 +80,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public boolean onNetworkAddition(Network network) {
+    public boolean onNetworkAddition(IPartNetwork network) {
         boolean res = network.addPart(getPartState().getId(), getTarget().getCenter());
         if(res) {
             part.onNetworkAddition(network, target, getPartState());
@@ -89,18 +89,18 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void onNetworkRemoval(Network network) {
+    public void onNetworkRemoval(IPartNetwork network) {
         network.removePart(getPartState().getId());
         part.onNetworkRemoval(network, target, getPartState());
     }
 
     @Override
-    public void onPreRemoved(Network network) {
+    public void onPreRemoved(IPartNetwork network) {
         part.onPreRemoved(network, target, getPartState());
     }
 
     @Override
-    public void onNeighborBlockChange(Network network, IBlockAccess world, Block neighborBlock) {
+    public void onNeighborBlockChange(IPartNetwork network, IBlockAccess world, Block neighborBlock) {
         part.onBlockNeighborChange(network, target, getPartState(), world, neighborBlock);
     }
 
@@ -110,18 +110,18 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     public boolean equals(Object o) {
-        return o instanceof PartNetworkElement && compareTo((INetworkElement) o) == 0;
+        return o instanceof IPartNetworkElement && compareTo((INetworkElement) o) == 0;
     }
 
     @Override
     public int compareTo(INetworkElement o) {
-        if(o instanceof PartNetworkElement) {
-            PartNetworkElement p = (PartNetworkElement) o;
-            int compPart = Integer.compare(part.hashCode(), p.part.hashCode());
+        if(o instanceof IPartNetworkElement) {
+            IPartNetworkElement p = (IPartNetworkElement) o;
+            int compPart = Integer.compare(part.hashCode(), p.getPart().hashCode());
             if(compPart == 0) {
-                int compPos = getCenterPos().compareTo(p.getCenterPos());
+                int compPos = getCenterPos(getTarget()).compareTo(getCenterPos(p.getTarget()));
                 if(compPos == 0) {
-                    return getCenterSide().compareTo(p.getCenterSide());
+                    return getCenterSide(getTarget()).compareTo(getCenterSide(p.getTarget()));
                 }
                 return compPos;
             }

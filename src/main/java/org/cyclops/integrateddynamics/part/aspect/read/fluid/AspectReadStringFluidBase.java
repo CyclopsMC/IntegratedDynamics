@@ -4,9 +4,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadStringBase;
 
 /**
@@ -22,14 +22,14 @@ public abstract class AspectReadStringFluidBase extends AspectReadStringBase {
 
     protected abstract String getUnlocalizedStringFluidType();
 
-    protected abstract String getValue(FluidTankInfo[] tankInfo, AspectProperties properties);
+    protected abstract String getValue(FluidTankInfo[] tankInfo, IAspectProperties properties);
 
     protected String getDefaultValue() {
         return "";
     }
 
     @Override
-    protected ValueTypeString.ValueString getValue(PartTarget target, AspectProperties properties) {
+    protected ValueTypeString.ValueString getValue(PartTarget target, IAspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         if(tile instanceof IFluidHandler) {

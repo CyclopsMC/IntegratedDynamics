@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.read.fluid;
 
 import net.minecraftforge.fluids.FluidTankInfo;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
 /**
  * Aspect that checks the target tank total capacity.
@@ -15,7 +15,7 @@ public class AspectReadIntegerFluidCapacityTotal extends AspectReadIntegerFluidB
     }
 
     @Override
-    protected int getValue(FluidTankInfo[] tankInfo, AspectProperties properties) {
+    protected int getValue(FluidTankInfo[] tankInfo, IAspectProperties properties) {
         int capacity = 0;
         for(FluidTankInfo tank : tankInfo) {
             capacity += tank.capacity;

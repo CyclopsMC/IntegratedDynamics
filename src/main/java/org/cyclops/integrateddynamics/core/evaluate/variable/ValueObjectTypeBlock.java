@@ -5,6 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 
 /**
  * Value type with values that are blocks (these are internally stored as blockstates).
@@ -29,15 +30,20 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     @Override
     public String serialize(ValueBlock value) {
         Pair<String, Integer> serializedBlockState = BlockHelpers.serializeBlockState(value.getRawValue());
-        return String.format("%s:%s", serializedBlockState.getLeft(), serializedBlockState.getRight());
+        return String.format("%s$%s", serializedBlockState.getLeft(), serializedBlockState.getRight());
     }
 
     @Override
     public ValueBlock deserialize(String value) {
-        String[] parts = value.split(":");
-        return ValueBlock.of(BlockHelpers.deserializeBlockState(
-                Pair.of(parts[0], Integer.parseInt(parts[1]))
-        ));
+        String[] parts = value.split("\\$");
+        try {
+            return ValueBlock.of(BlockHelpers.deserializeBlockState(
+                    Pair.of(parts[0], Integer.parseInt(parts[1]))
+            ));
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw new RuntimeException(String.format("Something went wrong while deserializing '%s'.", value));
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.helper;
 
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.APIReference;
 
 /**
  * Collection of generic L10N entries.
@@ -8,13 +8,15 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class L10NValues {
 
-    public static final String NS = Reference.MOD_ID;
+    public static final String NS = APIReference.API_OWNER;
 
     public static final String PART_PANEL_ERROR_INVALIDTYPE = "parttype.parttypes." + NS + ".dataDrivenPanel.error.invalidType";
 
     public static final String VALUETYPE_TOOLTIP_TYPENAME = "valuetype." + NS + ".tooltip.typeName";
     public static final String VALUETYPE_TOOLTIP_VALUE = "valuetype." + NS + ".tooltip.value";
     public static final String VALUETYPE_ERROR_INVALIDINPUT = "valuetype." + NS + ".error.invalidInput";
+    public static final String VALUETYPE_ERROR_INVALIDINPUTITEM = "valuetype." + NS + ".error.invalidInputItem";
+    public static final String VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK = "valuetype." + NS + ".error.block.noBlock";
 
     public static final String ASPECT_TOOLTIP_PARTID = "aspect." + NS + ".tooltip.partId";
     public static final String ASPECT_TOOLTIP_ASPECTNAME = "aspect." + NS + ".tooltip.aspectName";

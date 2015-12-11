@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect.read.minecraft;
 
-import org.cyclops.integrateddynamics.core.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 import java.util.Random;
 

@@ -31,16 +31,23 @@ import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.*;
+import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
+import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
+import org.cyclops.integrateddynamics.api.block.cable.*;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.client.model.CableModel;
-import org.cyclops.integrateddynamics.core.block.*;
-import org.cyclops.integrateddynamics.core.block.cable.*;
+import org.cyclops.integrateddynamics.core.block.CollidableComponent;
+import org.cyclops.integrateddynamics.core.block.ICollidable;
+import org.cyclops.integrateddynamics.core.block.ICollidableParent;
+import org.cyclops.integrateddynamics.core.block.cable.CableNetworkFacadeableComponent;
+import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
-import org.cyclops.integrateddynamics.core.network.INetworkElement;
-import org.cyclops.integrateddynamics.core.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.core.network.Network;
-import org.cyclops.integrateddynamics.core.part.IPartContainer;
-import org.cyclops.integrateddynamics.core.part.IPartContainerFacade;
-import org.cyclops.integrateddynamics.core.part.IPartType;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
@@ -56,8 +63,8 @@ import java.util.*;
  * Ray tracing code is partially based on BuildCraft's pipe code.
  * @author rubensworks
  */
-public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<CablePathElement>,
-        ICableFakeable<CablePathElement>, ICableWithParts<CablePathElement>, ICableFacadeable<CablePathElement>, INetworkElementProvider,
+public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
+        ICableFakeable<ICablePathElement>, ICableWithParts<ICablePathElement>, ICableFacadeable<ICablePathElement>, INetworkElementProvider,
         IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
 
     // Properties
@@ -171,7 +178,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     private ICollidable collidableComponent = new CollidableComponent<EnumFacing, BlockCable>(this, COLLIDABLE_COMPONENTS);
     //@Delegate// <- Lombok can't handle delegations with generics, so we'll have to do it manually...
     private CableNetworkFacadeableComponent<BlockCable> cableNetworkComponent = new CableNetworkFacadeableComponent<>(this);
-    private NetworkElementProviderComponent networkElementProviderComponent = new NetworkElementProviderComponent(this);
+    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
 
     private static BlockCable _instance = null;
 
@@ -237,7 +244,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             if(realCable) {
                 cableNetworkComponent.addToNetwork(world, pos);
             } else {
-                cableNetworkComponent.removeFromNetwork(world, pos);
+                if(!cableNetworkComponent.removeFromNetwork(world, pos)) {
+                    tile.setRealCable(!realCable);
+                }
             }
         }
     }
@@ -315,7 +324,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                             BlockPos neighbourPos = pos.offset(positionHit);
                             Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
                             if (neighbourBlock instanceof ICableNetwork) {
-                                ((ICableNetwork<CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
+                                ((ICableNetwork<IPartNetwork, ICablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
                             }
                             return true;
                         } else if (rayTraceResult.getCollisionType() == CENTER_COMPONENT) {
@@ -337,7 +346,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                                 // Reinit the networks for this block and the connected neighbour.
                                 initNetwork(world, pos);
                                 if (neighbourBlock instanceof ICableNetwork) {
-                                    ((ICableNetwork<CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
+                                    ((ICableNetwork<IPartNetwork, ICablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
                                 }
                             }
                             return true;
@@ -667,12 +676,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public void setNetwork(Network network, World world, BlockPos pos) {
+    public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
         cableNetworkComponent.setNetwork(network, world, pos);
     }
 
     @Override
-    public Network getNetwork(World world, BlockPos pos) {
+    public IPartNetwork getNetwork(World world, BlockPos pos) {
         return cableNetworkComponent.getNetwork(world, pos);
     }
 

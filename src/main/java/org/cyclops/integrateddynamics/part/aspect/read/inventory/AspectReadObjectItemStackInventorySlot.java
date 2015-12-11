@@ -5,10 +5,12 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.part.PartTarget;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadObjectItemStackBase;
@@ -19,7 +21,7 @@ import org.cyclops.integrateddynamics.part.aspect.read.AspectReadObjectItemStack
  */
 public class AspectReadObjectItemStackInventorySlot extends AspectReadObjectItemStackBase {
 
-    public static final AspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_SLOTID =
+    public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_SLOTID =
             new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid.name");
 
     @Override
@@ -28,7 +30,7 @@ public class AspectReadObjectItemStackInventorySlot extends AspectReadObjectItem
     }
 
     @Override
-    protected ValueObjectTypeItemStack.ValueItemStack getValue(PartTarget target, AspectProperties properties) {
+    protected ValueObjectTypeItemStack.ValueItemStack getValue(PartTarget target, IAspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
         ItemStack value = null;
@@ -46,8 +48,8 @@ public class AspectReadObjectItemStackInventorySlot extends AspectReadObjectItem
     }
 
     @Override
-    protected AspectProperties createDefaultProperties() {
-        AspectProperties properties = new AspectProperties(Sets.<AspectPropertyTypeInstance>newHashSet(
+    protected IAspectProperties createDefaultProperties() {
+        IAspectProperties properties = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
                 PROP_SLOTID
         ));
         properties.setValue(PROP_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
