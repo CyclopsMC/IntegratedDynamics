@@ -73,7 +73,9 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
 
     @Override
     public IValueType getOutputType() {
-        return getAspect().getValueType();
+        IAspect aspect = getAspect();
+        if(aspect == null) return null;
+        return aspect.getValueType();
     }
 
     @SideOnly(Side.CLIENT)
