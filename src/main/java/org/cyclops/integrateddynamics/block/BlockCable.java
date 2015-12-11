@@ -40,6 +40,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
@@ -62,8 +63,8 @@ import java.util.*;
  * Ray tracing code is partially based on BuildCraft's pipe code.
  * @author rubensworks
  */
-public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, CablePathElement>,
-        ICableFakeable<CablePathElement>, ICableWithParts<CablePathElement>, ICableFacadeable<CablePathElement>, INetworkElementProvider,
+public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
+        ICableFakeable<ICablePathElement>, ICableWithParts<ICablePathElement>, ICableFacadeable<ICablePathElement>, INetworkElementProvider,
         IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
 
     // Properties
@@ -323,7 +324,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                             BlockPos neighbourPos = pos.offset(positionHit);
                             Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
                             if (neighbourBlock instanceof ICableNetwork) {
-                                ((ICableNetwork<IPartNetwork, CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
+                                ((ICableNetwork<IPartNetwork, ICablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
                             }
                             return true;
                         } else if (rayTraceResult.getCollisionType() == CENTER_COMPONENT) {
@@ -345,7 +346,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                                 // Reinit the networks for this block and the connected neighbour.
                                 initNetwork(world, pos);
                                 if (neighbourBlock instanceof ICableNetwork) {
-                                    ((ICableNetwork<IPartNetwork, CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
+                                    ((ICableNetwork<IPartNetwork, ICablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
                                 }
                             }
                             return true;

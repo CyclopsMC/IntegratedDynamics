@@ -20,7 +20,7 @@ import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
-import org.cyclops.integrateddynamics.core.path.CablePathElement;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
@@ -60,7 +60,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
      * @param cables The cables that make up the connections in the network which can potentially provide network
      *               elements.
      */
-    public PartNetwork(Cluster<CablePathElement> cables) {
+    public PartNetwork(Cluster<ICablePathElement> cables) {
         super(cables);
     }
 
@@ -208,7 +208,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
     }
 
     @Override
-    public boolean removeCable(Block block, CablePathElement cable) {
+    public boolean removeCable(Block block, ICablePathElement cable) {
         if(super.removeCable(block, cable)) {
             notifyPartsChanged();
             return true;
@@ -223,7 +223,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
      * @param pos The position.
      * @return The newly formed network.
      */
-    public static PartNetwork initiateNetworkSetup(ICable<CablePathElement> connectable, World world, BlockPos pos) {
+    public static PartNetwork initiateNetworkSetup(ICable<ICablePathElement> connectable, World world, BlockPos pos) {
         PartNetwork network = new PartNetwork(PathFinder.getConnectedCluster(connectable.createPathElement(world, pos)));
         NetworkWorldStorage.getInstance(IntegratedDynamics._instance).addNewNetwork(network);
         return network;

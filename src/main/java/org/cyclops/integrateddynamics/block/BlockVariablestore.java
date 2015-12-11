@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.client.gui.GuiVariablestore;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
@@ -40,7 +41,7 @@ import java.util.Collection;
  *
  * @author rubensworks
  */
-public class BlockVariablestore extends ConfigurableBlockContainerGui implements ICableNetwork<IPartNetwork, CablePathElement>,
+public class BlockVariablestore extends ConfigurableBlockContainerGui implements ICableNetwork<IPartNetwork, ICablePathElement>,
         INetworkElementProvider<IPartNetwork>, IVariableContainerFacade {
 
     @BlockProperty

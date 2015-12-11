@@ -12,10 +12,10 @@ import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
-import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
@@ -31,7 +31,7 @@ import java.util.TreeSet;
  */
 public class Network<N extends INetwork<N>> implements INetwork<N> {
 
-    private Cluster<CablePathElement> baseCluster;
+    private Cluster<ICablePathElement> baseCluster;
 
     private final INetworkEventBus<N> eventBus = new NetworkEventBus<>();
     private final TreeSet<INetworkElement<N>> elements = Sets.newTreeSet();
@@ -44,7 +44,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
      * This constructor should not be called, except for the process of constructing networks from NBT.
      */
     public Network() {
-        this.baseCluster = new Cluster<CablePathElement>();
+        this.baseCluster = new Cluster<ICablePathElement>();
     }
 
     /**
@@ -56,7 +56,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
      * @param cables The cables that make up the connections in the network which can potentially provide network
      *               elements.
      */
-    public Network(Cluster<CablePathElement> cables) {
+    public Network(Cluster<ICablePathElement> cables) {
         this.baseCluster = cables;
         deriveNetworkElements(baseCluster);
     }
@@ -65,9 +65,9 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
         return (N) this;
     }
 
-    private void deriveNetworkElements(Cluster<CablePathElement> cables) {
+    private void deriveNetworkElements(Cluster<ICablePathElement> cables) {
         if(!killIfEmpty()) {
-            for (CablePathElement cable : cables) {
+            for (ICablePathElement cable : cables) {
                 World world = cable.getPosition().getWorld();
                 BlockPos pos = cable.getPosition().getBlockPos();
                 Block block = world.getBlockState(pos).getBlock();
@@ -249,7 +249,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     }
 
     @Override
-    public boolean removeCable(Block block, CablePathElement cable) {
+    public boolean removeCable(Block block, ICablePathElement cable) {
         if(baseCluster.remove(cable)) {
             if (block instanceof INetworkElementProvider) {
                 Collection<INetworkElement<N>> networkElements = ((INetworkElementProvider<N>) block).

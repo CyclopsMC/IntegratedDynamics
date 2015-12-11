@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.core.network.PartNetwork;
@@ -20,7 +21,7 @@ import org.cyclops.integrateddynamics.core.path.CablePathElement;
  * A component for {@link ICableNetwork}.
  * @author rubensworks
  */
-public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork, CablePathElement>> implements ICableNetwork<IPartNetwork, CablePathElement> {
+public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork, ICablePathElement>> implements ICableNetwork<IPartNetwork, ICablePathElement> {
 
     private final C cable;
 
@@ -170,7 +171,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
                     BlockPos sidePos = pos.offset(side);
                     Block block = world.getBlockState(sidePos).getBlock();
                     if(block instanceof ICableNetwork) {
-                        ((ICableNetwork<IPartNetwork, CablePathElement>) block).initNetwork(world, sidePos);
+                        ((ICableNetwork<IPartNetwork, ICablePathElement>) block).initNetwork(world, sidePos);
                     }
                 }
             }

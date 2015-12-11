@@ -9,8 +9,8 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
-import org.cyclops.integrateddynamics.core.path.CablePathElement;
 
 import javax.annotation.Nullable;
 
@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  * A component for {@link ICableFacadeable}.
  * @author rubensworks
  */
-public class CableNetworkFacadeableComponent<C extends Block & ICableNetwork<IPartNetwork, CablePathElement>> extends CableNetworkComponent<C> implements ICableFacadeable<CablePathElement> {
+public class CableNetworkFacadeableComponent<C extends Block & ICableNetwork<IPartNetwork, ICablePathElement>> extends CableNetworkComponent<C> implements ICableFacadeable<ICablePathElement> {
 
     public CableNetworkFacadeableComponent(C cable) {
         super(cable);

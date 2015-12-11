@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.api.network;
 import net.minecraft.block.Block;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
-import org.cyclops.integrateddynamics.core.path.CablePathElement;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 
 /**
  * A network can hold a set of {@link INetworkElement}s.
@@ -76,7 +76,7 @@ public interface INetwork<N extends INetwork<N>> extends INBTSerializable {
      * @param cable The actual cable instance.
      * @return If the cable was removed.
      */
-    public boolean removeCable(Block block, CablePathElement cable);
+    public boolean removeCable(Block block, ICablePathElement cable);
 
     /**
      * Called when the server loaded this network.

@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 
 import java.util.Set;
 
@@ -19,14 +19,14 @@ import java.util.Set;
  * @author rubensworks
  */
 @Data
-public class CablePathElement implements IPathElement<CablePathElement> {
+public class CablePathElement implements ICablePathElement {
 
     private final ICable cable;
     private final DimPos position;
 
     @Override
-    public Set<CablePathElement> getReachableElements() {
-        Set<CablePathElement> elements = Sets.newHashSet();
+    public Set<ICablePathElement> getReachableElements() {
+        Set<ICablePathElement> elements = Sets.newHashSet();
         World world = getPosition().getWorld();
         BlockPos pos = getPosition().getBlockPos();
         for(EnumFacing side : EnumFacing.VALUES) {
@@ -37,7 +37,7 @@ public class CablePathElement implements IPathElement<CablePathElement> {
                     IntegratedDynamics.clog(Level.ERROR, String.format("The position at %s was incorrectly marked " +
                             "as reachable as cable by %s.", pos, getCable()));
                 } else {
-                    elements.add(((ICable<CablePathElement>) block).createPathElement(world, posOffset));
+                    elements.add(((ICable<ICablePathElement>) block).createPathElement(world, posOffset));
                 }
             }
         }
@@ -50,10 +50,10 @@ public class CablePathElement implements IPathElement<CablePathElement> {
     }
 
     @Override
-    public int compareTo(CablePathElement o) {
-        if(cable.hashCode() == o.cable.hashCode()) {
-            return position.compareTo(o.position);
+    public int compareTo(ICablePathElement o) {
+        if(cable.hashCode() == o.getCable().hashCode()) {
+            return position.compareTo(o.getPosition());
         }
-        return Integer.compare(cable.hashCode(), o.cable.hashCode());
+        return Integer.compare(cable.hashCode(), o.getCable().hashCode());
     }
 }
