@@ -124,11 +124,18 @@ public interface INetwork extends INBTSerializable, ILazyExpressionValueCache {
     public void addNetworkElementUpdateable(INetworkElement element);
 
     /**
+     * Checks if the given network element can be removed from the network
+     * @param element The network element.
+     * @return If the element was can be removed from the network.
+     */
+    public boolean removeNetworkElementPre(INetworkElement element);
+
+    /**
      * Remove a given network element from the network.
      * Also removed its tickable instance.
      * @param element The network element.
      */
-    public void removeNetworkElement(INetworkElement element);
+    public void removeNetworkElementPost(INetworkElement element);
 
     /**
      * Remove given network element from the tickable elements set.
@@ -162,8 +169,9 @@ public interface INetwork extends INBTSerializable, ILazyExpressionValueCache {
      * If the cable had any network elements registered in the network, these will be killed and removed as well.
      * @param block The block instance of the cable element.
      * @param cable The actual cable instance.
+     * @return If the cable was removed.
      */
-    public void removeCable(Block block, CablePathElement cable);
+    public boolean removeCable(Block block, CablePathElement cable);
 
     /**
      * Called when the server loaded this network.

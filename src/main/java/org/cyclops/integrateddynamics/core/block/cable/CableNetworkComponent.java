@@ -142,10 +142,10 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
      * Remove this block from its current network.
      * @param world The world.
      * @param pos The position.
+     * @return If the cable was removed.
      */
-    public void removeFromNetwork(World world, BlockPos pos) {
-        removeFromNetwork(world, pos, true);
-        removeFromNetwork(world, pos, false);
+    public boolean removeFromNetwork(World world, BlockPos pos) {
+        return removeFromNetwork(world, pos, true) && removeFromNetwork(world, pos, false);
     }
 
     /**
@@ -154,12 +154,12 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
      * @param pos The position.
      * @param preDestroy At which stage of the block destruction this is being called.
      */
-    public void removeFromNetwork(World world, BlockPos pos, boolean preDestroy) {
+    public boolean removeFromNetwork(World world, BlockPos pos, boolean preDestroy) {
         if(preDestroy) {
             // Remove the cable from this network if it exists
             INetwork network = getNetwork(world, pos);
             if(network != null) {
-                network.removeCable(cable, createPathElement(world, pos));
+                return network.removeCable(cable, createPathElement(world, pos));
             }
         } else {
             triggerNeighbourConnections(world, pos);
@@ -174,28 +174,33 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<CablePathElem
                 }
             }
         }
+        return true;
     }
 
     /**
      * Called before this block is destroyed.
      * @param world The world.
      * @param pos The position.
+     * @return If the cable can be removed.
      */
-    public void onPreBlockDestroyed(World world, BlockPos pos) {
+    public boolean onPreBlockDestroyed(World world, BlockPos pos) {
         if(!world.isRemote) {
-            removeFromNetwork(world, pos, true);
+            return removeFromNetwork(world, pos, true);
         }
+        return true;
     }
 
     /**
      * Called before after block is destroyed.
      * @param world The world.
      * @param pos The position.
+     * @return If the cable was removed.
      */
-    public void onPostBlockDestroyed(World world, BlockPos pos) {
+    public boolean onPostBlockDestroyed(World world, BlockPos pos) {
         if(!world.isRemote) {
-            removeFromNetwork(world, pos, false);
+            return removeFromNetwork(world, pos, false);
         }
+        return true;
     }
 
     /**

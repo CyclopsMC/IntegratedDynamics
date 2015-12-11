@@ -243,7 +243,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             if(realCable) {
                 cableNetworkComponent.addToNetwork(world, pos);
             } else {
-                cableNetworkComponent.removeFromNetwork(world, pos);
+                if(!cableNetworkComponent.removeFromNetwork(world, pos)) {
+                    tile.setRealCable(!realCable);
+                }
             }
         }
     }

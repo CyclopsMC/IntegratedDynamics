@@ -213,6 +213,9 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             if (getNetwork() != null) {
                 INetworkElement networkElement = removed.createNetworkElement(
                         (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side);
+                if(!getNetwork().removeNetworkElementPre(networkElement)) {
+                    return null;
+                }
 
                 // Drop all parts types as item.
                 List<ItemStack> itemStacks = Lists.newLinkedList();
@@ -226,7 +229,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 }
 
                 // Remove the element from the network.
-                getNetwork().removeNetworkElement(networkElement);
+                getNetwork().removeNetworkElementPost(networkElement);
             }
             // Finally remove the part data from this tile.
             IPartType ret = partData.remove(side).getPart();

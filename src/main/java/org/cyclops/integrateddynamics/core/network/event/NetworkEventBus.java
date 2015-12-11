@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.event.ICancelableNetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 
@@ -50,6 +51,12 @@ public class NetworkEventBus implements INetworkEventBus {
                 listener.getNetworkEventListener().onEvent(event, listener);
             }
         }
+    }
+
+    @Override
+    public boolean postCancelable(ICancelableNetworkEvent event) {
+        post(event);
+        return !event.isCanceled();
     }
 
 }

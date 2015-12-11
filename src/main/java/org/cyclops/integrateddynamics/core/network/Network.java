@@ -23,6 +23,8 @@ import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
+import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
+import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
@@ -91,8 +93,9 @@ public class Network implements INetwork {
                     // and set the new network to this.
                     INetwork network = networkCarrier.getNetwork(world, pos);
                     if (network != null) {
-                        network.removeCable(block, cable);
-                        network.notifyPartsChanged();
+                        if(network.removeCable(block, cable)) {
+                            network.notifyPartsChanged();
+                        }
                     }
                     networkCarrier.resetCurrentNetwork(world, pos);
                     networkCarrier.setNetwork(this, world, pos);
@@ -260,24 +263,28 @@ public class Network implements INetwork {
 
     @Override
     public boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
-        elements.add(element);
-        if(!element.onNetworkAddition(this)) {
-            elements.remove(element);
-            return false;
-        }
-        if(!networkPreinit) {
-            addNetworkElementUpdateable(element);
-        }
-        if(element instanceof IEventListenableNetworkElement) {
-            IEventListenableNetworkElement listenableElement = (IEventListenableNetworkElement) element;
-            INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
-            if (listener != null && listener.hasEventSubscriptions()) {
-                for (Class<? extends INetworkEvent> eventType : listener.getSubscribedEvents()) {
-                    getEventBus().register(listenableElement, eventType);
+        if(getEventBus().postCancelable(new NetworkElementAddEvent.Pre(this, element))) {
+            elements.add(element);
+            if (!element.onNetworkAddition(this)) {
+                elements.remove(element);
+                return false;
+            }
+            if (!networkPreinit) {
+                addNetworkElementUpdateable(element);
+            }
+            if (element instanceof IEventListenableNetworkElement) {
+                IEventListenableNetworkElement listenableElement = (IEventListenableNetworkElement) element;
+                INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
+                if (listener != null && listener.hasEventSubscriptions()) {
+                    for (Class<? extends INetworkEvent> eventType : listener.getSubscribedEvents()) {
+                        getEventBus().register(listenableElement, eventType);
+                    }
                 }
             }
+            getEventBus().post(new NetworkElementAddEvent.Post(this, element));
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -289,8 +296,13 @@ public class Network implements INetwork {
     }
 
     @Override
-    public void removeNetworkElement(INetworkElement element) {
-        if(element instanceof IEventListenableNetworkElement) {
+    public boolean removeNetworkElementPre(INetworkElement element) {
+        return getEventBus().postCancelable(new NetworkElementRemoveEvent.Pre(this, element));
+    }
+
+    @Override
+    public void removeNetworkElementPost(INetworkElement element) {
+        if (element instanceof IEventListenableNetworkElement) {
             IEventListenableNetworkElement listenableElement = (IEventListenableNetworkElement) element;
             INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
             if (listener != null && listener.hasEventSubscriptions()) {
@@ -301,6 +313,7 @@ public class Network implements INetwork {
         element.onNetworkRemoval(this);
         elements.remove(element);
         removeNetworkElementUpdateable(element);
+        getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
     }
 
     @Override
@@ -376,18 +389,25 @@ public class Network implements INetwork {
     }
 
     @Override
-    public void removeCable(Block block, CablePathElement cable) {
+    public boolean removeCable(Block block, CablePathElement cable) {
         if(baseCluster.remove(cable)) {
             if (block instanceof INetworkElementProvider) {
                 Collection<INetworkElement> networkElements = ((INetworkElementProvider) block).
                         createNetworkElements(cable.getPosition().getWorld(), cable.getPosition().getBlockPos());
                 for (INetworkElement networkElement : networkElements) {
-                    removeNetworkElement(networkElement);
+                    if(!removeNetworkElementPre(networkElement)) {
+                        return false;
+                    }
                 }
+                for (INetworkElement networkElement : networkElements) {
+                    removeNetworkElementPost(networkElement);
+                }
+                return true;
             }
         } else {
             IntegratedDynamics.clog(Level.WARN, "Tried to remove a cable from a network it was not present in.");
         }
+        return false;
     }
 
     @Override

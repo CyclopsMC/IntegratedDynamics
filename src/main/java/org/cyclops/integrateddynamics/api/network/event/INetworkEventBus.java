@@ -36,4 +36,11 @@ public interface INetworkEventBus {
      */
     public void post(INetworkEvent event);
 
+    /**
+     * Post the given cancelable event to the events bus.
+     * @param event The event to post.
+     * @return If the event was not canceled.
+     */
+    public boolean postCancelable(ICancelableNetworkEvent event);
+
 }
