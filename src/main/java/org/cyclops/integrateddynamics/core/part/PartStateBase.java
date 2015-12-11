@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @NBTPersist
     private int id = -1;
     @NBTPersist
-    private Map<String, AspectProperties> aspectProperties = Maps.newHashMap();
+    private Map<String, IAspectProperties> aspectProperties = Maps.newHashMap();
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
@@ -91,12 +91,12 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
-    public AspectProperties getAspectProperties(IAspect aspect) {
+    public IAspectProperties getAspectProperties(IAspect aspect) {
         return aspectProperties.get(aspect.getUnlocalizedName());
     }
 
     @Override
-    public void setAspectProperties(IAspect aspect, AspectProperties properties) {
+    public void setAspectProperties(IAspect aspect, IAspectProperties properties) {
         aspectProperties.put(aspect.getUnlocalizedName(), properties);
         sendUpdate();
     }

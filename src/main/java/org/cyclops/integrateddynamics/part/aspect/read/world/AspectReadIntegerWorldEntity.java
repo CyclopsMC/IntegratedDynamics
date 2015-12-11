@@ -6,8 +6,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EntitySelectors;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class AspectReadIntegerWorldEntity extends AspectReadIntegerWorldBase {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected ValueTypeInteger.ValueInteger getValue(PartTarget target, AspectProperties properties) {
+    protected ValueTypeInteger.ValueInteger getValue(PartTarget target, IAspectProperties properties) {
         DimPos dimPos = target.getTarget().getPos();
         List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
                 new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), Predicate());

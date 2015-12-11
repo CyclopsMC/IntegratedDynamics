@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
 /**
  * Variable for a specific aspect from a part that calculates its target value only maximum once per ticking interval.
@@ -24,7 +24,7 @@ public abstract class LazyAspectVariable<V extends IValue> implements IAspectVar
     @Getter private final PartTarget target;
     @Getter private final IAspectRead<V, ?> aspect;
     @NonNull private V value;
-    private AspectProperties cachedProperties = null;
+    private IAspectProperties cachedProperties = null;
 
     public LazyAspectVariable(IValueType<V> type, PartTarget target, IAspectRead<V, ?> aspect) {
         this.type = type;
@@ -51,7 +51,7 @@ public abstract class LazyAspectVariable<V extends IValue> implements IAspectVar
         return this.value;
     }
 
-    protected AspectProperties getAspectProperties() {
+    protected IAspectProperties getAspectProperties() {
         if(cachedProperties == null && getAspect().hasProperties()) {
             PartPos pos = getTarget().getCenter();
             Pair<IPartType, IPartState> partData = PartPos.getPartData(pos);

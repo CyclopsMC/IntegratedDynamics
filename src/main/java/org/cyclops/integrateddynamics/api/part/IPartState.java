@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
 /**
  * A value holder for an {@link IPartType}.
@@ -76,13 +76,13 @@ public interface IPartState<P extends IPartType> {
      * @param aspect The aspect to get the properties from.
      * @return The properties, this can be null if still the default.
      */
-    public AspectProperties getAspectProperties(IAspect aspect);
+    public IAspectProperties getAspectProperties(IAspect aspect);
 
     /**
      * Set the properties for the given aspect.
      * @param aspect The aspect to get the properties from.
      * @param properties The properties, this can be null if still the default.
      */
-    public void setAspectProperties(IAspect aspect, AspectProperties properties);
+    public void setAspectProperties(IAspect aspect, IAspectProperties properties);
 
 }

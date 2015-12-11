@@ -7,8 +7,8 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
-import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -67,7 +67,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * @param state The current state of the given part.
      * @return The current properties.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>> AspectProperties getProperties(P partType, PartTarget target, S state);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> IAspectProperties getProperties(P partType, PartTarget target, S state);
 
     /**
      * Set the new properties of this aspect in the given part.
@@ -78,12 +78,12 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * @param state The current state of the given part.
      * @param properties The new properties.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void setProperties(P partType, PartTarget target, S state, AspectProperties properties);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void setProperties(P partType, PartTarget target, S state, IAspectProperties properties);
 
     /**
      * @return The default properties for this aspect.
      */
-    public AspectProperties getDefaultProperties();
+    public IAspectProperties getDefaultProperties();
 
     /**
      * These are the properties that are supported for this aspect.
@@ -91,7 +91,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * this to iterate over the values.
      * @return The types that are available for this aspect.
      */
-    public Collection<AspectPropertyTypeInstance> getPropertyTypes();
+    public Collection<IAspectPropertyTypeInstance> getPropertyTypes();
 
     /**
      * This will only be called if this aspect has properties.
