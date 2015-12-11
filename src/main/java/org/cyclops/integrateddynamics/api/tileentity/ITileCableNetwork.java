@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.tileentity;
 
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 
 /**
  * Interface for tile entities behind block that are a {@link ICableNetwork}.
@@ -19,12 +19,12 @@ public interface ITileCableNetwork extends ITileCable {
      * Tell the container it is part of the given network.
      * @param network The network.
      */
-    public void setNetwork(INetwork network);
+    public void setNetwork(IPartNetwork network);
 
     /**
      * Get the current container network. Can be null.
      * @return The network.
      */
-    public INetwork getNetwork();
+    public IPartNetwork getNetwork();
 
 }

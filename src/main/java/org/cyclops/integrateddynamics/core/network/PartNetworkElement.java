@@ -7,8 +7,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -21,7 +21,7 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IEventListenableNetworkElement<P> {
+public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IEventListenableNetworkElement<IPartNetwork, P> {
 
     private final P part;
     private final IPartContainerFacade partContainerFacade;
@@ -62,17 +62,17 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void update(INetwork network) {
+    public void update(IPartNetwork network) {
         part.update(network, getTarget(), getPartState());
     }
 
     @Override
-    public void beforeNetworkKill(INetwork network) {
+    public void beforeNetworkKill(IPartNetwork network) {
         part.beforeNetworkKill(network, target, getPartState());
     }
 
     @Override
-    public void afterNetworkAlive(INetwork network) {
+    public void afterNetworkAlive(IPartNetwork network) {
         part.afterNetworkAlive(network, target, getPartState());
     }
 
@@ -82,7 +82,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public boolean onNetworkAddition(INetwork network) {
+    public boolean onNetworkAddition(IPartNetwork network) {
         boolean res = network.addPart(getPartState().getId(), getTarget().getCenter());
         if(res) {
             part.onNetworkAddition(network, target, getPartState());
@@ -91,18 +91,18 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void onNetworkRemoval(INetwork network) {
+    public void onNetworkRemoval(IPartNetwork network) {
         network.removePart(getPartState().getId());
         part.onNetworkRemoval(network, target, getPartState());
     }
 
     @Override
-    public void onPreRemoved(INetwork network) {
+    public void onPreRemoved(IPartNetwork network) {
         part.onPreRemoved(network, target, getPartState());
     }
 
     @Override
-    public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighborBlock) {
+    public void onNeighborBlockChange(IPartNetwork network, IBlockAccess world, Block neighborBlock) {
         part.onBlockNeighborChange(network, target, getPartState(), world, neighborBlock);
     }
 

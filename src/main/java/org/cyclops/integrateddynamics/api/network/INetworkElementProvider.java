@@ -9,7 +9,7 @@ import java.util.Collection;
  * Classes that can create instances of an {@link INetworkElement}.
  * @author rubensworks
  */
-public interface INetworkElementProvider {
+public interface INetworkElementProvider<N extends INetwork<N>> {
 
     /**
      * Create network element instances for the given position.
@@ -17,6 +17,6 @@ public interface INetworkElementProvider {
      * @param blockPos The position.
      * @return A collection of all network elements at this position.
      */
-    public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos);
+    public Collection<INetworkElement<N>> createNetworkElements(World world, BlockPos blockPos);
 
 }

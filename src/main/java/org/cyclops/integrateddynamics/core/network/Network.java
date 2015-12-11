@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
@@ -8,51 +7,37 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.datastructure.CompositeMap;
-import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.block.IVariableContainerFacade;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
-import org.cyclops.integrateddynamics.api.part.*;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
-import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
+import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.path.Cluster;
-import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A network instance that can hold a set of {@link INetworkElement}s.
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
+ * @param <N> The materialized type of the network.
  * @author rubensworks
  */
-public class Network implements INetwork {
+public class Network<N extends INetwork<N>> implements INetwork<N> {
 
     private Cluster<CablePathElement> baseCluster;
 
-    private final INetworkEventBus eventBus = new NetworkEventBus();
-    private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
-    private TreeSet<INetworkElement> updateableElements = null;
-    private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
-    private Map<Integer, PartPos> partPositions = Maps.newHashMap();
-    private final List<DimPos> variableContainerPositions = Lists.newLinkedList();
-    private Map<Integer, IVariableFacade> compositeVariableCache = null;
-    private Map<Integer, IValue> lazyExpressionValueCache = Maps.newHashMap();
+    private final INetworkEventBus<N> eventBus = new NetworkEventBus<>();
+    private final TreeSet<INetworkElement<N>> elements = Sets.newTreeSet();
+    private TreeSet<INetworkElement<N>> updateableElements = null;
+    private TreeMap<INetworkElement<N>, Integer> updateableElementsTicks = null;
 
-    private volatile boolean partsChanged = false;
     private volatile boolean killed = false;
 
     /**
@@ -76,6 +61,10 @@ public class Network implements INetwork {
         deriveNetworkElements(baseCluster);
     }
 
+    protected N getMaterializedThis() {
+        return (N) this;
+    }
+
     private void deriveNetworkElements(Cluster<CablePathElement> cables) {
         if(!killIfEmpty()) {
             for (CablePathElement cable : cables) {
@@ -83,29 +72,27 @@ public class Network implements INetwork {
                 BlockPos pos = cable.getPosition().getBlockPos();
                 Block block = world.getBlockState(pos).getBlock();
                 if (block instanceof INetworkElementProvider) {
-                    for(INetworkElement element : ((INetworkElementProvider) block).createNetworkElements(world, pos)) {
+                    for(INetworkElement<N> element : ((INetworkElementProvider<N>) block).createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
                     }
                 }
                 if (block instanceof INetworkCarrier) {
-                    INetworkCarrier networkCarrier = (INetworkCarrier) block;
+                    INetworkCarrier<N> networkCarrier = (INetworkCarrier<N>) block;
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
-                    INetwork network = networkCarrier.getNetwork(world, pos);
+                    INetwork<N> network = networkCarrier.getNetwork(world, pos);
                     if (network != null) {
-                        if(network.removeCable(block, cable)) {
-                            network.notifyPartsChanged();
-                        }
+                        network.removeCable(block, cable);
                     }
                     networkCarrier.resetCurrentNetwork(world, pos);
-                    networkCarrier.setNetwork(this, world, pos);
+                    networkCarrier.setNetwork(getMaterializedThis(), world, pos);
                 }
             }
         }
     }
 
     @Override
-    public INetworkEventBus getEventBus() {
+    public INetworkEventBus<N> getEventBus() {
         return this.eventBus;
     }
 
@@ -116,117 +103,14 @@ public class Network implements INetwork {
         initialize(false);
     }
 
-    @Override
-    public boolean addPart(int partId, PartPos partPos) {
-        if(partPositions.containsKey(partId)) {
-            return false;
-        }
-        partPositions.put(partId, partPos);
-        return true;
-    }
-
-    @Override
-    public IPartState getPartState(int partId) {
-        PartPos partPos = partPositions.get(partId);
-        return TileMultipartTicking.get(partPos.getPos()).getPartState(partPos.getSide());
-    }
-
-    @Override
-    public IPartType getPartType(int partId) {
-        PartPos partPos = partPositions.get(partId);
-        return TileMultipartTicking.get(partPos.getPos()).getPart(partPos.getSide());
-    }
-
-    @Override
-    public void removePart(int partId) {
-        partPositions.remove(partId);
-    }
-
-    @Override
-    public boolean hasPart(int partId) {
-        if(!partPositions.containsKey(partId)) {
-            return false;
-        }
-        PartPos partPos = partPositions.get(partId);
-        IPartContainer partContainer = TileMultipartTicking.get(partPos.getPos());
-        return partContainer != null && partContainer.hasPart(partPos.getSide());
-    }
-
-    @Override
-    public <V extends IValue> boolean hasPartVariable(int partId, IAspectRead<V, ?> aspect) {
-        if(!hasPart(partId)) {
-            return false;
-        }
-        IPartState partState = getPartState(partId);
-        if(!(partState instanceof IPartStateReader)) {
-            return false;
-        }
-        IPartType partType = getPartType(partId);
-        if(!(partType instanceof IPartTypeReader)) {
-            return false;
-        }
-        return ((IPartTypeReader) getPartType(partId)).getVariable(
-                PartTarget.fromCenter(partPositions.get(partId)), (IPartStateReader) partState, aspect) != null;
-    }
-
-    @Override
-    public <V extends IValue> IVariable<V> getPartVariable(int partId, IAspectRead<V, ?> aspect) {
-        return ((IPartStateReader) getPartState(partId)).getVariable(aspect);
-    }
-
-    protected Map<Integer, IVariableFacade> getVariableCache() {
-        if(compositeVariableCache == null) {
-            // Create a new composite map view on the existing variable containers in this network.
-            CompositeMap<Integer, IVariableFacade> compositeMap = new CompositeMap<>();
-            for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
-                DimPos dimPos = it.next();
-                World world = dimPos.getWorld();
-                BlockPos pos = dimPos.getBlockPos();
-                Block block = world.getBlockState(pos).getBlock();
-                if(block instanceof IVariableContainerFacade) {
-                    compositeMap.addElement(((IVariableContainerFacade) block).getVariableContainer(world, pos).getVariableCache());
-                } else {
-                    IntegratedDynamics.clog(Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
-                    it.remove();
-                }
-            }
-            compositeVariableCache = compositeMap;
-        }
-        return compositeVariableCache;
-    }
-
-    @Override
-    public boolean hasVariableFacade(int variableId) {
-        return getVariableCache().containsKey(variableId);
-    }
-
-    @Override
-    public IVariableFacade getVariableFacade(int variableId) {
-        return getVariableCache().get(variableId);
-    }
-
-    @Override
-    public void setValue(int id, IValue value) {
-        lazyExpressionValueCache.put(id, value);
-    }
-
-    @Override
-    public boolean hasValue(int id) {
-        return lazyExpressionValueCache.containsKey(id);
-    }
-
-    @Override
-    public IValue getValue(int id) {
-        return lazyExpressionValueCache.get(id);
-    }
-
     /**
      * Check if two networks are equal.
      * @param networkA A network.
      * @param networkB Another network.
+     * @param <N> The networkl ty
      * @return If they are equal.
      */
-    public static boolean areNetworksEqual(Network networkA, Network networkB) {
+    public static <N extends INetwork<N>> boolean areNetworksEqual(Network<N> networkA, Network<N> networkB) {
         return networkA.elements.containsAll(networkB.elements) && networkA.elements.size() == networkB.elements.size();
     }
 
@@ -250,22 +134,10 @@ public class Network implements INetwork {
     }
 
     @Override
-    public boolean addVariableContainer(DimPos dimPos) {
-        compositeVariableCache = null;
-        return variableContainerPositions.add(dimPos);
-    }
-
-    @Override
-    public void removeVariableContainer(DimPos dimPos) {
-        compositeVariableCache = null;
-        variableContainerPositions.remove(dimPos);
-    }
-
-    @Override
-    public boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
-        if(getEventBus().postCancelable(new NetworkElementAddEvent.Pre(this, element))) {
+    public boolean addNetworkElement(INetworkElement<N> element, boolean networkPreinit) {
+        if(getEventBus().postCancelable(new NetworkElementAddEvent.Pre<N>(getMaterializedThis(), element))) {
             elements.add(element);
-            if (!element.onNetworkAddition(this)) {
+            if (!element.onNetworkAddition(getMaterializedThis())) {
                 elements.remove(element);
                 return false;
             }
@@ -273,22 +145,22 @@ public class Network implements INetwork {
                 addNetworkElementUpdateable(element);
             }
             if (element instanceof IEventListenableNetworkElement) {
-                IEventListenableNetworkElement listenableElement = (IEventListenableNetworkElement) element;
-                INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
+                IEventListenableNetworkElement<N, ?> listenableElement = (IEventListenableNetworkElement<N, ?>) element;
+                INetworkEventListener<N, ?> listener = listenableElement.getNetworkEventListener();
                 if (listener != null && listener.hasEventSubscriptions()) {
-                    for (Class<? extends INetworkEvent> eventType : listener.getSubscribedEvents()) {
+                    for (Class<? extends INetworkEvent<N>> eventType : listener.getSubscribedEvents()) {
                         getEventBus().register(listenableElement, eventType);
                     }
                 }
             }
-            getEventBus().post(new NetworkElementAddEvent.Post(this, element));
+            getEventBus().post(new NetworkElementAddEvent.Post<N>(getMaterializedThis(), element));
             return true;
         }
         return false;
     }
 
     @Override
-    public void addNetworkElementUpdateable(INetworkElement element) {
+    public void addNetworkElementUpdateable(INetworkElement<N> element) {
         if(element.isUpdate()) {
             updateableElements.add(element);
             updateableElementsTicks.put(element, 0);
@@ -296,24 +168,24 @@ public class Network implements INetwork {
     }
 
     @Override
-    public boolean removeNetworkElementPre(INetworkElement element) {
-        return getEventBus().postCancelable(new NetworkElementRemoveEvent.Pre(this, element));
+    public boolean removeNetworkElementPre(INetworkElement<N> element) {
+        return getEventBus().postCancelable(new NetworkElementRemoveEvent.Pre<N>(getMaterializedThis(), element));
     }
 
     @Override
-    public void removeNetworkElementPost(INetworkElement element) {
+    public void removeNetworkElementPost(INetworkElement<N> element) {
         if (element instanceof IEventListenableNetworkElement) {
-            IEventListenableNetworkElement listenableElement = (IEventListenableNetworkElement) element;
-            INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
+            IEventListenableNetworkElement<N, ?> listenableElement = (IEventListenableNetworkElement<N, ?>) element;
+            INetworkEventListener<N, ?> listener = listenableElement.getNetworkEventListener();
             if (listener != null && listener.hasEventSubscriptions()) {
                 getEventBus().unregister(listenableElement);
             }
         }
-        element.beforeNetworkKill(this);
-        element.onNetworkRemoval(this);
+        element.beforeNetworkKill(getMaterializedThis());
+        element.onNetworkRemoval(getMaterializedThis());
         elements.remove(element);
         removeNetworkElementUpdateable(element);
-        getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
+        getEventBus().post(new NetworkElementRemoveEvent.Post<N>(getMaterializedThis(), element));
     }
 
     @Override
@@ -329,18 +201,18 @@ public class Network implements INetwork {
     protected void initialize(boolean silent) {
         updateableElements = Sets.newTreeSet();
         updateableElementsTicks = Maps.newTreeMap();
-        for(INetworkElement element : elements) {
+        for(INetworkElement<N> element : elements) {
             addNetworkElementUpdateable(element);
             if(!silent) {
-                element.afterNetworkAlive(this);
+                element.afterNetworkAlive(getMaterializedThis());
             }
         }
     }
 
     @Override
     public void kill() {
-        for(INetworkElement element : elements) {
-            element.beforeNetworkKill(this);
+        for(INetworkElement<N> element : elements) {
+            element.beforeNetworkKill(getMaterializedThis());
         }
         killed = true;
     }
@@ -355,51 +227,39 @@ public class Network implements INetwork {
     }
 
     @Override
-    public void update() {
+    public final void update() {
         if(killIfEmpty() || killed) {
             NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
         } else {
-            // Reset lazy variable cache
-            lazyExpressionValueCache.clear();
-
-            // Signal parts of any changes
-            if (partsChanged) {
-                this.partsChanged = false;
-                onPartsChanged();
-            }
+            onUpdate();
 
             // Update updateable network elements
-            for (INetworkElement element : updateableElements) {
+            for (INetworkElement<N> element : updateableElements) {
                 if (updateableElementsTicks.get(element) <= 0) {
                     updateableElementsTicks.put(element, element.getUpdateInterval());
-                    element.update(this);
+                    element.update(getMaterializedThis());
                 }
                 updateableElementsTicks.put(element, updateableElementsTicks.get(element) - 1);
             }
         }
     }
 
-    @Override
-    public void notifyPartsChanged() {
-        this.partsChanged = true;
-    }
+    protected void onUpdate() {
 
-    private void onPartsChanged() {
-        System.out.println("Parts of network " + this + " are changed.");
     }
 
     @Override
     public boolean removeCable(Block block, CablePathElement cable) {
         if(baseCluster.remove(cable)) {
             if (block instanceof INetworkElementProvider) {
-                Collection<INetworkElement> networkElements = ((INetworkElementProvider) block).
+                Collection<INetworkElement<N>> networkElements = ((INetworkElementProvider<N>) block).
                         createNetworkElements(cable.getPosition().getWorld(), cable.getPosition().getBlockPos());
-                for (INetworkElement networkElement : networkElements) {
+                for (INetworkElement<N> networkElement : networkElements) {
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;
                     }
                 }
-                for (INetworkElement networkElement : networkElements) {
+                for (INetworkElement<N> networkElement : networkElements) {
                     removeNetworkElementPost(networkElement);
                 }
                 return true;
@@ -418,19 +278,6 @@ public class Network implements INetwork {
     @Override
     public void beforeServerStop() {
 
-    }
-
-    /**
-     * Initiate a full network from the given start position.
-     * @param connectable The cable to start the network from.
-     * @param world The world.
-     * @param pos The position.
-     * @return The newly formed network.
-     */
-    public static Network initiateNetworkSetup(ICable<CablePathElement> connectable, World world, BlockPos pos) {
-        Network network = new Network(PathFinder.getConnectedCluster(connectable.createPathElement(world, pos)));
-        NetworkWorldStorage.getInstance(IntegratedDynamics._instance).addNewNetwork(network);
-        return network;
     }
 
 }

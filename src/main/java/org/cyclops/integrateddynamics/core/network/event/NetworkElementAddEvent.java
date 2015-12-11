@@ -8,16 +8,16 @@ import org.cyclops.integrateddynamics.api.network.event.ICancelableNetworkEvent;
  * An event thrown when an {@link INetworkElement} is being added to the network.
  * @author rubensworks
  */
-public abstract class NetworkElementAddEvent extends NetworkEvent {
+public abstract class NetworkElementAddEvent<N extends INetwork<N>> extends NetworkEvent<N> {
 
-    private final INetworkElement networkElement;
+    private final INetworkElement<N> networkElement;
 
-    protected NetworkElementAddEvent(INetwork network, INetworkElement networkElement) {
+    protected NetworkElementAddEvent(N network, INetworkElement<N> networkElement) {
         super(network);
         this.networkElement = networkElement;
     }
 
-    public INetworkElement getNetworkElement() {
+    public INetworkElement<N> getNetworkElement() {
         return this.networkElement;
     }
 
@@ -25,11 +25,11 @@ public abstract class NetworkElementAddEvent extends NetworkEvent {
      * A cancelable event before the element is added to the network.
      * Canceling this event will prevent the network element from being added.
      */
-    public static class Pre extends NetworkElementAddEvent implements ICancelableNetworkEvent {
+    public static class Pre<N extends INetwork<N>> extends NetworkElementAddEvent<N> implements ICancelableNetworkEvent<N> {
 
         private boolean canceled = false;
 
-        public Pre(INetwork network, INetworkElement networkElement) {
+        public Pre(N network, INetworkElement<N> networkElement) {
             super(network, networkElement);
         }
 
@@ -48,9 +48,9 @@ public abstract class NetworkElementAddEvent extends NetworkEvent {
     /**
      * After the element has been added to the network.
      */
-    public static class Post extends NetworkElementAddEvent {
+    public static class Post<N extends INetwork<N>> extends NetworkElementAddEvent<N> {
 
-        public Post(INetwork network, INetworkElement networkElement) {
+        public Post(N network, INetworkElement<N> networkElement) {
             super(network, networkElement);
         }
 

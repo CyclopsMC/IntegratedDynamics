@@ -7,7 +7,7 @@ import net.minecraft.world.World;
  * Interface for blocks that are network-aware.
  * @author rubensworks
  */
-public interface INetworkCarrier {
+public interface INetworkCarrier<N extends INetwork> {
 
     /**
      * Tell the container it is no longer part of its current network.
@@ -23,7 +23,7 @@ public interface INetworkCarrier {
      * @param world The world.
      * @param pos The position.
      */
-    public void setNetwork(INetwork network, World world, BlockPos pos);
+    public void setNetwork(N network, World world, BlockPos pos);
 
     /**
      * Get the current container network. Can be null.
@@ -31,6 +31,6 @@ public interface INetworkCarrier {
      * @param pos The position.
      * @return The network.
      */
-    public INetwork getNetwork(World world, BlockPos pos);
+    public N getNetwork(World world, BlockPos pos);
 
 }

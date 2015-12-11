@@ -28,8 +28,8 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -68,7 +68,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Getter
     @Setter
-    private INetwork network;
+    private IPartNetwork network;
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {this.markDirty();
@@ -94,7 +94,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     protected IPartType validatePartType(String partTypeName, IPartType partType) {
         if(partType == null) {
-            INetwork network = getNetwork();
+            IPartNetwork network = getNetwork();
             UnknownPartEvent event = new UnknownPartEvent(network, partTypeName);
             network.getEventBus().post(event);
             partType = event.getPartType();

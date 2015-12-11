@@ -13,9 +13,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.init.IInitListener;
-import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
@@ -27,7 +27,7 @@ import java.util.List;
  * {@link IPartState}.
  * @author rubensworks
  */
-public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> extends INetworkEventListener<PartNetworkElement<P, S>> {
+public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> extends INetworkEventListener<IPartNetwork, PartNetworkElement<P, S>> {
 
     /**
      * Get the part type class.
@@ -120,7 +120,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target block.
      * Update at the tick interval specified.
      */
-    public void update(INetwork network, PartTarget target, S state);
+    public void update(IPartNetwork network, PartTarget target, S state);
 
     /**
      * @param network The network to update in.
@@ -128,7 +128,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target block.
      * Called right before the network is terminated or will be reset.
      */
-    public void beforeNetworkKill(INetwork network, PartTarget target, S state);
+    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state);
 
     /**
      * @param network The network to update in.
@@ -136,7 +136,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target block.
      * Called right after this network is initialized.
      */
-    public void afterNetworkAlive(INetwork network, PartTarget target, S state);
+    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state);
 
     /**
      * Get the itemstack from the given state.
@@ -166,7 +166,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param state The state
      * @param target The target block.
      */
-    public void onNetworkAddition(INetwork network, PartTarget target, S state);
+    public void onNetworkAddition(IPartNetwork network, PartTarget target, S state);
 
     /**
      * Called when this element is removed from the network.
@@ -174,7 +174,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param state The state
      * @param target The target block.
      */
-    public void onNetworkRemoval(INetwork network, PartTarget target, S state);
+    public void onNetworkRemoval(IPartNetwork network, PartTarget target, S state);
 
     /**
      * Create a network element for this part type.
@@ -183,7 +183,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param side The side this network element is/will be placed at.
      * @return A new network element instance.
      */
-    public INetworkElement createNetworkElement(IPartContainerFacade partContainerFacade, DimPos pos, EnumFacing side);
+    public INetworkElement<IPartNetwork> createNetworkElement(IPartContainerFacade partContainerFacade, DimPos pos, EnumFacing side);
 
     /**
      * Called when a part is right-clicked.
@@ -222,7 +222,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param state The state
      * @param target The target block.
      */
-    public void onPreRemoved(INetwork network, PartTarget target, S state);
+    public void onPreRemoved(IPartNetwork network, PartTarget target, S state);
 
     /**
      * Called when a neighbouring block is updated, more specifically when
@@ -233,7 +233,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock The block type of the neighbour that was updated.
      */
-    public void onBlockNeighborChange(INetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
+    public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
 
     @Data
     public static class RenderPosition {

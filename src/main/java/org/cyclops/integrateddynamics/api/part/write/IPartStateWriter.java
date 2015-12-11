@@ -4,7 +4,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
@@ -36,7 +36,7 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      * @param network The network this part belongs to.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(INetwork network);
+    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network);
 
     /**
      * Indicate that this state should eventually recheck its aspect info because something might have changed what can

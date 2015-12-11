@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
@@ -123,7 +123,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public <V extends IValue> IVariable<V> getVariable(INetwork network) {
+        public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
             return null;
         }
 
@@ -133,7 +133,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void validate(INetwork network, IValidator validator, IValueType containingValueType) {
+        public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
             validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
         }
 

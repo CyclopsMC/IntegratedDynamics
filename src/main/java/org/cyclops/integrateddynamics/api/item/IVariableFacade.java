@@ -9,7 +9,7 @@ import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public interface IVariableFacade {
      * @param network The object used to look for the variable.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(INetwork network);
+    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network);
 
     /**
      * @return If this is a valid reference.
@@ -48,7 +48,7 @@ public interface IVariableFacade {
      * @param validator The object to notify errors to.
      * @param containingValueType The value type in which this variable facade is being used.
      */
-    public void validate(INetwork network, IValidator validator, IValueType containingValueType);
+    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType);
 
     /**
      * @return The output type of this variable facade.

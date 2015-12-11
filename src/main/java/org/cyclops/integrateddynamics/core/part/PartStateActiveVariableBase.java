@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -49,7 +49,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
         return this.inventory;
     }
 
-    protected void validate(INetwork network) {
+    protected void validate(IPartNetwork network) {
         // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
         this.currentVariableFacade.validate(network,
                 new PartStateActiveVariableBase.Validator(this), currentVariableFacade.getOutputType());
@@ -74,7 +74,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
      * @param network The network.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(INetwork network) {
+    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(!checkedForWriteVariable) {
             for(int slot = 0; slot < getInventory().getSizeInventory(); slot++) {
                 ItemStack itemStack = getInventory().getStackInSlot(slot);

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
@@ -41,13 +41,13 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     }
 
     @Override
-    public void onNetworkAddition(INetwork network, PartTarget target, PartStateReaderBase<PartTypeRedstoneReader> state) {
+    public void onNetworkAddition(IPartNetwork network, PartTarget target, PartStateReaderBase<PartTypeRedstoneReader> state) {
         super.onNetworkAddition(network, target, state);
         READ_REDSTONE_COMPONENT.setAllowRedstoneInput(target, true);
     }
 
     @Override
-    public void onNetworkRemoval(INetwork network, PartTarget target, PartStateReaderBase<PartTypeRedstoneReader> state) {
+    public void onNetworkRemoval(IPartNetwork network, PartTarget target, PartStateReaderBase<PartTypeRedstoneReader> state) {
         super.onNetworkRemoval(network, target, state);
         READ_REDSTONE_COMPONENT.setAllowRedstoneInput(target, false);
     }

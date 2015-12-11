@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 
 /**
@@ -46,7 +46,7 @@ public class PartPos {
      * @param pos The part position.
      * @return The network or null if not found.
      */
-    public static INetwork getNetwork(PartPos pos) {
+    public static IPartNetwork getNetwork(PartPos pos) {
         ITileCableNetwork cableNetwork = TileHelpers.getSafeTile(pos.getPos().getWorld(), pos.getPos().getBlockPos(), ITileCableNetwork.class);
         return cableNetwork.getNetwork();
     }

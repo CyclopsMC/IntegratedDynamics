@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -57,7 +57,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     }
 
     @Override
-    public IVariable<V> getVariable(INetwork network) {
+    public IVariable<V> getVariable(IPartNetwork network) {
         if(isValid()) {
             if(variable == null) {
                 variable = new Variable<V>(getValueType(), getValue());
@@ -73,7 +73,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     }
 
     @Override
-    public void validate(INetwork network, IValidator validator, IValueType containingValueType) {
+    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {

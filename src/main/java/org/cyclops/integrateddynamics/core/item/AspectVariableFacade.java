@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -44,7 +44,7 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getVariable(INetwork network) {
+    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(isValid() && getAspect() instanceof IAspectRead && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect())) {
             return network.getPartVariable(getPartId(), (IAspectRead) getAspect());
         }
@@ -57,7 +57,7 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
     }
 
     @Override
-    public void validate(INetwork network, IValidator validator, IValueType containingValueType) {
+    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if (!isValid()) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else if (!(getAspect() instanceof IAspectRead

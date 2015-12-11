@@ -21,9 +21,9 @@ import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.block.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
-import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.client.gui.GuiVariablestore;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
@@ -40,8 +40,8 @@ import java.util.Collection;
  *
  * @author rubensworks
  */
-public class BlockVariablestore extends ConfigurableBlockContainerGui implements ICableNetwork<CablePathElement>,
-        INetworkElementProvider, IVariableContainerFacade {
+public class BlockVariablestore extends ConfigurableBlockContainerGui implements ICableNetwork<IPartNetwork, CablePathElement>,
+        INetworkElementProvider<IPartNetwork>, IVariableContainerFacade {
 
     @BlockProperty
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
@@ -50,7 +50,7 @@ public class BlockVariablestore extends ConfigurableBlockContainerGui implements
 
     //@Delegate <- Lombok can't handle delegations with generics, so we'll have to do it manually...
     private CableNetworkComponent<BlockVariablestore> cableNetworkComponent = new CableNetworkComponent<>(this);
-    private NetworkElementProviderComponent networkElementProviderComponent = new NetworkElementProviderComponent(this);
+    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
 
     /**
      * Get the unique instance.
@@ -114,8 +114,8 @@ public class BlockVariablestore extends ConfigurableBlockContainerGui implements
     }
 
     @Override
-    public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
-        return Sets.<INetworkElement>newHashSet(new VariablestoreNetworkElement(DimPos.of(world, blockPos)));
+    public Collection<INetworkElement<IPartNetwork>> createNetworkElements(World world, BlockPos blockPos) {
+        return Sets.<INetworkElement<IPartNetwork>>newHashSet(new VariablestoreNetworkElement(DimPos.of(world, blockPos)));
     }
 
     @Override
@@ -161,12 +161,12 @@ public class BlockVariablestore extends ConfigurableBlockContainerGui implements
     }
 
     @Override
-    public void setNetwork(INetwork network, World world, BlockPos pos) {
+    public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
         cableNetworkComponent.setNetwork(network, world, pos);
     }
 
     @Override
-    public INetwork getNetwork(World world, BlockPos pos) {
+    public IPartNetwork getNetwork(World world, BlockPos pos) {
         return cableNetworkComponent.getNetwork(world, pos);
     }
 

@@ -8,16 +8,16 @@ import org.cyclops.integrateddynamics.api.network.event.ICancelableNetworkEvent;
  * An event thrown when an {@link INetworkElement} is being removed from the network.
  * @author rubensworks
  */
-public abstract class NetworkElementRemoveEvent extends NetworkEvent {
+public abstract class NetworkElementRemoveEvent<N extends INetwork<N>> extends NetworkEvent<N> {
 
-    private final INetworkElement networkElement;
+    private final INetworkElement<N> networkElement;
 
-    protected NetworkElementRemoveEvent(INetwork network, INetworkElement networkElement) {
+    protected NetworkElementRemoveEvent(N network, INetworkElement<N> networkElement) {
         super(network);
         this.networkElement = networkElement;
     }
 
-    public INetworkElement getNetworkElement() {
+    public INetworkElement<N> getNetworkElement() {
         return this.networkElement;
     }
 
@@ -25,11 +25,11 @@ public abstract class NetworkElementRemoveEvent extends NetworkEvent {
      * A cancelable event before the element is removed from the network.
      * Canceling this event will prevent the network element from being removed.
      */
-    public static class Pre extends NetworkElementRemoveEvent implements ICancelableNetworkEvent {
+    public static class Pre<N extends INetwork<N>> extends NetworkElementRemoveEvent<N> implements ICancelableNetworkEvent<N> {
 
         private boolean canceled = false;
 
-        public Pre(INetwork network, INetworkElement networkElement) {
+        public Pre(N network, INetworkElement<N> networkElement) {
             super(network, networkElement);
         }
 
@@ -48,9 +48,9 @@ public abstract class NetworkElementRemoveEvent extends NetworkEvent {
     /**
      * After the element has been removed from the network.
      */
-    public static class Post extends NetworkElementRemoveEvent {
+    public static class Post<N extends INetwork<N>> extends NetworkElementRemoveEvent<N> {
 
-        public Post(INetwork network, INetworkElement networkElement) {
+        public Post(N network, INetworkElement<N> networkElement) {
             super(network, networkElement);
         }
 

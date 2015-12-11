@@ -34,9 +34,9 @@ import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
 import org.cyclops.integrateddynamics.api.block.cable.*;
-import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -62,7 +62,7 @@ import java.util.*;
  * Ray tracing code is partially based on BuildCraft's pipe code.
  * @author rubensworks
  */
-public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<CablePathElement>,
+public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, CablePathElement>,
         ICableFakeable<CablePathElement>, ICableWithParts<CablePathElement>, ICableFacadeable<CablePathElement>, INetworkElementProvider,
         IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
 
@@ -177,7 +177,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     private ICollidable collidableComponent = new CollidableComponent<EnumFacing, BlockCable>(this, COLLIDABLE_COMPONENTS);
     //@Delegate// <- Lombok can't handle delegations with generics, so we'll have to do it manually...
     private CableNetworkFacadeableComponent<BlockCable> cableNetworkComponent = new CableNetworkFacadeableComponent<>(this);
-    private NetworkElementProviderComponent networkElementProviderComponent = new NetworkElementProviderComponent(this);
+    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
 
     private static BlockCable _instance = null;
 
@@ -323,7 +323,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                             BlockPos neighbourPos = pos.offset(positionHit);
                             Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
                             if (neighbourBlock instanceof ICableNetwork) {
-                                ((ICableNetwork<CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
+                                ((ICableNetwork<IPartNetwork, CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
                             }
                             return true;
                         } else if (rayTraceResult.getCollisionType() == CENTER_COMPONENT) {
@@ -345,7 +345,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                                 // Reinit the networks for this block and the connected neighbour.
                                 initNetwork(world, pos);
                                 if (neighbourBlock instanceof ICableNetwork) {
-                                    ((ICableNetwork<CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
+                                    ((ICableNetwork<IPartNetwork, CablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
                                 }
                             }
                             return true;
@@ -675,12 +675,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public void setNetwork(INetwork network, World world, BlockPos pos) {
+    public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
         cableNetworkComponent.setNetwork(network, world, pos);
     }
 
     @Override
-    public INetwork getNetwork(World world, BlockPos pos) {
+    public IPartNetwork getNetwork(World world, BlockPos pos) {
         return cableNetworkComponent.getNetwork(world, pos);
     }
 

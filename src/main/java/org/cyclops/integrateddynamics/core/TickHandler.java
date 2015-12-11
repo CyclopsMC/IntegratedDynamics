@@ -28,7 +28,7 @@ public final class TickHandler {
     @SubscribeEvent
     public void onTick(TickEvent event) {
         if(event.type == TickEvent.Type.SERVER && event.phase == TickEvent.Phase.END) {
-            for(INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+            for(INetwork<?> network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                 network.update();
             }
         }

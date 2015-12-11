@@ -18,7 +18,7 @@ public class NetworkWorldStorage extends WorldStorage {
     private static NetworkWorldStorage INSTANCE = null;
 
     @NBTPersist
-    private Set<INetwork> networks = Sets.newHashSet();
+    private Set<INetwork<?>> networks = Sets.newHashSet();
 
     private NetworkWorldStorage(ModBase mod) {
         super(mod);
@@ -45,7 +45,7 @@ public class NetworkWorldStorage extends WorldStorage {
      * Add a network that needs persistence.
      * @param network The network.
      */
-    public synchronized void addNewNetwork(INetwork network) {
+    public synchronized void addNewNetwork(INetwork<?> network) {
         networks.add(network);
     }
 
@@ -54,27 +54,27 @@ public class NetworkWorldStorage extends WorldStorage {
      * This is allowed to be called if the network was already removed.
      * @param network The network.
      */
-    public synchronized void removeInvalidatedNetwork(INetwork network) {
+    public synchronized void removeInvalidatedNetwork(INetwork<?> network) {
         networks.remove(network);
     }
 
     /**
      * @return A thread-safe copy of the current network set.
      */
-    public synchronized Set<INetwork> getNetworks() {
+    public synchronized Set<INetwork<?>> getNetworks() {
         return ImmutableSet.copyOf(networks);
     }
 
     @Override
     public void afterLoad() {
-        for(INetwork network : networks) {
+        for(INetwork<?> network : networks) {
             network.afterServerLoad();
         }
     }
 
     @Override
     public void beforeSave() {
-        for(INetwork network : networks) {
+        for(INetwork<?> network : networks) {
             network.beforeServerStop();
         }
     }

@@ -21,7 +21,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.client.gui.GuiPartDisplay;
@@ -54,11 +54,11 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
-        Map<Class<? extends INetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
+    protected Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> constructNetworkEventActions() {
+        Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> actions = super.constructNetworkEventActions();
         actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
             @Override
-            public void onAction(INetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
+            public void onAction(IPartNetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
                 onVariableContentsUpdated(event.getNetwork(), target, state);
             }
         });
@@ -79,13 +79,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void beforeNetworkKill(INetwork network, PartTarget target, S state) {
+    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state) {
         super.beforeNetworkKill(network, target, state);
         state.onVariableContentsUpdated((P) this, target);
     }
 
     @Override
-    public void afterNetworkAlive(INetwork network, PartTarget target, S state) {
+    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state) {
         super.afterNetworkAlive(network, target, state);
         state.onVariableContentsUpdated((P) this, target);
     }
@@ -96,7 +96,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void update(INetwork network, PartTarget target, S state) {
+    public void update(IPartNetwork network, PartTarget target, S state) {
         super.update(network, target, state);
         IValue lastValue = state.getDisplayValue();
         IValue newValue = null;
@@ -117,7 +117,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
     }
 
-    protected void onValueChanged(INetwork network, PartTarget target, S state, IValue lastValue, IValue newValue) {
+    protected void onValueChanged(IPartNetwork network, PartTarget target, S state, IValue lastValue, IValue newValue) {
         state.setDisplayValue(newValue);
     }
 
@@ -152,7 +152,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 withProperty(IgnoredBlockStatus.STATUS, status);
     }
 
-    protected void onVariableContentsUpdated(INetwork network, PartTarget target, S state) {
+    protected void onVariableContentsUpdated(IPartNetwork network, PartTarget target, S state) {
         state.onVariableContentsUpdated((P) this, target);
     }
 

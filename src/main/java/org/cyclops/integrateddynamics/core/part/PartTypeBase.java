@@ -23,8 +23,8 @@ import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -59,7 +59,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     private final String name;
     @Getter
     private final RenderPosition renderPosition;
-    private final Map<Class<? extends INetworkEvent>, IEventAction> networkEventActions;
+    private final Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> networkEventActions;
 
     public PartTypeBase(String name, RenderPosition renderPosition) {
         if(hasGui()) {
@@ -132,7 +132,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * Override this to register your network event actions.
      * @return The event actions.
      */
-    protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
+    protected Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> constructNetworkEventActions() {
         return Maps.newHashMap();
     }
 
@@ -142,13 +142,13 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public final Set<Class<? extends INetworkEvent>> getSubscribedEvents() {
+    public final Set<Class<? extends INetworkEvent<IPartNetwork>>> getSubscribedEvents() {
         return networkEventActions.keySet();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final void onEvent(INetworkEvent event, PartNetworkElement<P, S> networkElement) {
+    public final void onEvent(INetworkEvent<IPartNetwork> event, PartNetworkElement<P, S> networkElement) {
         networkEventActions.get(event.getClass()).onAction(event.getNetwork(), networkElement.getTarget(), networkElement.getPartState(), event);
     }
 
@@ -194,7 +194,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void update(INetwork network, PartTarget target, S state) {
+    public void update(IPartNetwork network, PartTarget target, S state) {
 
     }
 
@@ -250,22 +250,22 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void beforeNetworkKill(INetwork network, PartTarget target, S state) {
+    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state) {
         System.out.println("killing " + state);
     }
 
     @Override
-    public void afterNetworkAlive(INetwork network, PartTarget target, S state) {
+    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state) {
         System.out.println("alive " + state);
     }
 
     @Override
-    public void onNetworkAddition(INetwork network, PartTarget target, S state) {
+    public void onNetworkAddition(IPartNetwork network, PartTarget target, S state) {
 
     }
 
     @Override
-    public void onNetworkRemoval(INetwork network, PartTarget target, S state) {
+    public void onNetworkRemoval(IPartNetwork network, PartTarget target, S state) {
 
     }
 
@@ -297,12 +297,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void onPreRemoved(INetwork network, PartTarget target, S state) {
+    public void onPreRemoved(IPartNetwork network, PartTarget target, S state) {
 
     }
 
     @Override
-    public void onBlockNeighborChange(INetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
+    public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
 
     }
 
@@ -314,7 +314,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {
 
-        public void onAction(INetwork network, PartTarget target, S state, E event);
+        public void onAction(IPartNetwork network, PartTarget target, S state, E event);
 
     }
 
