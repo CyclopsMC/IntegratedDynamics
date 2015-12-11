@@ -38,6 +38,7 @@ import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
+import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 import javax.annotation.Nullable;
@@ -91,6 +92,16 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         tag.setTag("parts", partList);
     }
 
+    protected IPartType validatePartType(String partTypeName, IPartType partType) {
+        if(partType == null) {
+            INetwork network = getNetwork();
+            UnknownPartEvent event = new UnknownPartEvent(network, partTypeName);
+            network.getEventBus().post(event);
+            partType = event.getPartType();
+        }
+        return partType;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         partData.clear(); // We only want the new data.
@@ -98,13 +109,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         for(int i = 0; i < partList.tagCount(); i++) {
             NBTTagCompound partTag = partList.getCompoundTagAt(i);
             String partTypeName = partTag.getString("__partType");
-            IPartType partType = PartTypes.REGISTRY.getPartType(partTypeName);
-            if(partType == null) { // TODO: Throw a nice event
-                if("display".equals(partTypeName)) {
-                    System.out.println("CONVERTED"); // TODO
-                    partType = PartTypes.REGISTRY.getPartType("displayPanel");
-                }
-            }
+            IPartType partType = validatePartType(partTypeName, PartTypes.REGISTRY.getPartType(partTypeName));
             if(partType != null) {
                 EnumFacing side = EnumFacing.byName(partTag.getString("__side"));
                 if(side != null) {
