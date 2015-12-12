@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
+import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 
 import java.io.IOException;
 import java.util.List;
@@ -202,7 +203,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
             subGuiHolder.removeSubGui(propertyInfo);
         }
         guiElement = new ValueTypeGuiElement<>(property.getType());
-        subGuiHolder.addSubGui(propertyConfigPattern = (ValueTypeSubGuiRenderPattern) guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getContainer()));
+        subGuiHolder.addSubGui(propertyConfigPattern = guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getContainer()));
         subGuiHolder.addSubGui(propertyInfo = new SubGuiValueTypeInfo(guiElement));
         propertyConfigPattern.initGui(guiLeft, guiTop);
         guiElement.activate();
@@ -228,9 +229,9 @@ public class GuiAspectSettings extends GuiContainerExtended {
         }
     }
 
-    public class SubGuiValueTypeInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<GuiAspectSettings, ContainerAspectSettings> {
+    public class SubGuiValueTypeInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<SubGuiConfigRenderPattern, GuiAspectSettings, ContainerAspectSettings> {
 
-        public SubGuiValueTypeInfo(IGuiInputElement<GuiAspectSettings, ContainerAspectSettings> element) {
+        public SubGuiValueTypeInfo(IGuiInputElement<SubGuiConfigRenderPattern, GuiAspectSettings, ContainerAspectSettings> element) {
             super(GuiAspectSettings.this, (ContainerAspectSettings) GuiAspectSettings.this.container, element, 8, 105, 160, 20);
         }
 

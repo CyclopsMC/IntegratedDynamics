@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-public class ValueTypeElementSubGuiRenderPattern extends ValueTypeSubGuiRenderPattern<GuiLogicProgrammer, ContainerLogicProgrammer> {
+public class ValueTypeElementSubGuiRenderPattern extends ValueTypeSubGuiRenderPattern<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> {
 
     public ValueTypeElementSubGuiRenderPattern(ValueTypeElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                                GuiLogicProgrammer gui, ContainerLogicProgrammer container) {

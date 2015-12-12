@@ -27,7 +27,7 @@ import java.util.List;
  * Element for value type.
  * @author rubensworks
  */
-public class ValueTypeElement implements ILogicProgrammerElement {
+public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> {
 
     @Getter
     private ValueTypeGuiElement<GuiLogicProgrammer, ContainerLogicProgrammer> innerGuiElement;

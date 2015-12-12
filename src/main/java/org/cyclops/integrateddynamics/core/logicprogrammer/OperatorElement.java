@@ -33,7 +33,7 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class OperatorElement implements ILogicProgrammerElement {
+public class OperatorElement implements ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> {
 
     private final IOperator operator;
     private IVariableFacade[] inputVariables;

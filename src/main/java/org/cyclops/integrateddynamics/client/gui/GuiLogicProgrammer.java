@@ -172,7 +172,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         }
     }
 
-    protected void onActivateElement(ILogicProgrammerElement element) {
+    protected void onActivateElement(ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> element) {
         subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammer) getContainer()));
         operatorConfigPattern.initGui(guiLeft, guiTop);
         subGuiHolder.addSubGui(new SubGuiOperatorInfo(element));
@@ -227,9 +227,9 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    public class SubGuiOperatorInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<GuiLogicProgrammer, ContainerLogicProgrammer> {
+    public class SubGuiOperatorInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> {
 
-        public SubGuiOperatorInfo(IGuiInputElement<GuiLogicProgrammer, ContainerLogicProgrammer> element) {
+        public SubGuiOperatorInfo(IGuiInputElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> element) {
             super(GuiLogicProgrammer.this, (ContainerLogicProgrammer) GuiLogicProgrammer.this.container, element, 88, 106, 139, 20);
         }
 

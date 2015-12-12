@@ -18,6 +18,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
@@ -30,7 +31,7 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class ValueTypeGuiElement<G extends Gui, C extends Container> implements IGuiInputElement<G, C> {
+public class ValueTypeGuiElement<G extends Gui, C extends Container> implements IGuiInputElement<SubGuiConfigRenderPattern, G, C> {
 
     private final IValueType valueType;
     private final String defaultInputString;
@@ -92,19 +93,19 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public ValueTypeSubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   G gui, C container) {
-        return new ValueTypeSubGuiRenderPattern<G, C>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+        return new ValueTypeSubGuiRenderPattern<ValueTypeSubGuiRenderPattern, G, C>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     @SideOnly(Side.CLIENT)
-    public abstract static class SubGuiValueTypeInfo<G extends GuiContainerExtended, C extends Container> extends SubGuiBox.Base {
+    public abstract static class SubGuiValueTypeInfo<S extends ISubGuiBox, G extends GuiContainerExtended, C extends Container> extends SubGuiBox.Base {
 
         private final IGuiInputElement element;
         protected final G gui;
         protected final C container;
 
-        public SubGuiValueTypeInfo(G gui, C container, IGuiInputElement<G, C> element, int x, int y, int width, int height) {
+        public SubGuiValueTypeInfo(G gui, C container, IGuiInputElement<S, G, C> element, int x, int y, int width, int height) {
             super(Box.DARK, x, y, width, height);
             this.gui = gui;
             this.container = container;

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeValueChangedPacket;
 
@@ -20,7 +21,7 @@ import java.io.IOException;
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-public class ValueTypeSubGuiRenderPattern<G extends Gui, C extends Container> extends SubGuiConfigRenderPattern<ValueTypeGuiElement, G, C> {
+public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C extends Container> extends SubGuiConfigRenderPattern<ValueTypeGuiElement<G, C>, G, C> {
 
     protected final ValueTypeGuiElement<G, C> element;
     @Getter

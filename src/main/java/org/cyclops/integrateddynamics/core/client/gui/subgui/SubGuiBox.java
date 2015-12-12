@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ import java.io.IOException;
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-public abstract class SubGuiBox extends Gui implements ISubGui {
+public abstract class SubGuiBox extends Gui implements ISubGuiBox {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID,
             IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "subGui.png");
@@ -79,11 +80,6 @@ public abstract class SubGuiBox extends Gui implements ISubGui {
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 
     }
-
-    protected abstract int getX();
-    protected abstract int getY();
-    protected abstract int getWidth();
-    protected abstract int getHeight();
 
     public static enum Box {
 
