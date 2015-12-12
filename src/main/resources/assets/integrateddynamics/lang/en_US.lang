@@ -10,6 +10,7 @@ gui.integrateddynamics.part.properties=Properties:
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
 tile.blocks.integrateddynamics.variablestore.name=Variable Store
+tile.blocks.integrateddynamics.energyBattery.name=Energy Battery
 tile.blocks.integrateddynamics.logicProgrammer.name=Logic Programmer
 
 # Items

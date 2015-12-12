@@ -16,7 +16,7 @@ import java.util.List;
  * These instances are used as a simple way of referring to these elements.
  * @author rubensworks
  */
-public interface INetworkElement<N extends INetwork<N>> extends Comparable<INetworkElement<N>> {
+public interface INetworkElement<N extends INetwork> extends Comparable<INetworkElement<N>> {
 
     /**
      * @return The tick interval to update this element.
@@ -78,6 +78,6 @@ public interface INetworkElement<N extends INetwork<N>> extends Comparable<INetw
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock block type of the neighbour that was updated.
      */
-    public void onNeighborBlockChange(IPartNetwork network, IBlockAccess world, Block neighborBlock);
+    public void onNeighborBlockChange(N network, IBlockAccess world, Block neighborBlock);
 
 }

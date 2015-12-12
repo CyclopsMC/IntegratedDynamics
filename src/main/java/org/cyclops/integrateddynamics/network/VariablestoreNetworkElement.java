@@ -63,8 +63,7 @@ public class VariablestoreNetworkElement implements INetworkElement<IPartNetwork
 
     @Override
     public boolean onNetworkAddition(IPartNetwork network) {
-        network.addVariableContainer(getPos());
-        return true; // No reason this could fail.
+        return network.addVariableContainer(getPos());
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.cyclops.integrateddynamics.api.path.IPathElement;
  * Interface for cables that are network-aware.
  * @author rubensworks
  */
-public interface ICableNetwork<N extends INetwork<N>, E extends IPathElement<E>> extends ICable<E>, INetworkCarrier<N> {
+public interface ICableNetwork<N extends INetwork, E extends IPathElement<E>> extends ICable<E>, INetworkCarrier<N> {
 
     /**
      * (Re-)initialize the network at the given position.

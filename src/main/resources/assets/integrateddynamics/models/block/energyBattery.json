@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "particle": "integrateddynamics:blocks/energyBattery",
+        "down": "integrateddynamics:blocks/energyBattery",
+        "up": "integrateddynamics:blocks/energyBattery",
+        "north": "integrateddynamics:blocks/energyBattery",
+        "east": "integrateddynamics:blocks/energyBattery",
+        "south": "integrateddynamics:blocks/energyBattery",
+        "west": "integrateddynamics:blocks/energyBattery"
+    }
+}

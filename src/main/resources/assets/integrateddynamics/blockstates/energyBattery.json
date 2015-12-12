@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "facing=south": { "model": "integrateddynamics:energyBattery" },
+    "facing=west" : { "model": "integrateddynamics:energyBattery", "y": 90 },
+    "facing=north": { "model": "integrateddynamics:energyBattery", "y": 180 },
+    "facing=east" : { "model": "integrateddynamics:energyBattery", "y": 270 },
+    "inventory"   : { "model": "integrateddynamics:energyBattery" }
+  }
+}

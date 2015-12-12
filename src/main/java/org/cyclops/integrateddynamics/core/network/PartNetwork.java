@@ -1,5 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
@@ -9,11 +12,14 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
+import org.cyclops.integrateddynamics.api.block.IEnergyBatteryFacade;
 import org.cyclops.integrateddynamics.api.block.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.*;
@@ -26,6 +32,8 @@ import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +43,13 @@ import java.util.Map;
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
  * @author rubensworks
  */
-public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
+public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, IEnergyNetwork {
 
     private Map<Integer, PartPos> partPositions;
     private List<DimPos> variableContainerPositions;
     private Map<Integer, IVariableFacade> compositeVariableCache;
     private Map<Integer, IValue> lazyExpressionValueCache;
+    private Map<DimPos, IEnergyBatteryFacade> energyBatteryPositions;
 
     private volatile boolean partsChanged = false;
 
@@ -71,6 +80,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
         variableContainerPositions = Lists.newLinkedList();
         compositeVariableCache = null;
         lazyExpressionValueCache = Maps.newHashMap();
+        energyBatteryPositions = Maps.newHashMap();
     }
 
     @Override
@@ -238,4 +248,69 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
         return network;
     }
 
+    protected synchronized List<IEnergyBattery> getMaterializedEnergyBatteries() {
+        return ImmutableList.copyOf(Iterables.transform(energyBatteryPositions.entrySet(), new Function<Map.Entry<DimPos, IEnergyBatteryFacade>, IEnergyBattery>() {
+            @Nullable
+            @Override
+            public IEnergyBattery apply(Map.Entry<DimPos, IEnergyBatteryFacade> input) {
+                return input.getValue().getEnergyBattery(input.getKey().getWorld(), input.getKey().getBlockPos());
+            }
+
+            @Override
+            public boolean equals(@Nullable Object object) {
+                return false;
+            }
+        }));
+    }
+
+    @Override
+    public synchronized int getStoredEnergy() {
+        int energy = 0;
+        for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
+            energy += energyBattery.getStoredEnergy();
+        }
+        return energy;
+    }
+
+    @Override
+    public synchronized int getMaxStoredEnergy() {
+        int maxEnergy = 0;
+        for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
+            maxEnergy += energyBattery.getMaxStoredEnergy();
+        }
+        return maxEnergy;
+    }
+
+    @Override
+    public synchronized int consume(int energy, boolean simulate) {
+        int toConsume = energy;
+        for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
+            int consume = Math.min(energyBattery.getStoredEnergy(), toConsume);
+            if(consume > 0) {
+                toConsume -= energyBattery.consume(consume, simulate);
+            }
+        }
+        return energy - toConsume;
+    }
+
+    @Override
+    public boolean addEnergyBattery(DimPos dimPos) {
+        World world = dimPos.getWorld();
+        BlockPos pos = dimPos.getBlockPos();
+        Block block = world.getBlockState(pos).getBlock();
+        if(block instanceof IEnergyBatteryFacade) {
+            return energyBatteryPositions.put(dimPos, (IEnergyBatteryFacade) block) == null;
+        }
+        return false;
+    }
+
+    @Override
+    public void removeEnergyBattery(DimPos pos) {
+        energyBatteryPositions.remove(pos);
+    }
+
+    @Override
+    public Map<DimPos, IEnergyBatteryFacade> getEnergyBatteries() {
+        return Collections.unmodifiableMap(energyBatteryPositions);
+    }
 }
