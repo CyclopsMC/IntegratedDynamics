@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.google.common.base.Strings;
 import lombok.ToString;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -19,22 +19,24 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
     @Override
     public ValueBlock getDefault() {
-        return ValueBlock.of(Blocks.air.getDefaultState());
+        return ValueBlock.of(null);
     }
 
     @Override
     public String toCompactString(ValueBlock value) {
-        return value.getRawValue().getBlock().getLocalizedName();
+        return value.getRawValue().isPresent() ? value.getRawValue().get().getBlock().getLocalizedName() : "";
     }
 
     @Override
     public String serialize(ValueBlock value) {
-        Pair<String, Integer> serializedBlockState = BlockHelpers.serializeBlockState(value.getRawValue());
+        if(!value.getRawValue().isPresent()) return "";
+        Pair<String, Integer> serializedBlockState = BlockHelpers.serializeBlockState(value.getRawValue().get());
         return String.format("%s$%s", serializedBlockState.getLeft(), serializedBlockState.getRight());
     }
 
     @Override
     public ValueBlock deserialize(String value) {
+        if(Strings.isNullOrEmpty(value)) return ValueBlock.of(null);
         String[] parts = value.split("\\$");
         try {
             return ValueBlock.of(BlockHelpers.deserializeBlockState(
@@ -48,31 +50,20 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
     @Override
     public String getName(ValueBlock a) {
-        return a.getRawValue().getBlock().getLocalizedName();
+        return toCompactString(a);
     }
 
     @ToString
-    public static class ValueBlock extends ValueBase {
-
-        private final IBlockState blockState;
+    public static class ValueBlock extends ValueOptionalBase<IBlockState> {
 
         private ValueBlock(IBlockState blockState) {
-            super(ValueTypes.OBJECT_BLOCK);
-            this.blockState = blockState;
+            super(ValueTypes.OBJECT_BLOCK, blockState);
         }
 
         public static ValueBlock of(IBlockState blockState) {
             return new ValueBlock(blockState);
         }
 
-        public IBlockState getRawValue() {
-            return blockState;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return o instanceof ValueBlock && ((ValueBlock) o).blockState == this.blockState;
-        }
     }
 
 }

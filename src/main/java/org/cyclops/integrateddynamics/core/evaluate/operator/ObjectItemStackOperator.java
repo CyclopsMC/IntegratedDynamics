@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import com.google.common.base.Optional;
 import net.minecraft.item.ItemStack;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -56,8 +57,8 @@ public class ObjectItemStackOperator extends ObjectOperatorBase {
         return new ObjectItemStackOperator(name, new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
-                ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-                return ValueTypeInteger.ValueInteger.of(a == null ? defaultValue : function.evaluate(a));
+                Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+                return ValueTypeInteger.ValueInteger.of(a.isPresent() ? function.evaluate(a.get()) : defaultValue);
             }
         }, IConfigRenderPattern.SUFFIX_1_LONG);
     }
@@ -70,8 +71,8 @@ public class ObjectItemStackOperator extends ObjectOperatorBase {
         return new ObjectItemStackOperator(name, new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
-                ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-                return ValueTypeBoolean.ValueBoolean.of(a == null ? defaultValue : function.evaluate(a));
+                Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+                return ValueTypeBoolean.ValueBoolean.of(a.isPresent() ? function.evaluate(a.get()) : defaultValue);
             }
         }, IConfigRenderPattern.SUFFIX_1_LONG);
     }

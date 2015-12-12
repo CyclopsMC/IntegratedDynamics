@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import com.google.common.base.Optional;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -418,8 +419,8 @@ public final class Operators {
     public static final ObjectBlockOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(new ObjectBlockOperator("opaque", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            IBlockState a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a.getBlock().isOpaqueCube());
+            Optional<IBlockState> a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
+            return ValueTypeBoolean.ValueBoolean.of(a.isPresent() && a.get().getBlock().isOpaqueCube());
         }
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 
@@ -523,8 +524,8 @@ public final class Operators {
     public static final ObjectItemStackOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(new ObjectItemStackOperator("rarity", "rarity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueTypeString.ValueString.of(a == null ? "": a.getRarity().rarityName);
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getRarity().rarityName : "");
         }
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 
@@ -534,9 +535,9 @@ public final class Operators {
     public static final ObjectItemStackOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(new ObjectItemStackOperator("strength", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.DOUBLE, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            IBlockState b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
-            return ValueTypeDouble.ValueDouble.of(a == null ? 0 : a.getStrVsBlock(b.getBlock()));
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            Optional<IBlockState> b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
+            return ValueTypeDouble.ValueDouble.of(a.isPresent() && b.isPresent() ? a.get().getStrVsBlock(b.get().getBlock()) : 0);
         }
     }, IConfigRenderPattern.INFIX));
 
@@ -546,9 +547,9 @@ public final class Operators {
     public static final ObjectItemStackOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(new ObjectItemStackOperator("canharvest", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            IBlockState b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a == null ? false : a.canHarvestBlock(b.getBlock()));
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            Optional<IBlockState> b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
+            return ValueTypeBoolean.ValueBoolean.of(a.isPresent() && b.isPresent() ? a.get().canHarvestBlock(b.get().getBlock()) : false);
         }
     }, IConfigRenderPattern.INFIX));
 

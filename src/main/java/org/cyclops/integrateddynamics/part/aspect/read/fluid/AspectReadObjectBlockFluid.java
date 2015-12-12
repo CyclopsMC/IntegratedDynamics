@@ -70,6 +70,6 @@ public class AspectReadObjectBlockFluid extends AspectReadObjectBlockBase {
     }
 
     private IBlockState getDefaultValue() {
-        return ValueTypes.OBJECT_BLOCK.getDefault().getRawValue();
+        return ValueTypes.OBJECT_BLOCK.getDefault().getRawValue().get();
     }
 }
