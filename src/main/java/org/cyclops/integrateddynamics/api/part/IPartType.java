@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -236,12 +235,31 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      */
     public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
 
-    @Data
     public static class RenderPosition {
 
         public static final RenderPosition NONE = new RenderPosition(-1, -1, -1);
 
-        private final float depthFactor, widthFactor, heightFactor;
+        private final float depthFactor;
+        private final float widthFactor;
+        private final float heightFactor;
+
+        public float getDepthFactor() {
+            return depthFactor;
+        }
+
+        public float getWidthFactor() {
+            return widthFactor;
+        }
+
+        public float getHeightFactor() {
+            return heightFactor;
+        }
+
+        public RenderPosition(float depthFactor, float widthFactor, float heightFactor) {
+            this.depthFactor = depthFactor;
+            this.widthFactor = widthFactor;
+            this.heightFactor = heightFactor;
+        }
 
     }
 

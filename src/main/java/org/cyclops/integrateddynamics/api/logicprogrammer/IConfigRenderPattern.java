@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
-import lombok.Data;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -29,12 +28,34 @@ public interface IConfigRenderPattern {
      */
     public Pair<Integer, Integer> getSymbolPosition();
 
-    @Data
     public static class Base implements IConfigRenderPattern {
 
         private final int width, height;
         private final Pair<Integer, Integer>[] slotPositions;
         private final Pair<Integer, Integer> symbolPosition;
+
+        public Base(int width, int height, Pair<Integer, Integer>[] slotPositions, Pair<Integer, Integer> symbolPosition) {
+            this.width = width;
+            this.height = height;
+            this.slotPositions = slotPositions;
+            this.symbolPosition = symbolPosition;
+        }
+
+        public int getWidth() {
+            return this.width;
+        }
+
+        public int getHeight() {
+            return this.height;
+        }
+
+        public Pair<Integer, Integer>[] getSlotPositions() {
+            return this.slotPositions;
+        }
+
+        public Pair<Integer, Integer> getSymbolPosition() {
+            return this.symbolPosition;
+        }
 
     }
 
