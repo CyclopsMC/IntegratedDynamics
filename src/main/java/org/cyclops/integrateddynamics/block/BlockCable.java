@@ -33,7 +33,10 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
-import org.cyclops.integrateddynamics.api.block.cable.*;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableFacadeable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -64,7 +67,7 @@ import java.util.*;
  * @author rubensworks
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        ICableFakeable<ICablePathElement>, ICableWithParts<ICablePathElement>, ICableFacadeable<ICablePathElement>, INetworkElementProvider,
+        ICableFakeable<ICablePathElement>, ICableFacadeable<ICablePathElement>, INetworkElementProvider,
         IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
 
     // Properties
@@ -219,8 +222,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return getDefaultState();
     }
 
-    @Override
-    public boolean hasPart(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    protected boolean hasPart(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return BlockHelpers.getSafeBlockStateProperty(
                (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
                PART[side.ordinal()],
