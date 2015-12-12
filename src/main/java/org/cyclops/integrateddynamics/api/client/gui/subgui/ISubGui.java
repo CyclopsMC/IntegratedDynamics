@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.client.gui.subgui;
+package org.cyclops.integrateddynamics.api.client.gui.subgui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;

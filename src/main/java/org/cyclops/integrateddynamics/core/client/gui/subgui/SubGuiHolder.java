@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui.subgui;
 import com.google.common.collect.Sets;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGui;
 
 import java.io.IOException;
 import java.util.Set;
