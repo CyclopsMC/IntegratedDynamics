@@ -3,12 +3,14 @@ package org.cyclops.integrateddynamics.block;
 import com.google.common.collect.Sets;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
@@ -42,6 +44,8 @@ public class BlockEnergyBattery extends ConfigurableBlockContainer implements IC
 
     @BlockProperty
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+    @BlockProperty
+    public static final PropertyInteger FILL = PropertyInteger.create("fill", 0, 10);
 
     private static BlockEnergyBattery _instance = null;
 
@@ -119,6 +123,11 @@ public class BlockEnergyBattery extends ConfigurableBlockContainer implements IC
     @Override
     public IEnergyBattery getEnergyBattery(World world, BlockPos pos) {
         return TileHelpers.getSafeTile(world, pos, TileEnergyBattery.class);
+    }
+
+    @Override
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT_MIPPED;
     }
 
     /* --------------- Delegate to ICableNetwork<CablePathElement> --------------- */

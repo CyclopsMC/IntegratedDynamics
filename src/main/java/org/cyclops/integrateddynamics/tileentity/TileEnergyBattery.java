@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
+import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 
 import java.util.Map;
@@ -96,11 +97,17 @@ public class TileEnergyBattery extends CyclopsTileEntity implements ITileCableNe
         return 1000; // TODO
     }
 
+    protected void setEnergy(int energy) {
+        this.energy = energy;
+        int fill = (int) Math.floor(((float) energy * BlockEnergyBattery.FILL.getAllowedValues().size()) / (float) getMaxStoredEnergy());
+        getWorld().setBlockState(getPos(), getWorld().getBlockState(getPos()).withProperty(BlockEnergyBattery.FILL, fill));
+        sendUpdate();
+    }
+
     @Override
     public void addEnergy(int energy) {
-        this.energy += energy;
-        this.energy = Math.min(energy, getMaxStoredEnergy());
-        sendUpdate();
+        int newEnergy = getStoredEnergy() + energy;
+        setEnergy(Math.min(newEnergy, getMaxStoredEnergy()));
     }
 
     @Override
@@ -108,8 +115,7 @@ public class TileEnergyBattery extends CyclopsTileEntity implements ITileCableNe
         int stored = getStoredEnergy();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {
-            this.energy = newEnergy;
-            sendUpdate();
+            setEnergy(newEnergy);
         }
         return stored - newEnergy;
     }
