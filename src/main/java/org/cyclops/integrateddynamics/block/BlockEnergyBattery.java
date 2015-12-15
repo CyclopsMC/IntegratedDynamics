@@ -5,8 +5,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -19,6 +21,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
 import org.cyclops.integrateddynamics.api.block.IEnergyBatteryFacade;
+import org.cyclops.integrateddynamics.api.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -28,11 +31,13 @@ import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
+import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A block that can hold defined variables so that they can be referred to elsewhere in the network.
@@ -40,12 +45,12 @@ import java.util.Collection;
  * @author rubensworks
  */
 public class BlockEnergyBattery extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        INetworkElementProvider<IPartNetwork>, IEnergyBatteryFacade {
+        INetworkElementProvider<IPartNetwork>, IEnergyBatteryFacade, IEnergyContainerBlock {
 
     @BlockProperty
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     @BlockProperty
-    public static final PropertyInteger FILL = PropertyInteger.create("fill", 0, 10);
+    public static final PropertyInteger FILL = PropertyInteger.create("fill", 0, 3);
 
     private static BlockEnergyBattery _instance = null;
 
@@ -78,7 +83,9 @@ public class BlockEnergyBattery extends ConfigurableBlockContainer implements IC
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
                                     EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote && WrenchHelpers.isWrench(player, pos) && player.isSneaking()) {
+            onPreBlockDestroyed(world, pos);
             world.destroyBlock(pos, !player.capabilities.isCreativeMode);
+            onPostBlockDestroyed(world, pos);
             return true;
         }
         return super.onBlockActivated(world, pos, state, player , side, hitX, hitY, hitZ);
@@ -88,11 +95,7 @@ public class BlockEnergyBattery extends ConfigurableBlockContainer implements IC
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
         cableNetworkComponent.addToNetwork(world, pos);
-    }
-
-    @Override
-    public boolean saveNBTToDroppedItem() {
-        return false;
+        TileHelpers.getSafeTile(world, pos, TileEnergyBattery.class).updateBlockState();
     }
 
     @Override
@@ -176,4 +179,18 @@ public class BlockEnergyBattery extends ConfigurableBlockContainer implements IC
         return cableNetworkComponent.createPathElement(world, blockPos);
     }
 
+    @Override
+    public String getEneryContainerNBTName() {
+        return "energy";
+    }
+
+    @Override
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
+        ItemStack empty = new ItemStack(this);
+        ItemStack full = new ItemStack(this);
+        ItemBlockEnergyContainer container = ((ItemBlockEnergyContainer) full.getItem());
+        container.addEnergy(full, container.getMaxStoredEnergy(full));
+        list.add(empty);
+        list.add(full);
+    }
 }

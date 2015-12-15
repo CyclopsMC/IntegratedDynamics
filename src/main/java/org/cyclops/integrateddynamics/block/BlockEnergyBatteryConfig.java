@@ -1,7 +1,11 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.item.ItemBlock;
+import org.cyclops.cyclopscore.config.ConfigurableProperty;
+import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 
 /**
  * Config for {@link BlockEnergyBattery}.
@@ -13,6 +17,12 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
      * The unique instance.
      */
     public static BlockEnergyBatteryConfig _instance;
+
+    /**
+     * The default capacity of an energy battery.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default capacity of an energy battery.")
+    public static int capacity = 10000;
 
     /**
      * Make a new instance.
@@ -27,4 +37,8 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
         );
     }
 
+    @Override
+    public Class<? extends ItemBlock> getItemBlockClass() {
+        return ItemBlockEnergyContainer.class;
+    }
 }

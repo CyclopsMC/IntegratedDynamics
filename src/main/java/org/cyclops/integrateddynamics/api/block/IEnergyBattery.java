@@ -24,13 +24,13 @@ public interface IEnergyBattery {
     public int getMaxStoredEnergy();
 
     /**
-     * Add the given energy amount to the network.
+     * Add the given energy amount to the battery.
      * @param energy The energy amount to add.
      */
     public void addEnergy(int energy);
 
     /**
-     * Remove the given energy amount from the network.
+     * Remove the given energy amount from the battery.
      * @param energy The energy amount to remove.
      * @param simulate If the consumption should be stimulated.
      * @return The amount of energy that was consumed.
