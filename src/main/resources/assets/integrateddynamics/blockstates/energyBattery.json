@@ -4,7 +4,8 @@
     "transform": "forge:default-block",
     "model"    : "integrateddynamics:energyBattery",
     "textures" : {
-      "overlay": "cyclopscore:blocks/empty"
+      "overlay_front": "cyclopscore:blocks/empty",
+      "overlay_side" : "cyclopscore:blocks/empty"
     }
   },
   "variants": {
@@ -20,16 +21,16 @@
     },
     "fill": {
       "0" : {},
-      "1" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_0" } },
-      "2" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_1" } },
-      "3" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_2" } },
-      "4" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_3" } },
-      "5" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_4" } },
-      "6" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_5" } },
-      "7" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_6" } },
-      "8" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_7" } },
-      "9" : { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_8" } },
-      "10": { "textures": { "overlay": "integrateddynamics:blocks/energyBattery_overlay_9" } }
+      "1" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_0", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_0" } },
+      "2" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_1", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_1" } },
+      "3" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_2", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_2" } },
+      "4" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_3", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_3" } },
+      "5" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_4", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_4" } },
+      "6" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_5", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_5" } },
+      "7" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_6", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_6" } },
+      "8" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_7", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_7" } },
+      "9" : { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_8", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_8" } },
+      "10": { "textures": { "overlay_front": "integrateddynamics:blocks/energyBattery_overlay_front_9", "overlay_side": "integrateddynamics:blocks/energyBattery_overlay_side_9" } }
     }
   }
 }

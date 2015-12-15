@@ -68,9 +68,9 @@ public class BlockEnergyBattery extends ConfigurableBlockContainer implements IC
      * @param eConfig Config for this block.
      */
     public BlockEnergyBattery(ExtendedConfig eConfig) {
-        super(eConfig, Material.glass, TileEnergyBattery.class);
+        super(eConfig, Material.anvil, TileEnergyBattery.class);
 
-        setHardness(3.0F);
+        setHardness(5.0F);
         setStepSound(soundTypeMetal);
     }
 
@@ -82,12 +82,6 @@ public class BlockEnergyBattery extends ConfigurableBlockContainer implements IC
             return true;
         }
         return super.onBlockActivated(world, pos, state, player , side, hitX, hitY, hitZ);
-    }
-
-    @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
-                                     int meta, EntityLivingBase placer) {
-        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
     }
 
     @Override
