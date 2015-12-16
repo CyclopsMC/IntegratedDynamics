@@ -12,7 +12,7 @@ import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
 import org.cyclops.integrateddynamics.api.block.IEnergyContainer;
 import org.cyclops.integrateddynamics.api.block.IEnergyContainerBlock;
-import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
+import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
 
     @Override
     public int getMaxStoredEnergy(ItemStack itemStack) {
-        return TileEnergyBattery.MAX_ENERGY;
+        return BlockEnergyBatteryConfig.capacity;
     }
 
     protected void setEnergy(ItemStack itemStack, int energy) {

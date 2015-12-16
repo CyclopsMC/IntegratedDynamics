@@ -282,6 +282,19 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     }
 
     @Override
+    public int addEnergy(int energy, boolean simulate) {
+        int toAdd = energy;
+        for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
+            int maxAdd = Math.min(energyBattery.getMaxStoredEnergy() - energyBattery.getStoredEnergy(), toAdd);
+            if(maxAdd > 0 && !simulate) {
+                energyBattery.addEnergy(maxAdd);
+            }
+            toAdd -= maxAdd;
+        }
+        return energy - toAdd;
+    }
+
+    @Override
     public synchronized int consume(int energy, boolean simulate) {
         int toConsume = energy;
         for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {

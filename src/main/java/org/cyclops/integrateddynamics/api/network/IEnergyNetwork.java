@@ -22,6 +22,14 @@ public interface IEnergyNetwork extends IPartNetwork {
     public int getMaxStoredEnergy();
 
     /**
+     * Add the given energy amount from the network.
+     * @param energy The energy amount to add.
+     * @param simulate If the addition should be stimulated.
+     * @return The amount of energy that was added.
+     */
+    public int addEnergy(int energy, boolean simulate);
+
+    /**
      * Remove the given energy amount from the network.
      * @param energy The energy amount to remove.
      * @param simulate If the consumption should be stimulated.

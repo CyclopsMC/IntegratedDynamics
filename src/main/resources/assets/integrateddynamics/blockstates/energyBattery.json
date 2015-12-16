@@ -11,7 +11,7 @@
   "variants": {
     "normal": [{}],
     "inventory": [{
-      "y": 180
+      "y": 0
     }],
     "facing": {
       "north": {"y": 180},
