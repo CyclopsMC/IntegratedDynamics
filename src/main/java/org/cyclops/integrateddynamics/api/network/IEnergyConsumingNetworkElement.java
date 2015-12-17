@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.api.network;
 
 /**
- * A network element that requires power to run.
+ * An energy consuming network element.
  * @author rubensworks
  */
-public interface IEnergyConsumingNetworkElement<N extends INetwork<N>> extends INetworkElement<N> {
+public interface IEnergyConsumingNetworkElement<N extends INetwork> extends INetworkElement<N> {
 
     /**
-     * @return The amount of energy required per tick to work.
+     * @return The energy consumption rate of this part for the given state.
      */
-    public int getEnergyUsage();
+    public int getConsumptionRate();
 
 }

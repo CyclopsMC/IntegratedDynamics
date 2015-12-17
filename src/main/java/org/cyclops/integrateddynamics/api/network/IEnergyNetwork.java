@@ -6,7 +6,7 @@ import org.cyclops.integrateddynamics.api.block.IEnergyBatteryFacade;
 import java.util.Map;
 
 /**
- * A network that accepts energy and allows {@link IEnergyConsumingNetworkElement}s to be used.
+ * A network that accepts energy.
  * @author rubensworks
  */
 public interface IEnergyNetwork extends IPartNetwork {

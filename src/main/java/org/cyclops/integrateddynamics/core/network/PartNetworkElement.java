@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
@@ -21,7 +22,7 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartNetworkElement<P, S> {
+public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartNetworkElement<P, S>, IEnergyConsumingNetworkElement<IPartNetwork> {
 
     private final P part;
     private final IPartContainerFacade partContainerFacade;
@@ -47,6 +48,11 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public S getPartState() {
         return (S) partContainerFacade.getPartContainer(getCenterPos(getTarget()).getWorld(), getCenterPos(getTarget()).getBlockPos()).
                getPartState(getCenterSide(getTarget()));
+    }
+
+    @Override
+    public int getConsumptionRate() {
+        return getPart().getConsumptionRate(getPartState());
     }
 
     @Override

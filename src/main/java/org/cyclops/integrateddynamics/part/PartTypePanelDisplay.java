@@ -31,6 +31,11 @@ public class PartTypePanelDisplay extends PartTypePanelVariableDriven<PartTypePa
         return new PartTypePanelDisplay.State();
     }
 
+    @Override
+    public int getConsumptionRate(State state) {
+        return state.hasVariable() ? 2 : 1;
+    }
+
     public static class State extends PartTypePanelVariableDriven.State<PartTypePanelDisplay, PartTypePanelDisplay.State> {
 
         @Override

@@ -309,6 +309,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side);
     }
 
+    @Override
+    public int getConsumptionRate(S state) {
+        return 0;
+    }
+
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {
 
         public void onAction(IPartNetwork network, PartTarget target, S state, E event);

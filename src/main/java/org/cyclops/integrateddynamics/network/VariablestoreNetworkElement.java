@@ -8,6 +8,7 @@ import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
@@ -20,7 +21,7 @@ import java.util.Map;
  * @author rubensworks
  */
 @Data
-public class VariablestoreNetworkElement implements INetworkElement<IPartNetwork> {
+public class VariablestoreNetworkElement implements INetworkElement<IPartNetwork>, IEnergyConsumingNetworkElement<IPartNetwork> {
 
     private final DimPos pos;
 
@@ -96,4 +97,8 @@ public class VariablestoreNetworkElement implements INetworkElement<IPartNetwork
         return getTile().getVariableCache();
     }
 
+    @Override
+    public int getConsumptionRate() {
+        return 4;
+    }
 }

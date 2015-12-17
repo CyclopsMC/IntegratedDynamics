@@ -37,6 +37,12 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default update frequency in ticks to use for new parts.")
     public static int defaultPartUpdateFreq = 1;
+
+    /**
+     * The energy usage multiplier for networks.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The energy usage multiplier for networks.")
+    public static int energyConsumptionMultiplier = 1;
     
     /**
      * Create a new instance.

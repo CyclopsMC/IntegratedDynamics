@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
 import org.cyclops.integrateddynamics.api.block.IEnergyBatteryFacade;
@@ -19,9 +20,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
@@ -211,6 +210,28 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
 
     private void onPartsChanged() {
         System.out.println("Parts of network " + this + " are changed.");
+    }
+
+    @Override
+    protected boolean canUpdate(INetworkElement<IPartNetwork> element) {
+        if(!super.canUpdate(element)) return false;
+        if(element instanceof IEnergyConsumingNetworkElement) return true;
+        int multiplier = GeneralConfig.energyConsumptionMultiplier;
+        if(multiplier == 0) return true;
+        int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
+        return consume(consumptionRate, true) == consumptionRate;
+    }
+
+    @Override
+    protected void postUpdate(INetworkElement<IPartNetwork> element) {
+        super.postUpdate(element);
+        if(element instanceof IEnergyConsumingNetworkElement) {
+            int multiplier = GeneralConfig.energyConsumptionMultiplier;
+            if (multiplier > 0) {
+                int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
+                consume(consumptionRate, false);
+            }
+        }
     }
 
     @Override

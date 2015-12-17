@@ -232,6 +232,14 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
         return false;
     }
 
+    protected boolean canUpdate(INetworkElement<N> element) {
+        return true;
+    }
+
+    protected void postUpdate(INetworkElement<N> element) {
+
+    }
+
     @Override
     public final void update() {
         if(killIfEmpty() || killed) {
@@ -241,9 +249,10 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
 
             // Update updateable network elements
             for (INetworkElement<N> element : updateableElements) {
-                if (updateableElementsTicks.get(element) <= 0) {
+                if (updateableElementsTicks.get(element) <= 0 && canUpdate(element)) {
                     updateableElementsTicks.put(element, element.getUpdateInterval());
                     element.update(getMaterializedThis());
+                    postUpdate(element);
                 }
                 updateableElementsTicks.put(element, updateableElementsTicks.get(element) - 1);
             }

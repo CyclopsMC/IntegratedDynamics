@@ -235,6 +235,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      */
     public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
 
+    /**
+     * @param state The state
+     * @return The consumption rate of this part for the given state.
+     */
+    public int getConsumptionRate(S state);
+
     public static class RenderPosition {
 
         public static final RenderPosition NONE = new RenderPosition(-1, -1, -1);

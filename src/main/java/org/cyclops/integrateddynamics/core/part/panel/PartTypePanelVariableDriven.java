@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A panel part that simply emits light.
+ * A panel part that is driven by a contained variable.
  * @author rubensworks
  */
 public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartTypePanel<P, S> {
