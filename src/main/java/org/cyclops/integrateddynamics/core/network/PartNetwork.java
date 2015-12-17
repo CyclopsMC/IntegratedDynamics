@@ -284,11 +284,17 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
         }));
     }
 
+    protected int addSafe(int a, int b) {
+        int add = a + b;
+        if(add < a || add < b) return Integer.MAX_VALUE;
+        return add;
+    }
+
     @Override
     public synchronized int getStoredEnergy() {
         int energy = 0;
         for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
-            energy += energyBattery.getStoredEnergy();
+            energy = addSafe(energy, energyBattery.getStoredEnergy());
         }
         return energy;
     }
@@ -297,7 +303,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     public synchronized int getMaxStoredEnergy() {
         int maxEnergy = 0;
         for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
-            maxEnergy += energyBattery.getMaxStoredEnergy();
+            maxEnergy = addSafe(maxEnergy, energyBattery.getMaxStoredEnergy());
         }
         return maxEnergy;
     }

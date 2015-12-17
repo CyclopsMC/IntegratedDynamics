@@ -12,6 +12,7 @@ gui.integrateddynamics.part.properties=Properties:
 tile.blocks.integrateddynamics.cable.name=Cable
 tile.blocks.integrateddynamics.variablestore.name=Variable Store
 tile.blocks.integrateddynamics.energyBattery.name=Energy Battery
+tile.blocks.integrateddynamics.creativeEnergyBattery.name=Creative Energy Battery
 tile.blocks.integrateddynamics.logicProgrammer.name=Logic Programmer
 tile.blocks.integrateddynamics.coalGenerator.name=Generator
 tile.blocks.integrateddynamics.coalGenerator.info=Produces energy from fuel items

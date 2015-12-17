@@ -21,6 +21,7 @@ public class Configs {
         configHandler.add(new BlockLogicProgrammerConfig());
         configHandler.add(new BlockInvisibleLightConfig());
         configHandler.add(new BlockEnergyBatteryConfig());
+        configHandler.add(new BlockCreativeEnergyBatteryConfig());
         configHandler.add(new BlockCoalGeneratorConfig());
 
         // Items
