@@ -22,7 +22,7 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
      * The default capacity of an energy battery.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default capacity of an energy battery.")
-    public static int capacity = 10000;
+    public static int capacity = 100000;
 
     /**
      * Make a new instance.
