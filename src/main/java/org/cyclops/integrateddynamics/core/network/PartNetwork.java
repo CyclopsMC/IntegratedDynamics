@@ -353,4 +353,15 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     public Map<DimPos, IEnergyBatteryFacade> getEnergyBatteries() {
         return Collections.unmodifiableMap(energyBatteryPositions);
     }
+
+    @Override
+    public int getConsumptionRate() {
+        int multiplier = GeneralConfig.energyConsumptionMultiplier;
+        if(multiplier == 0) return 0;
+        int consumption = 0;
+        for(INetworkElement element : getElements()) {
+            consumption += ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
+        }
+        return consumption;
+    }
 }

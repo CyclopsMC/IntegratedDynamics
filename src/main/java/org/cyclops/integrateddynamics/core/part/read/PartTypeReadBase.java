@@ -30,6 +30,11 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
+    public boolean isSolid(S state) {
+        return true;
+    }
+
+    @Override
     public Class<? super P> getPartTypeClass() {
         return IPartTypeReader.class;
     }

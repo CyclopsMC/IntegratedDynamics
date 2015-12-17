@@ -26,11 +26,6 @@ public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryR
     }
 
     @Override
-    public boolean isSolid(PartStateReaderBase<PartTypeInventoryReader> state) {
-        return true;
-    }
-
-    @Override
     public PartStateReaderBase<PartTypeInventoryReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeInventoryReader>();
     }

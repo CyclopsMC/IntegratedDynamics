@@ -38,11 +38,6 @@ public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, P
     }
 
     @Override
-    public boolean isSolid(PartStateReaderBase<PartTypeFluidReader> state) {
-        return true;
-    }
-
-    @Override
     public PartStateReaderBase<PartTypeFluidReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeFluidReader>();
     }

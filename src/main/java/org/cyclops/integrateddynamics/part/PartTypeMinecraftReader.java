@@ -23,11 +23,6 @@ public class PartTypeMinecraftReader extends PartTypeReadBase<PartTypeMinecraftR
     }
 
     @Override
-    public boolean isSolid(PartStateReaderBase<PartTypeMinecraftReader> state) {
-        return true;
-    }
-
-    @Override
     public PartStateReaderBase<PartTypeMinecraftReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeMinecraftReader>();
     }

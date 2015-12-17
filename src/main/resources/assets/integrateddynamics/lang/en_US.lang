@@ -61,6 +61,8 @@ parttype.parttypes.integrateddynamics.fluidReader.name=Fluid Reader
 parttype.parttypes.integrateddynamics.fluidReader.info=Reads fluid tanks
 parttype.parttypes.integrateddynamics.minecraftReader.name=Minecraft Reader
 parttype.parttypes.integrateddynamics.minecraftReader.info=Reads Minecraft system properties
+parttype.parttypes.integrateddynamics.networkReader.name=Network Reader
+parttype.parttypes.integrateddynamics.networkReader.info=Reads target network properties
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 parttype.parttypes.integrateddynamics.redstoneWriter.info=Writes to redstone
 parttype.parttypes.integrateddynamics.dataDrivenPanel.error.invalidType=This panel does not accept a %s.
@@ -180,7 +182,7 @@ aspect.aspects.integrateddynamics.read.boolean.fluid.full.info=If the target flu
 aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.name=Tank Not Empty
 aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.info=If the target fluid tank has something in it
 aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.name=Is Tank
-aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.info=If the target has is a fluid tank
+aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.info=If the target has a fluid tank
 aspect.aspects.integrateddynamics.read.boolean.fluid.gaseous.name=Fluid Gaseous
 aspect.aspects.integrateddynamics.read.boolean.fluid.gaseous.info=If the active tank has a gaseous fluid
 
@@ -220,6 +222,20 @@ aspect.aspects.integrateddynamics.read.integer.minecraft.playercount.name=Player
 aspect.aspects.integrateddynamics.read.integer.minecraft.playercount.info=The amount of players in the server
 aspect.aspects.integrateddynamics.read.integer.minecraft.ticktime.name=Tick time
 aspect.aspects.integrateddynamics.read.integer.minecraft.ticktime.info=The average tick time in milliseconds for the server
+
+## Network aspects
+aspect.aspects.integrateddynamics.read.boolean.network.applicable.name=Is Network
+aspect.aspects.integrateddynamics.read.boolean.network.applicable.info=If the target has a network
+aspect.aspects.integrateddynamics.read.integer.network.elementcount.name=Elements
+aspect.aspects.integrateddynamics.read.boolean.network.elementcount.info=The amount of elements in the target network
+aspect.aspects.integrateddynamics.read.integer.network.energy.batterycount.name=Energy Batteries
+aspect.aspects.integrateddynamics.read.boolean.network.energy.batterycount.info=The amount of energy batteries in the target network
+aspect.aspects.integrateddynamics.read.integer.network.energy.stored.name=Energy Stored
+aspect.aspects.integrateddynamics.read.boolean.network.energy.stored.info=The amount of energy available in the target network
+aspect.aspects.integrateddynamics.read.integer.network.energy.max.name=Energy Capacity
+aspect.aspects.integrateddynamics.read.boolean.network.energy.max.info=The energy capacity of the network
+aspect.aspects.integrateddynamics.read.integer.network.energy.consumptionrate.name=Energy Consumption Rate
+aspect.aspects.integrateddynamics.read.boolean.network.energy.consumptionrate.info=The energy consumption rate of the target network
 
 # Aspect property types
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID

@@ -45,11 +45,6 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
     }
 
     @Override
-    public boolean isSolid(PartStateReaderBase<PartTypeWorldReader> state) {
-        return true;
-    }
-
-    @Override
     public PartStateReaderBase<PartTypeWorldReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeWorldReader>();
     }

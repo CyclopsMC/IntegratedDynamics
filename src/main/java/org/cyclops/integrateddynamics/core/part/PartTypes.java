@@ -20,6 +20,7 @@ public final class PartTypes {
     public static final PartTypeWorldReader WORLD_READER = REGISTRY.register(new PartTypeWorldReader("worldReader"));
     public static final PartTypeFluidReader FLUID_READER = REGISTRY.register(new PartTypeFluidReader("fluidReader"));
     public static final PartTypeMinecraftReader MINECRAFT_READER = REGISTRY.register(new PartTypeMinecraftReader("minecraftReader"));
+    public static final PartTypeNetworkReader NETWORK_READER = REGISTRY.register(new PartTypeNetworkReader("networkReader"));
 
     // Writers
     public static final PartTypeRedstoneWriter REDSTONE_WRITER = REGISTRY.register(new PartTypeRedstoneWriter("redstoneWriter"));

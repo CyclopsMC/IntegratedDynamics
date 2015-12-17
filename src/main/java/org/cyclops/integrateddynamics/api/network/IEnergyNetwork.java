@@ -55,4 +55,9 @@ public interface IEnergyNetwork extends IPartNetwork {
      */
     public Map<DimPos, IEnergyBatteryFacade> getEnergyBatteries();
 
+    /**
+     * @return The current network consumption rate.
+     */
+    public int getConsumptionRate();
+
 }

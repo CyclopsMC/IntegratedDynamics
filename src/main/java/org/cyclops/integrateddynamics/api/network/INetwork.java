@@ -5,6 +5,8 @@ import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 
+import java.util.Set;
+
 /**
  * A network can hold a set of {@link INetworkElement}s.
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
@@ -89,5 +91,10 @@ public interface INetwork<N extends INetwork<N>> extends INBTSerializable {
      * This is the time to notify all network elements of this network.
      */
     public void beforeServerStop();
+
+    /**
+     * @return The network elements.
+     */
+    public Set<INetworkElement<N>> getElements();
 
 }

@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.part.aspect.read.inventory.*;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftPlayerCount;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftRandom;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftTicktime;
+import org.cyclops.integrateddynamics.part.aspect.read.network.*;
 import org.cyclops.integrateddynamics.part.aspect.read.redstone.*;
 import org.cyclops.integrateddynamics.part.aspect.read.world.*;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
@@ -99,6 +100,14 @@ public class Aspects {
     public static final AspectReadIntegerMinecraftRandom READ_INTEGER_MINECRAFT_RANDOM = new AspectReadIntegerMinecraftRandom();
     public static final AspectReadIntegerMinecraftPlayerCount READ_INTEGER_MINECRAFT_PLAYERCOUNT = new AspectReadIntegerMinecraftPlayerCount();
     public static final AspectReadIntegerMinecraftTicktime READ_INTEGER_MINECRAFT_TICKTIME = new AspectReadIntegerMinecraftTicktime();
+
+    // --- Network ---
+    public static final AspectReadBooleanNetworkApplicable READ_BOOLEAN_NETWORK_APPLICABLE = new AspectReadBooleanNetworkApplicable();
+
+    public static final AspectReadIntegerNetworkElementCount READ_INTEGER_NETWORK_ELEMENT_COUNT = new AspectReadIntegerNetworkElementCount();
+    public static final AspectReadIntegerNetworkEnergyBatteryCount READ_INTEGER_NETWORK_ENERGY_BATTERY_COUNT = new AspectReadIntegerNetworkEnergyBatteryCount();
+    public static final AspectReadIntegerNetworkEnergyStored READ_INTEGER_NETWORK_ENERGY_STORED = new AspectReadIntegerNetworkEnergyStored();
+    public static final AspectReadIntegerNetworkEnergyMax READ_INTEGER_NETWORK_ENERGY_MAX = new AspectReadIntegerNetworkEnergyMax();
 
     // --------------- Write ---------------
     public static final AspectWriteBooleanRedstone WRITE_BOOLEAN_REDSTONE = new AspectWriteBooleanRedstone();

@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -293,6 +294,11 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     @Override
     public void beforeServerStop() {
 
+    }
+
+    @Override
+    public Set<INetworkElement<N>> getElements() {
+        return this.elements;
     }
 
 }
