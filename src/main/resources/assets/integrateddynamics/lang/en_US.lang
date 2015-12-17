@@ -1,6 +1,7 @@
 # General
 itemGroup.integrateddynamics=Integrated Dynamics
 general.integrateddynamics.info.none=None
+general.integrateddynamics.energyUnit.name=RF
 
 # Gui
 gui.integrateddynamics.button.save=Save

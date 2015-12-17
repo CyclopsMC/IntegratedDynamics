@@ -8,11 +8,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
 import org.cyclops.integrateddynamics.api.block.IEnergyContainer;
 import org.cyclops.integrateddynamics.api.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 
@@ -51,7 +53,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
         super.addInformation(itemStack, entityPlayer, list, par4);
         int amount = getStoredEnergy(itemStack);
         int capacity = getMaxStoredEnergy(itemStack);
-        String line = String.format("%,d", amount) + " / " + String.format("%,d", capacity);
+        String line = String.format("%,d", amount) + " / " + String.format("%,d", capacity) + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
         list.add(IInformationProvider.ITEM_PREFIX + line);
     }
 
