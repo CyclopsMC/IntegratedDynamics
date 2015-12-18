@@ -1,18 +1,11 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
 import com.google.common.collect.Maps;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Delegate;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.InventoryTileEntity;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
-import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 
 import java.util.Map;
 
@@ -20,17 +13,15 @@ import java.util.Map;
  * A tile entity with inventory whose block can connect with cables.
  * @author rubensworks
  */
-public class TileCableConnectableInventory extends InventoryTileEntity implements ITileCableNetwork, CyclopsTileEntity.ITickingTile {
+public class TileCableConnectableInventory extends InventoryTileEntity implements ITileCableNetwork, CyclopsTileEntity.ITickingTile, TileCableNetworkComponent.IConnectionsMapProvider {
 
     @Delegate
     protected final ITickingTile tickingTileComponent = new TickingTileComponent(this);
+    @Delegate(types = {ITileCableNetwork.class})
+    protected final TileCableNetworkComponent tileCableNetworkComponent = new TileCableNetworkComponent(this);
 
     @NBTPersist
     private Map<Integer, Boolean> connected = Maps.newHashMap();
-
-    @Getter
-    @Setter
-    private IPartNetwork network;
 
     public TileCableConnectableInventory(int inventorySize, String inventoryName, int stackSize) {
         super(inventorySize, inventoryName, stackSize);
@@ -39,45 +30,12 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        // If the connection data were reset, update the cable connections
-        if (connected.isEmpty()) {
-            updateConnections();
-        }
+        tileCableNetworkComponent.updateTileEntity();
     }
 
     @Override
-    public void resetCurrentNetwork() {
-        if(network != null) setNetwork(null);
-    }
-
-    @Override
-    public boolean canConnect(ICable connector, EnumFacing side) {
-        return true;
-    }
-
-    @Override
-    public void updateConnections() {
-        World world = getWorld();
-        for(EnumFacing side : EnumFacing.VALUES) {
-            boolean cableConnected = CableNetworkComponent.canSideConnect(world, pos, side, (ICable) getBlock());
-            connected.put(side.ordinal(), cableConnected);
-        }
-        markDirty();
-    }
-
-    @Override
-    public boolean isConnected(EnumFacing side) {
-        return connected.containsKey(side.ordinal()) && connected.get(side.ordinal());
-    }
-
-    @Override
-    public void disconnect(EnumFacing side) {
-        // Do nothing
-    }
-
-    @Override
-    public void reconnect(EnumFacing side) {
-        // Do nothing
+    public Map<Integer, Boolean> getConnections() {
+        return connected;
     }
 
 }
