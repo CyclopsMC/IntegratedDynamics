@@ -3,8 +3,7 @@ package org.cyclops.integrateddynamics.client.gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
-import org.cyclops.integrateddynamics.block.BlockVariablestore;
+import org.cyclops.cyclopscore.client.gui.container.GuiContainerConfigurable;
 import org.cyclops.integrateddynamics.inventory.container.ContainerVariablestore;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
@@ -12,7 +11,7 @@ import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
  * Gui for the variablestore
  * @author rubensworks
  */
-public class GuiVariablestore extends GuiContainerExtended {
+public class GuiVariablestore extends GuiContainerConfigurable<ContainerVariablestore> {
 
     /**
      * Make a new instance.
@@ -36,10 +35,6 @@ public class GuiVariablestore extends GuiContainerExtended {
     @Override
     protected int getBaseYSize() {
         return TileVariablestore.ROWS * 18 + 17 + 96;
-    }
-
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        this.fontRendererObj.drawString(BlockVariablestore.getInstance().getLocalizedName(), 8, 6, 4210752);
     }
 
     @Override

@@ -9,9 +9,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
-import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
+import org.cyclops.cyclopscore.client.gui.container.GuiContainerConfigurable;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
@@ -26,7 +25,7 @@ import java.io.IOException;
  * Gui for the labeller.
  * @author rubensworks
  */
-public class GuiLabeller extends GuiContainerExtended {
+public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
 
     public static final int BUTTON_WRITE = 1;
 
@@ -65,16 +64,6 @@ public class GuiLabeller extends GuiContainerExtended {
     }
 
     @Override
-    public String getGuiTexture() {
-        return IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "labeller.png";
-    }
-
-    @Override
-    protected int getBaseXSize() {
-        return 176;
-    }
-
-    @Override
     protected int getBaseYSize() {
         return 113;
     }
@@ -95,6 +84,11 @@ public class GuiLabeller extends GuiContainerExtended {
     }
 
     @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+
+    }
+
+    @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         this.searchField.drawTextBox();
@@ -103,7 +97,7 @@ public class GuiLabeller extends GuiContainerExtended {
     @Override
     protected void actionPerformed(GuiButton guibutton) {
         if(guibutton.id == BUTTON_WRITE) {
-            ItemStack itemStack = ((ContainerLabeller) getContainer()).getItemStack();
+            ItemStack itemStack = getContainer().getItemStack();
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             IVariableFacade variableFacade = registry.handle(itemStack);
             if(variableFacade.isValid()) {
@@ -114,7 +108,7 @@ public class GuiLabeller extends GuiContainerExtended {
                 this.mc.thePlayer.sendQueue.addToSendQueue(new C17PacketCustomPayload("MC|ItemName", (new PacketBuffer(Unpooled.buffer())).writeString(searchField.getText())));
                 String name = searchField.getText();
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(new ItemStackRenamePacket(name));
-                ((ContainerLabeller) getContainer()).setItemStackName(name);
+                getContainer().setItemStackName(name);
             }
         }
     }

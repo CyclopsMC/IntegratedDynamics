@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import org.cyclops.cyclopscore.inventory.container.TileInventoryContainer;
+import org.cyclops.cyclopscore.inventory.container.TileInventoryContainerConfigurable;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
  * Container for the variablestore.
  * @author rubensworks
  */
-public class ContainerVariablestore extends TileInventoryContainer<TileVariablestore> {
+public class ContainerVariablestore extends TileInventoryContainerConfigurable<TileVariablestore> {
 
     /**
      * Make a new instance.

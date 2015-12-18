@@ -7,14 +7,14 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotFurnaceFuel;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.inventory.container.TileInventoryContainer;
+import org.cyclops.cyclopscore.inventory.container.TileInventoryContainerConfigurable;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 
 /**
  * Container for the coal generator.
  * @author rubensworks
  */
-public class ContainerCoalGenerator extends TileInventoryContainer<TileCoalGenerator> {
+public class ContainerCoalGenerator extends TileInventoryContainerConfigurable<TileCoalGenerator> {
 
     private int lastProgress;
 
