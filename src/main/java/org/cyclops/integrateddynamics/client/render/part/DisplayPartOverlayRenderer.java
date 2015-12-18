@@ -71,7 +71,6 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         int rotation = partState.getFacingRotation().ordinal() - 2;
         GlStateManager.translate(6, 6, 0);
         GlStateManager.rotate(rotation * 90, 0, 0, 1);
-        //GlStateManager.rotate((float) (Math.random() * 360), 0, 0, 1);
         GlStateManager.translate(-6, -6, 0);
 
         IValue value = partState.getDisplayValue();
