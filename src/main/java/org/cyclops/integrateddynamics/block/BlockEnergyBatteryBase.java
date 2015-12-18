@@ -65,9 +65,7 @@ public abstract class BlockEnergyBatteryBase extends ConfigurableBlockContainer 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
                                     EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote && WrenchHelpers.isWrench(player, pos) && player.isSneaking()) {
-            onPreBlockDestroyed(world, pos);
-            world.destroyBlock(pos, !player.capabilities.isCreativeMode);
-            onPostBlockDestroyed(world, pos);
+            destroyBlock(world, pos, true);
             return true;
         }
         return super.onBlockActivated(world, pos, state, player , side, hitX, hitY, hitZ);
