@@ -20,6 +20,7 @@ public class LogicProgrammerElementTypes {
 
     // Specific types
     public static final ValueObjectTypeBlockElementType     OBJECT_BLOCK_TYPE     = REGISTRY.addType(new ValueObjectTypeBlockElementType());
+    public static final ValueObjectTypeItemElementType      OBJECT_ITEM_TYPE      = REGISTRY.addType(new ValueObjectTypeItemElementType());
     public static final ValueObjectTypeItemStackElementType OBJECT_ITEMSTACK_TYPE = REGISTRY.addType(new ValueObjectTypeItemStackElementType());
 
     public static boolean areEqual(ILogicProgrammerElement e1, ILogicProgrammerElement e2) {

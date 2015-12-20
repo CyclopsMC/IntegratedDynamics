@@ -49,6 +49,7 @@ valuetype.valuetypes.integrateddynamics.string.name=String
 
 valuetype.valuetypes.integrateddynamics.object.block.name=Block
 valuetype.valuetypes.integrateddynamics.object.itemstack.name=Item Stack
+valuetype.valuetypes.integrateddynamics.object.item.name=Item
 
 # Part types
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
@@ -320,6 +321,10 @@ operator.operators.integrateddynamics.object.block.name=Block
 operator.operators.integrateddynamics.object.block.basename=Block %s
 operator.operators.integrateddynamics.object.block.opaque.name=Opaque
 operator.operators.integrateddynamics.object.block.opaque.info=If the given block is opaque, non-transparent
+operator.operators.integrateddynamics.object.block.itemstack.name=Item Stack
+operator.operators.integrateddynamics.object.block.itemstack.info=The stack representation of the given block
+operator.operators.integrateddynamics.object.block.item.name=Item
+operator.operators.integrateddynamics.object.block.item.info=The item representation of the given block
 
 operator.operators.integrateddynamics.object.itemstack.name=Item Stack
 operator.operators.integrateddynamics.object.itemstack.basename=Item Stack %s
@@ -347,6 +352,17 @@ operator.operators.integrateddynamics.object.itemstack.strength.name=Strength vs
 operator.operators.integrateddynamics.object.itemstack.strength.info=The strength this stack has against the given block
 operator.operators.integrateddynamics.object.itemstack.canharvest.name=Can Harvest
 operator.operators.integrateddynamics.object.itemstack.canharvest.info=If the stack can harvest the given block
+operator.operators.integrateddynamics.object.itemstack.item.name=Item
+operator.operators.integrateddynamics.object.itemstack.item.info=The item from the given stack
+operator.operators.integrateddynamics.object.itemstack.block.name=Block
+operator.operators.integrateddynamics.object.itemstack.block.info=The block from the given stack
+
+operator.operators.integrateddynamics.object.item.name=Item
+operator.operators.integrateddynamics.object.item.basename=Item %s
+operator.operators.integrateddynamics.object.item.isblock.name=Is Block
+operator.operators.integrateddynamics.object.item.isblock.info=If the item represents a block
+operator.operators.integrateddynamics.object.item.block.name=Block
+operator.operators.integrateddynamics.object.item.block.info=The block from the given item
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

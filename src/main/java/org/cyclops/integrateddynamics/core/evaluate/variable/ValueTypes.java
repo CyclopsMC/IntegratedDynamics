@@ -20,6 +20,7 @@ public class ValueTypes {
 
     // Object types
     public static ValueObjectTypeBlock     OBJECT_BLOCK     = REGISTRY.register(new ValueObjectTypeBlock());
+    public static ValueObjectTypeItem      OBJECT_ITEM      = REGISTRY.register(new ValueObjectTypeItem());
     public static ValueObjectTypeItemStack OBJECT_ITEMSTACK = REGISTRY.register(new ValueObjectTypeItemStack());
 
     // Categories
