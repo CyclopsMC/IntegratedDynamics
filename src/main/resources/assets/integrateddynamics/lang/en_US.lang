@@ -45,6 +45,7 @@ valuetype.valuetypes.integrateddynamics.named.info=Accepts all value types that 
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
 valuetype.valuetypes.integrateddynamics.double.name=Double
+valuetype.valuetypes.integrateddynamics.long.name=Long
 valuetype.valuetypes.integrateddynamics.string.name=String
 
 valuetype.valuetypes.integrateddynamics.object.block.name=Block
@@ -146,10 +147,6 @@ aspect.aspects.integrateddynamics.read.boolean.world.isnight.info=If it is night
 
 aspect.aspects.integrateddynamics.read.integer.world.entity.name=Entities
 aspect.aspects.integrateddynamics.read.integer.world.entity.info=The amount of entities at the target space
-aspect.aspects.integrateddynamics.read.integer.world.time.name=Time
-aspect.aspects.integrateddynamics.read.integer.world.time.info=The world time dependent of the set time command
-aspect.aspects.integrateddynamics.read.integer.world.totaltime.name=Total Time
-aspect.aspects.integrateddynamics.read.integer.world.totaltime.info=The world time independent of the set time command
 aspect.aspects.integrateddynamics.read.integer.world.raincountdown.name=Rain Countdown
 aspect.aspects.integrateddynamics.read.integer.world.raincountdown.info=The amount of ticks until it will rain in this world
 aspect.aspects.integrateddynamics.read.integer.world.ticktime.name=Tick time
@@ -168,6 +165,11 @@ aspect.aspects.integrateddynamics.read.integer.world.posy.name=Y Coordinate
 aspect.aspects.integrateddynamics.read.integer.world.posy.info=The Y coordinate of the target
 aspect.aspects.integrateddynamics.read.integer.world.posz.name=Z Coordinate
 aspect.aspects.integrateddynamics.read.integer.world.posz.info=The Z coordinate of the target
+
+aspect.aspects.integrateddynamics.read.long.world.time.name=Time
+aspect.aspects.integrateddynamics.read.long.world.time.info=The world time dependent of the set time command
+aspect.aspects.integrateddynamics.read.long.world.totaltime.name=Total Time
+aspect.aspects.integrateddynamics.read.long.world.totaltime.info=The world time independent of the set time command
 
 aspect.aspects.integrateddynamics.read.string.world.worldname.name=World Name
 aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target world name

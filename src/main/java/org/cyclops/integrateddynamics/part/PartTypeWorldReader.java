@@ -28,8 +28,6 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.READ_BOOLEAN_WORLD_ISDAY,
                 Aspects.READ_BOOLEAN_WORLD_ISNIGHT,
                 Aspects.READ_INTEGER_WORLD_ENTITY,
-                Aspects.READ_INTEGER_WORLD_TIME,
-                Aspects.READ_INTEGER_WORLD_TOTALTIME,
                 Aspects.READ_INTEGER_WORLD_RAINCOUNTDOWN,
                 Aspects.READ_INTEGER_WORLD_TICKTIME,
                 Aspects.READ_INTEGER_WORLD_DAYTIME,
@@ -39,6 +37,8 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.READ_INTEGER_WORLD_POSX,
                 Aspects.READ_INTEGER_WORLD_POSY,
                 Aspects.READ_INTEGER_WORLD_POSZ,
+                Aspects.READ_LONG_WORLD_TIME,
+                Aspects.READ_LONG_WORLD_TOTALTIME,
                 Aspects.READ_STRING_WORLD_NAME,
                 Aspects.READ_OBJECT_BLOCK_WORLD_BLOCK
         ));

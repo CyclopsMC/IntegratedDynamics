@@ -16,6 +16,7 @@ public class ValueTypes {
     public static ValueTypeBoolean BOOLEAN = REGISTRY.register(new ValueTypeBoolean());
     public static ValueTypeInteger INTEGER = REGISTRY.register(new ValueTypeInteger());
     public static ValueTypeDouble  DOUBLE  = REGISTRY.register(new ValueTypeDouble());
+    public static ValueTypeLong    LONG    = REGISTRY.register(new ValueTypeLong());
     public static ValueTypeString  STRING  = REGISTRY.register(new ValueTypeString());
 
     // Object types

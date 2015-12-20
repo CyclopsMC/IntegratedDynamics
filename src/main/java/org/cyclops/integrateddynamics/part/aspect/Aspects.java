@@ -56,8 +56,6 @@ public class Aspects {
     public static final AspectReadBooleanWorldIsNight READ_BOOLEAN_WORLD_ISNIGHT = new AspectReadBooleanWorldIsNight();
 
     public static final AspectReadIntegerWorldEntity READ_INTEGER_WORLD_ENTITY = new AspectReadIntegerWorldEntity();
-    public static final AspectReadIntegerWorldTime READ_INTEGER_WORLD_TIME = new AspectReadIntegerWorldTime();
-    public static final AspectReadIntegerWorldTotalTime READ_INTEGER_WORLD_TOTALTIME = new AspectReadIntegerWorldTotalTime();
     public static final AspectReadIntegerWorldRainCountdown READ_INTEGER_WORLD_RAINCOUNTDOWN = new AspectReadIntegerWorldRainCountdown();
     public static final AspectReadIntegerWorldTicktime READ_INTEGER_WORLD_TICKTIME = new AspectReadIntegerWorldTicktime();
     public static final AspectReadIntegerWorldDayTime READ_INTEGER_WORLD_DAYTIME = new AspectReadIntegerWorldDayTime();
@@ -67,6 +65,9 @@ public class Aspects {
     public static final AspectReadIntegerWorldPosX READ_INTEGER_WORLD_POSX = new AspectReadIntegerWorldPosX();
     public static final AspectReadIntegerWorldPosY READ_INTEGER_WORLD_POSY = new AspectReadIntegerWorldPosY();
     public static final AspectReadIntegerWorldPosZ READ_INTEGER_WORLD_POSZ = new AspectReadIntegerWorldPosZ();
+
+    public static final AspectReadLongWorldTime READ_LONG_WORLD_TIME = new AspectReadLongWorldTime();
+    public static final AspectReadLongWorldTotalTime READ_LONG_WORLD_TOTALTIME = new AspectReadLongWorldTotalTime();
 
     public static final AspectReadStringWorldName READ_STRING_WORLD_NAME = new AspectReadStringWorldName();
 
