@@ -18,6 +18,7 @@ public class ValueTypes {
     public static ValueTypeDouble  DOUBLE  = REGISTRY.register(new ValueTypeDouble());
     public static ValueTypeLong    LONG    = REGISTRY.register(new ValueTypeLong());
     public static ValueTypeString  STRING  = REGISTRY.register(new ValueTypeString());
+    public static ValueTypeList    LIST    = REGISTRY.register(new ValueTypeList());
 
     // Object types
     public static ValueObjectTypeBlock     OBJECT_BLOCK     = REGISTRY.register(new ValueObjectTypeBlock());
