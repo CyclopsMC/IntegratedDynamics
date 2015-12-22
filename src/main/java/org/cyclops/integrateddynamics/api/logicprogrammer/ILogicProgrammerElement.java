@@ -5,6 +5,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 
 /**
@@ -25,6 +26,20 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @return The string used to match regex searching.
      */
     public String getMatchString();
+
+    /**
+     * If the given value type matches with this element's input.
+     * @param valueType The value type to match.
+     * @return If it matches
+     */
+    public boolean matchesInput(IValueType valueType);
+
+    /**
+     * If the given value type matches with this element's output.
+     * @param valueType The value type to match.
+     * @return If it matches
+     */
+    public boolean matchesOutput(IValueType valueType);
 
     /**
      * Called when an input item slot has been updated.

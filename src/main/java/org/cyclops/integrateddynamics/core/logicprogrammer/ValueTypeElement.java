@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
@@ -44,6 +45,16 @@ public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRen
     @Override
     public String getMatchString() {
         return getLocalizedNameFull().toLowerCase();
+    }
+
+    @Override
+    public boolean matchesInput(IValueType valueType) {
+        return false;
+    }
+
+    @Override
+    public boolean matchesOutput(IValueType valueType) {
+        return ValueHelpers.correspondsTo(getInnerGuiElement().getValueType(), valueType);
     }
 
     @Override

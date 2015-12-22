@@ -30,6 +30,7 @@ import java.util.List;
 
 /**
  * Element for operator.
+ *
  * @author rubensworks
  */
 @Data
@@ -46,6 +47,21 @@ public class OperatorElement implements ILogicProgrammerElement<SubGuiConfigRend
     @Override
     public String getMatchString() {
         return getOperator().getLocalizedNameFull().toLowerCase();
+    }
+
+    @Override
+    public boolean matchesInput(IValueType valueType) {
+        for (IValueType operatorIn : getOperator().getInputTypes()) {
+            if(ValueHelpers.correspondsTo(operatorIn, valueType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean matchesOutput(IValueType valueType) {
+        return ValueHelpers.correspondsTo(getOperator().getOutputType(), valueType);
     }
 
     @Override
@@ -81,7 +97,7 @@ public class OperatorElement implements ILogicProgrammerElement<SubGuiConfigRend
 
     protected int[] getVariableIds(IVariableFacade[] inputVariables) {
         int[] variableIds = new int[inputVariables.length];
-        for(int i = 0; i < inputVariables.length; i++) {
+        for (int i = 0; i < inputVariables.length; i++) {
             variableIds[i] = inputVariables[i].getId();
         }
         return variableIds;
@@ -184,12 +200,12 @@ public class OperatorElement implements ILogicProgrammerElement<SubGuiConfigRend
 
             // Input type tooltips
             IValueType[] valueTypes = operator.getInputTypes();
-            for(int i = 0; i < valueTypes.length; i++) {
+            for (int i = 0; i < valueTypes.length; i++) {
                 IValueType valueType = valueTypes[i];
                 IInventory temporaryInputSlots = container.getTemporaryInputSlots();
-                if(temporaryInputSlots.getStackInSlot(i) == null) {
+                if (temporaryInputSlots.getStackInSlot(i) == null) {
                     Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
-                    if(gui.isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
+                    if (gui.isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
                             GuiLogicProgrammer.BOX_HEIGHT, GuiLogicProgrammer.BOX_HEIGHT, mouseX, mouseY)) {
                         gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
                     }
@@ -198,8 +214,8 @@ public class OperatorElement implements ILogicProgrammerElement<SubGuiConfigRend
 
             // Output type tooltip
             IValueType outputType = operator.getOutputType();
-            if(!container.hasWriteItemInSlot()) {
-                if(gui.isPointInRegion(ContainerLogicProgrammer.OUTPUT_X, ContainerLogicProgrammer.OUTPUT_Y,
+            if (!container.hasWriteItemInSlot()) {
+                if (gui.isPointInRegion(ContainerLogicProgrammer.OUTPUT_X, ContainerLogicProgrammer.OUTPUT_Y,
                         GuiLogicProgrammer.BOX_HEIGHT, GuiLogicProgrammer.BOX_HEIGHT, mouseX, mouseY)) {
                     gui.drawTooltip(getValueTypeTooltip(outputType), mouseX - guiLeft, mouseY - guiTop);
                 }

@@ -7,6 +7,7 @@ general.integrateddynamics.energyUnit.name=RF
 gui.integrateddynamics.button.save=Save
 gui.integrateddynamics.partsettings.updateInterval=Freq.
 gui.integrateddynamics.part.properties=Properties:
+gui.integrateddynamics.logicprogrammer.filter=Filter
 
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
