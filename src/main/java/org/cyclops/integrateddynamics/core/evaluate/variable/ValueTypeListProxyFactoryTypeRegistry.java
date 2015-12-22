@@ -34,7 +34,7 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
     }
 
     @Override
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> IProxyFactory<T, V, P> register(IProxyFactory<T, V, P> proxyFactory) {
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>, F extends IProxyFactory<T, V, P>> F register(F proxyFactory) {
         if(factories.containsKey(proxyFactory.getName())) {
             throw new RuntimeException(String.format("A list proxy factory by name '%s' already exists.", proxyFactory.getName()));
         }

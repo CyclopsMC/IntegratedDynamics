@@ -48,6 +48,7 @@ valuetype.valuetypes.integrateddynamics.double.name=Double
 valuetype.valuetypes.integrateddynamics.long.name=Long
 valuetype.valuetypes.integrateddynamics.string.name=String
 
+valuetype.valuetypes.integrateddynamics.object.list.name=List
 valuetype.valuetypes.integrateddynamics.object.block.name=Block
 valuetype.valuetypes.integrateddynamics.object.itemstack.name=Item Stack
 valuetype.valuetypes.integrateddynamics.object.item.name=Item
@@ -117,6 +118,9 @@ aspect.aspects.integrateddynamics.read.integer.inventory.count.name=Inventory Co
 aspect.aspects.integrateddynamics.read.integer.inventory.count.info=Get the total amount of items
 aspect.aspects.integrateddynamics.read.integer.inventory.countslot.name=Slot Stacksize
 aspect.aspects.integrateddynamics.read.integer.inventory.countslot.info=Get the stack size in the active slot
+
+aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.name=Item Stacks
+aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.info=Get a list of the item stacks in the inventory
 
 aspect.aspects.integrateddynamics.read.object.itemstack.inventory.name=Slot Item Stack
 aspect.aspects.integrateddynamics.read.object.itemstack.inventory.info=Get the Item Stack in the active slot

@@ -14,9 +14,10 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
      * @param <T> The list element type value type.
      * @param <V> The list element type.
      * @param <P> The proxy type.
+     * @param <F> The factory type.
      * @return The registered instance.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> IProxyFactory<T, V, P> register(IProxyFactory<T, V, P> proxyFactory);
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>, F extends IProxyFactory<T, V, P>> F register(F proxyFactory);
 
     /**
      * Get a proxy factory by name

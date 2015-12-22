@@ -40,6 +40,8 @@ public class Aspects {
 
     public static final AspectReadIntegerInventoryCount READ_INTEGER_INVENTORY_COUNT = new AspectReadIntegerInventoryCount();
 
+    public static final AspectReadListInventoryItemStacks READ_LIST_INVENTORY_ITEMSTACKS = new AspectReadListInventoryItemStacks();
+
     public static final AspectReadObjectItemStackInventorySlot READ_OBJECT_ITEM_STACK_INVENTORY_SLOT = new AspectReadObjectItemStackInventorySlot();
 
     // --- World ---
