@@ -25,8 +25,10 @@ public class ValueTypeListProxyFactories {
     public static ValueTypeListProxyNBTFactory<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack, ValueTypeListProxyPositionedInventory> POSITIONED_INVENTORY;
 
     public static void load() {
-        MATERIALIZED = REGISTRY.register(new ValueTypeListProxyMaterializedFactory());
-        POSITIONED_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>("positionedInventory", ValueTypeListProxyPositionedInventory.class));
+        if(MATERIALIZED == null) {
+            MATERIALIZED = REGISTRY.register(new ValueTypeListProxyMaterializedFactory());
+            POSITIONED_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>("positionedInventory", ValueTypeListProxyPositionedInventory.class));
+        }
     }
 
 }

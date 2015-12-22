@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
@@ -411,6 +412,43 @@ public final class Operators {
             return ValueTypeInteger.ValueInteger.of((int) Math.floor(a));
         }
     }, IConfigRenderPattern.PREFIX_1));
+
+    /**
+     * ----------------------------------- LIST OPERATORS -----------------------------------
+     */
+
+    /**
+     * List operator with one input list and one output integer
+     */
+    public static final ListOperator LIST_LENGTH = REGISTRY.register(new ListOperator("| |", "length", new IValueType[]{ValueTypes.LIST}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a.getLength());
+        }
+    }, IConfigRenderPattern.PREFIX_1));
+
+    /**
+     * List operator with one input list and one output integer
+     */
+    public static final ListOperator LIST_ELEMENT = REGISTRY.register(new ListOperator("get", "get", new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER}, ValueTypes.CATEGORY_ANY, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            return a.get(b);
+        }
+    }, IConfigRenderPattern.INFIX) {
+        @Override
+        public IValueType getConditionalOutputType(IVariable[] input) {
+            try {
+                IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
+                return a.getValueType();
+            } catch (EvaluationException e) {
+                return super.getConditionalOutputType(input);
+            }
+        }
+    });
 
     /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------

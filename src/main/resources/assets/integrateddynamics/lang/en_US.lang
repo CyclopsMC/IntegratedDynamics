@@ -323,6 +323,13 @@ operator.operators.integrateddynamics.double.ceil.info=Round up to the nearest I
 operator.operators.integrateddynamics.double.floor.name=Floor
 operator.operators.integrateddynamics.double.floor.info=Round down to the nearest Integer
 
+operator.operators.integrateddynamics.list.name=List
+operator.operators.integrateddynamics.list.basename=List %s
+operator.operators.integrateddynamics.list.length.name=Length
+operator.operators.integrateddynamics.list.length.info=The length of the given list
+operator.operators.integrateddynamics.list.get.name=Get
+operator.operators.integrateddynamics.list.get.info=Get the list element at the given position
+
 operator.operators.integrateddynamics.object.block.name=Block
 operator.operators.integrateddynamics.object.block.basename=Block %s
 operator.operators.integrateddynamics.object.block.opaque.name=Opaque
