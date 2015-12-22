@@ -139,9 +139,9 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                 // Operator info
                 String aspectName = L10NHelpers.localize(element.getSymbol());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
-                        this.guiLeft + offsetX + (hover ? 20 : 18),
+                        this.guiLeft + offsetX + (hover ? 22 : 21),
                         this.guiTop + offsetY + 26 + boxHeight * i,
-                        60, Helpers.RGBToInt(40, 40, 40));
+                        53, Helpers.RGBToInt(40, 40, 40));
             }
         }
     }
