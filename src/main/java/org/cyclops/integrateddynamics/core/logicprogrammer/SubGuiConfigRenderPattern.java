@@ -48,7 +48,7 @@ public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui
 
     @Override
     public void initGui(int guiLeft, int guiTop) {
-
+        super.initGui(guiLeft, guiTop);
     }
 
     @Override

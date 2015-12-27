@@ -15,7 +15,16 @@ public class ValueTypeElementType implements ILogicProgrammerElementType<ValueTy
 
     @Override
     public ValueTypeElement getByName(String name) {
-        return new ValueTypeElement(ValueTypes.REGISTRY.getValueType(name));
+        return getByValueType(ValueTypes.REGISTRY.getValueType(name));
+    }
+
+    /**
+     * Get the element by value type.
+     * @param valueType The value type.
+     * @return The corresponding element.
+     */
+    public ValueTypeElement getByValueType(IValueType valueType) {
+        return new ValueTypeElement(valueType);
     }
 
     @Override
@@ -38,4 +47,18 @@ public class ValueTypeElementType implements ILogicProgrammerElementType<ValueTy
         }
         return elements;
     }
+
+    /**
+     * @return All possible value types in this element type.
+     */
+    public List<IValueType> getValueTypes() {
+        List<IValueType> elements = Lists.newLinkedList();
+        for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
+            if(!valueType.isCategory() && !valueType.isObject()) {
+                elements.add(valueType);
+            }
+        }
+        return elements;
+    }
+
 }

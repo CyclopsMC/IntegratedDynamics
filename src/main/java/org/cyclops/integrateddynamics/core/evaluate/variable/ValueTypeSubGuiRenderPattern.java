@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -46,7 +47,8 @@ public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C
         this.searchField.setVisible(true);
         this.searchField.setTextColor(16777215);
         this.searchField.setCanLoseFocus(true);
-        this.searchField.setText(element.getValueType().toCompactString(element.getValueType().getDefault()));
+        String value = StringUtils.isEmpty(element.getInputString()) ? element.getValueType().toCompactString(element.getValueType().getDefault()) : element.getInputString();
+        this.searchField.setText(value);
         element.setInputString(searchField.getText());
         this.searchField.width = searchWidth;
         this.searchField.xPosition = guiLeft + (searchX + searchWidth) - this.searchField.width;

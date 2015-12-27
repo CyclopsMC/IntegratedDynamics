@@ -7,6 +7,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -17,6 +18,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
@@ -139,6 +141,21 @@ public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRen
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
         return new ValueTypeElementSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+    }
+
+    /**
+     * Set the value.
+     * @param value The value.
+     */
+    public void setValue(IValue value, ValueTypeSubGuiRenderPattern activeElementSubGui) {
+        getInnerGuiElement().setInputString(getInnerGuiElement().getValueType().serialize(value), activeElementSubGui);
+    }
+
+    /**
+     * @return The current value.
+     */
+    public IValue getValue() {
+        return getInnerGuiElement().getValueType().deserialize(getInnerGuiElement().getInputString());
     }
 
     protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IValueTypeVariableFacade> {

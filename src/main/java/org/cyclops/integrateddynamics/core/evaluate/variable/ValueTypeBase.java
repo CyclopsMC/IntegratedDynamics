@@ -98,6 +98,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         }
     }
 
+    @Override
+    public String toString() {
+        return L10NHelpers.localize(getUnlocalizedName());
+    }
+
     protected String getModId() {
         return Reference.MOD_ID;
     }
