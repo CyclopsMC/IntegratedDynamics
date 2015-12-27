@@ -31,6 +31,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeListValueChangedPacket;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,8 +50,14 @@ public class ValueTypeListElement extends ValueTypeElement {
     private int activeElement = -1;
     private MasterSubGuiRenderPattern masterGui;
 
+    private ValueTypeList.ValueList serverValue = null;
+
     public ValueTypeListElement() {
         super(ValueTypes.LIST);
+    }
+
+    public void setServerValue(ValueTypeList.ValueList serverValue) {
+        this.serverValue = serverValue;
     }
 
     @Override
@@ -65,17 +72,31 @@ public class ValueTypeListElement extends ValueTypeElement {
 
     @Override
     public boolean canWriteElementPre() {
-        return listValueType != null;
+        return MinecraftHelpers.isClientSide() ? listValueType != null : serverValue != null;
+    }
+
+    protected List<IValue> constructValues() {
+        List<IValue> valueList = Lists.newArrayListWithExpectedSize(this.length);
+        for (Map.Entry<Integer, ValueTypeElement> value : this.subElements.entrySet()) {
+            if(value.getValue().validate() == null) {
+                valueList.add(value.getKey(), value.getValue().getValue());
+            } else {
+                valueList.add(value.getKey(), listValueType.getDefault());
+            }
+        }
+        return valueList;
     }
 
     @Override
     public ItemStack writeElement(ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        List<IValue> valueList = Lists.newArrayListWithExpectedSize(this.length);
-        for(Map.Entry<Integer, ValueTypeElement> value : this.subElements.entrySet()) {
-            valueList.add(value.getKey(), value.getValue().getValue());
+        ValueTypeVariableFacadeFactory factory;
+        if(MinecraftHelpers.isClientSide()) {
+            factory = new ValueTypeVariableFacadeFactory(listValueType, constructValues());
+        } else {
+            factory = new ValueTypeVariableFacadeFactory(serverValue);
         }
-        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY, new ValueTypeVariableFacadeFactory(listValueType, valueList));
+        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY, factory);
     }
 
     public void setListValueType(IValueType listValueType) {
@@ -129,6 +150,12 @@ public class ValueTypeListElement extends ValueTypeElement {
 
     @Override
     public L10NHelpers.UnlocalizedString validate() {
+        if(!MinecraftHelpers.isClientSide()) {
+            return serverValue == null ? new L10NHelpers.UnlocalizedString() : null;
+        }
+        if(MinecraftHelpers.isClientSide()) {
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeListValueChangedPacket(listValueType == null ? ValueTypes.LIST.getDefault() : ValueTypeList.ValueList.ofList(listValueType, constructValues())));
+        }
         if(this.listValueType == null) {
             return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
@@ -335,22 +362,24 @@ public class ValueTypeListElement extends ValueTypeElement {
 
     protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IValueTypeVariableFacade> {
 
-        private final IValueType valueType;
-        private final List<IValue> values;
+        private final ValueTypeList.ValueList values;
 
         public ValueTypeVariableFacadeFactory(IValueType valueType, List<IValue> values) {
-            this.valueType = valueType;
+            this(ValueTypeList.ValueList.ofList(valueType, values));
+        }
+
+        public ValueTypeVariableFacadeFactory(ValueTypeList.ValueList values) {
             this.values = values;
         }
 
         @Override
         public IValueTypeVariableFacade create(boolean generateId) {
-            return new ValueTypeVariableFacade(generateId, ValueTypes.LIST, ValueTypeList.ValueList.ofList(valueType, values));
+            return new ValueTypeVariableFacade(generateId, ValueTypes.LIST, values);
         }
 
         @Override
         public IValueTypeVariableFacade create(int id) {
-            return new ValueTypeVariableFacade(id, ValueTypes.LIST, ValueTypeList.ValueList.ofList(valueType, values));
+            return new ValueTypeVariableFacade(id, ValueTypes.LIST, values);
         }
     }
 
