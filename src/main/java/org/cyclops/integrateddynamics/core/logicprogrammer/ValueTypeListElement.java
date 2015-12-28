@@ -306,8 +306,6 @@ public class ValueTypeListElement extends ValueTypeElement {
         private GuiButtonArrow arrowRight;
         private GuiButton arrowRemove;
 
-        // TODO: send packets when one element's value changes (send all info then, total value list and list element value type)
-
         public ListElementSubGui(ValueTypeListElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);

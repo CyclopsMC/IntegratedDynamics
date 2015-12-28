@@ -436,7 +436,11 @@ public final class Operators {
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
             int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return a.get(b);
+            if(b < a.getLength()) {
+                return a.get(b);
+            } else {
+                return a.getValueType().getDefault();
+            }
         }
     }, IConfigRenderPattern.INFIX) {
         @Override

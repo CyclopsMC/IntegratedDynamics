@@ -75,6 +75,8 @@ public class Aspects {
 
     public static final AspectReadObjectBlockWorld READ_OBJECT_BLOCK_WORLD_BLOCK = new AspectReadObjectBlockWorld();
 
+    public static final AspectReadListWorldEntities READ_LIST_WORLD_ENTITIES = new AspectReadListWorldEntities();
+
     // --- Fluid ---
     public static final AspectReadBooleanFluidFull READ_BOOLEAN_FLUID_FULL = new AspectReadBooleanFluidFull();
     public static final AspectReadBooleanFluidEmpty READ_BOOLEAN_FLUID_EMPTY = new AspectReadBooleanFluidEmpty();

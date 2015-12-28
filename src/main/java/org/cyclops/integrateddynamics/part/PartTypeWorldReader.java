@@ -40,7 +40,8 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.READ_LONG_WORLD_TIME,
                 Aspects.READ_LONG_WORLD_TOTALTIME,
                 Aspects.READ_STRING_WORLD_NAME,
-                Aspects.READ_OBJECT_BLOCK_WORLD_BLOCK
+                Aspects.READ_OBJECT_BLOCK_WORLD_BLOCK,
+                Aspects.READ_LIST_WORLD_ENTITIES
         ));
     }
 
