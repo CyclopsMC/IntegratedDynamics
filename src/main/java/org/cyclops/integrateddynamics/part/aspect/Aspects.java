@@ -46,18 +46,12 @@ public class Aspects {
 
     // --- World ---
     public static final AspectReadBooleanWorldBlock READ_BOOLEAN_WORLD_BLOCK = new AspectReadBooleanWorldBlock();
-    public static final AspectReadBooleanWorldEntity READ_BOOLEAN_WORLD_ENTITY = new AspectReadBooleanWorldEntity();
-    public static final AspectReadBooleanWorldMob READ_BOOLEAN_WORLD_MOB = new AspectReadBooleanWorldMob();
-    public static final AspectReadBooleanWorldPlayer READ_BOOLEAN_WORLD_PLAYER = new AspectReadBooleanWorldPlayer();
-    public static final AspectReadBooleanWorldItem READ_BOOLEAN_WORLD_ITEM = new AspectReadBooleanWorldItem();
-    public static final AspectReadBooleanWorldAnimal READ_BOOLEAN_WORLD_ANIMAL = new AspectReadBooleanWorldAnimal();
     public static final AspectReadBooleanWorldWeatherClear READ_BOOLEAN_WORLD_WEATHER_CLEAR = new AspectReadBooleanWorldWeatherClear();
     public static final AspectReadBooleanWorldWeatherRaining READ_BOOLEAN_WORLD_WEATHER_RAINING = new AspectReadBooleanWorldWeatherRaining();
     public static final AspectReadBooleanWorldWeatherThunder READ_BOOLEAN_WORLD_WEATHER_THUNDER = new AspectReadBooleanWorldWeatherThunder();
     public static final AspectReadBooleanWorldIsDay READ_BOOLEAN_WORLD_ISDAY = new AspectReadBooleanWorldIsDay();
     public static final AspectReadBooleanWorldIsNight READ_BOOLEAN_WORLD_ISNIGHT = new AspectReadBooleanWorldIsNight();
 
-    public static final AspectReadIntegerWorldEntity READ_INTEGER_WORLD_ENTITY = new AspectReadIntegerWorldEntity();
     public static final AspectReadIntegerWorldRainCountdown READ_INTEGER_WORLD_RAINCOUNTDOWN = new AspectReadIntegerWorldRainCountdown();
     public static final AspectReadIntegerWorldTicktime READ_INTEGER_WORLD_TICKTIME = new AspectReadIntegerWorldTicktime();
     public static final AspectReadIntegerWorldDayTime READ_INTEGER_WORLD_DAYTIME = new AspectReadIntegerWorldDayTime();

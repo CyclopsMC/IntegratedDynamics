@@ -17,17 +17,11 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
                 Aspects.READ_BOOLEAN_WORLD_BLOCK,
-                Aspects.READ_BOOLEAN_WORLD_ENTITY,
-                Aspects.READ_BOOLEAN_WORLD_MOB,
-                Aspects.READ_BOOLEAN_WORLD_PLAYER,
-                Aspects.READ_BOOLEAN_WORLD_ITEM,
-                Aspects.READ_BOOLEAN_WORLD_ANIMAL,
                 Aspects.READ_BOOLEAN_WORLD_WEATHER_CLEAR,
                 Aspects.READ_BOOLEAN_WORLD_WEATHER_RAINING,
                 Aspects.READ_BOOLEAN_WORLD_WEATHER_THUNDER,
                 Aspects.READ_BOOLEAN_WORLD_ISDAY,
                 Aspects.READ_BOOLEAN_WORLD_ISNIGHT,
-                Aspects.READ_INTEGER_WORLD_ENTITY,
                 Aspects.READ_INTEGER_WORLD_RAINCOUNTDOWN,
                 Aspects.READ_INTEGER_WORLD_TICKTIME,
                 Aspects.READ_INTEGER_WORLD_DAYTIME,
