@@ -57,6 +57,7 @@ valuetype.valuetypes.integrateddynamics.object.itemstack.name=Item Stack
 valuetype.valuetypes.integrateddynamics.object.item.name=Item
 
 # Part types
+parttype.parttypes.integrateddynamics.error.lowEnergy=Not enough energy
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
 parttype.parttypes.integrateddynamics.redstoneReader.info=Reads redstone values
 parttype.parttypes.integrateddynamics.inventoryReader.name=Inventory Reader

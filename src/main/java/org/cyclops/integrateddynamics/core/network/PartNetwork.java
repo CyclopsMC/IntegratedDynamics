@@ -215,11 +215,19 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     @Override
     protected boolean canUpdate(INetworkElement<IPartNetwork> element) {
         if(!super.canUpdate(element)) return false;
-        if(element instanceof IEnergyConsumingNetworkElement) return true;
+        if(!(element instanceof IEnergyConsumingNetworkElement)) return true;
         int multiplier = GeneralConfig.energyConsumptionMultiplier;
         if(multiplier == 0) return true;
         int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
         return consume(consumptionRate, true) == consumptionRate;
+    }
+
+    @Override
+    protected void onSkipUpdate(INetworkElement<IPartNetwork> element) {
+        super.onSkipUpdate(element);
+        if(element instanceof IEnergyConsumingNetworkElement) {
+            ((IEnergyConsumingNetworkElement) element).postUpdate(this, false);
+        }
     }
 
     @Override
@@ -231,6 +239,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
                 int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
                 consume(consumptionRate, false);
             }
+            ((IEnergyConsumingNetworkElement) element).postUpdate(this, true);
         }
     }
 

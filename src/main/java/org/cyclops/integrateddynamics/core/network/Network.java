@@ -241,6 +241,15 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
 
     }
 
+    /**
+     * When the given element is not being updated because {@link Network#canUpdate(INetworkElement)}
+     * returned false.
+     * @param element The element that is not being updated.
+     */
+    protected void onSkipUpdate(INetworkElement<N> element) {
+
+    }
+
     @Override
     public final void update() {
         if(killIfEmpty() || killed) {
@@ -254,6 +263,8 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                     updateableElementsTicks.put(element, element.getUpdateInterval());
                     element.update(getMaterializedThis());
                     postUpdate(element);
+                } else {
+                    onSkipUpdate(element);
                 }
                 updateableElementsTicks.put(element, updateableElementsTicks.get(element) - 1);
             }

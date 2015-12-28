@@ -128,7 +128,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
         IAspectWrite aspectWrite = state.getActiveAspect();
         if(aspectWrite != null) {
-            if(state.hasVariable()) {
+            if(state.hasVariable() && state.isEnabled()) {
                 status = IgnoredBlockStatus.Status.ACTIVE;
             } else {
                 status = IgnoredBlockStatus.Status.ERROR;

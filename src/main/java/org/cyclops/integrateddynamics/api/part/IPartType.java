@@ -12,10 +12,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.init.IInitListener;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.api.network.*;
 
 import java.util.List;
 
@@ -240,6 +237,30 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @return The consumption rate of this part for the given state.
      */
     public int getConsumptionRate(S state);
+
+    /**
+     * Called after the element was updated or not.
+     * If the update was not called, this can be because the network did not contain
+     * enough energy to let this element work.
+     * @param network The network to update in.
+     * @param state The state
+     * @param target The target block.
+     * @param updated If the {@link INetworkElement#update(INetwork)} was called.
+     */
+    public void postUpdate(IPartNetwork network, PartTarget target, S state, boolean updated);
+
+    /**
+     * @param state The state
+     * @return If this part is enabled.
+     */
+    public boolean isEnabled(S state);
+
+    /**
+     * Set if this part should work.
+     * @param state The state
+     * @param enabled If it should work.
+     */
+    public void setEnabled(S state, boolean enabled);
 
     public static class RenderPosition {
 

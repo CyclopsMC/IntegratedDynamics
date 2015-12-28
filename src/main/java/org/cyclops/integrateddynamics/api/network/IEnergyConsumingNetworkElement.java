@@ -11,4 +11,13 @@ public interface IEnergyConsumingNetworkElement<N extends INetwork> extends INet
      */
     public int getConsumptionRate();
 
+    /**
+     * Called after the element was updated or not.
+     * If the update was not called, this can be because the network did not contain
+     * enough energy to let this element work.
+     * @param network The network.
+     * @param updated If the {@link INetworkElement#update(INetwork)} was called.
+     */
+    public void postUpdate(N network, boolean updated);
+
 }

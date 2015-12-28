@@ -142,7 +142,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) partContainer.getPartState(side);
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
         if(!state.getInventory().isEmpty()) {
-            if(state.hasVariable()) {
+            if(state.hasVariable() && state.isEnabled()) {
                 status = IgnoredBlockStatus.Status.ACTIVE;
             } else {
                 status = IgnoredBlockStatus.Status.ERROR;

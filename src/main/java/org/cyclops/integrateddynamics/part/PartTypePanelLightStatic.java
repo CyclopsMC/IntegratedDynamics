@@ -70,4 +70,14 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
         super.onNetworkRemoval(network, target, state);
         PartTypePanelLightDynamic.setLightLevel(target, 0);
     }
+
+    @Override
+    public void postUpdate(IPartNetwork network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state, boolean updated) {
+        boolean wasEnabled = isEnabled(state);
+        super.postUpdate(network, target, state, updated);
+        boolean isEnabled = isEnabled(state);
+        if(wasEnabled != isEnabled) {
+            PartTypePanelLightDynamic.setLightLevel(target, isEnabled ? LIGHT_LEVEL : 0);
+        }
+    }
 }

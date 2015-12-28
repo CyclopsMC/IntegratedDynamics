@@ -279,7 +279,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     public boolean onPartActivated(World world, BlockPos pos, IBlockState state, S partState, EntityPlayer player,
                                    EnumFacing side, float hitX, float hitY, float hitZ) {
         // Drop through if the player is sneaking
-        if(player.isSneaking()) {
+        if(player.isSneaking() || !partState.isEnabled()) {
             return false;
         }
 
@@ -312,6 +312,21 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public int getConsumptionRate(S state) {
         return 0;
+    }
+
+    @Override
+    public void postUpdate(IPartNetwork network, PartTarget target, S state, boolean updated) {
+        setEnabled(state, updated);
+    }
+
+    @Override
+    public boolean isEnabled(S state) {
+        return state.isEnabled();
+    }
+
+    @Override
+    public void setEnabled(S state, boolean enabled) {
+        state.setEnabled(enabled);
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {

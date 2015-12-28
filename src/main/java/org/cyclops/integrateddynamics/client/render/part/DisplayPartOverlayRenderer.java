@@ -74,7 +74,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         GlStateManager.translate(-6, -6, 0);
 
         IValue value = partState.getDisplayValue();
-        if(value != null) {
+        if(value != null && partState.isEnabled()) {
             IValueType<?> valueType = value.getType();
             IValueTypeWorldRenderer renderer = ValueTypeWorldRenderers.REGISTRY.getRenderer(valueType);
             if(renderer == null) {

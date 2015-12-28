@@ -51,15 +51,16 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
 
     protected void refreshVariables(IInventory inventory) {
         variableCache.clear();
-        for(int i = 0; i < inventory.getSizeInventory(); i++) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
-            if(itemStack != null) {
+            if (itemStack != null) {
                 IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-                if(variableFacade.isValid()) {
+                if (variableFacade.isValid()) {
                     variableCache.put(variableFacade.getId(), variableFacade);
                 }
             }
         }
+
         IPartNetwork network = getNetwork();
         if(network != null) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
@@ -82,5 +83,4 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
             refreshVariables(inventory);
         }
     }
-
 }

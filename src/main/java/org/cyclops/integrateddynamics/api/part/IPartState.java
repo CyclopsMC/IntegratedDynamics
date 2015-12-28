@@ -85,4 +85,15 @@ public interface IPartState<P extends IPartType> {
      */
     public void setAspectProperties(IAspect aspect, IAspectProperties properties);
 
+    /**
+     * Enable the part from working.
+     * @param enabled If it should work.
+     */
+    public void setEnabled(boolean enabled);
+
+    /**
+     * @return If the part should work.
+     */
+    public boolean isEnabled();
+
 }

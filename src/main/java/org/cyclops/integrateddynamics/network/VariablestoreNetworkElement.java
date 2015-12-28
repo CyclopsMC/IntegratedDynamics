@@ -101,4 +101,9 @@ public class VariablestoreNetworkElement implements INetworkElement<IPartNetwork
     public int getConsumptionRate() {
         return 4;
     }
+
+    @Override
+    public void postUpdate(IPartNetwork network, boolean updated) {
+
+    }
 }
