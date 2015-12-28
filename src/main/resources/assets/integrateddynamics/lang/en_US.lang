@@ -55,6 +55,7 @@ valuetype.valuetypes.integrateddynamics.object.list.name=List
 valuetype.valuetypes.integrateddynamics.object.block.name=Block
 valuetype.valuetypes.integrateddynamics.object.itemstack.name=Item Stack
 valuetype.valuetypes.integrateddynamics.object.item.name=Item
+valuetype.valuetypes.integrateddynamics.object.entity.name=Entity
 
 # Part types
 parttype.parttypes.integrateddynamics.error.lowEnergy=Not enough energy
@@ -383,6 +384,37 @@ operator.operators.integrateddynamics.object.item.isblock.name=Is Block
 operator.operators.integrateddynamics.object.item.isblock.info=If the item represents a block
 operator.operators.integrateddynamics.object.item.block.name=Block
 operator.operators.integrateddynamics.object.item.block.info=The block from the given item
+
+operator.operators.integrateddynamics.object.entity.name=Entity
+operator.operators.integrateddynamics.object.entity.basename=Entity %s
+operator.operators.integrateddynamics.object.entity.ismob.name=Is Mob
+operator.operators.integrateddynamics.object.entity.ismob.info=If the entity is a mob
+operator.operators.integrateddynamics.object.entity.isanimal.name=Is Animal
+operator.operators.integrateddynamics.object.entity.isanimal.info=If the entity is an animal
+operator.operators.integrateddynamics.object.entity.isitem.name=Is Item
+operator.operators.integrateddynamics.object.entity.isitem.info=If the entity is an item
+operator.operators.integrateddynamics.object.entity.isplayer.name=Is Player
+operator.operators.integrateddynamics.object.entity.isplayer.info=If the entity is a player
+operator.operators.integrateddynamics.object.entity.item.name=Item
+operator.operators.integrateddynamics.object.entity.item.info=The stack from the item entity
+operator.operators.integrateddynamics.object.entity.health.name=Health
+operator.operators.integrateddynamics.object.entity.health.info=The entity health
+operator.operators.integrateddynamics.object.entity.width.name=Width
+operator.operators.integrateddynamics.object.entity.width.info=The entity width
+operator.operators.integrateddynamics.object.entity.height.name=Height
+operator.operators.integrateddynamics.object.entity.height.info=The entity height
+operator.operators.integrateddynamics.object.entity.isburning.name=Is Burning
+operator.operators.integrateddynamics.object.entity.isburning.info=If the entity is burning
+operator.operators.integrateddynamics.object.entity.iswet.name=Is Wet
+operator.operators.integrateddynamics.object.entity.iswet.info=If the entity is wet
+operator.operators.integrateddynamics.object.entity.issneaking.name=Is Sneaking
+operator.operators.integrateddynamics.object.entity.issneaking.info=If the entity is sneaking
+operator.operators.integrateddynamics.object.entity.iseating.name=Is Eating
+operator.operators.integrateddynamics.object.entity.iseating.info=If the entity is eating
+operator.operators.integrateddynamics.object.entity.armorinventory.name=Armor Inventory
+operator.operators.integrateddynamics.object.entity.armorinventory.info=The list of item stacks the entity is carrying as armor.
+operator.operators.integrateddynamics.object.entity.inventory.name=Player Inventory
+operator.operators.integrateddynamics.object.entity.inventory.info=The list of item stacks the player is carrying.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

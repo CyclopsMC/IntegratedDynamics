@@ -2,6 +2,12 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.base.Optional;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -17,6 +23,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+
+import java.util.Collections;
 
 /**
  * Collection of available operators.
@@ -439,7 +447,7 @@ public final class Operators {
             if(b < a.getLength()) {
                 return a.get(b);
             } else {
-                return a.getValueType().getDefault();
+                throw new EvaluationException(String.format("Index %s out of bounds for list of length %s.", b, a.getLength()));
             }
         }
     }, IConfigRenderPattern.INFIX) {
@@ -665,6 +673,163 @@ public final class Operators {
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             Optional<Item> a = ((ValueObjectTypeItem.ValueItem) variables[0].getValue()).getRawValue();
             return ValueObjectTypeBlock.ValueBlock.of((a.isPresent() && a.get() instanceof ItemBlock) ? ((ItemBlock) a.get()).getBlock().getDefaultState() : null);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * ----------------------------------- ENTITY OPERATORS -----------------------------------
+     */
+
+    /**
+     * If the entity is a mob
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISMOB = REGISTRY.register(ObjectEntityOperator.toBoolean("ismob", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity instanceof IMob;
+        }
+    }));
+
+    /**
+     * If the entity is an animal
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(ObjectEntityOperator.toBoolean("isanimal", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity instanceof IAnimals;
+        }
+    }));
+
+    /**
+     * If the entity is an item
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISITEM = REGISTRY.register(ObjectEntityOperator.toBoolean("isitem", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity instanceof EntityItem;
+        }
+    }));
+
+    /**
+     * If the entity is a player
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISPLAYER = REGISTRY.register(ObjectEntityOperator.toBoolean("isplayer", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity instanceof EntityPlayer;
+        }
+    }));
+
+    /**
+     * The itemstack from the entity
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ITEMSTACK = REGISTRY.register(new ObjectEntityOperator("item", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.OBJECT_ITEMSTACK, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
+            return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : null);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The entity health
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_HEALTH = REGISTRY.register(ObjectEntityOperator.toDouble("health", new ObjectEntityOperator.IDoubleFunction() {
+        @Override
+        public double evaluate(Entity entity) throws EvaluationException {
+            return (entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHealth() : 0;
+        }
+    }));
+
+    /**
+     * The entity width
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_WIDTH = REGISTRY.register(ObjectEntityOperator.toDouble("width", new ObjectEntityOperator.IDoubleFunction() {
+        @Override
+        public double evaluate(Entity entity) throws EvaluationException {
+            return entity.width;
+        }
+    }));
+
+    /**
+     * The entity width
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_HEIGHT = REGISTRY.register(ObjectEntityOperator.toDouble("height", new ObjectEntityOperator.IDoubleFunction() {
+        @Override
+        public double evaluate(Entity entity) throws EvaluationException {
+            return entity.height;
+        }
+    }));
+
+    /**
+     * If the entity is burning
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISBURNING = REGISTRY.register(ObjectEntityOperator.toBoolean("isburning", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity.isBurning();
+        }
+    }));
+
+    /**
+     * If the entity is wet
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISWET = REGISTRY.register(ObjectEntityOperator.toBoolean("iswet", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity.isWet();
+        }
+    }));
+
+    /**
+     * If the entity is sneaking
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISSNEAKING = REGISTRY.register(ObjectEntityOperator.toBoolean("issneaking", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity.isSneaking();
+        }
+    }));
+
+    /**
+     * If the entity is eating
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISEATING = REGISTRY.register(ObjectEntityOperator.toBoolean("iseating", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity.isEating();
+        }
+    }));
+
+    /**
+     * The list of armor itemstacks from an entity
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ARMORINVENTORY = REGISTRY.register(new ObjectEntityOperator("armorinventory", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.LIST, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
+            if(a.isPresent()) {
+                Entity entity = a.get();
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.worldObj, entity));
+            } else {
+                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.EMPTY_LIST);
+            }
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The list of itemstacks from an entity
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_INVENTORY = REGISTRY.register(new ObjectEntityOperator("inventory", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.LIST, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
+            if(a.isPresent()) {
+                Entity entity = a.get();
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.worldObj, entity));
+            } else {
+                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.EMPTY_LIST);
+            }
         }
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 

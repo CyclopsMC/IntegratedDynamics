@@ -24,7 +24,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
 
     @Override
     public ValueList getDefault() {
-        return ValueList.ofList(ValueTypes.BOOLEAN, Lists.<ValueTypeBoolean.ValueBoolean>newArrayList());
+        return ValueList.ofList(ValueTypes.CATEGORY_ANY, Lists.<IValue>newArrayList());
     }
 
     @Override

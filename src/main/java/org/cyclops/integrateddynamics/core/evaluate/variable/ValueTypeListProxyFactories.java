@@ -23,11 +23,15 @@ public class ValueTypeListProxyFactories {
 
     public static ValueTypeListProxyMaterializedFactory MATERIALIZED;
     public static ValueTypeListProxyNBTFactory<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack, ValueTypeListProxyPositionedInventory> POSITIONED_INVENTORY;
+    public static ValueTypeListProxyNBTFactory<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack, ValueTypeListProxyEntityArmorInventory> ENTITY_ARMORINVENTORY;
+    public static ValueTypeListProxyNBTFactory<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack, ValueTypeListProxyEntityInventory> ENTITY_INVENTORY;
 
     public static void load() {
         if(MATERIALIZED == null) {
             MATERIALIZED = REGISTRY.register(new ValueTypeListProxyMaterializedFactory());
             POSITIONED_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>("positionedInventory", ValueTypeListProxyPositionedInventory.class));
+            ENTITY_ARMORINVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>("entityArmorInventory", ValueTypeListProxyEntityArmorInventory.class));
+            ENTITY_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>("entityInventory", ValueTypeListProxyEntityInventory.class));
         }
     }
 
