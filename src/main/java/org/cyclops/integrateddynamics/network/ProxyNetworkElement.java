@@ -7,8 +7,8 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
-import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
+import org.cyclops.integrateddynamics.core.network.ConsumingNetworkElementBase;
+import org.cyclops.integrateddynamics.tileentity.TileProxy;
 
 import java.util.List;
 
@@ -17,38 +17,32 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class CoalGeneratorNetworkElement extends NetworkElementBase<IPartNetwork> {
+public class ProxyNetworkElement extends ConsumingNetworkElementBase<IPartNetwork> {
 
     private final DimPos pos;
 
-    protected TileCoalGenerator getTile() {
-        return TileHelpers.getSafeTile(getPos().getWorld(), getPos().getBlockPos(), TileCoalGenerator.class);
+    protected TileProxy getTile() {
+        return TileHelpers.getSafeTile(getPos().getWorld(), getPos().getBlockPos(), TileProxy.class);
     }
 
     @Override
     public void addDrops(List<ItemStack> itemStacks) {
-        TileCoalGenerator tile = getTile();
+        TileProxy tile = getTile();
         if(tile != null) {
             InventoryHelper.dropInventoryItems(getPos().getWorld(), getPos().getBlockPos(), tile.getInventory());
         }
     }
 
     @Override
-    public boolean onNetworkAddition(IPartNetwork network) {
-        return network.addVariableContainer(getPos());
-    }
-
-    @Override
-    public void onNetworkRemoval(IPartNetwork network) {
-        network.removeVariableContainer(getPos());
-    }
-
-    @Override
     public int compareTo(INetworkElement o) {
-        if(o instanceof CoalGeneratorNetworkElement) {
-            return getPos().compareTo(((CoalGeneratorNetworkElement) o).getPos());
+        if(o instanceof ProxyNetworkElement) {
+            return getPos().compareTo(((ProxyNetworkElement) o).getPos());
         }
         return Integer.compare(hashCode(), o.hashCode());
     }
 
+    @Override
+    public int getConsumptionRate() {
+        return 2;
+    }
 }

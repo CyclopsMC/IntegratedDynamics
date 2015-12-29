@@ -8,7 +8,6 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
-import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -19,7 +18,7 @@ import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
-import org.cyclops.integrateddynamics.item.ItemVariable;
+import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 
 /**
  * Container for writer parts.
@@ -45,7 +44,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     public ContainerPartWriter(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType) {
         super(player, partTarget, partContainer, partType, partType.getWriteAspects());
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            addSlotToContainer(new SlotSingleItem(inputSlots, i, SLOT_X, SLOT_Y + getAspectBoxHeight() * i, ItemVariable.getInstance()));
+            addSlotToContainer(new SlotVariable(inputSlots, i, SLOT_X, SLOT_Y + getAspectBoxHeight() * i));
             disableSlot(i);
         }
 

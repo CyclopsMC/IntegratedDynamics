@@ -23,6 +23,7 @@ public class Configs {
         configHandler.add(new BlockEnergyBatteryConfig());
         configHandler.add(new BlockCreativeEnergyBatteryConfig());
         configHandler.add(new BlockCoalGeneratorConfig());
+        configHandler.add(new BlockProxyConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());

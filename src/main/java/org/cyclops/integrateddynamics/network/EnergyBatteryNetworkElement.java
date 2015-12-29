@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class EnergyBatteryNetworkElement implements INetworkElement<IEnergyNetwork> {
+public class EnergyBatteryNetworkElement extends NetworkElementBase<IEnergyNetwork> {
 
     private final DimPos pos;
 
