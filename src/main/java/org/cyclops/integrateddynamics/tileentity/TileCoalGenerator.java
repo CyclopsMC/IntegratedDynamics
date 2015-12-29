@@ -8,8 +8,7 @@ import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 
 /**
- * A tile entity used to store variables.
- * Internally, this also acts as an expression cache
+ * A tile entity for the coal energy generator.
  * @author rubensworks
  */
 public class TileCoalGenerator extends TileCableConnectableInventory {
