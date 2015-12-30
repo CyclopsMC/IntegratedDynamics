@@ -685,6 +685,42 @@ public final class Operators {
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 
     /**
+     * If the NBT tags of the given stacks are equal
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(new ObjectItemStackOperator("=NBT=", "isnbtequal", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
+            boolean equal = false;
+            if(a.isPresent() && b.isPresent()) {
+                equal = ItemStack.areItemStackTagsEqual(a.get(), b.get());
+            } else if(!a.isPresent() && !b.isPresent()) {
+                equal = true;
+            }
+            return ValueTypeBoolean.ValueBoolean.of(equal);
+        }
+    }, IConfigRenderPattern.INFIX));
+
+    /**
+     * If the raw items of the given stacks are equal
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(new ObjectItemStackOperator("=Raw=", "israwitemequal", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
+            boolean equal = false;
+            if(a.isPresent() && b.isPresent()) {
+                equal = ItemStack.areItemsEqual(a.get(), b.get());
+            } else if(!a.isPresent() && !b.isPresent()) {
+                equal = true;
+            }
+            return ValueTypeBoolean.ValueBoolean.of(equal);
+        }
+    }, IConfigRenderPattern.INFIX));
+
+    /**
      * ----------------------------------- ITEM OBJECT OPERATORS -----------------------------------
      */
 
@@ -942,6 +978,24 @@ public final class Operators {
             return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getFluid().getRarity(a.get()).rarityName : "");
         }
     }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * If the fluid types of the two given fluidstacks are equal
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(new ObjectFluidStackOperator("=Raw=", "israwfluidequal", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+            Optional<FluidStack> b = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+            boolean equal = false;
+            if(a.isPresent() && b.isPresent()) {
+                equal = a.get().isFluidEqual(b.get());
+            } else if(!a.isPresent() && !b.isPresent()) {
+                equal = true;
+            }
+            return ValueTypeBoolean.ValueBoolean.of(equal);
+        }
+    }, IConfigRenderPattern.INFIX));
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

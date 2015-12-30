@@ -394,6 +394,10 @@ operator.operators.integrateddynamics.object.itemstack.fluidstack.name=Fluid
 operator.operators.integrateddynamics.object.itemstack.fluidstack.info=The fluid from the given stack
 operator.operators.integrateddynamics.object.itemstack.fluidstackcapacity.name=Fluid Capacity
 operator.operators.integrateddynamics.object.itemstack.fluidstackcapacity.info=The fluid capacity of the given stack in mB
+operator.operators.integrateddynamics.object.itemstack.isnbtequal.name=NBT equals
+operator.operators.integrateddynamics.object.itemstack.isnbtequal.info=If the NBT tags of the given stacks are equal
+operator.operators.integrateddynamics.object.itemstack.israwitemequal.name=Raw item equals
+operator.operators.integrateddynamics.object.itemstack.israwitemequal.info=If the raw item of the stacks are equal
 
 operator.operators.integrateddynamics.object.item.name=Item
 operator.operators.integrateddynamics.object.item.basename=Item %s
@@ -449,6 +453,8 @@ operator.operators.integrateddynamics.object.fluidstack.isgaseous.name=Is Gaseou
 operator.operators.integrateddynamics.object.fluidstack.isgaseous.info=If the fluid is gaseous
 operator.operators.integrateddynamics.object.fluidstack.rarity.name=Rarity
 operator.operators.integrateddynamics.object.fluidstack.rarity.info=The fluid rarity
+operator.operators.integrateddynamics.object.fluidstack.israwfluidequal.name=Raw fluid equals
+operator.operators.integrateddynamics.object.fluidstack.israwfluidequal.info=If the raw fluids are equal
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

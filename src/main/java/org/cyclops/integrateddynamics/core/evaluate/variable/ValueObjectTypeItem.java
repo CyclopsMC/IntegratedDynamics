@@ -56,6 +56,10 @@ public class ValueObjectTypeItem extends ValueObjectTypeBase<ValueObjectTypeItem
             return new ValueItem(item);
         }
 
+        @Override
+        protected boolean isEqual(Item a, Item b) {
+            return a == b;
+        }
     }
 
 }

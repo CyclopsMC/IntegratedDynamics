@@ -64,6 +64,10 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
             return new ValueFluidStack(fluidStack);
         }
 
+        @Override
+        protected boolean isEqual(FluidStack a, FluidStack b) {
+            return a.isFluidStackIdentical(b);
+        }
     }
 
 }

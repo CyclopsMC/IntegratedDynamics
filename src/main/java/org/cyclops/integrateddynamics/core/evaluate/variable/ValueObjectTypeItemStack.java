@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 
 /**
@@ -64,6 +65,10 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             return new ValueItemStack(itemStack);
         }
 
+        @Override
+        protected boolean isEqual(ItemStack a, ItemStack b) {
+            return ItemStackHelpers.areItemStacksIdentical(a, b);
+        }
     }
 
 }

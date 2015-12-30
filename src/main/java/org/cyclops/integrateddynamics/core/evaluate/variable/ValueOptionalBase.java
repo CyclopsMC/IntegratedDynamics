@@ -23,9 +23,19 @@ public abstract class ValueOptionalBase<T> extends ValueBase {
         return value;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object o) {
-        return o instanceof ValueOptionalBase && ((ValueOptionalBase) o).value.equals(this.value);
+        if((o instanceof ValueOptionalBase) && getType() == ((ValueOptionalBase) o).getType()) {
+            if (((ValueOptionalBase) o).getRawValue().isPresent() && getRawValue().isPresent()) {
+                return isEqual(((ValueOptionalBase<T>) o).getRawValue().get(), getRawValue().get());
+            } else if (!((ValueOptionalBase) o).getRawValue().isPresent() && !getRawValue().isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
+
+    protected abstract boolean isEqual(T a, T b);
 
 }

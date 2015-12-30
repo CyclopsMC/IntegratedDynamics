@@ -64,6 +64,10 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             return new ValueBlock(blockState);
         }
 
+        @Override
+        protected boolean isEqual(IBlockState a, IBlockState b) {
+            return a.getBlock().getMetaFromState(a) == b.getBlock().getMetaFromState(b);
+        }
     }
 
 }

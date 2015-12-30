@@ -83,6 +83,10 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
             return new ValueEntity(entity);
         }
 
+        @Override
+        protected boolean isEqual(Entity a, Entity b) {
+            return a.getEntityId() == b.getEntityId();
+        }
     }
 
 }
