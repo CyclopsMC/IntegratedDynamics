@@ -40,6 +40,7 @@ valuetype.integrateddynamics.error.invalidInput=The input "%s" could not be pars
 valuetype.integrateddynamics.error.invalidInputItem=This value type requires an input item.
 valuetype.integrateddynamics.error.invalidListElement=Element %s is invalid: %s
 valuetype.integrateddynamics.error.block.noBlock=The inserted item is no block.
+valuetype.integrateddynamics.error.fluid.noFluid=The inserted item contains no fluid.
 
 valuetype.valuetypes.integrateddynamics.any.name=Any
 valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
@@ -59,6 +60,7 @@ valuetype.valuetypes.integrateddynamics.object.block.name=Block
 valuetype.valuetypes.integrateddynamics.object.itemstack.name=Item Stack
 valuetype.valuetypes.integrateddynamics.object.item.name=Item
 valuetype.valuetypes.integrateddynamics.object.entity.name=Entity
+valuetype.valuetypes.integrateddynamics.object.fluidstack.name=Fluid
 
 # Part types
 parttype.parttypes.integrateddynamics.error.lowEnergy=Not enough energy
@@ -424,6 +426,11 @@ operator.operators.integrateddynamics.object.entity.armorinventory.name=Armor In
 operator.operators.integrateddynamics.object.entity.armorinventory.info=The list of item stacks the entity is carrying as armor.
 operator.operators.integrateddynamics.object.entity.inventory.name=Player Inventory
 operator.operators.integrateddynamics.object.entity.inventory.info=The list of item stacks the player is carrying.
+
+operator.operators.integrateddynamics.object.fluidstack.name=Fluid
+operator.operators.integrateddynamics.object.fluidstack.basename=Fluid %s
+operator.operators.integrateddynamics.object.fluidstack.amount.name=Amount
+operator.operators.integrateddynamics.object.fluidstack.amount.info=The amount of mB
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

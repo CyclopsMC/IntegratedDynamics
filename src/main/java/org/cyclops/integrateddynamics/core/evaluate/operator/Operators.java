@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -677,7 +678,7 @@ public final class Operators {
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 
     /**
-     * ----------------------------------- ENTITY OPERATORS -----------------------------------
+     * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
      */
 
     /**
@@ -832,6 +833,20 @@ public final class Operators {
             }
         }
     }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * ----------------------------------- FLUID STACK OBJECT OPERATORS -----------------------------------
+     */
+
+    /**
+     * If the entity is eating
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(ObjectFluidStackOperator.toInt("amount", new ObjectFluidStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.amount;
+        }
+    }));
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
