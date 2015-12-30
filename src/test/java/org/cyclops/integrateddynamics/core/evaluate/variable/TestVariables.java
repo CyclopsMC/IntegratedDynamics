@@ -107,7 +107,7 @@ public class TestVariables {
 
         DummyVariableList l0 = new DummyVariableList(ValueTypeList.ValueList.ofAll());
         assertThat("empty boolean list has length zero", l0.getValue().getRawValue().getLength(), is(0));
-        assertThat("empty boolean list has boolean type", l0.getValue().getRawValue().getValueType(), CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
+        assertThat("empty boolean list has boolean type", l0.getValue().getRawValue().getValueType(), CoreMatchers.<IValueType>is(ValueTypes.CATEGORY_ANY));
 
         DummyVariableList l2 = new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeString.ValueString.of("a"), ValueTypeString.ValueString.of("b"))
@@ -123,7 +123,7 @@ public class TestVariables {
         assertThat("nestedlist has list type", l2_2.getValue().getRawValue().getValueType(), CoreMatchers.<IValueType>is(ValueTypes.LIST));
 
         assertThat("serializing empty list",
-                l0.getType().serialize(l0.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.boolean.name"));
+                l0.getType().serialize(l0.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.any.name"));
         assertThat("serializing string list",
                 l2.getType().serialize(l2.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.string.name\\;a\\;b"));
         assertThat("serializing nested list",
