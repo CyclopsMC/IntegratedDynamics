@@ -2,6 +2,7 @@
 itemGroup.integrateddynamics=Integrated Dynamics
 general.integrateddynamics.info.none=None
 general.integrateddynamics.energyUnit.name=RF
+general.integrateddynamics.error.noNetwork=No valid network found
 
 # Gui
 gui.integrateddynamics.button.save=Save
@@ -86,6 +87,12 @@ parttype.parttypes.integrateddynamics.displayPanel.info=Visually display a varia
 # Variables facades
 variable.integrateddynamics.error.invalidItem=The current variable can not be used in this aspect.
 variable.integrateddynamics.error.partNotInNetwork=Part with id %s could not be found within the current network.
+
+# Proxy
+proxy.integrateddynamics.tooltip.proxyId=§e§oProxy ID: §r§o%s
+proxy.integrateddynamics.error.proxyNotInNetwork=Proxy with id %s could not be found within the current network.
+proxy.integrateddynamics.error.proxyInvalid=Proxy with id %s is not exposing a variable.
+proxy.integrateddynamics.error.proxyInvalidType=Proxy with id %s is expected to expose a variable with type %s while %s is found.
 
 # Aspects
 aspect.integrateddynamics.tooltip.aspectName=§eAspect: §r%s

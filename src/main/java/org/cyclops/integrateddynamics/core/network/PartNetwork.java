@@ -49,6 +49,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     private Map<Integer, IVariableFacade> compositeVariableCache;
     private Map<Integer, IValue> lazyExpressionValueCache;
     private Map<DimPos, IEnergyBatteryFacade> energyBatteryPositions;
+    private Map<Integer, DimPos> proxyPositions;
 
     private volatile boolean partsChanged = false;
 
@@ -80,6 +81,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
         compositeVariableCache = null;
         lazyExpressionValueCache = Maps.newHashMap();
         energyBatteryPositions = Maps.newHashMap();
+        proxyPositions = Maps.newHashMap();
     }
 
     @Override
@@ -201,6 +203,22 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     public void removeVariableContainer(DimPos dimPos) {
         compositeVariableCache = null;
         variableContainerPositions.remove(dimPos);
+    }
+
+    @Override
+    public boolean addProxy(int proxyId, DimPos dimPos) {
+        proxyPositions.put(proxyId, dimPos);
+        return true;
+    }
+
+    @Override
+    public void removeProxy(int proxyId) {
+        proxyPositions.remove(proxyId);
+    }
+
+    @Override
+    public DimPos getProxy(int proxyId) {
+        return proxyPositions.get(proxyId);
     }
 
     @Override
