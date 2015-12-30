@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -108,7 +109,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     @Override
     public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads) {
         if(isValid()) {
-            quads.addAll(variableModelBaked.getValueTypeSubModels().get(ValueTypes.CATEGORY_ANY).getGeneralQuads()); // TODO: add custom model
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.PROXY).getBakedModel().getGeneralQuads());
         }
     }
 }

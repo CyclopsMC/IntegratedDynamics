@@ -15,6 +15,7 @@ import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
+import org.cyclops.integrateddynamics.api.client.model.IVariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRendererRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
@@ -33,6 +34,8 @@ import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRend
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.client.model.VariableModelProviderRegistry;
+import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -112,6 +115,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         if(MinecraftHelpers.isClientSide()) {
             getRegistryManager().addRegistry(IPartOverlayRendererRegistry.class, PartOverlayRendererRegistry.getInstance());
             getRegistryManager().addRegistry(IValueTypeWorldRendererRegistry.class, ValueTypeWorldRendererRegistry.getInstance());
+            getRegistryManager().addRegistry(IVariableModelProviderRegistry.class, VariableModelProviderRegistry.getInstance());
         }
         getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(ProxyVariableFacadeHandler.getInstance());
 
@@ -128,6 +132,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         if(MinecraftHelpers.isClientSide()) {
             PartOverlayRenderers.load();
             ValueTypeWorldRenderers.load();
+            VariableModelProviders.load();
         }
 
         super.preInit(event);

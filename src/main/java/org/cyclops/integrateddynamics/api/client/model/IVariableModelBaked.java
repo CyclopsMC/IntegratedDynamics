@@ -1,12 +1,7 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ISmartItemModel;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-
-import java.util.Map;
 
 /**
  * A model for variable items.
@@ -15,27 +10,19 @@ import java.util.Map;
 public interface IVariableModelBaked extends IFlexibleBakedModel, ISmartItemModel {
 
     /**
-     * Add a sub-model for a value type.
-     * @param valueType The value type.
-     * @param bakedModel The sub-model.
+     * Set the baked submodels for the given provider.
+     * @param provider The provider.
+     * @param subModels The baked sub model holder.
+     * @param <B> The baked sub model type.
      */
-    public void addValueTypeModel(IValueType valueType, IBakedModel bakedModel);
+    public <B extends IVariableModelProvider.IBakedModelProvider> void setSubModels(IVariableModelProvider<B> provider, B subModels);
 
     /**
-     * @return The registered value type sub-models.
+     * Get the baked submodels for the given provider.
+     * @param provider The provider.
+     * @param <B> The baked sub model type.
+     * @return
      */
-    public Map<IValueType, IBakedModel> getValueTypeSubModels();
-
-    /**
-     * Add a sub-model for an aspect.
-     * @param aspect The aspect.
-     * @param bakedModel The sub-model.
-     */
-    public void addAspectModel(IAspect aspect, IBakedModel bakedModel);
-
-    /**
-     * @return The registered aspect sub-models.
-     */
-    public Map<IAspect, IBakedModel> getAspectSubModels();
+    public <B extends IVariableModelProvider.IBakedModelProvider> B getSubModels(IVariableModelProvider<B> provider);
 
 }
