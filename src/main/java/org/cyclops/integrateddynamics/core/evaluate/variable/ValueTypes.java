@@ -22,7 +22,6 @@ public class ValueTypes {
 
     // Object types
     public static ValueObjectTypeBlock      OBJECT_BLOCK      = REGISTRY.register(new ValueObjectTypeBlock());
-    public static ValueObjectTypeItem       OBJECT_ITEM       = REGISTRY.register(new ValueObjectTypeItem());
     public static ValueObjectTypeItemStack  OBJECT_ITEMSTACK  = REGISTRY.register(new ValueObjectTypeItemStack());
     public static ValueObjectTypeEntity     OBJECT_ENTITY     = REGISTRY.register(new ValueObjectTypeEntity());
     public static ValueObjectTypeFluidStack OBJECT_FLUIDSTACK = REGISTRY.register(new ValueObjectTypeFluidStack());

@@ -8,7 +8,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -491,17 +490,6 @@ public final class Operators {
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 
     /**
-     * The item representation of the block
-     */
-    public static final ObjectBlockOperator OBJECT_ITEM = REGISTRY.register(new ObjectBlockOperator("item", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.OBJECT_ITEM, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<IBlockState> a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeItem.ValueItem.of(a.isPresent() ? Item.getItemFromBlock(a.get().getBlock()) : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
-
-    /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
      */
 
@@ -631,17 +619,6 @@ public final class Operators {
     }, IConfigRenderPattern.INFIX));
 
     /**
-     * The item from the stack
-     */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ITEM = REGISTRY.register(new ObjectItemStackOperator("item", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_ITEM, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeItem.ValueItem.of(a.isPresent() ? a.get().getItem() : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
-
-    /**
      * The block from the stack
      */
     public static final ObjectItemStackOperator OBJECT_ITEMSTACK_BLOCK = REGISTRY.register(new ObjectItemStackOperator("block", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
@@ -719,32 +696,6 @@ public final class Operators {
             return ValueTypeBoolean.ValueBoolean.of(equal);
         }
     }, IConfigRenderPattern.INFIX));
-
-    /**
-     * ----------------------------------- ITEM OBJECT OPERATORS -----------------------------------
-     */
-
-    /**
-     * If the item is a block item
-     */
-    public static final ObjectItemOperator OBJECT_ITEM_ISBLOCK = REGISTRY.register(new ObjectItemOperator("isblock", new IValueType[]{ValueTypes.OBJECT_ITEM}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<Item> a = ((ValueObjectTypeItem.ValueItem) variables[0].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a.isPresent() && a.get() instanceof ItemBlock);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
-
-    /**
-     * The block from the item
-     */
-    public static final ObjectItemOperator OBJECT_ITEM_BLOCK = REGISTRY.register(new ObjectItemOperator("block", new IValueType[]{ValueTypes.OBJECT_ITEM}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<Item> a = ((ValueObjectTypeItem.ValueItem) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeBlock.ValueBlock.of((a.isPresent() && a.get() instanceof ItemBlock) ? ((ItemBlock) a.get()).getBlock().getDefaultState() : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
