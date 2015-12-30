@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 
 import java.util.Collections;
 
@@ -652,6 +653,38 @@ public final class Operators {
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 
     /**
+     * If the given stack has a fluid.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISFLUIDSTACK = REGISTRY.register(ObjectItemStackOperator.toBoolean("isfluidstack", new ObjectItemStackOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
+            return Helpers.getFluidStack(itemStack) != null;
+        }
+    }));
+
+    /**
+     * The fluidstack from the stack
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_FLUIDSTACK = REGISTRY.register(new ObjectItemStackOperator("fluidstack", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_FLUIDSTACK, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            return ValueObjectTypeFluidStack.ValueFluidStack.of(a.isPresent() ? Helpers.getFluidStack(a.get()) : null);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The capacity of the fluidstack from the stack.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = REGISTRY.register(new ObjectItemStackOperator("fluidstackcapacity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a.isPresent() ? Helpers.getFluidStackCapacity(a.get()) : 0);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
      * ----------------------------------- ITEM OBJECT OPERATORS -----------------------------------
      */
 
@@ -839,7 +872,7 @@ public final class Operators {
      */
 
     /**
-     * If the entity is eating
+     * The amount of fluid in the fluidstack
      */
     public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(ObjectFluidStackOperator.toInt("amount", new ObjectFluidStackOperator.IIntegerFunction() {
         @Override
@@ -847,6 +880,68 @@ public final class Operators {
             return fluidStack.amount;
         }
     }));
+
+    /**
+     * The block from the fluidstack
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_BLOCK = REGISTRY.register(new ObjectFluidStackOperator("block", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+            return ValueObjectTypeBlock.ValueBlock.of(a.isPresent() ? a.get().getFluid().getBlock().getDefaultState() : null);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The fluidstack luminosity
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("luminosity", new ObjectFluidStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.getFluid().getLuminosity(fluidStack);
+        }
+    }));
+
+    /**
+     * The fluidstack density
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("density", new ObjectFluidStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.getFluid().getDensity(fluidStack);
+        }
+    }));
+
+    /**
+     * The fluidstack viscosity
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("viscosity", new ObjectFluidStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.getFluid().getViscosity(fluidStack);
+        }
+    }));
+
+    /**
+     * If the fluidstack is gaseous
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(ObjectFluidStackOperator.toBoolean("isgaseous", new ObjectFluidStackOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.getFluid().isGaseous(fluidStack);
+        }
+    }));
+
+    /**
+     * The rarity of the fluidstack
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_RARITY = REGISTRY.register(new ObjectFluidStackOperator("rarity", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+            return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getFluid().getRarity(a.get()).rarityName : "");
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

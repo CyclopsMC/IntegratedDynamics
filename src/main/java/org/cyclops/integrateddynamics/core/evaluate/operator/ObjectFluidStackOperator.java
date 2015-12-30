@@ -7,10 +7,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 
 /**
  * Base class for fluidstack object operators.
@@ -77,12 +74,30 @@ public class ObjectFluidStackOperator extends ObjectOperatorBase {
         }, IConfigRenderPattern.SUFFIX_1_LONG);
     }
 
+    public static ObjectEntityOperator toDouble(String name, final IDoubleFunction function) {
+        return toDouble(name, function, 0);
+    }
+
+    public static ObjectEntityOperator toDouble(String name, final IDoubleFunction function, final int defaultValue) {
+        return new ObjectEntityOperator(name, new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.DOUBLE, new IFunction() {
+            @Override
+            public IValue evaluate(IVariable... variables) throws EvaluationException {
+                Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+                return ValueTypeDouble.ValueDouble.of(a.isPresent() ? function.evaluate(a.get()) : defaultValue);
+            }
+        }, IConfigRenderPattern.SUFFIX_1_LONG);
+    }
+
     public static interface IIntegerFunction {
         public int evaluate(FluidStack fluidStack) throws EvaluationException;
     }
 
     public static interface IBooleanFunction {
         public boolean evaluate(FluidStack fluidStack) throws EvaluationException;
+    }
+
+    public static interface IDoubleFunction {
+        public double evaluate(FluidStack fluidStack) throws EvaluationException;
     }
 
 }
