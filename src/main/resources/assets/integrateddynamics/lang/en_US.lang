@@ -20,6 +20,8 @@ tile.blocks.integrateddynamics.coalGenerator.name=Generator
 tile.blocks.integrateddynamics.coalGenerator.info=Produces energy from fuel items
 tile.blocks.integrateddynamics.proxy.name=Proxy
 tile.blocks.integrateddynamics.proxy.info=Expose a variable reference as an aspect
+tile.blocks.integrateddynamics.materializer.name=Materializer
+tile.blocks.integrateddynamics.materializer.info=Materialize the value of a variable in a new variable
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s

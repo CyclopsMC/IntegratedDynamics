@@ -99,6 +99,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
+    public V materialize(V value) {
+        return value;
+    }
+
+    @Override
     public String toString() {
         return L10NHelpers.localize(getUnlocalizedName());
     }

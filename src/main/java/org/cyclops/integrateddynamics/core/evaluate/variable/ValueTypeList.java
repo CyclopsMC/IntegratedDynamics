@@ -53,6 +53,16 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         return getDefault();
     }
 
+    @Override
+    public ValueList materialize(ValueList value) {
+        IValueTypeListProxy<IValueType<IValue>, IValue> list = value.getRawValue();
+        List<IValue> values = Lists.newArrayListWithExpectedSize(list.getLength());
+        for(IValue element : list) {
+            values.add(element);
+        }
+        return ValueList.ofList(list.getValueType(), values);
+    }
+
     @ToString
     public static class ValueList<T extends IValueType<V>, V extends IValue> extends ValueBase {
 
