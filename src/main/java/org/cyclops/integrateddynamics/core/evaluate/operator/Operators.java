@@ -481,7 +481,7 @@ public final class Operators {
     /**
      * The itemstack representation of the block
      */
-    public static final ObjectBlockOperator OBJECT_ITEMSTACK = REGISTRY.register(new ObjectBlockOperator("itemstack", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.OBJECT_ITEMSTACK, new OperatorBase.IFunction() {
+    public static final ObjectBlockOperator OBJECT_BLOCK_ITEMSTACK = REGISTRY.register(new ObjectBlockOperator("itemstack", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.OBJECT_ITEMSTACK, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             Optional<IBlockState> a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
@@ -671,7 +671,7 @@ public final class Operators {
             Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
             boolean equal = false;
             if(a.isPresent() && b.isPresent()) {
-                equal = ItemStack.areItemStackTagsEqual(a.get(), b.get());
+                equal = a.get().isItemEqual(b.get()) && ItemStack.areItemStackTagsEqual(a.get(), b.get());
             } else if(!a.isPresent() && !b.isPresent()) {
                 equal = true;
             }
