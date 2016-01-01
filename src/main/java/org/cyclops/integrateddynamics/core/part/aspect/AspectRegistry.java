@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -39,7 +39,7 @@ public final class AspectRegistry implements IAspectRegistry {
     private Map<String, IAspectRead> unlocalizedReadAspects = Maps.newHashMap();
     private Map<String, IAspectWrite> unlocalizedWriteAspects = Maps.newHashMap();
     @SideOnly(Side.CLIENT)
-    private Map<IAspect, ModelResourceLocation> aspectModels;
+    private Map<IAspect, ResourceLocation> aspectModels;
 
     private AspectRegistry() {
         IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
@@ -127,19 +127,19 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void registerAspectModel(IAspect aspect, ModelResourceLocation modelLocation) {
+    public void registerAspectModel(IAspect aspect, ResourceLocation modelLocation) {
         aspectModels.put(aspect, modelLocation);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public ModelResourceLocation getAspectModel(IAspect aspect) {
+    public ResourceLocation getAspectModel(IAspect aspect) {
         return aspectModels.get(aspect);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Collection<ModelResourceLocation> getAspectModels() {
+    public Collection<ResourceLocation> getAspectModels() {
         return Collections.unmodifiableCollection(aspectModels.values());
     }
 

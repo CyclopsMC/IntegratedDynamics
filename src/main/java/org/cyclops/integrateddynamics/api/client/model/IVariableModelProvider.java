@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.api.client.model;
 import com.google.common.base.Function;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelState;
 
@@ -29,7 +28,7 @@ public interface IVariableModelProvider<B extends IVariableModelProvider.IBakedM
     /**
      * @return All models this provider depends on and should thus be loaded.
      */
-    public Collection<ModelResourceLocation> getDependencies();
+    public Collection<ResourceLocation> getDependencies();
 
     /**
      * Provider for baked models.

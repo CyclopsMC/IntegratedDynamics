@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.TRSRTransformation;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
@@ -88,7 +89,7 @@ public class VariableModel implements IModel {
 
     @Override
     public IModelState getDefaultState() {
-        return ModelHelpers.DEFAULT_ITEM_STATE;
+        return TRSRTransformation.identity();
     }
 
 }

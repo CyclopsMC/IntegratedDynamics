@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelState;
@@ -39,7 +38,7 @@ public class AspectVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public Collection<ModelResourceLocation> getDependencies() {
+    public Collection<ResourceLocation> getDependencies() {
         return Aspects.REGISTRY.getAspectModels();
     }
 

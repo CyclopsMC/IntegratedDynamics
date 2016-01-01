@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelState;
@@ -22,7 +21,7 @@ import java.util.Collection;
  */
 public class ProxyVariableModelProvider implements IVariableModelProvider<BakedSingleVariableModelProvider> {
 
-    private ModelResourceLocation model = new ModelResourceLocation(Reference.MOD_ID + ":customoverlay/proxy");
+    private ResourceLocation model = new ResourceLocation(Reference.MOD_ID + ":customoverlay/proxy");
 
     @Override
     public BakedSingleVariableModelProvider bakeOverlayModels(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
@@ -37,7 +36,7 @@ public class ProxyVariableModelProvider implements IVariableModelProvider<BakedS
     }
 
     @Override
-    public Collection<ModelResourceLocation> getDependencies() {
+    public Collection<ResourceLocation> getDependencies() {
         return Lists.newArrayList(model);
     }
 

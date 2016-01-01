@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -30,7 +30,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     private final Map<String, IValueType> valueTypes = Maps.newHashMap();
     @SideOnly(Side.CLIENT)
-    private Map<IValueType, ModelResourceLocation> valueTypeModels;
+    private Map<IValueType, ResourceLocation> valueTypeModels;
 
     private ValueTypeRegistry() {
         if(MinecraftHelpers.isClientSide()) {
@@ -66,19 +66,19 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, ModelResourceLocation modelLocation) {
+    public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, ResourceLocation modelLocation) {
         valueTypeModels.put(valueType, modelLocation);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public <V extends IValue, T extends IValueType<V>> ModelResourceLocation getValueTypeModel(T valueType) {
+    public <V extends IValue, T extends IValueType<V>> ResourceLocation getValueTypeModel(T valueType) {
         return valueTypeModels.get(valueType);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Collection<ModelResourceLocation> getValueTypeModels() {
+    public Collection<ResourceLocation> getValueTypeModels() {
         return Collections.unmodifiableCollection(valueTypeModels.values());
     }
 

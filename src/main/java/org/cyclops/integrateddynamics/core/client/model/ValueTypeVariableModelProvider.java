@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelState;
@@ -28,9 +27,9 @@ public class ValueTypeVariableModelProvider implements IVariableModelProvider<Ba
         Map<IValueType, IBakedModel> bakedModels = Maps.newHashMap();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             try {
-                ModelResourceLocation modelResourceLocation = ValueTypes.REGISTRY.getValueTypeModel(valueType);
-                if(modelResourceLocation != null) {
-                    IModel model = ModelLoaderRegistry.getModel(modelResourceLocation);
+                ResourceLocation resourceLocation = ValueTypes.REGISTRY.getValueTypeModel(valueType);
+                if(resourceLocation != null) {
+                    IModel model = ModelLoaderRegistry.getModel(resourceLocation);
                     IBakedModel bakedValueTypeModel = model.bake(state, format, bakedTextureGetter);
                     bakedModels.put(valueType, bakedValueTypeModel);
                 }
@@ -42,7 +41,7 @@ public class ValueTypeVariableModelProvider implements IVariableModelProvider<Ba
     }
 
     @Override
-    public Collection<ModelResourceLocation> getDependencies() {
+    public Collection<ResourceLocation> getDependencies() {
         return ValueTypes.REGISTRY.getValueTypeModels();
     }
 
