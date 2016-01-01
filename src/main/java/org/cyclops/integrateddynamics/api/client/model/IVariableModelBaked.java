@@ -21,7 +21,7 @@ public interface IVariableModelBaked extends IFlexibleBakedModel, ISmartItemMode
      * Get the baked submodels for the given provider.
      * @param provider The provider.
      * @param <B> The baked sub model type.
-     * @return
+     * @return The baked model provider.
      */
     public <B extends IVariableModelProvider.IBakedModelProvider> B getSubModels(IVariableModelProvider<B> provider);
 

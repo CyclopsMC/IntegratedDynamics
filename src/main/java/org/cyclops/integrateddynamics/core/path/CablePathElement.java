@@ -56,4 +56,11 @@ public class CablePathElement implements ICablePathElement {
         }
         return Integer.compare(cable.hashCode(), o.getCable().hashCode());
     }
+
+    @Override
+    public int hashCode() {
+        int result = cable.hashCode();
+        result = 31 * result + position.hashCode();
+        return result;
+    }
 }

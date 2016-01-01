@@ -125,6 +125,14 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
+    public int hashCode() {
+        int result = part.hashCode();
+        result = 31 * result + partContainerFacade.hashCode();
+        result = 31 * result + target.hashCode();
+        return result;
+    }
+
+    @Override
     public int compareTo(INetworkElement o) {
         if(o instanceof IPartNetworkElement) {
             IPartNetworkElement p = (IPartNetworkElement) o;

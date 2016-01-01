@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.network;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
@@ -17,6 +18,7 @@ import java.util.List;
  * Network element for variable stores.
  * @author rubensworks
  */
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class EnergyBatteryNetworkElement extends NetworkElementBase<IEnergyNetwork> {
 

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.network;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -16,6 +17,7 @@ import java.util.List;
  * Network element for coal generators.
  * @author rubensworks
  */
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class CoalGeneratorNetworkElement extends NetworkElementBase<IPartNetwork> {
 

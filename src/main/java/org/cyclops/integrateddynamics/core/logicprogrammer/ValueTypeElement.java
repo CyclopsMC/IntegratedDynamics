@@ -146,6 +146,7 @@ public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRen
     /**
      * Set the value.
      * @param value The value.
+     * @param activeElementSubGui The sub gui that is displaying the value
      */
     public void setValue(IValue value, ValueTypeSubGuiRenderPattern activeElementSubGui) {
         getInnerGuiElement().setInputString(getInnerGuiElement().getValueType().serialize(value), activeElementSubGui);

@@ -36,6 +36,7 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
      * Make a new block instance.
      *
      * @param eConfig Config for this block.
+     * @param tileEntity The tile class
      */
     public BlockContainerGuiCabled(ExtendedConfig eConfig, Class<? extends CyclopsTileEntity> tileEntity) {
         super(eConfig, Material.anvil, tileEntity);
