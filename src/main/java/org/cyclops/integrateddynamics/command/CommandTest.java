@@ -7,8 +7,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import org.cyclops.cyclopscore.command.CommandMod;
 import org.cyclops.cyclopscore.init.ModBase;
-import org.cyclops.integrateddynamics.core.evaluate.variable.integration.IntegrationBefore;
-import org.cyclops.integrateddynamics.core.evaluate.variable.integration.IntegrationTest;
+import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
+import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

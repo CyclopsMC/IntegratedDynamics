@@ -10,6 +10,9 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
+import org.cyclops.integrateddynamics.core.test.IntegrationTest;
+import org.cyclops.integrateddynamics.core.test.TestHelpers;
 
 /**
  * Test the different logical operators.

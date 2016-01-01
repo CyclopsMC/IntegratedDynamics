@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
+package org.cyclops.integrateddynamics.core.test;
 
 import org.apache.http.util.Asserts;
 import org.cyclops.integrateddynamics.command.CommandTest;

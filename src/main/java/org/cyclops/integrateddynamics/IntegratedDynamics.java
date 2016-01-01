@@ -44,7 +44,6 @@ import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.core.evaluate.variable.integration.TestHelpers;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypeRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
@@ -53,6 +52,7 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
+import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Map;
