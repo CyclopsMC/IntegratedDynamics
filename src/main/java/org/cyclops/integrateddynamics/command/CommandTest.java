@@ -27,7 +27,8 @@ public class CommandTest extends CommandMod {
     private static final String P = "org.cyclops.integrateddynamics.core.evaluate.variable.integration.";
     public static final List<String> CLASSES = Lists.newArrayList(
             P + "TestBlockOperators",
-            P + "TestItemStackOperators"
+            P + "TestItemStackOperators",
+            P + "TestEntityOperators"
     );
 
     public CommandTest(ModBase mod) {

@@ -29,7 +29,13 @@ public class TestHelpers {
      */
     public static <T> void assertEqual(T actual, T expected, String ifEqual) {
         try {
-            Asserts.check(Objects.equals(actual, expected), ifEqual);
+            if(actual instanceof Double) {
+                Asserts.check(((Double) actual - (Double) expected) < 0.0001D, ifEqual);
+            } else if(actual instanceof Float) {
+                Asserts.check(((Float) actual - (Float) expected) < 0.0001F, ifEqual);
+            } else {
+                Asserts.check(Objects.equals(actual, expected), ifEqual);
+            }
         } catch (IllegalStateException e) {
             throw new AssertionError(String.format("Failure: %s. Expected %s, but got %s.", ifEqual, expected, actual));
         }

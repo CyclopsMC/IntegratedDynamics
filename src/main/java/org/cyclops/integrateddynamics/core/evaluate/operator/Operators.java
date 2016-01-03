@@ -717,7 +717,7 @@ public final class Operators {
     public static final ObjectEntityOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(ObjectEntityOperator.toBoolean("isanimal", new ObjectEntityOperator.IBooleanFunction() {
         @Override
         public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof IAnimals;
+            return entity instanceof IAnimals && !(entity instanceof IMob);
         }
     }));
 
