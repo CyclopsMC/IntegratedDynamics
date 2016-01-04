@@ -56,6 +56,9 @@ public abstract class SubGuiBox extends Gui implements ISubGuiBox {
         textureManager.bindTexture(TEXTURE);
         GlStateManager.color(1, 1, 1);
 
+        int textureWidth = 19;
+        int textureHeight = textureWidth;
+
         int x = guiLeft + getX();
         int y = guiTop + getY();
         int width = getWidth();
@@ -65,25 +68,40 @@ public abstract class SubGuiBox extends Gui implements ISubGuiBox {
 
         // Corners
         this.drawTexturedModalRect(x, y, tx, tx, 1, 1); // top left
-        this.drawTexturedModalRect(x + width - 1, y, tx + 2, ty, 1, 1); // top right
-        this.drawTexturedModalRect(x, y + height - 1, 0, tx + 2, ty + 1, 1); // bottom left
-        this.drawTexturedModalRect(x + width - 1, y + height - 1, tx + 2, ty + 2, 1, 1); // bottom right
+        this.drawTexturedModalRect(x + width - 1, y, tx + textureWidth - 1, ty, 1, 1); // top right
+        this.drawTexturedModalRect(x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1); // bottom left
+        this.drawTexturedModalRect(x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1); // bottom right
+
+        int i, j;
 
         // Sides
-        for(int i = 1; i < width - 1; i += 1) {
-            this.drawTexturedModalRect(x + i, y, tx + 1, ty, 1, 1);
-            this.drawTexturedModalRect(x + i, y + height - 1, tx + 1, ty + 2, 1, 1);
+        i = 1;
+        while(i < width - 1) {
+            int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
+            this.drawTexturedModalRect(x + i, y, tx + 1, ty, currentWidth, 1);
+            this.drawTexturedModalRect(x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1);
+            i += currentWidth;
         }
-        for(int i = 1; i < height - 1; i += 1) {
-            this.drawTexturedModalRect(x, y + i, tx, ty + 1, 1, 1);
-            this.drawTexturedModalRect(x + width - 1, y + i, tx + 2, ty + 1, 1, 1);
+
+        i = 1;
+        while(i < height - 1) {
+            int currentHeight = Math.max(1, Math.min(height - i, textureHeight - 2) - 1);
+            this.drawTexturedModalRect(x, y + i, tx, ty + 1, 1, currentHeight);
+            this.drawTexturedModalRect(x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight);
+            i += currentHeight;
         }
 
         // Center
-        for(int i = 1; i < width - 1; i += 1) {
-            for(int j = 1; j < height - 1; j += 1) {
-                this.drawTexturedModalRect(x + i, y + j, tx + 1, ty + 1, 1, 1);
+        i = 1;
+        while(i < width - 1) {
+            int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
+            j = 1;
+            while (j < height - 1) {
+                int currentHeight = Math.max(1, Math.min(height - j, textureHeight - 2) - 1);
+                this.drawTexturedModalRect(x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight);
+                j += currentHeight;
             }
+            i += currentWidth;
         }
 
         // Draw buttons
@@ -121,7 +139,7 @@ public abstract class SubGuiBox extends Gui implements ISubGuiBox {
     public static enum Box {
 
         LIGHT(0, 0),
-        DARK(0, 3);
+        DARK(0, 19);
 
         private final int x, y;
 

@@ -43,7 +43,7 @@ public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui
     }
 
     protected void drawSlot(int x, int y) {
-        this.drawTexturedModalRect(x, y, 3, 0, 18, 18);
+        this.drawTexturedModalRect(x, y, 19, 0, 18, 18);
     }
 
     @Override

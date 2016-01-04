@@ -59,7 +59,7 @@ public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C
         super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         textureManager.bindTexture(TEXTURE);
-        this.drawTexturedModalRect(searchField.xPosition - 1, searchField.yPosition - 1, 21, 0, searchField.width + 1, 12);
+        this.drawTexturedModalRect(searchField.xPosition - 1, searchField.yPosition - 1, 37, 0, searchField.width + 1, 12);
         // Textbox
         searchField.drawTextBox();
     }
