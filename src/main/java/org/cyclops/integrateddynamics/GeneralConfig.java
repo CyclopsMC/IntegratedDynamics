@@ -42,7 +42,7 @@ public class GeneralConfig extends DummyConfig {
      * The energy usage multiplier for networks.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The energy usage multiplier for networks.")
-    public static int energyConsumptionMultiplier = 1;
+    public static int energyConsumptionMultiplier = 0;
     
     /**
      * Create a new instance.
