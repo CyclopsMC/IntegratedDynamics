@@ -65,7 +65,7 @@ public class ObjectFluidStackOperator extends ObjectOperatorBase {
     }
 
     public static ObjectFluidStackOperator toBoolean(String name, final IBooleanFunction function, final boolean defaultValue) {
-        return new ObjectFluidStackOperator(name, new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new IFunction() {
+        return new ObjectFluidStackOperator(name, new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.BOOLEAN, new IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
                 Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
@@ -79,7 +79,7 @@ public class ObjectFluidStackOperator extends ObjectOperatorBase {
     }
 
     public static ObjectEntityOperator toDouble(String name, final IDoubleFunction function, final int defaultValue) {
-        return new ObjectEntityOperator(name, new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.DOUBLE, new IFunction() {
+        return new ObjectEntityOperator(name, new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.DOUBLE, new IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
                 Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();

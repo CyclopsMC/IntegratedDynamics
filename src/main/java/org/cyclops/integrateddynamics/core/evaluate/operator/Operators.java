@@ -937,7 +937,7 @@ public final class Operators {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
             Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
-            Optional<FluidStack> b = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+            Optional<FluidStack> b = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[1].getValue()).getRawValue();
             boolean equal = false;
             if(a.isPresent() && b.isPresent()) {
                 equal = a.get().isFluidEqual(b.get());

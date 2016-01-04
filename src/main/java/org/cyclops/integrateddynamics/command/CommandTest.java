@@ -28,7 +28,8 @@ public class CommandTest extends CommandMod {
     public static final List<String> CLASSES = Lists.newArrayList(
             P + "TestBlockOperators",
             P + "TestItemStackOperators",
-            P + "TestEntityOperators"
+            P + "TestEntityOperators",
+            P + "TestFluidStackOperators"
     );
 
     public CommandTest(ModBase mod) {
