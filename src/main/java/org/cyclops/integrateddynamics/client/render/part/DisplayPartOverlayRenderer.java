@@ -50,6 +50,8 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     public void renderPartOverlay(IPartContainer partContainer, double x, double y, double z, float partialTick,
                                   int destroyStage, EnumFacing direction, IPartType partType,
                                   TileEntityRendererDispatcher rendererDispatcher) {
+        if(!shouldRender(partContainer.getPosition().getBlockPos())) return;
+
         GlStateManager.enableRescaleNormal();
         GlStateManager.alphaFunc(516, 0.1F);
         GlStateManager.enableBlend();
