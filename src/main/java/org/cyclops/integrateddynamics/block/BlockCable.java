@@ -447,6 +447,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
+    public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return super.doesSideBlockRendering(world, pos, face) || hasFacade(world, pos);
+    }
+
+    @Override
     public boolean isFullCube() {
         return false;
     }
