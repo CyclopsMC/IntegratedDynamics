@@ -6,9 +6,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import net.minecraft.block.properties.PropertyHelper;
-import net.minecraft.block.state.BlockState;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
-import org.cyclops.cyclopscore.block.property.BlockPropertyManagerComponent;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 
 import java.util.Collection;
@@ -19,7 +17,7 @@ import java.util.Collection;
  * @author rubensworks
  */
 public class IgnoredBlockStatus extends IgnoredBlock {
-    @BlockProperty
+    @BlockProperty(excludeFromMeta = true)
     public static final PropertyStatus STATUS = PropertyStatus.create("status", Status.class);
 
     /**
@@ -29,15 +27,6 @@ public class IgnoredBlockStatus extends IgnoredBlock {
      */
     public IgnoredBlockStatus(ExtendedConfig eConfig) {
         super(eConfig);
-    }
-
-    @Override protected BlockState createBlockState() {
-        return (propertyManager = new BlockPropertyManagerComponent(this) {
-            @Override
-            protected boolean ignoreMetaOverflow() {
-                return true;
-            }
-        }).createDelegatedBlockState();
     }
 
     public static class PropertyStatus extends PropertyHelper {
