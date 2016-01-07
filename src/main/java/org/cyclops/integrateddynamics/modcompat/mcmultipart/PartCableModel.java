@@ -1,6 +1,7 @@
-package org.cyclops.integrateddynamics.client.model;
+package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.base.Optional;
+import mcmultipart.client.multipart.ISmartMultipartModel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
@@ -9,29 +10,30 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.client.model.CableModelBase;
 
 /**
  * A dynamic model for cables.
  * @author rubensworks
  */
-public class CableModel extends CableModelBase {
+public class PartCableModel extends CableModelBase implements ISmartMultipartModel {
 
-    public CableModel(IExtendedBlockState state, boolean isItemStack) {
+    public PartCableModel(IExtendedBlockState state, boolean isItemStack) {
         super(state, isItemStack);
     }
 
-    public CableModel() {
+    public PartCableModel() {
         super();
     }
 
     @Override
     protected boolean isRealCable() {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.REALCABLE, true);
+        return true;
     }
 
     @Override
     protected Optional<IBlockState> getFacade() {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.FACADE, Optional.absent());
+        return Optional.absent();
     }
 
     @Override
@@ -41,22 +43,26 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean hasPart(EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PART[side.ordinal()], false);
+        return false;
     }
 
     @Override
     protected IPartType.RenderPosition getPartRenderPosition(EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty(getState(),
-                BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
+        return IPartType.RenderPosition.NONE;
     }
 
     @Override
     public IBakedModel handleBlockState(IBlockState state) {
-        return new CableModel((IExtendedBlockState) state, false);
+        return new PartCableModel((IExtendedBlockState) state, false);
     }
 
     @Override
     public IBakedModel handleItemState(ItemStack stack) {
-        return new CableModel((IExtendedBlockState) BlockCable.getInstance().getDefaultState(), true);
+        return new PartCableModel((IExtendedBlockState) BlockCable.getInstance().getDefaultState(), true);
+    }
+
+    @Override
+    public IBakedModel handlePartState(IBlockState state) {
+        return handleBlockState(state);
     }
 }

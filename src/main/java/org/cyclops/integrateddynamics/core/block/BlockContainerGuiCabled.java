@@ -92,6 +92,11 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
     }
 
     @Override
+    public void triggerUpdateNeighbourConnections(World world, BlockPos pos) {
+        cableNetworkComponent.triggerUpdateNeighbourConnections(world, pos);
+    }
+
+    @Override
     public boolean isConnected(World world, BlockPos pos, EnumFacing side) {
         return cableNetworkComponent.isConnected(world, pos, side);
     }
@@ -104,6 +109,11 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
     @Override
     public void reconnect(World world, BlockPos pos, EnumFacing side) {
         cableNetworkComponent.reconnect(world, pos, side);
+    }
+
+    @Override
+    public void remove(World world, BlockPos pos, EntityPlayer player) {
+        cableNetworkComponent.remove(world, pos, player);
     }
 
     @Override

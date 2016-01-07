@@ -275,8 +275,8 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     }
 
     @Override
-    public boolean removeCable(Block block, ICablePathElement cable) {
-        if(super.removeCable(block, cable)) {
+    public boolean removeCable(ICable cable, ICablePathElement cablePathElement) {
+        if(super.removeCable(cable, cablePathElement)) {
             notifyPartsChanged();
             return true;
         }

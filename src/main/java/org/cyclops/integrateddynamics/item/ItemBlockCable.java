@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.item;
 
+import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,10 +14,15 @@ import org.cyclops.cyclopscore.item.ItemBlockMetadata;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.block.BlockCable;
 
+import java.util.List;
+
 /**
+ * The item for the cable.
  * @author rubensworks
  */
 public class ItemBlockCable extends ItemBlockMetadata {
+
+    private static final List<IUseAction> USE_ACTIONS = Lists.newLinkedList();
 
     /**
      * Make a new instance.
@@ -25,6 +31,14 @@ public class ItemBlockCable extends ItemBlockMetadata {
      */
     public ItemBlockCable(Block block) {
         super(block);
+    }
+
+    /**
+     * Register a use action for the cable item.
+     * @param useAction The use action.
+     */
+    public static void addUseAction(IUseAction useAction) {
+        USE_ACTIONS.add(useAction);
     }
 
     protected boolean checkCableAt(World world, BlockPos pos) {
@@ -51,13 +65,23 @@ public class ItemBlockCable extends ItemBlockMetadata {
             ICableFakeable cable = (ICableFakeable) block;
             if(!cable.isRealCable(world, pos)) {
                 cable.setRealCable(world, pos, true);
-                playPlaceSound(world, pos);
-                --stack.stackSize;
-                blockCable.setDisableCollisionBox(false);
+                return true;
+            }
+        }
+        for(IUseAction useAction : USE_ACTIONS) {
+            if(useAction.attempItemUseTarget(stack, world, pos, blockCable)) {
                 return true;
             }
         }
         return false;
+    }
+
+    protected void afterItemUse(ItemStack stack, World world, BlockPos pos, BlockCable blockCable, boolean calledSuper) {
+        if(!calledSuper) {
+            playPlaceSound(world, pos);
+            --stack.stackSize;
+        }
+        blockCable.setDisableCollisionBox(false);
     }
 
     public static void playPlaceSound(World world, BlockPos pos) {
@@ -79,15 +103,35 @@ public class ItemBlockCable extends ItemBlockMetadata {
         blockCable.setDisableCollisionBox(true);
 
         // Avoid regular block placement when the target is an unreal cable.
-        if(attempItemUseTarget(stack, worldIn, pos, blockCable)) return true;
+        if(attempItemUseTarget(stack, worldIn, pos, blockCable)) {
+            afterItemUse(stack, worldIn, pos, blockCable, false);
+            return true;
+        }
 
         // Change pos and side when we are targeting a block that is blocked by an unreal cable, so we want to target
         // the unreal cable.
-        if(attempItemUseTarget(stack, worldIn, pos.offset(side), blockCable)) return true;
+        if(attempItemUseTarget(stack, worldIn, pos.offset(side), blockCable)) {
+            afterItemUse(stack, worldIn, pos, blockCable, false);
+            return true;
+        }
 
         boolean ret = super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
-        blockCable.setDisableCollisionBox(false);
+        afterItemUse(stack, worldIn, pos, blockCable, true);
         return ret;
+    }
+
+    public static interface IUseAction {
+
+        /**
+         * Attempt to use the given item .
+         * @param itemStack The item stack that is being used.
+         * @param world The world.
+         * @param pos The position.
+         * @param blockCable The cable block instance.
+         * @return
+         */
+        public boolean attempItemUseTarget(ItemStack itemStack, World world, BlockPos pos, BlockCable blockCable);
+
     }
 
 }

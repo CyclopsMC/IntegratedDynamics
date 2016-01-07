@@ -2,17 +2,18 @@ package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
@@ -77,19 +78,19 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
             for (ICablePathElement cable : cables) {
                 World world = cable.getPosition().getWorld();
                 BlockPos pos = cable.getPosition().getBlockPos();
-                Block block = world.getBlockState(pos).getBlock();
-                if (block instanceof INetworkElementProvider) {
-                    for(INetworkElement<N> element : ((INetworkElementProvider<N>) block).createNetworkElements(world, pos)) {
+                INetworkElementProvider networkElementProvider = CableHelpers.getInterface(world, pos, INetworkElementProvider.class);
+                if (networkElementProvider != null) {
+                    for(INetworkElement<N> element : ((INetworkElementProvider<N>) networkElementProvider).createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
                     }
                 }
-                if (block instanceof INetworkCarrier) {
-                    INetworkCarrier<N> networkCarrier = (INetworkCarrier<N>) block;
+                INetworkCarrier<N> networkCarrier = CableHelpers.getInterface(world, pos, INetworkCarrier.class);
+                if (networkCarrier != null) {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
                     INetwork<N> network = networkCarrier.getNetwork(world, pos);
                     if (network != null) {
-                        network.removeCable(block, cable);
+                        network.removeCable((ICable) networkCarrier, cable);
                     }
                     networkCarrier.resetCurrentNetwork(world, pos);
                     networkCarrier.setNetwork(getMaterializedThis(), world, pos);
@@ -276,11 +277,11 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     }
 
     @Override
-    public boolean removeCable(Block block, ICablePathElement cable) {
-        if(baseCluster.remove(cable)) {
-            if (block instanceof INetworkElementProvider) {
-                Collection<INetworkElement<N>> networkElements = ((INetworkElementProvider<N>) block).
-                        createNetworkElements(cable.getPosition().getWorld(), cable.getPosition().getBlockPos());
+    public boolean removeCable(ICable cable, ICablePathElement cablePathElement) {
+        if(baseCluster.remove(cablePathElement)) {
+            if (cable instanceof INetworkElementProvider) {
+                Collection<INetworkElement<N>> networkElements = ((INetworkElementProvider<N>) cable).
+                        createNetworkElements(cablePathElement.getPosition().getWorld(), cablePathElement.getPosition().getBlockPos());
                 for (INetworkElement<N> networkElement : networkElements) {
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;

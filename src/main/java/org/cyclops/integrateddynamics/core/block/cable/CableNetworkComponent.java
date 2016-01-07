@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.block.cable;
 
-import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.PartNetwork;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 
@@ -21,9 +22,9 @@ import org.cyclops.integrateddynamics.core.path.CablePathElement;
  * A component for {@link ICableNetwork}.
  * @author rubensworks
  */
-public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork, ICablePathElement>> implements ICableNetwork<IPartNetwork, ICablePathElement> {
+public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICablePathElement>> implements ICableNetwork<IPartNetwork, ICablePathElement> {
 
-    private final C cable;
+    protected final C cable;
 
     public CableNetworkComponent(C cable) {
         this.cable = cable;
@@ -34,6 +35,14 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
         return new CablePathElement(cable, DimPos.of(world, blockPos));
     }
 
+    protected ITileCable getTile(World world, BlockPos pos) {
+        return TileHelpers.getSafeTile(world, pos, ITileCable.class);
+    }
+
+    protected ITileCableNetwork getTileNetwork(World world, BlockPos pos) {
+        return TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
+    }
+
     @Override
     public void initNetwork(World world, BlockPos pos) {
         PartNetwork.initiateNetworkSetup(cable, world, pos).initialize();
@@ -41,13 +50,13 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
 
     @Override
     public boolean canConnect(World world, BlockPos pos, ICable connector, EnumFacing side) {
-        ITileCable tile = TileHelpers.getSafeTile(world, pos, ITileCable.class);
+        ITileCable tile = getTile(world, pos);
         return tile != null && tile.canConnect(connector, side);
     }
 
     @Override
     public void updateConnections(World world, BlockPos pos) {
-        ITileCable tile = TileHelpers.getSafeTile(world, pos, ITileCable.class);
+        ITileCable tile = getTile(world, pos);
         if(tile != null) {
             tile.updateConnections();
             world.markBlockRangeForRenderUpdate(pos, pos);
@@ -55,14 +64,21 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
     }
 
     @Override
+    public void triggerUpdateNeighbourConnections(World world, BlockPos pos) {
+        for(EnumFacing side : EnumFacing.VALUES) {
+            requestConnectionsUpdate(world, pos.offset(side));
+        }
+    }
+
+    @Override
     public boolean isConnected(World world, BlockPos pos, EnumFacing side) {
-        ITileCable tile = TileHelpers.getSafeTile(world, pos, ITileCable.class);
+        ITileCable tile = getTile(world, pos);
         return tile != null && tile.isConnected(side);
     }
 
     @Override
     public void disconnect(World world, BlockPos pos, EnumFacing side) {
-        ITileCable tile = TileHelpers.getSafeTile(world, pos, ITileCable.class);
+        ITileCable tile = getTile(world, pos);
         if(tile != null) {
             tile.disconnect(side);
         }
@@ -70,15 +86,20 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
 
     @Override
     public void reconnect(World world, BlockPos pos, EnumFacing side) {
-        ITileCable tile = TileHelpers.getSafeTile(world, pos, ITileCable.class);
+        ITileCable tile = getTile(world, pos);
         if(tile != null) {
             tile.reconnect(side);
         }
     }
 
     @Override
+    public void remove(World world, BlockPos pos, EntityPlayer player) {
+        world.destroyBlock(pos, true);
+    }
+
+    @Override
     public void resetCurrentNetwork(World world, BlockPos pos) {
-        ITileCableNetwork tile = TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
+        ITileCableNetwork tile = getTileNetwork(world, pos);
         if(tile != null) {
             tile.resetCurrentNetwork();
         }
@@ -86,7 +107,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
 
     @Override
     public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
-        ITileCableNetwork tile = TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
+        ITileCableNetwork tile = getTileNetwork(world, pos);
         if(tile != null) {
             if(tile.getNetwork() != null) {
                 IntegratedDynamics.clog(Level.WARN, "Tried to set a new network for a tile without the previous one being removed.");
@@ -97,7 +118,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
 
     @Override
     public IPartNetwork getNetwork(World world, BlockPos pos) {
-        ITileCableNetwork tile = TileHelpers.getSafeTile(world, pos, ITileCableNetwork.class);
+        ITileCableNetwork tile = getTileNetwork(world, pos);
         if(tile != null) {
             return tile.getNetwork();
         }
@@ -110,20 +131,9 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
      * @param pos The position of this block.
      */
     public void requestConnectionsUpdate(World world, BlockPos pos) {
-        Block block = world.getBlockState(pos).getBlock();
-        if(block instanceof ICable) {
-            ((ICable) block).updateConnections(world, pos);
-        }
-    }
-
-    /**
-     * Trigger a connections update for all neighbours.
-     * @param world The world.
-     * @param blockPos The center positions.
-     */
-    public void triggerNeighbourConnections(World world, BlockPos blockPos) {
-        for(EnumFacing side : EnumFacing.VALUES) {
-            requestConnectionsUpdate(world, blockPos.offset(side));
+        ICable cable = CableHelpers.getInterface(world, pos, ICable.class);
+        if(cable != null) {
+            cable.updateConnections(world, pos);
         }
     }
 
@@ -133,7 +143,7 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
      * @param pos The position.
      */
     public void addToNetwork(World world, BlockPos pos) {
-        triggerNeighbourConnections(world, pos);
+        triggerUpdateNeighbourConnections(world, pos);
         if(!world.isRemote) {
             initNetwork(world, pos);
         }
@@ -164,14 +174,14 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
                 return network.removeCable(cable, createPathElement(world, pos));
             }
         } else {
-            triggerNeighbourConnections(world, pos);
+            triggerUpdateNeighbourConnections(world, pos);
             // Reinit neighbouring networks.
             for(EnumFacing side : EnumFacing.VALUES) {
                 if(!world.isRemote) {
                     BlockPos sidePos = pos.offset(side);
-                    Block block = world.getBlockState(sidePos).getBlock();
-                    if(block instanceof ICableNetwork) {
-                        ((ICableNetwork<IPartNetwork, ICablePathElement>) block).initNetwork(world, sidePos);
+                    ICableNetwork sideCable = CableHelpers.getInterface(world, sidePos, ICableNetwork.class);
+                    if(sideCable != null) {
+                        ((ICableNetwork<IPartNetwork, ICablePathElement>) sideCable).initNetwork(world, sidePos);
                     }
                 }
             }
@@ -216,10 +226,9 @@ public class CableNetworkComponent<C extends Block & ICableNetwork<IPartNetwork,
      */
     public static boolean canSideConnect(World world, BlockPos pos, EnumFacing side, ICable originCable) {
         BlockPos neighbourPos = pos.offset(side);
-        Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-        return neighbourBlock instanceof ICable &&
-                ((ICable) neighbourBlock).canConnect(world, neighbourPos, (ICable) originCable,
-                        side.getOpposite());
+        ICable neighbourCable = CableHelpers.getInterface(world, neighbourPos, ICable.class);
+        return neighbourCable != null &&
+                neighbourCable.canConnect(world, neighbourPos, originCable, side.getOpposite());
     }
 
 }

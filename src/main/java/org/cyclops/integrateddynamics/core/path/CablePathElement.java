@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.path;
 
 import com.google.common.collect.Sets;
 import lombok.Data;
-import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -11,6 +10,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import java.util.Set;
 
@@ -32,12 +32,12 @@ public class CablePathElement implements ICablePathElement {
         for(EnumFacing side : EnumFacing.VALUES) {
             if(cable.isConnected(world, pos, side)) {
                 BlockPos posOffset = pos.offset(side);
-                Block block = world.getBlockState(posOffset).getBlock();
-                if(!(block instanceof ICable)) {
+                ICable cable = CableHelpers.getInterface(world, posOffset, ICable.class);
+                if(cable == null) {
                     IntegratedDynamics.clog(Level.ERROR, String.format("The position at %s was incorrectly marked " +
                             "as reachable as cable by %s.", pos, getCable()));
                 } else {
-                    elements.add(((ICable<ICablePathElement>) block).createPathElement(world, posOffset));
+                    elements.add(((ICable<ICablePathElement>) cable).createPathElement(world, posOffset));
                 }
             }
         }
