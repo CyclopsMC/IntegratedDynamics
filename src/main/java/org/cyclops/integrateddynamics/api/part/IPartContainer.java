@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -39,6 +40,16 @@ public interface IPartContainer {
                                                                              IPartState<P> partState);
 
     /**
+     * Check if the given part can be added at the given side.
+     * @param side The side to place the part on.
+     * @param part The part.
+     * @param <P> The type of part.
+     * @param <S> The type of part state.
+     * @return If the part can be added.
+     */
+    public <P extends IPartType<P, S>, S extends IPartState<P>> boolean canAddPart(EnumFacing side, IPartType<P, S> part);
+
+    /**
      * Get the part of a side, can be null.
      * @param side The side.
      * @return The part or null.
@@ -57,7 +68,7 @@ public interface IPartContainer {
      * @param player The player removing the part.
      * @return The removed part or null.
      */
-    public IPartType removePart(EnumFacing side, EntityPlayer player);
+    public IPartType removePart(EnumFacing side, @Nullable EntityPlayer player);
 
     /**
      * Set the state of a part.

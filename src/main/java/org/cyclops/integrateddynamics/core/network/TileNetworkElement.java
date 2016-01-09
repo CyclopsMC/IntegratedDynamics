@@ -29,7 +29,7 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
     }
 
     @Override
-    public void addDrops(List<ItemStack> itemStacks) {
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
         T tile = getTile();
         if(tile != null) {
             InventoryHelper.dropInventoryItems(getPos().getWorld(), getPos().getBlockPos(), tile.getInventory());

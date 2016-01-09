@@ -1,17 +1,14 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.experimental.Delegate;
+import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
-import mcmultipart.client.multipart.IHitEffectsPart;
-import mcmultipart.multipart.IOccludingPart;
-import mcmultipart.multipart.ISlottedPart;
-import mcmultipart.multipart.Multipart;
+import mcmultipart.multipart.IMultipart;
+import mcmultipart.multipart.IMultipartContainer;
+import mcmultipart.multipart.MultipartHelper;
 import mcmultipart.multipart.PartSlot;
 import mcmultipart.raytrace.PartMOP;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -19,21 +16,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.cyclopscore.persist.nbt.NBTProviderComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
@@ -42,30 +36,32 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
  * A part for cables.
  * @author rubensworks
  */
-public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPart, IOccludingPart,
-        ICableNetwork<IPartNetwork, ICablePathElement>, INetworkElementProvider,
-        IDynamicRedstoneBlock, IDynamicLightBlock, INBTProvider, ITileCableNetwork {
+public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwork, ICablePathElement>,
+        INetworkElementProvider, IDynamicRedstoneBlock, IDynamicLightBlock, ITileCableNetwork, IPartContainerFacade, ITickable {
 
-    @Delegate
-    private final INBTProvider nbtProvider = new NBTProviderComponent(this);
     private final PartCableNetworkComponent cableNetworkComponent = new PartCableNetworkComponent(this);
     private final NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
 
+    private final Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData;
     @NBTPersist
     private Map<Integer, Boolean> connected = Maps.newHashMap();
     @NBTPersist
@@ -77,28 +73,26 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
     @NBTPersist
     private boolean allowsRedstone = false;
     private IPartNetwork network = null;
+    private IPartContainer partContainer = null;
 
+    public PartCable() {
+        this(Maps.<EnumFacing, PartHelpers.PartStateHolder<?, ?>>newHashMap());
+    }
+
+    public PartCable(Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData) {
+        this.partData = partData;
+    }
+
+    /**
+     * @return The raw part data.
+     */
+    public Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> getPartData() {
+        return this.partData;
+    }
+
+    @Override
     protected ItemStack getItemStack() {
         return new ItemStack(BlockCable.getInstance());
-    }
-    @Override
-    public ItemStack getPickBlock(EntityPlayer player, PartMOP hit) {
-        return getItemStack();
-    }
-
-    @Override
-    public List<ItemStack> getDrops() {
-        return Lists.newArrayList(getItemStack());
-    }
-
-    @Override
-    public float getHardness(PartMOP hit) {
-        return BlockCable.BLOCK_HARDNESS;
-    }
-
-    @Override
-    public Material getMaterial() {
-        return BlockCable.BLOCK_MATERIAL;
     }
 
     @Override
@@ -106,13 +100,21 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
         IExtendedBlockState extendedState = (IExtendedBlockState) state;
         for(EnumFacing side : EnumFacing.VALUES) {
             extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()], isConnected(side));
+            boolean hasPart = hasPart(side);
+            extendedState = extendedState.withProperty(BlockCable.PART[side.ordinal()], hasPart);
+            if(hasPart) {
+                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
+            } else {
+                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
+            }
         }
         return extendedState;
     }
 
     @Override
     public BlockState createBlockState() {
-        return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[0], BlockCable.CONNECTED);
+        return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[0],
+                ArrayUtils.addAll(BlockCable.PART_RENDERPOSITIONS, ArrayUtils.addAll(BlockCable.CONNECTED, BlockCable.PART)));
     }
 
     @Override
@@ -128,12 +130,6 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(PartMOP partMOP, AdvancedEffectRenderer advancedEffectRenderer) {
-        return true;
-    }
-
-    @Override
     public void addOcclusionBoxes(List<AxisAlignedBB> list) {
         list.add(BlockCable.getInstance().getCableBoundingBox(null));
     }
@@ -144,12 +140,21 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
         for(EnumFacing side : EnumFacing.VALUES) {
             if(isConnected(side)) {
                 list.add(BlockCable.getInstance().getCableBoundingBox(side));
+            } else if(hasPart(side)) {
+                list.add(BlockCable.getInstance().getCableBoundingBoxWithPart(side));
             }
         }
     }
 
     protected void addCollisionBoxConditional(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity, EnumFacing side) {
         AxisAlignedBB box = BlockCable.getInstance().getCableBoundingBox(side);
+        if(box.intersectsWith(mask)) {
+            list.add(box);
+        }
+    }
+
+    protected void addCollisionBoxWithPartConditional(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity, EnumFacing side) {
+        AxisAlignedBB box = BlockCable.getInstance().getCableBoundingBoxWithPart(side);
         if(box.intersectsWith(mask)) {
             list.add(box);
         }
@@ -165,6 +170,12 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
                 }
                 i++;
             }
+            if(hasPart(side)) {
+                if(i == subHit) {
+                    return side;
+                }
+                i++;
+            }
         }
         return null;
     }
@@ -175,6 +186,8 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
         for(EnumFacing side : EnumFacing.VALUES) {
             if(isConnected(side)) {
                 addCollisionBoxConditional(mask, list, collidingEntity, side);
+            } else if(hasPart(side)) {
+                addCollisionBoxWithPartConditional(mask, list, collidingEntity, side);
             }
         }
     }
@@ -194,51 +207,34 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
         return EnumSet.of(PartSlot.CENTER);
     }
 
-    @Override
-    public void writeUpdatePacket(PacketBuffer buf) {
-        NBTTagCompound tag = new NBTTagCompound();
-        writeToNBT(tag);
-        buf.writeNBTTagCompoundToBuffer(tag);
-    }
-
-    @Override
-    public void readUpdatePacket(PacketBuffer buf) {
-        super.readUpdatePacket(buf);
-        try {
-            readFromNBT(buf.readNBTTagCompoundFromBuffer());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void detectPresentParts() {
+        IMultipartContainer container = getContainer();
+        for(IMultipart multipart : container.getParts()) {
+            if(multipart instanceof PartPartType) {
+                final PartPartType partPart = (PartPartType) multipart;
+                PartHelpers.setPart(getNetwork(), getWorld(), getPos(), partPart.getFacing(), partPart.getPartType(), partPart.getPartType().getDefaultState(), new PartHelpers.IPartStateHolderCallback() {
+                    @Override
+                    public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
+                        partData.put(partPart.getFacing(), partStateHolder);
+                        sendUpdate();
+                    }
+                });
+            }
         }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        nbtProvider.readGeneratedFieldsFromNBT(tag);
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
-        nbtProvider.writeGeneratedFieldsToNBT(tag);
     }
 
     @Override
     public void onAdded() {
         super.onAdded();
         cableNetworkComponent.addToNetwork(getWorld(), getPos());
-    }
-
-    @Override
-    public void onLoaded() {
-        super.onLoaded();
+        detectPresentParts();
     }
 
     @Override
     public void onRemoved() {
         World world = getWorld();
         BlockPos pos = getPos();
-        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos);
+        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, false);
         cableNetworkComponent.onPreBlockDestroyed(world, pos);
         super.onRemoved();
         cableNetworkComponent.onPostBlockDestroyed(world, pos);
@@ -247,7 +243,9 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
     @Override
     public boolean onActivated(EntityPlayer player, ItemStack stack, PartMOP hit) {
         EnumFacing cableConnectionHit = getSubHitSide(hit.subHit);
-        return BlockCable.onCableActivated(getWorld(), getPos(), BlockCable.getInstance().getDefaultState(), player, hit.sideHit, cableConnectionHit);
+        return !getWorld().isRemote ?
+                BlockCable.onCableActivated(getWorld(), getPos(), BlockCable.getInstance().getDefaultState(), player, hit.sideHit, cableConnectionHit)
+                : super.onActivated(player, stack, hit);
     }
 
     @Override
@@ -258,8 +256,24 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
         networkElementProviderComponent.onBlockNeighborChange(getNetwork(world, pos), world, pos, neighborBlock);
     }
 
+    @Override
+    public void writeToNBT(NBTTagCompound tag) {
+        super.writeToNBT(tag);
+        PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tag) {
+        PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData);
+        super.readFromNBT(tag);
+    }
+
     protected boolean hasPart(EnumFacing side) {
-        return false; // TODO
+        return getPartContainer().hasPart(side);
+    }
+
+    protected IPartType getPart(EnumFacing side) {
+        return getPartContainer().getPart(side);
     }
 
     public boolean isForceDisconnected(EnumFacing side) {
@@ -272,15 +286,17 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
         this.connected.put(side.ordinal(), connected);
     }
 
-    protected void sendUpdate() {
-        sendUpdatePacket();
-    }
-
     /* --------------- Start element Providers--------------- */
 
     @Override
     public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
-        return Collections.emptyList(); // TODO: detect parts
+        Set<INetworkElement> sidedElements = Sets.newHashSet();
+        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : getPartContainer().getParts().entrySet()) {
+            if(getPartContainer().getPartState(entry.getKey()) != null) {
+                sidedElements.add(entry.getValue().createNetworkElement(this, DimPos.of(world, blockPos), entry.getKey()));
+            }
+        }
+        return sidedElements;
     }
 
     @Override
@@ -445,4 +461,136 @@ public class PartCable extends Multipart implements ISlottedPart, IHitEffectsPar
     public IPartNetwork getNetwork() {
         return this.network;
     }
+
+    protected IPartContainer getPartContainer() {
+        if(this.partContainer == null) {
+            this.partContainer = new VirtualPartContainer();
+        }
+        return this.partContainer;
+    }
+
+    @Override
+    public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
+        return getPartContainer();
+    }
+
+    @Override
+    public void update() {
+        if(!MinecraftHelpers.isClientSide()) {
+            for(PartHelpers.PartStateHolder<?, ?> partStateHolder : this.partData.values()) {
+                IPartState partState = partStateHolder.getState();
+                if (partState.isDirtyAndReset()) {
+                    markDirty();
+                }
+                if (partState.isUpdateAndReset()) {
+                    sendUpdate();
+                }
+            }
+        }
+    }
+
+    public class VirtualPartContainer implements IPartContainer {
+
+        protected PartPartType getPartPart(EnumFacing side) {
+            IMultipartContainer container = getContainer();
+            if(container != null) {
+                IMultipart multipart = container.getPartInSlot(PartSlot.getFaceSlot(side));
+                if (multipart instanceof PartPartType) {
+                    return (PartPartType) multipart;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public DimPos getPosition() {
+            return DimPos.of(getWorld(), getPos());
+        }
+
+        @Override
+        public Map<EnumFacing, IPartType<?, ?>> getParts() {
+            Map<EnumFacing, IPartType<?, ?>> parts = Maps.newHashMap();
+            for(EnumFacing side : EnumFacing.VALUES) {
+                IPartType partType = getPart(side);
+                if(partType != null) {
+                    parts.put(side, partType);
+                }
+            }
+            return parts;
+        }
+
+        @Override
+        public boolean hasParts() {
+            for(IMultipart multipart : getContainer().getParts()) {
+                if(multipart instanceof PartPartType) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public <P extends IPartType<P, S>, S extends IPartState<P>> void setPart(final EnumFacing side, IPartType<P, S> part, IPartState<P> partState) {
+            final PartPartType partPart = new PartPartType(side, part);
+            PartHelpers.setPart(getNetwork(), getWorld(), getPos(), side, part, partState, new PartHelpers.IPartStateHolderCallback() {
+                @Override
+                public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
+                    partData.put(side, partStateHolder);
+                    sendUpdate();
+                }
+            });
+            MultipartHelper.addPart(getWorld(), getPos(), partPart);
+        }
+
+        @Override
+        public <P extends IPartType<P, S>, S extends IPartState<P>> boolean canAddPart(EnumFacing side, IPartType<P, S> part) {
+            return !hasPart(side) && MultipartHelper.canAddPart(getWorld(), getPos(), new PartPartType(side, part));
+        }
+
+        @Override
+        public IPartType getPart(EnumFacing side) {
+            PartPartType partPartType = getPartPart(side);
+            if(partPartType != null) {
+                return partPartType.getPartType();
+            }
+            return null;
+        }
+
+        @Override
+        public boolean hasPart(EnumFacing side) {
+            return getPart(side) != null;
+        }
+
+        @Override
+        public IPartType removePart(EnumFacing side, EntityPlayer player) {
+            PartPartType partPartType = getPartPart(side);
+            if(partPartType != null) {
+                IPartType removed = partPartType.getPartType();
+                for(ItemStack itemStack : partPartType.getDrops()) {
+                    ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
+                }
+                getContainer().removePart(partPartType);
+                partData.remove(side);
+                sendUpdate();
+                return removed;
+            }
+            return null;
+        }
+
+        @Override
+        public void setPartState(EnumFacing side, IPartState partState) {
+            partData.put(side, PartHelpers.PartStateHolder.of(getPart(side), partState));
+            sendUpdate();
+        }
+
+        @Override
+        public IPartState getPartState(EnumFacing side) {
+            PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
+            if(partStateHolder != null) {
+                return partStateHolder.getState();
+            }
+            return null;
+        }
+    }
+
 }

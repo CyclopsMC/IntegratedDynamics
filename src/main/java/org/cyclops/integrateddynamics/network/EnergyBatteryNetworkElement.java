@@ -54,7 +54,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase<IEnergyNetwo
     }
 
     @Override
-    public void addDrops(List<ItemStack> itemStacks) {
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
 
     }
 

@@ -93,8 +93,9 @@ public interface ICollidable<P> {
      */
     public static interface IComponent<P, B> {
         public Collection<P> getPossiblePositions();
+        public int getBoundsCount(P position);
         public boolean isActive(B block, World world, BlockPos pos, P position);
-        public AxisAlignedBB getBounds(B block, World world, BlockPos pos, P position);
+        public List<AxisAlignedBB> getBounds(B block, World world, BlockPos pos, P position);
     }
 
 }

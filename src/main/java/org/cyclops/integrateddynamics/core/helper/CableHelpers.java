@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 
 import java.util.List;
 
@@ -39,6 +40,24 @@ public class CableHelpers {
         C instance;
         for(IInterfaceRetriever interfaceRetriever : INTERFACE_RETRIEVERS) {
             instance = interfaceRetriever.getInterface(world, pos, clazz);
+            if(instance != null) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check for the given interface at the given position.
+     * @param dimPos The dimensional position.
+     * @param clazz The class to find.
+     * @param <C> The class type.
+     * @return The instance or null.
+     */
+    public static <C> C getInterface(DimPos dimPos, Class<C> clazz) {
+        C instance;
+        for(IInterfaceRetriever interfaceRetriever : INTERFACE_RETRIEVERS) {
+            instance = interfaceRetriever.getInterface(dimPos.getWorld(), dimPos.getBlockPos(), clazz);
             if(instance != null) {
                 return instance;
             }

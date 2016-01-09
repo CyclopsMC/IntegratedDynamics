@@ -66,7 +66,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks) {
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
         for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
             ItemStack itemStack = state.getInventory().getStackInSlot(i);
             if(itemStack != null) {
@@ -75,7 +75,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
         state.getInventory().clear();
         state.onVariableContentsUpdated((P) this, target);
-        super.addDrops(target, state, itemStacks);
+        super.addDrops(target, state, itemStacks, dropMainElement);
     }
 
     @Override
@@ -137,15 +137,17 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side) {
-        PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) partContainer.getPartState(side);
+    public IBlockState getBlockState(IPartContainer partContainer,
+                                     EnumFacing side) {
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
-        if(!state.getInventory().isEmpty()) {
-            if(state.hasVariable() && state.isEnabled()) {
-                status = IgnoredBlockStatus.Status.ACTIVE;
-            } else {
-                status = IgnoredBlockStatus.Status.ERROR;
+        if(partContainer != null) {
+            PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) partContainer.getPartState(side);
+            if (state != null && !state.getInventory().isEmpty()) {
+                if (state.hasVariable() && state.isEnabled()) {
+                    status = IgnoredBlockStatus.Status.ACTIVE;
+                } else {
+                    status = IgnoredBlockStatus.Status.ERROR;
+                }
             }
         }
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).
@@ -157,7 +159,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, IBlockState state, final S partState, EntityPlayer player,
+    public boolean onPartActivated(World world, BlockPos pos, final S partState, EntityPlayer player,
                                    EnumFacing side, float hitX, float hitY, float hitZ) {
         if(WrenchHelpers.isWrench(player, pos)) {
             WrenchHelpers.wrench(player, pos, new WrenchHelpers.IWrenchAction<Void>() {
@@ -168,7 +170,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             });
             return true;
         }
-        return super.onPartActivated(world, pos, state, partState, player, side, hitX, hitY, hitZ);
+        return super.onPartActivated(world, pos, partState, player, side, hitX, hitY, hitZ);
     }
 
     public static abstract class State<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartStateActiveVariableBase<P> {

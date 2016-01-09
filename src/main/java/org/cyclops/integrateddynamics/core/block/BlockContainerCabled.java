@@ -63,7 +63,7 @@ public abstract class BlockContainerCabled extends ConfigurableBlockContainer im
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos);
+        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
         cableNetworkComponent.onPreBlockDestroyed(world, pos);
         super.onPreBlockDestroyed(world, pos);
     }

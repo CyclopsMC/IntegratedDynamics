@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.part;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -125,6 +126,16 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         return item;
     }
 
+    @Override
+    public String getBlockModelPath() {
+        return getMod().getModId() + ":" + "part_" + getName() + "Block";
+    }
+
+    @Override
+    public String getItemModelPath() {
+        return getMod().getModId() + ":" + "part_" + getName() + "Item";
+    }
+
     /**
      * Override this to register your network event actions.
      * @return The event actions.
@@ -208,8 +219,10 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks) {
-        itemStacks.add(getItemStack(state));
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
+        if(dropMainElement) {
+            itemStacks.add(getItemStack(state));
+        }
     }
 
     @Override
@@ -276,7 +289,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, IBlockState state, S partState, EntityPlayer player,
+    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player,
                                    EnumFacing side, float hitX, float hitY, float hitZ) {
         // Drop through if the player is sneaking
         if(player.isSneaking() || !partState.isEnabled()) {
@@ -304,9 +317,13 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side) {
+    public IBlockState getBlockState(IPartContainer partContainer, EnumFacing side) {
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side);
+    }
+
+    @Override
+    public BlockState getBaseBlockState() {
+        return getBlock().getBlockState();
     }
 
     @Override

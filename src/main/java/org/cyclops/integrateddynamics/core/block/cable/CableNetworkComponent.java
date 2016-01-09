@@ -11,6 +11,9 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
@@ -130,7 +133,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
      * @param world The world.
      * @param pos The position of this block.
      */
-    public void requestConnectionsUpdate(World world, BlockPos pos) {
+    public static void requestConnectionsUpdate(World world, BlockPos pos) {
         ICable cable = CableHelpers.getInterface(world, pos, ICable.class);
         if(cable != null) {
             cable.updateConnections(world, pos);
@@ -155,8 +158,8 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
      * @param pos The position.
      * @return If the cable was removed.
      */
-    public boolean removeFromNetwork(World world, BlockPos pos) {
-        return removeFromNetwork(world, pos, true) && removeFromNetwork(world, pos, false);
+    public boolean removeCableFromNetwork(World world, BlockPos pos) {
+        return removeCableFromNetwork(world, pos, true) && removeCableFromNetwork(world, pos, false);
     }
 
     /**
@@ -166,7 +169,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
      * @param preDestroy At which stage of the block destruction this is being called.
      * @return If the cable was removed from the network.
      */
-    public boolean removeFromNetwork(World world, BlockPos pos, boolean preDestroy) {
+    public boolean removeCableFromNetwork(World world, BlockPos pos, boolean preDestroy) {
         if(preDestroy) {
             // Remove the cable from this network if it exists
             IPartNetwork network = getNetwork(world, pos);
@@ -190,6 +193,59 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
     }
 
     /**
+     * Remove a single part from the current network.
+     * The part is at this stage already removed from the part container.
+     * @param world The world.
+     * @param pos The position.
+     * @param network The network
+     * @param side The side to remove the part for.
+     * @param removed The part that is already removed.
+     * @return If the part was removed from the network.
+     */
+    public static boolean removePartFromNetwork(World world, BlockPos pos, IPartNetwork network, EnumFacing side, IPartType<?, ?> removed) {
+        return removePartFromNetwork(world, pos, true, network, side, removed) && removePartFromNetwork(world, pos, false, network, side, removed);
+    }
+
+    /**
+     * Remove a single part from the current network.
+     * The part is at this stage already removed from the part container.
+     * @param world The world.
+     * @param pos The position.
+     * @param preDestroy At which stage of the block destruction this is being called.
+     * @param network The network
+     * @param side The side to remove the part for.
+     * @param removed The part that is already removed.
+     * @return If the part was removed from the network.
+     */
+    public static boolean removePartFromNetwork(World world, BlockPos pos, boolean preDestroy, IPartNetwork network, EnumFacing side, IPartType<?, ?> removed) {
+        if(preDestroy) {
+            // Remove the cable from this network if it exists
+            IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
+            if(partContainerFacade != null && network != null) {
+                IPartNetworkElement<?, ?> networkElement = (IPartNetworkElement<?, ?>) removed.createNetworkElement(partContainerFacade, DimPos.of(world, pos), side);
+                networkElement.onPreRemoved(network);
+                if(network.removeNetworkElementPre(networkElement)) {
+                    network.removeNetworkElementPost(networkElement);
+                    network.notifyPartsChanged();
+                    return true;
+                }
+                return false;
+            }
+        } else {
+            // Reinit neighbour networks.
+            BlockPos sidePos = pos.offset(side);
+            requestConnectionsUpdate(world, sidePos);
+            if(!world.isRemote) {
+                ICableNetwork sideCable = CableHelpers.getInterface(world, sidePos, ICableNetwork.class);
+                if(sideCable != null) {
+                    ((ICableNetwork<IPartNetwork, ICablePathElement>) sideCable).initNetwork(world, sidePos);
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Called before this block is destroyed.
      * @param world The world.
      * @param pos The position.
@@ -197,7 +253,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
      */
     public boolean onPreBlockDestroyed(World world, BlockPos pos) {
         if(!world.isRemote) {
-            return removeFromNetwork(world, pos, true);
+            return removeCableFromNetwork(world, pos, true);
         }
         return true;
     }
@@ -210,7 +266,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
      */
     public boolean onPostBlockDestroyed(World world, BlockPos pos) {
         if(!world.isRemote) {
-            return removeFromNetwork(world, pos, false);
+            return removeCableFromNetwork(world, pos, false);
         }
         return true;
     }

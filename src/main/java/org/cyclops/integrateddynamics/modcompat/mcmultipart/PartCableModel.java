@@ -43,12 +43,12 @@ public class PartCableModel extends CableModelBase implements ISmartMultipartMod
 
     @Override
     protected boolean hasPart(EnumFacing side) {
-        return false;
+        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PART[side.ordinal()], false);
     }
 
     @Override
     protected IPartType.RenderPosition getPartRenderPosition(EnumFacing side) {
-        return IPartType.RenderPosition.NONE;
+        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
     }
 
     @Override

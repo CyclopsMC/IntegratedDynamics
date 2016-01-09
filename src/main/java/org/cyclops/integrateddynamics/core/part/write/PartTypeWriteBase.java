@@ -63,7 +63,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks) {
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
         for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
             ItemStack itemStack = state.getInventory().getStackInSlot(i);
             if(itemStack != null) {
@@ -72,7 +72,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         }
         state.getInventory().clear();
         state.triggerAspectInfoUpdate((P) this, target, null);
-        super.addDrops(target, state, itemStacks);
+        super.addDrops(target, state, itemStacks, dropMainElement);
     }
 
     @Override
@@ -122,8 +122,8 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side) {
+    public IBlockState getBlockState(IPartContainer partContainer,
+                                     EnumFacing side) {
         IPartStateWriter state = (IPartStateWriter) partContainer.getPartState(side);
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
         IAspectWrite aspectWrite = state.getActiveAspect();

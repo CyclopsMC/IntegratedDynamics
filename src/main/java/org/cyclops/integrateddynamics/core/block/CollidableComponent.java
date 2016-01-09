@@ -33,7 +33,9 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         this.components = components;
         int count = 0;
         for(IComponent component : components) {
-            count += component.getPossiblePositions().size();
+            for(Object position : component.getPossiblePositions()) {
+                count += component.getBoundsCount(position);
+            }
         }
         this.totalComponents = count;
     }
@@ -42,8 +44,10 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
                          AxisAlignedBB axisalignedbb, List list, Entity collidingEntity) {
         for(EnumFacing position : component.getPossiblePositions()) {
             if(component.isActive(getBlock(), world, pos, position)) {
-                setBlockBounds(component.getBounds(getBlock(), world, pos, position));
-                getBlock().addCollisionBoxesToListParent(world, pos, state, axisalignedbb, list, collidingEntity);
+                for(AxisAlignedBB bb : component.getBounds(getBlock(), world, pos, position)) {
+                    setBlockBounds(bb);
+                    getBlock().addCollisionBoxesToListParent(world, pos, state, axisalignedbb, list, collidingEntity);
+                }
             }
         }
     }
@@ -113,14 +117,17 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         int i = countStart;
         for(P position : component.getPossiblePositions()) {
             if(component.isActive(getBlock(), world, pos, position)) {
-                AxisAlignedBB bb = component.getBounds(getBlock(), world, pos, position);
-                setBlockBounds(bb);
-                boxes[i]      = bb;
-                hits[i]       = getBlock().collisionRayTraceParent(world, pos, origin, direction);
-                sideHit[i]    = position;
-                components[i] = component;
+                int offset = 0;
+                for(AxisAlignedBB bb : component.getBounds(getBlock(), world, pos, position)) {
+                    setBlockBounds(bb);
+                    boxes[i + offset] = bb;
+                    hits[i + offset] = getBlock().collisionRayTraceParent(world, pos, origin, direction);
+                    sideHit[i + offset] = position;
+                    components[i + offset] = component;
+                    offset++;
+                }
             }
-            i++;
+            i += component.getBoundsCount(position);
         }
         return i;
     }

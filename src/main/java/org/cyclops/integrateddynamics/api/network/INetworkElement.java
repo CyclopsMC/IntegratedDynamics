@@ -49,8 +49,9 @@ public interface INetworkElement<N extends INetwork> extends Comparable<INetwork
     /**
      * Add the itemstacks to drop when this element is removed.
      * @param itemStacks The itemstack list to add to.
+     * @param dropMainElement If the part itself should also be dropped.
      */
-    public void addDrops(List<ItemStack> itemStacks);
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement);
 
     /**
      * Called when this element is added to the network.

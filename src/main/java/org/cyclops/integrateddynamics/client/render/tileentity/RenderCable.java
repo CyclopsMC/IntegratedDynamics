@@ -33,7 +33,7 @@ public class RenderCable extends RenderTileEntityBakedModel<TileMultipartTicking
         }
 
         for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : tile.getParts().entrySet()) {
-            tempBlockState = entry.getValue().getBlockState(tile, x, y, z, partialTick, destroyStage, entry.getKey());
+            tempBlockState = entry.getValue().getBlockState(tile, entry.getKey());
             super.renderTileEntityAt(tile, x, y, z, partialTick, destroyStage);
             for(IPartOverlayRenderer renderer: PartOverlayRenderers.REGISTRY.getRenderers(entry.getValue())) {
                 renderer.renderPartOverlay(tile, x, y, z, partialTick, destroyStage, entry.getKey(), entry.getValue(), rendererDispatcher);

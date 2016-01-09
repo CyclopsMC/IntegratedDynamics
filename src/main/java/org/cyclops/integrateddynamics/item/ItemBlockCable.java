@@ -61,16 +61,18 @@ public class ItemBlockCable extends ItemBlockMetadata {
 
     protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable) {
         Block block = world.getBlockState(pos).getBlock();
-        if(block instanceof ICableFakeable) {
-            ICableFakeable cable = (ICableFakeable) block;
-            if(!cable.isRealCable(world, pos)) {
-                cable.setRealCable(world, pos, true);
-                return true;
+        if(!block.isAir(world, pos)) {
+            if (block instanceof ICableFakeable) {
+                ICableFakeable cable = (ICableFakeable) block;
+                if (!cable.isRealCable(world, pos)) {
+                    cable.setRealCable(world, pos, true);
+                    return true;
+                }
             }
-        }
-        for(IUseAction useAction : USE_ACTIONS) {
-            if(useAction.attempItemUseTarget(stack, world, pos, blockCable)) {
-                return true;
+            for (IUseAction useAction : USE_ACTIONS) {
+                if (useAction.attempItemUseTarget(stack, world, pos, blockCable)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -128,7 +130,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
          * @param world The world.
          * @param pos The position.
          * @param blockCable The cable block instance.
-         * @return
+         * @return If the use action was applied.
          */
         public boolean attempItemUseTarget(ItemStack itemStack, World world, BlockPos pos, BlockCable blockCable);
 

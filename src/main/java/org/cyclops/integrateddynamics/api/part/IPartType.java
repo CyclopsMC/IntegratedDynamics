@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -47,6 +48,16 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @return The unlocalized name of this part. (With the .name suffix)
      */
     public String getUnlocalizedName();
+
+    /**
+     * @return JSON model path for the block representation of this part.
+     */
+    public String getBlockModelPath();
+
+    /**
+     * @return JSON model path for the item representation of this part.
+     */
+    public String getItemModelPath();
 
     /**
      * @return The item associated with this part type.
@@ -154,8 +165,9 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target.
      * @param state The state
      * @param itemStacks The itemstack list to add to.
+     * @param dropMainElement If the part itself should also be dropped.
      */
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks);
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement);
 
     /**
      * Called when this element is added to the network.
@@ -186,7 +198,6 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * Called when a part is right-clicked.
      * @param world The world.
      * @param pos The position of the block this part is part of.
-     * @param state The block state of the parent block.
      * @param partState The state of this part.
      * @param player The player activating the part.
      * @param side The side this part is attached on.
@@ -195,23 +206,22 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param hitZ The Z hit position.
      * @return True if the further processing should be stopped.
      */
-    public boolean onPartActivated(World world, BlockPos pos, IBlockState state, S partState, EntityPlayer player,
+    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player,
                                    EnumFacing side, float hitX, float hitY, float hitZ);
 
     /**
      * Get the base block state that will be rendered for this part.
      * An appropriate {@link org.cyclops.integrateddynamics.core.block.IgnoredBlock#FACING} property will be set.
      * @param partContainer The tile entity.
-     * @param x X
-     * @param y Y
-     * @param z Z
-     * @param partialTick The partial tick
-     * @param destroyStage The stage of the block destruction.
      * @param side The position of the part.
      * @return The block state to render with.
      */
-    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side);
+    public IBlockState getBlockState(IPartContainer partContainer, EnumFacing side);
+
+    /**
+     * @return The default block state representation of this part.
+     */
+    public BlockState getBaseBlockState();
 
     /**
      * Called when this element is about to be removed.

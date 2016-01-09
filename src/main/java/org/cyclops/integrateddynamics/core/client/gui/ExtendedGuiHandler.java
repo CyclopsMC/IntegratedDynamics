@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.client.gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -14,9 +13,11 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -137,12 +138,12 @@ public class ExtendedGuiHandler extends GuiHandler {
     }
 
     private static Pair<IPartContainer, IPartType> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
-        TileEntity tileEntity = world.getTileEntity(pos);
-        if(!(tileEntity instanceof IPartContainer)) {
+        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
+        if(partContainerFacade == null) {
             IntegratedDynamics.clog(Level.WARN, String.format("The tile at %s is not a valid part container.", pos));
             return null;
         }
-        IPartContainer partContainer = (IPartContainer) tileEntity;
+        IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
         IPartType partType = partContainer.getPart(side);
         if(partType == null) {
             IntegratedDynamics.clog(Level.WARN, String.format("The part container at %s side %s does not " +

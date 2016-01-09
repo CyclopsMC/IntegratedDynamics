@@ -29,13 +29,14 @@ public class NetworkElementProviderComponent<N extends INetwork> {
      * @param network The network
      * @param world The world.
      * @param pos The position.
+     * @param dropMainElement If the main part element should be dropped.
      */
-    public void onPreBlockDestroyed(N network, World world, BlockPos pos) {
+    public void onPreBlockDestroyed(N network, World world, BlockPos pos, boolean dropMainElement) {
         // Drop all parts types as item.
         if(!world.isRemote) {
             List<ItemStack> itemStacks = Lists.newLinkedList();
             for (INetworkElement<N> networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-                networkElement.addDrops(itemStacks);
+                networkElement.addDrops(itemStacks, dropMainElement);
                 networkElement.onPreRemoved(network);
             }
             for (ItemStack itemStack : itemStacks) {
