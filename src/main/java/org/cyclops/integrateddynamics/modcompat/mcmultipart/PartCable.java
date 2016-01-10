@@ -264,7 +264,9 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData);
+        synchronized (this.partData) {
+            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData);
+        }
         super.readFromNBT(tag);
     }
 
@@ -585,9 +587,11 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
         @Override
         public IPartState getPartState(EnumFacing side) {
-            PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
-            if(partStateHolder != null) {
-                return partStateHolder.getState();
+            synchronized (partData) {
+                PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
+                if(partStateHolder != null) {
+                    return partStateHolder.getState();
+                }
             }
             return null;
         }
