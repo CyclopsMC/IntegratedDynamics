@@ -9,6 +9,7 @@ gui.integrateddynamics.button.save=Save
 gui.integrateddynamics.partsettings.updateInterval=Freq.
 gui.integrateddynamics.part.properties=Properties:
 gui.integrateddynamics.logicprogrammer.filter=Filter
+gui.integrateddynamics.waila.partConfig=Part Information
 
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
@@ -65,6 +66,11 @@ valuetype.valuetypes.integrateddynamics.object.fluidstack.name=Fluid
 
 # Part types
 parttype.parttypes.integrateddynamics.error.lowEnergy=Not enough energy
+parttype.parttypes.integrateddynamics.tooltip.disabled=Disabled
+parttype.parttypes.integrateddynamics.tooltip.inactive=Inactive
+parttype.parttypes.integrateddynamics.tooltip.errors=Errors:
+parttype.parttypes.integrateddynamics.tooltip.writer.activeAspect=Aspect: %s (%s)
+parttype.parttypes.integrateddynamics.tooltip.display.activeValue=Value: %s (%s)
 parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
 parttype.parttypes.integrateddynamics.redstoneReader.info=Reads redstone values
 parttype.parttypes.integrateddynamics.inventoryReader.name=Inventory Reader

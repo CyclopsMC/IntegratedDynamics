@@ -3,11 +3,13 @@ package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
+import mcmultipart.block.TileMultipart;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IMultipartContainer;
 import mcmultipart.multipart.MultipartHelper;
 import mcmultipart.multipart.PartSlot;
 import mcmultipart.raytrace.PartMOP;
+import mcmultipart.raytrace.RayTraceUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockState;
@@ -49,6 +51,7 @@ import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderCom
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -474,6 +477,17 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
         return getPartContainer();
+    }
+
+    @Nullable
+    @Override
+    public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
+        Vec3 start = RayTraceUtils.getStart(player);
+        Vec3 end = RayTraceUtils.getEnd(player);
+        RayTraceUtils.RayTraceResultPart result = ((TileMultipart) world.getTileEntity(pos)).getPartContainer().collisionRayTrace(start, end);
+        if(result == null || result.hit == null) return null;
+        PartPartType partPartType = (PartPartType) result.hit.partHit;
+        return partPartType != null ? partPartType.getFacing() : null;
     }
 
     @Override

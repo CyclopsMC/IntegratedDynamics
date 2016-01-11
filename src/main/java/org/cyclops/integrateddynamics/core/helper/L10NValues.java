@@ -15,6 +15,11 @@ public class L10NValues {
 
     public static final String PART_PANEL_ERROR_INVALIDTYPE = "parttype.parttypes." + NS + ".dataDrivenPanel.error.invalidType";
     public static final String PART_ERROR_LOWENERGY = "parttype.parttypes." + NS + ".error.lowEnergy";
+    public static final String PART_TOOLTIP_DISABLED = "parttype.parttypes." + NS + ".tooltip.disabled";
+    public static final String PART_TOOLTIP_INACTIVE = "parttype.parttypes." + NS + ".tooltip.inactive";
+    public static final String PART_TOOLTIP_ERRORS = "parttype.parttypes." + NS + ".tooltip.errors";
+    public static final String PART_TOOLTIP_WRITER_ACTIVEASPECT = "parttype.parttypes." + NS + ".tooltip.writer.activeAspect";
+    public static final String PART_TOOLTIP_DISPLAY_ACTIVEVALUE = "parttype.parttypes." + NS + ".tooltip.display.activeValue";
 
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
 

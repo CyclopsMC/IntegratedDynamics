@@ -137,6 +137,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
             return Collections.singletonList(block.getCableBoundingBox(null));
         }
+
+        @Override
+        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
+            return new ItemStack(BlockCable.getInstance());
+        }
     };
     private static final IComponent<EnumFacing, BlockCable> CABLECONNECTIONS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
         @Override
@@ -157,6 +162,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         @Override
         public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
             return Collections.singletonList(block.getCableBoundingBox(position));
+        }
+
+        @Override
+        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
+            return new ItemStack(BlockCable.getInstance());
         }
     };
     private static final IComponent<EnumFacing, BlockCable> PARTS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
@@ -182,6 +192,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     block.getPartBoundingBox(position)
             );
         }
+
+        @Override
+        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
+            IPartContainer partContainer = BlockCable.getInstance().getPartContainer(world, pos);
+            return partContainer.getPart(position).getPickBlock(world, pos, partContainer.getPartState(position));
+        }
     };
     private static final IComponent<EnumFacing, BlockCable> FACADE_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
 
@@ -205,6 +221,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         @Override
         public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
             return Collections.singletonList(BOUNDS);
+        }
+
+        @Override
+        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
+            ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
+            ItemFacade.getInstance().writeFacadeBlock(itemStack, BlockCable.getInstance().getFacade(world, pos));
+            return itemStack;
         }
     };
     static {
@@ -418,6 +441,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player) {
+        RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
+        if(rayTraceResult != null) {
+            EnumFacing positionHit = rayTraceResult.getPositionHit();
+            return rayTraceResult.getCollisionType().getPickBlock(world, pos, positionHit);
+        }
         return new ItemStack(getItem(world, pos), 1, getDamageValue(world, pos));
     }
 
@@ -448,6 +476,16 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
         return TileHelpers.getSafeTile(world, pos, IPartContainer.class);
+    }
+
+    @Nullable
+    @Override
+    public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
+        ICollidable.RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
+        if(rayTraceResult != null) {
+            return rayTraceResult.getPositionHit();
+        }
+        return null;
     }
 
     /* --------------- Start ICollidable and rendering --------------- */

@@ -154,6 +154,15 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public ItemStack getItemStack(S state);
 
     /**
+     * Get the itemstack from the given state.
+     * @param world The world.
+     * @param pos The position.
+     * @param state The state.
+     * @return The itemstack possibly containing the state information.
+     */
+    public ItemStack getPickBlock(World world, BlockPos pos, S state);
+
+    /**
      * Get the part state from the given itemstack.
      * @param itemStack The itemstack possibly containing state information.
      * @return The state contained in the itemstack or the default part state.
@@ -271,6 +280,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param enabled If it should work.
      */
     public void setEnabled(S state, boolean enabled);
+
+    /**
+     * Add tooltip lines for this aspect when this part is being hovered by a mod like WAILA.
+     * @param state The state.
+     * @param lines The list to add lines to.
+     */
+    public void loadTooltip(S state, List<String> lines);
 
     public static class RenderPosition {
 

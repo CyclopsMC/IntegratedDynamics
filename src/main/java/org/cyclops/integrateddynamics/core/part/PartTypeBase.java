@@ -19,6 +19,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.cyclopscore.init.ModBase;
@@ -31,6 +32,7 @@ import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 
@@ -197,6 +199,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public ItemStack getPickBlock(World world, BlockPos pos, S state) {
+        return getItemStack(state);
+    }
+
+    @Override
     public boolean isUpdate(S state) {
         return false;
     }
@@ -344,6 +351,13 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public void setEnabled(S state, boolean enabled) {
         state.setEnabled(enabled);
+    }
+
+    @Override
+    public void loadTooltip(S state, List<String> lines) {
+        if(!state.isEnabled()) {
+            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_DISABLED));
+        }
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {

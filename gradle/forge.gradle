@@ -9,6 +9,10 @@ repositories {
         name "Amadornes"
         url "http://maven.amadornes.com/"
     }
+    maven {
+        name "Mobius Repo"
+        url "http://mobiusstrip.eu/maven"
+    }
 }
 
 dependencies {
@@ -19,7 +23,8 @@ dependencies {
         compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
     }
 
-    compile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:deobf"
+    compile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:deobf" // http://maven.amadornes.com/
+    compile "mcp.mobius.waila:Waila:${config.waila_version}:dev" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
 
     // Project lombok
     compile "org.projectlombok:lombok:1.16.4"

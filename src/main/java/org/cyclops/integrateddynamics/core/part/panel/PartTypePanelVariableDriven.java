@@ -10,6 +10,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
@@ -30,6 +31,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
@@ -171,6 +173,28 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             return true;
         }
         return super.onPartActivated(world, pos, partState, player, side, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public void loadTooltip(S state, List<String> lines) {
+        super.loadTooltip(state, lines);
+        if (!state.getInventory().isEmpty()) {
+            if (state.hasVariable() && state.isEnabled()) {
+                IValue value = state.getDisplayValue();
+                IValueType valueType = value.getType();
+                lines.add(L10NHelpers.localize(
+                        L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
+                        valueType.getDisplayColorFormat() + valueType.toCompactString(value),
+                        L10NHelpers.localize(valueType.getUnlocalizedName())));
+            } else {
+                lines.add(EnumChatFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
+                for (L10NHelpers.UnlocalizedString error : state.getGlobalErrors()) {
+                    lines.add(EnumChatFormatting.RED + error.localize());
+                }
+            }
+        } else {
+            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_INACTIVE));
+        }
     }
 
     public static abstract class State<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartStateActiveVariableBase<P> {
