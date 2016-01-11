@@ -21,6 +21,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
 
@@ -90,7 +91,7 @@ public class ItemFacade extends ConfigurableItem {
     public boolean onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumFacing side,
                              float hitX, float hitY, float hitZ) {
         if(!world.isRemote) {
-            ITileCableFacadeable facadeContainer = (ITileCableFacadeable) world.getTileEntity(pos);
+            ITileCableFacadeable facadeContainer = TileHelpers.getSafeTile(world, pos, ITileCableFacadeable.class);
             IBlockState blockState = getFacadeBlock(itemStack);
             if(facadeContainer != null && blockState != null) {
                 // Add facade to existing cable

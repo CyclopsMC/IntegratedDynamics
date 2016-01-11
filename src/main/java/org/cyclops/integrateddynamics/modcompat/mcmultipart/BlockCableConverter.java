@@ -25,14 +25,14 @@ import java.util.Map;
  * Converter for the original cable block to its multipart form.
  * @author rubensworks
  */
-public class BlockCableConverter implements IPartConverter {
+public class BlockCableConverter implements IPartConverter.IPartConverter2 {
     @Override
     public Collection<Block> getConvertableBlocks() {
         return Collections.<Block>singleton(BlockCable.getInstance());
     }
 
     @Override
-    public Collection<? extends IMultipart> convertBlock(IBlockAccess world, BlockPos blockPos) {
+    public Collection<? extends IMultipart> convertBlock(IBlockAccess world, BlockPos blockPos, boolean simulate) {
         Collection<IMultipart> parts = Lists.newLinkedList();
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, blockPos, TileMultipartTicking.class);
 
@@ -41,7 +41,9 @@ public class BlockCableConverter implements IPartConverter {
         for(Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
             parts.add(new PartPartType(entry.getKey(), entry.getValue().getPart()));
         }
-        //tile.silentResetPartData(); // TODO: this is called twice, enable this when fixed to avoid part drops
+        if(!simulate) {
+            tile.silentResetPartData();
+        }
 
         // Add cable
         if(tile.isRealCable()) {
@@ -50,7 +52,7 @@ public class BlockCableConverter implements IPartConverter {
         }
 
         // Optionally drop facade
-        if(tile.hasFacade()) { // TODO: this is called twice
+        if(!simulate && tile.hasFacade()) {
             IBlockState blockState = tile.getFacade();
             ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
             ItemFacade.getInstance().writeFacadeBlock(itemStack, blockState);
