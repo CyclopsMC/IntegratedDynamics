@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import java.util.List;
 
@@ -25,7 +26,6 @@ import java.util.List;
 public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartNetworkElement<P, S>, IEnergyConsumingNetworkElement<IPartNetwork> {
 
     private final P part;
-    private final IPartContainerFacade partContainerFacade;
     private final PartTarget target;
 
     protected static DimPos getCenterPos(PartTarget target) {
@@ -45,8 +45,13 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
+    public IPartContainerFacade getPartContainerFacade() {
+        return CableHelpers.getInterface(getCenterPos(getTarget()), IPartContainerFacade.class);
+    }
+
+    @Override
     public S getPartState() {
-        return (S) partContainerFacade.getPartContainer(getCenterPos(getTarget()).getWorld(), getCenterPos(getTarget()).getBlockPos()).
+        return (S) getPartContainerFacade().getPartContainer(getCenterPos(getTarget()).getWorld(), getCenterPos(getTarget()).getBlockPos()).
                getPartState(getCenterSide(getTarget()));
     }
 
@@ -127,7 +132,6 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     @Override
     public int hashCode() {
         int result = part.hashCode();
-        result = 31 * result + partContainerFacade.hashCode();
         result = 31 * result + target.hashCode();
         return result;
     }

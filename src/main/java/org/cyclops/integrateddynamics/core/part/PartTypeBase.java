@@ -186,7 +186,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public INetworkElement<IPartNetwork> createNetworkElement(IPartContainerFacade partContainerFacade, DimPos pos, EnumFacing side) {
-        return new PartNetworkElement(this, partContainerFacade, PartTarget.fromCenter(pos, side));
+        return new PartNetworkElement(this, PartTarget.fromCenter(pos, side));
     }
 
     @Override

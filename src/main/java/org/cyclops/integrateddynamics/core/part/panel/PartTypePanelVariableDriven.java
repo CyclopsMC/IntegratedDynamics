@@ -181,11 +181,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         if (!state.getInventory().isEmpty()) {
             if (state.hasVariable() && state.isEnabled()) {
                 IValue value = state.getDisplayValue();
-                IValueType valueType = value.getType();
-                lines.add(L10NHelpers.localize(
-                        L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
-                        valueType.getDisplayColorFormat() + valueType.toCompactString(value),
-                        L10NHelpers.localize(valueType.getUnlocalizedName())));
+                if(value != null) {
+                    IValueType valueType = value.getType();
+                    lines.add(L10NHelpers.localize(
+                            L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
+                            valueType.getDisplayColorFormat() + valueType.toCompactString(value),
+                            L10NHelpers.localize(valueType.getUnlocalizedName())));
+                }
             } else {
                 lines.add(EnumChatFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
                 for (L10NHelpers.UnlocalizedString error : state.getGlobalErrors()) {

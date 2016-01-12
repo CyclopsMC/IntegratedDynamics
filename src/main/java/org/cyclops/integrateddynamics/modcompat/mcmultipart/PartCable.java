@@ -77,6 +77,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     private boolean allowsRedstone = false;
     private IPartNetwork network = null;
     private IPartContainer partContainer = null;
+    private boolean addSilent = false;
 
     public PartCable() {
         this(Maps.<EnumFacing, PartHelpers.PartStateHolder<?, ?>>newHashMap());
@@ -229,8 +230,10 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public void onAdded() {
         super.onAdded();
-        cableNetworkComponent.addToNetwork(getWorld(), getPos());
-        detectPresentParts();
+        if(!isAddSilent()) {
+            cableNetworkComponent.addToNetwork(getWorld(), getPos());
+            detectPresentParts();
+        }
     }
 
     @Override
@@ -505,6 +508,14 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
                 }
             }
         }
+    }
+
+    public void setAddSilent(boolean addSilent) {
+        this.addSilent = addSilent;
+    }
+
+    public boolean isAddSilent() {
+        return this.addSilent;
     }
 
     public class VirtualPartContainer implements IPartContainer {

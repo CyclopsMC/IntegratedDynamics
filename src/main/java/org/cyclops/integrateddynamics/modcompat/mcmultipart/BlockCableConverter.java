@@ -43,11 +43,13 @@ public class BlockCableConverter implements IPartConverter.IPartConverter2 {
         }
         if(!simulate) {
             tile.silentResetPartData();
+            tile.resetCurrentNetwork();
         }
 
         // Add cable
         if(tile.isRealCable()) {
             PartCable partCable = new PartCable(partData);
+            partCable.setAddSilent(true);
             parts.add(partCable);
         }
 
