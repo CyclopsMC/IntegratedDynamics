@@ -486,6 +486,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         Vec3 end = RayTraceUtils.getEnd(player);
         RayTraceUtils.RayTraceResultPart result = ((TileMultipart) world.getTileEntity(pos)).getPartContainer().collisionRayTrace(start, end);
         if(result == null || result.hit == null) return null;
+        IMultipart multipart = result.hit.partHit;
+        if(!(multipart instanceof PartPartType)) return null;
         PartPartType partPartType = (PartPartType) result.hit.partHit;
         return partPartType != null ? partPartType.getFacing() : null;
     }
