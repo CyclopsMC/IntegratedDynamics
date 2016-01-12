@@ -442,7 +442,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         if(connected.isEmpty()) {
             updateConnections();
         }
-        return !isForceDisconnected(side) && connected.get(side.ordinal());
+        return !isForceDisconnected(side) && connected != null && connected.get(side.ordinal());
     }
 
     @Override

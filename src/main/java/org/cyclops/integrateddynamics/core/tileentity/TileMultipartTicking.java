@@ -261,6 +261,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             }
         }
         extendedState = extendedState.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
+        extendedState = extendedState.withProperty(BlockCable.PARTCONTAINER, this);
         return extendedState;
     }
 

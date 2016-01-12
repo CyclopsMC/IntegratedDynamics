@@ -129,6 +129,7 @@ public abstract class CableModelBase extends DynamicModel {
             addBakedQuad(ret, x1, x2, z2, z3, 1, texture, side); // 7
             addBakedQuad(ret, x2, x3, z2, z3, 1, texture, side); // 8
         }
+
         return ret;
     }
 
@@ -137,6 +138,8 @@ public abstract class CableModelBase extends DynamicModel {
     protected abstract boolean isConnected(EnumFacing side);
     protected abstract boolean hasPart(EnumFacing side);
     protected abstract IPartType.RenderPosition getPartRenderPosition(EnumFacing side);
+    protected abstract boolean shouldRenderParts();
+    protected abstract IBakedModel getPartModel(EnumFacing side);
 
     @SuppressWarnings("unchecked")
     @Override
@@ -161,6 +164,9 @@ public abstract class CableModelBase extends DynamicModel {
                         renderPosition = getPartRenderPosition(side);
                         float depthFactor = renderPosition == IPartType.RenderPosition.NONE ? 0F : renderPosition.getDepthFactor();
                         quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
+                        if(shouldRenderParts()) {
+                            ret.addAll(getPartModel(side).getGeneralQuads());
+                        }
                     }
                     for (float[][] v : quadVertexes) {
                         Vec3 v1 = rotate(new Vec3(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);

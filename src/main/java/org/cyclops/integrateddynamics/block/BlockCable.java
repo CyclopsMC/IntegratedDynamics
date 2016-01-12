@@ -93,6 +93,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             PART_RENDERPOSITIONS[side.ordinal()] = new UnlistedProperty<>("partRenderPosition-" + side.getName(), IPartType.RenderPosition.class);
         }
     }
+    @BlockProperty
+    public static final IUnlistedProperty<IPartContainer> PARTCONTAINER = new UnlistedProperty<>("partcontainer", IPartContainer.class);
 
     // Collision boxes
     public static final float[][] CABLE_COLLISION_BOXES = {

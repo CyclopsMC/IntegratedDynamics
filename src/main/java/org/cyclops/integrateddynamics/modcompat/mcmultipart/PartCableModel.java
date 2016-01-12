@@ -52,6 +52,16 @@ public class PartCableModel extends CableModelBase implements ISmartMultipartMod
     }
 
     @Override
+    protected boolean shouldRenderParts() {
+        return false;
+    }
+
+    @Override
+    protected IBakedModel getPartModel(EnumFacing side) {
+        return null;
+    }
+
+    @Override
     public IBakedModel handleBlockState(IBlockState state) {
         return new PartCableModel((IExtendedBlockState) state, false);
     }
