@@ -55,6 +55,7 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
+import org.cyclops.integrateddynamics.modcompat.thaumcraft.ThaumcraftModCompat;
 import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -124,6 +125,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         super.loadModCompats(modCompatLoader);
         modCompatLoader.addModCompat(new McMultiPartModCompat());
         modCompatLoader.addModCompat(new WailaModCompat());
+        modCompatLoader.addModCompat(new ThaumcraftModCompat());
     }
 
     @Mod.EventHandler

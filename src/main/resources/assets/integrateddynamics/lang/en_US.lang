@@ -462,3 +462,20 @@ operator.operators.integrateddynamics.general.identity.info=A copy of the input 
 operator.operators.integrateddynamics.cast.name=Cast
 operator.operators.integrateddynamics.binary.basename=Cast
 operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s
+
+### ----- Mod Compats ----- ###
+
+## ----- Thaumcraft ----- ##
+
+## Part types
+parttype.parttypes.integrateddynamics.thaumcraftReader.name=Thaumcraft Reader
+parttype.parttypes.integrateddynamics.thaumcraftReader.info=Read from Thaumcraft blocks
+
+## Value Types
+valuetype.valuetypes.integrateddynamics.object.thaumcraftaspect.name=Thaumcraft Aspect
+
+## Aspects
+aspect.aspects.integrateddynamics.read.boolean.thaumcraft.isaspectcontainer.name=Is Aspect Container
+aspect.aspects.integrateddynamics.read.boolean.thaumcraft.isaspectcontainer.info=If the given block can hold aspects.
+aspect.aspects.integrateddynamics.read.list.thaumcraft.aspectcontainer.name=Aspect Container Aspects
+aspect.aspects.integrateddynamics.read.list.thaumcraft.aspectcontainer.info=All aspects in the given aspect container.
