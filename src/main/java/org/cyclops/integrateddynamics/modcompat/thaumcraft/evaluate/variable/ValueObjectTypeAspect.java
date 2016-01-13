@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueOptionalBase;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.modcompat.thaumcraft.ThaumcraftModCompat;
 import thaumcraft.api.aspects.Aspect;
 
 import java.util.Objects;
@@ -66,11 +66,11 @@ public class ValueObjectTypeAspect extends ValueObjectTypeBase<ValueObjectTypeAs
     public static class ValueAspect extends ValueOptionalBase<Pair<Aspect, Integer>> {
 
         private ValueAspect(Aspect aspect, int amount) {
-            super(ValueTypes.OBJECT_ENTITY, Pair.of(aspect, amount));
+            super(ThaumcraftModCompat.OBJECT_ASPECT, Pair.of(aspect, amount));
         }
 
         public ValueAspect() {
-            super(ValueTypes.OBJECT_ENTITY, null);
+            super(ThaumcraftModCompat.OBJECT_ASPECT, null);
         }
 
         public static ValueAspect of(Aspect aspect, int amount) {

@@ -473,6 +473,7 @@ parttype.parttypes.integrateddynamics.thaumcraftReader.info=Read from Thaumcraft
 
 ## Value Types
 valuetype.valuetypes.integrateddynamics.object.thaumcraftaspect.name=Thaumcraft Aspect
+valuetype.integrateddynamics.error.thaumcraftaspect.noAspect=The inserted item contains no aspects.
 
 ## Aspects
 aspect.aspects.integrateddynamics.read.boolean.thaumcraft.isaspectcontainer.name=Is Aspect Container
