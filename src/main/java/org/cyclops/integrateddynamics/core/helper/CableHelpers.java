@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 
 import java.util.List;
 
@@ -24,6 +25,12 @@ public class CableHelpers {
                     return clazz.cast(block);
                 }
                 return null;
+            }
+        });
+        addInterfaceRetriever(new IInterfaceRetriever() {
+            @Override
+            public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {
+                return TileHelpers.getSafeTile(world, pos, clazz);
             }
         });
     }
