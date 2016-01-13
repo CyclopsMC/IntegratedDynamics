@@ -31,11 +31,6 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     }
 
     @Override
-    public boolean isSolid(PartStateReaderBase<PartTypeRedstoneReader> state) {
-        return true;
-    }
-
-    @Override
     public PartStateReaderBase<PartTypeRedstoneReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeRedstoneReader>();
     }

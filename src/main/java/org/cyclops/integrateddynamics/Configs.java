@@ -1,10 +1,7 @@
 package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
-import org.cyclops.integrateddynamics.block.BlockCableConfig;
-import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
-import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
-import org.cyclops.integrateddynamics.block.BlockVariablestoreConfig;
+import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.item.ItemFacadeConfig;
 import org.cyclops.integrateddynamics.item.ItemLabellerConfig;
 import org.cyclops.integrateddynamics.item.ItemVariableConfig;
@@ -23,6 +20,11 @@ public class Configs {
         configHandler.add(new BlockVariablestoreConfig());
         configHandler.add(new BlockLogicProgrammerConfig());
         configHandler.add(new BlockInvisibleLightConfig());
+        configHandler.add(new BlockEnergyBatteryConfig());
+        configHandler.add(new BlockCreativeEnergyBatteryConfig());
+        configHandler.add(new BlockCoalGeneratorConfig());
+        configHandler.add(new BlockProxyConfig());
+        configHandler.add(new BlockMaterializerConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());

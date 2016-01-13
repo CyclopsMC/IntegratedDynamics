@@ -14,6 +14,7 @@ import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.api.path.IPathElementProvider;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import java.util.Collection;
 import java.util.Set;
@@ -70,12 +71,12 @@ public class Cluster<E extends IPathElement> implements Collection<E>, INBTSeria
                         "invalid dimension id %s.", dimensionId));
             } else {
                 World world = MinecraftServer.getServer().worldServers[dimensionId];
-                if(!(world.getBlockState(pos).getBlock() instanceof IPathElementProvider)) {
+                IPathElementProvider pathElementProvider = CableHelpers.getInterface(world, pos, IPathElementProvider.class);
+                if(pathElementProvider == null) {
                     IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +
                             "position %s in world %s because it is no valid network element provider block.", pos, dimensionId));
                 } else {
-                    elements.add((E) ((IPathElementProvider) world.getBlockState(pos).getBlock())
-                            .createPathElement(world, pos));
+                    elements.add((E) pathElementProvider.createPathElement(world, pos));
                 }
             }
         }

@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -97,6 +99,42 @@ public class TestVariables {
         assertThat("deserializing 10 returns 10", s10.getType().deserialize("10"), is(s10.getValue()));
         assertThat("deserializing -10 returns -10", sm10.getType().deserialize("-10"), is(sm10.getValue()));
         assertThat("deserializing 0 returns 0", s0.getType().deserialize("0"), is(s0.getValue()));
+    }
+
+    @Test
+    public void testListTypeMaterialized() {
+        ValueTypeListProxyFactories.load();
+
+        DummyVariableList l0 = new DummyVariableList(ValueTypeList.ValueList.ofAll());
+        assertThat("empty boolean list has length zero", l0.getValue().getRawValue().getLength(), is(0));
+        assertThat("empty boolean list has boolean type", l0.getValue().getRawValue().getValueType(), CoreMatchers.<IValueType>is(ValueTypes.CATEGORY_ANY));
+
+        DummyVariableList l2 = new DummyVariableList(ValueTypeList.ValueList.ofAll(
+                ValueTypeString.ValueString.of("a"), ValueTypeString.ValueString.of("b"))
+        );
+        assertThat("string list has length two", l2.getValue().getRawValue().getLength(), is(2));
+        assertThat("string list has string type", l2.getValue().getRawValue().getValueType(), CoreMatchers.<IValueType>is(ValueTypes.STRING));
+
+        DummyVariableList l2_2 = new DummyVariableList(ValueTypeList.ValueList.ofAll(
+                ValueTypeList.ValueList.ofAll(ValueTypeString.ValueString.of("a"), ValueTypeString.ValueString.of("b")),
+                ValueTypeList.ValueList.ofAll(ValueTypeString.ValueString.of("c"), ValueTypeString.ValueString.of("d"))
+        ));
+        assertThat("nested list has length two", l2_2.getValue().getRawValue().getLength(), is(2));
+        assertThat("nestedlist has list type", l2_2.getValue().getRawValue().getValueType(), CoreMatchers.<IValueType>is(ValueTypes.LIST));
+
+        assertThat("serializing empty list",
+                l0.getType().serialize(l0.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.any.name"));
+        assertThat("serializing string list",
+                l2.getType().serialize(l2.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.string.name\\;a\\;b"));
+        assertThat("serializing nested list",
+                l2.getType().serialize(l2_2.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.object.list.name\\;materialized\\\\;valuetype.valuetypes.integrateddynamics.string.name\\\\\\;a\\\\\\;b\\;materialized\\\\;valuetype.valuetypes.integrateddynamics.string.name\\\\\\;c\\\\\\;d"));
+
+        assertThat("deserializing empty list",
+                l0.getType().deserialize(l0.getType().serialize(l0.getValue())), is(l0.getValue()));
+        assertThat("deserializing string list",
+                l2.getType().deserialize(l2.getType().serialize(l2.getValue())), is(l2.getValue()));
+        assertThat("deserializing nested list",
+                l2_2.getType().deserialize(l2_2.getType().serialize(l2_2.getValue())), is(l2_2.getValue()));
     }
 
 }

@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import net.minecraft.block.Block;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+
+import java.util.Set;
 
 /**
  * A network can hold a set of {@link INetworkElement}s.
@@ -72,11 +74,11 @@ public interface INetwork<N extends INetwork<N>> extends INBTSerializable {
     /**
      * Remove the given cable from the network.
      * If the cable had any network elements registered in the network, these will be killed and removed as well.
-     * @param block The block instance of the cable element.
      * @param cable The actual cable instance.
+     * @param cablePathElement The actual cable instance.
      * @return If the cable was removed.
      */
-    public boolean removeCable(Block block, ICablePathElement cable);
+    public boolean removeCable(ICable cable, ICablePathElement cablePathElement);
 
     /**
      * Called when the server loaded this network.
@@ -89,5 +91,10 @@ public interface INetwork<N extends INetwork<N>> extends INBTSerializable {
      * This is the time to notify all network elements of this network.
      */
     public void beforeServerStop();
+
+    /**
+     * @return The network elements.
+     */
+    public Set<INetworkElement<N>> getElements();
 
 }

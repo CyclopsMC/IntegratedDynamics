@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import lombok.Data;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -13,10 +13,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.init.IInitListener;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.api.network.*;
 
 import java.util.List;
 
@@ -51,6 +48,16 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @return The unlocalized name of this part. (With the .name suffix)
      */
     public String getUnlocalizedName();
+
+    /**
+     * @return JSON model path for the block representation of this part.
+     */
+    public String getBlockModelPath();
+
+    /**
+     * @return JSON model path for the item representation of this part.
+     */
+    public String getItemModelPath();
 
     /**
      * @return The item associated with this part type.
@@ -147,6 +154,15 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public ItemStack getItemStack(S state);
 
     /**
+     * Get the itemstack from the given state.
+     * @param world The world.
+     * @param pos The position.
+     * @param state The state.
+     * @return The itemstack possibly containing the state information.
+     */
+    public ItemStack getPickBlock(World world, BlockPos pos, S state);
+
+    /**
      * Get the part state from the given itemstack.
      * @param itemStack The itemstack possibly containing state information.
      * @return The state contained in the itemstack or the default part state.
@@ -158,8 +174,9 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target.
      * @param state The state
      * @param itemStacks The itemstack list to add to.
+     * @param dropMainElement If the part itself should also be dropped.
      */
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks);
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement);
 
     /**
      * Called when this element is added to the network.
@@ -190,7 +207,6 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * Called when a part is right-clicked.
      * @param world The world.
      * @param pos The position of the block this part is part of.
-     * @param state The block state of the parent block.
      * @param partState The state of this part.
      * @param player The player activating the part.
      * @param side The side this part is attached on.
@@ -199,23 +215,22 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param hitZ The Z hit position.
      * @return True if the further processing should be stopped.
      */
-    public boolean onPartActivated(World world, BlockPos pos, IBlockState state, S partState, EntityPlayer player,
+    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player,
                                    EnumFacing side, float hitX, float hitY, float hitZ);
 
     /**
      * Get the base block state that will be rendered for this part.
      * An appropriate {@link org.cyclops.integrateddynamics.core.block.IgnoredBlock#FACING} property will be set.
      * @param partContainer The tile entity.
-     * @param x X
-     * @param y Y
-     * @param z Z
-     * @param partialTick The partial tick
-     * @param destroyStage The stage of the block destruction.
      * @param side The position of the part.
      * @return The block state to render with.
      */
-    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side);
+    public IBlockState getBlockState(IPartContainer partContainer, EnumFacing side);
+
+    /**
+     * @return The default block state representation of this part.
+     */
+    public BlockState getBaseBlockState();
 
     /**
      * Called when this element is about to be removed.
@@ -236,12 +251,68 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      */
     public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
 
-    @Data
+    /**
+     * @param state The state
+     * @return The consumption rate of this part for the given state.
+     */
+    public int getConsumptionRate(S state);
+
+    /**
+     * Called after the element was updated or not.
+     * If the update was not called, this can be because the network did not contain
+     * enough energy to let this element work.
+     * @param network The network to update in.
+     * @param state The state
+     * @param target The target block.
+     * @param updated If the {@link INetworkElement#update(INetwork)} was called.
+     */
+    public void postUpdate(IPartNetwork network, PartTarget target, S state, boolean updated);
+
+    /**
+     * @param state The state
+     * @return If this part is enabled.
+     */
+    public boolean isEnabled(S state);
+
+    /**
+     * Set if this part should work.
+     * @param state The state
+     * @param enabled If it should work.
+     */
+    public void setEnabled(S state, boolean enabled);
+
+    /**
+     * Add tooltip lines for this aspect when this part is being hovered by a mod like WAILA.
+     * @param state The state.
+     * @param lines The list to add lines to.
+     */
+    public void loadTooltip(S state, List<String> lines);
+
     public static class RenderPosition {
 
         public static final RenderPosition NONE = new RenderPosition(-1, -1, -1);
 
-        private final float depthFactor, widthFactor, heightFactor;
+        private final float depthFactor;
+        private final float widthFactor;
+        private final float heightFactor;
+
+        public float getDepthFactor() {
+            return depthFactor;
+        }
+
+        public float getWidthFactor() {
+            return widthFactor;
+        }
+
+        public float getHeightFactor() {
+            return heightFactor;
+        }
+
+        public RenderPosition(float depthFactor, float widthFactor, float heightFactor) {
+            this.depthFactor = depthFactor;
+            this.widthFactor = widthFactor;
+            this.heightFactor = heightFactor;
+        }
 
     }
 

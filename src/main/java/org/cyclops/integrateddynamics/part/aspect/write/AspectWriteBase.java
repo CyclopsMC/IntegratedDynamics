@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -56,7 +56,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
     @SideOnly(Side.CLIENT)
     protected void registerModelResourceLocation() {
         Aspects.REGISTRY.registerAspectModel(this,
-                new ModelResourceLocation(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
+                new ResourceLocation(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
     }
 
 }

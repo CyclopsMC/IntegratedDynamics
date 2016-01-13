@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.collect.Sets;
 import net.minecraft.util.EnumChatFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -16,12 +15,15 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 public class ValueTypeCategoryNamed extends ValueTypeCategoryBase<IValue> {
 
     public ValueTypeCategoryNamed() {
-        super("named", Helpers.RGBToInt(250, 10, 13), EnumChatFormatting.RED.toString(),
-                Sets.<IValueType<?>>newHashSet(ValueTypes.OBJECT_BLOCK));
+        super("named", Helpers.RGBToInt(250, 10, 13), EnumChatFormatting.RED.toString());
     }
 
     public String getName(IVariable a) throws EvaluationException {
         return ((IValueTypeNamed) a.getType()).getName(a.getValue());
     }
 
+    @Override
+    public boolean correspondsTo(IValueType valueType) {
+        return super.correspondsTo(valueType) && valueType instanceof IValueTypeNamed;
+    }
 }

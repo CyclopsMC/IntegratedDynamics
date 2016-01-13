@@ -79,6 +79,16 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }
 
+    @Override
+    public void postUpdate(IPartNetwork network, PartTarget target, State state, boolean updated) {
+        boolean wasEnabled = isEnabled(state);
+        super.postUpdate(network, target, state, updated);
+        boolean isEnabled = isEnabled(state);
+        if(wasEnabled != isEnabled) {
+            setLightLevel(target, isEnabled ? getLightLevel(state, state.getDisplayValue()) : 0);
+        }
+    }
+
     public static void setLightLevel(PartTarget target, int lightLevel) {
         if(ConfigHandler.isEnabled(BlockInvisibleLightConfig.class)) {
             World world = target.getTarget().getPos().getWorld();

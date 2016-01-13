@@ -23,7 +23,7 @@ public class VariableLoader implements ICustomModelLoader {
     @Override
     public boolean accepts(ResourceLocation modelLocation) {
         return modelLocation.getResourceDomain().equals(Reference.MOD_ID)
-               && modelLocation.getResourcePath().startsWith(LOCATION);
+               && modelLocation.getResourcePath().equals(LOCATION);
     }
 
     @Override

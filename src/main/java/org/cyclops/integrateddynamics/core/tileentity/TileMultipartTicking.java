@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
@@ -13,7 +12,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -23,7 +21,6 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -38,8 +35,8 @@ import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
-import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
-import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -50,9 +47,9 @@ import java.util.Map;
  * @author Ruben Taelman
  */
 public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTileEntity.ITickingTile,
-        IPartContainer, ITileCableNetwork, ITileCableFacadeable {
+        IPartContainer, ITileCableNetwork, ITileCableFacadeable, PartHelpers.IPartStateHolderCallback {
 
-    private final Map<EnumFacing, PartStateHolder<?, ?>> partData = Maps.newHashMap();
+    private final Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData = Maps.newHashMap();
     @Delegate
     protected final ITickingTile tickingTileComponent = new TickingTileComponent(this);
 
@@ -73,58 +70,12 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Override
     public void writeToNBT(NBTTagCompound tag) {this.markDirty();
         super.writeToNBT(tag);
-        NBTTagList partList = new NBTTagList();
-        for(Map.Entry<EnumFacing, PartStateHolder<?, ?>> entry : partData.entrySet()) {
-            NBTTagCompound partTag = new NBTTagCompound();
-            IPartType part = entry.getValue().getPart();
-            IPartState partState = entry.getValue().getState();
-            partTag.setString("__partType", part.getName());
-            partTag.setString("__side", entry.getKey().getName());
-            try {
-                part.toNBT(partTag, partState);
-                partList.appendTag(partTag);
-            } catch (Exception e) {
-                e.printStackTrace();
-                IntegratedDynamics.clog(Level.ERROR,  String.format("The part %s at position %s was errored " +
-                        "and is removed.", part.getName(), getPosition()));
-            }
-        }
-        tag.setTag("parts", partList);
-    }
-
-    protected IPartType validatePartType(String partTypeName, IPartType partType) {
-        if(partType == null) {
-            IPartNetwork network = getNetwork();
-            UnknownPartEvent event = new UnknownPartEvent(network, partTypeName);
-            network.getEventBus().post(event);
-            partType = event.getPartType();
-        }
-        return partType;
+        PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        partData.clear(); // We only want the new data.
-        NBTTagList partList = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-        for(int i = 0; i < partList.tagCount(); i++) {
-            NBTTagCompound partTag = partList.getCompoundTagAt(i);
-            String partTypeName = partTag.getString("__partType");
-            IPartType partType = validatePartType(partTypeName, PartTypes.REGISTRY.getPartType(partTypeName));
-            if(partType != null) {
-                EnumFacing side = EnumFacing.byName(partTag.getString("__side"));
-                if(side != null) {
-                    IPartState partState = partType.fromNBT(partTag);
-                    partData.put(side, PartStateHolder.of(partType, partState));
-                } else {
-                    IntegratedDynamics.clog(Level.WARN, String.format("The part %s at position %s was at an invalid " +
-                                    "side and removed.",
-                            partType.getName(), getPosition()));
-                }
-            } else {
-                IntegratedDynamics.clog(Level.WARN, String.format("The part %s at position %s was unknown and removed.",
-                        partTypeName, getPosition()));
-            }
-        }
+        PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData);
         super.readFromNBT(tag);
     }
 
@@ -152,10 +103,10 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public Map<EnumFacing, IPartType<?, ?>> getParts() {
-        return Maps.transformValues(partData, new Function<PartStateHolder<?, ?>, IPartType<?, ?>>() {
+        return Maps.transformValues(partData, new Function<PartHelpers.PartStateHolder<?, ?>, IPartType<?, ?>>() {
             @Nullable
             @Override
-            public IPartType<?, ?> apply(@Nullable PartStateHolder<?, ?> input) {
+            public IPartType<?, ?> apply(@Nullable PartHelpers.PartStateHolder<?, ?> input) {
                 return input.getPart();
             }
         });
@@ -166,6 +117,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         return !partData.isEmpty();
     }
 
+    @Override
+    public <P extends IPartType<P, S>, S extends IPartState<P>> boolean canAddPart(EnumFacing side, IPartType<P, S> part) {
+        return !hasPart(side);
+    }
+
     protected void onPartsChanged() {
         markDirty();
         sendUpdate();
@@ -173,21 +129,13 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     @Override
-    public void setPart(EnumFacing side, IPartType part, IPartState partState) {
-        partData.put(side, PartStateHolder.of(part, partState));
-        if(getNetwork() != null) {
-            INetworkElement networkElement = part.createNetworkElement(
-                    (IPartContainerFacade) getBlock(), DimPos.of(getWorld(), getPos()), side);
-            if(!getNetwork().addNetworkElement(networkElement, false)) {
-                // In this case, the addition failed because that part id is already present in the network,
-                // therefore we have to make a new state for that part (with a new id) and retry.
-                partState = part.getDefaultState();
-                partData.put(side, PartStateHolder.of(part, partState));
-                IntegratedDynamics.clog(Level.WARN, "A part already existed in the network, this is possibly a " +
-                        "result from item duplication.");
-                getNetwork().addNetworkElement(networkElement, false);
+    public void setPart(final EnumFacing side, final IPartType part, final IPartState partState) {
+        PartHelpers.setPart(getNetwork(), getWorld(), getPos(), side, part, partState, new PartHelpers.IPartStateHolderCallback() {
+            @Override
+            public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
+                partData.put(side, PartHelpers.PartStateHolder.of(part, partState));
             }
-        }
+        });
         onPartsChanged();
     }
 
@@ -204,7 +152,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public IPartType removePart(EnumFacing side, EntityPlayer player) {
-        PartStateHolder<?, ?> partStateHolder = partData.get(side); // Don't remove the state just yet! We might need it in network removal.
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side); // Don't remove the state just yet! We might need it in network removal.
         if(partStateHolder == null) {
             IntegratedDynamics.clog(Level.WARN, "Attempted to remove a part at a side where no part was.");
             return null;
@@ -219,7 +167,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
                 // Drop all parts types as item.
                 List<ItemStack> itemStacks = Lists.newLinkedList();
-                networkElement.addDrops(itemStacks);
+                networkElement.addDrops(itemStacks, true);
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
                         ItemStackHelpers.spawnItemStackToPlayer(getWorld(), pos, itemStack, player);
@@ -240,18 +188,18 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public void setPartState(EnumFacing side, IPartState partState) {
-        PartStateHolder<?, ?> partStateHolder = partData.get(side);
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
         if(partStateHolder == null) {
             throw new IllegalArgumentException(String.format("No part at position %s was found to update the state " +
                     "for.", getPosition()));
         }
-        partData.put(side, PartStateHolder.of(partStateHolder.getPart(), partState));
+        partData.put(side, PartHelpers.PartStateHolder.of(partStateHolder.getPart(), partState));
         onPartsChanged();
     }
 
     @Override
     public IPartState getPartState(EnumFacing side) {
-        PartStateHolder<?, ?> partStateHolder = partData.get(side);
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
         if(partStateHolder == null) {
             throw new IllegalArgumentException(String.format("No part at position %s was found to get the state from.",
                     getPosition()));
@@ -313,6 +261,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             }
         }
         extendedState = extendedState.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
+        extendedState = extendedState.withProperty(BlockCable.PARTCONTAINER, this);
         return extendedState;
     }
 
@@ -332,7 +281,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
         if(!MinecraftHelpers.isClientSide()) {
             // Loop over all part states to check their dirtiness
-            for (PartStateHolder<?, ?> partStateHolder : partData.values()) {
+            for (PartHelpers.PartStateHolder<?, ?> partStateHolder : partData.values()) {
                 if (partStateHolder.getState().isDirtyAndReset()) {
                     markDirty();
                 }
@@ -427,7 +376,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
      * @return The container or null.
      */
     public static IPartContainer get(DimPos pos) {
-        return TileHelpers.getSafeTile(pos.getWorld(), pos.getBlockPos(), IPartContainer.class);
+        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(pos, IPartContainerFacade.class);
+        return partContainerFacade.getPartContainer(pos.getWorld(), pos.getBlockPos());
     }
 
     @Override
@@ -471,16 +421,32 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         forceDisconnected.remove(side.ordinal());
     }
 
-    @Data
-    private static class PartStateHolder<P extends IPartType<P, S>, S extends IPartState<P>> {
-
-        private final IPartType<P, S> part;
-        private final S state;
-
-        public static PartStateHolder<?, ?> of(IPartType part, IPartState partState) {
-            return new PartStateHolder(part, partState);
-        }
+    @Override
+    public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
 
     }
 
+    /**
+     * @return The raw part data.
+     */
+    public Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> getPartData() {
+        return this.partData;
+    }
+
+    /**
+     * Override the part data.
+     * @param partData The raw part data.
+     */
+    public void setPartData(Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData) {
+        this.partData.clear();
+        this.partData.putAll(partData);
+    }
+
+    /**
+     * Reset the part data without signaling any neighbours or the network.
+     * Is used in block conversion.
+     */
+    public void silentResetPartData() {
+        this.partData.clear();
+    }
 }

@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
@@ -78,7 +79,7 @@ public interface ICollidable<P> {
         private final MovingObjectPosition movingObjectPosition;
         private final AxisAlignedBB boundingBox;
         private final P positionHit;
-        private final IComponent<?, ?> collisionType;
+        private final IComponent<P, ?> collisionType;
 
         @Override
         public String toString() {
@@ -93,8 +94,10 @@ public interface ICollidable<P> {
      */
     public static interface IComponent<P, B> {
         public Collection<P> getPossiblePositions();
+        public int getBoundsCount(P position);
         public boolean isActive(B block, World world, BlockPos pos, P position);
-        public AxisAlignedBB getBounds(B block, World world, BlockPos pos, P position);
+        public List<AxisAlignedBB> getBounds(B block, World world, BlockPos pos, P position);
+        public ItemStack getPickBlock(World world, BlockPos pos, P position);
     }
 
 }

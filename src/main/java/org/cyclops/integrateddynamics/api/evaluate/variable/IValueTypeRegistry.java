@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.init.IRegistry;
@@ -43,30 +43,30 @@ public interface IValueTypeRegistry extends IRegistry, IVariableFacadeHandler<IV
 
     /**
      * Register a model resource location for the given value type.
-     * @param valueType The value type.
-     * @param modelLocation The model resource location.
      * @param <V> The value type.
      * @param <T> The value type type.
+     * @param valueType The value type.
+     * @param modelLocation The model resource location.
      */
     @SideOnly(Side.CLIENT)
-    public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, ModelResourceLocation modelLocation);
+    public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, ResourceLocation modelLocation);
 
     /**
      * Get the model resource location of the given value type.
-     * @param valueType The value type.
      * @param <V> The value type.
      * @param <T> The value type type.
+     * @param valueType The value type.
      * @return The model resource location.
      */
     @SideOnly(Side.CLIENT)
-    public <V extends IValue, T extends IValueType<V>> ModelResourceLocation getValueTypeModel(T valueType);
+    public <V extends IValue, T extends IValueType<V>> ResourceLocation getValueTypeModel(T valueType);
 
     /**
      * Get all registered model resource locations for the value types.
      * @return All model resource locations.
      */
     @SideOnly(Side.CLIENT)
-    public Collection<ModelResourceLocation> getValueTypeModels();
+    public Collection<ResourceLocation> getValueTypeModels();
 
     /**
      * @return All registered value types.

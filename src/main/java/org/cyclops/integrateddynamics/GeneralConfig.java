@@ -37,6 +37,19 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default update frequency in ticks to use for new parts.")
     public static int defaultPartUpdateFreq = 1;
+
+    /**
+     * The energy usage multiplier for networks.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The energy usage multiplier for networks.")
+    public static int energyConsumptionMultiplier = 0;
+
+    /**
+     * If parts should be rendered using the TESR if the static block rendering is wonky.
+     * TODO: this should be set to a default false eventually.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "If parts should be rendered using the TESR if the static block rendering is wonky.", isCommandable = true)
+    public static boolean TESRPartRendering = true;
     
     /**
      * Create a new instance.

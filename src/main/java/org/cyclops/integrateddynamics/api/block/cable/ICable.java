@@ -1,10 +1,13 @@
 package org.cyclops.integrateddynamics.api.block.cable;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.api.path.IPathElementProvider;
+
+import javax.annotation.Nullable;
 
 /**
  * Interface for blocks that can connect with cables.
@@ -24,10 +27,19 @@ public interface ICable<E extends IPathElement<E>> extends IPathElementProvider<
 
     /**
      * Update the cable connections at the given position.
+     * This will not trigger neighbour cable connection updates.
      * @param world The world.
      * @param pos The position of this block.
      */
     public void updateConnections(World world, BlockPos pos);
+
+    /**
+     * Trigger a call of {@link ICable#updateConnections(World, BlockPos)}
+     * for all connected neighbours
+     * @param world The world.
+     * @param pos The position of this block.
+     */
+    public void triggerUpdateNeighbourConnections(World world, BlockPos pos);
 
     /**
      * Check if this cable is connected to a side.
@@ -54,5 +66,13 @@ public interface ICable<E extends IPathElement<E>> extends IPathElementProvider<
      * @param side The side to remake the connection for.
      */
     public void reconnect(World world, BlockPos pos, EnumFacing side);
+
+    /**
+     * Remove this cable from the world and drop it.
+     * @param world The world.
+     * @param pos The position.
+     * @param player The player removing the cable.
+     */
+    public void remove(World world, BlockPos pos, @Nullable EntityPlayer player);
 
 }

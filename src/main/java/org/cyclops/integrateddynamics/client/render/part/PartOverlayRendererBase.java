@@ -1,7 +1,10 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 
 /**
@@ -9,6 +12,17 @@ import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendere
  * @author rubensworks
  */
 public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
+
+    public static int MAX_RENDER_DISTANCE = 10;
+
+    protected int getMaxRenderDistance() {
+        return MAX_RENDER_DISTANCE;
+    }
+
+    protected boolean shouldRender(BlockPos pos) {
+        Entity renderEntity = FMLClientHandler.instance().getClient().thePlayer;
+        return renderEntity.getDistance(pos.getX(), pos.getY(), pos.getZ()) < getMaxRenderDistance();
+    }
 
     /**
      * Sets the OpenGL matrix orientation for the given direction.

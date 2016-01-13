@@ -1,16 +1,21 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
+import net.minecraft.client.gui.Gui;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 
 /**
  * An element instantiation inside the logic programmer.
+ * @param <G> The type of gui.
+ * @param <C> The type of container.
+ * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface ILogicProgrammerElement extends IGuiInputElement<GuiLogicProgrammer, ContainerLogicProgrammer> {
+public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C extends Container> extends IGuiInputElement<S, G, C> {
 
     /**
      * @return The element type.
@@ -21,6 +26,20 @@ public interface ILogicProgrammerElement extends IGuiInputElement<GuiLogicProgra
      * @return The string used to match regex searching.
      */
     public String getMatchString();
+
+    /**
+     * If the given value type matches with this element's input.
+     * @param valueType The value type to match.
+     * @return If it matches
+     */
+    public boolean matchesInput(IValueType valueType);
+
+    /**
+     * If the given value type matches with this element's output.
+     * @param valueType The value type to match.
+     * @return If it matches
+     */
+    public boolean matchesOutput(IValueType valueType);
 
     /**
      * Called when an input item slot has been updated.

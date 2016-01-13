@@ -74,6 +74,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
         return null;
     }
 
+    @Override
+    public DummyValue materialize(DummyValue value) {
+        return value;
+    }
+
     @ToString
     public static class DummyValue extends ValueBase {
 

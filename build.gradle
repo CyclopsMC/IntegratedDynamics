@@ -15,7 +15,7 @@ buildscript {
 plugins {
     // For people who want stable
     //id "net.minecraftforge.gradle.forge" version "2.0.2"
-    id 'com.matthewprenger.cursegradle' version '1.0.4'
+    id 'com.matthewprenger.cursegradle' version '1.0.5'
 }
 
 // For those who want the bleeding edge

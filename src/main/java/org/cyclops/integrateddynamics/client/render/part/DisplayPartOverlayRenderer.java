@@ -50,6 +50,8 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     public void renderPartOverlay(IPartContainer partContainer, double x, double y, double z, float partialTick,
                                   int destroyStage, EnumFacing direction, IPartType partType,
                                   TileEntityRendererDispatcher rendererDispatcher) {
+        if(!shouldRender(partContainer.getPosition().getBlockPos())) return;
+
         GlStateManager.enableRescaleNormal();
         GlStateManager.alphaFunc(516, 0.1F);
         GlStateManager.enableBlend();
@@ -67,23 +69,25 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         GlStateManager.disableRescaleNormal();
 
         PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) partContainer.getPartState(direction);
-
-        int rotation = partState.getFacingRotation().ordinal() - 2;
-        GlStateManager.translate(6, 6, 0);
-        GlStateManager.rotate(rotation * 90, 0, 0, 1);
-        //GlStateManager.rotate((float) (Math.random() * 360), 0, 0, 1);
-        GlStateManager.translate(-6, -6, 0);
-
-        IValue value = partState.getDisplayValue();
-        if(value != null) {
-            IValueType<?> valueType = value.getType();
-            IValueTypeWorldRenderer renderer = ValueTypeWorldRenderers.REGISTRY.getRenderer(valueType);
-            if(renderer == null) {
-                renderer = ValueTypeWorldRenderers.DEFAULT;
-            }
-            renderer.renderValue(partContainer, x, y, z, partialTick, destroyStage, direction, partType, value, rendererDispatcher);
-        } else if(!partState.getInventory().isEmpty()) {
+        if(partState == null || partState.getFacingRotation() == null) {
             Images.ERROR.drawWorld(rendererDispatcher.renderEngine, 12.5F, 12.5F);
+        } else {
+            int rotation = partState.getFacingRotation().ordinal() - 2;
+            GlStateManager.translate(6, 6, 0);
+            GlStateManager.rotate(rotation * 90, 0, 0, 1);
+            GlStateManager.translate(-6, -6, 0);
+
+            IValue value = partState.getDisplayValue();
+            if (value != null && partState.isEnabled()) {
+                IValueType<?> valueType = value.getType();
+                IValueTypeWorldRenderer renderer = ValueTypeWorldRenderers.REGISTRY.getRenderer(valueType);
+                if (renderer == null) {
+                    renderer = ValueTypeWorldRenderers.DEFAULT;
+                }
+                renderer.renderValue(partContainer, x, y, z, partialTick, destroyStage, direction, partType, value, rendererDispatcher);
+            } else if (!partState.getInventory().isEmpty()) {
+                Images.ERROR.drawWorld(rendererDispatcher.renderEngine, 12.5F, 12.5F);
+            }
         }
 
         GlStateManager.popAttrib();

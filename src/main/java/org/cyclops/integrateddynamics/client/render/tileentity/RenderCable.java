@@ -3,7 +3,9 @@ package org.cyclops.integrateddynamics.client.render.tileentity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.MinecraftForgeClient;
 import org.cyclops.cyclopscore.client.render.tileentity.RenderTileEntityBakedModel;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
@@ -31,12 +33,15 @@ public class RenderCable extends RenderTileEntityBakedModel<TileMultipartTicking
         } else if(getTexture() != null) {
             this.bindTexture(getTexture());
         }
-
-        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : tile.getParts().entrySet()) {
-            tempBlockState = entry.getValue().getBlockState(tile, x, y, z, partialTick, destroyStage, entry.getKey());
-            super.renderTileEntityAt(tile, x, y, z, partialTick, destroyStage);
-            for(IPartOverlayRenderer renderer: PartOverlayRenderers.REGISTRY.getRenderers(entry.getValue())) {
-                renderer.renderPartOverlay(tile, x, y, z, partialTick, destroyStage, entry.getKey(), entry.getValue(), rendererDispatcher);
+        if(MinecraftForgeClient.getRenderPass() == 0) {
+            for (Map.Entry<EnumFacing, IPartType<?, ?>> entry : tile.getParts().entrySet()) {
+                if (GeneralConfig.TESRPartRendering) {
+                    tempBlockState = entry.getValue().getBlockState(tile, entry.getKey());
+                    super.renderTileEntityAt(tile, x, y, z, partialTick, destroyStage);
+                }
+                for (IPartOverlayRenderer renderer : PartOverlayRenderers.REGISTRY.getRenderers(entry.getValue())) {
+                    renderer.renderPartOverlay(tile, x, y, z, partialTick, destroyStage, entry.getKey(), entry.getValue(), rendererDispatcher);
+                }
             }
         }
     }

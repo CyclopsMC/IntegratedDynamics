@@ -33,6 +33,8 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private int id = -1;
     @NBTPersist
     private Map<String, IAspectProperties> aspectProperties = Maps.newHashMap();
+    @NBTPersist
+    private boolean enabled = true;
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
@@ -101,4 +103,13 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         sendUpdate();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

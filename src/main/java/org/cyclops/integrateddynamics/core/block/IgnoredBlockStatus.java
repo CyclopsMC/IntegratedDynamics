@@ -17,7 +17,7 @@ import java.util.Collection;
  * @author rubensworks
  */
 public class IgnoredBlockStatus extends IgnoredBlock {
-    @BlockProperty
+    @BlockProperty(excludeFromMeta = true)
     public static final PropertyStatus STATUS = PropertyStatus.create("status", Status.class);
 
     /**

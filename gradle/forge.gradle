@@ -5,6 +5,14 @@ repositories {
         name "RubensWorks FS"
         url "http://maven.rubensworks.net/"
     }
+    maven {
+        name "Amadornes"
+        url "http://maven.amadornes.com/"
+    }
+    maven {
+        name "Mobius Repo"
+        url "http://mobiusstrip.eu/maven"
+    }
 }
 
 dependencies {
@@ -14,6 +22,9 @@ dependencies {
     } else {
         compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
     }
+
+    compile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:deobf" // http://maven.amadornes.com/
+    compile "mcp.mobius.waila:Waila:${config.waila_version}:dev" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
 
     // Project lombok
     compile "org.projectlombok:lombok:1.16.4"
@@ -38,7 +49,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20151201"
+    mappings = "snapshot_20151230"
 }
 
 if (project.buildnumber.equals("RELEASE"))

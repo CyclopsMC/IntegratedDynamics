@@ -1,7 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import com.google.common.base.Optional;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -9,9 +19,13 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
+
+import java.util.Collections;
 
 /**
  * Collection of available operators.
@@ -409,6 +423,47 @@ public final class Operators {
     }, IConfigRenderPattern.PREFIX_1));
 
     /**
+     * ----------------------------------- LIST OPERATORS -----------------------------------
+     */
+
+    /**
+     * List operator with one input list and one output integer
+     */
+    public static final ListOperator LIST_LENGTH = REGISTRY.register(new ListOperator("| |", "length", new IValueType[]{ValueTypes.LIST}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a.getLength());
+        }
+    }, IConfigRenderPattern.PREFIX_1));
+
+    /**
+     * List operator with one input list and one output integer
+     */
+    public static final ListOperator LIST_ELEMENT = REGISTRY.register(new ListOperator("get", "get", new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER}, ValueTypes.CATEGORY_ANY, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
+            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
+            if(b < a.getLength()) {
+                return a.get(b);
+            } else {
+                throw new EvaluationException(String.format("Index %s out of bounds for list of length %s.", b, a.getLength()));
+            }
+        }
+    }, IConfigRenderPattern.INFIX) {
+        @Override
+        public IValueType getConditionalOutputType(IVariable[] input) {
+            try {
+                IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
+                return a.getValueType();
+            } catch (EvaluationException e) {
+                return super.getConditionalOutputType(input);
+            }
+        }
+    });
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 
@@ -418,8 +473,19 @@ public final class Operators {
     public static final ObjectBlockOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(new ObjectBlockOperator("opaque", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            IBlockState a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a.getBlock().isOpaqueCube());
+            Optional<IBlockState> a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
+            return ValueTypeBoolean.ValueBoolean.of(a.isPresent() && a.get().getBlock().isOpaqueCube());
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The itemstack representation of the block
+     */
+    public static final ObjectBlockOperator OBJECT_BLOCK_ITEMSTACK = REGISTRY.register(new ObjectBlockOperator("itemstack", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.OBJECT_ITEMSTACK, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<IBlockState> a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
+            return ValueObjectTypeItemStack.ValueItemStack.of(a.isPresent() ? BlockHelpers.getItemStackFromBlockState(a.get()) : null);
         }
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 
@@ -523,8 +589,8 @@ public final class Operators {
     public static final ObjectItemStackOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(new ObjectItemStackOperator("rarity", "rarity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueTypeString.ValueString.of(a == null ? "": a.getRarity().rarityName);
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getRarity().rarityName : "");
         }
     }, IConfigRenderPattern.SUFFIX_1_LONG));
 
@@ -534,9 +600,9 @@ public final class Operators {
     public static final ObjectItemStackOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(new ObjectItemStackOperator("strength", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.DOUBLE, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            IBlockState b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
-            return ValueTypeDouble.ValueDouble.of(a == null ? 0 : a.getStrVsBlock(b.getBlock()));
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            Optional<IBlockState> b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
+            return ValueTypeDouble.ValueDouble.of(a.isPresent() && b.isPresent() ? a.get().getStrVsBlock(b.get().getBlock()) : 0);
         }
     }, IConfigRenderPattern.INFIX));
 
@@ -546,9 +612,339 @@ public final class Operators {
     public static final ObjectItemStackOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(new ObjectItemStackOperator("canharvest", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
         @Override
         public IValue evaluate(IVariable... variables) throws EvaluationException {
-            ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            IBlockState b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a == null ? false : a.canHarvestBlock(b.getBlock()));
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            Optional<IBlockState> b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
+            return ValueTypeBoolean.ValueBoolean.of(a.isPresent() && b.isPresent() ? a.get().canHarvestBlock(b.get().getBlock()) : false);
+        }
+    }, IConfigRenderPattern.INFIX));
+
+    /**
+     * The block from the stack
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_BLOCK = REGISTRY.register(new ObjectItemStackOperator("block", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            return ValueObjectTypeBlock.ValueBlock.of((a.isPresent() && a.get().getItem() instanceof ItemBlock) ? BlockHelpers.getBlockStateFromItemStack(a.get()) : null);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * If the given stack has a fluid.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISFLUIDSTACK = REGISTRY.register(ObjectItemStackOperator.toBoolean("isfluidstack", new ObjectItemStackOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
+            return Helpers.getFluidStack(itemStack) != null;
+        }
+    }));
+
+    /**
+     * The fluidstack from the stack
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_FLUIDSTACK = REGISTRY.register(new ObjectItemStackOperator("fluidstack", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_FLUIDSTACK, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            return ValueObjectTypeFluidStack.ValueFluidStack.of(a.isPresent() ? Helpers.getFluidStack(a.get()) : null);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The capacity of the fluidstack from the stack.
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = REGISTRY.register(new ObjectItemStackOperator("fluidstackcapacity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            return ValueTypeInteger.ValueInteger.of(a.isPresent() ? Helpers.getFluidStackCapacity(a.get()) : 0);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * If the NBT tags of the given stacks are equal
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(new ObjectItemStackOperator("=NBT=", "isnbtequal", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
+            boolean equal = false;
+            if(a.isPresent() && b.isPresent()) {
+                equal = a.get().isItemEqual(b.get()) && ItemStack.areItemStackTagsEqual(a.get(), b.get());
+            } else if(!a.isPresent() && !b.isPresent()) {
+                equal = true;
+            }
+            return ValueTypeBoolean.ValueBoolean.of(equal);
+        }
+    }, IConfigRenderPattern.INFIX));
+
+    /**
+     * If the raw items of the given stacks are equal
+     */
+    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(new ObjectItemStackOperator("=Raw=", "israwitemequal", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
+            Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
+            boolean equal = false;
+            if(a.isPresent() && b.isPresent()) {
+                equal = ItemStack.areItemsEqual(a.get(), b.get());
+            } else if(!a.isPresent() && !b.isPresent()) {
+                equal = true;
+            }
+            return ValueTypeBoolean.ValueBoolean.of(equal);
+        }
+    }, IConfigRenderPattern.INFIX));
+
+    /**
+     * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
+     */
+
+    /**
+     * If the entity is a mob
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISMOB = REGISTRY.register(ObjectEntityOperator.toBoolean("ismob", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity instanceof IMob;
+        }
+    }));
+
+    /**
+     * If the entity is an animal
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(ObjectEntityOperator.toBoolean("isanimal", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity instanceof IAnimals && !(entity instanceof IMob);
+        }
+    }));
+
+    /**
+     * If the entity is an item
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISITEM = REGISTRY.register(ObjectEntityOperator.toBoolean("isitem", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity instanceof EntityItem;
+        }
+    }));
+
+    /**
+     * If the entity is a player
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISPLAYER = REGISTRY.register(ObjectEntityOperator.toBoolean("isplayer", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity instanceof EntityPlayer;
+        }
+    }));
+
+    /**
+     * The itemstack from the entity
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ITEMSTACK = REGISTRY.register(new ObjectEntityOperator("item", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.OBJECT_ITEMSTACK, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
+            return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : null);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The entity health
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_HEALTH = REGISTRY.register(ObjectEntityOperator.toDouble("health", new ObjectEntityOperator.IDoubleFunction() {
+        @Override
+        public double evaluate(Entity entity) throws EvaluationException {
+            return (entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHealth() : 0;
+        }
+    }));
+
+    /**
+     * The entity width
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_WIDTH = REGISTRY.register(ObjectEntityOperator.toDouble("width", new ObjectEntityOperator.IDoubleFunction() {
+        @Override
+        public double evaluate(Entity entity) throws EvaluationException {
+            return entity.width;
+        }
+    }));
+
+    /**
+     * The entity width
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_HEIGHT = REGISTRY.register(ObjectEntityOperator.toDouble("height", new ObjectEntityOperator.IDoubleFunction() {
+        @Override
+        public double evaluate(Entity entity) throws EvaluationException {
+            return entity.height;
+        }
+    }));
+
+    /**
+     * If the entity is burning
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISBURNING = REGISTRY.register(ObjectEntityOperator.toBoolean("isburning", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity.isBurning();
+        }
+    }));
+
+    /**
+     * If the entity is wet
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISWET = REGISTRY.register(ObjectEntityOperator.toBoolean("iswet", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity.isWet();
+        }
+    }));
+
+    /**
+     * If the entity is sneaking
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISSNEAKING = REGISTRY.register(ObjectEntityOperator.toBoolean("issneaking", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity.isSneaking();
+        }
+    }));
+
+    /**
+     * If the entity is eating
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ISEATING = REGISTRY.register(ObjectEntityOperator.toBoolean("iseating", new ObjectEntityOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(Entity entity) throws EvaluationException {
+            return entity.isEating();
+        }
+    }));
+
+    /**
+     * The list of armor itemstacks from an entity
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_ARMORINVENTORY = REGISTRY.register(new ObjectEntityOperator("armorinventory", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.LIST, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
+            if(a.isPresent()) {
+                Entity entity = a.get();
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.worldObj, entity));
+            } else {
+                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.EMPTY_LIST);
+            }
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The list of itemstacks from an entity
+     */
+    public static final ObjectEntityOperator OBJECT_ENTITY_INVENTORY = REGISTRY.register(new ObjectEntityOperator("inventory", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.LIST, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
+            if(a.isPresent()) {
+                Entity entity = a.get();
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.worldObj, entity));
+            } else {
+                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.EMPTY_LIST);
+            }
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * ----------------------------------- FLUID STACK OBJECT OPERATORS -----------------------------------
+     */
+
+    /**
+     * The amount of fluid in the fluidstack
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(ObjectFluidStackOperator.toInt("amount", new ObjectFluidStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.amount;
+        }
+    }));
+
+    /**
+     * The block from the fluidstack
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_BLOCK = REGISTRY.register(new ObjectFluidStackOperator("block", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+            return ValueObjectTypeBlock.ValueBlock.of(a.isPresent() ? a.get().getFluid().getBlock().getDefaultState() : null);
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * The fluidstack luminosity
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("luminosity", new ObjectFluidStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.getFluid().getLuminosity(fluidStack);
+        }
+    }));
+
+    /**
+     * The fluidstack density
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("density", new ObjectFluidStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.getFluid().getDensity(fluidStack);
+        }
+    }));
+
+    /**
+     * The fluidstack viscosity
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("viscosity", new ObjectFluidStackOperator.IIntegerFunction() {
+        @Override
+        public int evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.getFluid().getViscosity(fluidStack);
+        }
+    }));
+
+    /**
+     * If the fluidstack is gaseous
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(ObjectFluidStackOperator.toBoolean("isgaseous", new ObjectFluidStackOperator.IBooleanFunction() {
+        @Override
+        public boolean evaluate(FluidStack fluidStack) throws EvaluationException {
+            return fluidStack.getFluid().isGaseous(fluidStack);
+        }
+    }));
+
+    /**
+     * The rarity of the fluidstack
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_RARITY = REGISTRY.register(new ObjectFluidStackOperator("rarity", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+            return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getFluid().getRarity(a.get()).rarityName : "");
+        }
+    }, IConfigRenderPattern.SUFFIX_1_LONG));
+
+    /**
+     * If the fluid types of the two given fluidstacks are equal
+     */
+    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(new ObjectFluidStackOperator("=Raw=", "israwfluidequal", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
+        @Override
+        public IValue evaluate(IVariable... variables) throws EvaluationException {
+            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
+            Optional<FluidStack> b = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[1].getValue()).getRawValue();
+            boolean equal = false;
+            if(a.isPresent() && b.isPresent()) {
+                equal = a.get().isFluidEqual(b.get());
+            } else if(!a.isPresent() && !b.isPresent()) {
+                equal = true;
+            }
+            return ValueTypeBoolean.ValueBoolean.of(equal);
         }
     }, IConfigRenderPattern.INFIX));
 

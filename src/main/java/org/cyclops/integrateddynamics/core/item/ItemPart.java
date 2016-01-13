@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.item;
 
+import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,10 +14,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.List;
@@ -28,6 +32,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extends ConfigurableItem {
+
+    private static final List<IUseAction> USE_ACTIONS = Lists.newLinkedList();
 
     private final IPartType<P, S> part;
 
@@ -42,6 +48,14 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         this.part = part;
     }
 
+    /**
+     * Register a use action for the cable item.
+     * @param useAction The use action.
+     */
+    public static void addUseAction(IUseAction useAction) {
+        USE_ACTIONS.add(useAction);
+    }
+
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         return L10NHelpers.localize(part.getUnlocalizedName());
@@ -51,10 +65,11 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     public boolean onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumFacing side,
                              float hitX, float hitY, float hitZ) {
         if(!world.isRemote) {
-            if(world.getTileEntity(pos) instanceof IPartContainer) {
+            IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
+            if(partContainerFacade != null) {
                 // Add part to existing cable
-                IPartContainer partContainer = (IPartContainer) world.getTileEntity(pos);
-                if(!partContainer.hasPart(side)) {
+                IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
+                if(partContainer.canAddPart(side, getPart())) {
                     partContainer.setPart(side, getPart(), getPart().getState(itemStack));
                     System.out.println("Setting part " + getPart());
                     ItemBlockCable.playPlaceSound(world, pos);
@@ -64,18 +79,30 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 itemStack.stackSize--;
                 return true;
             } else {
+                // Check all third party actions
+                for (IUseAction useAction : USE_ACTIONS) {
+                    if (useAction.attempItemUseTarget(this, itemStack, world, pos, side)) {
+                        return true;
+                    }
+                }
+
                 // Place part at a new position with an unreal cable
                 BlockPos target = pos.offset(side);
-                ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
-                if(itemBlockCable.onItemUse(itemStack, playerIn, world, target, side, hitX, hitY, hitZ)) {
-                    IPartContainer partContainer = (IPartContainer) world.getTileEntity(target);
-                    if(partContainer != null) {
-                        partContainer.setPart(side.getOpposite(), getPart(), getPart().getState(itemStack));
-                        System.out.println("Setting part " + getPart());
-                        ItemBlockCable.playPlaceSound(world, pos);
+                if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
+                    ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
+                    if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, side, hitX, hitY, hitZ)) {
+                        partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
+                        if (partContainerFacade != null) {
+                            IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
+                            partContainer.setPart(side.getOpposite(), getPart(), getPart().getState(itemStack));
+                            System.out.println("Setting part " + getPart());
+                            ItemBlockCable.playPlaceSound(world, pos);
+                            if (world.getBlockState(target).getBlock() instanceof ICableFakeable) {
+                                BlockCable.getInstance().setRealCable(world, target, false);
+                            }
+                            return true;
+                        }
                     }
-                    BlockCable.getInstance().setRealCable(world, target, false);
-                    return true;
                 }
             }
         }
@@ -92,6 +119,21 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         }
         L10NHelpers.addOptionalInfo(list, getPart().getUnlocalizedNameBase());
         super.addInformation(itemStack, entityPlayer, list, par4);
+    }
+
+    public static interface IUseAction {
+
+        /**
+         * Attempt to use the given item.
+         * @param itemPart The part item instance.
+         * @param itemStack The item stack that is being used.
+         * @param world The world.
+         * @param pos The position.
+         * @param sideHit The side that is being hit.
+         * @return If the use action was applied.
+         */
+        public boolean attempItemUseTarget(ItemPart itemPart, ItemStack itemStack, World world, BlockPos pos, EnumFacing sideHit);
+
     }
 
 }

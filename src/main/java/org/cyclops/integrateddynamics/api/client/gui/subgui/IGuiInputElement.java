@@ -6,7 +6,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 
 import java.util.List;
 
@@ -14,9 +13,10 @@ import java.util.List;
  * An element inside the logic programmer.
  * @param <G> The type of gui.
  * @param <C> The type of container.
+ * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface IGuiInputElement<G extends Gui, C extends Container> {
+public interface IGuiInputElement<S extends ISubGuiBox, G extends Gui, C extends Container> {
 
     /**
      * @return Localized name used for rendering.
@@ -69,7 +69,7 @@ public interface IGuiInputElement<G extends Gui, C extends Container> {
      * @return A subgui that is shown when activated.
      */
     @SideOnly(Side.CLIENT)
-    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public S createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   G gui, C container);
 
 }

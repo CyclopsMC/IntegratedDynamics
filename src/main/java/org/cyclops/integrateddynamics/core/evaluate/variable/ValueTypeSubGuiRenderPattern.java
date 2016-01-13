@@ -9,8 +9,10 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeValueChangedPacket;
 
@@ -20,7 +22,7 @@ import java.io.IOException;
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-public class ValueTypeSubGuiRenderPattern<G extends Gui, C extends Container> extends SubGuiConfigRenderPattern<ValueTypeGuiElement, G, C> {
+public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C extends Container> extends SubGuiConfigRenderPattern<ValueTypeGuiElement<G, C>, G, C> {
 
     protected final ValueTypeGuiElement<G, C> element;
     @Getter
@@ -45,7 +47,8 @@ public class ValueTypeSubGuiRenderPattern<G extends Gui, C extends Container> ex
         this.searchField.setVisible(true);
         this.searchField.setTextColor(16777215);
         this.searchField.setCanLoseFocus(true);
-        this.searchField.setText(element.getValueType().toCompactString(element.getValueType().getDefault()));
+        String value = StringUtils.isEmpty(element.getInputString()) ? element.getValueType().toCompactString(element.getValueType().getDefault()) : element.getInputString();
+        this.searchField.setText(value);
         element.setInputString(searchField.getText());
         this.searchField.width = searchWidth;
         this.searchField.xPosition = guiLeft + (searchX + searchWidth) - this.searchField.width;
@@ -56,7 +59,7 @@ public class ValueTypeSubGuiRenderPattern<G extends Gui, C extends Container> ex
         super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         textureManager.bindTexture(TEXTURE);
-        this.drawTexturedModalRect(searchField.xPosition - 1, searchField.yPosition - 1, 21, 0, searchField.width + 1, 12);
+        this.drawTexturedModalRect(searchField.xPosition - 1, searchField.yPosition - 1, 37, 0, searchField.width + 1, 12);
         // Textbox
         searchField.drawTextBox();
     }

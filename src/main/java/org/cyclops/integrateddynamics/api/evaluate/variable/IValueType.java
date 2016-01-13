@@ -85,6 +85,13 @@ public interface IValueType<V extends IValue> {
     public V deserialize(String value);
 
     /**
+     * Materialize the given value so that it can exist without any external references.
+     * @param value The value to materialize.
+     * @return The materialized value.
+     */
+    public V materialize(V value);
+
+    /**
      * Use this comparator for any comparisons with value types.
      */
     public static class ValueTypeComparator implements Comparator<IValueType> {

@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -22,6 +24,9 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
     private static final int SLOT_X = 79;
     private static final int SLOT_Y = 8;
 
+    private final int readValueId;
+    private final int readColorId;
+
     /**
      * Make a new instance.
      * @param target        The target.
@@ -32,11 +37,31 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
     public ContainerPartDisplay(EntityPlayer player, PartTarget target, IPartContainer partContainer, IPartType partType) {
         super(player, target, partContainer, (P) partType);
 
+        readValueId = getNextValueId();
+        readColorId = getNextValueId();
+
         SimpleInventory inventory = getPartState().getInventory();
         inventory.addDirtyMarkListener(this);
 
         addInventory(getPartState().getInventory(), 0, 80, 14, 1, 1);
         addPlayerInventory(player.inventory, 8, 46);
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+
+        if(!MinecraftHelpers.isClientSide()) {
+            String readValue = "";
+            int readValueColor = 0;
+            IValue value = getPartState().getDisplayValue();
+            if(value != null) {
+                readValue = value.getType().toCompactString(value);
+                readValueColor = value.getType().getDisplayColor();
+            }
+            ValueNotifierHelpers.setValue(this, readValueId, readValue);
+            ValueNotifierHelpers.setValue(this, readColorId, readValueColor);
+        }
     }
 
     @Override
@@ -59,5 +84,13 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
     @Override
     protected int getSizeInventory() {
         return getPartState().getInventory().getSizeInventory();
+    }
+
+    public String getReadValue() {
+        return ValueNotifierHelpers.getValueString(this, readValueId);
+    }
+
+    public int getReadValueColor() {
+        return ValueNotifierHelpers.getValueInt(this, readColorId);
     }
 }

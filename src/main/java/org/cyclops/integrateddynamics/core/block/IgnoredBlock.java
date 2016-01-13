@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class IgnoredBlock extends ConfigurableBlock {
 
-    @BlockProperty
+    @BlockProperty(excludeFromMeta = true)
     public static final PropertyEnum FACING = PropertyDirection.create("facing", EnumFacing.class);
 
     /**

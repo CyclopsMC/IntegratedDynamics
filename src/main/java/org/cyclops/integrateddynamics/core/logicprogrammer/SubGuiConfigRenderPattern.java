@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
@@ -23,7 +24,7 @@ import java.util.List;
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui, C extends Container> extends SubGuiBox {
+public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui, C extends Container> extends SubGuiBox implements ISubGuiBox {
 
     protected final E element;
     private final int x, y;
@@ -42,12 +43,12 @@ public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui
     }
 
     protected void drawSlot(int x, int y) {
-        this.drawTexturedModalRect(x, y, 3, 0, 18, 18);
+        this.drawTexturedModalRect(x, y, 19, 0, 18, 18);
     }
 
     @Override
     public void initGui(int guiLeft, int guiTop) {
-
+        super.initGui(guiLeft, guiTop);
     }
 
     @Override
@@ -83,12 +84,12 @@ public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui
     }
 
     @Override
-    protected int getWidth() {
+    public int getWidth() {
         return element.getRenderPattern().getWidth();
     }
 
     @Override
-    protected int getHeight() {
+    public int getHeight() {
         return element.getRenderPattern().getHeight();
     }
 

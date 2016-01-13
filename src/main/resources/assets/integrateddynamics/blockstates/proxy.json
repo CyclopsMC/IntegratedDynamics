@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "facing=south": { "model": "integrateddynamics:proxy" },
+    "facing=west" : { "model": "integrateddynamics:proxy", "y": 90 },
+    "facing=north": { "model": "integrateddynamics:proxy", "y": 180 },
+    "facing=east" : { "model": "integrateddynamics:proxy", "y": 270 },
+    "inventory"   : { "model": "integrateddynamics:proxy" }
+  }
+}

@@ -33,7 +33,10 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
-import org.cyclops.integrateddynamics.api.block.cable.*;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableFacadeable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -47,6 +50,8 @@ import org.cyclops.integrateddynamics.core.block.ICollidable;
 import org.cyclops.integrateddynamics.core.block.ICollidableParent;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkFacadeableComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -64,8 +69,11 @@ import java.util.*;
  * @author rubensworks
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        ICableFakeable<ICablePathElement>, ICableWithParts<ICablePathElement>, ICableFacadeable<ICablePathElement>, INetworkElementProvider,
+        ICableFakeable<ICablePathElement>, ICableFacadeable<ICablePathElement>, INetworkElementProvider,
         IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
+
+    public static final float BLOCK_HARDNESS = 3.0F;
+    public static final Material BLOCK_MATERIAL = Material.glass;
 
     // Properties
     @BlockProperty
@@ -85,9 +93,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             PART_RENDERPOSITIONS[side.ordinal()] = new UnlistedProperty<>("partRenderPosition-" + side.getName(), IPartType.RenderPosition.class);
         }
     }
+    @BlockProperty
+    public static final IUnlistedProperty<IPartContainer> PARTCONTAINER = new UnlistedProperty<>("partcontainer", IPartContainer.class);
 
     // Collision boxes
-    private static final float[][] CABLE_COLLISION_BOXES = {
+    public static final float[][] CABLE_COLLISION_BOXES = {
             {CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX}, // DOWN
             {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX}, // UP
             {CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MIN}, // NORTH
@@ -95,8 +105,16 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             {0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX}, // WEST
             {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX}, // EAST
     };
+    public static final float[][] CABLE_COLLISION_BOXES_WITH_PART = {
+            {CableModel.MIN, CableModel.PART_DEPTH_FACTOR, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX}, // DOWN
+            {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1 - CableModel.PART_DEPTH_FACTOR, CableModel.MAX}, // UP
+            {CableModel.MIN, CableModel.MIN, CableModel.PART_DEPTH_FACTOR, CableModel.MAX, CableModel.MAX, CableModel.MIN}, // NORTH
+            {CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1 - CableModel.PART_DEPTH_FACTOR}, // SOUTH
+            {CableModel.PART_DEPTH_FACTOR, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX}, // WEST
+            {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1 - CableModel.PART_DEPTH_FACTOR, CableModel.MAX, CableModel.MAX}, // EAST
+    };
     private static final float[][] PART_COLLISION_BOXES = {
-            {0.19F, 0.81F}, {CableModel.MIN - 0.37F, CableModel.MIN}, {0.19F, 0.81F}
+            {0.19F, 0.81F}, {0.005F, CableModel.PART_DEPTH_FACTOR}, {0.19F, 0.81F}
     };
 
     // Collision components
@@ -108,13 +126,23 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         }
 
         @Override
+        public int getBoundsCount(EnumFacing position) {
+            return 1;
+        }
+
+        @Override
         public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
             return block.isRealCable(world, pos);
         }
 
         @Override
-        public AxisAlignedBB getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return block.getCableBoundingBox(null);
+        public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return Collections.singletonList(block.getCableBoundingBox(null));
+        }
+
+        @Override
+        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
+            return new ItemStack(BlockCable.getInstance());
         }
     };
     private static final IComponent<EnumFacing, BlockCable> CABLECONNECTIONS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
@@ -124,13 +152,23 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         }
 
         @Override
+        public int getBoundsCount(EnumFacing position) {
+            return 1;
+        }
+
+        @Override
         public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
             return block.isConnected(world, pos, position);
         }
 
         @Override
-        public AxisAlignedBB getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return block.getCableBoundingBox(position);
+        public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return Collections.singletonList(block.getCableBoundingBox(position));
+        }
+
+        @Override
+        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
+            return new ItemStack(BlockCable.getInstance());
         }
     };
     private static final IComponent<EnumFacing, BlockCable> PARTS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
@@ -140,13 +178,27 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         }
 
         @Override
+        public int getBoundsCount(EnumFacing position) {
+            return 2;
+        }
+
+        @Override
         public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
             return block.hasPart(world, pos, position);
         }
 
         @Override
-        public AxisAlignedBB getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return block.getPartBoundingBox(position).expand(0.01, 0.01, 0.01);
+        public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return Lists.newArrayList(
+                    block.getCableBoundingBoxWithPart(position),
+                    block.getPartBoundingBox(position)
+            );
+        }
+
+        @Override
+        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
+            IPartContainer partContainer = BlockCable.getInstance().getPartContainer(world, pos);
+            return partContainer.getPart(position).getPickBlock(world, pos, partContainer.getPartState(position));
         }
     };
     private static final IComponent<EnumFacing, BlockCable> FACADE_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
@@ -159,13 +211,25 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         }
 
         @Override
+        public int getBoundsCount(EnumFacing position) {
+            return 1;
+        }
+
+        @Override
         public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
             return block.hasFacade(world, pos);
         }
 
         @Override
-        public AxisAlignedBB getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return BOUNDS;
+        public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
+            return Collections.singletonList(BOUNDS);
+        }
+
+        @Override
+        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
+            ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
+            ItemFacade.getInstance().writeFacadeBlock(itemStack, BlockCable.getInstance().getFacade(world, pos));
+            return itemStack;
         }
     };
     static {
@@ -201,9 +265,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
      * @param eConfig Config for this block.
      */
     public BlockCable(ExtendedConfig eConfig) {
-        super(eConfig, Material.glass, TileMultipartTicking.class);
+        super(eConfig, BLOCK_MATERIAL, TileMultipartTicking.class);
 
-        setHardness(3.0F);
+        setHardness(BLOCK_HARDNESS);
         setStepSound(soundTypeMetal);
         if(MinecraftHelpers.isClientSide()) {
             eConfig.getMod().getIconProvider().registerIconHolderObject(this);
@@ -219,8 +283,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return getDefaultState();
     }
 
-    @Override
-    public boolean hasPart(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    protected boolean hasPart(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return BlockHelpers.getSafeBlockStateProperty(
                (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
                PART[side.ordinal()],
@@ -244,7 +307,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             if(realCable) {
                 cableNetworkComponent.addToNetwork(world, pos);
             } else {
-                if(!cableNetworkComponent.removeFromNetwork(world, pos)) {
+                if(!cableNetworkComponent.removeCableFromNetwork(world, pos)) {
                     tile.setRealCable(!realCable);
                 }
             }
@@ -280,83 +343,85 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
                         // Remove part from cable
                         if(player.isSneaking()) {
-                            getPartContainer(world, pos).removePart(positionHit, player);
-                            world.notifyNeighborsOfStateChange(pos, this);
-                            ItemBlockCable.playBreakSound(world, pos, state);
-                            // Remove full cable block if this was the last part and if it was already an unreal cable.
-                            if(!isRealCable(world, pos) && !getPartContainer(world, pos).hasParts()) {
-                                world.destroyBlock(pos, !player.capabilities.isCreativeMode);
-                            }
+                            PartHelpers.removePart(world, pos, positionHit, player, true);
                         }
                         return true;
                     } else {
                         // Delegate activated call to part
-                        getPartContainer(world, pos).getPart(positionHit).onPartActivated(world, pos, state,
+                        return getPartContainer(world, pos).getPart(positionHit).onPartActivated(world, pos,
                                 getPartContainer(world, pos).getPartState(positionHit), player, positionHit, hitX, hitY, hitZ);
-                        return true;
                     }
                 } else if (!world.isRemote
                         && (rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT
                             || rayTraceResult.getCollisionType() == CENTER_COMPONENT)) {
-                    if(WrenchHelpers.isWrench(player, pos)) {
-                        if (player.isSneaking()) {
-                            if (!getPartContainer(world, pos).hasParts()) {
-                                // Remove full cable
-                                world.destroyBlock(pos, true);
-                            } else {
-                                // Mark cable as unavailable.
-                                setRealCable(world, pos, false);
-                                ItemBlockCable.playBreakSound(world, pos, state);
-                                ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
-                            }
-                        } else if (rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT) {
-                            // Disconnect cable side
-
-                            // Store the disconnection in the tile entity
-                            disconnect(world, pos, positionHit);
-
-                            // Signal changes
-                            updateConnections(world, pos);
-                            cableNetworkComponent.triggerNeighbourConnections(world, pos);
-
-                            // Reinit the networks for this block and the disconnected neighbour.
-                            initNetwork(world, pos);
-                            BlockPos neighbourPos = pos.offset(positionHit);
-                            Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-                            if (neighbourBlock instanceof ICableNetwork) {
-                                ((ICableNetwork<IPartNetwork, ICablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
-                            }
-                            return true;
-                        } else if (rayTraceResult.getCollisionType() == CENTER_COMPONENT) {
-                            // Reconnect cable side
-                            BlockPos neighbourPos = pos.offset(side);
-                            Block neighbourBlock = world.getBlockState(neighbourPos).getBlock();
-                            if(neighbourBlock instanceof ICable && !isConnected(world, pos, side) &&
-                                    (canConnect(world, pos, this, side) || ((ICable) neighbourBlock).canConnect(world, neighbourPos, this, side.getOpposite()))
-                                    ) {
-                                // Notify the reconnection in the tile entity of this and the neighbour block,
-                                // since we don't know in which one the disconnection was made.
-                                reconnect(world, pos, side);
-                                ((ICable) neighbourBlock).reconnect(world, neighbourPos, side.getOpposite());
-
-                                // Signal changes
-                                updateConnections(world, pos);
-                                cableNetworkComponent.triggerNeighbourConnections(world, pos);
-
-                                // Reinit the networks for this block and the connected neighbour.
-                                initNetwork(world, pos);
-                                if (neighbourBlock instanceof ICableNetwork) {
-                                    ((ICableNetwork<IPartNetwork, ICablePathElement>) neighbourBlock).initNetwork(world, neighbourPos);
-                                }
-                            }
-                            return true;
-                        }
+                    if(onCableActivated(world, pos, state, player, side,
+                            rayTraceResult.getCollisionType() == CENTER_COMPONENT ? null : rayTraceResult.getPositionHit())) {
                         return true;
                     }
                 }
             }
         }
         return super.onBlockActivated(world, pos, state, player , side, hitX, hitY, hitZ);
+    }
+
+    public static boolean onCableActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, EnumFacing cableConnectionHit) {
+        ICableNetwork<?, ?> cable = CableHelpers.getInterface(world, pos, ICableNetwork.class);
+        if(WrenchHelpers.isWrench(player, pos)) {
+            if (player.isSneaking()) {
+                if (!(cable instanceof IPartContainerFacade) || !((IPartContainerFacade) cable).getPartContainer(world, pos).hasParts() || !(cable instanceof ICableFakeable)) {
+                    // Remove full cable
+                    cable.remove(world, pos, player);
+                } else {
+                    // Mark cable as unavailable.
+                    ((ICableFakeable) cable).setRealCable(world, pos, false);
+                    ItemBlockCable.playBreakSound(world, pos, state);
+                    ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
+                }
+            } else if (cableConnectionHit != null) {
+                // Disconnect cable side
+
+                // Store the disconnection in the tile entity
+                cable.disconnect(world, pos, cableConnectionHit);
+
+                // Signal changes
+                cable.updateConnections(world, pos);
+                cable.triggerUpdateNeighbourConnections(world, pos);
+
+                // Reinit the networks for this block and the disconnected neighbour.
+                cable.initNetwork(world, pos);
+                BlockPos neighbourPos = pos.offset(cableConnectionHit);
+                ICableNetwork neighbourCable = CableHelpers.getInterface(world, neighbourPos, ICableNetwork.class);
+                if (neighbourCable != null) {
+                    neighbourCable.initNetwork(world, neighbourPos);
+                }
+                return true;
+            } else if (cableConnectionHit == null) {
+                // Reconnect cable side
+                BlockPos neighbourPos = pos.offset(side);
+                ICable neighbourCable = CableHelpers.getInterface(world, neighbourPos, ICable.class);
+                if(neighbourCable != null && !cable.isConnected(world, pos, side) &&
+                        (cable.canConnect(world, pos, neighbourCable, side) || neighbourCable.canConnect(world, neighbourPos, cable, side.getOpposite()))
+                        ) {
+                    // Notify the reconnection in the tile entity of this and the neighbour block,
+                    // since we don't know in which one the disconnection was made.
+                    cable.reconnect(world, pos, side);
+                    neighbourCable.reconnect(world, neighbourPos, side.getOpposite());
+
+                    // Signal changes
+                    cable.updateConnections(world, pos);
+                    cable.triggerUpdateNeighbourConnections(world, pos);
+
+                    // Reinit the networks for this block and the connected neighbour.
+                    cable.initNetwork(world, pos);
+                    if (neighbourCable instanceof ICableNetwork) {
+                        ((ICableNetwork<IPartNetwork, ICablePathElement>) neighbourCable).initNetwork(world, neighbourPos);
+                    }
+                }
+                return true;
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -378,12 +443,17 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player) {
+        RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
+        if(rayTraceResult != null) {
+            EnumFacing positionHit = rayTraceResult.getPositionHit();
+            return rayTraceResult.getCollisionType().getPickBlock(world, pos, positionHit);
+        }
         return new ItemStack(getItem(world, pos), 1, getDamageValue(world, pos));
     }
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos);
+        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
         if(isRealCable(world, pos)) {
             cableNetworkComponent.onPreBlockDestroyed(world, pos);
         }
@@ -408,6 +478,16 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
         return TileHelpers.getSafeTile(world, pos, IPartContainer.class);
+    }
+
+    @Nullable
+    @Override
+    public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
+        ICollidable.RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
+        if(rayTraceResult != null) {
+            return rayTraceResult.getPositionHit();
+        }
+        return null;
     }
 
     /* --------------- Start ICollidable and rendering --------------- */
@@ -442,6 +522,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public boolean isOpaqueCube() {
         return false;
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return super.doesSideBlockRendering(world, pos, face) || hasFacade(world, pos);
     }
 
     @Override
@@ -487,18 +572,29 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return EnumWorldBlockLayer.TRANSLUCENT;
     }
 
-    private AxisAlignedBB getCableBoundingBox(EnumFacing side) {
+    public AxisAlignedBB getCableBoundingBox(EnumFacing side) {
         float min = CableModel.MIN;
         float max = CableModel.MAX;
         if (side == null) {
-            return AxisAlignedBB.fromBounds(min, min, min, max, max, max).expand(0.002F, 0.002F, 0.002F);
+            return AxisAlignedBB.fromBounds(min, min, min, max, max, max);
         } else {
             float[] b = CABLE_COLLISION_BOXES[side.ordinal()];
-            return AxisAlignedBB.fromBounds(b[0], b[1], b[2], b[3], b[4], b[5]).expand(0.001F, 0.001F, 0.001F);
+            return AxisAlignedBB.fromBounds(b[0], b[1], b[2], b[3], b[4], b[5]);
         }
     }
 
-    private AxisAlignedBB getPartBoundingBox(EnumFacing side) {
+    public AxisAlignedBB getCableBoundingBoxWithPart(EnumFacing side) {
+        float min = CableModel.MIN;
+        float max = CableModel.MAX;
+        if (side == null) {
+            return AxisAlignedBB.fromBounds(min, min, min, max, max, max);
+        } else {
+            float[] b = CABLE_COLLISION_BOXES_WITH_PART[side.ordinal()];
+            return AxisAlignedBB.fromBounds(b[0], b[1], b[2], b[3], b[4], b[5]);
+        }
+    }
+
+    public AxisAlignedBB getPartBoundingBox(EnumFacing side) {
         // Copy bounds
         float[][] bounds = new float[PART_COLLISION_BOXES.length][PART_COLLISION_BOXES[0].length];
         for (int i = 0; i < bounds.length; i++)
@@ -637,6 +733,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
+    public void triggerUpdateNeighbourConnections(World world, BlockPos pos) {
+        cableNetworkComponent.triggerUpdateNeighbourConnections(world, pos);
+    }
+
+    @Override
     public boolean isConnected(World world, BlockPos pos, EnumFacing side) {
         // Note delegated to component, but instead use the cached information in the extended blockstate
         return BlockHelpers.getSafeBlockStateProperty(
@@ -653,6 +754,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public void reconnect(World world, BlockPos pos, EnumFacing side) {
         cableNetworkComponent.reconnect(world, pos, side);
+    }
+
+    @Override
+    public void remove(World world, BlockPos pos, EntityPlayer player) {
+        cableNetworkComponent.remove(world, pos, player);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
@@ -8,14 +11,16 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
+import org.cyclops.integrateddynamics.api.block.IEnergyBatteryFacade;
 import org.cyclops.integrateddynamics.api.block.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
@@ -26,6 +31,8 @@ import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +42,14 @@ import java.util.Map;
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
  * @author rubensworks
  */
-public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
+public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, IEnergyNetwork {
 
     private Map<Integer, PartPos> partPositions;
     private List<DimPos> variableContainerPositions;
     private Map<Integer, IVariableFacade> compositeVariableCache;
     private Map<Integer, IValue> lazyExpressionValueCache;
+    private Map<DimPos, IEnergyBatteryFacade> energyBatteryPositions;
+    private Map<Integer, DimPos> proxyPositions;
 
     private volatile boolean partsChanged = false;
 
@@ -71,6 +80,8 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
         variableContainerPositions = Lists.newLinkedList();
         compositeVariableCache = null;
         lazyExpressionValueCache = Maps.newHashMap();
+        energyBatteryPositions = Maps.newHashMap();
+        proxyPositions = Maps.newHashMap();
     }
 
     @Override
@@ -195,12 +206,59 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
     }
 
     @Override
+    public boolean addProxy(int proxyId, DimPos dimPos) {
+        proxyPositions.put(proxyId, dimPos);
+        return true;
+    }
+
+    @Override
+    public void removeProxy(int proxyId) {
+        proxyPositions.remove(proxyId);
+    }
+
+    @Override
+    public DimPos getProxy(int proxyId) {
+        return proxyPositions.get(proxyId);
+    }
+
+    @Override
     public void notifyPartsChanged() {
         this.partsChanged = true;
     }
 
     private void onPartsChanged() {
         System.out.println("Parts of network " + this + " are changed.");
+    }
+
+    @Override
+    protected boolean canUpdate(INetworkElement<IPartNetwork> element) {
+        if(!super.canUpdate(element)) return false;
+        if(!(element instanceof IEnergyConsumingNetworkElement)) return true;
+        int multiplier = GeneralConfig.energyConsumptionMultiplier;
+        if(multiplier == 0) return true;
+        int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
+        return consume(consumptionRate, true) == consumptionRate;
+    }
+
+    @Override
+    protected void onSkipUpdate(INetworkElement<IPartNetwork> element) {
+        super.onSkipUpdate(element);
+        if(element instanceof IEnergyConsumingNetworkElement) {
+            ((IEnergyConsumingNetworkElement) element).postUpdate(this, false);
+        }
+    }
+
+    @Override
+    protected void postUpdate(INetworkElement<IPartNetwork> element) {
+        super.postUpdate(element);
+        if(element instanceof IEnergyConsumingNetworkElement) {
+            int multiplier = GeneralConfig.energyConsumptionMultiplier;
+            if (multiplier > 0) {
+                int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
+                consume(consumptionRate, false);
+            }
+            ((IEnergyConsumingNetworkElement) element).postUpdate(this, true);
+        }
     }
 
     @Override
@@ -217,8 +275,8 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
     }
 
     @Override
-    public boolean removeCable(Block block, ICablePathElement cable) {
-        if(super.removeCable(block, cable)) {
+    public boolean removeCable(ICable cable, ICablePathElement cablePathElement) {
+        if(super.removeCable(cable, cablePathElement)) {
             notifyPartsChanged();
             return true;
         }
@@ -238,4 +296,99 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork {
         return network;
     }
 
+    protected synchronized List<IEnergyBattery> getMaterializedEnergyBatteries() {
+        return ImmutableList.copyOf(Iterables.transform(energyBatteryPositions.entrySet(), new Function<Map.Entry<DimPos, IEnergyBatteryFacade>, IEnergyBattery>() {
+            @Nullable
+            @Override
+            public IEnergyBattery apply(Map.Entry<DimPos, IEnergyBatteryFacade> input) {
+                return input.getValue().getEnergyBattery(input.getKey().getWorld(), input.getKey().getBlockPos());
+            }
+
+            @Override
+            public boolean equals(@Nullable Object object) {
+                return false;
+            }
+        }));
+    }
+
+    protected int addSafe(int a, int b) {
+        int add = a + b;
+        if(add < a || add < b) return Integer.MAX_VALUE;
+        return add;
+    }
+
+    @Override
+    public synchronized int getStoredEnergy() {
+        int energy = 0;
+        for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
+            energy = addSafe(energy, energyBattery.getStoredEnergy());
+        }
+        return energy;
+    }
+
+    @Override
+    public synchronized int getMaxStoredEnergy() {
+        int maxEnergy = 0;
+        for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
+            maxEnergy = addSafe(maxEnergy, energyBattery.getMaxStoredEnergy());
+        }
+        return maxEnergy;
+    }
+
+    @Override
+    public int addEnergy(int energy, boolean simulate) {
+        int toAdd = energy;
+        for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
+            int maxAdd = Math.min(energyBattery.getMaxStoredEnergy() - energyBattery.getStoredEnergy(), toAdd);
+            if(maxAdd > 0 && !simulate) {
+                energyBattery.addEnergy(maxAdd);
+            }
+            toAdd -= maxAdd;
+        }
+        return energy - toAdd;
+    }
+
+    @Override
+    public synchronized int consume(int energy, boolean simulate) {
+        int toConsume = energy;
+        for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
+            int consume = Math.min(energyBattery.getStoredEnergy(), toConsume);
+            if(consume > 0) {
+                toConsume -= energyBattery.consume(consume, simulate);
+            }
+        }
+        return energy - toConsume;
+    }
+
+    @Override
+    public boolean addEnergyBattery(DimPos dimPos) {
+        World world = dimPos.getWorld();
+        BlockPos pos = dimPos.getBlockPos();
+        Block block = world.getBlockState(pos).getBlock();
+        if(block instanceof IEnergyBatteryFacade) {
+            return energyBatteryPositions.put(dimPos, (IEnergyBatteryFacade) block) == null;
+        }
+        return false;
+    }
+
+    @Override
+    public void removeEnergyBattery(DimPos pos) {
+        energyBatteryPositions.remove(pos);
+    }
+
+    @Override
+    public Map<DimPos, IEnergyBatteryFacade> getEnergyBatteries() {
+        return Collections.unmodifiableMap(energyBatteryPositions);
+    }
+
+    @Override
+    public int getConsumptionRate() {
+        int multiplier = GeneralConfig.energyConsumptionMultiplier;
+        if(multiplier == 0) return 0;
+        int consumption = 0;
+        for(INetworkElement element : getElements()) {
+            consumption += ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
+        }
+        return consumption;
+    }
 }

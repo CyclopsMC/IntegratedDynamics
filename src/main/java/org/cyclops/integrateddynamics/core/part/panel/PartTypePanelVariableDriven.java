@@ -10,6 +10,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
@@ -30,6 +31,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
@@ -39,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A panel part that simply emits light.
+ * A panel part that is driven by a contained variable.
  * @author rubensworks
  */
 public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartTypePanel<P, S> {
@@ -66,7 +68,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks) {
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
         for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
             ItemStack itemStack = state.getInventory().getStackInSlot(i);
             if(itemStack != null) {
@@ -75,7 +77,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
         state.getInventory().clear();
         state.onVariableContentsUpdated((P) this, target);
-        super.addDrops(target, state, itemStacks);
+        super.addDrops(target, state, itemStacks, dropMainElement);
     }
 
     @Override
@@ -137,15 +139,17 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side) {
-        PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) partContainer.getPartState(side);
+    public IBlockState getBlockState(IPartContainer partContainer,
+                                     EnumFacing side) {
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
-        if(!state.getInventory().isEmpty()) {
-            if(state.hasVariable()) {
-                status = IgnoredBlockStatus.Status.ACTIVE;
-            } else {
-                status = IgnoredBlockStatus.Status.ERROR;
+        if(partContainer != null) {
+            PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) partContainer.getPartState(side);
+            if (state != null && !state.getInventory().isEmpty()) {
+                if (state.hasVariable() && state.isEnabled()) {
+                    status = IgnoredBlockStatus.Status.ACTIVE;
+                } else {
+                    status = IgnoredBlockStatus.Status.ERROR;
+                }
             }
         }
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).
@@ -157,7 +161,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, IBlockState state, final S partState, EntityPlayer player,
+    public boolean onPartActivated(World world, BlockPos pos, final S partState, EntityPlayer player,
                                    EnumFacing side, float hitX, float hitY, float hitZ) {
         if(WrenchHelpers.isWrench(player, pos)) {
             WrenchHelpers.wrench(player, pos, new WrenchHelpers.IWrenchAction<Void>() {
@@ -168,7 +172,31 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             });
             return true;
         }
-        return super.onPartActivated(world, pos, state, partState, player, side, hitX, hitY, hitZ);
+        return super.onPartActivated(world, pos, partState, player, side, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public void loadTooltip(S state, List<String> lines) {
+        super.loadTooltip(state, lines);
+        if (!state.getInventory().isEmpty()) {
+            if (state.hasVariable() && state.isEnabled()) {
+                IValue value = state.getDisplayValue();
+                if(value != null) {
+                    IValueType valueType = value.getType();
+                    lines.add(L10NHelpers.localize(
+                            L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
+                            valueType.getDisplayColorFormat() + valueType.toCompactString(value),
+                            L10NHelpers.localize(valueType.getUnlocalizedName())));
+                }
+            } else {
+                lines.add(EnumChatFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
+                for (L10NHelpers.UnlocalizedString error : state.getGlobalErrors()) {
+                    lines.add(EnumChatFormatting.RED + error.localize());
+                }
+            }
+        } else {
+            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_INACTIVE));
+        }
     }
 
     public static abstract class State<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartStateActiveVariableBase<P> {
@@ -190,6 +218,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             IValue value = getDisplayValue();
             if(value != null) {
                 tag.setString("displayValueType", value.getType().getUnlocalizedName());
+                if(!MinecraftHelpers.isClientSide()) {
+                    value = value.getType().materialize(value);
+                }
                 tag.setString("displayValue", value.getType().serialize(value));
             }
             tag.setInteger("facingRotation", facingRotation.ordinal());

@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.part.aspect.read.inventory.*;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftPlayerCount;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftRandom;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftTicktime;
+import org.cyclops.integrateddynamics.part.aspect.read.network.*;
 import org.cyclops.integrateddynamics.part.aspect.read.redstone.*;
 import org.cyclops.integrateddynamics.part.aspect.read.world.*;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
@@ -39,24 +40,18 @@ public class Aspects {
 
     public static final AspectReadIntegerInventoryCount READ_INTEGER_INVENTORY_COUNT = new AspectReadIntegerInventoryCount();
 
+    public static final AspectReadListInventoryItemStacks READ_LIST_INVENTORY_ITEMSTACKS = new AspectReadListInventoryItemStacks();
+
     public static final AspectReadObjectItemStackInventorySlot READ_OBJECT_ITEM_STACK_INVENTORY_SLOT = new AspectReadObjectItemStackInventorySlot();
 
     // --- World ---
     public static final AspectReadBooleanWorldBlock READ_BOOLEAN_WORLD_BLOCK = new AspectReadBooleanWorldBlock();
-    public static final AspectReadBooleanWorldEntity READ_BOOLEAN_WORLD_ENTITY = new AspectReadBooleanWorldEntity();
-    public static final AspectReadBooleanWorldMob READ_BOOLEAN_WORLD_MOB = new AspectReadBooleanWorldMob();
-    public static final AspectReadBooleanWorldPlayer READ_BOOLEAN_WORLD_PLAYER = new AspectReadBooleanWorldPlayer();
-    public static final AspectReadBooleanWorldItem READ_BOOLEAN_WORLD_ITEM = new AspectReadBooleanWorldItem();
-    public static final AspectReadBooleanWorldAnimal READ_BOOLEAN_WORLD_ANIMAL = new AspectReadBooleanWorldAnimal();
     public static final AspectReadBooleanWorldWeatherClear READ_BOOLEAN_WORLD_WEATHER_CLEAR = new AspectReadBooleanWorldWeatherClear();
     public static final AspectReadBooleanWorldWeatherRaining READ_BOOLEAN_WORLD_WEATHER_RAINING = new AspectReadBooleanWorldWeatherRaining();
     public static final AspectReadBooleanWorldWeatherThunder READ_BOOLEAN_WORLD_WEATHER_THUNDER = new AspectReadBooleanWorldWeatherThunder();
     public static final AspectReadBooleanWorldIsDay READ_BOOLEAN_WORLD_ISDAY = new AspectReadBooleanWorldIsDay();
     public static final AspectReadBooleanWorldIsNight READ_BOOLEAN_WORLD_ISNIGHT = new AspectReadBooleanWorldIsNight();
 
-    public static final AspectReadIntegerWorldEntity READ_INTEGER_WORLD_ENTITY = new AspectReadIntegerWorldEntity();
-    public static final AspectReadIntegerWorldTime READ_INTEGER_WORLD_TIME = new AspectReadIntegerWorldTime();
-    public static final AspectReadIntegerWorldTotalTime READ_INTEGER_WORLD_TOTALTIME = new AspectReadIntegerWorldTotalTime();
     public static final AspectReadIntegerWorldRainCountdown READ_INTEGER_WORLD_RAINCOUNTDOWN = new AspectReadIntegerWorldRainCountdown();
     public static final AspectReadIntegerWorldTicktime READ_INTEGER_WORLD_TICKTIME = new AspectReadIntegerWorldTicktime();
     public static final AspectReadIntegerWorldDayTime READ_INTEGER_WORLD_DAYTIME = new AspectReadIntegerWorldDayTime();
@@ -67,9 +62,14 @@ public class Aspects {
     public static final AspectReadIntegerWorldPosY READ_INTEGER_WORLD_POSY = new AspectReadIntegerWorldPosY();
     public static final AspectReadIntegerWorldPosZ READ_INTEGER_WORLD_POSZ = new AspectReadIntegerWorldPosZ();
 
+    public static final AspectReadLongWorldTime READ_LONG_WORLD_TIME = new AspectReadLongWorldTime();
+    public static final AspectReadLongWorldTotalTime READ_LONG_WORLD_TOTALTIME = new AspectReadLongWorldTotalTime();
+
     public static final AspectReadStringWorldName READ_STRING_WORLD_NAME = new AspectReadStringWorldName();
 
     public static final AspectReadObjectBlockWorld READ_OBJECT_BLOCK_WORLD_BLOCK = new AspectReadObjectBlockWorld();
+
+    public static final AspectReadListWorldEntities READ_LIST_WORLD_ENTITIES = new AspectReadListWorldEntities();
 
     // --- Fluid ---
     public static final AspectReadBooleanFluidFull READ_BOOLEAN_FLUID_FULL = new AspectReadBooleanFluidFull();
@@ -99,6 +99,14 @@ public class Aspects {
     public static final AspectReadIntegerMinecraftRandom READ_INTEGER_MINECRAFT_RANDOM = new AspectReadIntegerMinecraftRandom();
     public static final AspectReadIntegerMinecraftPlayerCount READ_INTEGER_MINECRAFT_PLAYERCOUNT = new AspectReadIntegerMinecraftPlayerCount();
     public static final AspectReadIntegerMinecraftTicktime READ_INTEGER_MINECRAFT_TICKTIME = new AspectReadIntegerMinecraftTicktime();
+
+    // --- Network ---
+    public static final AspectReadBooleanNetworkApplicable READ_BOOLEAN_NETWORK_APPLICABLE = new AspectReadBooleanNetworkApplicable();
+
+    public static final AspectReadIntegerNetworkElementCount READ_INTEGER_NETWORK_ELEMENT_COUNT = new AspectReadIntegerNetworkElementCount();
+    public static final AspectReadIntegerNetworkEnergyBatteryCount READ_INTEGER_NETWORK_ENERGY_BATTERY_COUNT = new AspectReadIntegerNetworkEnergyBatteryCount();
+    public static final AspectReadIntegerNetworkEnergyStored READ_INTEGER_NETWORK_ENERGY_STORED = new AspectReadIntegerNetworkEnergyStored();
+    public static final AspectReadIntegerNetworkEnergyMax READ_INTEGER_NETWORK_ENERGY_MAX = new AspectReadIntegerNetworkEnergyMax();
 
     // --------------- Write ---------------
     public static final AspectWriteBooleanRedstone WRITE_BOOLEAN_REDSTONE = new AspectWriteBooleanRedstone();

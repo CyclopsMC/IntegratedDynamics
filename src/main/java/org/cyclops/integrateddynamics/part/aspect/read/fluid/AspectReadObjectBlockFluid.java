@@ -12,7 +12,6 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadObjectBlockBase;
 
@@ -70,6 +69,6 @@ public class AspectReadObjectBlockFluid extends AspectReadObjectBlockBase {
     }
 
     private IBlockState getDefaultValue() {
-        return ValueTypes.OBJECT_BLOCK.getDefault().getRawValue();
+        return null;
     }
 }

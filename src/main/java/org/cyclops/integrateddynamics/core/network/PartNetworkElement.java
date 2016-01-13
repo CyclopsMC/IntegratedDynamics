@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
@@ -13,6 +14,7 @@ import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import java.util.List;
 
@@ -21,10 +23,9 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartNetworkElement<P, S> {
+public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartNetworkElement<P, S>, IEnergyConsumingNetworkElement<IPartNetwork> {
 
     private final P part;
-    private final IPartContainerFacade partContainerFacade;
     private final PartTarget target;
 
     protected static DimPos getCenterPos(PartTarget target) {
@@ -44,9 +45,24 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
+    public IPartContainerFacade getPartContainerFacade() {
+        return CableHelpers.getInterface(getCenterPos(getTarget()), IPartContainerFacade.class);
+    }
+
+    @Override
     public S getPartState() {
-        return (S) partContainerFacade.getPartContainer(getCenterPos(getTarget()).getWorld(), getCenterPos(getTarget()).getBlockPos()).
+        return (S) getPartContainerFacade().getPartContainer(getCenterPos(getTarget()).getWorld(), getCenterPos(getTarget()).getBlockPos()).
                getPartState(getCenterSide(getTarget()));
+    }
+
+    @Override
+    public int getConsumptionRate() {
+        return getPart().getConsumptionRate(getPartState());
+    }
+
+    @Override
+    public void postUpdate(IPartNetwork network, boolean updated) {
+        part.postUpdate(network, getTarget(), getPartState(), updated);
     }
 
     @Override
@@ -75,8 +91,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void addDrops(List<ItemStack> itemStacks) {
-        part.addDrops(getTarget(), getPartState(), itemStacks);
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
+        part.addDrops(getTarget(), getPartState(), itemStacks, dropMainElement);
     }
 
     @Override
@@ -111,6 +127,13 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     public boolean equals(Object o) {
         return o instanceof IPartNetworkElement && compareTo((INetworkElement) o) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = part.hashCode();
+        result = 31 * result + target.hashCode();
+        return result;
     }
 
     @Override

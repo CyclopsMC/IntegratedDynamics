@@ -5,10 +5,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -21,6 +23,7 @@ import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.client.gui.GuiPartWriter;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
@@ -63,7 +66,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks) {
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
         for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
             ItemStack itemStack = state.getInventory().getStackInSlot(i);
             if(itemStack != null) {
@@ -72,7 +75,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         }
         state.getInventory().clear();
         state.triggerAspectInfoUpdate((P) this, target, null);
-        super.addDrops(target, state, itemStacks);
+        super.addDrops(target, state, itemStacks, dropMainElement);
     }
 
     @Override
@@ -122,13 +125,13 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side) {
+    public IBlockState getBlockState(IPartContainer partContainer,
+                                     EnumFacing side) {
         IPartStateWriter state = (IPartStateWriter) partContainer.getPartState(side);
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
         IAspectWrite aspectWrite = state.getActiveAspect();
         if(aspectWrite != null) {
-            if(state.hasVariable()) {
+            if(state.hasVariable() && state.isEnabled()) {
                 status = IgnoredBlockStatus.Status.ACTIVE;
             } else {
                 status = IgnoredBlockStatus.Status.ERROR;
@@ -141,6 +144,29 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @Override
     public Class<? extends Container> getContainer() {
         return ContainerPartWriter.class;
+    }
+
+    @Override
+    public void loadTooltip(S state, List<String> lines) {
+        super.loadTooltip(state, lines);
+        IAspectWrite aspectWrite = state.getActiveAspect();
+        if (aspectWrite != null) {
+            if (state.hasVariable() && state.isEnabled()) {
+                lines.add(L10NHelpers.localize(
+                        L10NValues.PART_TOOLTIP_WRITER_ACTIVEASPECT,
+                        L10NHelpers.localize(aspectWrite.getUnlocalizedName()),
+                        aspectWrite.getValueType().getDisplayColorFormat()
+                                + L10NHelpers.localize(aspectWrite.getValueType().getUnlocalizedName())
+                                + EnumChatFormatting.RESET));
+            } else {
+                lines.add(EnumChatFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
+                for (L10NHelpers.UnlocalizedString error : state.getErrors(aspectWrite)) {
+                    lines.add(EnumChatFormatting.RED + error.localize());
+                }
+            }
+        } else {
+            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_INACTIVE));
+        }
     }
 
     @Override

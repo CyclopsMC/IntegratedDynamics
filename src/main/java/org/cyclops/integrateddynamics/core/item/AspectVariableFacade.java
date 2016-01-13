@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
+import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
@@ -73,7 +74,9 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
 
     @Override
     public IValueType getOutputType() {
-        return getAspect().getValueType();
+        IAspect aspect = getAspect();
+        if(aspect == null) return null;
+        return aspect.getValueType();
     }
 
     @SideOnly(Side.CLIENT)
@@ -93,8 +96,8 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
         if(isValid()) {
             IAspect aspect = getAspect();
             IValueType valueType = aspect.getValueType();
-            quads.addAll(variableModelBaked.getValueTypeSubModels().get(valueType).getGeneralQuads());
-            quads.addAll(variableModelBaked.getAspectSubModels().get(aspect).getGeneralQuads());
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType).getGeneralQuads());
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.ASPECT).getBakedModels().get(aspect).getGeneralQuads());
         }
     }
 }

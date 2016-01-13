@@ -16,7 +16,7 @@ import java.util.List;
  * These instances are used as a simple way of referring to these elements.
  * @author rubensworks
  */
-public interface INetworkElement<N extends INetwork<N>> extends Comparable<INetworkElement<N>> {
+public interface INetworkElement<N extends INetwork> extends Comparable<INetworkElement<N>> {
 
     /**
      * @return The tick interval to update this element.
@@ -49,8 +49,9 @@ public interface INetworkElement<N extends INetwork<N>> extends Comparable<INetw
     /**
      * Add the itemstacks to drop when this element is removed.
      * @param itemStacks The itemstack list to add to.
+     * @param dropMainElement If the part itself should also be dropped.
      */
-    public void addDrops(List<ItemStack> itemStacks);
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement);
 
     /**
      * Called when this element is added to the network.
@@ -78,6 +79,6 @@ public interface INetworkElement<N extends INetwork<N>> extends Comparable<INetw
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock block type of the neighbour that was updated.
      */
-    public void onNeighborBlockChange(IPartNetwork network, IBlockAccess world, Block neighborBlock);
+    public void onNeighborBlockChange(N network, IBlockAccess world, Block neighborBlock);
 
 }

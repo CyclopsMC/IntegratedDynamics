@@ -100,6 +100,27 @@ public interface IPartNetwork extends INetwork<IPartNetwork>, ILazyExpressionVal
     public void removeVariableContainer(DimPos dimPos);
 
     /**
+     * Add the given proxy to the network.
+     * @param proxyId The id of the proxy.
+     * @param dimPos The proxy position.
+     * @return If the addition was successful.
+     */
+    public boolean addProxy(int proxyId, DimPos dimPos);
+
+    /**
+     * Remove the proxy by id from this network.
+     * @param proxyId The id of the proxy.
+     */
+    public void removeProxy(int proxyId);
+
+    /**
+     * Check if this network contains the given part id.
+     * @param proxyId The id of the proxy.
+     * @return The proxy position.
+     */
+    public DimPos getProxy(int proxyId);
+
+    /**
      * Tell the network to recheck all parts next update round.
      */
     public void notifyPartsChanged();

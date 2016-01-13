@@ -39,4 +39,9 @@ public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPart
         }
     }
 
+    @Override
+    public int getConsumptionRate(S state) {
+        return 1;
+    }
+
 }

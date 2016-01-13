@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.google.common.base.Optional;
 import lombok.ToString;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -25,16 +26,15 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     @Override
     public String toCompactString(ValueItemStack value) {
-        ItemStack itemStack = value.getRawValue();
-        if(itemStack == null) return "";
-        return itemStack.getDisplayName();
+        Optional<ItemStack> itemStack = value.getRawValue();
+        return itemStack.isPresent() ? itemStack.get().getDisplayName() : "";
     }
 
     @Override
     public String serialize(ValueItemStack value) {
         NBTTagCompound tag = new NBTTagCompound();
-        ItemStack itemStack = value.getRawValue();
-        if(itemStack != null) value.getRawValue().writeToNBT(tag);
+        Optional<ItemStack> itemStack = value.getRawValue();
+        if(itemStack.isPresent()) itemStack.get().writeToNBT(tag);
         return tag.toString();
     }
 
@@ -51,32 +51,23 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     @Override
     public String getName(ValueItemStack a) {
-        ItemStack itemStack = a.getRawValue();
-        if(itemStack == null) return "";
-        return itemStack.getDisplayName();
+        return toCompactString(a);
     }
 
     @ToString
-    public static class ValueItemStack extends ValueBase {
-
-        private final ItemStack itemStack;
+    public static class ValueItemStack extends ValueOptionalBase<ItemStack> {
 
         private ValueItemStack(ItemStack itemStack) {
-            super(ValueTypes.OBJECT_ITEMSTACK);
-            this.itemStack = itemStack;
+            super(ValueTypes.OBJECT_ITEMSTACK, itemStack);
         }
 
         public static ValueItemStack of(ItemStack itemStack) {
             return new ValueItemStack(itemStack);
         }
 
-        public ItemStack getRawValue() {
-            return itemStack;
-        }
-
         @Override
-        public boolean equals(Object o) {
-            return o instanceof ValueItemStack && ItemStackHelpers.areItemStacksIdentical(((ValueItemStack) o).itemStack, itemStack);
+        protected boolean isEqual(ItemStack a, ItemStack b) {
+            return ItemStackHelpers.areItemStacksIdentical(a, b);
         }
     }
 

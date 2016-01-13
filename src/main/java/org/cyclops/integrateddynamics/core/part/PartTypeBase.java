@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.part;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -18,6 +19,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.cyclopscore.init.ModBase;
@@ -30,6 +32,7 @@ import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 
@@ -125,6 +128,16 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         return item;
     }
 
+    @Override
+    public String getBlockModelPath() {
+        return getMod().getModId() + ":" + "part_" + getName() + "Block";
+    }
+
+    @Override
+    public String getItemModelPath() {
+        return getMod().getModId() + ":" + "part_" + getName() + "Item";
+    }
+
     /**
      * Override this to register your network event actions.
      * @return The event actions.
@@ -173,7 +186,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public INetworkElement<IPartNetwork> createNetworkElement(IPartContainerFacade partContainerFacade, DimPos pos, EnumFacing side) {
-        return new PartNetworkElement(this, partContainerFacade, PartTarget.fromCenter(pos, side));
+        return new PartNetworkElement(this, PartTarget.fromCenter(pos, side));
     }
 
     @Override
@@ -183,6 +196,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         ItemStack itemStack = new ItemStack(getItem());
         itemStack.setTagCompound(tag);
         return itemStack;
+    }
+
+    @Override
+    public ItemStack getPickBlock(World world, BlockPos pos, S state) {
+        return getItemStack(state);
     }
 
     @Override
@@ -208,8 +226,10 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks) {
-        itemStacks.add(getItemStack(state));
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
+        if(dropMainElement) {
+            itemStacks.add(getItemStack(state));
+        }
     }
 
     @Override
@@ -276,10 +296,10 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, IBlockState state, S partState, EntityPlayer player,
+    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player,
                                    EnumFacing side, float hitX, float hitY, float hitZ) {
         // Drop through if the player is sneaking
-        if(player.isSneaking()) {
+        if(player.isSneaking() || !partState.isEnabled()) {
             return false;
         }
 
@@ -304,9 +324,40 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                     int destroyStage, EnumFacing side) {
+    public IBlockState getBlockState(IPartContainer partContainer, EnumFacing side) {
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side);
+    }
+
+    @Override
+    public BlockState getBaseBlockState() {
+        return getBlock().getBlockState();
+    }
+
+    @Override
+    public int getConsumptionRate(S state) {
+        return 0;
+    }
+
+    @Override
+    public void postUpdate(IPartNetwork network, PartTarget target, S state, boolean updated) {
+        setEnabled(state, updated);
+    }
+
+    @Override
+    public boolean isEnabled(S state) {
+        return state.isEnabled();
+    }
+
+    @Override
+    public void setEnabled(S state, boolean enabled) {
+        state.setEnabled(enabled);
+    }
+
+    @Override
+    public void loadTooltip(S state, List<String> lines) {
+        if(!state.isEnabled()) {
+            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_DISABLED));
+        }
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {

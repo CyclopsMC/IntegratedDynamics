@@ -15,10 +15,10 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammerConfig;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
@@ -75,7 +75,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
 
     @Override
     protected int getBaseYSize() {
-        return 213;
+        return 240;
     }
 
     @Override
@@ -105,8 +105,8 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         FontRenderer fontRenderer = fontRendererObj;
 
         // Draw container name
-        fontRenderer.drawString(L10NHelpers.localize(BlockLogicProgrammer.getInstance().getLocalizedName()),
-                this.guiLeft + offsetX + 87, this.guiTop + offsetY + 7, Helpers.RGBToInt(80, 80, 80));
+        fontRenderer.drawString(L10NHelpers.localize(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
+                this.guiLeft + offsetX + 5, this.guiTop + offsetY + 208, Helpers.RGBToInt(80, 80, 80));
 
         // Draw operators
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getScrollingInventoryContainer();
@@ -139,9 +139,9 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                 // Operator info
                 String aspectName = L10NHelpers.localize(element.getSymbol());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
-                        this.guiLeft + offsetX + (hover ? 20 : 18),
+                        this.guiLeft + offsetX + (hover ? 22 : 21),
                         this.guiTop + offsetY + 26 + boxHeight * i,
-                        60, Helpers.RGBToInt(40, 40, 40));
+                        53, Helpers.RGBToInt(40, 40, 40));
             }
         }
     }
@@ -172,7 +172,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         }
     }
 
-    protected void onActivateElement(ILogicProgrammerElement element) {
+    protected void onActivateElement(ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> element) {
         subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammer) getContainer()));
         operatorConfigPattern.initGui(guiLeft, guiTop);
         subGuiHolder.addSubGui(new SubGuiOperatorInfo(element));
@@ -227,9 +227,9 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    public class SubGuiOperatorInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<GuiLogicProgrammer, ContainerLogicProgrammer> {
+    public class SubGuiOperatorInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> {
 
-        public SubGuiOperatorInfo(IGuiInputElement<GuiLogicProgrammer, ContainerLogicProgrammer> element) {
+        public SubGuiOperatorInfo(IGuiInputElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> element) {
             super(GuiLogicProgrammer.this, (ContainerLogicProgrammer) GuiLogicProgrammer.this.container, element, 88, 106, 139, 20);
         }
 

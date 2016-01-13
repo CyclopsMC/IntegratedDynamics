@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.core.network.packet.ActionLabelPacket;
 import org.cyclops.integrateddynamics.core.network.packet.AllLabelsPacket;
 import org.cyclops.integrateddynamics.network.packet.ItemStackRenamePacket;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeListValueChangedPacket;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeValueChangedPacket;
 
 /**
@@ -31,6 +32,7 @@ public class CommonProxy extends CommonProxyComponent {
         packetHandler.register(ActionLabelPacket.class);
         packetHandler.register(AllLabelsPacket.class);
         packetHandler.register(ItemStackRenamePacket.class);
+        packetHandler.register(LogicProgrammerValueTypeListValueChangedPacket.class);
 
         IntegratedDynamics.clog("Registered packet handler.");
     }

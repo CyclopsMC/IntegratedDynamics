@@ -15,7 +15,8 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
  */
 public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
-    private static final float MAX = 12.8F;
+    private static final float MAX = 12.5F;
+    private static final float MARGIN_FACTOR = 1.1F;
 
     @Override
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
@@ -24,12 +25,12 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         String string = value.getType().toCompactString(value);
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float height = fontRenderer.FONT_HEIGHT;
-        float width = fontRenderer.getStringWidth(string);
+        float width = fontRenderer.getStringWidth(string) - 1;
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
 
-        float scaleX = MAX / width;
-        float scaleY = MAX / height;
+        float scaleX = MAX / (width * MARGIN_FACTOR);
+        float scaleY = MAX / (height * MARGIN_FACTOR);
         float scale = Math.min(scaleX, scaleY); // Maintain aspect ratio
         float newWidth = width * scale;
         float newHeight = height * scale;
