@@ -120,7 +120,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     protected void onValueChanged(IPartNetwork network, PartTarget target, S state, IValue lastValue, IValue newValue) {
-        state.setDisplayValue(newValue);
+        state.setDisplayValue(newValue != null ? newValue.getType().materialize(newValue) : null);
     }
 
     @Override
@@ -217,10 +217,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.writeToNBT(tag);
             IValue value = getDisplayValue();
             if(value != null) {
-                tag.setString("displayValueType", value.getType().getUnlocalizedName());
-                if(!MinecraftHelpers.isClientSide()) {
-                    value = value.getType().materialize(value);
-                }
+                tag.setString("displayValueType", value.getType().getUnlocalizedName());;
                 tag.setString("displayValue", value.getType().serialize(value));
             }
             tag.setInteger("facingRotation", facingRotation.ordinal());
