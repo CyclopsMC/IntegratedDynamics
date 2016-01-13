@@ -1,12 +1,17 @@
 package org.cyclops.integrateddynamics.modcompat.thaumcraft;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.modcompat.IModCompat;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactories;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyNBTFactory;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.modcompat.thaumcraft.client.render.valuetype.AspectValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueObjectTypeAspect;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueTypeListProxyPositionedAspectContainer;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.logicprogrammer.ValueObjectTypeAspectElementType;
@@ -42,9 +47,16 @@ public class ThaumcraftModCompat implements IModCompat {
 			// Logic programmer aspect value type creator
 			OBJECT_ASPECT_ELEMENTTYPE = LogicProgrammerElementTypes.REGISTRY.addType(new ValueObjectTypeAspectElementType());
 
-			// TODO: register fancy display part rendering for aspect value type
+			if(MinecraftHelpers.isClientSide()) {
+				initClient();
+			}
 		}
     }
+
+	@SideOnly(Side.CLIENT)
+	protected void initClient() {
+		ValueTypeWorldRenderers.REGISTRY.register(ThaumcraftModCompat.OBJECT_ASPECT, new AspectValueTypeWorldRenderer());
+	}
 
 	@Override
 	public boolean isEnabled() {
