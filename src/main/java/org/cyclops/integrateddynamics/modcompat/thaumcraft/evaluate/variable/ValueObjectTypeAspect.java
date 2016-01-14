@@ -59,7 +59,11 @@ public class ValueObjectTypeAspect extends ValueObjectTypeBase<ValueObjectTypeAs
 
     @Override
     public String getName(ValueAspect a) {
-        return toCompactString(a);
+        Optional<Pair<Aspect, Integer>> aspect = a.getRawValue();
+        if(aspect.isPresent()) {
+            return aspect.get().getKey().getName();
+        }
+        return "";
     }
 
     @ToString
