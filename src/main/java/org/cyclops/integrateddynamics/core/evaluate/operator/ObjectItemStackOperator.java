@@ -39,7 +39,7 @@ public class ObjectItemStackOperator extends ObjectOperatorBase {
         this(name, name, inputTypes, outputType, function, renderPattern);
     }
 
-    protected ObjectItemStackOperator(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
+    public ObjectItemStackOperator(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                                       IFunction function, IConfigRenderPattern renderPattern) {
         super(symbol, operatorName, inputTypes, outputType, function, renderPattern);
     }

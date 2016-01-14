@@ -480,3 +480,18 @@ aspect.aspects.integrateddynamics.read.boolean.thaumcraft.isaspectcontainer.name
 aspect.aspects.integrateddynamics.read.boolean.thaumcraft.isaspectcontainer.info=If the given block can hold aspects.
 aspect.aspects.integrateddynamics.read.list.thaumcraft.aspectcontainer.name=Aspect Container Aspects
 aspect.aspects.integrateddynamics.read.list.thaumcraft.aspectcontainer.info=All aspects in the given aspect container.
+
+## Operators
+operator.operators.integrateddynamics.object.itemstack.getitemthaumcraftaspects.name=Thaumcraft Aspects
+operator.operators.integrateddynamics.object.itemstack.getitemthaumcraftaspects.info=The list of Thaumcraft aspects this item has
+
+operator.operators.integrateddynamics.object.thaumcraft.aspect.name=Thaumcraft Aspect
+operator.operators.integrateddynamics.object.thaumcraft.aspect.basename=Thaumcraft Aspect %s
+operator.operators.integrateddynamics.object.thaumcraft.aspect.amount.name=Vis Amount
+operator.operators.integrateddynamics.object.thaumcraft.aspect.amount.info=The amount of vis in the aspect
+operator.operators.integrateddynamics.object.thaumcraft.aspect.israwaspectequal.name=Raw Aspect Equals
+operator.operators.integrateddynamics.object.thaumcraft.aspect.israwaspectequal.info=If the given raw aspects are equal
+operator.operators.integrateddynamics.object.thaumcraft.aspect.getcompoundaspects.name=Compound Aspects
+operator.operators.integrateddynamics.object.thaumcraft.aspect.getcompoundaspects.info=The list of aspects this aspect is made up of
+operator.operators.integrateddynamics.object.thaumcraft.aspect.isprimal.name=Is Aspect Primal
+operator.operators.integrateddynamics.object.thaumcraft.aspect.isprimal.info=If the given aspect is a primal aspect
