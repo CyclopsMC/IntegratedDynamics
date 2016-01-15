@@ -803,6 +803,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
         super.onNeighborBlockChange(world, pos, state, neighborBlock);
+        cableNetworkComponent.updateConnections(world, pos);
         networkElementProviderComponent.onBlockNeighborChange(getNetwork(world, pos), world, pos, neighborBlock);
     }
 }

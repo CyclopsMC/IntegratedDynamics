@@ -41,13 +41,15 @@ public class BlockCableConverter implements IPartConverter.IPartConverter2 {
         for(Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
             parts.add(new PartPartType(entry.getKey(), entry.getValue().getPart()));
         }
+        boolean wasRealCable = tile.isRealCable();
         if(!simulate) {
             tile.silentResetPartData();
             tile.resetCurrentNetwork();
+            tile.setRealCable(false);
         }
 
         // Add cable
-        if(tile.isRealCable()) {
+        if(wasRealCable) {
             PartCable partCable = new PartCable(partData);
             partCable.setAddSilent(true);
             parts.add(partCable);
