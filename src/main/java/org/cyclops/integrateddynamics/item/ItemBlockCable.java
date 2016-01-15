@@ -11,8 +11,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.item.ItemBlockMetadata;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import java.util.List;
 
@@ -42,8 +44,11 @@ public class ItemBlockCable extends ItemBlockMetadata {
     }
 
     protected boolean checkCableAt(World world, BlockPos pos) {
-        Block block = world.getBlockState(pos).getBlock();
-        return block instanceof ICableFakeable && !((ICableFakeable) block).isRealCable(world, pos);
+        ICable cable = CableHelpers.getInterface(world, pos, ICable.class);
+        if(cable instanceof ICableFakeable) {
+            return ((ICableFakeable) cable).isRealCable(world, pos);
+        }
+        return cable != null;
     }
 
     @SideOnly(Side.CLIENT)
@@ -62,12 +67,10 @@ public class ItemBlockCable extends ItemBlockMetadata {
     protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable) {
         Block block = world.getBlockState(pos).getBlock();
         if(!block.isAir(world, pos)) {
-            if (block instanceof ICableFakeable) {
-                ICableFakeable cable = (ICableFakeable) block;
-                if (!cable.isRealCable(world, pos)) {
-                    cable.setRealCable(world, pos, true);
-                    return true;
-                }
+            ICableFakeable cable = CableHelpers.getInterface(world, pos, ICableFakeable.class);
+            if (cable != null && !cable.isRealCable(world, pos)) {
+                cable.setRealCable(world, pos, true);
+                return true;
             }
             for (IUseAction useAction : USE_ACTIONS) {
                 if (useAction.attempItemUseTarget(stack, world, pos, blockCable)) {
