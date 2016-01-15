@@ -85,7 +85,7 @@ public class McMultiPartHelpers {
             public boolean attempItemUseTarget(ItemPart itemPart, ItemStack itemStack, World world, BlockPos pos, EnumFacing sideHit) {
                 PartPartType partPart = new PartPartType(sideHit.getOpposite(), itemPart.getPart());
                 pos = pos.offset(sideHit);
-                if(MultipartHelper.canAddPart(world, pos, partPart)) {
+                if(MultipartHelper.getPartContainer(world, pos) != null && MultipartHelper.canAddPart(world, pos, partPart)) {
                     if(!world.isRemote) {
                         MultipartHelper.addPart(world, pos, partPart);
                     }

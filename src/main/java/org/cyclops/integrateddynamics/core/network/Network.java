@@ -293,6 +293,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                 return true;
             }
         } else {
+            Thread.dumpStack();
             IntegratedDynamics.clog(Level.WARN, "Tried to remove a cable from a network it was not present in.");
         }
         return false;

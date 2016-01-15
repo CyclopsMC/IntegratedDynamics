@@ -11,9 +11,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
@@ -69,14 +71,9 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             if(partContainerFacade != null) {
                 // Add part to existing cable
                 IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
-                if(partContainer.canAddPart(side, getPart())) {
-                    partContainer.setPart(side, getPart(), getPart().getState(itemStack));
-                    System.out.println("Setting part " + getPart());
-                    ItemBlockCable.playPlaceSound(world, pos);
-                } else {
-                    System.out.println("Side occupied!");
+                if(addPart(world, pos, side, partContainer, itemStack) && !playerIn.capabilities.isCreativeMode) {
+                    itemStack.stackSize--;
                 }
-                itemStack.stackSize--;
                 return true;
             } else {
                 // Check all third party actions
@@ -94,19 +91,41 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                         partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
                         if (partContainerFacade != null) {
                             IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
-                            partContainer.setPart(side.getOpposite(), getPart(), getPart().getState(itemStack));
-                            System.out.println("Setting part " + getPart());
-                            ItemBlockCable.playPlaceSound(world, pos);
+                            addPart(world, pos, side.getOpposite(), partContainer, itemStack);
                             if (world.getBlockState(target).getBlock() instanceof ICableFakeable) {
                                 BlockCable.getInstance().setRealCable(world, target, false);
+                            } else {
+                                IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable, got %s", world.getBlockState(target).getBlock()));
                             }
                             return true;
                         }
+                    }
+                } else {
+                    partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
+                    if(partContainerFacade != null) {
+                        IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
+                        if(addPart(world, pos, side.getOpposite(), partContainer, itemStack) && !playerIn.capabilities.isCreativeMode) {
+                            itemStack.stackSize--;
+                        }
+                        return true;
                     }
                 }
             }
         }
         return super.onItemUse(itemStack, playerIn, world, pos, side, hitX, hitY, hitZ);
+    }
+
+    protected boolean addPart(World world, BlockPos pos, EnumFacing side, IPartContainer partContainer, ItemStack itemStack) {
+        IPartType partType = getPart();
+        if(partContainer.canAddPart(side, partType)) {
+            partContainer.setPart(side, getPart(), partType.getState(itemStack));
+            System.out.println("Setting part " + getPart());
+            ItemBlockCable.playPlaceSound(world, pos);
+            return true;
+        } else {
+            System.out.println("Side occupied!");
+        }
+        return false;
     }
 
     @SuppressWarnings("rawtypes")

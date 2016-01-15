@@ -24,6 +24,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.block.property.UnlistedProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
@@ -31,6 +32,7 @@ import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.*;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
@@ -304,11 +306,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
         if(tile != null) {
             tile.setRealCable(realCable);
-            if(realCable) {
+            if (realCable) {
                 cableNetworkComponent.addToNetwork(world, pos);
             } else {
-                if(!cableNetworkComponent.removeCableFromNetwork(world, pos)) {
+                networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, false);
+                if (!cableNetworkComponent.removeCableFromNetwork(world, pos)) {
                     tile.setRealCable(!realCable);
+                    IntegratedDynamics.clog(Level.WARN, "Tried to set a fake cable, but the original network element was not present");
                 }
             }
         }
@@ -453,8 +457,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
         if(isRealCable(world, pos)) {
+            networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
             cableNetworkComponent.onPreBlockDestroyed(world, pos);
         }
         super.onPreBlockDestroyed(world, pos);

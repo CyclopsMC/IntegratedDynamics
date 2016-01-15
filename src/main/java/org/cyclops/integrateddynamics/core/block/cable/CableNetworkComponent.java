@@ -112,7 +112,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
     public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
         ITileCableNetwork tile = getTileNetwork(world, pos);
         if(tile != null) {
-            if(tile.getNetwork() != null) {
+            if(network != null && tile.getNetwork() != null) {
                 IntegratedDynamics.clog(Level.WARN, "Tried to set a new network for a tile without the previous one being removed.");
             }
             tile.setNetwork(network);
@@ -188,6 +188,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
                     }
                 }
             }
+            setNetwork(null, world, pos);
         }
         return true;
     }
