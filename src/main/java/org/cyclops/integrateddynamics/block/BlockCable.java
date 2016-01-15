@@ -350,7 +350,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                             PartHelpers.removePart(world, pos, positionHit, player, true);
                         }
                         return true;
-                    } else {
+                    } else if(isRealCable(world, pos)) {
                         // Delegate activated call to part
                         return getPartContainer(world, pos).getPart(positionHit).onPartActivated(world, pos,
                                 getPartContainer(world, pos).getPartState(positionHit), player, positionHit, hitX, hitY, hitZ);
