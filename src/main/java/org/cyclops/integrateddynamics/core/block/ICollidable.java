@@ -98,6 +98,16 @@ public interface ICollidable<P> {
         public boolean isActive(B block, World world, BlockPos pos, P position);
         public List<AxisAlignedBB> getBounds(B block, World world, BlockPos pos, P position);
         public ItemStack getPickBlock(World world, BlockPos pos, P position);
+
+        /**
+         * Destroy this component
+         * @param world The world
+         * @param pos The position
+         * @param position The component position
+         * @param player The player destroying the component.
+         * @return If the complete block was destroyed
+         */
+        public boolean destroy(World world, BlockPos pos, P position, EntityPlayer player);
     }
 
 }

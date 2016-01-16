@@ -237,13 +237,18 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
-    public void onRemoved() {
+    public void harvest(EntityPlayer player, PartMOP hit) {
         World world = getWorld();
         BlockPos pos = getPos();
         networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, false);
         cableNetworkComponent.onPreBlockDestroyed(world, pos);
+        super.harvest(player, hit);
+    }
+
+    @Override
+    public void onRemoved() {
         super.onRemoved();
-        cableNetworkComponent.onPostBlockDestroyed(world, pos);
+        cableNetworkComponent.onPostBlockDestroyed(getWorld(), getPos());
     }
 
     @Override
@@ -351,7 +356,10 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     public void remove(World world, BlockPos pos, EntityPlayer player) {
+        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, false);
+        cableNetworkComponent.onPreBlockDestroyed(world, pos);
         cableNetworkComponent.remove(world, pos, player);
+        cableNetworkComponent.onPostBlockDestroyed(world, pos);
     }
 
     @Override

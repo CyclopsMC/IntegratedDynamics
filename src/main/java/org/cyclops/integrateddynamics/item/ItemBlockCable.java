@@ -46,7 +46,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
     protected boolean checkCableAt(World world, BlockPos pos) {
         ICable cable = CableHelpers.getInterface(world, pos, ICable.class);
         if(cable instanceof ICableFakeable) {
-            return ((ICableFakeable) cable).isRealCable(world, pos);
+            return !((ICableFakeable) cable).isRealCable(world, pos);
         }
         return cable != null;
     }

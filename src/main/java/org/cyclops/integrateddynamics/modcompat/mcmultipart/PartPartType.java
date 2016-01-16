@@ -75,7 +75,13 @@ public class PartPartType extends MultipartBase {
     @Override
     public List<ItemStack> getDrops() {
         List<ItemStack> drops = Lists.newLinkedList();
-        getPartType().addDrops(getPartTarget(), getDelegatedPartState(), drops, true);
+        IPartState partState = getDelegatedPartState();
+        // partstate can be null if there is not cable in this block
+        if(partState != null) {
+            getPartType().addDrops(getPartTarget(), partState, drops, true);
+        } else {
+            drops.add(getItemStack());
+        }
         return drops;
     }
 

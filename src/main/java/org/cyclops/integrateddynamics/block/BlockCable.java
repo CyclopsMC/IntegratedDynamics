@@ -146,6 +146,21 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
             return new ItemStack(BlockCable.getInstance());
         }
+
+        @Override
+        public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
+            if(!world.isRemote) {
+                BlockCable cable = BlockCable.getInstance();
+                if (cable.getPartContainer(world, pos).hasParts()) {
+                    cable.setRealCable(world, pos, false);
+                    ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
+                } else {
+                    cable.remove(world, pos, player);
+                    return false;
+                }
+            }
+            return false;
+        }
     };
     private static final IComponent<EnumFacing, BlockCable> CABLECONNECTIONS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
         @Override
@@ -171,6 +186,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         @Override
         public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
             return new ItemStack(BlockCable.getInstance());
+        }
+
+        @Override
+        public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
+            return CENTER_COMPONENT.destroy(world, pos, position, player);
         }
     };
     private static final IComponent<EnumFacing, BlockCable> PARTS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
@@ -202,6 +222,14 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             IPartContainer partContainer = BlockCable.getInstance().getPartContainer(world, pos);
             return partContainer.getPart(position).getPickBlock(world, pos, partContainer.getPartState(position));
         }
+
+        @Override
+        public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
+            if(!world.isRemote) {
+                PartHelpers.removePart(world, pos, position, player, false);
+            }
+            return false;
+        }
     };
     private static final IComponent<EnumFacing, BlockCable> FACADE_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
 
@@ -232,6 +260,18 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
             ItemFacade.getInstance().writeFacadeBlock(itemStack, BlockCable.getInstance().getFacade(world, pos));
             return itemStack;
+        }
+
+        @Override
+        public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
+            if(!world.isRemote) {
+                IBlockState blockState = BlockCable.getInstance().getFacade(world, pos);
+                ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
+                ItemFacade.getInstance().writeFacadeBlock(itemStack, blockState);
+                BlockCable.getInstance().setFacade(world, pos, null);
+                ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
+            }
+            return false;
         }
     };
     static {
@@ -319,6 +359,30 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
+    protected void onPreBlockDestroyed(World world, BlockPos pos, EntityPlayer player) {
+        if(player == null && isRealCable(world, pos)) {
+            networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
+            cableNetworkComponent.onPreBlockDestroyed(world, pos);
+        }
+        super.onPreBlockDestroyed(world, pos);
+    }
+
+    @Override
+    protected void onPostBlockDestroyed(World world, BlockPos pos) {
+        super.onPostBlockDestroyed(world, pos);
+        cableNetworkComponent.onPostBlockDestroyed(world, pos);
+    }
+
+    @Override
+    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+        RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
+        if(rayTraceResult != null && rayTraceResult.getCollisionType() != null) {
+            return rayTraceResult.getCollisionType().destroy(world, pos, rayTraceResult.getPositionHit(), player);
+        }
+        return super.removedByPlayer(world, pos, player, willHarvest);
+    }
+
+    @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
                                     EnumFacing side, float hitX, float hitY, float hitZ) {
         /*
@@ -334,11 +398,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                 EnumFacing positionHit = rayTraceResult.getPositionHit();
                 if(rayTraceResult.getCollisionType() == FACADE_COMPONENT) {
                     if(!world.isRemote && WrenchHelpers.isWrench(player, pos) && player.isSneaking()) {
-                        IBlockState blockState = getFacade(world, pos);
-                        ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
-                        ItemFacade.getInstance().writeFacadeBlock(itemStack, blockState);
-                        setFacade(world, pos, null);
-                        ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
+                        FACADE_COMPONENT.destroy(world, pos, side, player);
                         world.notifyNeighborsOfStateChange(pos, this);
                         return true;
                     }
@@ -347,7 +407,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
                         // Remove part from cable
                         if(player.isSneaking()) {
-                            PartHelpers.removePart(world, pos, positionHit, player, true);
+                            PARTS_COMPONENT.destroy(world, pos, side, player);
                         }
                         return true;
                     } else if(isRealCable(world, pos)) {
@@ -453,21 +513,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             return rayTraceResult.getCollisionType().getPickBlock(world, pos, positionHit);
         }
         return new ItemStack(getItem(world, pos), 1, getDamageValue(world, pos));
-    }
-
-    @Override
-    protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        if(isRealCable(world, pos)) {
-            networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
-            cableNetworkComponent.onPreBlockDestroyed(world, pos);
-        }
-        super.onPreBlockDestroyed(world, pos);
-    }
-
-    @Override
-    protected void onPostBlockDestroyed(World world, BlockPos pos) {
-        super.onPostBlockDestroyed(world, pos);
-        cableNetworkComponent.onPostBlockDestroyed(world, pos);
     }
 
     @Override

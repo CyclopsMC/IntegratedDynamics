@@ -70,7 +70,7 @@ public interface IPartContainer {
      */
     public IPartType removePart(EnumFacing side, @Nullable EntityPlayer player);
 
-    /**
+    /**dz
      * Set the state of a part.
      * @param side The side.
      * @param partState The part state.
