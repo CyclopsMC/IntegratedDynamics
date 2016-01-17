@@ -16,7 +16,7 @@ public abstract class ObjectOperatorBase extends OperatorBase {
 
     @Override
     public String getUnlocalizedType() {
-        return "object." + getUnlocalizedObjectType();
+        return getUnlocalizedObjectType();
     }
 
     public abstract String getUnlocalizedObjectType();

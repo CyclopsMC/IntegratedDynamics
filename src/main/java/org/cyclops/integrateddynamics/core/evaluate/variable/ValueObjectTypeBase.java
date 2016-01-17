@@ -19,11 +19,6 @@ public abstract class ValueObjectTypeBase<V extends IValue> extends ValueTypeBas
     }
 
     @Override
-    protected String getTypeNamespace() {
-        return ".object.";
-    }
-
-    @Override
     public boolean isObject() {
         return true;
     }

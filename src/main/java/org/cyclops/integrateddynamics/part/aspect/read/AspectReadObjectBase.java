@@ -11,7 +11,7 @@ public abstract class AspectReadObjectBase<V extends IValue, T extends IValueTyp
 
     @Override
     public String getUnlocalizedType() {
-        return super.getUnlocalizedType() + ".object." + getUnlocalizedObjectType();
+        return super.getUnlocalizedType() + "." + getUnlocalizedObjectType();
     }
 
     protected abstract String getUnlocalizedObjectType();

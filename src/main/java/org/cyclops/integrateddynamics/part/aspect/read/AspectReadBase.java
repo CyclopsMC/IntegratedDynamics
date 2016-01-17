@@ -28,11 +28,13 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
 
     private final String unlocalizedTypeSuffix;
 
+    @Deprecated
     public AspectReadBase() {
-        this(null);
+        this(null, null);
     }
 
-    public AspectReadBase(String unlocalizedTypeSuffix) {
+    public AspectReadBase(String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
+        super(defaultProperties);
         if(unlocalizedTypeSuffix == null) {
             unlocalizedTypeSuffix = "";
         }

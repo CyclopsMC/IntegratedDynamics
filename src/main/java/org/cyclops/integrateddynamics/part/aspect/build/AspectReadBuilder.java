@@ -60,6 +60,20 @@ public class AspectReadBuilder<V extends IValue, T extends IValueType<V>, O> {
     }
 
     /**
+     * Add the given kind.
+     * @param kind The kind to append.
+     * @return The new builder instance.
+     */
+    public AspectReadBuilder<V, T, O> appendKind(String kind) {
+        return new AspectReadBuilder<>(
+                this.valueType,
+                join(this.kinds, kind),
+                this.defaultAspectProperties,
+                join(this.valuePropagators, null)
+        );
+    }
+
+    /**
      * Set the given default aspect properties.
      * @param aspectProperties The aspect properties.
      * @return The new builder instance.
@@ -103,13 +117,11 @@ public class AspectReadBuilder<V extends IValue, T extends IValueType<V>, O> {
     private static class Built<V extends IValue, T extends IValueType<V>> extends AspectReadBase<V, T> {
 
         private final T valueType;
-        private final IAspectProperties defaultAspectProperties;
         private final List<IAspectValuePropagator> valuePropagators;
 
         public Built(AspectReadBuilder<V, T, V> aspectBuilder) {
-            super(deriveUnlocalizedType(aspectBuilder));
+            super(deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties);
             this.valueType = aspectBuilder.valueType;
-            this.defaultAspectProperties = aspectBuilder.defaultAspectProperties;
             this.valuePropagators = aspectBuilder.valuePropagators;
         }
 
@@ -134,11 +146,6 @@ public class AspectReadBuilder<V extends IValue, T extends IValueType<V>, O> {
         @Override
         public T getValueType() {
             return valueType;
-        }
-
-        @Override
-        protected IAspectProperties createDefaultProperties() {
-            return this.defaultAspectProperties;
         }
     }
 
