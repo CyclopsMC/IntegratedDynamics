@@ -1,14 +1,18 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.part.aspect.build.IAspectValuePropagator;
+import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.read.fluid.*;
 import org.cyclops.integrateddynamics.part.aspect.read.inventory.*;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftPlayerCount;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftRandom;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftTicktime;
 import org.cyclops.integrateddynamics.part.aspect.read.network.*;
-import org.cyclops.integrateddynamics.part.aspect.read.redstone.*;
 import org.cyclops.integrateddynamics.part.aspect.read.world.*;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteIntegerRedstone;
@@ -25,12 +29,33 @@ public class Aspects {
 
     // --------------- Read ---------------
     // --- Redstone ---
-    public static final AspectReadBooleanRedstoneLow READ_BOOLEAN_REDSTONE_LOW = new AspectReadBooleanRedstoneLow();
-    public static final AspectReadBooleanRedstoneNonLow READ_BOOLEAN_REDSTONE_NONLOW = new AspectReadBooleanRedstoneNonLow();
-    public static final AspectReadBooleanRedstoneHigh READ_BOOLEAN_REDSTONE_HIGH = new AspectReadBooleanRedstoneHigh();
 
-    public static final AspectReadIntegerRedstoneValue READ_INTEGER_REDSTONE_VALUE = new AspectReadIntegerRedstoneValue();
-    public static final AspectReadIntegerRedstoneComparator READ_INTEGER_REDSTONE_COMPARATOR = new AspectReadIntegerRedstoneComparator();
+    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_REDSTONE_LOW =
+            AspectReadBuilders.BUILDER_BOOLEAN_REDSTONE.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                @Override
+                public Boolean getOutput(Integer input) {
+                    return input == 0;
+                }
+            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "low").build();
+    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_REDSTONE_NONLOW =
+            AspectReadBuilders.BUILDER_BOOLEAN_REDSTONE.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                @Override
+                public Boolean getOutput(Integer input) {
+                    return input > 0;
+                }
+            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonlow").build();
+    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_REDSTONE_HIGH =
+            AspectReadBuilders.BUILDER_BOOLEAN_REDSTONE.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                @Override
+                public Boolean getOutput(Integer input) {
+                    return input == 15;
+                }
+            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "high").build();
+
+    public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> READ_INTEGER_REDSTONE_VALUE =
+            AspectReadBuilders.BUILDER_INTEGER_REDSTONE.handle(AspectReadBuilders.PROP_GET_INTEGER, "value").build();
+    public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> READ_INTEGER_REDSTONE_COMPARATOR =
+            AspectReadBuilders.BUILDER_INTEGER_COMPARATOR.handle(AspectReadBuilders.PROP_GET_INTEGER, "comparator").build();
 
     // --- Inventory ---
     public static final AspectReadBooleanInventoryFull READ_BOOLEAN_INVENTORY_FULL = new AspectReadBooleanInventoryFull();

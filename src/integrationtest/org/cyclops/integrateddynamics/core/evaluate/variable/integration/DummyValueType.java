@@ -31,6 +31,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
+    public String getTypeName() {
+        return "boolean";
+    }
+
+    @Override
     public String getUnlocalizedName() {
         return "boolean";
     }

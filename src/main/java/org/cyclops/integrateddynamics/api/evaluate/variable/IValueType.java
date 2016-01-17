@@ -28,6 +28,11 @@ public interface IValueType<V extends IValue> {
     public V getDefault();
 
     /**
+     * @return The name of this type without any prefixes.
+     */
+    public String getTypeName();
+
+    /**
      * @return The unique name of this type that will also be used for display.
      */
     public String getUnlocalizedName();

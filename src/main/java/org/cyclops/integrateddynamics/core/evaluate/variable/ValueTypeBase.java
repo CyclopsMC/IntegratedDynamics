@@ -54,7 +54,8 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         return getUnlocalizedPrefix() + ".name";
     }
 
-    protected String getTypeName() {
+    @Override
+    public String getTypeName() {
         return this.typeName;
     }
 
