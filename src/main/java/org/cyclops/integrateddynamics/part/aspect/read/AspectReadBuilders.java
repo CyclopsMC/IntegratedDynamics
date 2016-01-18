@@ -58,70 +58,75 @@ public class AspectReadBuilders {
         }
     };
 
-    // --- Redstone ---
-    public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_REDSTONE = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
-        @Override
-        public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
-            DimPos dimPos = input.getLeft().getTarget().getPos();
-            return dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
-        }
-    };
-    public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
-        @Override
-        public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
-            DimPos dimPos = input.getLeft().getTarget().getPos();
-            return dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock().getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
-        }
-    };
+    public static final class Redstone {
 
-    public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
-            BUILDER_BOOLEAN_REDSTONE = BUILDER_BOOLEAN.handle(PROP_GET_REDSTONE, "redstone");
-    public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
-            BUILDER_INTEGER_REDSTONE = BUILDER_INTEGER.handle(PROP_GET_REDSTONE, "redstone");
-    public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
-            BUILDER_INTEGER_COMPARATOR = BUILDER_INTEGER.handle(PROP_GET_COMPARATOR, "redstone");
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
+            @Override
+            public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                return dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
+            }
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
+            @Override
+            public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                return dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock().getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
+            }
+        };
 
-    // --- Inventory ---
-    public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_INVENTORY_SLOTID =
-            new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid.name");
-    public static final IAspectProperties PROPERTIES_INVENTORY = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
-            PROP_INVENTORY_SLOTID
-    ));
-    static {
-        PROPERTIES_INVENTORY.setValue(PROP_INVENTORY_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
+                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "redstone");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "redstone");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
+                BUILDER_INTEGER_COMPARATOR = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_COMPARATOR, "redstone");
+
     }
 
-    public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IInventory> PROP_GET_INVENTORY = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IInventory>() {
-        @Override
-        public IInventory getOutput(Pair<PartTarget, IAspectProperties> input) {
-            DimPos dimPos = input.getLeft().getTarget().getPos();
-            return TileHelpers.getSafeTile(dimPos, IInventory.class);
+    public static final class Inventory {
+
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_SLOTID =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid.name");
+        public static final IAspectProperties PROPERTIES = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+                PROPERTY_SLOTID
+        ));
+        static {
+            PROPERTIES.setValue(PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         }
-    };
-    public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_INVENTORY_SLOT = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack>() {
-        @Override
-        public ItemStack getOutput(Pair<PartTarget, IAspectProperties> input) {
-            IInventory inventory = TileHelpers.getSafeTile(input.getLeft().getTarget().getPos(), IInventory.class);
-            int slotId = input.getRight().getValue(PROP_INVENTORY_SLOTID).getRawValue();
-            if(inventory != null && slotId >= 0 && slotId < inventory.getSizeInventory()) {
-                return inventory.getStackInSlot(slotId);
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IInventory> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IInventory>() {
+            @Override
+            public IInventory getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                return TileHelpers.getSafeTile(dimPos, IInventory.class);
             }
-            return null;
-        }
-    };
-    public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_INVENTORY_LIST = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
-        @Override
-        public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
-            return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedInventory(input.getLeft().getTarget().getPos()));
-        }
-    };
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack>() {
+            @Override
+            public ItemStack getOutput(Pair<PartTarget, IAspectProperties> input) {
+                IInventory inventory = TileHelpers.getSafeTile(input.getLeft().getTarget().getPos(), IInventory.class);
+                int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
+                if(inventory != null && slotId >= 0 && slotId < inventory.getSizeInventory()) {
+                    return inventory.getStackInSlot(slotId);
+                }
+                return null;
+            }
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
+            @Override
+            public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedInventory(input.getLeft().getTarget().getPos()));
+            }
+        };
 
-    public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IInventory>
-            BUILDER_BOOLEAN_INVENTORY = BUILDER_BOOLEAN.handle(PROP_GET_INVENTORY, "inventory");
-    public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IInventory>
-            BUILDER_INTEGER_INVENTORY = BUILDER_INTEGER.handle(PROP_GET_INVENTORY, "inventory");
-    public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
-            BUILDER_ITEMSTACK_INVENTORY = BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET_INVENTORY_SLOT, "inventory").withProperties(PROPERTIES_INVENTORY);
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IInventory>
+                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "inventory");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IInventory>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "inventory");
+        public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
+                BUILDER_ITEMSTACK = BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET_SLOT, "inventory").withProperties(PROPERTIES);
 
+    }
 
 }

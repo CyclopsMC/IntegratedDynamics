@@ -22,11 +22,11 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     public PartTypeRedstoneReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-                Aspects.READ_BOOLEAN_REDSTONE_LOW,
-                Aspects.READ_BOOLEAN_REDSTONE_NONLOW,
-                Aspects.READ_BOOLEAN_REDSTONE_HIGH,
-                Aspects.READ_INTEGER_REDSTONE_VALUE,
-                Aspects.READ_INTEGER_REDSTONE_COMPARATOR
+                Aspects.Read.Redstone.BOOLEAN_LOW,
+                Aspects.Read.Redstone.BOOLEAN_NONLOW,
+                Aspects.Read.Redstone.BOOLEAN_HIGH,
+                Aspects.Read.Redstone.INTEGER_VALUE,
+                Aspects.Read.Redstone.INTEGER_COMPARATOR
         ));
     }
 

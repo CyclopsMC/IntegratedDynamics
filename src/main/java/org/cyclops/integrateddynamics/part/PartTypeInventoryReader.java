@@ -16,13 +16,13 @@ public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryR
     public PartTypeInventoryReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-                Aspects.READ_BOOLEAN_INVENTORY_FULL,
-                Aspects.READ_BOOLEAN_INVENTORY_EMPTY,
-                Aspects.READ_BOOLEAN_INVENTORY_NONEMPTY,
-                Aspects.READ_BOOLEAN_INVENTORY_APPLICABLE,
-                Aspects.READ_INTEGER_INVENTORY_COUNT,
-                Aspects.READ_LIST_INVENTORY_ITEMSTACKS,
-                Aspects.READ_OBJECT_ITEM_STACK_INVENTORY_SLOT
+                Aspects.Read.Inventory.BOOLEAN_FULL,
+                Aspects.Read.Inventory.BOOLEAN_EMPTY,
+                Aspects.Read.Inventory.BOOLEAN_NONEMPTY,
+                Aspects.Read.Inventory.BOOLEAN_APPLICABLE,
+                Aspects.Read.Inventory.INTEGER_COUNT,
+                Aspects.Read.Inventory.LIST_ITEMSTACKS,
+                Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT
         ));
     }
 

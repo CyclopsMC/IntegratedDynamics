@@ -30,112 +30,121 @@ public class Aspects {
 
     public static void load() {}
 
+    public static final class Read {
+
+        public static final class Redstone {
+
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_LOW =
+                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                        @Override
+                        public Boolean getOutput(Integer input) {
+                            return input == 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "low").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONLOW =
+                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                        @Override
+                        public Boolean getOutput(Integer input) {
+                            return input > 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonlow").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_HIGH =
+                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                        @Override
+                        public Boolean getOutput(Integer input) {
+                            return input == 15;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "high").build();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_VALUE =
+                    AspectReadBuilders.Redstone.BUILDER_INTEGER.handle(AspectReadBuilders.PROP_GET_INTEGER, "value").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_COMPARATOR =
+                    AspectReadBuilders.Redstone.BUILDER_INTEGER_COMPARATOR.handle(AspectReadBuilders.PROP_GET_INTEGER, "comparator").build();
+
+        }
+
+        public static final class Inventory {
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_FULL =
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IInventory, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IInventory inventory) {
+                            if(inventory != null) {
+                                for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if (itemStack == null) {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "full").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_EMPTY =
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IInventory, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IInventory inventory) {
+                            if(inventory != null) {
+                                for(int i = 0; i < inventory.getSizeInventory(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if(itemStack != null) {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "empty").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONEMPTY =
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IInventory, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IInventory inventory) {
+                            if(inventory != null) {
+                                for(int i = 0; i < inventory.getSizeInventory(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if(itemStack != null) {
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonempty").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_APPLICABLE =
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IInventory, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IInventory inventory) {
+                            return inventory != null;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").build();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_COUNT =
+                    AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(new IAspectValuePropagator<IInventory, Integer>() {
+                        @Override
+                        public Integer getOutput(IInventory inventory) {
+                            int count = 0;
+                            if(inventory != null) {
+                                for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if (itemStack != null) {
+                                        count += itemStack.stackSize;
+                                    }
+                                }
+                            }
+                            return count;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "count").build();
+
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ITEMSTACKS =
+                    AspectReadBuilders.BUILDER_LIST.appendKind("inventory").handle(AspectReadBuilders.Inventory.PROP_GET_LIST, "itemstacks").build();
+
+            public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> OBJECT_ITEM_STACK_SLOT =
+                    AspectReadBuilders.Inventory.BUILDER_ITEMSTACK.handle(AspectReadBuilders.PROP_GET_ITEMSTACK).build();
+        }
+
+    }
+
     // --------------- Read ---------------
-    // --- Redstone ---
-
-    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_REDSTONE_LOW =
-            AspectReadBuilders.BUILDER_BOOLEAN_REDSTONE.handle(new IAspectValuePropagator<Integer, Boolean>() {
-                @Override
-                public Boolean getOutput(Integer input) {
-                    return input == 0;
-                }
-            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "low").build();
-    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_REDSTONE_NONLOW =
-            AspectReadBuilders.BUILDER_BOOLEAN_REDSTONE.handle(new IAspectValuePropagator<Integer, Boolean>() {
-                @Override
-                public Boolean getOutput(Integer input) {
-                    return input > 0;
-                }
-            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonlow").build();
-    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_REDSTONE_HIGH =
-            AspectReadBuilders.BUILDER_BOOLEAN_REDSTONE.handle(new IAspectValuePropagator<Integer, Boolean>() {
-                @Override
-                public Boolean getOutput(Integer input) {
-                    return input == 15;
-                }
-            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "high").build();
-
-    public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> READ_INTEGER_REDSTONE_VALUE =
-            AspectReadBuilders.BUILDER_INTEGER_REDSTONE.handle(AspectReadBuilders.PROP_GET_INTEGER, "value").build();
-    public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> READ_INTEGER_REDSTONE_COMPARATOR =
-            AspectReadBuilders.BUILDER_INTEGER_COMPARATOR.handle(AspectReadBuilders.PROP_GET_INTEGER, "comparator").build();
-
-    // --- Inventory ---
-    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_INVENTORY_FULL =
-            AspectReadBuilders.BUILDER_BOOLEAN_INVENTORY.handle(new IAspectValuePropagator<IInventory, Boolean>() {
-                @Override
-                public Boolean getOutput(IInventory inventory) {
-                    if(inventory != null) {
-                        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                            ItemStack itemStack = inventory.getStackInSlot(i);
-                            if (itemStack == null) {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                }
-            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "full").build();
-    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_INVENTORY_EMPTY =
-            AspectReadBuilders.BUILDER_BOOLEAN_INVENTORY.handle(new IAspectValuePropagator<IInventory, Boolean>() {
-                @Override
-                public Boolean getOutput(IInventory inventory) {
-                    if(inventory != null) {
-                        for(int i = 0; i < inventory.getSizeInventory(); i++) {
-                            ItemStack itemStack = inventory.getStackInSlot(i);
-                            if(itemStack != null) {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                }
-            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "empty").build();
-    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_INVENTORY_NONEMPTY =
-            AspectReadBuilders.BUILDER_BOOLEAN_INVENTORY.handle(new IAspectValuePropagator<IInventory, Boolean>() {
-                @Override
-                public Boolean getOutput(IInventory inventory) {
-                    if(inventory != null) {
-                        for(int i = 0; i < inventory.getSizeInventory(); i++) {
-                            ItemStack itemStack = inventory.getStackInSlot(i);
-                            if(itemStack != null) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonempty").build();
-    public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> READ_BOOLEAN_INVENTORY_APPLICABLE =
-            AspectReadBuilders.BUILDER_BOOLEAN_INVENTORY.handle(new IAspectValuePropagator<IInventory, Boolean>() {
-                @Override
-                public Boolean getOutput(IInventory inventory) {
-                    return inventory != null;
-                }
-            }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").build();
-
-    public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> READ_INTEGER_INVENTORY_COUNT =
-            AspectReadBuilders.BUILDER_INTEGER_INVENTORY.handle(new IAspectValuePropagator<IInventory, Integer>() {
-                @Override
-                public Integer getOutput(IInventory inventory) {
-                    int count = 0;
-                    if(inventory != null) {
-                        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                            ItemStack itemStack = inventory.getStackInSlot(i);
-                            if (itemStack != null) {
-                                count += itemStack.stackSize;
-                            }
-                        }
-                    }
-                    return count;
-                }
-            }).handle(AspectReadBuilders.PROP_GET_INTEGER, "count").build();
-
-    public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> READ_LIST_INVENTORY_ITEMSTACKS =
-            AspectReadBuilders.BUILDER_LIST.appendKind("inventory").handle(AspectReadBuilders.PROP_GET_INVENTORY_LIST, "itemstacks").build();
-
-    public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> READ_OBJECT_ITEM_STACK_INVENTORY_SLOT =
-            AspectReadBuilders.BUILDER_ITEMSTACK_INVENTORY.handle(AspectReadBuilders.PROP_GET_ITEMSTACK).build();
+    // TODO: remain all to inner static classes
 
     // --- World ---
     public static final AspectReadBooleanWorldBlock READ_BOOLEAN_WORLD_BLOCK = new AspectReadBooleanWorldBlock();
