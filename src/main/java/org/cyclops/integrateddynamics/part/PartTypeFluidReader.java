@@ -16,24 +16,24 @@ public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, P
     public PartTypeFluidReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-                Aspects.READ_BOOLEAN_FLUID_FULL,
-                Aspects.READ_BOOLEAN_FLUID_EMPTY,
-                Aspects.READ_BOOLEAN_FLUID_NONEMPTY,
-                Aspects.READ_BOOLEAN_FLUID_APPLICABLE,
-                Aspects.READ_BOOLEAN_FLUID_GASEOUS,
-                Aspects.READ_INTEGER_FLUID_AMOUNT,
-                Aspects.READ_INTEGER_FLUID_AMOUNTTOTAL,
-                Aspects.READ_INTEGER_FLUID_CAPACITY,
-                Aspects.READ_INTEGER_FLUID_CAPACITYTOTAL,
-                Aspects.READ_INTEGER_FLUID_TANKS,
-                Aspects.READ_INTEGER_FLUID_DENSITY,
-                Aspects.READ_INTEGER_FLUID_LUMINOSITY,
-                Aspects.READ_INTEGER_FLUID_TEMPERATURE,
-                Aspects.READ_INTEGER_FLUID_VISCOSITY,
-                Aspects.READ_DOUBLE_FLUID_FILLRATIO,
-                Aspects.READ_STRING_FLUID_NAME,
-                Aspects.READ_STRING_FLUID_RARITY,
-                Aspects.READ_BLOCK_FLUID_BLOCK
+                Aspects.Read.Fluid.BOOLEAN_FULL,
+                Aspects.Read.Fluid.BOOLEAN_EMPTY,
+                Aspects.Read.Fluid.BOOLEAN_NONEMPTY,
+                Aspects.Read.Fluid.BOOLEAN_APPLICABLE,
+                Aspects.Read.Fluid.BOOLEAN_GASEOUS,
+                Aspects.Read.Fluid.INTEGER_AMOUNT,
+                Aspects.Read.Fluid.INTEGER_AMOUNTTOTAL,
+                Aspects.Read.Fluid.INTEGER_CAPACITY,
+                Aspects.Read.Fluid.INTEGER_CAPACITYTOTAL,
+                Aspects.Read.Fluid.INTEGER_TANKS,
+                Aspects.Read.Fluid.INTEGER_DENSITY,
+                Aspects.Read.Fluid.INTEGER_LUMINOSITY,
+                Aspects.Read.Fluid.INTEGER_TEMPERATURE,
+                Aspects.Read.Fluid.INTEGER_VISCOSITY,
+                Aspects.Read.Fluid.DOUBLE_FILLRATIO,
+                Aspects.Read.Fluid.STRING_NAME,
+                Aspects.Read.Fluid.STRING_RARITY,
+                Aspects.Read.Fluid.BLOCK
         ));
     }
 
