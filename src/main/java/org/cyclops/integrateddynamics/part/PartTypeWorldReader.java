@@ -16,26 +16,26 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
     public PartTypeWorldReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-                Aspects.READ_BOOLEAN_WORLD_BLOCK,
-                Aspects.READ_BOOLEAN_WORLD_WEATHER_CLEAR,
-                Aspects.READ_BOOLEAN_WORLD_WEATHER_RAINING,
-                Aspects.READ_BOOLEAN_WORLD_WEATHER_THUNDER,
-                Aspects.READ_BOOLEAN_WORLD_ISDAY,
-                Aspects.READ_BOOLEAN_WORLD_ISNIGHT,
-                Aspects.READ_INTEGER_WORLD_RAINCOUNTDOWN,
-                Aspects.READ_INTEGER_WORLD_TICKTIME,
-                Aspects.READ_INTEGER_WORLD_DAYTIME,
-                Aspects.READ_INTEGER_WORLD_LIGHT_LEVEL,
-                Aspects.READ_INTEGER_WORLD_PLAYERCOUNT,
-                Aspects.READ_INTEGER_WORLD_DIMENSION,
-                Aspects.READ_INTEGER_WORLD_POSX,
-                Aspects.READ_INTEGER_WORLD_POSY,
-                Aspects.READ_INTEGER_WORLD_POSZ,
-                Aspects.READ_LONG_WORLD_TIME,
-                Aspects.READ_LONG_WORLD_TOTALTIME,
-                Aspects.READ_STRING_WORLD_NAME,
-                Aspects.READ_OBJECT_BLOCK_WORLD_BLOCK,
-                Aspects.READ_LIST_WORLD_ENTITIES
+                Aspects.Read.World.BOOLEAN_BLOCK,
+                Aspects.Read.World.BOOLEAN_WEATHER_CLEAR,
+                Aspects.Read.World.BOOLEAN_WEATHER_RAINING,
+                Aspects.Read.World.BOOLEAN_WEATHER_THUNDER,
+                Aspects.Read.World.BOOLEAN_ISDAY,
+                Aspects.Read.World.BOOLEAN_ISNIGHT,
+                Aspects.Read.World.INTEGER_RAINCOUNTDOWN,
+                Aspects.Read.World.INTEGER_TICKTIME,
+                Aspects.Read.World.INTEGER_DAYTIME,
+                Aspects.Read.World.INTEGER_LIGHTLEVEL,
+                Aspects.Read.World.INTEGER_PLAYERCOUNT,
+                Aspects.Read.World.INTEGER_DIMENSION,
+                Aspects.Read.World.INTEGER_POSX,
+                Aspects.Read.World.INTEGER_POSY,
+                Aspects.Read.World.INTEGER_POSZ,
+                Aspects.Read.World.LONG_TIME,
+                Aspects.Read.World.LONG_TOTALTIME,
+                Aspects.Read.World.STRING_NAME,
+                Aspects.Read.World.BLOCK,
+                Aspects.Read.World.LIST_ENTITIES
         ));
     }
 

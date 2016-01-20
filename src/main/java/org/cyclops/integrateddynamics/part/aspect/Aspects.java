@@ -1,14 +1,24 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.math.DoubleMath;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EntitySelectors;
+import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.read.fluid.*;
@@ -16,9 +26,11 @@ import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadInteg
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftRandom;
 import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftTicktime;
 import org.cyclops.integrateddynamics.part.aspect.read.network.*;
-import org.cyclops.integrateddynamics.part.aspect.read.world.*;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteIntegerRedstone;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Collection of all aspects.
@@ -139,39 +151,172 @@ public class Aspects {
 
             public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> OBJECT_ITEM_STACK_SLOT =
                     AspectReadBuilders.Inventory.BUILDER_ITEMSTACK.handle(AspectReadBuilders.PROP_GET_ITEMSTACK).build();
+
+        }
+
+        public static final class World {
+
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_BLOCK =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<DimPos, Boolean>() {
+                        @Override
+                        public Boolean getOutput(DimPos dimPos) {
+                            Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
+                            return block != Blocks.air;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_CLEAR =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return !world.isRaining();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("clear").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_RAINING =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return world.isRaining();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("raining").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_THUNDER =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return world.isThundering();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("thunder").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISDAY =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return MinecraftHelpers.isDay(world);
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isday").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISNIGHT =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return !MinecraftHelpers.isDay(world);
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isnight").build();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RAINCOUNTDOWN =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.world.World world) {
+                            return world.getWorldInfo().getRainTime();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "raincountdown").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.world.World world) {
+                            return (int) DoubleMath.mean(MinecraftServer.getServer().worldTickTimes.get(world.provider.getDimensionId()));
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.world.World world) {
+                            return (int) world.getWorldTime() % MinecraftHelpers.MINECRAFT_DAY;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "daytime").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHTLEVEL =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(new IAspectValuePropagator<DimPos, Integer>() {
+                        @Override
+                        public Integer getOutput(DimPos dimPos) {
+                            return dimPos.getWorld().getLight(dimPos.getBlockPos());
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "lightlevel").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLAYERCOUNT =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.world.World world) {
+                            return world.playerEntities.size();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "playercount").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DIMENSION =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.world.World world) {
+                            return world.provider.getDimensionId();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "dimension").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSX =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
+                        @Override
+                        public Integer getOutput(BlockPos pos) {
+                            return pos.getX();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "posx").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSY =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
+                        @Override
+                        public Integer getOutput(BlockPos pos) {
+                            return pos.getY();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "posy").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSZ =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
+                        @Override
+                        public Integer getOutput(BlockPos pos) {
+                            return pos.getZ();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "posz").build();
+
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
+                    AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Long>() {
+                        @Override
+                        public Long getOutput(net.minecraft.world.World world) {
+                            return world.getWorldTime();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_LONG, "time").build();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TOTALTIME =
+                    AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Long>() {
+                        @Override
+                        public Long getOutput(net.minecraft.world.World world) {
+                            return world.getTotalWorldTime();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_LONG, "totaltime").build();
+
+            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_NAME =
+                    AspectReadBuilders.World.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, String>() {
+                        @Override
+                        public String getOutput(net.minecraft.world.World world) {
+                            return world.getWorldInfo().getWorldName();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_STRING, "worldname").build();
+
+            public static final IAspectRead<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock> BLOCK =
+                    AspectReadBuilders.World.BUILDER_BLOCK.handle(new IAspectValuePropagator<DimPos, IBlockState>() {
+                        @Override
+                        public IBlockState getOutput(DimPos dimPos) {
+                            return dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BLOCK).build();
+
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ENTITIES =
+                    AspectReadBuilders.World.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
+                        @Override
+                        public ValueTypeList.ValueList getOutput(DimPos dimPos) {
+                            List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.selectAnything);
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities, new Function<Entity, ValueObjectTypeEntity.ValueEntity>() {
+                                @Nullable
+                                @Override
+                                public ValueObjectTypeEntity.ValueEntity apply(Entity input) {
+                                    return ValueObjectTypeEntity.ValueEntity.of(input);
+                                }
+                            }));
+                        }
+                    }).appendKind("entities").build();
+
         }
 
     }
 
     // --------------- Read ---------------
     // TODO: remain all to inner static classes
-
-    // --- World ---
-    public static final AspectReadBooleanWorldBlock READ_BOOLEAN_WORLD_BLOCK = new AspectReadBooleanWorldBlock();
-    public static final AspectReadBooleanWorldWeatherClear READ_BOOLEAN_WORLD_WEATHER_CLEAR = new AspectReadBooleanWorldWeatherClear();
-    public static final AspectReadBooleanWorldWeatherRaining READ_BOOLEAN_WORLD_WEATHER_RAINING = new AspectReadBooleanWorldWeatherRaining();
-    public static final AspectReadBooleanWorldWeatherThunder READ_BOOLEAN_WORLD_WEATHER_THUNDER = new AspectReadBooleanWorldWeatherThunder();
-    public static final AspectReadBooleanWorldIsDay READ_BOOLEAN_WORLD_ISDAY = new AspectReadBooleanWorldIsDay();
-    public static final AspectReadBooleanWorldIsNight READ_BOOLEAN_WORLD_ISNIGHT = new AspectReadBooleanWorldIsNight();
-
-    public static final AspectReadIntegerWorldRainCountdown READ_INTEGER_WORLD_RAINCOUNTDOWN = new AspectReadIntegerWorldRainCountdown();
-    public static final AspectReadIntegerWorldTicktime READ_INTEGER_WORLD_TICKTIME = new AspectReadIntegerWorldTicktime();
-    public static final AspectReadIntegerWorldDayTime READ_INTEGER_WORLD_DAYTIME = new AspectReadIntegerWorldDayTime();
-    public static final AspectReadIntegerWorldLightLevel READ_INTEGER_WORLD_LIGHT_LEVEL = new AspectReadIntegerWorldLightLevel();
-    public static final AspectReadIntegerWorldPlayerCount READ_INTEGER_WORLD_PLAYERCOUNT = new AspectReadIntegerWorldPlayerCount();
-    public static final AspectReadIntegerWorldDimension READ_INTEGER_WORLD_DIMENSION = new AspectReadIntegerWorldDimension();
-    public static final AspectReadIntegerWorldPosX READ_INTEGER_WORLD_POSX = new AspectReadIntegerWorldPosX();
-    public static final AspectReadIntegerWorldPosY READ_INTEGER_WORLD_POSY = new AspectReadIntegerWorldPosY();
-    public static final AspectReadIntegerWorldPosZ READ_INTEGER_WORLD_POSZ = new AspectReadIntegerWorldPosZ();
-
-    public static final AspectReadLongWorldTime READ_LONG_WORLD_TIME = new AspectReadLongWorldTime();
-    public static final AspectReadLongWorldTotalTime READ_LONG_WORLD_TOTALTIME = new AspectReadLongWorldTotalTime();
-
-    public static final AspectReadStringWorldName READ_STRING_WORLD_NAME = new AspectReadStringWorldName();
-
-    public static final AspectReadObjectBlockWorld READ_OBJECT_BLOCK_WORLD_BLOCK = new AspectReadObjectBlockWorld();
-
-    public static final AspectReadListWorldEntities READ_LIST_WORLD_ENTITIES = new AspectReadListWorldEntities();
 
     // --- Fluid ---
     public static final AspectReadBooleanFluidFull READ_BOOLEAN_FLUID_FULL = new AspectReadBooleanFluidFull();
