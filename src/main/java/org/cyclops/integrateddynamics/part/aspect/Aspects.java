@@ -550,9 +550,15 @@ public class Aspects {
 
     }
 
-    // --------------- Write ---------------
-    public static final AspectWriteBooleanRedstone WRITE_BOOLEAN_REDSTONE = new AspectWriteBooleanRedstone();
+    public static final class Write {
 
-    public static final AspectWriteIntegerRedstone WRITE_INTEGER_REDSTONE = new AspectWriteIntegerRedstone();
+        public static final class Redstone {
+
+            public static final AspectWriteBooleanRedstone BOOLEAN = new AspectWriteBooleanRedstone();
+            public static final AspectWriteIntegerRedstone INTEGER = new AspectWriteIntegerRedstone();
+
+        }
+
+    }
 
 }
