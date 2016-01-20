@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
 import com.google.common.collect.Sets;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -11,6 +12,8 @@ import net.minecraftforge.fluids.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
@@ -260,6 +263,41 @@ public class AspectReadBuilders {
                 BUILDER_STRING = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET, "fluid");
         public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, FluidTankInfo>
                 BUILDER_STRING_ACTIVATABLE = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
+
+    }
+
+    public static final class Minecraft {
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, net.minecraft.client.Minecraft> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, net.minecraft.client.Minecraft>() {
+            @Override
+            public net.minecraft.client.Minecraft getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return net.minecraft.client.Minecraft.getMinecraft();
+            }
+        };
+
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, net.minecraft.client.Minecraft>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "minecraft");
+
+    }
+
+    public static final class Network {
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork> PROP_GET_NETWORK = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork>() {
+            @Override
+            public INetwork getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
+                if(block instanceof INetworkCarrier) {
+                    return((INetworkCarrier) block).getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
+                }
+                return null;
+            }
+        };
+
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, INetwork>
+                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_NETWORK, "network");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, INetwork>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_NETWORK, "network");
 
     }
 

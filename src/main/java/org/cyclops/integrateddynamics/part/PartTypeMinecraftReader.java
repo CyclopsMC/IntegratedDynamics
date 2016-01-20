@@ -16,9 +16,9 @@ public class PartTypeMinecraftReader extends PartTypeReadBase<PartTypeMinecraftR
     public PartTypeMinecraftReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-                Aspects.READ_INTEGER_MINECRAFT_RANDOM,
-                Aspects.READ_INTEGER_MINECRAFT_PLAYERCOUNT,
-                Aspects.READ_INTEGER_MINECRAFT_TICKTIME
+                Aspects.Read.Minecraft.INTEGER_RANDOM,
+                Aspects.Read.Minecraft.INTEGER_PLAYERCOUNT,
+                Aspects.Read.Minecraft.INTEGER_TICKTIME
         ));
     }
 

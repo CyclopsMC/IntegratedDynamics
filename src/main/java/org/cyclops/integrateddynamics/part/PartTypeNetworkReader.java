@@ -16,11 +16,11 @@ public class PartTypeNetworkReader extends PartTypeReadBase<PartTypeNetworkReade
     public PartTypeNetworkReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-                Aspects.READ_BOOLEAN_NETWORK_APPLICABLE,
-                Aspects.READ_INTEGER_NETWORK_ELEMENT_COUNT,
-                Aspects.READ_INTEGER_NETWORK_ENERGY_BATTERY_COUNT,
-                Aspects.READ_INTEGER_NETWORK_ENERGY_STORED,
-                Aspects.READ_INTEGER_NETWORK_ENERGY_MAX
+                Aspects.Read.Network.BOOLEAN_APPLICABLE,
+                Aspects.Read.Network.INTEGER_ELEMENT_COUNT,
+                Aspects.Read.Network.INTEGER_ENERGY_BATTERY_COUNT,
+                Aspects.Read.Network.INTEGER_ENERGY_STORED,
+                Aspects.Read.Network.INTEGER_ENERGY_MAX
         ));
     }
 

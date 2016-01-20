@@ -18,20 +18,19 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
-import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftPlayerCount;
-import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftRandom;
-import org.cyclops.integrateddynamics.part.aspect.read.minecraft.AspectReadIntegerMinecraftTicktime;
-import org.cyclops.integrateddynamics.part.aspect.read.network.*;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteIntegerRedstone;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Collection of all aspects.
@@ -480,23 +479,76 @@ public class Aspects {
 
         }
 
+        public static final class Minecraft {
+
+            private static final Random RANDOM = new Random();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RANDOM =
+                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<net.minecraft.client.Minecraft, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.client.Minecraft minecraft) {
+                            return RANDOM.nextInt();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "random").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLAYERCOUNT =
+                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<net.minecraft.client.Minecraft, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.client.Minecraft minecraft) {
+                            return MinecraftServer.getServer().getCurrentPlayerCount();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "playercount").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
+                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<net.minecraft.client.Minecraft, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.client.Minecraft minecraft) {
+                            return (int) DoubleMath.mean(MinecraftServer.getServer().tickTimeArray);
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").build();
+
+        }
+
+        public static final class Network {
+
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_APPLICABLE =
+                    AspectReadBuilders.Network.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<INetwork, Boolean>() {
+                        @Override
+                        public Boolean getOutput(INetwork network) {
+                            return network != null;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").build();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ELEMENT_COUNT =
+                    AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
+                        @Override
+                        public Integer getOutput(INetwork network) {
+                            return network != null ? network.getElements().size() : 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "elementcount").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_BATTERY_COUNT =
+                    AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
+                        @Override
+                        public Integer getOutput(INetwork network) {
+                            return network != null ? (network instanceof IEnergyNetwork ? ((IEnergyNetwork) network).getEnergyBatteries().size() : 0) : 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("batterycount").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_STORED =
+                    AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
+                        @Override
+                        public Integer getOutput(INetwork network) {
+                            return network != null ? (network instanceof IEnergyNetwork ? ((IEnergyNetwork) network).getStoredEnergy() : 0) : 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("stored").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_MAX =
+                    AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
+                        @Override
+                        public Integer getOutput(INetwork network) {
+                            return network != null ? (network instanceof IEnergyNetwork ? ((IEnergyNetwork) network).getMaxStoredEnergy() : 0) : 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("max").build();
+
+        }
+
     }
-
-    // --------------- Read ---------------
-    // TODO: remain all to inner static classes
-
-    // --- Minecraft ---
-    public static final AspectReadIntegerMinecraftRandom READ_INTEGER_MINECRAFT_RANDOM = new AspectReadIntegerMinecraftRandom();
-    public static final AspectReadIntegerMinecraftPlayerCount READ_INTEGER_MINECRAFT_PLAYERCOUNT = new AspectReadIntegerMinecraftPlayerCount();
-    public static final AspectReadIntegerMinecraftTicktime READ_INTEGER_MINECRAFT_TICKTIME = new AspectReadIntegerMinecraftTicktime();
-
-    // --- Network ---
-    public static final AspectReadBooleanNetworkApplicable READ_BOOLEAN_NETWORK_APPLICABLE = new AspectReadBooleanNetworkApplicable();
-
-    public static final AspectReadIntegerNetworkElementCount READ_INTEGER_NETWORK_ELEMENT_COUNT = new AspectReadIntegerNetworkElementCount();
-    public static final AspectReadIntegerNetworkEnergyBatteryCount READ_INTEGER_NETWORK_ENERGY_BATTERY_COUNT = new AspectReadIntegerNetworkEnergyBatteryCount();
-    public static final AspectReadIntegerNetworkEnergyStored READ_INTEGER_NETWORK_ENERGY_STORED = new AspectReadIntegerNetworkEnergyStored();
-    public static final AspectReadIntegerNetworkEnergyMax READ_INTEGER_NETWORK_ENERGY_MAX = new AspectReadIntegerNetworkEnergyMax();
 
     // --------------- Write ---------------
     public static final AspectWriteBooleanRedstone WRITE_BOOLEAN_REDSTONE = new AspectWriteBooleanRedstone();
