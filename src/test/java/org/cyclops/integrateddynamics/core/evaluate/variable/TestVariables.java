@@ -127,7 +127,7 @@ public class TestVariables {
         assertThat("serializing string list",
                 l2.getType().serialize(l2.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.string.name\\;a\\;b"));
         assertThat("serializing nested list",
-                l2.getType().serialize(l2_2.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.object.list.name\\;materialized\\\\;valuetype.valuetypes.integrateddynamics.string.name\\\\\\;a\\\\\\;b\\;materialized\\\\;valuetype.valuetypes.integrateddynamics.string.name\\\\\\;c\\\\\\;d"));
+                l2.getType().serialize(l2_2.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.list.name\\;materialized\\\\;valuetype.valuetypes.integrateddynamics.string.name\\\\\\;a\\\\\\;b\\;materialized\\\\;valuetype.valuetypes.integrateddynamics.string.name\\\\\\;c\\\\\\;d"));
 
         assertThat("deserializing empty list",
                 l0.getType().deserialize(l0.getType().serialize(l0.getValue())), is(l0.getValue()));
