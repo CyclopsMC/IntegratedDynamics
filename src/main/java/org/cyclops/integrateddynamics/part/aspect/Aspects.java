@@ -7,7 +7,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
@@ -15,6 +14,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EntitySelectors;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.items.IItemHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -77,11 +77,11 @@ public class Aspects {
 
         public static final class Inventory {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_FULL =
-                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IInventory, Boolean>() {
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
                         @Override
-                        public Boolean getOutput(IInventory inventory) {
+                        public Boolean getOutput(IItemHandler inventory) {
                             if(inventory != null) {
-                                for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                                for (int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
                                     if (itemStack == null) {
                                         return false;
@@ -92,11 +92,11 @@ public class Aspects {
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "full").build();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_EMPTY =
-                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IInventory, Boolean>() {
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
                         @Override
-                        public Boolean getOutput(IInventory inventory) {
+                        public Boolean getOutput(IItemHandler inventory) {
                             if(inventory != null) {
-                                for(int i = 0; i < inventory.getSizeInventory(); i++) {
+                                for(int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
                                     if(itemStack != null) {
                                         return false;
@@ -107,11 +107,11 @@ public class Aspects {
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "empty").build();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONEMPTY =
-                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IInventory, Boolean>() {
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
                         @Override
-                        public Boolean getOutput(IInventory inventory) {
+                        public Boolean getOutput(IItemHandler inventory) {
                             if(inventory != null) {
-                                for(int i = 0; i < inventory.getSizeInventory(); i++) {
+                                for(int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
                                     if(itemStack != null) {
                                         return true;
@@ -122,20 +122,20 @@ public class Aspects {
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonempty").build();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_APPLICABLE =
-                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IInventory, Boolean>() {
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
                         @Override
-                        public Boolean getOutput(IInventory inventory) {
+                        public Boolean getOutput(IItemHandler inventory) {
                             return inventory != null;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").build();
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_COUNT =
-                    AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(new IAspectValuePropagator<IInventory, Integer>() {
+                    AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(new IAspectValuePropagator<IItemHandler, Integer>() {
                         @Override
-                        public Integer getOutput(IInventory inventory) {
+                        public Integer getOutput(IItemHandler inventory) {
                             int count = 0;
                             if(inventory != null) {
-                                for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                                for (int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
                                     if (itemStack != null) {
                                         count += itemStack.stackSize;

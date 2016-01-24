@@ -3,17 +3,19 @@ package org.cyclops.integrateddynamics.part.aspect.read;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
@@ -129,20 +131,21 @@ public class AspectReadBuilders {
             PROPERTIES.setValue(PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         }
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IInventory> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IInventory>() {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler>() {
             @Override
-            public IInventory getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                return TileHelpers.getSafeTile(dimPos, IInventory.class);
+            public IItemHandler getOutput(Pair<PartTarget, IAspectProperties> input) {
+                PartPos target = input.getLeft().getTarget();
+                return TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
             }
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack>() {
             @Override
             public ItemStack getOutput(Pair<PartTarget, IAspectProperties> input) {
-                IInventory inventory = TileHelpers.getSafeTile(input.getLeft().getTarget().getPos(), IInventory.class);
+                PartPos target = input.getLeft().getTarget();
+                IItemHandler itemHandler = TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
                 int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
-                if(inventory != null && slotId >= 0 && slotId < inventory.getSizeInventory()) {
-                    return inventory.getStackInSlot(slotId);
+                if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
+                    return itemHandler.getStackInSlot(slotId);
                 }
                 return null;
             }
@@ -154,9 +157,9 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IInventory>
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IItemHandler>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "inventory");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IInventory>
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IItemHandler>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "inventory");
         public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
                 BUILDER_ITEMSTACK = BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET_SLOT, "inventory").withProperties(PROPERTIES);
