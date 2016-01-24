@@ -18,10 +18,10 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.part.aspect.build.AspectReadBuilder;
+import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
-import org.cyclops.integrateddynamics.part.aspect.build.AspectReadBuilder;
-import org.cyclops.integrateddynamics.part.aspect.build.IAspectValuePropagator;
 
 /**
  * Collection of aspect read builders and value propagators.

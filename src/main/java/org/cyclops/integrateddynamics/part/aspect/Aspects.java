@@ -23,7 +23,7 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.part.aspect.build.IAspectValuePropagator;
+import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteIntegerRedstone;

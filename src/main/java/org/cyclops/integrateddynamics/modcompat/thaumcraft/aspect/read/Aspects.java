@@ -8,8 +8,8 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
+import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueTypeListProxyPositionedAspectContainer;
-import org.cyclops.integrateddynamics.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import thaumcraft.api.aspects.IAspectContainer;
 

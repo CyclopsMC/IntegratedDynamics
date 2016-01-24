@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.part.aspect.build;
+package org.cyclops.integrateddynamics.core.part.aspect.build;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
