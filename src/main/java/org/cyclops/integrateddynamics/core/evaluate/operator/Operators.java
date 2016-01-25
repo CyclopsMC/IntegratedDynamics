@@ -455,35 +455,38 @@ public final class Operators {
     /**
      * Double round operator with one input double and one output integers.
      */
-    public static final DoubleOperator DOUBLE_ROUND = REGISTRY.register(new DoubleOperator("|| ||", "round", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of((int) Math.round(a));
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator DOUBLE_ROUND = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("|| ||").operatorName("round")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of((int) Math.round(a.getRawValue()));
+                }
+            }).build());
 
     /**
      * Double ceil operator with one input double and one output integers.
      */
-    public static final DoubleOperator DOUBLE_CEIL = REGISTRY.register(new DoubleOperator("⌈ ⌉", "ceil", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of((int) Math.ceil(a));
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator DOUBLE_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of((int) Math.ceil(a.getRawValue()));
+                }
+            }).build());
 
     /**
      * Double floor operator with one input double and one output integers.
      */
-    public static final DoubleOperator DOUBLE_FLOOR = REGISTRY.register(new DoubleOperator("⌊ ⌋", "floor", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of((int) Math.floor(a));
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator DOUBLE_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of((int) Math.floor(a.getRawValue()));
+                }
+            }).build());
 
     /**
      * ----------------------------------- LIST OPERATORS -----------------------------------

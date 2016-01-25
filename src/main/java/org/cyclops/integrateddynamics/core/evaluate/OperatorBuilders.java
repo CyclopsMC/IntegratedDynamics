@@ -53,4 +53,8 @@ public class OperatorBuilders {
     public static final OperatorBuilder STRING_1_PREFIX = STRING.inputTypes(1, ValueTypes.STRING).renderPattern(IConfigRenderPattern.PREFIX_1);
     public static final OperatorBuilder STRING_2 = STRING.inputTypes(2, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX);
 
+    // --------------- Double builders ---------------
+    public static final OperatorBuilder DOUBLE = OperatorBuilder.forType(ValueTypes.DOUBLE).appendKind("double");
+    public static final OperatorBuilder DOUBLE_1_PREFIX = DOUBLE.inputTypes(1, ValueTypes.DOUBLE).renderPattern(IConfigRenderPattern.PREFIX_1);
+
 }
