@@ -414,35 +414,39 @@ public final class Operators {
     /**
      * String length operator with one input string and one output integer.
      */
-    public static final StringOperator STRING_LENGTH = REGISTRY.register(new StringOperator("len", "length", new IValueType[]{ValueTypes.STRING}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            String a = ((ValueTypeString.ValueString) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a.length());
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator STRING_LENGTH = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX.symbol("len").operatorName("length")
+            .output(ValueTypes.INTEGER).function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue().length());
+                }
+            }).build());
 
     /**
      * String concat operator with two input strings and one output string.
      */
-    public static final StringOperator STRING_CONCAT = REGISTRY.register(new StringOperator("+", "concat", 2, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            String a = ((ValueTypeString.ValueString) variables[0].getValue()).getRawValue();
-            String b = ((ValueTypeString.ValueString) variables[1].getValue()).getRawValue();
-            return ValueTypeString.ValueString.of(a + b);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator STRING_CONCAT = REGISTRY.register(OperatorBuilders.STRING_2.symbol("+").operatorName("concat")
+            .output(ValueTypes.INTEGER).function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString a = variables.getValue(0);
+                    ValueTypeString.ValueString b = variables.getValue(1);
+                    return ValueTypeString.ValueString.of(a.getRawValue() + b.getRawValue());
+                }
+            }).build());
 
     /**
      * Get a name value type name.
      */
-    public static final StringOperator NAMED_NAME = REGISTRY.register(new StringOperator("name", "name", new IValueType[]{ValueTypes.CATEGORY_NAMED}, ValueTypes.STRING, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypeString.ValueString.of(ValueTypes.CATEGORY_NAMED.getName(variables[0]));
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator NAMED_NAME = REGISTRY.register(OperatorBuilders.STRING_2.symbol("name").operatorName("name")
+            .inputType(ValueTypes.CATEGORY_NAMED).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypeString.ValueString.of(ValueTypes.CATEGORY_NAMED.getName(variables.getVariables()[0]));
+                }
+            }).build());
 
     /**
      * ----------------------------------- DOUBLE OPERATORS -----------------------------------

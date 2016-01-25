@@ -48,4 +48,9 @@ public class OperatorBuilders {
     public static final OperatorBuilder BINARY_1_PREFIX = BINARY.inputTypes(1, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.PREFIX_1);
     public static final OperatorBuilder BINARY_2 = BINARY.inputTypes(2, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.INFIX);
 
+    // --------------- String builders ---------------
+    public static final OperatorBuilder STRING = OperatorBuilder.forType(ValueTypes.STRING).appendKind("string");
+    public static final OperatorBuilder STRING_1_PREFIX = STRING.inputTypes(1, ValueTypes.STRING).renderPattern(IConfigRenderPattern.PREFIX_1);
+    public static final OperatorBuilder STRING_2 = STRING.inputTypes(2, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX);
+
 }
