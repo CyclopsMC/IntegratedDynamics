@@ -104,64 +104,68 @@ public final class Operators {
     /**
      * Arithmetic ADD operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_ADDITION = REGISTRY.register(new ArithmeticOperator("+", "addition", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.add(variables[0], variables[1]);
-        }
-    }));
+    public static final IOperator ARITHMETIC_ADDITION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("+").operatorName("addition")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.add(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic MINUS operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(new ArithmeticOperator("-", "subtraction", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.subtract(variables[0], variables[1]);
-        }
-    }));
+    public static final IOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("-").operatorName("subtraction")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.subtract(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic MULTIPLY operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(new ArithmeticOperator("*", "multiplication", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.multiply(variables[0], variables[1]);
-        }
-    }));
+    public static final IOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("*").operatorName("multiplication")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.multiply(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic DIVIDE operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_DIVISION = REGISTRY.register(new ArithmeticOperator("/", "division", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.divide(variables[0], variables[1]);
-        }
-    }));
+    public static final IOperator ARITHMETIC_DIVISION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("/").operatorName("division")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.divide(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic MAX operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MAXIMUM = REGISTRY.register(new ArithmeticOperator("max", "maximum", new OperatorBase.IFunction() {
-
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.max(variables[0], variables[1]);
-        }
-    }, IConfigRenderPattern.PREFIX_2));
+    public static final IOperator ARITHMETIC_MAXIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("max").operatorName("maximum")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.max(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic MIN operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MINIMUM = REGISTRY.register(new ArithmeticOperator("min", "minimum", new OperatorBase.IFunction() {
-
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.min(variables[0], variables[1]);
-        }
-    }, IConfigRenderPattern.PREFIX_2));
+    public static final IOperator ARITHMETIC_MINIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("min").operatorName("minimum")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.min(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
 
 

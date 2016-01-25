@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 
@@ -28,9 +29,11 @@ public class OperatorBuilder {
     private final IConfigRenderPattern renderPattern;
     private final String modId;
     private final List<String> kinds;
+    private final IConditionalOutputTypeDeriver conditionalOutputTypeDeriver;
 
     protected OperatorBuilder(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
-                              OperatorBase.ISmartFunction function, IConfigRenderPattern renderPattern, String modId, List<String> kinds) {
+                              OperatorBase.ISmartFunction function, IConfigRenderPattern renderPattern, String modId,
+                              List<String> kinds, IConditionalOutputTypeDeriver conditionalOutputTypeDeriver) {
         this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
@@ -39,6 +42,7 @@ public class OperatorBuilder {
         this.renderPattern = renderPattern;
         this.modId = modId;
         this.kinds = kinds;
+        this.conditionalOutputTypeDeriver = conditionalOutputTypeDeriver;
     }
 
     /**
@@ -47,7 +51,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder output(IValueType outputType) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver);
     }
 
     /**
@@ -56,7 +61,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder symbol(String symbol) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver);
     }
 
     /**
@@ -65,7 +71,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder operatorName(String operatorName) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver);
     }
 
     /**
@@ -75,7 +82,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder symbolOperator(String symbolOperator) {
-        return new OperatorBuilder(symbolOperator, symbolOperator, inputTypes, outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbolOperator, symbolOperator, inputTypes, outputType, function, renderPattern,
+                modId, kinds, conditionalOutputTypeDeriver);
     }
 
     /**
@@ -84,7 +92,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder inputTypes(IValueType[] inputTypes) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver);
     }
 
     /**
@@ -94,7 +103,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder inputTypes(int length, IValueType defaultType) {
-        return new OperatorBuilder(symbol, operatorName, OperatorBase.constructInputVariables(length, defaultType), outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbol, operatorName, OperatorBase.constructInputVariables(length, defaultType),
+                outputType, function, renderPattern, modId, kinds, conditionalOutputTypeDeriver);
     }
 
     /**
@@ -112,7 +122,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder function(OperatorBase.ISmartFunction function) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver);
     }
 
     /**
@@ -121,7 +132,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder renderPattern(IConfigRenderPattern renderPattern) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver);
     }
 
     /**
@@ -130,7 +142,8 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder modId(String modId) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds);
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver);
     }
 
     protected static <T> List<T> join(List<T> list, T newElement) {
@@ -148,7 +161,19 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public OperatorBuilder appendKind(String kind) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, join(kinds, kind));
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+                join(kinds, kind), conditionalOutputTypeDeriver);
+    }
+
+    /**
+     * Set the conditional output type deriver.
+     * @param conditionalOutputTypeDeriver The output type deriver based on certain input.
+     *                                     This will be used for {@link IOperator#getConditionalOutputType(IVariable[])}.
+     * @return The builder instance.
+     */
+    public OperatorBuilder conditionalOutputTypeDeriver(IConditionalOutputTypeDeriver conditionalOutputTypeDeriver) {
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+                kinds, conditionalOutputTypeDeriver);
     }
 
     /**
@@ -165,13 +190,15 @@ public class OperatorBuilder {
      * @return The builder instance.
      */
     public static OperatorBuilder forType(IValueType<?> outputType) {
-        return new OperatorBuilder(null, null, null, outputType, null, null, Reference.MOD_ID, Collections.<String>emptyList());
+        return new OperatorBuilder(null, null, null, outputType, null, null, Reference.MOD_ID,
+                Collections.<String>emptyList(), null);
     }
 
     private static class Built extends OperatorBase {
 
         private final String modId;
         private final String unlocalizedType;
+        private final IConditionalOutputTypeDeriver conditionalOutputTypeDeriver;
 
         protected Built(OperatorBuilder operatorBuilder) {
             super(Objects.requireNonNull(operatorBuilder.symbol),
@@ -182,6 +209,7 @@ public class OperatorBuilder {
                     Objects.requireNonNull(operatorBuilder.renderPattern));
             this.modId = Objects.requireNonNull(operatorBuilder.modId);
             this.unlocalizedType = deriveUnlocalizedType(operatorBuilder);
+            this.conditionalOutputTypeDeriver = operatorBuilder.conditionalOutputTypeDeriver;
         }
 
         protected static String deriveUnlocalizedType(OperatorBuilder operatorBuilder) {
@@ -206,6 +234,19 @@ public class OperatorBuilder {
         protected String getUnlocalizedType() {
             return this.unlocalizedType;
         }
+
+        @Override
+        public IValueType getConditionalOutputType(IVariable[] input) {
+            return conditionalOutputTypeDeriver != null
+                    ? conditionalOutputTypeDeriver.getConditionalOutputType(input)
+                    : super.getConditionalOutputType(input);
+        }
+    }
+
+    public static interface IConditionalOutputTypeDeriver {
+
+        public IValueType getConditionalOutputType(IVariable[] input);
+
     }
 
 }
