@@ -22,6 +22,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 
@@ -54,43 +55,45 @@ public final class Operators {
     /**
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_AND = REGISTRY.register(new LogicalOperator("&&", "and", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
-            if (!a) {
-                return ValueTypeBoolean.ValueBoolean.of(false);
-            } else {
-                return variables[1].getValue();
-            }
-        }
-    }));
+    public static final IOperator LOGICAL_AND = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("&&").operatorName("and")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeBoolean.ValueBoolean a = variables.getValue(0);
+                    if (!a.getRawValue()) {
+                        return ValueTypeBoolean.ValueBoolean.of(false);
+                    } else {
+                        return variables.getValue(1);
+                    }
+                }
+            }).build());
 
     /**
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_OR = REGISTRY.register(new LogicalOperator("||", "or", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
-            if (a) {
-                return ValueTypeBoolean.ValueBoolean.of(true);
-            } else {
-                return variables[1].getValue();
-            }
-        }
-    }));
+    public static final IOperator LOGICAL_OR = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("||").operatorName("or")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeBoolean.ValueBoolean a = variables.getValue(0);
+                    if (a.getRawValue()) {
+                        return ValueTypeBoolean.ValueBoolean.of(true);
+                    } else {
+                        return variables.getValue(1);
+                    }
+                }
+            }).build());
 
     /**
      * Logical NOT operator with one input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_NOT = REGISTRY.register(new LogicalOperator("!", "not", 1, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(!a);
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator LOGICAL_NOT = REGISTRY.register(OperatorBuilders.LOGICAL_1.symbol("!").operatorName("not")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypeBoolean.ValueBoolean.of(!((ValueTypeBoolean.ValueBoolean) variables.getValue(0)).getRawValue());
+                }
+            }).build());
 
     /**
      * ----------------------------------- ARITHMETIC OPERATORS -----------------------------------
