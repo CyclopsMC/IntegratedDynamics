@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
+import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
@@ -22,7 +23,7 @@ public class OperatorBuilders {
     // --------------- Arithmetic builders ---------------
     public static final OperatorBuilder ARITHMETIC = OperatorBuilder.forType(ValueTypes.CATEGORY_NUMBER).appendKind("arithmetic").conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
         @Override
-        public IValueType getConditionalOutputType(IVariable[] input) {
+        public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
             IValueType[] original = ValueHelpers.from(input);
             IValueTypeNumber[] types = new IValueTypeNumber[original.length];
             for(int i = 0; i < original.length; i++) {
@@ -56,5 +57,9 @@ public class OperatorBuilders {
     // --------------- Double builders ---------------
     public static final OperatorBuilder DOUBLE = OperatorBuilder.forType(ValueTypes.DOUBLE).appendKind("double");
     public static final OperatorBuilder DOUBLE_1_PREFIX = DOUBLE.inputTypes(1, ValueTypes.DOUBLE).renderPattern(IConfigRenderPattern.PREFIX_1);
+
+    // --------------- List builders ---------------
+    public static final OperatorBuilder LIST = OperatorBuilder.forType(ValueTypes.LIST).appendKind("double");
+    public static final OperatorBuilder LIST_1_PREFIX = LIST.inputTypes(1, ValueTypes.LIST).renderPattern(IConfigRenderPattern.PREFIX_1);
 
 }

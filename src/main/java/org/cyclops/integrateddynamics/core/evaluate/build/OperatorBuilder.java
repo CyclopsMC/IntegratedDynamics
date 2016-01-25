@@ -254,7 +254,7 @@ public class OperatorBuilder {
         @Override
         public IValueType getConditionalOutputType(IVariable[] input) {
             return conditionalOutputTypeDeriver != null
-                    ? conditionalOutputTypeDeriver.getConditionalOutputType(input)
+                    ? conditionalOutputTypeDeriver.getConditionalOutputType(this, input)
                     : super.getConditionalOutputType(input);
         }
 
@@ -268,7 +268,7 @@ public class OperatorBuilder {
 
     public static interface IConditionalOutputTypeDeriver {
 
-        public IValueType getConditionalOutputType(IVariable[] input);
+        public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input);
 
     }
 

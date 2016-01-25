@@ -495,39 +495,43 @@ public final class Operators {
     /**
      * List operator with one input list and one output integer
      */
-    public static final ListOperator LIST_LENGTH = REGISTRY.register(new ListOperator("| |", "length", new IValueType[]{ValueTypes.LIST}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a.getLength());
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator LIST_LENGTH = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX.output(ValueTypes.INTEGER).symbol("| |").operatorName("length")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    return ValueTypeInteger.ValueInteger.of(a.getLength());
+                }
+            }).build());
 
     /**
      * List operator with one input list and one output integer
      */
-    public static final ListOperator LIST_ELEMENT = REGISTRY.register(new ListOperator("get", "get", new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER}, ValueTypes.CATEGORY_ANY, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            if(b < a.getLength()) {
-                return a.get(b);
-            } else {
-                throw new EvaluationException(String.format("Index %s out of bounds for list of length %s.", b, a.getLength()));
-            }
-        }
-    }, IConfigRenderPattern.INFIX) {
-        @Override
-        public IValueType getConditionalOutputType(IVariable[] input) {
-            try {
-                IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
-                return a.getValueType();
-            } catch (EvaluationException e) {
-                return super.getConditionalOutputType(input);
-            }
-        }
-    });
+    public static final IOperator LIST_ELEMENT = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER}).output(ValueTypes.CATEGORY_ANY)
+            .renderPattern(IConfigRenderPattern.INFIX).symbolOperator("get")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    if (b.getRawValue() < a.getLength()) {
+                        return a.get(b.getRawValue());
+                    } else {
+                        throw new EvaluationException(String.format("Index %s out of bounds for list of length %s.", b, a.getLength()));
+                    }
+                }
+            }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
+                @Override
+                public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
+                    try {
+                        IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
+                        return a.getValueType();
+                    } catch (EvaluationException e) {
+                        return operator.getConditionalOutputType(input);
+                    }
+                }
+            }).build());
 
     /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
