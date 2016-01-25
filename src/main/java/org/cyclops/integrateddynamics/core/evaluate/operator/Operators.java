@@ -87,7 +87,7 @@ public final class Operators {
     /**
      * Logical NOT operator with one input booleans and one output boolean.
      */
-    public static final IOperator LOGICAL_NOT = REGISTRY.register(OperatorBuilders.LOGICAL_1.symbol("!").operatorName("not")
+    public static final IOperator LOGICAL_NOT = REGISTRY.register(OperatorBuilders.LOGICAL_1_PREFIX.symbol("!").operatorName("not")
             .function(new OperatorBase.ISmartFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -98,8 +98,6 @@ public final class Operators {
     /**
      * ----------------------------------- ARITHMETIC OPERATORS -----------------------------------
      */
-
-    private static final ValueTypeInteger.ValueInteger ZERO = ValueTypeInteger.ValueInteger.of(0);
 
     /**
      * Arithmetic ADD operator with two input integers and one output integer.
@@ -173,46 +171,50 @@ public final class Operators {
      * ----------------------------------- INTEGER OPERATORS -----------------------------------
      */
 
+    private static final ValueTypeInteger.ValueInteger ZERO = ValueTypeInteger.ValueInteger.of(0);
+
     /**
      * Integer MODULO operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_MODULUS = REGISTRY.register(new IntegerOperator("%", "modulus", new OperatorBase.IFunction() {
-
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            if (b == 0) { // You can not divide by zero
-                throw new EvaluationException("Division by zero");
-            } else if (b == 1) { // If b is neutral element for division
-                return ZERO;
-            } else {
-                int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-                return ValueTypeInteger.ValueInteger.of(a % b);
-            }
-        }
-    }));
-
-    /**
-     * Integer INCREMENT operator with one input integers and one output integer.
-     */
-    public static final IntegerOperator INTEGER_INCREMENT = REGISTRY.register(new IntegerOperator("++", "increment", 1, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a + 1);
-        }
-    }, IConfigRenderPattern.SUFFIX_1));
+    public static final IOperator INTEGER_MODULUS = REGISTRY.register(OperatorBuilders.INTEGER_2.symbol("%").operatorName("modulus")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    if (b.getRawValue() == 0) { // You can not divide by zero
+                        throw new EvaluationException("Division by zero");
+                    } else if (b.getRawValue() == 1) { // If b is neutral element for division
+                        return ZERO;
+                    } else {
+                        ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                        return ValueTypeInteger.ValueInteger.of(a.getRawValue() % b.getRawValue());
+                    }
+                }
+            }).build());
 
     /**
      * Integer INCREMENT operator with one input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_DECREMENT = REGISTRY.register(new IntegerOperator("--", "decrement", 1, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a - 1);
-        }
-    }, IConfigRenderPattern.SUFFIX_1));
+    public static final IOperator INTEGER_INCREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("++").operatorName("increment")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() + 1);
+                }
+            }).build());
+
+    /**
+     * Integer INCREMENT operator with one input integers and one output integer.
+     */
+    public static final IOperator INTEGER_DECREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("--").operatorName("decrement")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() - 1);
+                }
+            }).build());
 
     /**
      * ----------------------------------- RELATIONAL OPERATORS -----------------------------------

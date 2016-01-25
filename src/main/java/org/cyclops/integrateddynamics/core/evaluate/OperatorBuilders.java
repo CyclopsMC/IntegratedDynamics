@@ -16,7 +16,7 @@ public class OperatorBuilders {
 
     // --------------- Logical builders ---------------
     public static final OperatorBuilder LOGICAL = OperatorBuilder.forType(ValueTypes.BOOLEAN).appendKind("logical");
-    public static final OperatorBuilder LOGICAL_1 = LOGICAL.inputTypes(1, ValueTypes.BOOLEAN).renderPattern(IConfigRenderPattern.PREFIX_1);
+    public static final OperatorBuilder LOGICAL_1_PREFIX = LOGICAL.inputTypes(1, ValueTypes.BOOLEAN).renderPattern(IConfigRenderPattern.PREFIX_1);
     public static final OperatorBuilder LOGICAL_2 = LOGICAL.inputTypes(2, ValueTypes.BOOLEAN).renderPattern(IConfigRenderPattern.INFIX);
 
     // --------------- Arithmetic builders ---------------
@@ -33,5 +33,10 @@ public class OperatorBuilders {
     });
     public static final OperatorBuilder ARITHMETIC_2 = ARITHMETIC.inputTypes(2, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.INFIX);
     public static final OperatorBuilder ARITHMETIC_2_PREFIX = ARITHMETIC.inputTypes(2, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.PREFIX_2);
+
+    // --------------- Integer builders ---------------
+    public static final OperatorBuilder INTEGER = OperatorBuilder.forType(ValueTypes.INTEGER).appendKind("integer");
+    public static final OperatorBuilder INTEGER_1_SUFFIX = INTEGER.inputTypes(1, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.SUFFIX_1);
+    public static final OperatorBuilder INTEGER_2 = INTEGER.inputTypes(2, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.INFIX);
 
 }
