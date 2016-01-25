@@ -320,85 +320,92 @@ public final class Operators {
     /**
      * Binary AND operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_AND = REGISTRY.register(new BinaryOperator("&", "and", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a & b);
-        }
-    }));
+    public static final IOperator BINARY_AND = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("&").operatorName("and")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() & b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary OR operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_OR = REGISTRY.register(new BinaryOperator("|", "or", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a | b);
-        }
-    }));
+    public static final IOperator BINARY_OR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("|").operatorName("or")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() | b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary XOR operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_XOR = REGISTRY.register(new BinaryOperator("^", "xor", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a ^ b);
-        }
-    }));
+    public static final IOperator BINARY_XOR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("^").operatorName("xor")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() ^ b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary COMPLEMENT operator with one input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_COMPLEMENT = REGISTRY.register(new BinaryOperator("~", "complement", 1, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(~a);
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator BINARY_COMPLEMENT = REGISTRY.register(OperatorBuilders.BINARY_1_PREFIX.symbol("~").operatorName("complement")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of(~a.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary &lt;&lt; operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_LSHIFT = REGISTRY.register(new BinaryOperator("<<", "lshift", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a << b);
-        }
-    }));
+    public static final IOperator BINARY_LSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("<<").operatorName("lshift")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() << b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary &gt;&gt; operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_RSHIFT = REGISTRY.register(new BinaryOperator(">>", "rshift", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a >> b);
-        }
-    }));
+    public static final IOperator BINARY_RSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>").operatorName("rshift")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() >> b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary &gt;&gt;&gt; operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_RZSHIFT = REGISTRY.register(new BinaryOperator(">>>", "rzshift", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a >>> b);
-        }
-    }));
+    public static final IOperator BINARY_RZSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>>").operatorName("rzshift")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() >>> b.getRawValue());
+                }
+            }).build());
 
     /**
      * ----------------------------------- STRING OPERATORS -----------------------------------

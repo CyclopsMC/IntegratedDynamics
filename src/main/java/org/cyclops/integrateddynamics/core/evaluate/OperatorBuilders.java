@@ -43,4 +43,9 @@ public class OperatorBuilders {
     public static final OperatorBuilder RELATIONAL = OperatorBuilder.forType(ValueTypes.BOOLEAN).appendKind("relational");
     public static final OperatorBuilder RELATIONAL_2 = RELATIONAL.inputTypes(2, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.INFIX);
 
+    // --------------- Binary builders ---------------
+    public static final OperatorBuilder BINARY = OperatorBuilder.forType(ValueTypes.INTEGER).appendKind("binary");
+    public static final OperatorBuilder BINARY_1_PREFIX = BINARY.inputTypes(1, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.PREFIX_1);
+    public static final OperatorBuilder BINARY_2 = BINARY.inputTypes(2, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.INFIX);
+
 }
