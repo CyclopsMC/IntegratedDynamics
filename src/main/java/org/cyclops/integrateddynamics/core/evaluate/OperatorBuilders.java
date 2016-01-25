@@ -39,4 +39,8 @@ public class OperatorBuilders {
     public static final OperatorBuilder INTEGER_1_SUFFIX = INTEGER.inputTypes(1, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.SUFFIX_1);
     public static final OperatorBuilder INTEGER_2 = INTEGER.inputTypes(2, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.INFIX);
 
+    // --------------- Relational builders ---------------
+    public static final OperatorBuilder RELATIONAL = OperatorBuilder.forType(ValueTypes.BOOLEAN).appendKind("relational");
+    public static final OperatorBuilder RELATIONAL_2 = RELATIONAL.inputTypes(2, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.INFIX);
+
 }

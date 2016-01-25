@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.build;
 
 import com.google.common.collect.Lists;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -30,10 +31,12 @@ public class OperatorBuilder {
     private final String modId;
     private final List<String> kinds;
     private final IConditionalOutputTypeDeriver conditionalOutputTypeDeriver;
+    private final ITypeValidator typeValidator;
 
     protected OperatorBuilder(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                               OperatorBase.ISmartFunction function, IConfigRenderPattern renderPattern, String modId,
-                              List<String> kinds, IConditionalOutputTypeDeriver conditionalOutputTypeDeriver) {
+                              List<String> kinds, IConditionalOutputTypeDeriver conditionalOutputTypeDeriver,
+                              ITypeValidator typeValidator) {
         this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
@@ -43,6 +46,7 @@ public class OperatorBuilder {
         this.modId = modId;
         this.kinds = kinds;
         this.conditionalOutputTypeDeriver = conditionalOutputTypeDeriver;
+        this.typeValidator = typeValidator;
     }
 
     /**
@@ -52,7 +56,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder output(IValueType outputType) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver);
+                conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -62,7 +66,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder symbol(String symbol) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver);
+                conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -72,7 +76,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder operatorName(String operatorName) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver);
+                conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -83,7 +87,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder symbolOperator(String symbolOperator) {
         return new OperatorBuilder(symbolOperator, symbolOperator, inputTypes, outputType, function, renderPattern,
-                modId, kinds, conditionalOutputTypeDeriver);
+                modId, kinds, conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -93,7 +97,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder inputTypes(IValueType[] inputTypes) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver);
+                conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -104,7 +108,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder inputTypes(int length, IValueType defaultType) {
         return new OperatorBuilder(symbol, operatorName, OperatorBase.constructInputVariables(length, defaultType),
-                outputType, function, renderPattern, modId, kinds, conditionalOutputTypeDeriver);
+                outputType, function, renderPattern, modId, kinds, conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -123,7 +127,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder function(OperatorBase.ISmartFunction function) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver);
+                conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -133,7 +137,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder renderPattern(IConfigRenderPattern renderPattern) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver);
+                conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -143,7 +147,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder modId(String modId) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver);
+                conditionalOutputTypeDeriver, typeValidator);
     }
 
     protected static <T> List<T> join(List<T> list, T newElement) {
@@ -162,7 +166,7 @@ public class OperatorBuilder {
      */
     public OperatorBuilder appendKind(String kind) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
-                join(kinds, kind), conditionalOutputTypeDeriver);
+                join(kinds, kind), conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -173,7 +177,17 @@ public class OperatorBuilder {
      */
     public OperatorBuilder conditionalOutputTypeDeriver(IConditionalOutputTypeDeriver conditionalOutputTypeDeriver) {
         return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
-                kinds, conditionalOutputTypeDeriver);
+                kinds, conditionalOutputTypeDeriver, typeValidator);
+    }
+
+    /**
+     * Set the type validator.
+     * @param typeValidator The type validator. This will be used for {@link IOperator#validateTypes(IValueType[])}.
+     * @return The builder instance.
+     */
+    public OperatorBuilder typeValidator(ITypeValidator typeValidator) {
+        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+                kinds, conditionalOutputTypeDeriver, typeValidator);
     }
 
     /**
@@ -191,7 +205,7 @@ public class OperatorBuilder {
      */
     public static OperatorBuilder forType(IValueType<?> outputType) {
         return new OperatorBuilder(null, null, null, outputType, null, null, Reference.MOD_ID,
-                Collections.<String>emptyList(), null);
+                Collections.<String>emptyList(), null, null);
     }
 
     private static class Built extends OperatorBase {
@@ -199,6 +213,7 @@ public class OperatorBuilder {
         private final String modId;
         private final String unlocalizedType;
         private final IConditionalOutputTypeDeriver conditionalOutputTypeDeriver;
+        private final ITypeValidator typeValidator;
 
         protected Built(OperatorBuilder operatorBuilder) {
             super(Objects.requireNonNull(operatorBuilder.symbol),
@@ -210,6 +225,7 @@ public class OperatorBuilder {
             this.modId = Objects.requireNonNull(operatorBuilder.modId);
             this.unlocalizedType = deriveUnlocalizedType(operatorBuilder);
             this.conditionalOutputTypeDeriver = operatorBuilder.conditionalOutputTypeDeriver;
+            this.typeValidator = operatorBuilder.typeValidator;
         }
 
         protected static String deriveUnlocalizedType(OperatorBuilder operatorBuilder) {
@@ -241,11 +257,30 @@ public class OperatorBuilder {
                     ? conditionalOutputTypeDeriver.getConditionalOutputType(input)
                     : super.getConditionalOutputType(input);
         }
+
+        @Override
+        public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input) {
+            return typeValidator != null
+                    ? typeValidator.validateTypes(this, input)
+                    : super.validateTypes(input);
+        }
     }
 
     public static interface IConditionalOutputTypeDeriver {
 
         public IValueType getConditionalOutputType(IVariable[] input);
+
+    }
+
+    public static interface ITypeValidator {
+
+        /**
+         * Check the given input value types for this operator.
+         * @param operator The operator that is being validated.
+         * @param input The ordered input value types.
+         * @return An error or null if valid.
+         */
+        public L10NHelpers.UnlocalizedString validateTypes(OperatorBase operator, IValueType[] input);
 
     }
 

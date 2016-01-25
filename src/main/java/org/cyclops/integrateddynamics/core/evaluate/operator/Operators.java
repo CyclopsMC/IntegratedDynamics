@@ -12,6 +12,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -23,8 +24,10 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
+import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.Collections;
 
@@ -223,31 +226,71 @@ public final class Operators {
     /**
      * Relational == operator with two inputs of any type (but equal) and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_EQUALS = REGISTRY.register(new RelationalEqualsOperator("==", "equals"));
+    public static final IOperator RELATIONAL_EQUALS = REGISTRY.register(OperatorBuilders.RELATIONAL
+            .inputTypes(2, ValueTypes.CATEGORY_ANY).renderPattern(IConfigRenderPattern.INFIX)
+            .symbol("==").operatorName("equals")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypeBoolean.ValueBoolean.of(variables.getValue(0).equals(variables.getValue(1)));
+                }
+            })
+            .typeValidator(new OperatorBuilder.ITypeValidator() {
+                @Override
+                public L10NHelpers.UnlocalizedString validateTypes(OperatorBase operator, IValueType[] input) {
+                    // Input size checking
+                    int requiredInputLength = operator.getRequiredInputLength();
+                    if(input.length != requiredInputLength) {
+                        return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+                                operator.getOperatorName(), input.length, requiredInputLength);
+                    }
+                    // Input types checking
+                    IValueType temporarySecondInputType = null;
+                    for(int i = 0; i < requiredInputLength; i++) {
+                        IValueType inputType = input[i];
+                        if(inputType == null) {
+                            return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, operator.getOperatorName(), Integer.toString(i));
+                        }
+                        if(i == 0) {
+                            temporarySecondInputType = inputType;
+                        } else if(i == 1) {
+                            if(temporarySecondInputType != inputType) {
+                                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                        operator.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
+                                        Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getUnlocalizedName()));
+                            }
+                        }
+                    }
+                    return null;
+                }
+            })
+            .build());
 
     /**
      * Relational &gt; operator with two input integers and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_GT = REGISTRY.register(new RelationalOperator(">", "gt", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a > b);
-        }
-    }));
+    public static final IOperator RELATIONAL_GT = REGISTRY.register(OperatorBuilders.RELATIONAL_2.symbol(">").operatorName("gt")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue() > b.getRawValue());
+                }
+            }).build());
 
     /**
      * Relational &gt; operator with two input integers and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_LT = REGISTRY.register(new RelationalOperator("<", "lt", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a < b);
-        }
-    }));
+    public static final IOperator RELATIONAL_LT = REGISTRY.register(OperatorBuilders.RELATIONAL_2.symbol("<").operatorName("lt")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue() < b.getRawValue());
+                }
+            }).build());
 
     /**
      * Relational != operator with two inputs of any type (but equal) and one output boolean.
