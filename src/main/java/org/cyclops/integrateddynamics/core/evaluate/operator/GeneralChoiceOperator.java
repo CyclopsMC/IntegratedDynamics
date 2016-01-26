@@ -18,11 +18,11 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 public class GeneralChoiceOperator extends GeneralOperator {
 
     public GeneralChoiceOperator(String symbol, String operatorName) {
-        super(symbol, operatorName, new IValueType[]{ValueTypes.BOOLEAN, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}, ValueTypes.CATEGORY_ANY, new OperatorBase.IFunction() {
+        super(symbol, operatorName, new IValueType[]{ValueTypes.BOOLEAN, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}, ValueTypes.CATEGORY_ANY, new IFunction() {
             @Override
-            public IValue evaluate(IVariable... variables) throws EvaluationException {
-                boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
-                return a ? variables[1].getValue() : variables[2].getValue();
+            public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
+                boolean a = ((ValueTypeBoolean.ValueBoolean) variables.getValue(0)).getRawValue();
+                return a ? variables.getValue(1) : variables.getValue(2);
             }
         }, new IConfigRenderPattern.Base(100, 22, new Pair[]{Pair.of(6, 2), Pair.of(60, 2) , Pair.of(80, 2)}, Pair.of(40, 2)));
     }

@@ -13,11 +13,11 @@ import java.util.List;
  * A smart function that is made up of a list of value propagators.
  * @author rubensworks
  */
-public class IterativeSmartFunction implements OperatorBase.ISmartFunction {
+public class IterativeFunction implements OperatorBase.IFunction {
 
     private final List<IOperatorValuePropagator> valuePropagators;
 
-    public IterativeSmartFunction(List<IOperatorValuePropagator> valuePropagators) {
+    public IterativeFunction(List<IOperatorValuePropagator> valuePropagators) {
         this.valuePropagators = valuePropagators;
     }
 
@@ -81,12 +81,12 @@ public class IterativeSmartFunction implements OperatorBase.ISmartFunction {
          * @param valuePropagator The core propagator that will be connected to the pre- and post-list.
          * @return The built function.
          */
-        public IterativeSmartFunction build(IOperatorValuePropagator<O, P> valuePropagator) {
+        public IterativeFunction build(IOperatorValuePropagator<O, P> valuePropagator) {
             List<IOperatorValuePropagator> valuePropagators = Lists.newArrayListWithExpectedSize(preValuePropagators.size() + postValuePropagators.size());
             valuePropagators.addAll(preValuePropagators);
             valuePropagators.add(valuePropagator);
             valuePropagators.addAll(postValuePropagators);
-            return new IterativeSmartFunction(valuePropagators);
+            return new IterativeFunction(valuePropagators);
         }
 
     }

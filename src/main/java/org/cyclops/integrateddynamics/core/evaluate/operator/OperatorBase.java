@@ -24,17 +24,11 @@ public abstract class OperatorBase implements IOperator {
     private final String operatorName;
     private final IValueType[] inputTypes;
     private final IValueType outputType;
-    private final ISmartFunction function;
+    private final IFunction function;
     private final IConfigRenderPattern renderPattern;
 
-    @Deprecated
     protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                            IFunction function, IConfigRenderPattern renderPattern) {
-        this(symbol, operatorName, inputTypes, outputType, new ISmartFunction.FunctionWrapper(function), renderPattern);
-    }
-
-    protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
-                           ISmartFunction function, IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
@@ -178,19 +172,6 @@ public abstract class OperatorBase implements IOperator {
         return renderPattern;
     }
 
-    @Deprecated
-    public static interface IFunction {
-
-        /**
-         * Evaluate this function for the given input.
-         * @param variables The input variables. They can be considered type-safe.
-         * @return The output value.
-         * @throws EvaluationException If an exception occurs while evaluating
-         */
-        public IValue evaluate(IVariable... variables) throws EvaluationException;
-
-    }
-
     public static class SafeVariablesGetter {
 
         private final IVariable[] variables;
@@ -209,7 +190,7 @@ public abstract class OperatorBase implements IOperator {
 
     }
 
-    public static interface ISmartFunction {
+    public static interface IFunction {
 
         /**
          * Evaluate this function for the given input.
@@ -218,20 +199,6 @@ public abstract class OperatorBase implements IOperator {
          * @throws EvaluationException If an exception occurs while evaluating
          */
         public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException;
-
-        public static class FunctionWrapper implements ISmartFunction {
-
-            private final IFunction function;
-
-            public FunctionWrapper(IFunction function) {
-                this.function = function;
-            }
-
-            @Override
-            public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
-                return function.evaluate(variables.getVariables());
-            }
-        }
 
     }
 

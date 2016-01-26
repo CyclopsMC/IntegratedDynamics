@@ -59,7 +59,7 @@ public final class Operators {
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
     public static final IOperator LOGICAL_AND = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("&&").operatorName("and")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeBoolean.ValueBoolean a = variables.getValue(0);
@@ -75,7 +75,7 @@ public final class Operators {
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
     public static final IOperator LOGICAL_OR = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("||").operatorName("or")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeBoolean.ValueBoolean a = variables.getValue(0);
@@ -91,7 +91,7 @@ public final class Operators {
      * Logical NOT operator with one input booleans and one output boolean.
      */
     public static final IOperator LOGICAL_NOT = REGISTRY.register(OperatorBuilders.LOGICAL_1_PREFIX.symbol("!").operatorName("not")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypeBoolean.ValueBoolean.of(!((ValueTypeBoolean.ValueBoolean) variables.getValue(0)).getRawValue());
@@ -106,7 +106,7 @@ public final class Operators {
      * Arithmetic ADD operator with two input integers and one output integer.
      */
     public static final IOperator ARITHMETIC_ADDITION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("+").operatorName("addition")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypes.CATEGORY_NUMBER.add(variables.getVariables()[0], variables.getVariables()[1]);
@@ -117,7 +117,7 @@ public final class Operators {
      * Arithmetic MINUS operator with two input integers and one output integer.
      */
     public static final IOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("-").operatorName("subtraction")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypes.CATEGORY_NUMBER.subtract(variables.getVariables()[0], variables.getVariables()[1]);
@@ -128,7 +128,7 @@ public final class Operators {
      * Arithmetic MULTIPLY operator with two input integers and one output integer.
      */
     public static final IOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("*").operatorName("multiplication")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypes.CATEGORY_NUMBER.multiply(variables.getVariables()[0], variables.getVariables()[1]);
@@ -139,7 +139,7 @@ public final class Operators {
      * Arithmetic DIVIDE operator with two input integers and one output integer.
      */
     public static final IOperator ARITHMETIC_DIVISION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("/").operatorName("division")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypes.CATEGORY_NUMBER.divide(variables.getVariables()[0], variables.getVariables()[1]);
@@ -150,7 +150,7 @@ public final class Operators {
      * Arithmetic MAX operator with two input integers and one output integer.
      */
     public static final IOperator ARITHMETIC_MAXIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("max").operatorName("maximum")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypes.CATEGORY_NUMBER.max(variables.getVariables()[0], variables.getVariables()[1]);
@@ -161,7 +161,7 @@ public final class Operators {
      * Arithmetic MIN operator with two input integers and one output integer.
      */
     public static final IOperator ARITHMETIC_MINIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("min").operatorName("minimum")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypes.CATEGORY_NUMBER.min(variables.getVariables()[0], variables.getVariables()[1]);
@@ -180,7 +180,7 @@ public final class Operators {
      * Integer MODULO operator with two input integers and one output integer.
      */
     public static final IOperator INTEGER_MODULUS = REGISTRY.register(OperatorBuilders.INTEGER_2.symbol("%").operatorName("modulus")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger b = variables.getValue(1);
@@ -199,7 +199,7 @@ public final class Operators {
      * Integer INCREMENT operator with one input integers and one output integer.
      */
     public static final IOperator INTEGER_INCREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("++").operatorName("increment")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -211,7 +211,7 @@ public final class Operators {
      * Integer INCREMENT operator with one input integers and one output integer.
      */
     public static final IOperator INTEGER_DECREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("--").operatorName("decrement")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -229,7 +229,7 @@ public final class Operators {
     public static final IOperator RELATIONAL_EQUALS = REGISTRY.register(OperatorBuilders.RELATIONAL
             .inputTypes(2, ValueTypes.CATEGORY_ANY).renderPattern(IConfigRenderPattern.INFIX)
             .symbol("==").operatorName("equals")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypeBoolean.ValueBoolean.of(variables.getValue(0).equals(variables.getValue(1)));
@@ -270,7 +270,7 @@ public final class Operators {
      * Relational &gt; operator with two input integers and one output boolean.
      */
     public static final IOperator RELATIONAL_GT = REGISTRY.register(OperatorBuilders.RELATIONAL_2.symbol(">").operatorName("gt")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -283,7 +283,7 @@ public final class Operators {
      * Relational &gt; operator with two input integers and one output boolean.
      */
     public static final IOperator RELATIONAL_LT = REGISTRY.register(OperatorBuilders.RELATIONAL_2.symbol("<").operatorName("lt")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -321,7 +321,7 @@ public final class Operators {
      * Binary AND operator with two input integers and one output integers.
      */
     public static final IOperator BINARY_AND = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("&").operatorName("and")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -334,7 +334,7 @@ public final class Operators {
      * Binary OR operator with two input integers and one output integers.
      */
     public static final IOperator BINARY_OR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("|").operatorName("or")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -347,7 +347,7 @@ public final class Operators {
      * Binary XOR operator with two input integers and one output integers.
      */
     public static final IOperator BINARY_XOR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("^").operatorName("xor")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -360,7 +360,7 @@ public final class Operators {
      * Binary COMPLEMENT operator with one input integers and one output integers.
      */
     public static final IOperator BINARY_COMPLEMENT = REGISTRY.register(OperatorBuilders.BINARY_1_PREFIX.symbol("~").operatorName("complement")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -372,7 +372,7 @@ public final class Operators {
      * Binary &lt;&lt; operator with two input integers and one output integers.
      */
     public static final IOperator BINARY_LSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("<<").operatorName("lshift")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -385,7 +385,7 @@ public final class Operators {
      * Binary &gt;&gt; operator with two input integers and one output integers.
      */
     public static final IOperator BINARY_RSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>").operatorName("rshift")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -398,7 +398,7 @@ public final class Operators {
      * Binary &gt;&gt;&gt; operator with two input integers and one output integers.
      */
     public static final IOperator BINARY_RZSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>>").operatorName("rzshift")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeInteger.ValueInteger a = variables.getValue(0);
@@ -415,7 +415,7 @@ public final class Operators {
      * String length operator with one input string and one output integer.
      */
     public static final IOperator STRING_LENGTH = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX.symbol("len").operatorName("length")
-            .output(ValueTypes.INTEGER).function(new OperatorBase.ISmartFunction() {
+            .output(ValueTypes.INTEGER).function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeString.ValueString a = variables.getValue(0);
@@ -427,7 +427,7 @@ public final class Operators {
      * String concat operator with two input strings and one output string.
      */
     public static final IOperator STRING_CONCAT = REGISTRY.register(OperatorBuilders.STRING_2.symbol("+").operatorName("concat")
-            .output(ValueTypes.INTEGER).function(new OperatorBase.ISmartFunction() {
+            .output(ValueTypes.INTEGER).function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeString.ValueString a = variables.getValue(0);
@@ -441,7 +441,7 @@ public final class Operators {
      */
     public static final IOperator NAMED_NAME = REGISTRY.register(OperatorBuilders.STRING_2.symbol("name").operatorName("name")
             .inputType(ValueTypes.CATEGORY_NAMED).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypeString.ValueString.of(ValueTypes.CATEGORY_NAMED.getName(variables.getVariables()[0]));
@@ -456,7 +456,7 @@ public final class Operators {
      * Double round operator with one input double and one output integers.
      */
     public static final IOperator DOUBLE_ROUND = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("|| ||").operatorName("round")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeDouble.ValueDouble a = variables.getValue(0);
@@ -468,7 +468,7 @@ public final class Operators {
      * Double ceil operator with one input double and one output integers.
      */
     public static final IOperator DOUBLE_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeDouble.ValueDouble a = variables.getValue(0);
@@ -480,7 +480,7 @@ public final class Operators {
      * Double floor operator with one input double and one output integers.
      */
     public static final IOperator DOUBLE_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeDouble.ValueDouble a = variables.getValue(0);
@@ -496,7 +496,7 @@ public final class Operators {
      * List operator with one input list and one output integer
      */
     public static final IOperator LIST_LENGTH = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX.output(ValueTypes.INTEGER).symbol("| |").operatorName("length")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
@@ -510,7 +510,7 @@ public final class Operators {
     public static final IOperator LIST_ELEMENT = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER}).output(ValueTypes.CATEGORY_ANY)
             .renderPattern(IConfigRenderPattern.INFIX).symbolOperator("get")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
@@ -541,7 +541,7 @@ public final class Operators {
      * Block isOpaque operator with one input block and one output boolean.
      */
     public static final IOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("opaque")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
@@ -553,7 +553,7 @@ public final class Operators {
      * The itemstack representation of the block
      */
     public static final IOperator OBJECT_BLOCK_ITEMSTACK = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("itemstack")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
@@ -678,7 +678,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.STRING).symbolOperator("rarity")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
@@ -692,7 +692,7 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}).output(ValueTypes.DOUBLE)
             .symbolOperator("strength")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
@@ -707,7 +707,7 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}).output(ValueTypes.BOOLEAN)
             .symbolOperator("canharvest")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
@@ -721,7 +721,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
@@ -746,7 +746,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_FLUIDSTACK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("fluidstack")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
@@ -771,7 +771,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=NBT=").operatorName("isnbtequal")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
@@ -791,7 +791,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwitemequal")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
@@ -863,7 +863,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ENTITY_ITEMSTACK = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("item")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
@@ -960,7 +960,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ENTITY_ARMORINVENTORY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.LIST).symbolOperator("armorinventory")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
@@ -978,7 +978,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ENTITY_INVENTORY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.LIST).symbolOperator("inventory")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
@@ -1012,7 +1012,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_FLUIDSTACK_BLOCK = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();
@@ -1073,7 +1073,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_FLUIDSTACK_RARITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.STRING).symbolOperator("rarity")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();
@@ -1086,7 +1086,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwfluidequal")
-            .function(new OperatorBase.ISmartFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();

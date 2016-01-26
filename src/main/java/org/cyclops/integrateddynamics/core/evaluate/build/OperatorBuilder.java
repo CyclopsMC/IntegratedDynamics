@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
-import org.cyclops.integrateddynamics.core.evaluate.operator.IterativeSmartFunction;
+import org.cyclops.integrateddynamics.core.evaluate.operator.IterativeFunction;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 
@@ -31,7 +31,7 @@ public class OperatorBuilder<O> {
     private final String symbol;
     private final String operatorName;
     private final IValueType[] inputTypes;
-    private final OperatorBase.ISmartFunction function;
+    private final OperatorBase.IFunction function;
     private final IConfigRenderPattern renderPattern;
     private final String modId;
     private final List<String> kinds;
@@ -40,7 +40,7 @@ public class OperatorBuilder<O> {
     private final List<IOperatorValuePropagator> valuePropagators;
 
     protected OperatorBuilder(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
-                              OperatorBase.ISmartFunction function, IConfigRenderPattern renderPattern, String modId,
+                              OperatorBase.IFunction function, IConfigRenderPattern renderPattern, String modId,
                               List<String> kinds, IConditionalOutputTypeDeriver conditionalOutputTypeDeriver,
                               ITypeValidator typeValidator, List<IOperatorValuePropagator> valuePropagators) {
         this.symbol = symbol;
@@ -132,7 +132,7 @@ public class OperatorBuilder<O> {
      * @param function The function.
      * @return The builder instance.
      */
-    public OperatorBuilder<O> function(OperatorBase.ISmartFunction function) {
+    public OperatorBuilder<O> function(OperatorBase.IFunction function) {
         if(this.valuePropagators != null) {
             throw new IllegalStateException("Can not add a function when value propagators are present.");
         }
@@ -242,9 +242,9 @@ public class OperatorBuilder<O> {
             this.typeValidator = operatorBuilder.typeValidator;
         }
 
-        protected static ISmartFunction deriveFunction(OperatorBuilder operatorBuilder) {
+        protected static IFunction deriveFunction(OperatorBuilder operatorBuilder) {
             if(operatorBuilder.valuePropagators != null) {
-                return new IterativeSmartFunction(operatorBuilder.valuePropagators);
+                return new IterativeFunction(operatorBuilder.valuePropagators);
             } else {
                 return Objects.requireNonNull(operatorBuilder.function);
             }

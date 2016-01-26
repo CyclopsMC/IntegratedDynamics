@@ -11,18 +11,15 @@ import org.cyclops.cyclopscore.modcompat.IModCompat;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
-import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
+import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.client.render.valuetype.AspectValueTypeWorldRenderer;
-import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.operator.ObjectThaumcraftAspectOperator;
+import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.operator.OperatorBuilders;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueObjectTypeAspect;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueTypeListProxyPositionedAspectContainer;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.logicprogrammer.ValueObjectTypeAspectElementType;
@@ -66,9 +63,9 @@ public class ThaumcraftModCompat implements IModCompat {
 
 			// Operators
 			/* Get aspects from item */
-			Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+			Operators.REGISTRY.register(org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
 					.output(ValueTypes.LIST).symbol("aspects").operatorName("getitemthaumcraftaspects")
-					.function(new OperatorBase.ISmartFunction() {
+					.function(new OperatorBase.IFunction() {
 						@Override
 						public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
 							Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
@@ -86,50 +83,58 @@ public class ThaumcraftModCompat implements IModCompat {
 						}
 					}).build());
 			/* Get amount of vis in aspect */
-			Operators.REGISTRY.register(ObjectThaumcraftAspectOperator.toInt("amount", new ObjectThaumcraftAspectOperator.IIntegerFunction() {
-				@Override
-				public int evaluate(Aspect aspect, int amount) throws EvaluationException {
-					return amount;
-				}
-			}));
-			/* Check if the raw aspect of two aspects are equal independent of amount */
-			Operators.REGISTRY.register(new ObjectThaumcraftAspectOperator("=Aspect=", "israwaspectequal", new IValueType[]{OBJECT_ASPECT, OBJECT_ASPECT}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-				@Override
-				public IValue evaluate(IVariable... variables) throws EvaluationException {
-					Optional<Pair<Aspect, Integer>> a = ((ValueObjectTypeAspect.ValueAspect) variables[0].getValue()).getRawValue();
-					Optional<Pair<Aspect, Integer>> b = ((ValueObjectTypeAspect.ValueAspect) variables[1].getValue()).getRawValue();
-					boolean equal = false;
-					if(a.isPresent() && b.isPresent()) {
-						equal = a.get().getKey().equals(b.get().getKey());
-					} else if(!a.isPresent() && !b.isPresent()) {
-						equal = true;
-					}
-					return ValueTypeBoolean.ValueBoolean.of(equal);
-				}
-			}, IConfigRenderPattern.INFIX));
-			/* Get the aspects this aspect is made up of */
-			Operators.REGISTRY.register(new ObjectThaumcraftAspectOperator("compound aspects", "getcompoundaspects", new IValueType[]{OBJECT_ASPECT}, ValueTypes.LIST, new OperatorBase.IFunction() {
-				@Override
-				public IValue evaluate(IVariable... variables) throws EvaluationException {
-					Optional<Pair<Aspect, Integer>> a = ((ValueObjectTypeAspect.ValueAspect) variables[0].getValue()).getRawValue();
-					if(a.isPresent()) {
-						Aspect[] aspectArray = a.get().getKey().getComponents();
-						List<ValueObjectTypeAspect.ValueAspect> list = Lists.newArrayListWithExpectedSize(aspectArray.length);
-						for(Aspect aspect : aspectArray) {
-							list.add(ValueObjectTypeAspect.ValueAspect.of(aspect, 1));
+			Operators.REGISTRY.register(OperatorBuilders.ASPECT_1_SUFFIX_LONG
+					.output(ValueTypes.INTEGER).symbolOperator("amount")
+					.function(OperatorBuilders.FUNCTION_ASPECT_TO_INT.build(new IOperatorValuePropagator<Pair<Aspect, Integer>, Integer>() {
+						@Override
+						public Integer getOutput(Pair<Aspect, Integer> input) throws EvaluationException {
+							return input != null ? input.getRight() : 0;
 						}
-						return ValueTypeList.ValueList.ofList(OBJECT_ASPECT, list);
-					}
-					return ValueTypeList.ValueList.ofList(OBJECT_ASPECT, Collections.EMPTY_LIST);
-				}
-			}, IConfigRenderPattern.SUFFIX_1_LONG));
+					})).build());
+			/* Check if the raw aspect of two aspects are equal independent of amount */
+			Operators.REGISTRY.register(OperatorBuilders.ASPECT_2
+					.output(ValueTypes.BOOLEAN).symbol("=Aspect=").operatorName("israwaspectequal")
+					.function(new OperatorBase.IFunction() {
+						@Override
+						public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+							Optional<Pair<Aspect, Integer>> a = ((ValueObjectTypeAspect.ValueAspect) variables.getValue(0)).getRawValue();
+							Optional<Pair<Aspect, Integer>> b = ((ValueObjectTypeAspect.ValueAspect) variables.getValue(1)).getRawValue();
+							boolean equal = false;
+							if(a.isPresent() && b.isPresent()) {
+								equal = a.get().getKey().equals(b.get().getKey());
+							} else if(!a.isPresent() && !b.isPresent()) {
+								equal = true;
+							}
+							return ValueTypeBoolean.ValueBoolean.of(equal);
+						}
+					}).build());
+			/* Get the aspects this aspect is made up of */
+			Operators.REGISTRY.register(OperatorBuilders.ASPECT_1_SUFFIX_LONG
+					.output(ValueTypes.LIST).symbol("compound aspects").operatorName("getcompoundaspects")
+					.function(new OperatorBase.IFunction() {
+						@Override
+						public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+							Optional<Pair<Aspect, Integer>> a = ((ValueObjectTypeAspect.ValueAspect) variables.getValue(0)).getRawValue();
+							if(a.isPresent()) {
+								Aspect[] aspectArray = a.get().getKey().getComponents();
+								List<ValueObjectTypeAspect.ValueAspect> list = Lists.newArrayListWithExpectedSize(aspectArray.length);
+								for(Aspect aspect : aspectArray) {
+									list.add(ValueObjectTypeAspect.ValueAspect.of(aspect, 1));
+								}
+								return ValueTypeList.ValueList.ofList(OBJECT_ASPECT, list);
+							}
+							return ValueTypeList.ValueList.ofList(OBJECT_ASPECT, Collections.<ValueObjectTypeAspect.ValueAspect>emptyList());
+						}
+					}).build());
 			/* Check if the given aspect is primal */
-			Operators.REGISTRY.register(ObjectThaumcraftAspectOperator.toBoolean("isprimal", new ObjectThaumcraftAspectOperator.IBooleanFunction() {
-				@Override
-				public boolean evaluate(Aspect aspect, int amount) throws EvaluationException {
-					return aspect.isPrimal();
-				}
-			}));
+			Operators.REGISTRY.register(OperatorBuilders.ASPECT_1_SUFFIX_LONG
+					.output(ValueTypes.BOOLEAN).symbolOperator("isprimal")
+					.function(OperatorBuilders.FUNCTION_ASPECT_TO_BOOLEAN.build(new IOperatorValuePropagator<Pair<Aspect, Integer>, Boolean>() {
+						@Override
+						public Boolean getOutput(Pair<Aspect, Integer> input) throws EvaluationException {
+							return input != null && input.getLeft().isPrimal();
+						}
+					})).build());
 
 			if(MinecraftHelpers.isClientSide()) {
 				initClient();
