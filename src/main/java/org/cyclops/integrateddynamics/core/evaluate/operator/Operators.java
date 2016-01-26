@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.base.Optional;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -23,6 +22,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
@@ -568,206 +568,243 @@ public final class Operators {
     /**
      * Item Stack size operator with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_SIZE = REGISTRY.register(ObjectItemStackOperator.toInt("size", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.stackSize;
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_SIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("size")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.stackSize : 0;
+                }
+            })).build());
 
     /**
      * Item Stack maxsize operator with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_MAXSIZE = REGISTRY.register(ObjectItemStackOperator.toInt("maxsize", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.getMaxStackSize();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_MAXSIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("maxsize")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.getMaxStackSize() : 0;
+                }
+            })).build());
 
     /**
      * Item Stack isstackable operator with one input itemstack and one output boolean.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISSTACKABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("stackable", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.isStackable();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISSTACKABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("stackable")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && itemStack.isStackable();
+                }
+            })).build());
 
     /**
      * Item Stack isdamageable operator with one input itemstack and one output boolean.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISDAMAGEABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("damageable", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.isItemStackDamageable();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISDAMAGEABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("damageable")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && itemStack.isItemStackDamageable();
+                }
+            })).build());
 
     /**
      * Item Stack damage operator with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_DAMAGE = REGISTRY.register(ObjectItemStackOperator.toInt("damage", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.getItemDamage();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_DAMAGE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("damage")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.getItemDamage() : 0;
+                }
+            })).build());
 
     /**
      * Item Stack maxdamage operator with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_MAXDAMAGE = REGISTRY.register(ObjectItemStackOperator.toInt("maxdamage", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.getMaxDamage();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_MAXDAMAGE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("maxdamage")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.getMaxDamage() : 0;
+                }
+            })).build());
 
     /**
      * Item Stack isenchanted operator with one input itemstack and one output boolean.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(ObjectItemStackOperator.toBoolean("enchanted", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.isItemEnchanted();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("enchanted")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && itemStack.isItemEnchanted();
+                }
+            })).build());
 
     /**
      * Item Stack isenchantable operator with one input itemstack and one output boolean.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("enchantable", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.isItemEnchantable();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("enchantable")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && itemStack.isItemEnchantable();
+                }
+            })).build());
 
     /**
      * Item Stack repair cost with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_REPAIRCOST = REGISTRY.register(ObjectItemStackOperator.toInt("repaircost", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.getRepairCost();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_REPAIRCOST = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("repaircost")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.getRepairCost() : 0;
+                }
+            })).build());
 
     /**
      * Get the rarity of an itemstack.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(new ObjectItemStackOperator("rarity", "rarity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getRarity().rarityName : "");
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("rarity")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueTypeString.ValueString.of(a.getRawValue().isPresent() ? a.getRawValue().get().getRarity().rarityName : "");
+                }
+            }).build());
 
     /**
      * Get the strength of an itemstack against a block as a double.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(new ObjectItemStackOperator("strength", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.DOUBLE, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            Optional<IBlockState> b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
-            return ValueTypeDouble.ValueDouble.of(a.isPresent() && b.isPresent() ? a.get().getStrVsBlock(b.get().getBlock()) : 0);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}).output(ValueTypes.DOUBLE)
+            .symbolOperator("strength")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
+                    return ValueTypeDouble.ValueDouble.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() ? a.getRawValue().get().getStrVsBlock(b.getRawValue().get().getBlock()) : 0);
+                }
+            }).build());
 
     /**
      * If the given itemstack can be used to harvest the given block.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(new ObjectItemStackOperator("canharvest", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            Optional<IBlockState> b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a.isPresent() && b.isPresent() ? a.get().canHarvestBlock(b.get().getBlock()) : false);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}).output(ValueTypes.BOOLEAN)
+            .symbolOperator("canharvest")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() && a.getRawValue().get().canHarvestBlock(b.getRawValue().get().getBlock()));
+                }
+            }).build());
 
     /**
      * The block from the stack
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_BLOCK = REGISTRY.register(new ObjectItemStackOperator("block", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeBlock.ValueBlock.of((a.isPresent() && a.get().getItem() instanceof ItemBlock) ? BlockHelpers.getBlockStateFromItemStack(a.get()) : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ITEMSTACK_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueObjectTypeBlock.ValueBlock.of((a.getRawValue().isPresent() && a.getRawValue().get().getItem() instanceof ItemBlock) ? BlockHelpers.getBlockStateFromItemStack(a.getRawValue().get()) : null);
+                }
+            }).build());
 
     /**
      * If the given stack has a fluid.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISFLUIDSTACK = REGISTRY.register(ObjectItemStackOperator.toBoolean("isfluidstack", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return Helpers.getFluidStack(itemStack) != null;
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISFLUIDSTACK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isfluidstack")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && Helpers.getFluidStack(itemStack) != null;
+                }
+            })).build());
 
     /**
      * The fluidstack from the stack
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_FLUIDSTACK = REGISTRY.register(new ObjectItemStackOperator("fluidstack", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_FLUIDSTACK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeFluidStack.ValueFluidStack.of(a.isPresent() ? Helpers.getFluidStack(a.get()) : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ITEMSTACK_FLUIDSTACK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("fluidstack")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueObjectTypeFluidStack.ValueFluidStack.of(a.getRawValue().isPresent() ? Helpers.getFluidStack(a.getRawValue().get()) : null);
+                }
+            }).build());
 
     /**
      * The capacity of the fluidstack from the stack.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = REGISTRY.register(new ObjectItemStackOperator("fluidstackcapacity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a.isPresent() ? Helpers.getFluidStackCapacity(a.get()) : 0);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("fluidstackcapacity")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? Helpers.getFluidStackCapacity(itemStack) : 0;
+                }
+            })).build());
 
     /**
      * If the NBT tags of the given stacks are equal
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(new ObjectItemStackOperator("=NBT=", "isnbtequal", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
-            boolean equal = false;
-            if(a.isPresent() && b.isPresent()) {
-                equal = a.get().isItemEqual(b.get()) && ItemStack.areItemStackTagsEqual(a.get(), b.get());
-            } else if(!a.isPresent() && !b.isPresent()) {
-                equal = true;
-            }
-            return ValueTypeBoolean.ValueBoolean.of(equal);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=NBT=").operatorName("isnbtequal")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+                    Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
+                    boolean equal = false;
+                    if(a.isPresent() && b.isPresent()) {
+                        equal = a.get().isItemEqual(b.get()) && ItemStack.areItemStackTagsEqual(a.get(), b.get());
+                    } else if(!a.isPresent() && !b.isPresent()) {
+                        equal = true;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(equal);
+                }
+            }).build());
 
     /**
      * If the raw items of the given stacks are equal
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(new ObjectItemStackOperator("=Raw=", "israwitemequal", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
-            boolean equal = false;
-            if(a.isPresent() && b.isPresent()) {
-                equal = ItemStack.areItemsEqual(a.get(), b.get());
-            } else if(!a.isPresent() && !b.isPresent()) {
-                equal = true;
-            }
-            return ValueTypeBoolean.ValueBoolean.of(equal);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwitemequal")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+                    Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
+                    boolean equal = false;
+                    if(a.isPresent() && b.isPresent()) {
+                        equal = ItemStack.areItemsEqual(a.get(), b.get());
+                    } else if(!a.isPresent() && !b.isPresent()) {
+                        equal = true;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(equal);
+                }
+            }).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------

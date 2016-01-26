@@ -1,13 +1,15 @@
 package org.cyclops.integrateddynamics.core.evaluate.build;
 
-import com.google.common.collect.Lists;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
+import org.cyclops.integrateddynamics.core.evaluate.operator.IterativeSmartFunction;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,9 +20,12 @@ import java.util.Objects;
  * Appending the kinds "a", "b" and "c" for example will result in the base localization key of "operator.operators.MOD_ID.a.b.c.".
  * This base key then will be suffixed with {"name", "basename"}.
  * If the operator name would be "xyz", then you'll also need the localization keys "operator.operators.MOD_ID.a.b.c.xyz."{"name", "info"}.
+ *
+ * The actual operator function can either be set by calling {@link OperatorBuilder#function} or by
+ * doing any number of calls to {@link OperatorBuilder#handle(IOperatorValuePropagator)} with value propagators.
  * @author rubensworks
  */
-public class OperatorBuilder {
+public class OperatorBuilder<O> {
 
     private final IValueType outputType;
     private final String symbol;
@@ -32,11 +37,12 @@ public class OperatorBuilder {
     private final List<String> kinds;
     private final IConditionalOutputTypeDeriver conditionalOutputTypeDeriver;
     private final ITypeValidator typeValidator;
+    private final List<IOperatorValuePropagator> valuePropagators;
 
     protected OperatorBuilder(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                               OperatorBase.ISmartFunction function, IConfigRenderPattern renderPattern, String modId,
                               List<String> kinds, IConditionalOutputTypeDeriver conditionalOutputTypeDeriver,
-                              ITypeValidator typeValidator) {
+                              ITypeValidator typeValidator, List<IOperatorValuePropagator> valuePropagators) {
         this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
@@ -47,6 +53,7 @@ public class OperatorBuilder {
         this.kinds = kinds;
         this.conditionalOutputTypeDeriver = conditionalOutputTypeDeriver;
         this.typeValidator = typeValidator;
+        this.valuePropagators = valuePropagators;
     }
 
     /**
@@ -54,9 +61,9 @@ public class OperatorBuilder {
      * @param outputType The output value type.
      * @return The builder instance.
      */
-    public OperatorBuilder output(IValueType outputType) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> output(IValueType outputType) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -64,9 +71,9 @@ public class OperatorBuilder {
      * @param symbol The symbol for the operator.
      * @return The builder instance.
      */
-    public OperatorBuilder symbol(String symbol) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> symbol(String symbol) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -74,9 +81,9 @@ public class OperatorBuilder {
      * @param operatorName The operator name.
      * @return The builder instance.
      */
-    public OperatorBuilder operatorName(String operatorName) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> operatorName(String operatorName) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -85,9 +92,9 @@ public class OperatorBuilder {
      * @param symbolOperator The symbol and operator name.
      * @return The builder instance.
      */
-    public OperatorBuilder symbolOperator(String symbolOperator) {
-        return new OperatorBuilder(symbolOperator, symbolOperator, inputTypes, outputType, function, renderPattern,
-                modId, kinds, conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> symbolOperator(String symbolOperator) {
+        return new OperatorBuilder<>(symbolOperator, symbolOperator, inputTypes, outputType, function, renderPattern,
+                modId, kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -95,9 +102,9 @@ public class OperatorBuilder {
      * @param inputTypes Array of value types.
      * @return The builder instance.
      */
-    public OperatorBuilder inputTypes(IValueType[] inputTypes) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> inputTypes(IValueType[] inputTypes) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -106,9 +113,9 @@ public class OperatorBuilder {
      * @param defaultType The input type to replicate `length` times.
      * @return The builder instance.
      */
-    public OperatorBuilder inputTypes(int length, IValueType defaultType) {
-        return new OperatorBuilder(symbol, operatorName, OperatorBase.constructInputVariables(length, defaultType),
-                outputType, function, renderPattern, modId, kinds, conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> inputTypes(int length, IValueType defaultType) {
+        return new OperatorBuilder<>(symbol, operatorName, OperatorBase.constructInputVariables(length, defaultType),
+                outputType, function, renderPattern, modId, kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -116,7 +123,7 @@ public class OperatorBuilder {
      * @param inputType The input type.
      * @return The builder instance.
      */
-    public OperatorBuilder inputType(IValueType inputType) {
+    public OperatorBuilder<O> inputType(IValueType inputType) {
         return inputTypes(1, inputType);
     }
 
@@ -125,9 +132,12 @@ public class OperatorBuilder {
      * @param function The function.
      * @return The builder instance.
      */
-    public OperatorBuilder function(OperatorBase.ISmartFunction function) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> function(OperatorBase.ISmartFunction function) {
+        if(this.valuePropagators != null) {
+            throw new IllegalStateException("Can not add a function when value propagators are present.");
+        }
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -135,9 +145,9 @@ public class OperatorBuilder {
      * @param renderPattern The render pattern.
      * @return The builder instance.
      */
-    public OperatorBuilder renderPattern(IConfigRenderPattern renderPattern) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> renderPattern(IConfigRenderPattern renderPattern) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -145,18 +155,9 @@ public class OperatorBuilder {
      * @param modId The mod id.
      * @return The builder instance.
      */
-    public OperatorBuilder modId(String modId) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
-                conditionalOutputTypeDeriver, typeValidator);
-    }
-
-    protected static <T> List<T> join(List<T> list, T newElement) {
-        List<T> newList = Lists.newArrayListWithExpectedSize(list.size() + 1);
-        newList.addAll(list);
-        if(newElement != null) {
-            newList.add(newElement);
-        }
-        return newList;
+    public OperatorBuilder<O> modId(String modId) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -164,9 +165,9 @@ public class OperatorBuilder {
      * @param kind The string to append.
      * @return The builder instance.
      */
-    public OperatorBuilder appendKind(String kind) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
-                join(kinds, kind), conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> appendKind(String kind) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+                Helpers.joinList(kinds, kind), conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -175,9 +176,9 @@ public class OperatorBuilder {
      *                                     This will be used for {@link IOperator#getConditionalOutputType(IVariable[])}.
      * @return The builder instance.
      */
-    public OperatorBuilder conditionalOutputTypeDeriver(IConditionalOutputTypeDeriver conditionalOutputTypeDeriver) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
-                kinds, conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> conditionalOutputTypeDeriver(IConditionalOutputTypeDeriver conditionalOutputTypeDeriver) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+                kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
     /**
@@ -185,9 +186,22 @@ public class OperatorBuilder {
      * @param typeValidator The type validator. This will be used for {@link IOperator#validateTypes(IValueType[])}.
      * @return The builder instance.
      */
-    public OperatorBuilder typeValidator(ITypeValidator typeValidator) {
-        return new OperatorBuilder(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
-                kinds, conditionalOutputTypeDeriver, typeValidator);
+    public OperatorBuilder<O> typeValidator(ITypeValidator typeValidator) {
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+                kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
+    }
+
+    /**
+     * Add a value propagator.
+     * @param valuePropagator The value propagator.
+     * @return The builder instance.
+     */
+    public <O2> OperatorBuilder<O2> handle(IOperatorValuePropagator<O, O2> valuePropagator) {
+        if(this.function != null) {
+            throw new IllegalStateException("Can not add a function when value propagators are present.");
+        }
+        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, Helpers.joinList(valuePropagators, valuePropagator));
     }
 
     /**
@@ -203,9 +217,9 @@ public class OperatorBuilder {
      * @param outputType The output type.
      * @return The builder instance.
      */
-    public static OperatorBuilder forType(IValueType<?> outputType) {
-        return new OperatorBuilder(null, null, null, outputType, null, null, Reference.MOD_ID,
-                Collections.<String>emptyList(), null, null);
+    public static OperatorBuilder<OperatorBase.SafeVariablesGetter> forType(IValueType<?> outputType) {
+        return new OperatorBuilder<>(null, null, null, outputType, null, null, Reference.MOD_ID,
+                Collections.<String>emptyList(), null, null, null);
     }
 
     private static class Built extends OperatorBase {
@@ -220,7 +234,7 @@ public class OperatorBuilder {
                     Objects.requireNonNull(operatorBuilder.operatorName),
                     Objects.requireNonNull(operatorBuilder.inputTypes),
                     Objects.requireNonNull(operatorBuilder.outputType),
-                    Objects.requireNonNull(operatorBuilder.function),
+                    Objects.requireNonNull(deriveFunction(operatorBuilder)),
                     Objects.requireNonNull(operatorBuilder.renderPattern));
             this.modId = Objects.requireNonNull(operatorBuilder.modId);
             this.unlocalizedType = deriveUnlocalizedType(operatorBuilder);
@@ -228,7 +242,15 @@ public class OperatorBuilder {
             this.typeValidator = operatorBuilder.typeValidator;
         }
 
-        protected static String deriveUnlocalizedType(OperatorBuilder operatorBuilder) {
+        protected static ISmartFunction deriveFunction(OperatorBuilder operatorBuilder) {
+            if(operatorBuilder.valuePropagators != null) {
+                return new IterativeSmartFunction(operatorBuilder.valuePropagators);
+            } else {
+                return Objects.requireNonNull(operatorBuilder.function);
+            }
+        }
+
+        protected static String deriveUnlocalizedType(OperatorBuilder<?> operatorBuilder) {
             StringBuilder sb = new StringBuilder();
             boolean first = true;
             for(String kind : operatorBuilder.kinds) {

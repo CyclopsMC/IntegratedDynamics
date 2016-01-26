@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBase;
 
 import java.util.Collections;
@@ -53,9 +54,9 @@ public class AspectReadBuilder<V extends IValue, T extends IValueType<V>, O> {
     public <O2> AspectReadBuilder<V, T, O2> handle(IAspectValuePropagator<O, O2> valuePropagator, String kind) {
         return new AspectReadBuilder<>(
                 this.valueType,
-                join(this.kinds, kind),
+                Helpers.joinList(this.kinds, kind),
                 this.defaultAspectProperties,
-                join(this.valuePropagators, valuePropagator)
+                Helpers.joinList(this.valuePropagators, valuePropagator)
         );
     }
 
@@ -67,9 +68,9 @@ public class AspectReadBuilder<V extends IValue, T extends IValueType<V>, O> {
     public AspectReadBuilder<V, T, O> appendKind(String kind) {
         return new AspectReadBuilder<>(
                 this.valueType,
-                join(this.kinds, kind),
+                Helpers.joinList(this.kinds, kind),
                 this.defaultAspectProperties,
-                join(this.valuePropagators, null)
+                Helpers.joinList(this.valuePropagators, null)
         );
     }
 
@@ -81,9 +82,9 @@ public class AspectReadBuilder<V extends IValue, T extends IValueType<V>, O> {
     public AspectReadBuilder<V, T, O> withProperties(IAspectProperties aspectProperties) {
         return new AspectReadBuilder<>(
                 this.valueType,
-                join(this.kinds, null),
+                Helpers.joinList(this.kinds, null),
                 aspectProperties,
-                join(this.valuePropagators, null)
+                Helpers.joinList(this.valuePropagators, null)
         );
     }
 
@@ -92,15 +93,6 @@ public class AspectReadBuilder<V extends IValue, T extends IValueType<V>, O> {
      */
     public IAspectRead<V, T> build() {
         return new Built<V, T>((AspectReadBuilder<V, T, V>) this);
-    }
-
-    protected static <T> List<T> join(List<T> list, T newElement) {
-        List<T> newList = Lists.newArrayListWithExpectedSize(list.size() + 1);
-        newList.addAll(list);
-        if(newElement != null) {
-            newList.add(newElement);
-        }
-        return newList;
     }
 
     /**

@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
-import org.cyclops.integrateddynamics.core.evaluate.operator.ObjectItemStackOperator;
+import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
@@ -66,23 +66,25 @@ public class ThaumcraftModCompat implements IModCompat {
 
 			// Operators
 			/* Get aspects from item */
-			Operators.REGISTRY.register(new ObjectItemStackOperator("aspects", "getitemthaumcraftaspects", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.LIST, new OperatorBase.IFunction() {
-				@Override
-				public IValue evaluate(IVariable... variables) throws EvaluationException {
-					Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-					if(a.isPresent()) {
-						AspectList aspectList = AspectHelper.getObjectAspects(a.get());
-						Aspect[] aspectArray = aspectList.getAspectsSortedByAmount();
-						List<ValueObjectTypeAspect.ValueAspect> list = Lists.newArrayListWithExpectedSize(aspectArray.length);
-						for(Aspect aspect : aspectArray) {
-							list.add(ValueObjectTypeAspect.ValueAspect.of(aspect, aspectList.getAmount(aspect)));
+			Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+					.output(ValueTypes.LIST).symbol("aspects").operatorName("getitemthaumcraftaspects")
+					.function(new OperatorBase.ISmartFunction() {
+						@Override
+						public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+							Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+							if(a.isPresent()) {
+								AspectList aspectList = AspectHelper.getObjectAspects(a.get());
+								Aspect[] aspectArray = aspectList.getAspectsSortedByAmount();
+								List<ValueObjectTypeAspect.ValueAspect> list = Lists.newArrayListWithExpectedSize(aspectArray.length);
+								for(Aspect aspect : aspectArray) {
+									list.add(ValueObjectTypeAspect.ValueAspect.of(aspect, aspectList.getAmount(aspect)));
+								}
+								return ValueTypeList.ValueList.ofList(OBJECT_ASPECT, list);
+							} else {
+								return ValueTypeList.ValueList.ofList(OBJECT_ASPECT, Collections.<ValueObjectTypeAspect.ValueAspect>emptyList());
+							}
 						}
-						return ValueTypeList.ValueList.ofList(OBJECT_ASPECT, list);
-					} else {
-						return ValueTypeList.ValueList.ofList(OBJECT_ASPECT, Collections.EMPTY_LIST);
-					}
-				}
-			}, IConfigRenderPattern.SUFFIX_1_LONG));
+					}).build());
 			/* Get amount of vis in aspect */
 			Operators.REGISTRY.register(ObjectThaumcraftAspectOperator.toInt("amount", new ObjectThaumcraftAspectOperator.IIntegerFunction() {
 				@Override

@@ -1,9 +1,12 @@
 package org.cyclops.integrateddynamics.core.helper;
 
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+
+import java.util.List;
 
 /**
  * Helper methods.
@@ -34,6 +37,22 @@ public final class Helpers {
             return ((IFluidContainerItem) itemStack.getItem()).getCapacity(itemStack);
         }
         return FluidContainerRegistry.getContainerCapacity(itemStack);
+    }
+
+    /**
+     * Add the given element to a copy of the given list/
+     * @param list The list.
+     * @param newElement The element.
+     * @param <T> The type.
+     * @return The new joined list.
+     */
+    public static <T> List<T> joinList(List<T> list, T newElement) {
+        List<T> newList = Lists.newArrayListWithExpectedSize(list.size() + 1);
+        newList.addAll(list);
+        if(newElement != null) {
+            newList.add(newElement);
+        }
+        return newList;
     }
 
 }
