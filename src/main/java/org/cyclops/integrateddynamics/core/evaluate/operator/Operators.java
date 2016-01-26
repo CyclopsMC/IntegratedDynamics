@@ -813,155 +813,183 @@ public final class Operators {
     /**
      * If the entity is a mob
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISMOB = REGISTRY.register(ObjectEntityOperator.toBoolean("ismob", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof IMob;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISMOB = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("ismob")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity instanceof IMob;
+                }
+            })).build());
 
     /**
      * If the entity is an animal
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(ObjectEntityOperator.toBoolean("isanimal", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof IAnimals && !(entity instanceof IMob);
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isanimal")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity instanceof IAnimals && !(entity instanceof IMob);
+                }
+            })).build());
 
     /**
      * If the entity is an item
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISITEM = REGISTRY.register(ObjectEntityOperator.toBoolean("isitem", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof EntityItem;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISITEM = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isitem")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity instanceof EntityItem;
+                }
+            })).build());
 
     /**
      * If the entity is a player
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISPLAYER = REGISTRY.register(ObjectEntityOperator.toBoolean("isplayer", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof EntityPlayer;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISPLAYER = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isplayer")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity instanceof EntityPlayer;
+                }
+            })).build());
 
     /**
      * The itemstack from the entity
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ITEMSTACK = REGISTRY.register(new ObjectEntityOperator("item", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.OBJECT_ITEMSTACK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ENTITY_ITEMSTACK = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("item")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
+                    return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : null);
+                }
+            }).build());
 
     /**
      * The entity health
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_HEALTH = REGISTRY.register(ObjectEntityOperator.toDouble("health", new ObjectEntityOperator.IDoubleFunction() {
-        @Override
-        public double evaluate(Entity entity) throws EvaluationException {
-            return (entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHealth() : 0;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_HEALTH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.DOUBLE).symbolOperator("health")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(new IOperatorValuePropagator<Entity, Double>() {
+                @Override
+                public Double getOutput(Entity entity) throws EvaluationException {
+                    return (entity instanceof EntityLivingBase) ? (double) ((EntityLivingBase) entity).getHealth() : 0;
+                }
+            })).build());
 
     /**
      * The entity width
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_WIDTH = REGISTRY.register(ObjectEntityOperator.toDouble("width", new ObjectEntityOperator.IDoubleFunction() {
-        @Override
-        public double evaluate(Entity entity) throws EvaluationException {
-            return entity.width;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_WIDTH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.DOUBLE).symbolOperator("width")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(new IOperatorValuePropagator<Entity, Double>() {
+                @Override
+                public Double getOutput(Entity entity) throws EvaluationException {
+                    return (entity != null) ? (double) entity.width : 0;
+                }
+            })).build());
 
     /**
      * The entity width
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_HEIGHT = REGISTRY.register(ObjectEntityOperator.toDouble("height", new ObjectEntityOperator.IDoubleFunction() {
-        @Override
-        public double evaluate(Entity entity) throws EvaluationException {
-            return entity.height;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_HEIGHT = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.DOUBLE).symbolOperator("height")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(new IOperatorValuePropagator<Entity, Double>() {
+                @Override
+                public Double getOutput(Entity entity) throws EvaluationException {
+                    return (entity != null) ? (double) entity.height : 0;
+                }
+            })).build());
 
     /**
      * If the entity is burning
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISBURNING = REGISTRY.register(ObjectEntityOperator.toBoolean("isburning", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity.isBurning();
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISBURNING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isburning")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity != null && entity.isBurning();
+                }
+            })).build());
 
     /**
      * If the entity is wet
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISWET = REGISTRY.register(ObjectEntityOperator.toBoolean("iswet", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity.isWet();
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISWET = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("iswet")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity != null && entity.isWet();
+                }
+            })).build());
 
     /**
      * If the entity is sneaking
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISSNEAKING = REGISTRY.register(ObjectEntityOperator.toBoolean("issneaking", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity.isSneaking();
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISSNEAKING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("issneaking")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity != null && entity.isSneaking();
+                }
+            })).build());
 
     /**
      * If the entity is eating
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISEATING = REGISTRY.register(ObjectEntityOperator.toBoolean("iseating", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity.isEating();
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISEATING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("iseating")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity != null && entity.isEating();
+                }
+            })).build());
 
     /**
      * The list of armor itemstacks from an entity
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ARMORINVENTORY = REGISTRY.register(new ObjectEntityOperator("armorinventory", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.LIST, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
-            if(a.isPresent()) {
-                Entity entity = a.get();
-                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.worldObj, entity));
-            } else {
-                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.EMPTY_LIST);
-            }
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ENTITY_ARMORINVENTORY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("armorinventory")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
+                    if(a.isPresent()) {
+                        Entity entity = a.get();
+                        return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.worldObj, entity));
+                    } else {
+                        return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.<ValueObjectTypeEntity.ValueEntity>emptyList());
+                    }
+                }
+            }).build());
 
     /**
      * The list of itemstacks from an entity
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_INVENTORY = REGISTRY.register(new ObjectEntityOperator("inventory", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.LIST, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
-            if(a.isPresent()) {
-                Entity entity = a.get();
-                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.worldObj, entity));
-            } else {
-                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.EMPTY_LIST);
-            }
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ENTITY_INVENTORY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("inventory")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
+                    if(a.isPresent()) {
+                        Entity entity = a.get();
+                        return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.worldObj, entity));
+                    } else {
+                        return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.<ValueObjectTypeEntity.ValueEntity>emptyList());
+                    }
+                }
+            }).build());
 
     /**
      * ----------------------------------- FLUID STACK OBJECT OPERATORS -----------------------------------

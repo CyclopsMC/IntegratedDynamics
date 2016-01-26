@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -22,6 +23,26 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> LOGICAL = OperatorBuilder.forType(ValueTypes.BOOLEAN).appendKind("logical");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> LOGICAL_1_PREFIX = LOGICAL.inputTypes(1, ValueTypes.BOOLEAN).renderPattern(IConfigRenderPattern.PREFIX_1);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> LOGICAL_2 = LOGICAL.inputTypes(2, ValueTypes.BOOLEAN).renderPattern(IConfigRenderPattern.INFIX);
+
+    // --------------- Value propagators ---------------
+    public static final IOperatorValuePropagator<Integer, IValue> PROPAGATOR_INTEGER_VALUE = new IOperatorValuePropagator<Integer, IValue>() {
+        @Override
+        public IValue getOutput(Integer input) throws EvaluationException {
+            return ValueTypeInteger.ValueInteger.of(input);
+        }
+    };
+    public static final IOperatorValuePropagator<Boolean, IValue> PROPAGATOR_BOOLEAN_VALUE = new IOperatorValuePropagator<Boolean, IValue>() {
+        @Override
+        public IValue getOutput(Boolean input) throws EvaluationException {
+            return ValueTypeBoolean.ValueBoolean.of(input);
+        }
+    };
+    public static final IOperatorValuePropagator<Double, IValue> PROPAGATOR_DOUBLE_VALUE = new IOperatorValuePropagator<Double, IValue>() {
+        @Override
+        public IValue getOutput(Double input) throws EvaluationException {
+            return ValueTypeDouble.ValueDouble.of(input);
+        }
+    };
 
     // --------------- Arithmetic builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ARITHMETIC = OperatorBuilder.forType(ValueTypes.CATEGORY_NUMBER).appendKind("arithmetic").conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
@@ -69,7 +90,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder BLOCK = OperatorBuilder.forType(ValueTypes.OBJECT_BLOCK).appendKind("block");
     public static final OperatorBuilder BLOCK_1_SUFFIX_LONG = BLOCK.inputTypes(1, ValueTypes.OBJECT_BLOCK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
 
-    // --------------- Block builders ---------------
+    // --------------- ItemStack builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK = OperatorBuilder.forType(ValueTypes.OBJECT_ITEMSTACK).appendKind("itemstack");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_1_SUFFIX_LONG = ITEMSTACK.inputTypes(1, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_2 = ITEMSTACK.inputTypes(2, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.INFIX);
@@ -81,19 +102,25 @@ public class OperatorBuilders {
                     return a.getRawValue().isPresent() ? a.getRawValue().get() : null;
                 }
             });
-    public static final IterativeSmartFunction.PrePostBuilder<ItemStack, Integer> FUNCTION_ITEMSTACK_TO_INT = FUNCTION_ITEMSTACK
-            .appendPost(new IOperatorValuePropagator<Integer, IValue>() {
+    public static final IterativeSmartFunction.PrePostBuilder<ItemStack, Integer> FUNCTION_ITEMSTACK_TO_INT =
+            FUNCTION_ITEMSTACK.appendPost(PROPAGATOR_INTEGER_VALUE);
+    public static final IterativeSmartFunction.PrePostBuilder<ItemStack, Boolean> FUNCTION_ITEMSTACK_TO_BOOLEAN =
+            FUNCTION_ITEMSTACK.appendPost(PROPAGATOR_BOOLEAN_VALUE);
+
+    // --------------- Entity builders ---------------
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY = OperatorBuilder.forType(ValueTypes.OBJECT_ENTITY).appendKind("entity");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_SUFFIX_LONG = ENTITY.inputTypes(1, ValueTypes.OBJECT_ENTITY).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+    public static final IterativeSmartFunction.PrePostBuilder<Entity, IValue> FUNCTION_ENTITY = IterativeSmartFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Entity>() {
                 @Override
-                public IValue getOutput(Integer input) throws EvaluationException {
-                    return ValueTypeInteger.ValueInteger.of(input);
+                public Entity getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = input.getValue(0);
+                    return a.getRawValue().isPresent() ? a.getRawValue().get() : null;
                 }
             });
-    public static final IterativeSmartFunction.PrePostBuilder<ItemStack, Boolean> FUNCTION_ITEMSTACK_TO_BOOLEAN = FUNCTION_ITEMSTACK
-            .appendPost(new IOperatorValuePropagator<Boolean, IValue>() {
-                @Override
-                public IValue getOutput(Boolean input) throws EvaluationException {
-                    return ValueTypeBoolean.ValueBoolean.of(input);
-                }
-            });
+    public static final IterativeSmartFunction.PrePostBuilder<Entity, Double> FUNCTION_ENTITY_TO_DOUBLE =
+            FUNCTION_ENTITY.appendPost(PROPAGATOR_DOUBLE_VALUE);
+    public static final IterativeSmartFunction.PrePostBuilder<Entity, Boolean> FUNCTION_ENTITY_TO_BOOLEAN =
+            FUNCTION_ENTITY.appendPost(PROPAGATOR_BOOLEAN_VALUE);
 
 }

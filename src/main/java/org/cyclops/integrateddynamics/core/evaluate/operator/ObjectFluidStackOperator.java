@@ -74,12 +74,12 @@ public class ObjectFluidStackOperator extends ObjectOperatorBase {
         }, IConfigRenderPattern.SUFFIX_1_LONG);
     }
 
-    public static ObjectEntityOperator toDouble(String name, final IDoubleFunction function) {
+    public static ObjectFluidStackOperator toDouble(String name, final IDoubleFunction function) {
         return toDouble(name, function, 0);
     }
 
-    public static ObjectEntityOperator toDouble(String name, final IDoubleFunction function, final int defaultValue) {
-        return new ObjectEntityOperator(name, new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.DOUBLE, new IFunction() {
+    public static ObjectFluidStackOperator toDouble(String name, final IDoubleFunction function, final int defaultValue) {
+        return new ObjectFluidStackOperator(name, new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.DOUBLE, new IFunction() {
             @Override
             public IValue evaluate(IVariable... variables) throws EvaluationException {
                 Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
