@@ -998,92 +998,108 @@ public final class Operators {
     /**
      * The amount of fluid in the fluidstack
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(ObjectFluidStackOperator.toInt("amount", new ObjectFluidStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.amount;
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("amount")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(new IOperatorValuePropagator<FluidStack, Integer>() {
+                @Override
+                public Integer getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null ? fluidStack.amount : 0;
+                }
+            })).build());
 
     /**
      * The block from the fluidstack
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_BLOCK = REGISTRY.register(new ObjectFluidStackOperator("block", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeBlock.ValueBlock.of(a.isPresent() ? a.get().getFluid().getBlock().getDefaultState() : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_FLUIDSTACK_BLOCK = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();
+                    return ValueObjectTypeBlock.ValueBlock.of(a.isPresent() ? a.get().getFluid().getBlock().getDefaultState() : null);
+                }
+            }).build());
 
     /**
      * The fluidstack luminosity
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("luminosity", new ObjectFluidStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.getFluid().getLuminosity(fluidStack);
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("luminosity")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(new IOperatorValuePropagator<FluidStack, Integer>() {
+                @Override
+                public Integer getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null ? fluidStack.getFluid().getLuminosity(fluidStack) : 0;
+                }
+            })).build());
 
     /**
      * The fluidstack density
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("density", new ObjectFluidStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.getFluid().getDensity(fluidStack);
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("density")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(new IOperatorValuePropagator<FluidStack, Integer>() {
+                @Override
+                public Integer getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null ? fluidStack.getFluid().getDensity(fluidStack) : 0;
+                }
+            })).build());
 
     /**
      * The fluidstack viscosity
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("viscosity", new ObjectFluidStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.getFluid().getViscosity(fluidStack);
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("viscosity")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(new IOperatorValuePropagator<FluidStack, Integer>() {
+                @Override
+                public Integer getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null ? fluidStack.getFluid().getViscosity(fluidStack) : 0;
+                }
+            })).build());
 
     /**
      * If the fluidstack is gaseous
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(ObjectFluidStackOperator.toBoolean("isgaseous", new ObjectFluidStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.getFluid().isGaseous(fluidStack);
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isgaseous")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<FluidStack, Boolean>() {
+                @Override
+                public Boolean getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null && fluidStack.getFluid().isGaseous(fluidStack);
+                }
+            })).build());
 
     /**
      * The rarity of the fluidstack
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_RARITY = REGISTRY.register(new ObjectFluidStackOperator("rarity", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
-            return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getFluid().getRarity(a.get()).rarityName : "");
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_FLUIDSTACK_RARITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("rarity")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();
+                    return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getFluid().getRarity(a.get()).rarityName : "");
+                }
+            }).build());
 
     /**
      * If the fluid types of the two given fluidstacks are equal
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(new ObjectFluidStackOperator("=Raw=", "israwfluidequal", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
-            Optional<FluidStack> b = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[1].getValue()).getRawValue();
-            boolean equal = false;
-            if(a.isPresent() && b.isPresent()) {
-                equal = a.get().isFluidEqual(b.get());
-            } else if(!a.isPresent() && !b.isPresent()) {
-                equal = true;
-            }
-            return ValueTypeBoolean.ValueBoolean.of(equal);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwfluidequal")
+            .function(new OperatorBase.ISmartFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();
+                    Optional<FluidStack> b = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(1)).getRawValue();
+                    boolean equal = false;
+                    if(a.isPresent() && b.isPresent()) {
+                        equal = a.get().isFluidEqual(b.get());
+                    } else if(!a.isPresent() && !b.isPresent()) {
+                        equal = true;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(equal);
+                }
+            }).build());
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

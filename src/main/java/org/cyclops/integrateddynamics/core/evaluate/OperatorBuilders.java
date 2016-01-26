@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -122,5 +123,22 @@ public class OperatorBuilders {
             FUNCTION_ENTITY.appendPost(PROPAGATOR_DOUBLE_VALUE);
     public static final IterativeSmartFunction.PrePostBuilder<Entity, Boolean> FUNCTION_ENTITY_TO_BOOLEAN =
             FUNCTION_ENTITY.appendPost(PROPAGATOR_BOOLEAN_VALUE);
+
+    // --------------- FluidStack builders ---------------
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK = OperatorBuilder.forType(ValueTypes.OBJECT_FLUIDSTACK).appendKind("fluidstack");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_1_SUFFIX_LONG = FLUIDSTACK.inputTypes(1, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_2 = FLUIDSTACK.inputTypes(2, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.INFIX);
+    public static final IterativeSmartFunction.PrePostBuilder<FluidStack, IValue> FUNCTION_FLUIDSTACK = IterativeSmartFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, FluidStack>() {
+                @Override
+                public FluidStack getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueObjectTypeFluidStack.ValueFluidStack a = input.getValue(0);
+                    return a.getRawValue().isPresent() ? a.getRawValue().get() : null;
+                }
+            });
+    public static final IterativeSmartFunction.PrePostBuilder<FluidStack, Integer> FUNCTION_FLUIDSTACK_TO_INT =
+            FUNCTION_FLUIDSTACK.appendPost(PROPAGATOR_INTEGER_VALUE);
+    public static final IterativeSmartFunction.PrePostBuilder<FluidStack, Boolean> FUNCTION_FLUIDSTACK_TO_BOOLEAN =
+            FUNCTION_FLUIDSTACK.appendPost(PROPAGATOR_BOOLEAN_VALUE);
 
 }
