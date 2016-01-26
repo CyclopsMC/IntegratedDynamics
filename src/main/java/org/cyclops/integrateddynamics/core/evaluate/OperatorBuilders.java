@@ -62,4 +62,8 @@ public class OperatorBuilders {
     public static final OperatorBuilder LIST = OperatorBuilder.forType(ValueTypes.LIST).appendKind("double");
     public static final OperatorBuilder LIST_1_PREFIX = LIST.inputTypes(1, ValueTypes.LIST).renderPattern(IConfigRenderPattern.PREFIX_1);
 
+    // --------------- Block builders ---------------
+    public static final OperatorBuilder BLOCK = OperatorBuilder.forType(ValueTypes.OBJECT_BLOCK).appendKind("block");
+    public static final OperatorBuilder BLOCK_1_SUFFIX_LONG = BLOCK.inputTypes(1, ValueTypes.OBJECT_BLOCK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+
 }
