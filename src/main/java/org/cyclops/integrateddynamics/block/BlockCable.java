@@ -83,15 +83,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @BlockProperty
     public static final IUnlistedProperty<Boolean>[] CONNECTED = new IUnlistedProperty[6];
     @BlockProperty
-    public static final IUnlistedProperty<Boolean>[] PART = new IUnlistedProperty[6];
-    @BlockProperty
     public static final IUnlistedProperty<IPartType.RenderPosition>[] PART_RENDERPOSITIONS = new IUnlistedProperty[6];
     @BlockProperty
     public static final IUnlistedProperty<Optional> FACADE = new UnlistedProperty<>("facade", Optional.class);
     static {
         for(EnumFacing side : EnumFacing.values()) {
             CONNECTED[side.ordinal()] = Properties.toUnlisted(PropertyBool.create("connect-" + side.getName()));
-            PART[side.ordinal()] = Properties.toUnlisted(PropertyBool.create("part-" + side.getName()));
             PART_RENDERPOSITIONS[side.ordinal()] = new UnlistedProperty<>("partRenderPosition-" + side.getName(), IPartType.RenderPosition.class);
         }
     }
@@ -106,17 +103,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             {CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1}, // SOUTH
             {0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX}, // WEST
             {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX}, // EAST
-    };
-    public static final float[][] CABLE_COLLISION_BOXES_WITH_PART = {
-            {CableModel.MIN, CableModel.PART_DEPTH_FACTOR, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX}, // DOWN
-            {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1 - CableModel.PART_DEPTH_FACTOR, CableModel.MAX}, // UP
-            {CableModel.MIN, CableModel.MIN, CableModel.PART_DEPTH_FACTOR, CableModel.MAX, CableModel.MAX, CableModel.MIN}, // NORTH
-            {CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1 - CableModel.PART_DEPTH_FACTOR}, // SOUTH
-            {CableModel.PART_DEPTH_FACTOR, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX}, // WEST
-            {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1 - CableModel.PART_DEPTH_FACTOR, CableModel.MAX, CableModel.MAX}, // EAST
-    };
-    private static final float[][] PART_COLLISION_BOXES = {
-            {0.19F, 0.81F}, {0.005F, CableModel.PART_DEPTH_FACTOR}, {0.19F, 0.81F}
     };
 
     // Collision components
@@ -212,8 +198,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         @Override
         public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
             return Lists.newArrayList(
-                    block.getCableBoundingBoxWithPart(position),
-                    block.getPartBoundingBox(position)
+                    block.getCableBoundingBoxWithPart(world, pos, position),
+                    block.getPartBoundingBox(world, pos, position)
             );
         }
 
@@ -328,8 +314,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     protected boolean hasPart(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return BlockHelpers.getSafeBlockStateProperty(
                (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
-               PART[side.ordinal()],
-               false);
+               PART_RENDERPOSITIONS[side.ordinal()],
+                IPartType.RenderPosition.NONE) != IPartType.RenderPosition.NONE;
     }
 
     @Override
@@ -632,26 +618,24 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         }
     }
 
-    public AxisAlignedBB getCableBoundingBoxWithPart(EnumFacing side) {
+    protected IPartType.RenderPosition getPartRenderPosition(World world, BlockPos pos, EnumFacing side) {
+        return BlockHelpers.getSafeBlockStateProperty((IExtendedBlockState)
+                getExtendedState(world.getBlockState(pos), world, pos), PART_RENDERPOSITIONS[side.ordinal()],
+                IPartType.RenderPosition.NONE);
+    }
+
+    private AxisAlignedBB getCableBoundingBoxWithPart(World world, BlockPos pos, EnumFacing side) {
         float min = CableModel.MIN;
         float max = CableModel.MAX;
         if (side == null) {
             return AxisAlignedBB.fromBounds(min, min, min, max, max, max);
         } else {
-            float[] b = CABLE_COLLISION_BOXES_WITH_PART[side.ordinal()];
-            return AxisAlignedBB.fromBounds(b[0], b[1], b[2], b[3], b[4], b[5]);
+            return getPartRenderPosition(world, pos, side).getSidedCableBoundingBox(side);
         }
     }
 
-    public AxisAlignedBB getPartBoundingBox(EnumFacing side) {
-        // Copy bounds
-        float[][] bounds = new float[PART_COLLISION_BOXES.length][PART_COLLISION_BOXES[0].length];
-        for (int i = 0; i < bounds.length; i++)
-            bounds[i] = Arrays.copyOf(PART_COLLISION_BOXES[i], PART_COLLISION_BOXES[i].length);
-
-        // Transform bounds
-        MatrixHelpers.transform(bounds, side);
-        return AxisAlignedBB.fromBounds(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+    private AxisAlignedBB getPartBoundingBox(World world, BlockPos pos, EnumFacing side) {
+        return getPartRenderPosition(world, pos, side).getBoundingBox(side);
     }
 
     @Override

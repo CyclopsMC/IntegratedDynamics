@@ -252,13 +252,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         for(EnumFacing side : EnumFacing.VALUES) {
             extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()],
                     !isForceDisconnected(side) && connected.get(side.ordinal()));
-            boolean hasPart = hasPart(side);
-            extendedState = extendedState.withProperty(BlockCable.PART[side.ordinal()], hasPart);
-            if(hasPart) {
-                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
-            } else {
-                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
-            }
+            extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
+                    hasPart(side) ? getPart(side).getRenderPosition() : IPartType.RenderPosition.NONE);
         }
         extendedState = extendedState.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
         extendedState = extendedState.withProperty(BlockCable.PARTCONTAINER, this);

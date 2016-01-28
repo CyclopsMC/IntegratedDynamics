@@ -46,7 +46,7 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean hasPart(EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PART[side.ordinal()], false);
+        return getPartRenderPosition(side) != IPartType.RenderPosition.NONE;
     }
 
     @Override

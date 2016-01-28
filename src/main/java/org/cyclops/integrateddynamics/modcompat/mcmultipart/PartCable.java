@@ -105,7 +105,6 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         for(EnumFacing side : EnumFacing.VALUES) {
             extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()], isConnected(side));
             boolean hasPart = hasPart(side);
-            extendedState = extendedState.withProperty(BlockCable.PART[side.ordinal()], hasPart);
             if(hasPart) {
                 extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
             } else {
@@ -118,7 +117,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public BlockState createBlockState() {
         return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[0],
-                ArrayUtils.addAll(BlockCable.PART_RENDERPOSITIONS, ArrayUtils.addAll(BlockCable.CONNECTED, BlockCable.PART)));
+                ArrayUtils.addAll(BlockCable.PART_RENDERPOSITIONS, BlockCable.CONNECTED));
     }
 
     @Override
@@ -145,7 +144,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
             if(isConnected(side)) {
                 list.add(BlockCable.getInstance().getCableBoundingBox(side));
             } else if(hasPart(side)) {
-                list.add(BlockCable.getInstance().getCableBoundingBoxWithPart(side));
+                list.add(getPart(side).getRenderPosition().getSidedCableBoundingBox(side));
             }
         }
     }
@@ -158,7 +157,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     protected void addCollisionBoxWithPartConditional(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity, EnumFacing side) {
-        AxisAlignedBB box = BlockCable.getInstance().getCableBoundingBoxWithPart(side);
+        AxisAlignedBB box = getPart(side).getRenderPosition().getSidedCableBoundingBox(side);
         if(box.intersectsWith(mask)) {
             list.add(box);
         }

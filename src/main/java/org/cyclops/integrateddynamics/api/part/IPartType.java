@@ -7,14 +7,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.MatrixHelpers;
 import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.client.model.CableModel;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -290,11 +294,30 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     public static class RenderPosition {
 
-        public static final RenderPosition NONE = new RenderPosition(-1, -1, -1);
+        public static final RenderPosition NONE = new RenderPosition(-1, -1, -1, -1);
 
         private final float depthFactor;
         private final float widthFactor;
         private final float heightFactor;
+        private final float[][] sidedCableCollisionBoxes;
+        private final float[][] collisionBoxes;
+
+        public RenderPosition(float selectionDepthFactor, float depthFactor, float widthFactor, float heightFactor) {
+            this.depthFactor = depthFactor;
+            this.widthFactor = widthFactor;
+            this.heightFactor = heightFactor;
+            this.sidedCableCollisionBoxes = new float[][]{
+                    {CableModel.MIN, selectionDepthFactor, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX}, // DOWN
+                    {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1 - selectionDepthFactor, CableModel.MAX}, // UP
+                    {CableModel.MIN, CableModel.MIN, selectionDepthFactor, CableModel.MAX, CableModel.MAX, CableModel.MIN}, // NORTH
+                    {CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1 - selectionDepthFactor}, // SOUTH
+                    {selectionDepthFactor, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX}, // WEST
+                    {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1 - selectionDepthFactor, CableModel.MAX, CableModel.MAX}, // EAST
+            };
+            this.collisionBoxes = new float[][]{
+                    {0.19F, 0.81F}, {0.005F, selectionDepthFactor}, {0.19F, 0.81F}
+            };
+        }
 
         public float getDepthFactor() {
             return depthFactor;
@@ -308,10 +331,20 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
             return heightFactor;
         }
 
-        public RenderPosition(float depthFactor, float widthFactor, float heightFactor) {
-            this.depthFactor = depthFactor;
-            this.widthFactor = widthFactor;
-            this.heightFactor = heightFactor;
+        public AxisAlignedBB getSidedCableBoundingBox(EnumFacing side) {
+            float[] b = sidedCableCollisionBoxes[side.ordinal()];
+            return AxisAlignedBB.fromBounds(b[0], b[1], b[2], b[3], b[4], b[5]);
+        }
+
+        public AxisAlignedBB getBoundingBox(EnumFacing side) {
+            // Copy bounds
+            float[][] bounds = new float[collisionBoxes.length][collisionBoxes[0].length];
+            for (int i = 0; i < bounds.length; i++)
+                bounds[i] = Arrays.copyOf(collisionBoxes[i], collisionBoxes[i].length);
+
+            // Transform bounds
+            MatrixHelpers.transform(bounds, side);
+            return AxisAlignedBB.fromBounds(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
         }
 
     }

@@ -117,7 +117,7 @@ public class PartPartType extends MultipartBase {
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return BlockCable.getInstance().getPartBoundingBox(getFacing());
+        return getPartType().getRenderPosition().getBoundingBox(getFacing());
     }
 
     @Override
@@ -129,17 +129,17 @@ public class PartPartType extends MultipartBase {
 
     @Override
     public void addOcclusionBoxes(List<AxisAlignedBB> list) {
-        list.add(BlockCable.getInstance().getPartBoundingBox(getFacing()));
+        list.add(getRenderBoundingBox());
     }
 
     @Override
     public void addSelectionBoxes(List<AxisAlignedBB> list) {
-        list.add(BlockCable.getInstance().getPartBoundingBox(getFacing()));
+        list.add(getRenderBoundingBox());
     }
 
     @Override
     public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-        AxisAlignedBB boundingBox = BlockCable.getInstance().getPartBoundingBox(getFacing());
+        AxisAlignedBB boundingBox = getRenderBoundingBox();
         if(mask.intersectsWith(boundingBox)) {
             list.add(boundingBox);
         }

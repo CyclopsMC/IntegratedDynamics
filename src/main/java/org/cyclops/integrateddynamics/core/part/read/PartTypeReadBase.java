@@ -26,7 +26,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
         extends PartTypeAspects<P, S> implements IPartTypeReader<P, S> {
 
     public PartTypeReadBase(String name) {
-        super(name, new RenderPosition(0.3125F, 0.625F, 0.625F));
+        super(name, new RenderPosition(0.1875F, 0.3125F, 0.625F, 0.625F));
     }
 
     @Override
