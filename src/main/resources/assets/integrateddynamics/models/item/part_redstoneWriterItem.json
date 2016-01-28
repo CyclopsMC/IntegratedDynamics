@@ -2,8 +2,8 @@
   "forge_marker": 1,
   "parent": "integrateddynamics:block/writer",
   "textures": {
-    "back" : "integrateddynamics:blocks/redstoneReader_back",
-    "front": "integrateddynamics:blocks/redstoneWriter_front_inactive"
+    "back" : "integrateddynamics:parts/redstoneReader_back",
+    "front": "integrateddynamics:parts/redstoneWriter_front_inactive"
   },
   "display": {
     "thirdperson": {

@@ -2,8 +2,8 @@
   "forge_marker": 1,
   "parent": "integrateddynamics:block/reader",
   "textures": {
-    "back" : "integrateddynamics:blocks/fluidReader_back",
-    "front": "integrateddynamics:blocks/fluidReader_front"
+    "back" : "integrateddynamics:parts/fluidReader_back",
+    "front": "integrateddynamics:parts/fluidReader_front"
   },
   "display": {
     "thirdperson": {

@@ -3,8 +3,8 @@
   "defaults": {
     "model": "integrateddynamics:reader",
     "textures": {
-      "back" : "integrateddynamics:blocks/redstoneReader_back",
-      "front": "integrateddynamics:blocks/redstoneReader_front"
+      "back" : "integrateddynamics:parts/redstoneReader_back",
+      "front": "integrateddynamics:parts/redstoneReader_front"
     }
   },
   "variants": {

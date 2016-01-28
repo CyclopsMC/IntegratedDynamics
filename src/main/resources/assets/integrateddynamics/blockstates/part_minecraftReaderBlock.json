@@ -3,8 +3,8 @@
   "defaults": {
     "model": "integrateddynamics:reader",
     "textures": {
-      "back" : "integrateddynamics:blocks/minecraftReader_back",
-      "front": "integrateddynamics:blocks/minecraftReader_front"
+      "back" : "integrateddynamics:parts/minecraftReader_back",
+      "front": "integrateddynamics:parts/minecraftReader_front"
     }
   },
   "variants": {

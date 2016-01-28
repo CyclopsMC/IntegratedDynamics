@@ -6,16 +6,16 @@
   "variants": {
     "status": {
       "active": {"textures": {
-        "back" : "integrateddynamics:blocks/redstoneReader_back",
-        "front": "integrateddynamics:blocks/redstoneWriter_front_active"
+        "back" : "integrateddynamics:parts/redstoneReader_back",
+        "front": "integrateddynamics:parts/redstoneWriter_front_active"
       }},
       "inactive": {"textures": {
-        "back" : "integrateddynamics:blocks/redstoneReader_back",
-        "front": "integrateddynamics:blocks/redstoneWriter_front_inactive"
+        "back" : "integrateddynamics:parts/redstoneReader_back",
+        "front": "integrateddynamics:parts/redstoneWriter_front_inactive"
       }},
       "error": {"textures": {
-        "back" : "integrateddynamics:blocks/redstoneReader_back",
-        "front": "integrateddynamics:blocks/redstoneWriter_front_error"
+        "back" : "integrateddynamics:parts/redstoneReader_back",
+        "front": "integrateddynamics:parts/redstoneWriter_front_error"
       }}
     },
     "facing": {

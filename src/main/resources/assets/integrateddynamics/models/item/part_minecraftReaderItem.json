@@ -2,8 +2,8 @@
   "forge_marker": 1,
   "parent": "integrateddynamics:block/reader",
   "textures": {
-    "back" : "integrateddynamics:blocks/minecraftReader_back",
-    "front": "integrateddynamics:blocks/minecraftReader_front"
+    "back" : "integrateddynamics:parts/minecraftReader_back",
+    "front": "integrateddynamics:parts/minecraftReader_front"
   },
   "display": {
     "thirdperson": {

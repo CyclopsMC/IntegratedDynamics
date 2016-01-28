@@ -2,8 +2,8 @@
   "forge_marker": 1,
   "parent": "integrateddynamics:block/reader",
   "textures": {
-    "back" : "integrateddynamics:blocks/inventoryReader_back",
-    "front": "integrateddynamics:blocks/inventoryReader_front"
+    "back" : "integrateddynamics:parts/inventoryReader_back",
+    "front": "integrateddynamics:parts/inventoryReader_front"
   },
   "display": {
     "thirdperson": {

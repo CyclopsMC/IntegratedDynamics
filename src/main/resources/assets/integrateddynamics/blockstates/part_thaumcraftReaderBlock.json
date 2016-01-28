@@ -3,8 +3,8 @@
   "defaults": {
     "model": "integrateddynamics:reader",
     "textures": {
-      "back" : "integrateddynamics:blocks/thaumcraftReader_back",
-      "front": "integrateddynamics:blocks/thaumcraftReader_front"
+      "back" : "integrateddynamics:parts/thaumcraftReader_back",
+      "front": "integrateddynamics:parts/thaumcraftReader_front"
     }
   },
   "variants": {
