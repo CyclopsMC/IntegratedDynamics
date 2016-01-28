@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.math.DoubleMath;
 import net.minecraft.block.Block;
@@ -14,20 +13,16 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.items.IItemHandler;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
-import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
@@ -269,6 +264,15 @@ public class Aspects {
                             return pos.getZ();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "posz").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ITEMFRAMEROTATION =
+                    AspectReadBuilders.World.BUILDER_INTEGER_ALL
+                            .handle(AspectReadBuilders.World.PROP_GET_ITEMFRAME)
+                            .handle(new IAspectValuePropagator<EntityItemFrame, Integer>() {
+                                @Override
+                                public Integer getOutput(EntityItemFrame itemFrame) {
+                                    return itemFrame!= null ? itemFrame.getRotation() : 0;
+                                }
+                            }).handle(AspectReadBuilders.PROP_GET_INTEGER, "itemframerotation").build();
 
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
                     AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Long>() {
@@ -317,29 +321,15 @@ public class Aspects {
                         }
                     }).appendKind("entities").build();
 
-            private static final Predicate<Entity> ENTITY_SELECTOR_ITEMFRAME = new Predicate<Entity>() {
-                @Override
-                public boolean apply(@Nullable Entity entity) {
-                    return entity instanceof EntityItemFrame;
-                }
-            };
-            public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> ITEMSTACK_ITEMFRAME =
-                    AspectReadBuilders.World.BUILDER_ITEMSTACK.handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueObjectTypeItemStack.ValueItemStack>() {
-                        @Override
-                        public ValueObjectTypeItemStack.ValueItemStack getOutput(Pair<PartTarget, IAspectProperties> pair) {
-                            DimPos dimPos = pair.getLeft().getTarget().getPos();
-                            EnumFacing facing = pair.getLeft().getTarget().getSide();
-                            List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
-                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
-                            ItemStack itemStack = null;
-                            for(Entity entity : entities) {
-                                if(EnumFacing.fromAngle(((EntityItemFrame) entity).rotationYaw) == facing.getOpposite()) {
-                                    itemStack = ((EntityItemFrame) entity).getDisplayedItem();
+            public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> ITEMSTACK_ITEMFRAMECONTENTS =
+                    AspectReadBuilders.World.BUILDER_ITEMSTACK
+                            .handle(AspectReadBuilders.World.PROP_GET_ITEMFRAME)
+                            .handle(new IAspectValuePropagator<EntityItemFrame, ItemStack>() {
+                                @Override
+                                public ItemStack getOutput(EntityItemFrame itemFrame) {
+                                    return itemFrame != null ? itemFrame.getDisplayedItem() : null;
                                 }
-                            }
-                            return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
-                        }
-                    }).appendKind("itemframe").build();
+                            }).handle(AspectReadBuilders.PROP_GET_ITEMSTACK, "itemframecontents").build();
 
         }
 

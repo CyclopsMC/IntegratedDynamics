@@ -192,6 +192,8 @@ aspect.aspects.integrateddynamics.read.integer.world.posy.name=Y Coordinate
 aspect.aspects.integrateddynamics.read.integer.world.posy.info=The Y coordinate of the target
 aspect.aspects.integrateddynamics.read.integer.world.posz.name=Z Coordinate
 aspect.aspects.integrateddynamics.read.integer.world.posz.info=The Z coordinate of the target
+aspect.aspects.integrateddynamics.read.integer.world.itemframerotation.name=Item Frame Rotation
+aspect.aspects.integrateddynamics.read.integer.world.itemframerotation.info=The index of the rotation the item in the attached Item Frame has.
 
 aspect.aspects.integrateddynamics.read.long.world.time.name=Time
 aspect.aspects.integrateddynamics.read.long.world.time.info=The world time dependent of the set time command
@@ -207,8 +209,8 @@ aspect.aspects.integrateddynamics.read.block.world.info=The target block
 aspect.aspects.integrateddynamics.read.list.world.entities.name=Entities
 aspect.aspects.integrateddynamics.read.list.world.entities.info=The entities in the target space
 
-aspect.aspects.integrateddynamics.read.itemstack.world.itemframe.name=Item Frame
-aspect.aspects.integrateddynamics.read.itemstack.world.itemframe.info=The item in an Item Frame attached to the reader
+aspect.aspects.integrateddynamics.read.itemstack.world.itemframecontents.name=Item Frame
+aspect.aspects.integrateddynamics.read.itemstack.world.itemframecontents.info=The item in an Item Frame attached to the reader
 
 ## Fluid aspects
 aspect.aspects.integrateddynamics.read.boolean.fluid.empty.name=Tank Empty

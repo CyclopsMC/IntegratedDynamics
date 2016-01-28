@@ -36,7 +36,8 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.Read.World.STRING_NAME,
                 Aspects.Read.World.BLOCK,
                 Aspects.Read.World.LIST_ENTITIES,
-                Aspects.Read.World.ITEMSTACK_ITEMFRAME
+                Aspects.Read.World.ITEMSTACK_ITEMFRAMECONTENTS,
+                Aspects.Read.World.INTEGER_ITEMFRAMEROTATION
         ));
     }
 

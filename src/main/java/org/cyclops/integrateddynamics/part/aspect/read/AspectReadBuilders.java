@@ -1,10 +1,15 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -24,6 +29,9 @@ import org.cyclops.integrateddynamics.core.part.aspect.build.AspectReadBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Collection of aspect read builders and value propagators.
@@ -186,11 +194,34 @@ public class AspectReadBuilders {
                 return input.getBlockPos();
             }
         };
+        private static final Predicate<Entity> ENTITY_SELECTOR_ITEMFRAME = new Predicate<Entity>() {
+            @Override
+            public boolean apply(@Nullable Entity entity) {
+                return entity instanceof EntityItemFrame;
+            }
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame> PROP_GET_ITEMFRAME = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame>() {
+            @Override
+            public EntityItemFrame getOutput(Pair<PartTarget, IAspectProperties> pair) {
+                DimPos dimPos = pair.getLeft().getTarget().getPos();
+                EnumFacing facing = pair.getLeft().getTarget().getSide();
+                List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+                        new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
+                for(Entity entity : entities) {
+                    if(EnumFacing.fromAngle(((EntityItemFrame) entity).rotationYaw) == facing.getOpposite()) {
+                        return ((EntityItemFrame) entity);
+                    }
+                }
+                return null;
+            }
+        };
 
         public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "world");
         public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "world");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
+                BUILDER_INTEGER_ALL = AspectReadBuilders.BUILDER_INTEGER.appendKind("world");
         public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, DimPos>
                 BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "world");
         public static final AspectReadBuilder<ValueTypeLong.ValueLong, ValueTypeLong, DimPos>
