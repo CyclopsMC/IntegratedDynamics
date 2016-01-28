@@ -8,9 +8,10 @@ import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -57,7 +58,7 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean shouldRenderParts() {
-        return !GeneralConfig.TESRPartRendering;
+        return MinecraftForgeClient.getRenderLayer() == EnumWorldBlockLayer.CUTOUT;
     }
 
     @Override

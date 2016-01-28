@@ -602,9 +602,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.TRANSLUCENT;
+    public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
+        return true;
     }
 
     public AxisAlignedBB getCableBoundingBox(EnumFacing side) {

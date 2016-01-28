@@ -8,7 +8,9 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.client.model.DynamicModel;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -146,57 +148,59 @@ public abstract class CableModelBase extends DynamicModel {
         List<BakedQuad> ret = Lists.newLinkedList();
         TextureAtlasSprite texture = getParticleTexture();
         boolean realCable = isItemStack() || isRealCable();
-
+        boolean renderCable = isItemStack() || MinecraftForgeClient.getRenderLayer() == EnumWorldBlockLayer.TRANSLUCENT;
         if(realCable) {
             Optional<IBlockState> blockStateHolder = getFacade();
             for (EnumFacing side : EnumFacing.values()) {
                 boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
                 boolean hasPart = !isItemStack() && hasPart(side);
-                IPartType.RenderPosition renderPosition = IPartType.RenderPosition.NONE;
-                if(isConnected) {
-                    renderPosition = CABLE_RENDERPOSITION;
+                if(hasPart && shouldRenderParts()) {
+                    ret.addAll(getPartModel(side).getGeneralQuads());
                 }
-                if (isConnected || hasPart) {
-                    int i = 0;
-                    float[][][] quadVertexes = this.quadVertexes;
-                    if(hasPart) {
-                        renderPosition = getPartRenderPosition(side);
-                        float depthFactor = renderPosition == IPartType.RenderPosition.NONE ? 0F : renderPosition.getDepthFactor();
-                        quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
-                        if(shouldRenderParts()) {
-                            ret.addAll(getPartModel(side).getGeneralQuads());
+                if(renderCable) {
+                    IPartType.RenderPosition renderPosition = IPartType.RenderPosition.NONE;
+                    if (isConnected) {
+                        renderPosition = CABLE_RENDERPOSITION;
+                    }
+                    if (isConnected || hasPart) {
+                        int i = 0;
+                        float[][][] quadVertexes = this.quadVertexes;
+                        if (hasPart) {
+                            renderPosition = getPartRenderPosition(side);
+                            float depthFactor = renderPosition == IPartType.RenderPosition.NONE ? 0F : renderPosition.getDepthFactor();
+                            quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
                         }
+                        for (float[][] v : quadVertexes) {
+                            Vec3 v1 = rotate(new Vec3(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
+                            Vec3 v2 = rotate(new Vec3(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).addVector(.5, .5, .5);
+                            Vec3 v3 = rotate(new Vec3(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);
+                            Vec3 v4 = rotate(new Vec3(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).addVector(.5, .5, .5);
+                            EnumFacing realSide = getSideFromVecs(v1, v2, v3);
+
+                            boolean invert = i == 2 || i == 1;
+                            int length = hasPart ? LENGTH_CONNECTION_LIMITED : LENGTH_CONNECTION;
+
+                            int[] data = Ints.concat(
+                                    vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture,
+                                            LENGTH_CONNECTION, invert ? length : 0),
+                                    vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture,
+                                            INV_LENGTH_CONNECTION, invert ? length : 0),
+                                    vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture,
+                                            INV_LENGTH_CONNECTION, invert ? 0 : length),
+                                    vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture,
+                                            LENGTH_CONNECTION, invert ? 0 : length)
+                            );
+                            i++;
+                            ret.add(new BakedQuad(data, -1, realSide));
+                        }
+                    } else {
+                        addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
                     }
-                    for (float[][] v : quadVertexes) {
-                        Vec3 v1 = rotate(new Vec3(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3 v2 = rotate(new Vec3(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3 v3 = rotate(new Vec3(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3 v4 = rotate(new Vec3(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).addVector(.5, .5, .5);
-                        EnumFacing realSide = getSideFromVecs(v1, v2, v3);
 
-                        boolean invert = i == 2 || i == 1;
-                        int length = hasPart ? LENGTH_CONNECTION_LIMITED : LENGTH_CONNECTION;
-
-                        int[] data = Ints.concat(
-                                vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture,
-                                        LENGTH_CONNECTION, invert ? length : 0),
-                                vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture,
-                                        INV_LENGTH_CONNECTION, invert ? length : 0),
-                                vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture,
-                                        INV_LENGTH_CONNECTION, invert ? 0 : length),
-                                vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture,
-                                        LENGTH_CONNECTION, invert ? 0 : length)
-                        );
-                        i++;
-                        ret.add(new BakedQuad(data, -1, realSide));
+                    // Render facade if present
+                    if (blockStateHolder.isPresent()) {
+                        ret.addAll(getFacadeQuads(blockStateHolder.get(), side, renderPosition));
                     }
-                } else {
-                    addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
-                }
-
-                // Render facade if present
-                if(blockStateHolder.isPresent()) {
-                    ret.addAll(getFacadeQuads(blockStateHolder.get(), side, renderPosition));
                 }
             }
         }
