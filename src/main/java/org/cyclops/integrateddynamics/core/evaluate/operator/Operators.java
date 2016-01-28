@@ -518,7 +518,7 @@ public final class Operators {
                     if (b.getRawValue() < a.getLength()) {
                         return a.get(b.getRawValue());
                     } else {
-                        throw new EvaluationException(String.format("Index %s out of bounds for list of length %s.", b, a.getLength()));
+                        return a.getValueType().getDefault();
                     }
                 }
             }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {

@@ -49,7 +49,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
                                                                                       IAspectRead<V, T> aspect) {
         if(!getAspects().contains(aspect)) {
             throw new IllegalArgumentException(String.format("Tried to get the variable for the aspect %s that did not exist within the " +
-                    "part type %s.", aspect, this));
+                    "part type %s.", aspect.getUnlocalizedName(), this));
         }
         IAspectVariable<V> variable = partState.getVariable(aspect);
         if(variable == null) {
