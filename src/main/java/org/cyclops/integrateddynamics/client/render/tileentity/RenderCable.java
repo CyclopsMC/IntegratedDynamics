@@ -52,4 +52,8 @@ public class RenderCable extends RenderTileEntityBakedModel<TileMultipartTicking
         return tempBlockState;
     }
 
+    @Override
+    public boolean func_181055_a() {
+        return true;
+    }
 }
