@@ -207,6 +207,9 @@ aspect.aspects.integrateddynamics.read.block.world.info=The target block
 aspect.aspects.integrateddynamics.read.list.world.entities.name=Entities
 aspect.aspects.integrateddynamics.read.list.world.entities.info=The entities in the target space
 
+aspect.aspects.integrateddynamics.read.itemstack.world.itemframe.name=Item Frame
+aspect.aspects.integrateddynamics.read.itemstack.world.itemframe.info=The item in an Item Frame attached to the reader
+
 ## Fluid aspects
 aspect.aspects.integrateddynamics.read.boolean.fluid.empty.name=Tank Empty
 aspect.aspects.integrateddynamics.read.boolean.fluid.empty.info=If the target fluid tank is empty

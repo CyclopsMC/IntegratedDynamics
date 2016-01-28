@@ -197,6 +197,8 @@ public class AspectReadBuilders {
                 BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET, "world");
         public static final AspectReadBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, DimPos>
                 BUILDER_BLOCK = AspectReadBuilders.BUILDER_OBJECT_BLOCK.handle(PROP_GET, "world");
+        public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
+                BUILDER_ITEMSTACK = AspectReadBuilders.BUILDER_OBJECT_ITEMSTACK.appendKind("world");
         public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, DimPos>
                 BUILDER_STRING = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET, "world");
 
