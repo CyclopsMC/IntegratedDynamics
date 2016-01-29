@@ -274,4 +274,30 @@ public class TestFluidStackOperators {
         Operators.OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- MODNAME -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testFluidModName() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_FLUIDSTACK_MODNAME.evaluate(new IVariable[]{eBucketLava});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Minecraft", "modname(lava) = Minecraft");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeModNameLarge() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_MODNAME.evaluate(new IVariable[]{eBucketLava, eBucketLava});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeModNameSmall() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_MODNAME.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeModName() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
 }

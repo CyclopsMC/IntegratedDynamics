@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -9,7 +10,12 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameData;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -562,6 +568,21 @@ public final class Operators {
             }).build());
 
     /**
+     * The name of the mod owning this block
+     */
+    public static final IOperator OBJECT_BLOCK_MODNAME = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+            .function(new IterativeFunction(Lists.newArrayList(
+                    new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, ResourceLocation>() {
+                        @Override
+                        public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                            ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                            return a.getRawValue().isPresent() ? GameData.getBlockRegistry().getNameForObject(a.getRawValue().get().getBlock()) : null;
+                        }
+                    },
+                    OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
+            ))).build());
+
+    /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
      */
 
@@ -807,6 +828,21 @@ public final class Operators {
             }).build());
 
     /**
+     * The name of the mod owning this item
+     */
+    public static final IOperator OBJECT_ITEMSTACK_MODNAME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+            .function(new IterativeFunction(Lists.newArrayList(
+                    new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, ResourceLocation>() {
+                        @Override
+                        public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                            ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                            return a.getRawValue().isPresent() ? GameData.getItemRegistry().getNameForObject(a.getRawValue().get().getItem()) : null;
+                        }
+                    },
+                    OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
+            ))).build());
+
+    /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
      */
 
@@ -992,6 +1028,28 @@ public final class Operators {
             }).build());
 
     /**
+     * The name of the mod owning this entity
+     */
+    public static final IOperator OBJECT_ENTITY_MODNAME = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    String modName = "";
+                    if(a.getRawValue().isPresent()) {
+                        try {
+                            Entity entity = a.getRawValue().get();
+                            EntityRegistry.EntityRegistration entityRegistration = EntityRegistry.instance().lookupModSpawn(entity.getClass(), true);
+                            modName = entityRegistration.getContainer().getName();
+                        } catch (NullPointerException e) {
+                            modName = "Minecraft";
+                        }
+                    }
+                    return ValueTypeString.ValueString.of(modName);
+                }
+            }).build());
+
+    /**
      * ----------------------------------- FLUID STACK OBJECT OPERATORS -----------------------------------
      */
 
@@ -1098,6 +1156,36 @@ public final class Operators {
                         equal = true;
                     }
                     return ValueTypeBoolean.ValueBoolean.of(equal);
+                }
+            }).build());
+
+    /**
+     * The name of the mod owning this fluid
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_MODNAME = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0);
+                    String modName = "";
+                    if (a.getRawValue().isPresent()) {
+                        try {
+                            Fluid fluid = a.getRawValue().get().getFluid();
+                            String modDomain = null;
+                            if (fluid.getStill() != null) {
+                                modDomain = fluid.getStill().getResourceDomain();
+                            } else if (fluid.getFlowing() != null) {
+                                modDomain = fluid.getFlowing().getResourceDomain();
+                            } else if (fluid.getBlock() != null) {
+                                modDomain = GameData.getBlockRegistry().getNameForObject(fluid.getBlock()).getResourceDomain();
+                            }
+                            String modId = org.cyclops.cyclopscore.helper.Helpers.getModId(modDomain);
+                            modName = Loader.instance().getIndexedModList().get(modId).getName();
+                        } catch (NullPointerException e) {
+                            modName = "Minecraft";
+                        }
+                    }
+                    return ValueTypeString.ValueString.of(modName);
                 }
             }).build());
 

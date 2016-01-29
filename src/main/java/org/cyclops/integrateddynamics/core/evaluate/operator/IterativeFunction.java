@@ -15,9 +15,9 @@ import java.util.List;
  */
 public class IterativeFunction implements OperatorBase.IFunction {
 
-    private final List<IOperatorValuePropagator> valuePropagators;
+    private final List<IOperatorValuePropagator<?, ?>> valuePropagators;
 
-    public IterativeFunction(List<IOperatorValuePropagator> valuePropagators) {
+    public IterativeFunction(List<IOperatorValuePropagator<?, ?>> valuePropagators) {
         this.valuePropagators = valuePropagators;
     }
 
@@ -41,10 +41,10 @@ public class IterativeFunction implements OperatorBase.IFunction {
      */
     public static class PrePostBuilder<O, P> {
 
-        private final List<IOperatorValuePropagator> preValuePropagators;
-        private final List<IOperatorValuePropagator> postValuePropagators;
+        private final List<IOperatorValuePropagator<?, ?>> preValuePropagators;
+        private final List<IOperatorValuePropagator<?, ?>> postValuePropagators;
 
-        private PrePostBuilder(List<IOperatorValuePropagator> preValuePropagators, List<IOperatorValuePropagator> postValuePropagators) {
+        private PrePostBuilder(List<IOperatorValuePropagator<?, ?>> preValuePropagators, List<IOperatorValuePropagator<?, ?>> postValuePropagators) {
             this.preValuePropagators = preValuePropagators;
             this.postValuePropagators = postValuePropagators;
         }
@@ -53,7 +53,7 @@ public class IterativeFunction implements OperatorBase.IFunction {
          * @return The builder instance.
          */
         public static PrePostBuilder<OperatorBase.SafeVariablesGetter, IValue> begin() {
-            return new PrePostBuilder<>(Collections.<IOperatorValuePropagator>emptyList(), Collections.<IOperatorValuePropagator>emptyList());
+            return new PrePostBuilder<>(Collections.<IOperatorValuePropagator<?, ?>>emptyList(), Collections.<IOperatorValuePropagator<?, ?>>emptyList());
         }
 
         /**
@@ -82,7 +82,7 @@ public class IterativeFunction implements OperatorBase.IFunction {
          * @return The built function.
          */
         public IterativeFunction build(IOperatorValuePropagator<O, P> valuePropagator) {
-            List<IOperatorValuePropagator> valuePropagators = Lists.newArrayListWithExpectedSize(preValuePropagators.size() + postValuePropagators.size());
+            List<IOperatorValuePropagator<?, ?>> valuePropagators = Lists.newArrayListWithExpectedSize(preValuePropagators.size() + postValuePropagators.size());
             valuePropagators.addAll(preValuePropagators);
             valuePropagators.add(valuePropagator);
             valuePropagators.addAll(postValuePropagators);

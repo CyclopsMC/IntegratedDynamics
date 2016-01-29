@@ -367,6 +367,8 @@ operator.operators.integrateddynamics.block.opaque.name=Opaque
 operator.operators.integrateddynamics.block.opaque.info=If the given block is opaque, non-transparent
 operator.operators.integrateddynamics.block.itemstack.name=Item
 operator.operators.integrateddynamics.block.itemstack.info=The item representation of the given block
+operator.operators.integrateddynamics.block.mod.name=Mod
+operator.operators.integrateddynamics.block.mod.info=The name of the mod owning the given block
 
 operator.operators.integrateddynamics.itemstack.name=Item
 operator.operators.integrateddynamics.itemstack.basename=Item %s
@@ -406,6 +408,8 @@ operator.operators.integrateddynamics.itemstack.isnbtequal.name=NBT equals
 operator.operators.integrateddynamics.itemstack.isnbtequal.info=If the NBT tags of the given items are equal
 operator.operators.integrateddynamics.itemstack.israwitemequal.name=Raw item equals
 operator.operators.integrateddynamics.itemstack.israwitemequal.info=If the raw item of the items are equal
+operator.operators.integrateddynamics.itemstack.mod.name=Mod
+operator.operators.integrateddynamics.itemstack.mod.info=The name of the mod owning the given item
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s
@@ -437,6 +441,8 @@ operator.operators.integrateddynamics.entity.armorinventory.name=Armor Inventory
 operator.operators.integrateddynamics.entity.armorinventory.info=The list of items the entity is carrying as armor.
 operator.operators.integrateddynamics.entity.inventory.name=Player Inventory
 operator.operators.integrateddynamics.entity.inventory.info=The list of items the player is carrying.
+operator.operators.integrateddynamics.entity.mod.name=Mod
+operator.operators.integrateddynamics.entity.mod.info=The name of the mod owning the given entity
 
 operator.operators.integrateddynamics.fluidstack.name=Fluid
 operator.operators.integrateddynamics.fluidstack.basename=Fluid %s
@@ -456,6 +462,8 @@ operator.operators.integrateddynamics.fluidstack.rarity.name=Rarity
 operator.operators.integrateddynamics.fluidstack.rarity.info=The fluid rarity
 operator.operators.integrateddynamics.fluidstack.israwfluidequal.name=Raw fluid equals
 operator.operators.integrateddynamics.fluidstack.israwfluidequal.info=If the raw fluids are equal
+operator.operators.integrateddynamics.fluidstack.mod.name=Mod
+operator.operators.integrateddynamics.fluidstack.mod.info=The name of the mod owning the given fluid
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

@@ -2,7 +2,11 @@ package org.cyclops.integrateddynamics.core.evaluate;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -42,6 +46,20 @@ public class OperatorBuilders {
         @Override
         public IValue getOutput(Double input) throws EvaluationException {
             return ValueTypeDouble.ValueDouble.of(input);
+        }
+    };
+    public static final IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString> PROPAGATOR_RESOURCELOCATION_MODNAME = new IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString>() {
+        @Override
+        public ValueTypeString.ValueString getOutput(ResourceLocation resourceLocation) throws EvaluationException {
+            String modName;
+            try {
+                String modId = Helpers.getModId(resourceLocation.getResourceDomain());
+                ModContainer mod = Loader.instance().getIndexedModList().get(modId);
+                modName = mod == null ? "Minecraft" : mod.getName();
+            } catch (NullPointerException e) {
+                modName = "";
+            }
+            return ValueTypeString.ValueString.of(modName);
         }
     };
 
