@@ -444,4 +444,14 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     public void silentResetPartData() {
         this.partData.clear();
     }
+
+    @Override
+    public boolean canRenderBreaking() {
+        return true;
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return true;
+    }
 }

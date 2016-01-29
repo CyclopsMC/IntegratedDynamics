@@ -146,6 +146,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             }
             return false;
         }
+
+        @Nullable
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
+            return RenderHelpers.getDynamicBakedModel(world, pos);
+        }
     };
     private static final IComponent<EnumFacing, BlockCable> CABLECONNECTIONS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
         @Override
@@ -176,6 +183,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         @Override
         public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
             return CENTER_COMPONENT.destroy(world, pos, position, player);
+        }
+
+        @Nullable
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
+            return CENTER_COMPONENT.getBreakingBaseModel(world, pos, position);
         }
     };
     private static final IComponent<EnumFacing, BlockCable> PARTS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
@@ -214,6 +228,17 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                 PartHelpers.removePart(world, pos, position, player, true);
             }
             return false;
+        }
+
+        @Nullable
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
+            IBlockState blockState = world.getBlockState(pos);
+            IExtendedBlockState state = (IExtendedBlockState) blockState.getBlock().getExtendedState(blockState, world, pos);
+            IPartContainer partContainer = BlockHelpers.getSafeBlockStateProperty(state, BlockCable.PARTCONTAINER, null);
+            IBlockState cableState = partContainer != null ? partContainer.getPart(position).getBlockState(partContainer, position) : null;
+            return RenderHelpers.getBakedModel(cableState);
         }
     };
     private static final IComponent<EnumFacing, BlockCable> FACADE_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
@@ -257,6 +282,17 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                 ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
             }
             return false;
+        }
+
+        @Nullable
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
+            IBlockState blockState = world.getBlockState(pos);
+            IExtendedBlockState state = (IExtendedBlockState) blockState.getBlock().getExtendedState(blockState, world, pos);
+            Optional<IBlockState> blockStateOptional = BlockHelpers.getSafeBlockStateProperty(state, BlockCable.FACADE, Optional.absent());
+            if(!blockStateOptional.isPresent()) return null;
+            return RenderHelpers.getBakedModel(blockStateOptional.get());
         }
     };
     static {
