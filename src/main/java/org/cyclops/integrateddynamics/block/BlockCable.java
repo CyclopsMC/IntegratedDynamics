@@ -212,7 +212,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         @Override
         public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
             if(!world.isRemote) {
-                PartHelpers.removePart(world, pos, position, player, false);
+                PartHelpers.removePart(world, pos, position, player, true);
             }
             return false;
         }
