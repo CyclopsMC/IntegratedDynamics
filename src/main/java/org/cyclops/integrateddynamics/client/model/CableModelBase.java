@@ -10,6 +10,7 @@ import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.client.model.DynamicModel;
@@ -189,6 +190,7 @@ public abstract class CableModelBase extends DynamicModel {
                                         LENGTH_CONNECTION, invert ? 0 : length)
                         );
                         i++;
+                        ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
                         ret.add(new BakedQuad(data, -1, realSide));
                     }
                 } else {
