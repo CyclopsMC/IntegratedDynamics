@@ -167,12 +167,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
         @Override
         public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return block.isConnected(world, pos, position);
+            return CENTER_COMPONENT.isActive(block, world, pos, position)
+                    && (block.isConnected(world, pos, position) || block.hasPart(world, pos, position));
         }
 
         @Override
         public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return Collections.singletonList(block.getCableBoundingBox(position));
+            return Collections.singletonList(block.isConnected(world, pos, position) ? block.getCableBoundingBox(position) : block.getCableBoundingBoxWithPart(world, pos, position));
         }
 
         @Override
@@ -200,7 +201,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
         @Override
         public int getBoundsCount(EnumFacing position) {
-            return 2;
+            return 1;
         }
 
         @Override
@@ -210,10 +211,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
         @Override
         public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return Lists.newArrayList(
-                    block.getCableBoundingBoxWithPart(world, pos, position),
-                    block.getPartBoundingBox(world, pos, position)
-            );
+            return Collections.singletonList(block.getPartBoundingBox(world, pos, position));
         }
 
         @Override
