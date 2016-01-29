@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.core.block.cable;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
@@ -19,6 +20,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
+import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.PartNetwork;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
@@ -100,7 +102,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
     @Override
     public void remove(World world, BlockPos pos, EntityPlayer player) {
         //world.destroyBlock(pos, true); // We don't call this directly because we don't want breaking sounds to play
-        ((Block) cable).dropBlockAsItem(world, pos, world.getBlockState(pos), 0);
+        ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
         world.setBlockState(pos, Blocks.air.getDefaultState(), 3);
     }
 
