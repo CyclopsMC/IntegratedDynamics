@@ -392,7 +392,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
                         // Remove part from cable
                         if(player.isSneaking()) {
-                            PARTS_COMPONENT.destroy(world, pos, side, player);
+                            PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
                             ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
                         }
                         return true;
