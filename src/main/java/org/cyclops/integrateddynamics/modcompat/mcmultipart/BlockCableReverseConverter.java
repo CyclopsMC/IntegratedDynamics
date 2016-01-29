@@ -31,10 +31,12 @@ public class BlockCableReverseConverter implements IPartConverter.IReversePartCo
         }
         if(parts.size() > 0) {
             Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData = null;
+            Map<Integer, Boolean> forceDisconnected = null;
             boolean hasParts = false;
             for(IMultipart part : parts) {
                 if(part instanceof PartCable) {
                     partData = ((PartCable) part).getPartData();
+                    forceDisconnected = ((PartCable) part).getForceDisconnected();
                 } else if(part instanceof PartPartType) {
                     hasParts = true;
                 }
@@ -59,6 +61,7 @@ public class BlockCableReverseConverter implements IPartConverter.IReversePartCo
                 }
             }
             tile.setPartData(partData);
+            tile.setForceDisconnected(forceDisconnected);
             tile.sendImmediateUpdate();
             return true;
         }

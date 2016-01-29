@@ -10,9 +10,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemFacade;
@@ -38,6 +41,7 @@ public class BlockCableConverter implements IPartConverter.IPartConverter2 {
 
         // Add parts
         Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData = Maps.newHashMap(tile.getPartData());
+        Map<Integer, Boolean> forceDisconnected = Maps.newHashMap(tile.getForceDisconnected());
         for(Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
             parts.add(new PartPartType(entry.getKey(), entry.getValue().getPart()));
         }
@@ -50,7 +54,14 @@ public class BlockCableConverter implements IPartConverter.IPartConverter2 {
 
         // Add cable
         if(wasRealCable) {
-            PartCable partCable = new PartCable(partData);
+            // Move all force disconnection info to the current block, because this
+            // is slightly easier to handle along the way.
+            for(EnumFacing side : EnumFacing.VALUES) {
+                boolean cableConnected = (!forceDisconnected.containsKey(side.ordinal()) || !forceDisconnected.get(side.ordinal()))
+                        && CableNetworkComponent.canSideConnect((World) world, blockPos, side, (ICable) tile.getBlock());
+                forceDisconnected.put(side.ordinal(), !cableConnected);
+            }
+            PartCable partCable = new PartCable(partData, forceDisconnected);
             partCable.setAddSilent(true);
             parts.add(partCable);
         }

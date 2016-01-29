@@ -68,7 +68,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @NBTPersist
     private Map<Integer, Boolean> connected = Maps.newHashMap();
     @NBTPersist
-    private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
+    private Map<Integer, Boolean> forceDisconnected;
     @NBTPersist
     private int lightLevel = 0;
     @NBTPersist
@@ -80,11 +80,12 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     private boolean addSilent = false;
 
     public PartCable() {
-        this(Maps.<EnumFacing, PartHelpers.PartStateHolder<?, ?>>newHashMap());
+        this(Maps.<EnumFacing, PartHelpers.PartStateHolder<?, ?>>newHashMap(), Maps.<Integer, Boolean>newHashMap());
     }
 
-    public PartCable(Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData) {
+    public PartCable(Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData, Map<Integer, Boolean> forceDisconnected) {
         this.partData = partData;
+        this.forceDisconnected = forceDisconnected;
     }
 
     /**
@@ -92,6 +93,13 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
      */
     public Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> getPartData() {
         return this.partData;
+    }
+
+    /**
+     * @return The raw force disconnection data.
+     */
+    public Map<Integer, Boolean> getForceDisconnected() {
+        return this.forceDisconnected;
     }
 
     @Override

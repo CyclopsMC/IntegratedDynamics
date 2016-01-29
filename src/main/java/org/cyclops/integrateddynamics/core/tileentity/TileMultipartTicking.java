@@ -440,6 +440,18 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     /**
+     * @return The raw force disconnection data.
+     */
+    public Map<Integer, Boolean> getForceDisconnected() {
+        return this.forceDisconnected;
+    }
+
+    public void setForceDisconnected(Map<Integer, Boolean> forceDisconnected) {
+        this.forceDisconnected.clear();
+        this.forceDisconnected.putAll(forceDisconnected);
+    }
+
+    /**
      * Reset the part data without signaling any neighbours or the network.
      * Is used in block conversion.
      */
