@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.core.helper;
 
 import lombok.Data;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -176,7 +178,11 @@ public class PartHelpers {
         world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
         // Remove full cable block if this was the last part and if it was already an unreal cable.
         if(destroyIfEmpty && (!(cable instanceof ICableFakeable) || !((ICableFakeable) cable).isRealCable(world, pos)) && !partContainer.hasParts()) {
-            world.destroyBlock(pos, player == null || !player.capabilities.isCreativeMode);
+            //world.destroyBlock(pos, player == null || !player.capabilities.isCreativeMode); // We don't call this directly because we don't want breaking sounds to play
+            if(player == null || !player.capabilities.isCreativeMode) {
+                ((Block) cable).dropBlockAsItem(world, pos, world.getBlockState(pos), 0);
+            }
+            world.setBlockState(pos, Blocks.air.getDefaultState(), 3);
         }
     }
 

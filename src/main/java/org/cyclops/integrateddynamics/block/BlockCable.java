@@ -421,6 +421,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                 if (!(cable instanceof IPartContainerFacade) || !((IPartContainerFacade) cable).getPartContainer(world, pos).hasParts() || !(cable instanceof ICableFakeable)) {
                     // Remove full cable
                     cable.remove(world, pos, player);
+                    ItemBlockCable.playBreakSound(world, pos, state);
                 } else {
                     // Mark cable as unavailable.
                     ((ICableFakeable) cable).setRealCable(world, pos, false);
