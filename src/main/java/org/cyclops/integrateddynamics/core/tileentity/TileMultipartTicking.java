@@ -178,6 +178,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
                 // Remove the element from the network.
                 getNetwork().removeNetworkElementPost(networkElement);
+            } else {
+                ItemStackHelpers.spawnItemStackToPlayer(getWorld(), pos, new ItemStack(removed.getItem()), player);
             }
             // Finally remove the part data from this tile.
             IPartType ret = partData.remove(side).getPart();
