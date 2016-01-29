@@ -142,7 +142,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
                 } else {
                     cable.remove(world, pos, player);
-                    return false;
                 }
             }
             return false;
@@ -394,6 +393,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                         // Remove part from cable
                         if(player.isSneaking()) {
                             PARTS_COMPONENT.destroy(world, pos, side, player);
+                            ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
                         }
                         return true;
                     } else if(isRealCable(world, pos)) {

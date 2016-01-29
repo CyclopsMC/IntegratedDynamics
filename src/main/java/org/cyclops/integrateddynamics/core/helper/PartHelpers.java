@@ -20,10 +20,8 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
-import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -176,7 +174,6 @@ public class PartHelpers {
         IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
         partContainer.removePart(side, player);
         world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
-        ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
         // Remove full cable block if this was the last part and if it was already an unreal cable.
         if(destroyIfEmpty && (!(cable instanceof ICableFakeable) || !((ICableFakeable) cable).isRealCable(world, pos)) && !partContainer.hasParts()) {
             world.destroyBlock(pos, player == null || !player.capabilities.isCreativeMode);

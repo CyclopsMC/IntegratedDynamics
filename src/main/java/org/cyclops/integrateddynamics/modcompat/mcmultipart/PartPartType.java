@@ -31,6 +31,7 @@ import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
+import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -182,6 +183,7 @@ public class PartPartType extends MultipartBase {
                 } else {
                     PartHelpers.removePart(world, pos, getFacing(), player, false);
                 }
+                ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
             }
             return true;
         } else {

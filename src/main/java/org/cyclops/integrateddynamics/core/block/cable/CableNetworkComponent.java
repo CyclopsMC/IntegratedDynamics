@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.block.cable;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -97,7 +99,9 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
 
     @Override
     public void remove(World world, BlockPos pos, EntityPlayer player) {
-        world.destroyBlock(pos, true);
+        //world.destroyBlock(pos, true); // We don't call this directly because we don't want breaking sounds to play
+        ((Block) cable).dropBlockAsItem(world, pos, world.getBlockState(pos), 0);
+        world.setBlockState(pos, Blocks.air.getDefaultState(), 3);
     }
 
     @Override
