@@ -27,7 +27,7 @@ public class AspectValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     @Override
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
                             int destroyStage, EnumFacing direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher) {
+                            TileEntityRendererDispatcher rendererDispatcher, float alpha) {
         Optional<Pair<Aspect, Integer>> optional = ((ValueObjectTypeAspect.ValueAspect) value).getRawValue();
         if(optional.isPresent()) {
             ResourceLocation resourceLocation = optional.get().getKey().getImage();
@@ -55,17 +55,17 @@ public class AspectValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             float u2 = (float)(sheetX + sheetWidth) / sheetWidth;
             float v1 = (float)sheetY / sheetHeight;
             float v2 = (float)(sheetY + sheetHeight) / sheetHeight;
-            worldRenderer.pos((double)max, (double)max, 0).tex((double)u2, (double)v2).color(r, g, b, 1).endVertex();
-            worldRenderer.pos((double)max, (double)min, 0).tex((double)u2, (double)v1).color(r, g, b, 1).endVertex();
-            worldRenderer.pos((double)min, (double)min, 0).tex((double)u1, (double)v1).color(r, g, b, 1).endVertex();
-            worldRenderer.pos((double)min, (double)max, 0).tex((double)u1, (double)v2).color(r, g, b, 1).endVertex();
+            worldRenderer.pos((double)max, (double)max, 0).tex((double)u2, (double)v2).color(r, g, b, alpha).endVertex();
+            worldRenderer.pos((double)max, (double)min, 0).tex((double)u2, (double)v1).color(r, g, b, alpha).endVertex();
+            worldRenderer.pos((double)min, (double)min, 0).tex((double)u1, (double)v1).color(r, g, b, alpha).endVertex();
+            worldRenderer.pos((double)min, (double)max, 0).tex((double)u1, (double)v2).color(r, g, b, alpha).endVertex();
             Tessellator.getInstance().draw();
             GlStateManager.popMatrix();
 
             // Render aspect size
             GlStateManager.translate(7F, 8.5F, 0.1F);
             GlStateManager.scale(0.5F, 0.5F, 1F);
-            rendererDispatcher.getFontRenderer().drawString(String.valueOf(optional.get().getValue()), 0, 0, Helpers.RGBToInt(200, 200, 200));
+            rendererDispatcher.getFontRenderer().drawString(String.valueOf(optional.get().getValue()), 0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)));
 
             GlStateManager.disableRescaleNormal();
             GlStateManager.popMatrix();

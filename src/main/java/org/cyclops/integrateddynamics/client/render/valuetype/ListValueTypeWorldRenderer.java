@@ -5,6 +5,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.EnumFacing;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -27,7 +28,7 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     @Override
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
                             int destroyStage, EnumFacing direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher) {
+                            TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float maxWidth = 0;
 
@@ -61,7 +62,8 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         int offset = 0;
         for(String line : lines) {
-            rendererDispatcher.getFontRenderer().drawString(line, 0, offset, listType.getDisplayColor());
+            int color = Helpers.addAlphaToColor(listType.getDisplayColor(), distanceAlpha);
+            rendererDispatcher.getFontRenderer().drawString(line, 0, offset, color);
             offset += singleHeight;
         }
 

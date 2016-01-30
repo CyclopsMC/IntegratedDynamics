@@ -24,8 +24,9 @@ public interface IValueTypeWorldRenderer {
      * @param partType The part type that is being overlayed
      * @param value The value to render
      * @param rendererDispatcher The render dispatcher
+     * @param alpha The alpha to render with.
      */
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, EnumFacing direction, IPartType partType, IValue value, TileEntityRendererDispatcher rendererDispatcher);
+                            int destroyStage, EnumFacing direction, IPartType partType, IValue value, TileEntityRendererDispatcher rendererDispatcher, float alpha);
 
 }

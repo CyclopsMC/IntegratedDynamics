@@ -4,6 +4,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.EnumFacing;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -21,7 +22,7 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     @Override
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
                             int destroyStage, EnumFacing direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher) {
+                            TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {
         String string = value.getType().toCompactString(value);
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float height = fontRenderer.FONT_HEIGHT;
@@ -37,7 +38,8 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         GlStateManager.translate((MAX - newWidth) / 2, (MAX - newHeight) / 2, 0F);
         GlStateManager.scale(scale, scale, 1F);
 
-        rendererDispatcher.getFontRenderer().drawString(string, 0, 0, value.getType().getDisplayColor());
+        int color = Helpers.addAlphaToColor(value.getType().getDisplayColor(), distanceAlpha);
+        rendererDispatcher.getFontRenderer().drawString(string, 0, 0, color);
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
     }
