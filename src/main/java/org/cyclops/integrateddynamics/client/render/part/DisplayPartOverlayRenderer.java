@@ -60,7 +60,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         Entity renderEntity = FMLClientHandler.instance().getClient().thePlayer;
         float distanceFactor = (float) ((getMaxRenderDistance() - renderEntity.getDistance(pos.getX(), pos.getY(), pos.getZ())) / 5);
         float distanceAlpha = Math.min(1.0F, distanceFactor);
-        if(distanceAlpha < 0.05F) distanceAlpha = 0.05F;
+        if(distanceAlpha < 0.05F) distanceAlpha = 0.05F; // Can't be 0 because the MC font renderer doesn't handle 0 alpha's properly.
 
         GlStateManager.enableRescaleNormal();
         GlStateManager.alphaFunc(516, 0.1F);

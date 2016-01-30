@@ -43,6 +43,12 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The energy usage multiplier for networks.")
     public static int energyConsumptionMultiplier = 0;
+
+    /**
+     * The maximum render distance for part overlays to render. The higher, the more resource intensive.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The maximum render distance for part overlays to render. The higher, the more resource intensive.", isCommandable = true)
+    public static int partOverlayRenderdistance = 15;
     
     /**
      * Create a new instance.

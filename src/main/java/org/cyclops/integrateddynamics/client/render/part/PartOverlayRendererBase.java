@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 
 /**
@@ -13,10 +14,8 @@ import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendere
  */
 public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
 
-    public static int MAX_RENDER_DISTANCE = 10;
-
     protected int getMaxRenderDistance() {
-        return MAX_RENDER_DISTANCE;
+        return GeneralConfig.partOverlayRenderdistance;
     }
 
     protected boolean shouldRender(BlockPos pos) {
