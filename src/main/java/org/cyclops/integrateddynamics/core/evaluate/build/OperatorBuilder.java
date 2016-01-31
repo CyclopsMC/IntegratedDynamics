@@ -24,6 +24,7 @@ import java.util.Objects;
  * The actual operator function can either be set by calling {@link OperatorBuilder#function} or by
  * doing any number of calls to {@link OperatorBuilder#handle(IOperatorValuePropagator)} with value propagators.
  * @author rubensworks
+ * @param <O> The current output type for value propagators.
  */
 public class OperatorBuilder<O> {
 
@@ -195,6 +196,7 @@ public class OperatorBuilder<O> {
      * Add a value propagator.
      * @param valuePropagator The value propagator.
      * @return The builder instance.
+     * @param <O2> The new output type for value propagators.
      */
     public <O2> OperatorBuilder<O2> handle(IOperatorValuePropagator<O, O2> valuePropagator) {
         if(this.function != null) {
