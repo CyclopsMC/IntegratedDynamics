@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import lombok.ToString;
 import net.minecraft.util.EnumChatFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
@@ -40,6 +41,16 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
             e.printStackTrace();
         }
         return "";
+    }
+
+    @Override
+    public L10NHelpers.UnlocalizedString canDeserialize(String value) {
+        try {
+            IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
+            return null;
+        } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+            return new L10NHelpers.UnlocalizedString(e.getMessage());
+        }
     }
 
     @Override

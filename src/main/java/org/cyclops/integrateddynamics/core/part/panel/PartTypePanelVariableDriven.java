@@ -230,7 +230,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     && tag.hasKey("displayValue", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("displayValueType"));
                 if(valueType != null) {
-                    setDisplayValue(valueType.deserialize(tag.getString("displayValue")));
+                    String serializedValue = tag.getString("displayValue");
+                    L10NHelpers.UnlocalizedString deserializationError = valueType.canDeserialize(serializedValue);
+                    if(deserializationError == null) {
+                        setDisplayValue(valueType.deserialize(serializedValue));
+                    } else {
+                        IntegratedDynamics.clog(Level.ERROR, deserializationError.localize());
+                    }
                 } else {
                     IntegratedDynamics.clog(Level.ERROR,
                             String.format("Tried to deserialize the value \"%s\" for type \"%s\" which could not be found.",
