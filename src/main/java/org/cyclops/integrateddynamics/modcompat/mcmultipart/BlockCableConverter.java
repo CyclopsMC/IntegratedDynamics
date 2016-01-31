@@ -50,6 +50,7 @@ public class BlockCableConverter implements IPartConverter.IPartConverter2 {
             tile.silentResetPartData();
             tile.resetCurrentNetwork();
             tile.setRealCable(false);
+            BlockCable.IS_MCMP_CONVERTING = true;
         }
 
         // Add cable

@@ -307,6 +307,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     private static BlockCable _instance = null;
 
+    public static boolean IS_MCMP_CONVERTING = false;
+
     @SideOnly(Side.CLIENT)
     @Icon(location = "blocks/cable")
     public TextureAtlasSprite texture;
@@ -389,7 +391,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     protected void onPostBlockDestroyed(World world, BlockPos pos) {
         super.onPostBlockDestroyed(world, pos);
-        cableNetworkComponent.onPostBlockDestroyed(world, pos);
+        if(!IS_MCMP_CONVERTING) { // Yes, this is a hack, we don't want this to be called after a MCMP block conversion
+            IS_MCMP_CONVERTING = false;
+            cableNetworkComponent.onPostBlockDestroyed(world, pos);
+        }
     }
 
     @Override
