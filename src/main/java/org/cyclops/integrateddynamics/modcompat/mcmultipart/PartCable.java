@@ -4,10 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.block.TileMultipart;
-import mcmultipart.multipart.IMultipart;
-import mcmultipart.multipart.IMultipartContainer;
-import mcmultipart.multipart.MultipartHelper;
-import mcmultipart.multipart.PartSlot;
+import mcmultipart.multipart.*;
 import mcmultipart.raytrace.PartMOP;
 import mcmultipart.raytrace.RayTraceUtils;
 import net.minecraft.block.Block;
@@ -306,6 +303,12 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         this.connected.put(side.ordinal(), connected);
     }
 
+    @Override
+    public void onPartChanged(IMultipart part) {
+        super.onPartChanged(part);
+        updateConnections();
+    }
+
     /* --------------- Start element Providers--------------- */
 
     @Override
@@ -430,18 +433,21 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     public boolean canConnect(ICable connector, EnumFacing side) {
-        return !isForceDisconnected(side) && getContainer().getPartInSlot(PartSlot.getFaceSlot(side)) == null;
+        return !isForceDisconnected(side)
+                && getContainer().getPartInSlot(PartSlot.getFaceSlot(side)) == null
+                && OcclusionHelper.occlusionTest(getContainer().getParts(), this, BlockCable.getInstance().getCableBoundingBox(side));
     }
 
     @Override
     public void updateConnections() {
         World world = getWorld();
         for(EnumFacing side : EnumFacing.VALUES) {
-            boolean cableConnected = CableNetworkComponent.canSideConnect(world, getPos(), side, this);
+            boolean canConnectThis = this.canConnect(this, side);
+            boolean cableConnected = canConnectThis && CableNetworkComponent.canSideConnect(world, getPos(), side, this);
             setConnected(side, cableConnected);
 
             // Remove any already existing force-disconnects for this side.
-            if(!cableConnected) {
+            if (!cableConnected && canConnectThis) {
                 forceDisconnected.put(side.ordinal(), false);
             }
         }
