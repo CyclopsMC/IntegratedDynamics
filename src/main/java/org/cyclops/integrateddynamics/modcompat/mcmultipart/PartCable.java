@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -45,6 +46,7 @@ import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 
@@ -307,6 +309,24 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     public void onPartChanged(IMultipart part) {
         super.onPartChanged(part);
         updateConnections();
+    }
+
+    @Override
+    public void onConverted(TileEntity tile) {
+        super.onConverted(tile);
+        World world = getWorld();
+        BlockPos pos = getPos();
+        triggerUpdateNeighbourConnections(world, pos);
+        // Reinit neighbouring networks.
+        for(EnumFacing side : EnumFacing.VALUES) {
+            if(!world.isRemote) {
+                BlockPos sidePos = pos.offset(side);
+                ICableNetwork sideCable = CableHelpers.getInterface(world, sidePos, ICableNetwork.class);
+                if(sideCable != null) {
+                    ((ICableNetwork<IPartNetwork, ICablePathElement>) sideCable).initNetwork(world, sidePos);
+                }
+            }
+        }
     }
 
     /* --------------- Start element Providers--------------- */
