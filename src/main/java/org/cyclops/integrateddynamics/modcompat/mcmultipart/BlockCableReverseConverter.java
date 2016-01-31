@@ -37,6 +37,7 @@ public class BlockCableReverseConverter implements IPartConverter.IReversePartCo
                 if(part instanceof PartCable) {
                     partData = ((PartCable) part).getPartData();
                     forceDisconnected = ((PartCable) part).getForceDisconnected();
+                    ((PartCable) part).setSendFurtherUpdates(false);
                 } else if(part instanceof PartPartType) {
                     hasParts = true;
                 }

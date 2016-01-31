@@ -77,6 +77,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     private IPartNetwork network = null;
     private IPartContainer partContainer = null;
     private boolean addSilent = false;
+    private boolean sendFurtherUpdates = true;
 
     public PartCable() {
         this(Maps.<EnumFacing, PartHelpers.PartStateHolder<?, ?>>newHashMap(), Maps.<Integer, Boolean>newHashMap());
@@ -308,7 +309,9 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public void onPartChanged(IMultipart part) {
         super.onPartChanged(part);
-        updateConnections();
+        if(sendFurtherUpdates) {
+            updateConnections();
+        }
     }
 
     @Override
@@ -557,6 +560,10 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     public boolean isAddSilent() {
         return this.addSilent;
+    }
+
+    public void setSendFurtherUpdates(boolean sendFurtherUpdates) {
+        this.sendFurtherUpdates = sendFurtherUpdates;
     }
 
     public class VirtualPartContainer implements IPartContainer {
