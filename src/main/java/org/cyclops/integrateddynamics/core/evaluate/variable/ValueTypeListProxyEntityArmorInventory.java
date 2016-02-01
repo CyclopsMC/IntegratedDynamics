@@ -22,7 +22,10 @@ public class ValueTypeListProxyEntityArmorInventory extends ValueTypeListProxyEn
     protected ItemStack[] getInventory() {
         Entity e = getEntity();
         if(e != null) {
-            return e.getInventory();
+            ItemStack[] inventory = e.getInventory();
+            if(inventory != null) {
+                return inventory;
+            }
         }
         return new ItemStack[0];
     }
