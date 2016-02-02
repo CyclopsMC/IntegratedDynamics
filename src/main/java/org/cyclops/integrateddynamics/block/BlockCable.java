@@ -744,6 +744,14 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        if(side == null) {
+            for(EnumFacing dummySide : EnumFacing.VALUES) {
+                if(getRedstoneLevel(world, pos, dummySide) >= 0 || isAllowRedstoneInput(world, pos, dummySide)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return getRedstoneLevel(world, pos, side.getOpposite()) >= 0 || isAllowRedstoneInput(world, pos, side.getOpposite());
     }
 
