@@ -72,7 +72,11 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
             addError(new L10NHelpers.UnlocalizedString(L10NValues.GENERAL_ERROR_NONETWORK));
         } else if (this.variableStored != null) {
             preValidate(variableStored);
-            variableStored.validate(network, this, ValueTypes.CATEGORY_ANY);
+            try {
+                variableStored.validate(network, this, ValueTypes.CATEGORY_ANY);
+            } catch (IllegalArgumentException e) {
+                addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            }
         }
         if(network != null && lastVariabledId != variableId) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
@@ -93,7 +97,12 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
     public IVariable<?> getVariable(IPartNetwork network) {
         if(variableStored == null || !getErrors().isEmpty()) return null;
-        return variableStored.getVariable(network);
+        try {
+            return variableStored.getVariable(network);
+        } catch (IllegalArgumentException e) {
+            addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            return null;
+        }
     }
 
     @Override
