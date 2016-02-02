@@ -177,7 +177,6 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
     @Override
     public void loadTooltip(S state, List<String> lines) {
-        super.loadTooltip(state, lines);
         if (!state.getInventory().isEmpty()) {
             if (state.hasVariable() && state.isEnabled()) {
                 IValue value = state.getDisplayValue();
@@ -197,6 +196,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         } else {
             lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_INACTIVE));
         }
+        super.loadTooltip(state, lines);
     }
 
     public static abstract class State<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartStateActiveVariableBase<P> {
