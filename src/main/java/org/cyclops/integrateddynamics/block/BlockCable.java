@@ -241,7 +241,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     };
     private static final IComponent<EnumFacing, BlockCable> FACADE_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
 
-        private final AxisAlignedBB BOUNDS = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
+        private final AxisAlignedBB BOUNDS = new AxisAlignedBB(0.01, 0.01, 0.01, 0.99, 0.99, 0.99);
 
         @Override
         public Collection<EnumFacing> getPossiblePositions() {
