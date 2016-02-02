@@ -207,6 +207,9 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
 
     @Override
     public boolean addProxy(int proxyId, DimPos dimPos) {
+        if(proxyPositions.containsKey(proxyId)) {
+            return false;
+        }
         proxyPositions.put(proxyId, dimPos);
         return true;
     }

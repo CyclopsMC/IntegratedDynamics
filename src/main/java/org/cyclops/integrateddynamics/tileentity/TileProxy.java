@@ -51,11 +51,20 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
         return slot != SLOT_WRITE_OUT && super.canInsertItem(slot, itemStack, side);
     }
 
+    /**
+     * This will generate a new proxy id.
+     * Be careful when calling this!
+     */
+    public void generateNewProxyId() {
+        this.proxyId = IntegratedDynamics.globalCounters.getNext(GLOBALCOUNTER_KEY);
+        markDirty();
+    }
+
     @Override
     public void onLoad() {
         super.onLoad();
         if(!MinecraftHelpers.isClientSide() && this.proxyId == -1) {
-            this.proxyId = IntegratedDynamics.globalCounters.getNext(GLOBALCOUNTER_KEY);
+            generateNewProxyId();
         }
     }
 
