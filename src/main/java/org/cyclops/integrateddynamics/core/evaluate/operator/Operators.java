@@ -433,7 +433,7 @@ public final class Operators {
      * String concat operator with two input strings and one output string.
      */
     public static final IOperator STRING_CONCAT = REGISTRY.register(OperatorBuilders.STRING_2.symbol("+").operatorName("concat")
-            .output(ValueTypes.INTEGER).function(new OperatorBase.IFunction() {
+            .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeString.ValueString a = variables.getValue(0);
