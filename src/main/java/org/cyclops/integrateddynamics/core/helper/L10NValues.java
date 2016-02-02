@@ -12,6 +12,7 @@ public class L10NValues {
 
     public static final String GENERAL_ENERGY_UNIT = "general." + NS + ".energyUnit.name";
     public static final String GENERAL_ERROR_NONETWORK = "general." + NS + ".error.noNetwork";
+    public static final String GENERAL_ITEM_ID = "item.items." + NS + ".general.id";
 
     public static final String PART_PANEL_ERROR_INVALIDTYPE = "parttype.parttypes." + NS + ".dataDrivenPanel.error.invalidType";
     public static final String PART_ERROR_LOWENERGY = "parttype.parttypes." + NS + ".error.lowEnergy";

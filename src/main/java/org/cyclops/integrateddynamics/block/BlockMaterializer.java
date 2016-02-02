@@ -63,4 +63,9 @@ public class BlockMaterializer extends BlockContainerGuiCabled {
     public Class<? extends GuiScreen> getGui() {
         return GuiMaterializer.class;
     }
+
+    @Override
+    public boolean saveNBTToDroppedItem() {
+        return true;
+    }
 }

@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.List;
@@ -134,7 +135,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean par4) {
         if(itemStack.getTagCompound() != null) {
             int id = itemStack.getTagCompound().getInteger("id");
-            list.add(L10NHelpers.localize("item.items.integrateddynamics.general.id", id));
+            list.add(L10NHelpers.localize(L10NValues.GENERAL_ITEM_ID, id));
         }
         L10NHelpers.addOptionalInfo(list, getPart().getUnlocalizedNameBase());
         super.addInformation(itemStack, entityPlayer, list, par4);
