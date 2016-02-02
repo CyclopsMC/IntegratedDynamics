@@ -10,6 +10,7 @@ gui.integrateddynamics.partsettings.updateInterval=Freq.
 gui.integrateddynamics.part.properties=Properties:
 gui.integrateddynamics.logicprogrammer.filter=Filter
 gui.integrateddynamics.waila.partConfig=Part Information
+gui.integrateddynamics.waila.proxyConfig=Part Information
 
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
