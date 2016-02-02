@@ -7,6 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -304,14 +305,14 @@ public class AspectReadBuilders {
 
     public static final class Minecraft {
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, net.minecraft.client.Minecraft> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, net.minecraft.client.Minecraft>() {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer>() {
             @Override
-            public net.minecraft.client.Minecraft getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return net.minecraft.client.Minecraft.getMinecraft();
+            public MinecraftServer getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return MinecraftServer.getServer();
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, net.minecraft.client.Minecraft>
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "minecraft");
 
     }

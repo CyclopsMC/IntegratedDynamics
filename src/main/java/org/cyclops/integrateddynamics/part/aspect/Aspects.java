@@ -504,24 +504,24 @@ public class Aspects {
             private static final Random RANDOM = new Random();
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RANDOM =
-                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<net.minecraft.client.Minecraft, Integer>() {
+                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
                         @Override
-                        public Integer getOutput(net.minecraft.client.Minecraft minecraft) {
+                        public Integer getOutput(MinecraftServer minecraft) {
                             return RANDOM.nextInt();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "random").build();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLAYERCOUNT =
-                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<net.minecraft.client.Minecraft, Integer>() {
+                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
                         @Override
-                        public Integer getOutput(net.minecraft.client.Minecraft minecraft) {
-                            return MinecraftServer.getServer().getCurrentPlayerCount();
+                        public Integer getOutput(MinecraftServer minecraft) {
+                            return minecraft.getCurrentPlayerCount();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "playercount").build();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
-                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<net.minecraft.client.Minecraft, Integer>() {
+                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
                         @Override
-                        public Integer getOutput(net.minecraft.client.Minecraft minecraft) {
-                            return (int) DoubleMath.mean(MinecraftServer.getServer().tickTimeArray);
+                        public Integer getOutput(MinecraftServer minecraft) {
+                            return (int) DoubleMath.mean(minecraft.tickTimeArray);
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").build();
 
