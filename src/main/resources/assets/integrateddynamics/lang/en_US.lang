@@ -96,6 +96,7 @@ parttype.parttypes.integrateddynamics.displayPanel.info=Visually display a varia
 # Variables facades
 variable.integrateddynamics.error.invalidItem=The current variable can not be used in this aspect.
 variable.integrateddynamics.error.partNotInNetwork=Part with id %s could not be found within the current network.
+variable.integrateddynamics.error.recursion=The variable with id %s is referring to itself.
 
 # Proxy
 proxy.integrateddynamics.tooltip.proxyId=§e§oProxy ID: §r§o%s

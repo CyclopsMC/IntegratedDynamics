@@ -71,12 +71,17 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
         if (network == null) {
             addError(new L10NHelpers.UnlocalizedString(L10NValues.GENERAL_ERROR_NONETWORK));
         } else if (this.variableStored != null) {
+            preValidate(variableStored);
             variableStored.validate(network, this, ValueTypes.CATEGORY_ANY);
         }
         if(network != null && lastVariabledId != variableId) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }
         sendUpdate();
+    }
+
+    protected void preValidate(IVariableFacade variableStored) {
+
     }
 
     @Override
@@ -87,7 +92,7 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
     }
 
     public IVariable<?> getVariable(IPartNetwork network) {
-        if(variableStored == null) return null;
+        if(variableStored == null || !getErrors().isEmpty()) return null;
         return variableStored.getVariable(network);
     }
 

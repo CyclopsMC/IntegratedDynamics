@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import lombok.Getter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -14,6 +15,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ProxyVariableFacade;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 import org.cyclops.integrateddynamics.network.ProxyNetworkElement;
@@ -87,5 +89,16 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
                 return new ProxyVariableFacade(id, proxyId);
             }
         });
+    }
+
+    @Override
+    protected void preValidate(IVariableFacade variableStored) {
+        super.preValidate(variableStored);
+        // Hard check to make sure the variable is not directly referring to this proxy.
+        if(variableStored instanceof IProxyVariableFacade) {
+            if(((IProxyVariableFacade) variableStored).getProxyId() == getProxyId()) {
+                addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_RECURSION, variableStored.getId()));
+            }
+        }
     }
 }
