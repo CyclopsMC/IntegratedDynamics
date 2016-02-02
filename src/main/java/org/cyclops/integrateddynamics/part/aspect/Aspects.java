@@ -7,6 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -305,6 +307,19 @@ public class Aspects {
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BLOCK).build();
 
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
+                    AspectReadBuilders.World.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
+                        @Override
+                        public ValueTypeList.ValueList getOutput(DimPos dimPos) {
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(dimPos.getWorld().playerEntities, new Function<EntityPlayer, ValueObjectTypeEntity.ValueEntity>() {
+                                @Nullable
+                                @Override
+                                public ValueObjectTypeEntity.ValueEntity apply(EntityPlayer input) {
+                                    return ValueObjectTypeEntity.ValueEntity.of(input);
+                                }
+                            }));
+                        }
+                    }).appendKind("players").build();
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ENTITIES =
                     AspectReadBuilders.World.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
                         @Override
@@ -524,6 +539,19 @@ public class Aspects {
                             return (int) DoubleMath.mean(minecraft.tickTimeArray);
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").build();
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
+                    AspectReadBuilders.Minecraft.BUILDER_LIST.handle(new IAspectValuePropagator<MinecraftServer, ValueTypeList.ValueList>() {
+                        @Override
+                        public ValueTypeList.ValueList getOutput(MinecraftServer minecraft) {
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(minecraft.getConfigurationManager().playerEntityList, new Function<EntityPlayerMP, ValueObjectTypeEntity.ValueEntity>() {
+                                @Nullable
+                                @Override
+                                public ValueObjectTypeEntity.ValueEntity apply(EntityPlayerMP input) {
+                                    return ValueObjectTypeEntity.ValueEntity.of(input);
+                                }
+                            }));
+                        }
+                    }).appendKind("players").build();
 
         }
 

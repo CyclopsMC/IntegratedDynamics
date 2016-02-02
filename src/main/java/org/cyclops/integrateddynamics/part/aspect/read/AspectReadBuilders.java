@@ -314,6 +314,8 @@ public class AspectReadBuilders {
 
         public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "minecraft");
+        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, MinecraftServer>
+                BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "minecraft");
 
     }
 

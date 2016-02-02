@@ -31,13 +31,14 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.Read.World.INTEGER_POSX,
                 Aspects.Read.World.INTEGER_POSY,
                 Aspects.Read.World.INTEGER_POSZ,
+                Aspects.Read.World.INTEGER_ITEMFRAMEROTATION,
                 Aspects.Read.World.LONG_TIME,
                 Aspects.Read.World.LONG_TOTALTIME,
                 Aspects.Read.World.STRING_NAME,
                 Aspects.Read.World.BLOCK,
                 Aspects.Read.World.LIST_ENTITIES,
-                Aspects.Read.World.ITEMSTACK_ITEMFRAMECONTENTS,
-                Aspects.Read.World.INTEGER_ITEMFRAMEROTATION
+                Aspects.Read.World.LIST_PLAYERS,
+                Aspects.Read.World.ITEMSTACK_ITEMFRAMECONTENTS
         ));
     }
 

@@ -209,6 +209,8 @@ aspect.aspects.integrateddynamics.read.block.world.info=The target block
 
 aspect.aspects.integrateddynamics.read.list.world.entities.name=Entities
 aspect.aspects.integrateddynamics.read.list.world.entities.info=The entities in the target space
+aspect.aspects.integrateddynamics.read.list.world.players.name=Players
+aspect.aspects.integrateddynamics.read.list.world.players.info=The players that are in this world
 
 aspect.aspects.integrateddynamics.read.itemstack.world.itemframecontents.name=Item Frame
 aspect.aspects.integrateddynamics.read.itemstack.world.itemframecontents.info=The item in an Item Frame attached to the reader
@@ -261,6 +263,8 @@ aspect.aspects.integrateddynamics.read.integer.minecraft.playercount.name=Player
 aspect.aspects.integrateddynamics.read.integer.minecraft.playercount.info=The amount of players in the server
 aspect.aspects.integrateddynamics.read.integer.minecraft.ticktime.name=Tick time
 aspect.aspects.integrateddynamics.read.integer.minecraft.ticktime.info=The average tick time in milliseconds for the server
+aspect.aspects.integrateddynamics.read.list.minecraft.players.name=Players
+aspect.aspects.integrateddynamics.read.list.minecraft.players.info=The players that are online on this server
 
 ## Network aspects
 aspect.aspects.integrateddynamics.read.boolean.network.applicable.name=Is Network
