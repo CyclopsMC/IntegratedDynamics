@@ -64,7 +64,7 @@ public class CableModel extends CableModelBase {
     @Override
     protected IBakedModel getPartModel(EnumFacing side) {
         IPartContainer partContainer = BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PARTCONTAINER, null);
-        IBlockState blockState = partContainer != null ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
+        IBlockState blockState = partContainer != null && partContainer.hasPart(side) ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
         Minecraft mc = Minecraft.getMinecraft();
         BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRendererDispatcher();
         BlockModelShapes blockModelShapes = blockRendererDispatcher.getBlockModelShapes();
