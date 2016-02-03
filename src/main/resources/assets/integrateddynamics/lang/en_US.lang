@@ -213,6 +213,9 @@ aspect.aspects.integrateddynamics.read.list.world.entities.info=The entities in 
 aspect.aspects.integrateddynamics.read.list.world.players.name=Players
 aspect.aspects.integrateddynamics.read.list.world.players.info=The players that are in this world
 
+aspect.aspects.integrateddynamics.read.entity.world.name=Entity
+aspect.aspects.integrateddynamics.read.entity.world.info=The selected entity in the target space
+
 aspect.aspects.integrateddynamics.read.itemstack.world.itemframecontents.name=Item Frame
 aspect.aspects.integrateddynamics.read.itemstack.world.itemframecontents.info=The item in an Item Frame attached to the reader
 
@@ -284,6 +287,7 @@ aspect.aspects.integrateddynamics.read.boolean.network.energy.consumptionrate.in
 # Aspect property types
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
+aspect.aspecttypes.integrateddynamics.integer.listindex.name=List Element
 
 # Operators
 operator.integrateddynamics.tooltip.operatorName=§eOperator: §r%s (%s)
@@ -499,6 +503,8 @@ aspect.aspects.integrateddynamics.read.boolean.thaumcraft.isaspectcontainer.name
 aspect.aspects.integrateddynamics.read.boolean.thaumcraft.isaspectcontainer.info=If the given block can hold aspects.
 aspect.aspects.integrateddynamics.read.list.thaumcraft.aspectcontainer.name=Aspect Container Aspects
 aspect.aspects.integrateddynamics.read.list.thaumcraft.aspectcontainer.info=All aspects in the given aspect container.
+aspect.aspects.integrateddynamics.read.thaumcraftaspect.thaumcraft.aspectcontainer.name=Aspect Container Aspect
+aspect.aspects.integrateddynamics.read.thaumcraftaspect.thaumcraft.aspectcontainer.info=The selected aspect in the given aspect container.
 
 ## Operators
 operator.operators.integrateddynamics.itemstack.getitemthaumcraftaspects.name=Thaumcraft Aspects

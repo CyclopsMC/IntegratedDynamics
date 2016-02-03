@@ -8,9 +8,13 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
+import org.cyclops.integrateddynamics.core.part.aspect.build.AspectReadBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
+import org.cyclops.integrateddynamics.modcompat.thaumcraft.ThaumcraftModCompat;
+import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueObjectTypeAspect;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueTypeListProxyPositionedAspectContainer;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
+import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IAspectContainer;
 
 /**
@@ -39,6 +43,24 @@ public class Aspects {
                             return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedAspectContainer(input.getLeft().getTarget().getPos()));
                         }
                     }).appendKind("aspectcontainer").build();
+
+            public static final IAspectRead<ValueObjectTypeAspect.ValueAspect, ValueObjectTypeAspect> ASPECT =
+                    AspectReadBuilder.forType(ThaumcraftModCompat.OBJECT_ASPECT).appendKind("thaumcraft").withProperties(AspectReadBuilders.LIST_PROPERTIES)
+                            .handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueObjectTypeAspect.ValueAspect>() {
+                                @Override
+                                public ValueObjectTypeAspect.ValueAspect getOutput(Pair<PartTarget, IAspectProperties> input) {
+                                    int i = input.getRight().getValue(AspectReadBuilders.PROPERTY_LISTINDEX).getRawValue();
+                                    DimPos dimPos = input.getLeft().getTarget().getPos();
+                                    IAspectContainer aspectContainer = TileHelpers.getSafeTile(dimPos, IAspectContainer.class);
+                                    AspectList aspectList;
+                                    if (aspectContainer == null || i >= (aspectList = aspectContainer.getAspects()).size()) {
+                                        return ValueObjectTypeAspect.ValueAspect.ofNull();
+                                    } else {
+                                        thaumcraft.api.aspects.Aspect aspect = aspectList.getAspects()[i];
+                                        return ValueObjectTypeAspect.ValueAspect.of(aspect, aspectList.getAmount(aspect));
+                                    }
+                                }
+                            }).appendKind("aspectcontainer").build();
 
         }
 

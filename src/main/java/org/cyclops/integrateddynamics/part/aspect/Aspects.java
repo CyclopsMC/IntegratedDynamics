@@ -18,13 +18,16 @@ import net.minecraft.util.EntitySelectors;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.items.IItemHandler;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
@@ -335,6 +338,18 @@ public class Aspects {
                             }));
                         }
                     }).appendKind("entities").build();
+
+            public static final IAspectRead<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity> ENTITY =
+                    AspectReadBuilders.World.BUILDER_ENTITY.withProperties(AspectReadBuilders.LIST_PROPERTIES).handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueObjectTypeEntity.ValueEntity>() {
+                        @Override
+                        public ValueObjectTypeEntity.ValueEntity getOutput(Pair<PartTarget, IAspectProperties> input) {
+                            int i = input.getRight().getValue(AspectReadBuilders.PROPERTY_LISTINDEX).getRawValue();
+                            DimPos dimPos = input.getLeft().getTarget().getPos();
+                            List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.selectAnything);
+                            return ValueObjectTypeEntity.ValueEntity.of(i < entities.size() ? entities.get(i) : null);
+                        }
+                    }).build();
 
             public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> ITEMSTACK_ITEMFRAMECONTENTS =
                     AspectReadBuilders.World.BUILDER_ITEMSTACK

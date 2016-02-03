@@ -49,11 +49,11 @@ public class ThaumcraftModCompat implements IModCompat {
     @Override
     public void onInit(Step step) {
     	if(step == Step.PREINIT) {
-			// Part types
-			PartTypes.REGISTRY.register(new PartTypeThaumcraftReader("thaumcraftReader"));
-
 			// Value types
 			OBJECT_ASPECT = ValueTypes.REGISTRY.register(new ValueObjectTypeAspect());
+
+			// Part types
+			PartTypes.REGISTRY.register(new PartTypeThaumcraftReader("thaumcraftReader"));
 
 			// List proxy factories
 			POSITIONED_ASPECTCONTAINER = ValueTypeListProxyFactories.REGISTRY.register(new ValueTypeListProxyNBTFactory<>("positionedAspectContainer", ValueTypeListProxyPositionedAspectContainer.class));

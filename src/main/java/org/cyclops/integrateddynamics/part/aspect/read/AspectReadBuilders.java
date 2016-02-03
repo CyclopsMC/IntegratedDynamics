@@ -51,6 +51,8 @@ public class AspectReadBuilders {
             BUILDER_LONG = AspectReadBuilder.forType(ValueTypes.LONG);
     public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, Pair<PartTarget, IAspectProperties>>
             BUILDER_STRING = AspectReadBuilder.forType(ValueTypes.STRING);
+    public static final AspectReadBuilder<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity, Pair<PartTarget, IAspectProperties>>
+            BUILDER_ENTITY = AspectReadBuilder.forType(ValueTypes.OBJECT_ENTITY);
     public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, Pair<PartTarget, IAspectProperties>>
             BUILDER_LIST = AspectReadBuilder.forType(ValueTypes.LIST);
 
@@ -102,6 +104,16 @@ public class AspectReadBuilders {
             return ValueObjectTypeBlock.ValueBlock.of(input);
         }
     };
+
+    // --------------- Generic properties ---------------
+    public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_LISTINDEX =
+            new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.listindex.name");
+    public static final IAspectProperties LIST_PROPERTIES = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+            PROPERTY_LISTINDEX
+    ));
+    static {
+        LIST_PROPERTIES.setValue(PROPERTY_LISTINDEX, ValueTypeInteger.ValueInteger.of(0));
+    }
 
     public static final class Redstone {
 
@@ -233,6 +245,8 @@ public class AspectReadBuilders {
                 BUILDER_ITEMSTACK = AspectReadBuilders.BUILDER_OBJECT_ITEMSTACK.appendKind("world");
         public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, DimPos>
                 BUILDER_STRING = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET, "world");
+        public static final AspectReadBuilder<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity, Pair<PartTarget, IAspectProperties>>
+                BUILDER_ENTITY = AspectReadBuilders.BUILDER_ENTITY.appendKind("world");
 
     }
 

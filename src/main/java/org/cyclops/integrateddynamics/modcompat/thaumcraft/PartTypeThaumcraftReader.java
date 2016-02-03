@@ -17,7 +17,8 @@ public class PartTypeThaumcraftReader extends PartTypeReadBase<PartTypeThaumcraf
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
                 Aspects.Read.Aspect.BOOLEAN_ISASPECTCONTAINER,
-                Aspects.Read.Aspect.LIST_ASPECTCONTAINER
+                Aspects.Read.Aspect.LIST_ASPECTCONTAINER,
+                Aspects.Read.Aspect.ASPECT
         ));
     }
 
