@@ -12,7 +12,6 @@ import java.util.Comparator;
  * A gui part that can be rendered withing another gui.
  * @author rubensworks
  */
-@SideOnly(Side.CLIENT)
 public interface ISubGui {
 
     public void initGui(int guiLeft, int guiTop);

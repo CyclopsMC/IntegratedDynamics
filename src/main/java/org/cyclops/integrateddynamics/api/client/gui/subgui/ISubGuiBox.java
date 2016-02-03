@@ -7,7 +7,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * A subgui in a box shape.
  * @author rubensworks
  */
-@SideOnly(Side.CLIENT)
 public interface ISubGuiBox extends ISubGui {
 
     public int getX();
