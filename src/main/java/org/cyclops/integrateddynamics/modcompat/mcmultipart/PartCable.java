@@ -269,6 +269,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         super.onNeighborBlockChange(neighborBlock);
         World world = getWorld();
         BlockPos pos = getPos();
+        cableNetworkComponent.updateConnections(world, pos);
         networkElementProviderComponent.onBlockNeighborChange(getNetwork(world, pos), world, pos, neighborBlock);
     }
 

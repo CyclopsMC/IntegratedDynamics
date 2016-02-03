@@ -16,6 +16,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemFacade;
@@ -60,7 +61,10 @@ public class BlockCableConverter implements IPartConverter.IPartConverter2 {
             for(EnumFacing side : EnumFacing.VALUES) {
                 boolean cableConnected = (!forceDisconnected.containsKey(side.ordinal()) || !forceDisconnected.get(side.ordinal()))
                         && CableNetworkComponent.canSideConnect((World) world, blockPos, side, (ICable) tile.getBlock());
-                forceDisconnected.put(side.ordinal(), !cableConnected);
+                ICable neighbourCable = CableHelpers.getInterface(world, blockPos.offset(side), ICable.class);
+                if(neighbourCable != null) {
+                    forceDisconnected.put(side.ordinal(), !cableConnected);
+                }
             }
             PartCable partCable = new PartCable(partData, forceDisconnected);
             partCable.setAddSilent(true);
