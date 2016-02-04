@@ -381,7 +381,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos, EntityPlayer player) {
-        if(player == null && isRealCable(world, pos)) {
+        if(isRealCable(world, pos)) {
             networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
             cableNetworkComponent.onPreBlockDestroyed(world, pos);
         }
