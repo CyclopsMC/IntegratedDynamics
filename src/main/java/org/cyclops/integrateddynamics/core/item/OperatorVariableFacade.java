@@ -36,6 +36,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     private final IOperator operator;
     private final int[] variableIds;
     private IExpression expression = null;
+    private int lastNetworkHash = -1;
 
     public OperatorVariableFacade(boolean generateId, IOperator operator, int[] variableIds) {
         super(generateId);
@@ -52,7 +53,9 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     @Override
     public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(isValid()) {
-            if(expression == null || expression.hasErrored()) {
+            int newNetworkHash = network != null ? network.hashCode() : -1;
+            if(expression == null || expression.hasErrored() || newNetworkHash != this.lastNetworkHash) {
+                this.lastNetworkHash = newNetworkHash;
                 IVariable[] variables = new IVariable[variableIds.length];
                 for (int i = 0; i < variableIds.length; i++) {
                     int variableId = variableIds[i];
