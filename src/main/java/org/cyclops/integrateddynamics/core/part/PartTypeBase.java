@@ -277,6 +277,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public void afterNetworkReAlive(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
     public void onNetworkAddition(IPartNetwork network, PartTarget target, S state) {
 
     }

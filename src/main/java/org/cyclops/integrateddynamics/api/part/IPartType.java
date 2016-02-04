@@ -151,6 +151,15 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state);
 
     /**
+     * @param network The network to update in.
+     * @param state The state
+     * @param target The target block.
+     * Called right after this network has come alive again,
+     * for example after a network restart.
+     */
+    public void afterNetworkReAlive(IPartNetwork network, PartTarget target, S state);
+
+    /**
      * Get the itemstack from the given state.
      * @param state The state
      * @return The itemstack possibly containing the state information.

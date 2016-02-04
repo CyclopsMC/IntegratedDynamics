@@ -43,4 +43,10 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
         }
         return Integer.compare(hashCode(), o.hashCode());
     }
+
+    @Override
+    public void afterNetworkReAlive(IPartNetwork network) {
+        super.afterNetworkReAlive(network);
+        getTile().afterNetworkReAlive();
+    }
 }

@@ -47,6 +47,13 @@ public interface INetworkElement<N extends INetwork> extends Comparable<INetwork
     public void afterNetworkAlive(N network);
 
     /**
+     * Called right after this network has come alive again,
+     * for example after a network restart.
+     * @param network The network to update in.
+     */
+    public void afterNetworkReAlive(N network);
+
+    /**
      * Add the itemstacks to drop when this element is removed.
      * @param itemStacks The itemstack list to add to.
      * @param dropMainElement If the part itself should also be dropped.

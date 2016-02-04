@@ -42,6 +42,11 @@ public abstract class NetworkElementBase<N extends INetwork> implements INetwork
     }
 
     @Override
+    public void afterNetworkReAlive(N network) {
+
+    }
+
+    @Override
     public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
 
     }

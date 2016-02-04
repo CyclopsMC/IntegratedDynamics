@@ -214,6 +214,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
             if(!silent) {
                 element.afterNetworkAlive(getMaterializedThis());
             }
+            element.afterNetworkReAlive(getMaterializedThis());
         }
     }
 

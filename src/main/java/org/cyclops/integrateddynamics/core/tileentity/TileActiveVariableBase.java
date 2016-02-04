@@ -40,12 +40,6 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
     public abstract int getSlotRead();
 
-    @Override
-    public void setNetwork(IPartNetwork network) {
-        super.setNetwork(network);
-        updateReadVariable();
-    }
-
     public boolean hasVariable() {
         return getStackInSlot(getSlotRead()) != null;
     }
@@ -120,11 +114,16 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
         return Sets.<Class<? extends INetworkEvent<IPartNetwork>>>newHashSet(VariableContentsUpdatedEvent.class);
     }
 
-
     @Override
     public void onEvent(INetworkEvent<IPartNetwork> event, E networkElement) {
         if(event instanceof VariableContentsUpdatedEvent) {
             updateReadVariable();
         }
+    }
+
+    @Override
+    public void afterNetworkReAlive() {
+        super.afterNetworkReAlive();
+        updateReadVariable();
     }
 }

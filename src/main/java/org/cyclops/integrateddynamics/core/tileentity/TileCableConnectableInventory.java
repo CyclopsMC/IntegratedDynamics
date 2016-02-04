@@ -38,4 +38,11 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
         return connected;
     }
 
+    /**
+     * Called after the network has been fully initialized
+     */
+    public void afterNetworkReAlive() {
+
+    }
+
 }

@@ -98,6 +98,11 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
+    public void afterNetworkReAlive(IPartNetwork network) {
+        part.afterNetworkReAlive(network, target, getPartState());
+    }
+
+    @Override
     public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
         part.addDrops(getTarget(), getPartState(), itemStacks, dropMainElement);
     }
