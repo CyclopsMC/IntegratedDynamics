@@ -31,8 +31,9 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
                 IntegratedDynamics.clog(Level.WARN, "A proxy already existed in the network, this is possibly a " +
                         "result from item duplication.");
                 getTile().generateNewProxyId();
+                return network.addProxy(getId(), getPos());
             }
-            return network.addProxy(getId(), getPos());
+            return true;
         }
         return false;
     }
