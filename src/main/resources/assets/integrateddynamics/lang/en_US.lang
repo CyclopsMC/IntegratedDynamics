@@ -228,8 +228,6 @@ aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.name=Tank Not Empt
 aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.info=If the target fluid tank has something in it
 aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.name=Is Tank
 aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.info=If the target has a fluid tank
-aspect.aspects.integrateddynamics.read.boolean.fluid.gaseous.name=Fluid Gaseous
-aspect.aspects.integrateddynamics.read.boolean.fluid.gaseous.info=If the active tank has a gaseous fluid
 
 aspect.aspects.integrateddynamics.read.integer.fluid.amount.name=Fluid Amount
 aspect.aspects.integrateddynamics.read.integer.fluid.amount.info=The amount of fluid in mB in the active tank
@@ -241,24 +239,17 @@ aspect.aspects.integrateddynamics.read.integer.fluid.totalcapacity.name=Total Fl
 aspect.aspects.integrateddynamics.read.integer.fluid.totalcapacity.info=Total capacity of the tank
 aspect.aspects.integrateddynamics.read.integer.fluid.tanks.name=Tanks
 aspect.aspects.integrateddynamics.read.integer.fluid.tanks.info=The amount of tanks found at the target
-aspect.aspects.integrateddynamics.read.integer.fluid.density.name=Fluid Density
-aspect.aspects.integrateddynamics.read.integer.fluid.density.info=The density of the fluid in the active tank
-aspect.aspects.integrateddynamics.read.integer.fluid.luminosity.name=Fluid Luminosity
-aspect.aspects.integrateddynamics.read.integer.fluid.luminosity.info=The luminosity of the fluid in the active tank
-aspect.aspects.integrateddynamics.read.integer.fluid.temperature.name=Fluid Temperature
-aspect.aspects.integrateddynamics.read.integer.fluid.temperature.info=The temperature of the fluid in the active tank
-aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.name=Fluid Viscosity
-aspect.aspects.integrateddynamics.read.integer.fluid.viscosity.info=The viscosity of the fluid in the active tank
 
 aspect.aspects.integrateddynamics.read.double.fluid.fillratio.name=Fluid Fill Ratio
 aspect.aspects.integrateddynamics.read.double.fluid.fillratio.info=The amount of fluid in the active tank divided by its capacity
 
-aspect.aspects.integrateddynamics.read.string.fluid.name.name=Fluid Name
-aspect.aspects.integrateddynamics.read.string.fluid.name.info=The name of fluid in the active tank
-aspect.aspects.integrateddynamics.read.block.fluid.name=Fluid Block
-aspect.aspects.integrateddynamics.read.block.fluid.info=The block corresponding to the fluid
-aspect.aspects.integrateddynamics.read.string.fluid.rarity.name=Fluid Rarity
-aspect.aspects.integrateddynamics.read.string.fluid.rarity.info=The rarity of fluid in the active tank
+aspect.aspects.integrateddynamics.read.list.fluid.fluidstacks.name=Tank Fluids
+aspect.aspects.integrateddynamics.read.list.fluid.fluidstacks.info=The list of fluids in all tanks
+aspect.aspects.integrateddynamics.read.list.fluid.capacities.name=Tank Capacities
+aspect.aspects.integrateddynamics.read.list.fluid.capacities.info=The list of capacities of all tanks
+
+aspect.aspects.integrateddynamics.read.fluidstack.fluid.name=Tank Fluid
+aspect.aspects.integrateddynamics.read.fluidstack.fluid.info=The fluid in the target tank
 
 ## Minecraft aspects
 aspect.aspects.integrateddynamics.read.integer.minecraft.random.name=Random

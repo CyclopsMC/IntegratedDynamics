@@ -410,13 +410,6 @@ public class Aspects {
                             return tankInfo.length > 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_GASEOUS =
-                    AspectReadBuilders.Fluid.BUILDER_BOOLEAN_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, Boolean>() {
-                        @Override
-                        public Boolean getOutput(FluidStack fluidStack) {
-                            return fluidStack != null && fluidStack.getFluid().isGaseous(fluidStack);
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "gaseous").build();
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_AMOUNT =
                     AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, Integer>() {
@@ -463,34 +456,6 @@ public class Aspects {
                             return tankInfo.length;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "tanks").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DENSITY =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, Integer>() {
-                        @Override
-                        public Integer getOutput(FluidStack fluidStack) {
-                            return fluidStack != null ? fluidStack.getFluid().getDensity(fluidStack) : 0;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "density").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LUMINOSITY =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, Integer>() {
-                        @Override
-                        public Integer getOutput(FluidStack fluidStack) {
-                            return fluidStack != null ? fluidStack.getFluid().getLuminosity(fluidStack) : 0;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "luminosity").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TEMPERATURE =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, Integer>() {
-                        @Override
-                        public Integer getOutput(FluidStack fluidStack) {
-                            return fluidStack != null ? fluidStack.getFluid().getTemperature(fluidStack) : 0;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "temperature").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_VISCOSITY =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, Integer>() {
-                        @Override
-                        public Integer getOutput(FluidStack fluidStack) {
-                            return fluidStack != null ? fluidStack.getFluid().getViscosity(fluidStack) : 0;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "viscosity").build();
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_FILLRATIO =
                     AspectReadBuilders.Fluid.BUILDER_DOUBLE_ACTIVATABLE.handle(new IAspectValuePropagator<FluidTankInfo, Double>() {
@@ -504,28 +469,15 @@ public class Aspects {
                         }
                     }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "fillratio").build();
 
-            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_NAME =
-                    AspectReadBuilders.Fluid.BUILDER_STRING_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, String>() {
-                        @Override
-                        public String getOutput(FluidStack fluidStack) {
-                            return fluidStack != null ? fluidStack.getLocalizedName() : "";
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_STRING, "name").build();
-            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_RARITY =
-                    AspectReadBuilders.Fluid.BUILDER_STRING_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, String>() {
-                        @Override
-                        public String getOutput(FluidStack fluidStack) {
-                            return fluidStack != null ? fluidStack.getFluid().getRarity(fluidStack).rarityName : "";
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_STRING, "rarity").build();
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_TANKFLUIDS =
+                    AspectReadBuilders.BUILDER_LIST.appendKind("fluid").handle(AspectReadBuilders.Fluid.PROP_GET_LIST_FLUIDSTACKS, "fluidstacks").build();
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_TANKCAPACITIES =
+                    AspectReadBuilders.BUILDER_LIST.appendKind("fluid").handle(AspectReadBuilders.Fluid.PROP_GET_LIST_CAPACITIES, "capacities").build();
 
-            public static final IAspectRead<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock> BLOCK =
-                    AspectReadBuilders.Fluid.BUILDER_BLOCK_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(new IAspectValuePropagator<FluidStack, IBlockState>() {
-                        @Override
-                        public IBlockState getOutput(FluidStack fluidStack) {
-                            return fluidStack != null ? fluidStack.getFluid().getBlock().getDefaultState() : null;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BLOCK).build();
+            public static final IAspectRead<ValueObjectTypeFluidStack.ValueFluidStack, ValueObjectTypeFluidStack> FLUIDSTACK =
+                    AspectReadBuilders.BUILDER_OBJECT_FLUIDSTACK
+                            .handle(AspectReadBuilders.Fluid.PROP_GET_ACTIVATABLE, "fluid").withProperties(AspectReadBuilders.Fluid.PROPERTIES)
+                            .handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(AspectReadBuilders.PROP_GET_FLUIDSTACK).build();
 
         }
 

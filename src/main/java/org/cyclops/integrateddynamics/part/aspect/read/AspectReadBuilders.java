@@ -60,6 +60,8 @@ public class AspectReadBuilders {
             BUILDER_OBJECT_ITEMSTACK = AspectReadBuilder.forType(ValueTypes.OBJECT_ITEMSTACK);
     public static final AspectReadBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, Pair<PartTarget, IAspectProperties>>
             BUILDER_OBJECT_BLOCK = AspectReadBuilder.forType(ValueTypes.OBJECT_BLOCK);
+    public static final AspectReadBuilder<ValueObjectTypeFluidStack.ValueFluidStack, ValueObjectTypeFluidStack, Pair<PartTarget, IAspectProperties>>
+            BUILDER_OBJECT_FLUIDSTACK = AspectReadBuilder.forType(ValueTypes.OBJECT_FLUIDSTACK);
 
     // --------------- Value type propagators ---------------
     public static final IAspectValuePropagator<Boolean, ValueTypeBoolean.ValueBoolean> PROP_GET_BOOLEAN = new IAspectValuePropagator<Boolean, ValueTypeBoolean.ValueBoolean>() {
@@ -102,6 +104,12 @@ public class AspectReadBuilders {
         @Override
         public ValueObjectTypeBlock.ValueBlock getOutput(IBlockState input) {
             return ValueObjectTypeBlock.ValueBlock.of(input);
+        }
+    };
+    public static final IAspectValuePropagator<FluidStack, ValueObjectTypeFluidStack.ValueFluidStack> PROP_GET_FLUIDSTACK = new IAspectValuePropagator<FluidStack, ValueObjectTypeFluidStack.ValueFluidStack>() {
+        @Override
+        public ValueObjectTypeFluidStack.ValueFluidStack getOutput(FluidStack input) {
+            return ValueObjectTypeFluidStack.ValueFluidStack.of(input);
         }
     };
 
@@ -293,27 +301,31 @@ public class AspectReadBuilders {
                 return tankInfo != null ? tankInfo.fluid : null;
             }
         };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST_FLUIDSTACKS = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
+            @Override
+            public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankFluidStacks(
+                        input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                ));
+            }
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST_CAPACITIES = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
+            @Override
+            public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankCapacities(
+                        input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                ));
+            }
+        };
 
         public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, FluidTankInfo[]>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "fluid");
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, FluidTankInfo>
-                BUILDER_BOOLEAN_ACTIVATABLE = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
         public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, FluidTankInfo[]>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "fluid");
         public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, FluidTankInfo>
                 BUILDER_INTEGER_ACTIVATABLE = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
-        public static final AspectReadBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, FluidTankInfo[]>
-                BUILDER_DOUBLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET, "fluid");
         public static final AspectReadBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, FluidTankInfo>
                 BUILDER_DOUBLE_ACTIVATABLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
-        public static final AspectReadBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, FluidTankInfo[]>
-                BUILDER_BLOCK = AspectReadBuilders.BUILDER_OBJECT_BLOCK.handle(PROP_GET, "fluid");
-        public static final AspectReadBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, FluidTankInfo>
-                BUILDER_BLOCK_ACTIVATABLE = AspectReadBuilders.BUILDER_OBJECT_BLOCK.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
-        public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, FluidTankInfo[]>
-                BUILDER_STRING = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET, "fluid");
-        public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, FluidTankInfo>
-                BUILDER_STRING_ACTIVATABLE = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
 
     }
 
