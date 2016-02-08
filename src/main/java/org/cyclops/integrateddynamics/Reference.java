@@ -16,6 +16,12 @@ public final class Reference {
     public static final String GA_TRACKING_ID = "UA-65307010-4";
     public static final String VERSION_URL = "https://raw.githubusercontent.com/CyclopsMC/Versions/master/1.8/IntegratedDynamics.txt";
 
+    // OREDICT NAMES
+    public static final String DICT_WOODLOG = "logWood";
+    public static final String DICT_TREELEAVES = "treeLeaves";
+    public static final String DICT_SAPLINGTREE = "treeSapling";
+    public static final String DICT_WOODPLANK = "plankWood";
+
     // MOD ID's
     public static final String MOD_FORGE = "Forge";
     public static final String MOD_FORGE_VERSION = "@FORGE_VERSION@";

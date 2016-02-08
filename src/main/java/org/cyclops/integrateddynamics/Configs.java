@@ -25,6 +25,10 @@ public class Configs {
         configHandler.add(new BlockCoalGeneratorConfig());
         configHandler.add(new BlockProxyConfig());
         configHandler.add(new BlockMaterializerConfig());
+        configHandler.add(new MenrilLogConfig());
+        configHandler.add(new MenrilLeavesConfig());
+        configHandler.add(new MenrilSaplingConfig());
+        configHandler.add(new MenrilPlanksConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());

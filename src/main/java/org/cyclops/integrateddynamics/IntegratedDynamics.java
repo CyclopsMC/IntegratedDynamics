@@ -106,8 +106,8 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
     @Override
     protected RecipeHandler constructRecipeHandler() {
-        return new ExtendedRecipeHandler(this
-                // TODO
+        return new ExtendedRecipeHandler(this,
+                "shapeless.xml"
         );
     }
 

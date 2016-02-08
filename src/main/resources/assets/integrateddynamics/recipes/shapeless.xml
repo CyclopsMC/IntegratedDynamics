@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+	<recipe type="shapeless">
+		<condition type="config">menrilLog</condition>
+		<condition type="config">menrilPlanks</condition>
+		<input>
+			<item>integrateddynamics:menrilLog</item>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:menrilPlanks</item>
+		</output>
+	</recipe>
+
+</recipes>
