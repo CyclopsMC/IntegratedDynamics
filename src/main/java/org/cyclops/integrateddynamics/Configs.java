@@ -30,6 +30,8 @@ public class Configs {
         configHandler.add(new MenrilLeavesConfig());
         configHandler.add(new MenrilSaplingConfig());
         configHandler.add(new MenrilPlanksConfig());
+        configHandler.add(new CrystalizedMenrilBlockConfig());
+        configHandler.add(new CrystalizedMenrilBrickConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());

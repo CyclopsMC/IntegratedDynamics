@@ -28,6 +28,8 @@ tile.blocks.integrateddynamics.menrilLog.name=Menril Log
 tile.blocks.integrateddynamics.menrilLeaves.name=Menril Leaves
 tile.blocks.integrateddynamics.menrilSapling.name=Menril Sapling
 tile.blocks.integrateddynamics.menrilPlanks.name=Menril Plank
+tile.blocks.integrateddynamics.crystalizedMenrilBlock.name=Block of Crystalized Menril
+tile.blocks.integrateddynamics.crystalizedMenrilBrick.name=Crystalized Menril Brick
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
