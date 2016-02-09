@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.item.ItemFacadeConfig;
 import org.cyclops.integrateddynamics.item.ItemLabellerConfig;
 import org.cyclops.integrateddynamics.item.ItemVariableConfig;
 import org.cyclops.integrateddynamics.item.ItemWrenchConfig;
+import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 
 /**
  * This class holds a set of all the configs that need to be registered.
@@ -35,6 +36,9 @@ public class Configs {
         configHandler.add(new ItemVariableConfig());
         configHandler.add(new ItemLabellerConfig());
         configHandler.add(new ItemFacadeConfig());
+
+        // Biomes
+        configHandler.add(new BiomeMeneglinConfig());
 
     }
 

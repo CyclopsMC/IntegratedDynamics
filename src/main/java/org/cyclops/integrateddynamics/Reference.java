@@ -16,6 +16,9 @@ public final class Reference {
     public static final String GA_TRACKING_ID = "UA-65307010-4";
     public static final String VERSION_URL = "https://raw.githubusercontent.com/CyclopsMC/Versions/master/1.8/IntegratedDynamics.txt";
 
+    // Biome ID's
+    public static final int BIOME_MENEGLIN = 193;
+
     // OREDICT NAMES
     public static final String DICT_WOODLOG = "logWood";
     public static final String DICT_TREELEAVES = "treeLeaves";
