@@ -41,6 +41,7 @@ public class Configs {
         configHandler.add(new ItemLabellerConfig());
         configHandler.add(new ItemFacadeConfig());
         configHandler.add(new ItemBucketMenrilResinConfig());
+        configHandler.add(new ItemCrystalizedMenrilChunkConfig());
 
         // Biomes
         configHandler.add(new BiomeMeneglinConfig());

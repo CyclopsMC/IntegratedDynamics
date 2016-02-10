@@ -12,4 +12,15 @@
 		</output>
 	</recipe>
 
+	<recipe type="shapeless">
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<item>integrateddynamics:crystalizedMenrilBlock</item>
+		</input>
+		<output>
+			<item amount="9">integrateddynamics:crystalizedMenrilChunk</item>
+		</output>
+	</recipe>
+
 </recipes>

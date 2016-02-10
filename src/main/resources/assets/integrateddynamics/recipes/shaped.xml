@@ -21,4 +21,31 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:crystalizedMenrilBlock</item>
+		</output>
+	</recipe>
+
 </recipes>
