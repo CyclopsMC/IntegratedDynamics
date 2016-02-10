@@ -11,9 +11,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.world.gen.WorldGeneratorTree;
-import org.cyclops.integrateddynamics.block.MenrilLeavesConfig;
-import org.cyclops.integrateddynamics.block.MenrilLogConfig;
-import org.cyclops.integrateddynamics.block.MenrilSaplingConfig;
+import org.cyclops.integrateddynamics.block.BlockMenrilLeavesConfig;
+import org.cyclops.integrateddynamics.block.BlockMenrilLogConfig;
+import org.cyclops.integrateddynamics.block.BlockMenrilSaplingConfig;
 
 import java.util.List;
 import java.util.Random;
@@ -43,17 +43,17 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
 
     @Override
     public BlockLeaves getLeaves() {
-        return (BlockLeaves) MenrilLeavesConfig._instance.getBlockInstance();
+        return (BlockLeaves) BlockMenrilLeavesConfig._instance.getBlockInstance();
     }
 
     @Override
     public BlockLog getLogs() {
-        return (BlockLog) MenrilLogConfig._instance.getBlockInstance();
+        return (BlockLog) BlockMenrilLogConfig._instance.getBlockInstance();
     }
 
     @Override
     public BlockSapling getSapling() {
-        return (BlockSapling) MenrilSaplingConfig._instance.getBlockInstance();
+        return (BlockSapling) BlockMenrilSaplingConfig._instance.getBlockInstance();
     }
 
     public boolean growTree(World world, Random rand, BlockPos blockPos) {

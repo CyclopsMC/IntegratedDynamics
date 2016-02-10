@@ -12,21 +12,21 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class CrystalizedMenrilBlockConfig extends BlockConfig {
+public class BlockCrystalizedMenrilBrickConfig extends BlockConfig {
 
     /**
      * The unique instance.
      */
-    public static CrystalizedMenrilBlockConfig _instance;
+    public static BlockCrystalizedMenrilBrickConfig _instance;
 
     /**
      * Make a new instance.
      */
-    public CrystalizedMenrilBlockConfig() {
+    public BlockCrystalizedMenrilBrickConfig() {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "crystalizedMenrilBlock",
+                "crystalizedMenrilBrick",
                 null,
                 null
         );

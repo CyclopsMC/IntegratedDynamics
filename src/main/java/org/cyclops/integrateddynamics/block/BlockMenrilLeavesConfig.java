@@ -17,17 +17,17 @@ import java.util.Random;
  * @author rubensworks
  *
  */
-public class MenrilLeavesConfig extends BlockConfig {
+public class BlockMenrilLeavesConfig extends BlockConfig {
 
     /**
      * The unique instance.
      */
-    public static MenrilLeavesConfig _instance;
+    public static BlockMenrilLeavesConfig _instance;
 
     /**
      * Make a new instance.
      */
-    public MenrilLeavesConfig() {
+    public BlockMenrilLeavesConfig() {
         super(
                 IntegratedDynamics._instance,
                 true,
@@ -42,7 +42,7 @@ public class MenrilLeavesConfig extends BlockConfig {
         return (ConfigurableBlockLeaves) new ConfigurableBlockLeaves(this) {
             @Override
             public Item getItemDropped(IBlockState iBlockState, Random random, int i) {
-                return Item.getItemFromBlock(MenrilSaplingConfig._instance.getBlockInstance());
+                return Item.getItemFromBlock(BlockMenrilSaplingConfig._instance.getBlockInstance());
             }
         }.setHardness(0.2F).setLightLevel(0.65F).setLightOpacity(1).setStepSound(Block.soundTypeGrass);
     }

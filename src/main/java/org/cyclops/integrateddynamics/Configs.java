@@ -27,12 +27,12 @@ public class Configs {
         configHandler.add(new BlockCoalGeneratorConfig());
         configHandler.add(new BlockProxyConfig());
         configHandler.add(new BlockMaterializerConfig());
-        configHandler.add(new MenrilLogConfig());
-        configHandler.add(new MenrilLeavesConfig());
-        configHandler.add(new MenrilSaplingConfig());
-        configHandler.add(new MenrilPlanksConfig());
-        configHandler.add(new CrystalizedMenrilBlockConfig());
-        configHandler.add(new CrystalizedMenrilBrickConfig());
+        configHandler.add(new BlockMenrilLogConfig());
+        configHandler.add(new BlockMenrilLeavesConfig());
+        configHandler.add(new BlockMenrilSaplingConfig());
+        configHandler.add(new BlockMenrilPlanksConfig());
+        configHandler.add(new BlockCrystalizedMenrilBlockConfig());
+        configHandler.add(new BlockCrystalizedMenrilBrickConfig());
         configHandler.add(new BlockFluidMenrilResinConfig());
 
         // Items

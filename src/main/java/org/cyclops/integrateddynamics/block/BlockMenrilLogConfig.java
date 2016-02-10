@@ -1,33 +1,33 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.material.Material;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockSapling;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog;
 import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.world.gen.WorldGeneratorMenrilTree;
 
 /**
- * Config for the Menril Sapling.
+ * Config for the Menril Log.
  * @author rubensworks
  *
  */
-public class MenrilSaplingConfig extends BlockConfig {
+public class BlockMenrilLogConfig extends BlockConfig {
 
     /**
      * The unique instance.
      */
-    public static MenrilSaplingConfig _instance;
+    public static BlockMenrilLogConfig _instance;
 
     /**
      * Make a new instance.
      */
-    public MenrilSaplingConfig() {
+    public BlockMenrilLogConfig() {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "menrilSapling",
+                "menrilLog",
                 null,
                 null
         );
@@ -35,12 +35,18 @@ public class MenrilSaplingConfig extends BlockConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return new ConfigurableBlockSapling(this, Material.plants, new WorldGeneratorMenrilTree(false));
+        return (ConfigurableBlockLog) new ConfigurableBlockLog(this).
+                setHardness(2.0F).setStepSound(Block.soundTypeWood);
     }
     
     @Override
     public String getOreDictionaryId() {
-        return Reference.DICT_SAPLINGTREE;
+        return Reference.DICT_WOODLOG;
+    }
+    
+    @Override
+    public void onRegistered() {
+    	Blocks.fire.setFireInfo(getBlockInstance(), 5, 20);
     }
     
 }
