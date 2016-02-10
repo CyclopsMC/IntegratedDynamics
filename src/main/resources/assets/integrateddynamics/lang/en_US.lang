@@ -30,6 +30,7 @@ tile.blocks.integrateddynamics.menrilSapling.name=Menril Sapling
 tile.blocks.integrateddynamics.menrilPlanks.name=Menril Plank
 tile.blocks.integrateddynamics.crystalizedMenrilBlock.name=Block of Crystalized Menril
 tile.blocks.integrateddynamics.crystalizedMenrilBrick.name=Crystalized Menril Brick
+tile.blocks.integrateddynamics.blockMenrilResin.name=Menril Resin
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
@@ -41,6 +42,10 @@ item.items.integrateddynamics.labeller.info=Labels your variables
 item.items.integrateddynamics.labeller.button.write=Write
 item.items.integrateddynamics.facade.name=Facade
 item.items.integrateddynamics.facade.info=Combine with a block in crafting table
+item.items.integrateddynamics.bucketMenrilResin.name=Menril Resin Bucket
+
+# Fluids
+fluid.fluids.integrateddynamics.menrilresin=Menril Resin
 
 # Biomes
 biomes.integrateddynamics.biomeMeneglin=Meneglin

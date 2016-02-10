@@ -2,10 +2,8 @@ package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.*;
-import org.cyclops.integrateddynamics.item.ItemFacadeConfig;
-import org.cyclops.integrateddynamics.item.ItemLabellerConfig;
-import org.cyclops.integrateddynamics.item.ItemVariableConfig;
-import org.cyclops.integrateddynamics.item.ItemWrenchConfig;
+import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
+import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 
 /**
@@ -15,6 +13,9 @@ import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 public class Configs {
 
     public static void registerBlocks(ConfigHandler configHandler) {
+
+        // Fluids
+        configHandler.add(new FluidMenrilResinConfig());
 
         // Blocks
         configHandler.add(new BlockCableConfig());
@@ -32,12 +33,14 @@ public class Configs {
         configHandler.add(new MenrilPlanksConfig());
         configHandler.add(new CrystalizedMenrilBlockConfig());
         configHandler.add(new CrystalizedMenrilBrickConfig());
+        configHandler.add(new BlockFluidMenrilResinConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());
         configHandler.add(new ItemVariableConfig());
         configHandler.add(new ItemLabellerConfig());
         configHandler.add(new ItemFacadeConfig());
+        configHandler.add(new ItemBucketMenrilResinConfig());
 
         // Biomes
         configHandler.add(new BiomeMeneglinConfig());
