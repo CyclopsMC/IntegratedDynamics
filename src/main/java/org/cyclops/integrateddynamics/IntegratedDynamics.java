@@ -16,6 +16,8 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
+import org.cyclops.cyclopscore.item.BucketRegistry;
+import org.cyclops.cyclopscore.item.IBucketRegistry;
 import org.cyclops.cyclopscore.modcompat.ModCompatLoader;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
@@ -132,6 +134,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Mod.EventHandler
     @Override
     public final void preInit(FMLPreInitializationEvent event) {
+        getRegistryManager().addRegistry(IBucketRegistry.class, new BucketRegistry());
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IValueCastRegistry.class, ValueCastRegistry.getInstance());

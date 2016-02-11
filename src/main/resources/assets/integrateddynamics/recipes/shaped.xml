@@ -48,4 +48,30 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item type="oredict">logWood</item>
+					<item type="oredict">dyeBlack</item>
+					<item type="oredict">logWood</item>
+				</gridrow>
+				<gridrow>
+					<item type="oredict">logWood</item>
+					<item />
+					<item type="oredict">logWood</item>
+				</gridrow>
+				<gridrow>
+					<item type="oredict">logWood</item>
+					<item type="oredict">logWood</item>
+					<item type="oredict">logWood</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:dryingBasin</item>
+		</output>
+	</recipe>
+
 </recipes>

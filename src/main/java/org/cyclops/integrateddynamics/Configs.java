@@ -34,6 +34,7 @@ public class Configs {
         configHandler.add(new BlockCrystalizedMenrilBlockConfig());
         configHandler.add(new BlockCrystalizedMenrilBrickConfig());
         configHandler.add(new BlockFluidMenrilResinConfig());
+        configHandler.add(new BlockDryingBasinConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());
