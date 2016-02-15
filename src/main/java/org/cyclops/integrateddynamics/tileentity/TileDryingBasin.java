@@ -117,6 +117,7 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     public void setInventorySlotContents(int slotId, ItemStack itemstack) {
         super.setInventorySlotContents(slotId, itemstack);
         this.randomRotation = worldObj.rand.nextFloat() * 360;
+        sendUpdate();
     }
 
     /**

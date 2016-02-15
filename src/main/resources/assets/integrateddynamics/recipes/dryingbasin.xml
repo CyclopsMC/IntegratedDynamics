@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+	<recipe type="integrateddynamics:dryingbasin">
+		<condition type="config">dryingBasin</condition>
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">menrilresin</condition>
+		<input>
+			<fluid amount="1000">menrilresin</fluid>
+		</input>
+		<output>
+			<item>integrateddynamics:crystalizedMenrilBlock</item>
+		</output>
+		<properties>
+			<duration>100</duration>
+		</properties>
+	</recipe>
+
+</recipes>

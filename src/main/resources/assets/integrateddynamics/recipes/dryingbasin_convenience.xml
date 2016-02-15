@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="mod">evilcraft</condition>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<fluid amount="1000">evilcraftblood</fluid>
+		</input>
+		<output>
+			<item>evilcraft:hardenedBlood</item>
+		</output>
+		<properties>
+			<duration>400</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<item>minecraft:rotten_flesh</item>
+		</input>
+		<output>
+			<item>minecraft:leather</item>
+		</output>
+		<properties>
+			<duration>100</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<item type="oredict">treeSapling</item>
+		</input>
+		<output>
+			<item>minecraft:deadbush</item>
+		</output>
+		<properties>
+			<duration>150</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<item>minecraft:clay</item>
+		</input>
+		<output>
+			<item>minecraft:hardened_clay</item>
+		</output>
+		<properties>
+			<duration>400</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<fluid amount="100">water</fluid>
+			<item>minecraft:dirt</item>
+		</input>
+		<output>
+			<item meta="1">minecraft:dirt</item>
+		</output>
+		<properties>
+			<duration>100</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="mod">MineFactoryReloaded</condition>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<fluid amount="100">mushroomsoup</fluid>
+			<item>minecraft:dirt</item>
+		</input>
+		<output>
+			<item meta="2">minecraft:dirt</item>
+		</output>
+		<properties>
+			<duration>200</duration>
+		</properties>
+	</recipe>
+
+</recipes>
