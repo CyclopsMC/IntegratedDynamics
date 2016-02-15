@@ -15,6 +15,12 @@ import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
+import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
+import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
 
 import java.util.List;
@@ -23,7 +29,7 @@ import java.util.List;
  * A block for drying stuff.
  * @author rubensworks
  */
-public class BlockDryingBasin extends ConfigurableBlockContainer {
+public class BlockDryingBasin extends ConfigurableBlockContainer implements IMachine<BlockDryingBasin, ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     private static BlockDryingBasin _instance = null;
 
@@ -127,5 +133,10 @@ public class BlockDryingBasin extends ConfigurableBlockContainer {
         TileDryingBasin tile = TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class);
         if(tile == null) return 0;
         return tile.getInventory().getStackInSlot(0) != null ? 15 : 0;
+    }
+
+    @Override
+    public IRecipeRegistry<BlockDryingBasin, ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
+        return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
 }
