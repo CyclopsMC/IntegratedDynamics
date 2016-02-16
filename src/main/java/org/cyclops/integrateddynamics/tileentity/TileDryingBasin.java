@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.tileentity;
 
 import com.google.common.collect.Sets;
 import lombok.experimental.Delegate;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -26,6 +27,8 @@ import org.cyclops.integrateddynamics.block.BlockDryingBasin;
  */
 public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsTileEntity.ITickingTile {
 
+    private static final int WOOD_IGNITION_TEMPERATURE = 573; // 300 degrees celcius
+
     @Delegate
     private final ITickingTile tickingTileComponent = new TickingTileComponent(this);
 
@@ -33,6 +36,8 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     private Float randomRotation = 0F;
     @NBTPersist
     private int progress = 0;
+    @NBTPersist
+    private int fire = 0;
 
     private SingleCache<Pair<ItemStack, FluidStack>,
             IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>> recipeCache;
@@ -91,7 +96,14 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     protected void updateTileEntity() {
         super.updateTileEntity();
         if(!worldObj.isRemote) {
-            if (getCurrentRecipe() != null) {
+            if (!getTank().isEmpty() && getTank().getFluid().getFluid().getTemperature(getTank().getFluid()) >= WOOD_IGNITION_TEMPERATURE) {
+                if (++fire >= 100) {
+                    getWorld().setBlockState(getPos(), Blocks.fire.getDefaultState());
+                } else if (getWorld().isAirBlock(getPos().offset(EnumFacing.UP)) && worldObj.rand.nextInt(10) == 0) {
+                    getWorld().setBlockState(getPos().offset(EnumFacing.UP), Blocks.fire.getDefaultState());
+                }
+
+            } else if (getCurrentRecipe() != null) {
                 IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe = getCurrentRecipe();
                 if (progress >= recipe.getProperties().getDuration()) {
                     setInventorySlotContents(0, recipe.getOutput().getItemStack());
@@ -107,8 +119,11 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                     progress++;
                     sendUpdate();
                 }
+                fire = 0;
             } else {
                 progress = 0;
+                fire = 0;
+                sendUpdate();
             }
         }
     }
