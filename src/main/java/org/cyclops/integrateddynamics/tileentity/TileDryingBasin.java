@@ -2,9 +2,12 @@ package org.cyclops.integrateddynamics.tileentity;
 
 import com.google.common.collect.Sets;
 import lombok.experimental.Delegate;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -124,6 +127,22 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                 progress = 0;
                 fire = 0;
                 sendUpdate();
+            }
+        } else if(progress > 0 && worldObj.rand.nextInt(5) == 0) {
+            if(!getTank().isEmpty()) {
+                Block block = getTank().getFluid().getFluid().getBlock();
+                if(block != null) {
+                    int blockStateId = Block.getStateId(block.getDefaultState());
+                    getWorld().spawnParticle(EnumParticleTypes.BLOCK_DUST,
+                            getPos().getX() + Math.random() * 0.8D + 0.1D, getPos().getY() + Math.random() * 0.1D + 0.9D,
+                            getPos().getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0, blockStateId);
+                }
+            }
+            if(getStackInSlot(0) != null) {
+                int itemId = Item.getIdFromItem(getStackInSlot(0).getItem());
+                getWorld().spawnParticle(EnumParticleTypes.ITEM_CRACK,
+                        getPos().getX() + Math.random() * 0.8D + 0.1D, getPos().getY() + Math.random() * 0.1D + 0.9D,
+                        getPos().getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0, itemId);
             }
         }
     }
