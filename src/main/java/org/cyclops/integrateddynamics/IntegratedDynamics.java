@@ -61,6 +61,7 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
+import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.ThaumcraftModCompat;
 import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
@@ -142,6 +143,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new McMultiPartModCompat());
         modCompatLoader.addModCompat(new WailaModCompat());
         modCompatLoader.addModCompat(new ThaumcraftModCompat());
+        modCompatLoader.addModCompat(new JEIModCompat());
     }
 
     @Mod.EventHandler
