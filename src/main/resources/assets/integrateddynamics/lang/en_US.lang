@@ -10,7 +10,10 @@ gui.integrateddynamics.partsettings.updateInterval=Freq.
 gui.integrateddynamics.part.properties=Properties:
 gui.integrateddynamics.logicprogrammer.filter=Filter
 gui.integrateddynamics.waila.partConfig=Part Information
-gui.integrateddynamics.waila.proxyConfig=Part Information
+gui.integrateddynamics.waila.proxyConfig=Proxy Information
+gui.integrateddynamics.waila.dryingBasinConfig=Drying Basin Information
+gui.integrateddynamics.waila.item=Item: %s
+gui.integrateddynamics.waila.fluid=Fluid: %s (%s mB)
 
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
