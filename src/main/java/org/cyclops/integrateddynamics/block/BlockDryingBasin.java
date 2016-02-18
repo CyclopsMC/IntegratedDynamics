@@ -86,6 +86,7 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                     tile.setInventorySlotContents(0, itemStack.splitStack(1));
                     if(itemStack.stackSize <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                     tile.sendUpdate();
+                    return true;
                 }
             }
         }

@@ -4,6 +4,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.client.render.tileentity.RenderTileEntitySqueezer;
+import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
 /**
  * Config for {@link BlockSqueezer}.
@@ -33,6 +35,6 @@ public class BlockSqueezerConfig extends BlockContainerConfig {
     @SideOnly(Side.CLIENT)
     public void onRegistered() {
         super.onRegistered();
-        //getMod().getProxy().registerRenderer(TileDryingBasin.class, new RenderTileEntitySqueezer()); // TODO
+        getMod().getProxy().registerRenderer(TileSqueezer.class, new RenderTileEntitySqueezer());
     }
 }

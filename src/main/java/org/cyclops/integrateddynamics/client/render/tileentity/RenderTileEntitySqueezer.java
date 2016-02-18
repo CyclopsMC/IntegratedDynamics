@@ -9,12 +9,13 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
-import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
+import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -23,12 +24,12 @@ import org.lwjgl.opengl.GL11;
  * @author rubensworks
  *
  */
-public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileDryingBasin> implements RenderHelpers.IFluidContextRender {
+public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSqueezer> implements RenderHelpers.IFluidContextRender {
 
-    private TileDryingBasin lastTile;
+    private TileSqueezer lastTile;
 
 	@Override
-	public void renderTileEntityAt(TileDryingBasin tile, double x, double y, double z, float partialTickTime, int partialDamage) {
+	public void renderTileEntityAt(TileSqueezer tile, double x, double y, double z, float partialTickTime, int partialDamage) {
         if(tile != null) {
             if(tile.getStackInSlot(0) != null) {
                 GlStateManager.pushMatrix();
@@ -36,7 +37,7 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
                 float var11 = (float) (y - 0.5F);
                 float var12 = (float) (z - 0.5F);
                 GlStateManager.translate(var10, var11, var12);
-                renderItem(tile.getWorld(), tile.getStackInSlot(0), tile.getRandomRotation());
+                renderItem(tile.getWorld(), tile.getPos(), tile.getStackInSlot(0), tile);
                 GlStateManager.popMatrix();
             }
 
@@ -45,16 +46,18 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
         }
 	}
 	
-	private void renderItem(World world, ItemStack itemStack, float rotation) {
+	private void renderItem(World world, BlockPos pos, ItemStack itemStack, TileSqueezer tile) {
         GlStateManager.pushMatrix();
         if (itemStack.getItem() instanceof ItemBlock) {
-            GlStateManager.translate(1F, 1.2F, 1F);
-            GlStateManager.scale(1.2F, 1.2F, 1.2F);
+            float yTop = (9 - tile.getItemHeight()) * 0.125F;
+            GlStateManager.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
+            GlStateManager.scale(1.4F, 1.4F, 1.4F);
+            GlStateManager.scale(1F, yTop - 0.125F, 1F);
         } else {
+            // TODO: item scaling like blocks
             GlStateManager.translate(1F, 1.2F, 1F);
             GlStateManager.rotate(25F, 1, 0, 0);
             GlStateManager.rotate(25F, 0, 1, 0);
-            GlStateManager.rotate(rotation, 0, 1, 0);
         }
         
         GlStateManager.pushAttrib();
@@ -68,6 +71,7 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
 
     @Override
     public void renderFluid(FluidStack fluid) {
+        // TODO: render in basin and 2 sides
         double height = fluid.amount * 0.90D / FluidContainerRegistry.BUCKET_VOLUME;
         int brightness = lastTile.getWorld().getCombinedLight(lastTile.getPos(), fluid.getFluid().getLuminosity(fluid));
         int l2 = brightness >> 0x10 & 0xFFFF;

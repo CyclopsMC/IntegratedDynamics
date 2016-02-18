@@ -8,12 +8,15 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
 import java.util.List;
@@ -50,6 +53,31 @@ public class BlockSqueezer extends ConfigurableBlockContainer {
     }
 
     @Override
+    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumFacing side, float motionX, float motionY, float motionZ) {
+        if (world.isRemote) {
+            return true;
+        } else if(world.getBlockState(blockPos).getValue(BlockSqueezer.HEIGHT) == 1) {
+            ItemStack itemStack = player.inventory.getCurrentItem();
+            TileSqueezer tile = TileHelpers.getSafeTile(world, blockPos, TileSqueezer.class);
+            if (tile != null) {
+                if (itemStack == null && tile.getStackInSlot(0) != null) {
+                    player.inventory.setInventorySlotContents(player.inventory.currentItem, tile.getStackInSlot(0));
+                    tile.setInventorySlotContents(0, null);
+                    tile.sendUpdate();
+                    return true;
+                } else if (itemStack != null && tile.getStackInSlot(0) == null) {
+                    tile.setInventorySlotContents(0, itemStack.splitStack(1));
+                    if (itemStack.stackSize <= 0)
+                        player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+                    tile.sendUpdate();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void onLanded(World worldIn, Entity entityIn) {
         double motionY = entityIn.motionY;
         super.onLanded(worldIn, entityIn);
@@ -66,7 +94,10 @@ public class BlockSqueezer extends ConfigurableBlockContainer {
 
             if((entityIn.posY - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
                 if (blockState.getBlock() == this) { // Just to be sure...
-                    worldIn.setBlockState(blockPos, blockState.withProperty(HEIGHT, Math.min(7, blockState.getValue(HEIGHT) + steps)));
+                    int newHeight = Math.min(7, blockState.getValue(HEIGHT) + steps);
+                    worldIn.setBlockState(blockPos, blockState.withProperty(HEIGHT, newHeight));
+                    TileSqueezer tile = TileHelpers.getSafeTile(worldIn, blockPos, TileSqueezer.class);
+                    tile.setItemHeight(Math.max(newHeight, tile.getItemHeight()));
                 }
             }
         }
@@ -94,7 +125,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer {
         return super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(AXIS, BlockSqueezer.EnumAxis.fromFacingAxis(axis));
     }
 
-    protected float getRelativeTopPositionTop(IBlockAccess world, BlockPos blockPos, IBlockState blockState) {
+    public float getRelativeTopPositionTop(IBlockAccess world, BlockPos blockPos, IBlockState blockState) {
         return (9 - blockState.getValue(HEIGHT)) * 0.125F;
     }
 
