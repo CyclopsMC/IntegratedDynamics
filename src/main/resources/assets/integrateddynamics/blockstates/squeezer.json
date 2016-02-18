@@ -1,0 +1,31 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model"    : "integrateddynamics:squeezer",
+    "textures" : {
+      "0": "blocks/anvil_base",
+      "1": "blocks/planks_oak"
+    }
+  },
+  "variants": {
+    "height": {
+      "1": { "submodel" : "integrateddynamics:squeezer_top_1" },
+      "2": { "submodel" : "integrateddynamics:squeezer_top_2" },
+      "3": { "submodel" : "integrateddynamics:squeezer_top_3" },
+      "4": { "submodel" : "integrateddynamics:squeezer_top_4" },
+      "5": { "submodel" : "integrateddynamics:squeezer_top_5" },
+      "6": { "submodel" : "integrateddynamics:squeezer_top_6" },
+      "7": { "submodel" : "integrateddynamics:squeezer_top_7" }
+    },
+    "inventory": [{
+      "y": 0,
+      "submodel" : "integrateddynamics:squeezer_top_1"
+    }],
+    "axis": {
+      "x": {},
+      "y": {},
+      "z": {"y": 90}
+    }
+  }
+}

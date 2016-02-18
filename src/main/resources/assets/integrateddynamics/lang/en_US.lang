@@ -36,6 +36,8 @@ tile.blocks.integrateddynamics.crystalizedMenrilBrick.name=Crystalized Menril Br
 tile.blocks.integrateddynamics.blockMenrilResin.name=Menril Resin
 tile.blocks.integrateddynamics.dryingBasin.name=Drying Basin
 tile.blocks.integrateddynamics.dryingBasin.info=For drying items and fluids
+tile.blocks.integrateddynamics.squeezer.name=Squeezer
+tile.blocks.integrateddynamics.squeezer.info=For squeezing, flattening and crushing things
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
