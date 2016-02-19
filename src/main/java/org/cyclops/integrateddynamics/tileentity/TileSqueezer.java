@@ -8,8 +8,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+import org.cyclops.cyclopscore.datastructure.SingleCache;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
+import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
+import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.TankInventoryTileEntity;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
@@ -24,8 +31,13 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     private final ITickingTile tickingTileComponent = new TickingTileComponent(this);
 
     @NBTPersist
+    private int progress = 0;
+    @NBTPersist
     @Getter
     private int itemHeight = 1;
+
+    private SingleCache<ItemStack,
+            IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>> recipeCache;
 
     public TileSqueezer() {
         super(1, "squeezerInventory", 1, FluidContainerRegistry.BUCKET_VOLUME, "squeezerTank");
@@ -36,22 +48,71 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
         addSlotsToSide(EnumFacing.SOUTH, Sets.newHashSet(1));
         addSlotsToSide(EnumFacing.WEST, Sets.newHashSet(1));
         addSlotsToSide(EnumFacing.EAST, Sets.newHashSet(1));
+
+        // Efficient cache to retrieve the current craftable recipe.
+        recipeCache = new SingleCache<>(
+                new SingleCache.ICacheUpdater<ItemStack,
+                        IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>>() {
+                    @Override
+                    public IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getNewValue(ItemStack key) {
+                        ItemStackRecipeComponent recipeInput = new ItemStackRecipeComponent(key);
+                        return getRegistry().findRecipeByInput(recipeInput);
+                    }
+
+                    @Override
+                    public boolean isKeyEqual(ItemStack cacheKey, ItemStack newKey) {
+                        return cacheKey == null || newKey == null ||
+                                ItemStack.areItemStacksEqual(cacheKey, newKey);
+                    }
+                });
+    }
+
+    protected IRecipeRegistry<BlockSqueezer, ItemStackRecipeComponent,
+            ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getRegistry() {
+        return BlockSqueezer.getInstance().getRecipeRegistry();
+    }
+
+    protected IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getCurrentRecipe() {
+        return recipeCache.get(getStackInSlot(0));
     }
 
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if(!getWorld().isRemote && !getTank().isEmpty()) {
-            EnumFacing[] sides = getWorld().getBlockState(getPos()).getValue(BlockSqueezer.AXIS).getSides();
-            for (EnumFacing side : sides) {
-                IFluidHandler handler = TileHelpers.getSafeTile(getWorld(), getPos().offset(side), IFluidHandler.class);
-                if (!getTank().isEmpty() && handler != null) {
-                    FluidStack fluidStack = new FluidStack(getTank().getFluidType(),
-                            Math.min(100, getTank().getFluidAmount()));
-                    if (handler.fill(side.getOpposite(), fluidStack, false) > 0) {
-                        int filled = handler.fill(side.getOpposite(), fluidStack, true);
-                        drain(filled, true);
+        if(!getWorld().isRemote) {
+            if(!getTank().isEmpty()) {
+                EnumFacing[] sides = getWorld().getBlockState(getPos()).getValue(BlockSqueezer.AXIS).getSides();
+                for (EnumFacing side : sides) {
+                    IFluidHandler handler = TileHelpers.getSafeTile(getWorld(), getPos().offset(side), IFluidHandler.class);
+                    if (!getTank().isEmpty() && handler != null) {
+                        FluidStack fluidStack = new FluidStack(getTank().getFluidType(),
+                                Math.min(100, getTank().getFluidAmount()));
+                        if (handler.fill(side.getOpposite(), fluidStack, false) > 0) {
+                            int filled = handler.fill(side.getOpposite(), fluidStack, true);
+                            drain(filled, true);
+                        }
                     }
+                }
+            } else {
+                if (itemHeight == 7 && getCurrentRecipe() != null) {
+                    IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe = getCurrentRecipe();
+                    if (progress >= recipe.getProperties().getDuration()) {
+                        setInventorySlotContents(0, null);
+                        ItemStack toSpawn = recipe.getOutput().getItemStack();
+                        if(toSpawn != null) {
+                            ItemStackHelpers.spawnItemStack(getWorld(), getPos(), toSpawn.copy());
+                        }
+                        if (recipe.getOutput().getFluidStack() != null) {
+                            fill(recipe.getOutput().getFluidStack(), true);
+                        }
+                        progress = 0;
+                    } else {
+                        progress++;
+                        sendUpdate();
+                    }
+                } else {
+                    progress = 0;
+                    sendUpdate();
                 }
             }
         }

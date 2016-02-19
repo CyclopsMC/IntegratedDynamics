@@ -17,6 +17,13 @@ import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
+import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
+import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
 import java.util.List;
@@ -25,7 +32,7 @@ import java.util.List;
  * A block for squeezing stuff.
  * @author rubensworks
  */
-public class BlockSqueezer extends ConfigurableBlockContainer {
+public class BlockSqueezer extends ConfigurableBlockContainer implements IMachine<BlockSqueezer, ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     @BlockProperty
     public static final PropertyEnum<BlockSqueezer.EnumAxis> AXIS = PropertyDirection.create("axis", BlockSqueezer.EnumAxis.class);
@@ -184,6 +191,11 @@ public class BlockSqueezer extends ConfigurableBlockContainer {
     public int getComparatorInputOverride(World world, BlockPos blockPos) {
         IBlockState blockState = world.getBlockState(blockPos);
         return (int) (((double) blockState.getValue(HEIGHT) - 1) / 6D * 15D);
+    }
+
+    @Override
+    public IRecipeRegistry<BlockSqueezer, ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
+        return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
 
     public static enum EnumAxis implements IStringSerializable {
