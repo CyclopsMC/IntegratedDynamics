@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -95,17 +94,10 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
 	
 	private void renderItem(World world, BlockPos pos, ItemStack itemStack, TileSqueezer tile) {
         GlStateManager.pushMatrix();
-        if (itemStack.getItem() instanceof ItemBlock) {
-            float yTop = (9 - tile.getItemHeight()) * 0.125F;
-            GlStateManager.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
-            GlStateManager.scale(1.4F, 1.4F, 1.4F);
-            GlStateManager.scale(1F, yTop - 0.125F, 1F);
-        } else {
-            // TODO: item scaling like blocks
-            GlStateManager.translate(1F, 1.2F, 1F);
-            GlStateManager.rotate(25F, 1, 0, 0);
-            GlStateManager.rotate(25F, 0, 1, 0);
-        }
+        float yTop = (9 - tile.getItemHeight()) * 0.125F;
+        GlStateManager.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
+        GlStateManager.scale(1.4F, 1.4F, 1.4F);
+        GlStateManager.scale(1F, yTop - 0.125F, 1F);
         
         GlStateManager.pushAttrib();
         RenderHelper.enableStandardItemLighting();
