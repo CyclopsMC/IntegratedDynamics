@@ -14,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import org.cyclops.cyclopscore.helper.DirectionHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 import org.lwjgl.opengl.GL11;
@@ -25,6 +26,50 @@ import org.lwjgl.opengl.GL11;
  *
  */
 public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSqueezer> implements RenderHelpers.IFluidContextRender {
+
+    private static final double OFFSET = 0.01D;
+    private static final double MINY = 0.0625D;
+    private static final double MAXY = 0.125D - OFFSET;
+    private static final double MIN = 0D + OFFSET;
+    private static final double MAX = 1D - OFFSET;
+    private static double[][][] coordinates = {
+            { // DOWN
+                    {MIN, MINY, MIN},
+                    {MIN, MINY, MAX},
+                    {MAX, MINY, MAX},
+                    {MAX, MINY, MIN}
+            },
+            { // UP
+                    {MIN, MAXY, MIN},
+                    {MIN, MAXY, MAX},
+                    {MAX, MAXY, MAX},
+                    {MAX, MAXY, MIN}
+            },
+            { // NORTH
+                    {MIN, MINY, MIN},
+                    {MIN, MAXY, MIN},
+                    {MAX, MAXY, MIN},
+                    {MAX, MINY, MIN}
+            },
+            { // SOUTH
+                    {MIN, MINY, MAX},
+                    {MIN, MAXY, MAX},
+                    {MAX, MAXY, MAX},
+                    {MAX, MINY, MAX}
+            },
+            { // WEST
+                    {MIN, MINY, MIN},
+                    {MIN, MAXY, MIN},
+                    {MIN, MAXY, MAX},
+                    {MIN, MINY, MAX}
+            },
+            { // EAST
+                    {MAX, MINY, MIN},
+                    {MAX, MAXY, MIN},
+                    {MAX, MAXY, MAX},
+                    {MAX, MINY, MAX}
+            }
+    };
 
     private TileSqueezer lastTile;
 
@@ -41,8 +86,10 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
                 GlStateManager.popMatrix();
             }
 
-            lastTile = tile;
-            RenderHelpers.renderTileFluidContext(tile.getTank().getFluid(), x, y, z, tile, this);
+            if(!tile.getTank().isEmpty()) {
+                lastTile = tile;
+                RenderHelpers.renderTileFluidContext(tile.getTank().getFluid(), x, y, z, tile, this);
+            }
         }
 	}
 	
@@ -71,24 +118,35 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
 
     @Override
     public void renderFluid(FluidStack fluid) {
-        // TODO: render in basin and 2 sides
-        double height = fluid.amount * 0.90D / FluidContainerRegistry.BUCKET_VOLUME;
+        double height = Math.max(0.0625D + OFFSET, ((double) fluid.amount) * 0.0625D / FluidContainerRegistry.BUCKET_VOLUME + 0.0625D + OFFSET);
         int brightness = lastTile.getWorld().getCombinedLight(lastTile.getPos(), fluid.getFluid().getLuminosity(fluid));
         int l2 = brightness >> 0x10 & 0xFFFF;
         int i3 = brightness & 0xFFFF;
 
-        TextureAtlasSprite icon = RenderHelpers.getFluidIcon(lastTile.getTank().getFluid(), EnumFacing.UP);
+        for(EnumFacing side : DirectionHelpers.DIRECTIONS) {
+            TextureAtlasSprite icon = RenderHelpers.getFluidIcon(lastTile.getTank().getFluid(), EnumFacing.UP);
 
-        Tessellator t = Tessellator.getInstance();
-        WorldRenderer worldRenderer = t.getWorldRenderer();
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
+            Tessellator t = Tessellator.getInstance();
+            WorldRenderer worldRenderer = t.getWorldRenderer();
+            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
 
-        worldRenderer.pos(0, height, 0).tex(icon.getMinU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(0, height, 1).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(1, height, 1).tex(icon.getMaxU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(1, height, 0).tex(icon.getMaxU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+            double[][] c = coordinates[side.ordinal()];
+            double replacedMaxV = (side == EnumFacing.UP || side == EnumFacing.DOWN) ?
+                    icon.getMaxV() : ((icon.getMaxV() - icon.getMinV()) * height + icon.getMinV());
+            worldRenderer.pos(c[0][0], getHeight(side, c[0][1], height), c[0][2]).tex(icon.getMinU(), replacedMaxV).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+            worldRenderer.pos(c[1][0], getHeight(side, c[1][1], height), c[1][2]).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+            worldRenderer.pos(c[2][0], getHeight(side, c[2][1], height), c[2][2]).tex(icon.getMaxU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+            worldRenderer.pos(c[3][0], getHeight(side, c[3][1], height), c[3][2]).tex(icon.getMaxU(), replacedMaxV).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
 
-        t.draw();
+            t.draw();
+        }
+    }
+
+    private static double getHeight(EnumFacing side, double height, double replaceHeight) {
+        if(height == MAXY) {
+            return replaceHeight;
+        }
+        return height;
     }
 
 }

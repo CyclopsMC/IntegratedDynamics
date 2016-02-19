@@ -187,14 +187,15 @@ public class BlockSqueezer extends ConfigurableBlockContainer {
     }
 
     public static enum EnumAxis implements IStringSerializable {
-        X("x"),
-        Z("z");
+        X("x", new EnumFacing[]{EnumFacing.EAST, EnumFacing.WEST}),
+        Z("z", new EnumFacing[]{EnumFacing.NORTH, EnumFacing.SOUTH});
 
         private final String name;
+        private final EnumFacing[] sides;
 
-        private EnumAxis(String name)
-        {
+        private EnumAxis(String name, EnumFacing[] sides) {
             this.name = name;
+            this.sides = sides;
         }
 
         public String toString() {
@@ -214,6 +215,10 @@ public class BlockSqueezer extends ConfigurableBlockContainer {
 
         public String getName() {
             return this.name;
+        }
+
+        public EnumFacing[] getSides() {
+            return sides;
         }
     }
 }

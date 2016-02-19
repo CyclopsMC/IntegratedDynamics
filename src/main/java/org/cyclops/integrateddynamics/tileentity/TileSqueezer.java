@@ -6,6 +6,9 @@ import lombok.experimental.Delegate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.TankInventoryTileEntity;
@@ -38,6 +41,20 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
+        if(!getWorld().isRemote && !getTank().isEmpty()) {
+            EnumFacing[] sides = getWorld().getBlockState(getPos()).getValue(BlockSqueezer.AXIS).getSides();
+            for (EnumFacing side : sides) {
+                IFluidHandler handler = TileHelpers.getSafeTile(getWorld(), getPos().offset(side), IFluidHandler.class);
+                if (!getTank().isEmpty() && handler != null) {
+                    FluidStack fluidStack = new FluidStack(getTank().getFluidType(),
+                            Math.min(100, getTank().getFluidAmount()));
+                    if (handler.fill(side.getOpposite(), fluidStack, false) > 0) {
+                        int filled = handler.fill(side.getOpposite(), fluidStack, true);
+                        drain(filled, true);
+                    }
+                }
+            }
+        }
     }
 
     @Override
