@@ -82,7 +82,7 @@ public class SqueezerRecipeCategory implements IRecipeCategory {
                 recipeLayout.getItemStacks().set(OUTPUT_SLOT, recipe.getOutputItem());
             }
 
-            recipeLayout.getFluidStacks().init(FLUIDOUTPUT_SLOT, true, 76, 30, 16, 16, 1000, true, null);
+            recipeLayout.getFluidStacks().init(FLUIDOUTPUT_SLOT, true, 76, 30, 16, 16, 1000, false, null);
             if(recipe.getOutputFluid() != null) {
                 recipeLayout.getFluidStacks().set(FLUIDOUTPUT_SLOT, recipe.getOutputFluid());
             }

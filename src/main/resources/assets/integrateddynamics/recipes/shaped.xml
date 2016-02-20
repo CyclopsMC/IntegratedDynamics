@@ -74,4 +74,30 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">squeezer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item type="oredict">stickWood</item>
+					<item>minecraft:anvil</item>
+					<item type="oredict">stickWood</item>
+				</gridrow>
+				<gridrow>
+					<item type="oredict">stickWood</item>
+					<item />
+					<item type="oredict">stickWood</item>
+				</gridrow>
+				<gridrow>
+					<item type="oredict">plankWood</item>
+					<item type="oredict">ingotIron</item>
+					<item type="oredict">plankWood</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:squeezer</item>
+		</output>
+	</recipe>
+
 </recipes>
