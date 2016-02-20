@@ -8,6 +8,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -95,9 +98,17 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                 if (itemHeight == 7 && getCurrentRecipe() != null) {
                     IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
                         setInventorySlotContents(0, null);
-                        ItemStack toSpawn = recipe.getOutput().getItemStack();
-                        if(toSpawn != null) {
-                            ItemStackHelpers.spawnItemStack(getWorld(), getPos(), toSpawn.copy());
+                        ItemStack resultStack = recipe.getOutput().getItemStack();
+                        if(resultStack != null) {
+                            for(EnumFacing side : EnumFacing.VALUES) {
+                                if(resultStack != null && side != EnumFacing.UP) {
+                                    IItemHandler itemHandler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                                    resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
+                                }
+                            }
+                            if(resultStack != null) {
+                                ItemStackHelpers.spawnItemStack(getWorld(), getPos(), resultStack.copy());
+                            }
                         }
                         if (recipe.getOutput().getFluidStack() != null) {
                             fill(recipe.getOutput().getFluidStack(), true);
