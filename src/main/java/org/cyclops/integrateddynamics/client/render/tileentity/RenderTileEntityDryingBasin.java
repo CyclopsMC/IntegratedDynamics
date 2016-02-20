@@ -68,7 +68,7 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
 
     @Override
     public void renderFluid(FluidStack fluid) {
-        double height = fluid.amount * 0.90D / FluidContainerRegistry.BUCKET_VOLUME;
+        double height = (fluid.amount * 0.7D) / FluidContainerRegistry.BUCKET_VOLUME + 0.23D + 0.01D;
         int brightness = lastTile.getWorld().getCombinedLight(lastTile.getPos(), fluid.getFluid().getLuminosity(fluid));
         int l2 = brightness >> 0x10 & 0xFFFF;
         int i3 = brightness & 0xFFFF;
