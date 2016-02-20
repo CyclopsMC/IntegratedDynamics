@@ -4,6 +4,9 @@ import mezz.jei.api.*;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeCategory;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeHandler;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeJEI;
+import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeCategory;
+import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeHandler;
+import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeJEI;
 
 /**
  * Helper for registering JEI manager.
@@ -33,6 +36,10 @@ public class JEIIntegratedDynamicsConfig implements IModPlugin {
             registry.addRecipeCategories(new DryingBasinRecipeCategory(JEI_HELPER.getGuiHelper()));
             registry.addRecipeHandlers(new DryingBasinRecipeHandler());
 
+            // Squeezer
+            registry.addRecipes(SqueezerRecipeJEI.getAllRecipes());
+            registry.addRecipeCategories(new SqueezerRecipeCategory(JEI_HELPER.getGuiHelper()));
+            registry.addRecipeHandlers(new SqueezerRecipeHandler());
         }
     }
 

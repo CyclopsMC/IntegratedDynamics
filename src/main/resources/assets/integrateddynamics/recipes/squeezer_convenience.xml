@@ -15,16 +15,6 @@
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
         <input>
-            <item>minecraft:hay_block</item>
-        </input>
-        <output>
-            <item amount="9">minecraft:wheat</item>
-        </output>
-    </recipe>
-
-    <recipe type="integrateddynamics:squeezer">
-        <condition type="config">squeezer</condition>
-        <input>
             <item>minecraft:snowball</item>
         </input>
         <output>
@@ -81,6 +71,28 @@
         </input>
         <output>
             <fluid amount="250">mushroomsoup</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">evilcraft</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>evilcraft:darkOre</item>
+        </input>
+        <output>
+            <item amount="2">evilcraft:darkGem</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">evilcraft</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>evilcraft:darkGem</item>
+        </input>
+        <output>
+            <item>evilcraft:darkGemCrushed</item>
         </output>
     </recipe>
 
