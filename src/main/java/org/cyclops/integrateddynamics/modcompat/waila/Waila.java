@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
+import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
 /**
  * Waila support class.
@@ -27,6 +28,7 @@ public class Waila {
         registrar.registerBodyProvider(new PartDataProvider(), IMultipartContainer.class);
         registrar.registerBodyProvider(new ProxyDataProvider(), TileProxy.class);
         registrar.registerBodyProvider(new DryingBasinDataProvider(), TileDryingBasin.class);
+        registrar.registerBodyProvider(new SqueezerDataProvider(), TileSqueezer.class);
     }
     
     /**
