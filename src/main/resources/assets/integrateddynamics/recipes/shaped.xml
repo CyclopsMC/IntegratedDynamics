@@ -100,4 +100,336 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">cable</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:redstone</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:redstone</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:redstone</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="3">integrateddynamics:cable</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">cable</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>minecraft:redstone</item>
+					<item>minecraft:redstone</item>
+					<item>minecraft:redstone</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="3">integrateddynamics:cable</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">wrench</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:redstone</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item />
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:wrench</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variable</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:paper</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="24">integrateddynamics:variable</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">labeller</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:writable_book</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item />
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:labeller</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">labeller</condition>
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:slime_ball</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:slime_ball</item>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>minecraft:slime_ball</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:slime_ball</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="32">integrateddynamics:facade</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variablestore</condition>
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item type="oredict">chestWood</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:variablestore</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">energyBattery</condition>
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:redstone_block</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:energyBattery</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">proxy</condition>
+		<condition type="config">variablestore</condition>
+		<condition type="config">variable</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:variable</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:variable</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:variablestore</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:variable</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:variable</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:proxy</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">materializer</condition>
+		<condition type="config">variablestore</condition>
+		<condition type="config">variable</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:variable</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:variablestore</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:redstone</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:materializer</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:variable</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:piston</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:variable</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item meta="0">integrateddynamics:variableTransformer</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:variable</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>minecraft:sticky_piston</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:variable</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item meta="1">integrateddynamics:variableTransformer</item>
+		</output>
+	</recipe>
+
 </recipes>

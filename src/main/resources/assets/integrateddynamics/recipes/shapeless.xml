@@ -23,4 +23,28 @@
 		</output>
 	</recipe>
 
+	<recipe type="shapeless">
+		<condition type="config">logicProgrammer</condition>
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<input>
+			<item>integrateddynamics:crystalizedMenrilBlock</item>
+			<item>minecraft:crafting_table</item>
+		</input>
+		<output>
+			<item>integrateddynamics:logicProgrammer</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
+		<condition type="config">coalGenerator</condition>
+		<condition type="config">energyBattery</condition>
+		<input>
+			<item>integrateddynamics:energyBattery</item>
+			<item>minecraft:furnace</item>
+		</input>
+		<output>
+			<item>integrateddynamics:coalGenerator</item>
+		</output>
+	</recipe>
+
 </recipes>

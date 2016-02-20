@@ -9,7 +9,7 @@
 			<item>integrateddynamics:menrilLog</item>
 		</input>
 		<output>
-			<fluid amount="250">menrilresin</fluid>
+			<fluid amount="1000">menrilresin</fluid>
 		</output>
 	</recipe>
 
