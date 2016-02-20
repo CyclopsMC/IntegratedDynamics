@@ -20,7 +20,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
+import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -32,7 +32,7 @@ import java.util.List;
  * A block for squeezing stuff.
  * @author rubensworks
  */
-public class BlockSqueezer extends ConfigurableBlockContainer implements IMachine<BlockSqueezer, ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> {
+public class BlockSqueezer extends ConfigurableBlockContainer implements IMachine<BlockSqueezer, ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> {
 
     @BlockProperty
     public static final PropertyEnum<BlockSqueezer.EnumAxis> AXIS = PropertyDirection.create("axis", BlockSqueezer.EnumAxis.class);
@@ -194,7 +194,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
     }
 
     @Override
-    public IRecipeRegistry<BlockSqueezer, ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
+    public IRecipeRegistry<BlockSqueezer, ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getRecipeRegistry() {
         return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
 

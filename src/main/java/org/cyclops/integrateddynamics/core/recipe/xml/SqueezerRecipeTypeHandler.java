@@ -3,33 +3,31 @@ package org.cyclops.integrateddynamics.core.recipe.xml;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.init.RecipeHandler;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
+import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.OreDictItemStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.xml.SuperRecipeTypeHandler;
 import org.cyclops.cyclopscore.recipe.xml.XmlRecipeLoader;
-import org.cyclops.integrateddynamics.block.BlockDryingBasin;
+import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.w3c.dom.Element;
 
 /**
- * Handler for drying basin recipes.
+ * Handler for squeezer recipes.
  * @author rubensworks
  *
  */
-public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler {
+public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler {
 
 	@Override
 	protected ItemStack handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
         Object inputItem = null;
         ItemStack outputItem = null;
-        FluidStack inputFluid = null;
         FluidStack outputFluid = null;
 
         if(input.getElementsByTagName("item").getLength() > 0) {
             inputItem = getItem(recipeHandler, input.getElementsByTagName("item").item(0));
-        }
-        if(input.getElementsByTagName("fluid").getLength() > 0) {
-            inputFluid = getFluid(recipeHandler, input.getElementsByTagName("fluid").item(0));
         }
 
         if(output.getElementsByTagName("item").getLength() > 0) {
@@ -39,24 +37,22 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler {
             outputFluid = getFluid(recipeHandler, output.getElementsByTagName("fluid").item(0));
         }
 
-        if(inputFluid != null && outputFluid != null) {
-            throw new XmlRecipeLoader.XmlRecipeException(String.format("Can't have an input and output fluid: %s and %s", inputFluid.getLocalizedName(), outputFluid.getLocalizedName()));
+        if(inputItem == null && outputFluid == null) {
+            throw new XmlRecipeLoader.XmlRecipeException("Squeezer recipes must have an output item or fluid.");
         }
 
-		int duration = Integer.parseInt(properties.getElementsByTagName("duration").item(0).getTextContent());
-
-        ItemAndFluidStackRecipeComponent inputRecipeComponent;
+        ItemStackRecipeComponent inputRecipeComponent;
         if(inputItem instanceof ItemStack) {
-            inputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) inputItem, inputFluid);
+            inputRecipeComponent = new ItemStackRecipeComponent((ItemStack) inputItem);
         } else {
-            inputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) inputItem, inputFluid);
+            inputRecipeComponent = new OreDictItemStackRecipeComponent((String) inputItem);
         }
 
         ItemAndFluidStackRecipeComponent outputRecipeComponent = new ItemAndFluidStackRecipeComponent(outputItem, outputFluid);
-		BlockDryingBasin.getInstance().getRecipeRegistry().registerRecipe(
+		BlockSqueezer.getInstance().getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,
                 outputRecipeComponent,
-                new DurationRecipeProperties(duration)
+                new DummyPropertiesComponent()
         );
         return outputItem;
 	}

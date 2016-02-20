@@ -14,7 +14,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
+import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
@@ -31,13 +31,11 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     private final ITickingTile tickingTileComponent = new TickingTileComponent(this);
 
     @NBTPersist
-    private int progress = 0;
-    @NBTPersist
     @Getter
     private int itemHeight = 1;
 
     private SingleCache<ItemStack,
-            IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>> recipeCache;
+            IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent>> recipeCache;
 
     public TileSqueezer() {
         super(1, "squeezerInventory", 1, FluidContainerRegistry.BUCKET_VOLUME, "squeezerTank");
@@ -52,9 +50,9 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(
                 new SingleCache.ICacheUpdater<ItemStack,
-                        IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>>() {
+                        IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent>>() {
                     @Override
-                    public IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getNewValue(ItemStack key) {
+                    public IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getNewValue(ItemStack key) {
                         ItemStackRecipeComponent recipeInput = new ItemStackRecipeComponent(key);
                         return getRegistry().findRecipeByInput(recipeInput);
                     }
@@ -68,11 +66,11 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     }
 
     protected IRecipeRegistry<BlockSqueezer, ItemStackRecipeComponent,
-            ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getRegistry() {
+            ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getRegistry() {
         return BlockSqueezer.getInstance().getRecipeRegistry();
     }
 
-    protected IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getCurrentRecipe() {
+    protected IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
         return recipeCache.get(getStackInSlot(0));
     }
 
@@ -95,8 +93,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                 }
             } else {
                 if (itemHeight == 7 && getCurrentRecipe() != null) {
-                    IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe = getCurrentRecipe();
-                    if (progress >= recipe.getProperties().getDuration()) {
+                    IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
                         setInventorySlotContents(0, null);
                         ItemStack toSpawn = recipe.getOutput().getItemStack();
                         if(toSpawn != null) {
@@ -105,13 +102,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                         if (recipe.getOutput().getFluidStack() != null) {
                             fill(recipe.getOutput().getFluidStack(), true);
                         }
-                        progress = 0;
-                    } else {
-                        progress++;
-                        sendUpdate();
-                    }
                 } else {
-                    progress = 0;
                     sendUpdate();
                 }
             }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+	<recipe type="integrateddynamics:squeezer">
+		<condition type="config">squeezer</condition>
+		<condition type="config">menrilLog</condition>
+		<condition type="config">menrilresin</condition>
+		<input>
+			<item>integrateddynamics:menrilLog</item>
+		</input>
+		<output>
+			<fluid amount="250">menrilresin</fluid>
+		</output>
+	</recipe>
+
+</recipes>

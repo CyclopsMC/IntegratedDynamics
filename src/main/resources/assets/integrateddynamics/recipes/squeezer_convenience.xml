@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="1">minecraft:sponge</item>
+        </input>
+        <output>
+            <item>minecraft:sponge</item>
+            <fluid amount="50">water</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="config">squeezer</condition>
+        <input>
+            <item type="oredict">blockGlass</item>
+        </input>
+        <output>
+            <item>minecraft:sand</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:hay_block</item>
+        </input>
+        <output>
+            <item amount="9">minecraft:wheat</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:gravel</item>
+        </input>
+        <output>
+            <item>minecraft:flint</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:snowball</item>
+        </input>
+        <output>
+            <fluid amount="250">water</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:ice</item>
+        </input>
+        <output>
+            <fluid amount="1000">water</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:snow</item>
+        </input>
+        <output>
+            <fluid amount="1000">water</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:blaze_rod</item>
+        </input>
+        <output>
+            <fluid amount="250">lava</fluid>
+        </output>
+    </recipe>
+
+</recipes>
