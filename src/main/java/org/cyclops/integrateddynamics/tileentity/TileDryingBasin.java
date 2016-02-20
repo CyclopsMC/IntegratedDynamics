@@ -48,12 +48,12 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     public TileDryingBasin() {
         super(1, "dryingBasingInventory", 1, FluidContainerRegistry.BUCKET_VOLUME, "dryingBasingTank");
 
-        addSlotsToSide(EnumFacing.UP, Sets.newHashSet(1));
-        addSlotsToSide(EnumFacing.DOWN, Sets.newHashSet(1));
-        addSlotsToSide(EnumFacing.NORTH, Sets.newHashSet(1));
-        addSlotsToSide(EnumFacing.SOUTH, Sets.newHashSet(1));
-        addSlotsToSide(EnumFacing.WEST, Sets.newHashSet(1));
-        addSlotsToSide(EnumFacing.EAST, Sets.newHashSet(1));
+        addSlotsToSide(EnumFacing.UP, Sets.newHashSet(0));
+        addSlotsToSide(EnumFacing.DOWN, Sets.newHashSet(0));
+        addSlotsToSide(EnumFacing.NORTH, Sets.newHashSet(0));
+        addSlotsToSide(EnumFacing.SOUTH, Sets.newHashSet(0));
+        addSlotsToSide(EnumFacing.WEST, Sets.newHashSet(0));
+        addSlotsToSide(EnumFacing.EAST, Sets.newHashSet(0));
 
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(
