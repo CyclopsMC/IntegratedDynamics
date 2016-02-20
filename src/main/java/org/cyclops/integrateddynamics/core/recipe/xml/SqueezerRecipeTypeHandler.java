@@ -23,7 +23,7 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler {
 	protected ItemStack handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
         Object inputItem = null;
-        ItemStack outputItem = null;
+        Object outputItem = null;
         FluidStack outputFluid = null;
 
         if(input.getElementsByTagName("item").getLength() > 0) {
@@ -48,13 +48,20 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler {
             inputRecipeComponent = new OreDictItemStackRecipeComponent((String) inputItem);
         }
 
-        ItemAndFluidStackRecipeComponent outputRecipeComponent = new ItemAndFluidStackRecipeComponent(outputItem, outputFluid);
+        ItemAndFluidStackRecipeComponent outputRecipeComponent;
+        if(outputItem instanceof ItemStack) {
+            outputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) outputItem, outputFluid);
+        } else {
+            outputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) outputItem, outputFluid);
+        }
+
+
 		BlockSqueezer.getInstance().getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,
                 outputRecipeComponent,
                 new DummyPropertiesComponent()
         );
-        return outputItem;
+        return outputRecipeComponent.getItemStack();
 	}
 
 }

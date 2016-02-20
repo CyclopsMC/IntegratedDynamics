@@ -121,7 +121,8 @@ public class IntegratedDynamics extends ModBaseVersionable {
                 "dryingbasin.xml",
                 "dryingbasin_convenience.xml",
                 "squeezer.xml",
-                "squeezer_convenience.xml"
+                "squeezer_convenience.xml",
+                "squeezer_ores.xml"
         ) {
             @Override
             protected void registerHandlers(Map<String, IRecipeTypeHandler> recipeTypeHandlers, Map<String, IRecipeConditionHandler> recipeConditionHandlers) {

@@ -15,30 +15,10 @@
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
         <input>
-            <item type="oredict">blockGlass</item>
-        </input>
-        <output>
-            <item>minecraft:sand</item>
-        </output>
-    </recipe>
-
-    <recipe type="integrateddynamics:squeezer">
-        <condition type="config">squeezer</condition>
-        <input>
             <item>minecraft:hay_block</item>
         </input>
         <output>
             <item amount="9">minecraft:wheat</item>
-        </output>
-    </recipe>
-
-    <recipe type="integrateddynamics:squeezer">
-        <condition type="config">squeezer</condition>
-        <input>
-            <item>minecraft:gravel</item>
-        </input>
-        <output>
-            <item>minecraft:flint</item>
         </output>
     </recipe>
 
@@ -75,10 +55,32 @@
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
         <input>
-            <item>minecraft:blaze_rod</item>
+            <item>minecraft:blaze_powder</item>
         </input>
         <output>
             <fluid amount="250">lava</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">MineFactoryReloaded</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:brown_mushroom</item>
+        </input>
+        <output>
+            <fluid amount="250">mushroomsoup</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">MineFactoryReloaded</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:red_mushroom</item>
+        </input>
+        <output>
+            <fluid amount="250">mushroomsoup</fluid>
         </output>
     </recipe>
 
