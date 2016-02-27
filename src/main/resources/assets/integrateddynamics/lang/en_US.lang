@@ -53,6 +53,8 @@ item.items.integrateddynamics.bucketMenrilResin.name=Menril Resin Bucket
 item.items.integrateddynamics.crystalizedMenrilChunk.name=Crystalized Menril Chunk
 item.items.integrateddynamics.variableTransformer.output.name=Output Variable Transformer
 item.items.integrateddynamics.variableTransformer.input.name=Input Variable Transformer
+item.items.integrateddynamics.menrilBerries.name=Menril Berries
+item.items.integrateddynamics.menrilBerries.info=Tasty and illuminating
 
 # Fluids
 fluid.fluids.integrateddynamics.menrilresin=Menril Resin
