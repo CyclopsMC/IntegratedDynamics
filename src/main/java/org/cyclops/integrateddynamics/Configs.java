@@ -36,6 +36,7 @@ public class Configs {
         configHandler.add(new BlockFluidMenrilResinConfig());
         configHandler.add(new BlockDryingBasinConfig());
         configHandler.add(new BlockSqueezerConfig());
+        configHandler.add(new BlockMenrilTorchConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());
