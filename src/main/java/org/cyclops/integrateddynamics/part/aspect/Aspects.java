@@ -3,9 +3,7 @@ package org.cyclops.integrateddynamics.part.aspect;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.math.DoubleMath;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -50,227 +48,55 @@ public class Aspects {
 
     public static final class Read {
 
-        public static final class Redstone {
-
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_LOW =
-                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
-                        @Override
-                        public Boolean getOutput(Integer input) {
-                            return input == 0;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "low").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONLOW =
-                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
-                        @Override
-                        public Boolean getOutput(Integer input) {
-                            return input > 0;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonlow").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_HIGH =
-                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
-                        @Override
-                        public Boolean getOutput(Integer input) {
-                            return input == 15;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "high").build();
-
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_VALUE =
-                    AspectReadBuilders.Redstone.BUILDER_INTEGER.handle(AspectReadBuilders.PROP_GET_INTEGER, "value").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_COMPARATOR =
-                    AspectReadBuilders.Redstone.BUILDER_INTEGER_COMPARATOR.handle(AspectReadBuilders.PROP_GET_INTEGER, "comparator").build();
-
-        }
-
-        public static final class Inventory {
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_FULL =
-                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
-                        @Override
-                        public Boolean getOutput(IItemHandler inventory) {
-                            if(inventory != null) {
-                                for (int i = 0; i < inventory.getSlots(); i++) {
-                                    ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if (itemStack == null) {
-                                        return false;
-                                    }
-                                }
-                            }
-                            return true;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "full").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_EMPTY =
-                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
-                        @Override
-                        public Boolean getOutput(IItemHandler inventory) {
-                            if(inventory != null) {
-                                for(int i = 0; i < inventory.getSlots(); i++) {
-                                    ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if(itemStack != null) {
-                                        return false;
-                                    }
-                                }
-                            }
-                            return true;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "empty").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONEMPTY =
-                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
-                        @Override
-                        public Boolean getOutput(IItemHandler inventory) {
-                            if(inventory != null) {
-                                for(int i = 0; i < inventory.getSlots(); i++) {
-                                    ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if(itemStack != null) {
-                                        return true;
-                                    }
-                                }
-                            }
-                            return false;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonempty").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_APPLICABLE =
-                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
-                        @Override
-                        public Boolean getOutput(IItemHandler inventory) {
-                            return inventory != null;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").build();
-
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_COUNT =
-                    AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(new IAspectValuePropagator<IItemHandler, Integer>() {
-                        @Override
-                        public Integer getOutput(IItemHandler inventory) {
-                            int count = 0;
-                            if(inventory != null) {
-                                for (int i = 0; i < inventory.getSlots(); i++) {
-                                    ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if (itemStack != null) {
-                                        count += itemStack.stackSize;
-                                    }
-                                }
-                            }
-                            return count;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "count").build();
-
-            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ITEMSTACKS =
-                    AspectReadBuilders.BUILDER_LIST.appendKind("inventory").handle(AspectReadBuilders.Inventory.PROP_GET_LIST, "itemstacks").build();
-
-            public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> OBJECT_ITEM_STACK_SLOT =
-                    AspectReadBuilders.Inventory.BUILDER_ITEMSTACK.handle(AspectReadBuilders.PROP_GET_ITEMSTACK).build();
-
-        }
-
-        public static final class World {
-
+        public static final class Block {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_BLOCK =
-                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<DimPos, Boolean>() {
+                    AspectReadBuilders.Block.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<DimPos, Boolean>() {
                         @Override
                         public Boolean getOutput(DimPos dimPos) {
-                            Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
+                            net.minecraft.block.Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
                             return block != Blocks.air;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_CLEAR =
-                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
-                        @Override
-                        public Boolean getOutput(net.minecraft.world.World world) {
-                            return !world.isRaining();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("clear").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_RAINING =
-                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
-                        @Override
-                        public Boolean getOutput(net.minecraft.world.World world) {
-                            return world.isRaining();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("raining").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_THUNDER =
-                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
-                        @Override
-                        public Boolean getOutput(net.minecraft.world.World world) {
-                            return world.isThundering();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("thunder").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISDAY =
-                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
-                        @Override
-                        public Boolean getOutput(net.minecraft.world.World world) {
-                            return MinecraftHelpers.isDay(world);
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isday").build();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISNIGHT =
-                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
-                        @Override
-                        public Boolean getOutput(net.minecraft.world.World world) {
-                            return !MinecraftHelpers.isDay(world);
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isnight").build();
-
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RAINCOUNTDOWN =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
-                        @Override
-                        public Integer getOutput(net.minecraft.world.World world) {
-                            return world.getWorldInfo().getRainTime();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "raincountdown").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
-                        @Override
-                        public Integer getOutput(net.minecraft.world.World world) {
-                            return (int) DoubleMath.mean(MinecraftServer.getServer().worldTickTimes.get(world.provider.getDimensionId()));
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
-                        @Override
-                        public Integer getOutput(net.minecraft.world.World world) {
-                            return (int) world.getWorldTime() % MinecraftHelpers.MINECRAFT_DAY;
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "daytime").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHTLEVEL =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(new IAspectValuePropagator<DimPos, Integer>() {
-                        @Override
-                        public Integer getOutput(DimPos dimPos) {
-                            return dimPos.getWorld().getLight(dimPos.getBlockPos());
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "lightlevel").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLAYERCOUNT =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
-                        @Override
-                        public Integer getOutput(net.minecraft.world.World world) {
-                            return world.playerEntities.size();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "playercount").build();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DIMENSION =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
                         @Override
                         public Integer getOutput(net.minecraft.world.World world) {
                             return world.provider.getDimensionId();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "dimension").build();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSX =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
+                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
                         @Override
                         public Integer getOutput(BlockPos pos) {
                             return pos.getX();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "posx").build();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSY =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
+                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
                         @Override
                         public Integer getOutput(BlockPos pos) {
                             return pos.getY();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "posy").build();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSZ =
-                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
+                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(new IAspectValuePropagator<BlockPos, Integer>() {
                         @Override
                         public Integer getOutput(BlockPos pos) {
                             return pos.getZ();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "posz").build();
+            public static final IAspectRead<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock> BLOCK =
+                    AspectReadBuilders.Block.BUILDER_BLOCK.handle(new IAspectValuePropagator<DimPos, IBlockState>() {
+                        @Override
+                        public IBlockState getOutput(DimPos dimPos) {
+                            return dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BLOCK).build();
+        }
+
+        public static final class Entity {
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ITEMFRAMEROTATION =
-                    AspectReadBuilders.World.BUILDER_INTEGER_ALL
+                    AspectReadBuilders.Entity.BUILDER_INTEGER_ALL
                             .handle(AspectReadBuilders.World.PROP_GET_ITEMFRAME)
                             .handle(new IAspectValuePropagator<EntityItemFrame, Integer>() {
                                 @Override
@@ -278,40 +104,23 @@ public class Aspects {
                                     return itemFrame!= null ? itemFrame.getRotation() : 0;
                                 }
                             }).handle(AspectReadBuilders.PROP_GET_INTEGER, "itemframerotation").build();
-
-            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
-                    AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Long>() {
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ENTITIES =
+                    AspectReadBuilders.Entity.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
                         @Override
-                        public Long getOutput(net.minecraft.world.World world) {
-                            return world.getWorldTime();
+                        public ValueTypeList.ValueList getOutput(DimPos dimPos) {
+                            List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.selectAnything);
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities, new Function<net.minecraft.entity.Entity, ValueObjectTypeEntity.ValueEntity>() {
+                                @Nullable
+                                @Override
+                                public ValueObjectTypeEntity.ValueEntity apply(net.minecraft.entity.Entity input) {
+                                    return ValueObjectTypeEntity.ValueEntity.of(input);
+                                }
+                            }));
                         }
-                    }).handle(AspectReadBuilders.PROP_GET_LONG, "time").build();
-            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TOTALTIME =
-                    AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Long>() {
-                        @Override
-                        public Long getOutput(net.minecraft.world.World world) {
-                            return world.getTotalWorldTime();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_LONG, "totaltime").build();
-
-            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_NAME =
-                    AspectReadBuilders.World.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, String>() {
-                        @Override
-                        public String getOutput(net.minecraft.world.World world) {
-                            return world.getWorldInfo().getWorldName();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_STRING, "worldname").build();
-
-            public static final IAspectRead<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock> BLOCK =
-                    AspectReadBuilders.World.BUILDER_BLOCK.handle(new IAspectValuePropagator<DimPos, IBlockState>() {
-                        @Override
-                        public IBlockState getOutput(DimPos dimPos) {
-                            return dimPos.getWorld().getBlockState(dimPos.getBlockPos());
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_BLOCK).build();
-
+                    }).appendKind("entities").build();
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
-                    AspectReadBuilders.World.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
+                    AspectReadBuilders.Entity.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
                         @Override
                         public ValueTypeList.ValueList getOutput(DimPos dimPos) {
                             return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(dimPos.getWorld().playerEntities, new Function<EntityPlayer, ValueObjectTypeEntity.ValueEntity>() {
@@ -323,36 +132,21 @@ public class Aspects {
                             }));
                         }
                     }).appendKind("players").build();
-            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ENTITIES =
-                    AspectReadBuilders.World.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
-                        @Override
-                        public ValueTypeList.ValueList getOutput(DimPos dimPos) {
-                            List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
-                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.selectAnything);
-                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities, new Function<Entity, ValueObjectTypeEntity.ValueEntity>() {
-                                @Nullable
-                                @Override
-                                public ValueObjectTypeEntity.ValueEntity apply(Entity input) {
-                                    return ValueObjectTypeEntity.ValueEntity.of(input);
-                                }
-                            }));
-                        }
-                    }).appendKind("entities").build();
 
             public static final IAspectRead<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity> ENTITY =
-                    AspectReadBuilders.World.BUILDER_ENTITY.withProperties(AspectReadBuilders.LIST_PROPERTIES).handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueObjectTypeEntity.ValueEntity>() {
+                    AspectReadBuilders.Entity.BUILDER_ENTITY.withProperties(AspectReadBuilders.LIST_PROPERTIES).handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueObjectTypeEntity.ValueEntity>() {
                         @Override
                         public ValueObjectTypeEntity.ValueEntity getOutput(Pair<PartTarget, IAspectProperties> input) {
                             int i = input.getRight().getValue(AspectReadBuilders.PROPERTY_LISTINDEX).getRawValue();
                             DimPos dimPos = input.getLeft().getTarget().getPos();
-                            List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+                            List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
                                     new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.selectAnything);
                             return ValueObjectTypeEntity.ValueEntity.of(i < entities.size() ? entities.get(i) : null);
                         }
                     }).build();
 
             public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> ITEMSTACK_ITEMFRAMECONTENTS =
-                    AspectReadBuilders.World.BUILDER_ITEMSTACK
+                    AspectReadBuilders.Entity.BUILDER_ITEMSTACK
                             .handle(AspectReadBuilders.World.PROP_GET_ITEMFRAME)
                             .handle(new IAspectValuePropagator<EntityItemFrame, ItemStack>() {
                                 @Override
@@ -360,6 +154,46 @@ public class Aspects {
                                     return itemFrame != null ? itemFrame.getDisplayedItem() : null;
                                 }
                             }).handle(AspectReadBuilders.PROP_GET_ITEMSTACK, "itemframecontents").build();
+        }
+
+        public static final class ExtraDimensional {
+
+            private static final Random RANDOM = new Random();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RANDOM =
+                    AspectReadBuilders.ExtraDimensional.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
+                        @Override
+                        public Integer getOutput(MinecraftServer minecraft) {
+                            return RANDOM.nextInt();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "random").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLAYERCOUNT =
+                    AspectReadBuilders.ExtraDimensional.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
+                        @Override
+                        public Integer getOutput(MinecraftServer minecraft) {
+                            return minecraft.getCurrentPlayerCount();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "playercount").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
+                    AspectReadBuilders.ExtraDimensional.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
+                        @Override
+                        public Integer getOutput(MinecraftServer minecraft) {
+                            return (int) DoubleMath.mean(minecraft.tickTimeArray);
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").build();
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
+                    AspectReadBuilders.ExtraDimensional.BUILDER_LIST.handle(new IAspectValuePropagator<MinecraftServer, ValueTypeList.ValueList>() {
+                        @Override
+                        public ValueTypeList.ValueList getOutput(MinecraftServer minecraft) {
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(minecraft.getConfigurationManager().playerEntityList, new Function<EntityPlayerMP, ValueObjectTypeEntity.ValueEntity>() {
+                                @Nullable
+                                @Override
+                                public ValueObjectTypeEntity.ValueEntity apply(EntityPlayerMP input) {
+                                    return ValueObjectTypeEntity.ValueEntity.of(input);
+                                }
+                            }));
+                        }
+                    }).appendKind("players").build();
 
         }
 
@@ -481,44 +315,86 @@ public class Aspects {
 
         }
 
-        public static final class Minecraft {
-
-            private static final Random RANDOM = new Random();
-
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RANDOM =
-                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
+        public static final class Inventory {
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_FULL =
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
                         @Override
-                        public Integer getOutput(MinecraftServer minecraft) {
-                            return RANDOM.nextInt();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "random").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLAYERCOUNT =
-                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
-                        @Override
-                        public Integer getOutput(MinecraftServer minecraft) {
-                            return minecraft.getCurrentPlayerCount();
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "playercount").build();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
-                    AspectReadBuilders.Minecraft.BUILDER_INTEGER.handle(new IAspectValuePropagator<MinecraftServer, Integer>() {
-                        @Override
-                        public Integer getOutput(MinecraftServer minecraft) {
-                            return (int) DoubleMath.mean(minecraft.tickTimeArray);
-                        }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").build();
-            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
-                    AspectReadBuilders.Minecraft.BUILDER_LIST.handle(new IAspectValuePropagator<MinecraftServer, ValueTypeList.ValueList>() {
-                        @Override
-                        public ValueTypeList.ValueList getOutput(MinecraftServer minecraft) {
-                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(minecraft.getConfigurationManager().playerEntityList, new Function<EntityPlayerMP, ValueObjectTypeEntity.ValueEntity>() {
-                                @Nullable
-                                @Override
-                                public ValueObjectTypeEntity.ValueEntity apply(EntityPlayerMP input) {
-                                    return ValueObjectTypeEntity.ValueEntity.of(input);
+                        public Boolean getOutput(IItemHandler inventory) {
+                            if(inventory != null) {
+                                for (int i = 0; i < inventory.getSlots(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if (itemStack == null) {
+                                        return false;
+                                    }
                                 }
-                            }));
+                            }
+                            return true;
                         }
-                    }).appendKind("players").build();
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "full").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_EMPTY =
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IItemHandler inventory) {
+                            if(inventory != null) {
+                                for(int i = 0; i < inventory.getSlots(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if(itemStack != null) {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "empty").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONEMPTY =
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IItemHandler inventory) {
+                            if(inventory != null) {
+                                for(int i = 0; i < inventory.getSlots(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if(itemStack != null) {
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonempty").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_APPLICABLE =
+                    AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IItemHandler, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IItemHandler inventory) {
+                            return inventory != null;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").build();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_COUNT =
+                    AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(new IAspectValuePropagator<IItemHandler, Integer>() {
+                        @Override
+                        public Integer getOutput(IItemHandler inventory) {
+                            int count = 0;
+                            if(inventory != null) {
+                                for (int i = 0; i < inventory.getSlots(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if (itemStack != null) {
+                                        count += itemStack.stackSize;
+                                    }
+                                }
+                            }
+                            return count;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "count").build();
+
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ITEMSTACKS =
+                    AspectReadBuilders.BUILDER_LIST.appendKind("inventory").handle(AspectReadBuilders.Inventory.PROP_GET_LIST, "itemstacks").build();
+
+            public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> OBJECT_ITEM_STACK_SLOT =
+                    AspectReadBuilders.Inventory.BUILDER_ITEMSTACK.handle(AspectReadBuilders.PROP_GET_ITEMSTACK).build();
+
+        }
+
+        public static final class Machine {
 
         }
 
@@ -560,6 +436,143 @@ public class Aspects {
                             return network != null ? (network instanceof IEnergyNetwork ? ((IEnergyNetwork) network).getMaxStoredEnergy() : 0) : 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("max").build();
+
+        }
+
+        public static final class Redstone {
+
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_LOW =
+                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                        @Override
+                        public Boolean getOutput(Integer input) {
+                            return input == 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "low").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONLOW =
+                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                        @Override
+                        public Boolean getOutput(Integer input) {
+                            return input > 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonlow").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_HIGH =
+                    AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<Integer, Boolean>() {
+                        @Override
+                        public Boolean getOutput(Integer input) {
+                            return input == 15;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "high").build();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_VALUE =
+                    AspectReadBuilders.Redstone.BUILDER_INTEGER.handle(AspectReadBuilders.PROP_GET_INTEGER, "value").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_COMPARATOR =
+                    AspectReadBuilders.Redstone.BUILDER_INTEGER_COMPARATOR.handle(AspectReadBuilders.PROP_GET_INTEGER, "comparator").build();
+
+        }
+
+        public static final class World {
+
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_CLEAR =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return !world.isRaining();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("clear").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_RAINING =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return world.isRaining();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("raining").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_THUNDER =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return world.isThundering();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("thunder").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISDAY =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return MinecraftHelpers.isDay(world);
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isday").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISNIGHT =
+                    AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Boolean>() {
+                        @Override
+                        public Boolean getOutput(net.minecraft.world.World world) {
+                            return !MinecraftHelpers.isDay(world);
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isnight").build();
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RAINCOUNTDOWN =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.world.World world) {
+                            return world.getWorldInfo().getRainTime();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "raincountdown").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.world.World world) {
+                            return (int) DoubleMath.mean(MinecraftServer.getServer().worldTickTimes.get(world.provider.getDimensionId()));
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
+                        @Override
+                        public Integer getOutput(net.minecraft.world.World world) {
+                            return (int) world.getWorldTime() % MinecraftHelpers.MINECRAFT_DAY;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "daytime").build();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHTLEVEL =
+                    AspectReadBuilders.World.BUILDER_INTEGER.handle(new IAspectValuePropagator<DimPos, Integer>() {
+                        @Override
+                        public Integer getOutput(DimPos dimPos) {
+                            return dimPos.getWorld().getLight(dimPos.getBlockPos());
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "lightlevel").build();
+
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
+                    AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Long>() {
+                        @Override
+                        public Long getOutput(net.minecraft.world.World world) {
+                            return world.getWorldTime();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_LONG, "time").build();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TOTALTIME =
+                    AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Long>() {
+                        @Override
+                        public Long getOutput(net.minecraft.world.World world) {
+                            return world.getTotalWorldTime();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_LONG, "totaltime").build();
+
+            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_NAME =
+                    AspectReadBuilders.World.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, String>() {
+                        @Override
+                        public String getOutput(net.minecraft.world.World world) {
+                            return world.getWorldInfo().getWorldName();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_STRING, "worldname").build();
+
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
+                    AspectReadBuilders.World.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
+                        @Override
+                        public ValueTypeList.ValueList getOutput(DimPos dimPos) {
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(dimPos.getWorld().playerEntities, new Function<EntityPlayer, ValueObjectTypeEntity.ValueEntity>() {
+                                @Nullable
+                                @Override
+                                public ValueObjectTypeEntity.ValueEntity apply(EntityPlayer input) {
+                                    return ValueObjectTypeEntity.ValueEntity.of(input);
+                                }
+                            }));
+                        }
+                    }).appendKind("players").build();
 
         }
 

@@ -2,9 +2,7 @@ package org.cyclops.integrateddynamics.part.aspect.read;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -123,79 +121,7 @@ public class AspectReadBuilders {
         LIST_PROPERTIES.setValue(PROPERTY_LISTINDEX, ValueTypeInteger.ValueInteger.of(0));
     }
 
-    public static final class Redstone {
-
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
-            @Override
-            public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                return dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
-            }
-        };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
-            @Override
-            public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                return dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock().getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
-            }
-        };
-
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
-                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "redstone");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
-                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "redstone");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
-                BUILDER_INTEGER_COMPARATOR = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_COMPARATOR, "redstone");
-
-    }
-
-    public static final class Inventory {
-
-        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_SLOTID =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid.name");
-        public static final IAspectProperties PROPERTIES = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
-                PROPERTY_SLOTID
-        ));
-        static {
-            PROPERTIES.setValue(PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
-        }
-
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler>() {
-            @Override
-            public IItemHandler getOutput(Pair<PartTarget, IAspectProperties> input) {
-                PartPos target = input.getLeft().getTarget();
-                return TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-            }
-        };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack>() {
-            @Override
-            public ItemStack getOutput(Pair<PartTarget, IAspectProperties> input) {
-                PartPos target = input.getLeft().getTarget();
-                IItemHandler itemHandler = TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-                int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
-                if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
-                    return itemHandler.getStackInSlot(slotId);
-                }
-                return null;
-            }
-        };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
-            @Override
-            public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedInventory(input.getLeft().getTarget().getPos()));
-            }
-        };
-
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IItemHandler>
-                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "inventory");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IItemHandler>
-                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "inventory");
-        public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
-                BUILDER_ITEMSTACK = BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET_SLOT, "inventory").withProperties(PROPERTIES);
-
-    }
-
-    public static final class World {
+    public static final class Block {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>() {
             @Override
@@ -203,58 +129,49 @@ public class AspectReadBuilders {
                 return input.getLeft().getTarget().getPos();
             }
         };
-        public static final IAspectValuePropagator<DimPos, net.minecraft.world.World> PROP_GET_WORLD = new IAspectValuePropagator<DimPos, net.minecraft.world.World>() {
+
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
+                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "block");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "block");
+        public static final AspectReadBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, DimPos>
+                BUILDER_BLOCK = AspectReadBuilders.BUILDER_OBJECT_BLOCK.handle(PROP_GET, "block");
+
+    }
+
+    public static final class Entity {
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>() {
             @Override
-            public net.minecraft.world.World getOutput(DimPos input) {
-                return input.getWorld();
-            }
-        };
-        public static final IAspectValuePropagator<DimPos, BlockPos> PROP_GET_POS = new IAspectValuePropagator<DimPos, BlockPos>() {
-            @Override
-            public BlockPos getOutput(DimPos input) {
-                return input.getBlockPos();
-            }
-        };
-        private static final Predicate<Entity> ENTITY_SELECTOR_ITEMFRAME = new Predicate<Entity>() {
-            @Override
-            public boolean apply(@Nullable Entity entity) {
-                return entity instanceof EntityItemFrame;
-            }
-        };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame> PROP_GET_ITEMFRAME = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame>() {
-            @Override
-            public EntityItemFrame getOutput(Pair<PartTarget, IAspectProperties> pair) {
-                DimPos dimPos = pair.getLeft().getTarget().getPos();
-                EnumFacing facing = pair.getLeft().getTarget().getSide();
-                List<Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
-                        new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
-                for(Entity entity : entities) {
-                    if(EnumFacing.fromAngle(((EntityItemFrame) entity).rotationYaw) == facing.getOpposite()) {
-                        return ((EntityItemFrame) entity);
-                    }
-                }
-                return null;
+            public DimPos getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return input.getLeft().getTarget().getPos();
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
-                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
-                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
-                BUILDER_INTEGER_ALL = AspectReadBuilders.BUILDER_INTEGER.appendKind("world");
-        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, DimPos>
-                BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueTypeLong.ValueLong, ValueTypeLong, DimPos>
-                BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, DimPos>
-                BUILDER_BLOCK = AspectReadBuilders.BUILDER_OBJECT_BLOCK.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
-                BUILDER_ITEMSTACK = AspectReadBuilders.BUILDER_OBJECT_ITEMSTACK.appendKind("world");
-        public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, DimPos>
-                BUILDER_STRING = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET, "world");
         public static final AspectReadBuilder<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity, Pair<PartTarget, IAspectProperties>>
-                BUILDER_ENTITY = AspectReadBuilders.BUILDER_ENTITY.appendKind("world");
+                BUILDER_ENTITY = AspectReadBuilders.BUILDER_ENTITY.appendKind("entity");
+        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, DimPos>
+                BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "entity");
+        public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
+                BUILDER_ITEMSTACK = AspectReadBuilders.BUILDER_OBJECT_ITEMSTACK.appendKind("entity");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
+                BUILDER_INTEGER_ALL = AspectReadBuilders.BUILDER_INTEGER.appendKind("entity");
+
+    }
+
+    public static final class ExtraDimensional {
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer>() {
+            @Override
+            public MinecraftServer getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return MinecraftServer.getServer();
+            }
+        };
+
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "extradimensional");
+        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, MinecraftServer>
+                BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "extradimensional");
 
     }
 
@@ -329,19 +246,49 @@ public class AspectReadBuilders {
 
     }
 
-    public static final class Minecraft {
+    public static final class Inventory {
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer>() {
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_SLOTID =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid.name");
+        public static final IAspectProperties PROPERTIES = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+                PROPERTY_SLOTID
+        ));
+        static {
+            PROPERTIES.setValue(PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
+        }
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler>() {
             @Override
-            public MinecraftServer getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return MinecraftServer.getServer();
+            public IItemHandler getOutput(Pair<PartTarget, IAspectProperties> input) {
+                PartPos target = input.getLeft().getTarget();
+                return TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            }
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack>() {
+            @Override
+            public ItemStack getOutput(Pair<PartTarget, IAspectProperties> input) {
+                PartPos target = input.getLeft().getTarget();
+                IItemHandler itemHandler = TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
+                if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
+                    return itemHandler.getStackInSlot(slotId);
+                }
+                return null;
+            }
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
+            @Override
+            public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedInventory(input.getLeft().getTarget().getPos()));
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
-                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "minecraft");
-        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, MinecraftServer>
-                BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "minecraft");
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IItemHandler>
+                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "inventory");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IItemHandler>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "inventory");
+        public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
+                BUILDER_ITEMSTACK = BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET_SLOT, "inventory").withProperties(PROPERTIES);
 
     }
 
@@ -351,7 +298,7 @@ public class AspectReadBuilders {
             @Override
             public INetwork getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos dimPos = input.getLeft().getTarget().getPos();
-                Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
+                net.minecraft.block.Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
                 if(block instanceof INetworkCarrier) {
                     return((INetworkCarrier) block).getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
                 }
@@ -363,6 +310,87 @@ public class AspectReadBuilders {
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_NETWORK, "network");
         public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, INetwork>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_NETWORK, "network");
+
+    }
+
+    public static final class Redstone {
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
+            @Override
+            public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                return dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
+            }
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
+            @Override
+            public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                return dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock().getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
+            }
+        };
+
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
+                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "redstone");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "redstone");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
+                BUILDER_INTEGER_COMPARATOR = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_COMPARATOR, "redstone");
+
+    }
+
+    public static final class World {
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>() {
+            @Override
+            public DimPos getOutput(Pair<PartTarget, IAspectProperties> input) {
+                return input.getLeft().getTarget().getPos();
+            }
+        };
+        public static final IAspectValuePropagator<DimPos, net.minecraft.world.World> PROP_GET_WORLD = new IAspectValuePropagator<DimPos, net.minecraft.world.World>() {
+            @Override
+            public net.minecraft.world.World getOutput(DimPos input) {
+                return input.getWorld();
+            }
+        };
+        public static final IAspectValuePropagator<DimPos, BlockPos> PROP_GET_POS = new IAspectValuePropagator<DimPos, BlockPos>() {
+            @Override
+            public BlockPos getOutput(DimPos input) {
+                return input.getBlockPos();
+            }
+        };
+        private static final Predicate<net.minecraft.entity.Entity> ENTITY_SELECTOR_ITEMFRAME = new Predicate<net.minecraft.entity.Entity>() {
+            @Override
+            public boolean apply(@Nullable net.minecraft.entity.Entity entity) {
+                return entity instanceof EntityItemFrame;
+            }
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame> PROP_GET_ITEMFRAME = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame>() {
+            @Override
+            public EntityItemFrame getOutput(Pair<PartTarget, IAspectProperties> pair) {
+                DimPos dimPos = pair.getLeft().getTarget().getPos();
+                EnumFacing facing = pair.getLeft().getTarget().getSide();
+                List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+                        new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
+                for(net.minecraft.entity.Entity entity : entities) {
+                    if(EnumFacing.fromAngle(((EntityItemFrame) entity).rotationYaw) == facing.getOpposite()) {
+                        return ((EntityItemFrame) entity);
+                    }
+                }
+                return null;
+            }
+        };
+
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
+                BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "world");
+        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "world");
+        public static final AspectReadBuilder<ValueTypeLong.ValueLong, ValueTypeLong, DimPos>
+                BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET, "world");
+        public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, DimPos>
+                BUILDER_STRING = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET, "world");
+        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, DimPos>
+                BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "world");
 
     }
 

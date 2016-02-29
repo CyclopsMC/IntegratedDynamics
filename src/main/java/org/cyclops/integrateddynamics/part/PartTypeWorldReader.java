@@ -16,7 +16,6 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
     public PartTypeWorldReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-                Aspects.Read.World.BOOLEAN_BLOCK,
                 Aspects.Read.World.BOOLEAN_WEATHER_CLEAR,
                 Aspects.Read.World.BOOLEAN_WEATHER_RAINING,
                 Aspects.Read.World.BOOLEAN_WEATHER_THUNDER,
@@ -26,20 +25,10 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.Read.World.INTEGER_TICKTIME,
                 Aspects.Read.World.INTEGER_DAYTIME,
                 Aspects.Read.World.INTEGER_LIGHTLEVEL,
-                Aspects.Read.World.INTEGER_PLAYERCOUNT,
-                Aspects.Read.World.INTEGER_DIMENSION,
-                Aspects.Read.World.INTEGER_POSX,
-                Aspects.Read.World.INTEGER_POSY,
-                Aspects.Read.World.INTEGER_POSZ,
-                Aspects.Read.World.INTEGER_ITEMFRAMEROTATION,
                 Aspects.Read.World.LONG_TIME,
                 Aspects.Read.World.LONG_TOTALTIME,
                 Aspects.Read.World.STRING_NAME,
-                Aspects.Read.World.BLOCK,
-                Aspects.Read.World.LIST_ENTITIES,
-                Aspects.Read.World.LIST_PLAYERS,
-                Aspects.Read.World.ENTITY,
-                Aspects.Read.World.ITEMSTACK_ITEMFRAMECONTENTS
+                Aspects.Read.World.LIST_PLAYERS
         ));
     }
 

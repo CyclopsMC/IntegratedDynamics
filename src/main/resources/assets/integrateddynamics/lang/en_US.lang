@@ -99,18 +99,24 @@ parttype.parttypes.integrateddynamics.tooltip.inactive=Inactive
 parttype.parttypes.integrateddynamics.tooltip.errors=Errors:
 parttype.parttypes.integrateddynamics.tooltip.writer.activeAspect=Aspect: %s (%s)
 parttype.parttypes.integrateddynamics.tooltip.display.activeValue=Value: %s (%s)
-parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
-parttype.parttypes.integrateddynamics.redstoneReader.info=Reads redstone values
-parttype.parttypes.integrateddynamics.inventoryReader.name=Inventory Reader
-parttype.parttypes.integrateddynamics.inventoryReader.info=Reads data from inventories
-parttype.parttypes.integrateddynamics.worldReader.name=World Reader
-parttype.parttypes.integrateddynamics.worldReader.info=Reads things related to the world, blocks and entities
+parttype.parttypes.integrateddynamics.blockReader.name=Block Reader
+parttype.parttypes.integrateddynamics.blockReader.info=Reads block information
+parttype.parttypes.integrateddynamics.entityReader.name=Entity Reader
+parttype.parttypes.integrateddynamics.entityReader.info=Reads entity information
+parttype.parttypes.integrateddynamics.extradimensionalReader.name=Extra-Dimensional Reader
+parttype.parttypes.integrateddynamics.extradimensionalReader.info=Reads information that is shared for all dimensions
 parttype.parttypes.integrateddynamics.fluidReader.name=Fluid Reader
 parttype.parttypes.integrateddynamics.fluidReader.info=Reads fluid tanks
-parttype.parttypes.integrateddynamics.minecraftReader.name=Minecraft Reader
-parttype.parttypes.integrateddynamics.minecraftReader.info=Reads Minecraft system properties
+parttype.parttypes.integrateddynamics.inventoryReader.name=Inventory Reader
+parttype.parttypes.integrateddynamics.inventoryReader.info=Reads data from inventories
 parttype.parttypes.integrateddynamics.networkReader.name=Network Reader
 parttype.parttypes.integrateddynamics.networkReader.info=Reads target network properties
+parttype.parttypes.integrateddynamics.machineReader.name=Machine Reader
+parttype.parttypes.integrateddynamics.machineReader.info=Reads machine properties
+parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
+parttype.parttypes.integrateddynamics.redstoneReader.info=Reads redstone values
+parttype.parttypes.integrateddynamics.worldReader.name=World Reader
+parttype.parttypes.integrateddynamics.worldReader.info=Reads things related to the world, blocks and entities
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 parttype.parttypes.integrateddynamics.redstoneWriter.info=Writes to redstone
 parttype.parttypes.integrateddynamics.dataDrivenPanel.error.invalidType=This panel does not accept a %s.
@@ -138,113 +144,46 @@ aspect.integrateddynamics.tooltip.valueTypeName=§eType: §r%s
 aspect.integrateddynamics.tooltip.partId=§e§oPart ID: §r§o%s
 aspect.integrateddynamics.error.invalidType=This aspect expects %s, but %s was given.
 
-## Redstone aspects
-aspect.aspects.integrateddynamics.read.boolean.redstone.high.name=Redstone High
-aspect.aspects.integrateddynamics.read.boolean.redstone.high.info=If the redstone level is at its maximum
-aspect.aspects.integrateddynamics.read.boolean.redstone.low.name=Redstone Low
-aspect.aspects.integrateddynamics.read.boolean.redstone.low.info=If there is no redstone level
-aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.name=Redstone
-aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.info=If there is a redstone level
-aspect.aspects.integrateddynamics.read.integer.redstone.value.name=Redstone
-aspect.aspects.integrateddynamics.read.integer.redstone.value.info=Get the exact redstone level
-aspect.aspects.integrateddynamics.read.integer.redstone.comparator.name=Comparator
-aspect.aspects.integrateddynamics.read.integer.redstone.comparator.info=Get the comparator value
+## Block aspects
+aspect.aspects.integrateddynamics.read.boolean.block.block.name=Has Block
+aspect.aspects.integrateddynamics.read.boolean.block.block.info=If the target space has a block
 
-aspect.aspects.integrateddynamics.write.boolean.redstone.name=Redstone
-aspect.aspects.integrateddynamics.write.boolean.redstone.info=Outputs a full redstone signal if true
+aspect.aspects.integrateddynamics.read.integer.block.dimension.name=Dimension
+aspect.aspects.integrateddynamics.read.integer.block.dimension.info=The id of the target world dimension
+aspect.aspects.integrateddynamics.read.integer.block.posx.name=X Coordinate
+aspect.aspects.integrateddynamics.read.integer.block.posx.info=The X coordinate of the target
+aspect.aspects.integrateddynamics.read.integer.block.posy.name=Y Coordinate
+aspect.aspects.integrateddynamics.read.integer.block.posy.info=The Y coordinate of the target
+aspect.aspects.integrateddynamics.read.integer.block.posz.name=Z Coordinate
+aspect.aspects.integrateddynamics.read.integer.block.posz.info=The Z coordinate of the target
 
-aspect.aspects.integrateddynamics.write.integer.redstone.name=Redstone
-aspect.aspects.integrateddynamics.write.integer.redstone.info=Outputs the value as exact redstone signal
+aspect.aspects.integrateddynamics.read.block.block.name=Block
+aspect.aspects.integrateddynamics.read.block.block.info=The target block
 
-## Inventory aspects
-aspect.aspects.integrateddynamics.read.boolean.inventory.full.name=Inventory Full
-aspect.aspects.integrateddynamics.read.boolean.inventory.full.info=If all slots have at least one item
-aspect.aspects.integrateddynamics.read.boolean.inventory.empty.name=Inventory Empty
-aspect.aspects.integrateddynamics.read.boolean.inventory.empty.info=If all slots are empty
-aspect.aspects.integrateddynamics.read.boolean.inventory.nonempty.name=Inventory Not Empty
-aspect.aspects.integrateddynamics.read.boolean.inventory.nonempty.info=If there is at least one item
-aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.name=Is Inventory
-aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.info=If the target has an inventory
+## Entity aspects
+aspect.aspects.integrateddynamics.read.integer.entity.itemframerotation.name=Item Frame Rotation
+aspect.aspects.integrateddynamics.read.integer.entity.itemframerotation.info=The index of the rotation the item in the attached Item Frame has.
 
-aspect.aspects.integrateddynamics.read.integer.inventory.count.name=Inventory Count
-aspect.aspects.integrateddynamics.read.integer.inventory.count.info=Get the total amount of items
-aspect.aspects.integrateddynamics.read.integer.inventory.countslot.name=Slot Stacksize
-aspect.aspects.integrateddynamics.read.integer.inventory.countslot.info=Get the stack size in the active slot
+aspect.aspects.integrateddynamics.read.list.entity.entities.name=Entities
+aspect.aspects.integrateddynamics.read.list.entity.entities.info=The entities in the target space
+aspect.aspects.integrateddynamics.read.list.entity.players.name=Players
+aspect.aspects.integrateddynamics.read.list.entity.players.info=The players that are in this world
 
-aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.name=Items
-aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.info=Get a list of the items in the inventory
+aspect.aspects.integrateddynamics.read.entity.entity.name=Entity
+aspect.aspects.integrateddynamics.read.entity.entity.info=The selected entity in the target space
 
-aspect.aspects.integrateddynamics.read.itemstack.inventory.name=Slot Item
-aspect.aspects.integrateddynamics.read.itemstack.inventory.info=Get the Item in the active slot
+aspect.aspects.integrateddynamics.read.itemstack.entity.itemframecontents.name=Item Frame
+aspect.aspects.integrateddynamics.read.itemstack.entity.itemframecontents.info=The item in an Item Frame attached to the reader
 
-## World aspects
-aspect.aspects.integrateddynamics.read.boolean.world.block.name=Has Block
-aspect.aspects.integrateddynamics.read.boolean.world.block.info=If the target space has a block
-aspect.aspects.integrateddynamics.read.boolean.world.entity.name=Has Entity
-aspect.aspects.integrateddynamics.read.boolean.world.entity.info=If the target space has an entity
-aspect.aspects.integrateddynamics.read.boolean.world.mob.name=Has Mob
-aspect.aspects.integrateddynamics.read.boolean.world.mob.info=If the target space has a mob
-aspect.aspects.integrateddynamics.read.boolean.world.animal.name=Has Animal
-aspect.aspects.integrateddynamics.read.boolean.world.animal.info=If the target space has an animal
-aspect.aspects.integrateddynamics.read.boolean.world.player.name=Has Player
-aspect.aspects.integrateddynamics.read.boolean.world.player.info=If the target space has a player
-aspect.aspects.integrateddynamics.read.boolean.world.item.name=Has Item
-aspect.aspects.integrateddynamics.read.boolean.world.item.info=If the target space has an item
-aspect.aspects.integrateddynamics.read.boolean.world.weather.clear.name=Weather: Clear
-aspect.aspects.integrateddynamics.read.boolean.world.weather.clear.info=If there is a clear weather in the world
-aspect.aspects.integrateddynamics.read.boolean.world.weather.raining.name=Weather: Rain
-aspect.aspects.integrateddynamics.read.boolean.world.weather.raining.info=If there it is raining in the world
-aspect.aspects.integrateddynamics.read.boolean.world.weather.thunder.name=Weather: Thunder
-aspect.aspects.integrateddynamics.read.boolean.world.weather.thunder.info=If there is a thunderstorm in the world
-aspect.aspects.integrateddynamics.read.boolean.world.isday.name=Is Day
-aspect.aspects.integrateddynamics.read.boolean.world.isday.info=If it is day in the target world
-aspect.aspects.integrateddynamics.read.boolean.world.isnight.name=Is Night
-aspect.aspects.integrateddynamics.read.boolean.world.isnight.info=If it is night in the target world
-
-aspect.aspects.integrateddynamics.read.integer.world.entity.name=Entities
-aspect.aspects.integrateddynamics.read.integer.world.entity.info=The amount of entities at the target space
-aspect.aspects.integrateddynamics.read.integer.world.raincountdown.name=Rain Countdown
-aspect.aspects.integrateddynamics.read.integer.world.raincountdown.info=The amount of ticks until it will rain in this world
-aspect.aspects.integrateddynamics.read.integer.world.ticktime.name=Tick time
-aspect.aspects.integrateddynamics.read.integer.world.ticktime.info=The average tick time in milliseconds for this world
-aspect.aspects.integrateddynamics.read.integer.world.daytime.name=Day Time
-aspect.aspects.integrateddynamics.read.integer.world.daytime.info=The time that has passed in the target world day
-aspect.aspects.integrateddynamics.read.integer.world.lightlevel.name=Light Level
-aspect.aspects.integrateddynamics.read.integer.world.lightlevel.info=The light level at the target
-aspect.aspects.integrateddynamics.read.integer.world.playercount.name=Player Count
-aspect.aspects.integrateddynamics.read.integer.world.playercount.info=The amount of players in the world
-aspect.aspects.integrateddynamics.read.integer.world.dimension.name=Dimension
-aspect.aspects.integrateddynamics.read.integer.world.dimension.info=The id of the target world dimension
-aspect.aspects.integrateddynamics.read.integer.world.posx.name=X Coordinate
-aspect.aspects.integrateddynamics.read.integer.world.posx.info=The X coordinate of the target
-aspect.aspects.integrateddynamics.read.integer.world.posy.name=Y Coordinate
-aspect.aspects.integrateddynamics.read.integer.world.posy.info=The Y coordinate of the target
-aspect.aspects.integrateddynamics.read.integer.world.posz.name=Z Coordinate
-aspect.aspects.integrateddynamics.read.integer.world.posz.info=The Z coordinate of the target
-aspect.aspects.integrateddynamics.read.integer.world.itemframerotation.name=Item Frame Rotation
-aspect.aspects.integrateddynamics.read.integer.world.itemframerotation.info=The index of the rotation the item in the attached Item Frame has.
-
-aspect.aspects.integrateddynamics.read.long.world.time.name=Time
-aspect.aspects.integrateddynamics.read.long.world.time.info=The world time dependent of the set time command
-aspect.aspects.integrateddynamics.read.long.world.totaltime.name=Total Time
-aspect.aspects.integrateddynamics.read.long.world.totaltime.info=The world time independent of the set time command
-
-aspect.aspects.integrateddynamics.read.string.world.worldname.name=World Name
-aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target world name
-
-aspect.aspects.integrateddynamics.read.block.world.name=Block
-aspect.aspects.integrateddynamics.read.block.world.info=The target block
-
-aspect.aspects.integrateddynamics.read.list.world.entities.name=Entities
-aspect.aspects.integrateddynamics.read.list.world.entities.info=The entities in the target space
-aspect.aspects.integrateddynamics.read.list.world.players.name=Players
-aspect.aspects.integrateddynamics.read.list.world.players.info=The players that are in this world
-
-aspect.aspects.integrateddynamics.read.entity.world.name=Entity
-aspect.aspects.integrateddynamics.read.entity.world.info=The selected entity in the target space
-
-aspect.aspects.integrateddynamics.read.itemstack.world.itemframecontents.name=Item Frame
-aspect.aspects.integrateddynamics.read.itemstack.world.itemframecontents.info=The item in an Item Frame attached to the reader
+## Extra-Dimensional aspects
+aspect.aspects.integrateddynamics.read.integer.extradimensional.random.name=Random
+aspect.aspects.integrateddynamics.read.integer.extradimensional.random.info=A random integer value
+aspect.aspects.integrateddynamics.read.integer.extradimensional.playercount.name=Player Count
+aspect.aspects.integrateddynamics.read.integer.extradimensional.playercount.info=The amount of players in the server
+aspect.aspects.integrateddynamics.read.integer.extradimensional.ticktime.name=Tick time
+aspect.aspects.integrateddynamics.read.integer.extradimensional.ticktime.info=The average tick time in milliseconds for the server
+aspect.aspects.integrateddynamics.read.list.extradimensional.players.name=Players
+aspect.aspects.integrateddynamics.read.list.extradimensional.players.info=The players that are online on this server
 
 ## Fluid aspects
 aspect.aspects.integrateddynamics.read.boolean.fluid.empty.name=Tank Empty
@@ -278,15 +217,26 @@ aspect.aspects.integrateddynamics.read.list.fluid.capacities.info=The list of ca
 aspect.aspects.integrateddynamics.read.fluidstack.fluid.name=Tank Fluid
 aspect.aspects.integrateddynamics.read.fluidstack.fluid.info=The fluid in the target tank
 
-## Minecraft aspects
-aspect.aspects.integrateddynamics.read.integer.minecraft.random.name=Random
-aspect.aspects.integrateddynamics.read.integer.minecraft.random.info=A random integer value
-aspect.aspects.integrateddynamics.read.integer.minecraft.playercount.name=Player Count
-aspect.aspects.integrateddynamics.read.integer.minecraft.playercount.info=The amount of players in the server
-aspect.aspects.integrateddynamics.read.integer.minecraft.ticktime.name=Tick time
-aspect.aspects.integrateddynamics.read.integer.minecraft.ticktime.info=The average tick time in milliseconds for the server
-aspect.aspects.integrateddynamics.read.list.minecraft.players.name=Players
-aspect.aspects.integrateddynamics.read.list.minecraft.players.info=The players that are online on this server
+## Inventory aspects
+aspect.aspects.integrateddynamics.read.boolean.inventory.full.name=Inventory Full
+aspect.aspects.integrateddynamics.read.boolean.inventory.full.info=If all slots have at least one item
+aspect.aspects.integrateddynamics.read.boolean.inventory.empty.name=Inventory Empty
+aspect.aspects.integrateddynamics.read.boolean.inventory.empty.info=If all slots are empty
+aspect.aspects.integrateddynamics.read.boolean.inventory.nonempty.name=Inventory Not Empty
+aspect.aspects.integrateddynamics.read.boolean.inventory.nonempty.info=If there is at least one item
+aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.name=Is Inventory
+aspect.aspects.integrateddynamics.read.boolean.inventory.applicable.info=If the target has an inventory
+
+aspect.aspects.integrateddynamics.read.integer.inventory.count.name=Inventory Count
+aspect.aspects.integrateddynamics.read.integer.inventory.count.info=Get the total amount of items
+aspect.aspects.integrateddynamics.read.integer.inventory.countslot.name=Slot Stacksize
+aspect.aspects.integrateddynamics.read.integer.inventory.countslot.info=Get the stack size in the active slot
+
+aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.name=Items
+aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.info=Get a list of the items in the inventory
+
+aspect.aspects.integrateddynamics.read.itemstack.inventory.name=Slot Item
+aspect.aspects.integrateddynamics.read.itemstack.inventory.info=Get the Item in the active slot
 
 ## Network aspects
 aspect.aspects.integrateddynamics.read.boolean.network.applicable.name=Is Network
@@ -301,6 +251,67 @@ aspect.aspects.integrateddynamics.read.integer.network.energy.max.name=Energy Ca
 aspect.aspects.integrateddynamics.read.boolean.network.energy.max.info=The energy capacity of the network
 aspect.aspects.integrateddynamics.read.integer.network.energy.consumptionrate.name=Energy Consumption Rate
 aspect.aspects.integrateddynamics.read.boolean.network.energy.consumptionrate.info=The energy consumption rate of the target network
+
+## Redstone aspects
+aspect.aspects.integrateddynamics.read.boolean.redstone.high.name=Redstone High
+aspect.aspects.integrateddynamics.read.boolean.redstone.high.info=If the redstone level is at its maximum
+aspect.aspects.integrateddynamics.read.boolean.redstone.low.name=Redstone Low
+aspect.aspects.integrateddynamics.read.boolean.redstone.low.info=If there is no redstone level
+aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.name=Redstone
+aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.info=If there is a redstone level
+aspect.aspects.integrateddynamics.read.integer.redstone.value.name=Redstone
+aspect.aspects.integrateddynamics.read.integer.redstone.value.info=Get the exact redstone level
+aspect.aspects.integrateddynamics.read.integer.redstone.comparator.name=Comparator
+aspect.aspects.integrateddynamics.read.integer.redstone.comparator.info=Get the comparator value
+
+aspect.aspects.integrateddynamics.write.boolean.redstone.name=Redstone
+aspect.aspects.integrateddynamics.write.boolean.redstone.info=Outputs a full redstone signal if true
+
+aspect.aspects.integrateddynamics.write.integer.redstone.name=Redstone
+aspect.aspects.integrateddynamics.write.integer.redstone.info=Outputs the value as exact redstone signal
+
+## World aspects
+aspect.aspects.integrateddynamics.read.boolean.world.entity.name=Has Entity
+aspect.aspects.integrateddynamics.read.boolean.world.entity.info=If the target space has an entity
+aspect.aspects.integrateddynamics.read.boolean.world.mob.name=Has Mob
+aspect.aspects.integrateddynamics.read.boolean.world.mob.info=If the target space has a mob
+aspect.aspects.integrateddynamics.read.boolean.world.animal.name=Has Animal
+aspect.aspects.integrateddynamics.read.boolean.world.animal.info=If the target space has an animal
+aspect.aspects.integrateddynamics.read.boolean.world.player.name=Has Player
+aspect.aspects.integrateddynamics.read.boolean.world.player.info=If the target space has a player
+aspect.aspects.integrateddynamics.read.boolean.world.item.name=Has Item
+aspect.aspects.integrateddynamics.read.boolean.world.item.info=If the target space has an item
+aspect.aspects.integrateddynamics.read.boolean.world.weather.clear.name=Weather: Clear
+aspect.aspects.integrateddynamics.read.boolean.world.weather.clear.info=If there is a clear weather in the world
+aspect.aspects.integrateddynamics.read.boolean.world.weather.raining.name=Weather: Rain
+aspect.aspects.integrateddynamics.read.boolean.world.weather.raining.info=If there it is raining in the world
+aspect.aspects.integrateddynamics.read.boolean.world.weather.thunder.name=Weather: Thunder
+aspect.aspects.integrateddynamics.read.boolean.world.weather.thunder.info=If there is a thunderstorm in the world
+aspect.aspects.integrateddynamics.read.boolean.world.isday.name=Is Day
+aspect.aspects.integrateddynamics.read.boolean.world.isday.info=If it is day in the target world
+aspect.aspects.integrateddynamics.read.boolean.world.isnight.name=Is Night
+aspect.aspects.integrateddynamics.read.boolean.world.isnight.info=If it is night in the target world
+
+aspect.aspects.integrateddynamics.read.integer.world.entity.name=Entities
+aspect.aspects.integrateddynamics.read.integer.world.entity.info=The amount of entities at the target space
+aspect.aspects.integrateddynamics.read.integer.world.raincountdown.name=Rain Countdown
+aspect.aspects.integrateddynamics.read.integer.world.raincountdown.info=The amount of ticks until it will rain in this world
+aspect.aspects.integrateddynamics.read.integer.world.ticktime.name=Tick time
+aspect.aspects.integrateddynamics.read.integer.world.ticktime.info=The average tick time in milliseconds for this world
+aspect.aspects.integrateddynamics.read.integer.world.daytime.name=Day Time
+aspect.aspects.integrateddynamics.read.integer.world.daytime.info=The time that has passed in the target world day
+aspect.aspects.integrateddynamics.read.integer.world.lightlevel.name=Light Level
+aspect.aspects.integrateddynamics.read.integer.world.lightlevel.info=The light level at the target
+aspect.aspects.integrateddynamics.read.integer.world.players.name=Player Count
+aspect.aspects.integrateddynamics.read.integer.world.players.info=The players that are online in this world
+
+aspect.aspects.integrateddynamics.read.long.world.time.name=Time
+aspect.aspects.integrateddynamics.read.long.world.time.info=The world time dependent of the set time command
+aspect.aspects.integrateddynamics.read.long.world.totaltime.name=Total Time
+aspect.aspects.integrateddynamics.read.long.world.totaltime.info=The world time independent of the set time command
+
+aspect.aspects.integrateddynamics.read.string.world.worldname.name=World Name
+aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target world name
 
 # Aspect property types
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID

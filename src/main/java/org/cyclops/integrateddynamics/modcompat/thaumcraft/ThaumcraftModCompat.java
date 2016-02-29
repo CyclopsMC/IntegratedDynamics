@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.modcompat.thaumcraft;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -11,6 +12,7 @@ import org.cyclops.cyclopscore.modcompat.IModCompat;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
@@ -23,6 +25,7 @@ import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.operator.Ope
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueObjectTypeAspect;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueTypeListProxyPositionedAspectContainer;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.logicprogrammer.ValueObjectTypeAspectElementType;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectHelper;
 import thaumcraft.api.aspects.AspectList;
@@ -53,7 +56,11 @@ public class ThaumcraftModCompat implements IModCompat {
 			OBJECT_ASPECT = ValueTypes.REGISTRY.register(new ValueObjectTypeAspect());
 
 			// Part types
-			PartTypes.REGISTRY.register(new PartTypeThaumcraftReader("thaumcraftReader"));
+			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Sets.<IAspect>newHashSet(
+					org.cyclops.integrateddynamics.modcompat.thaumcraft.aspect.read.Aspects.Read.Aspect.BOOLEAN_ISASPECTCONTAINER,
+					org.cyclops.integrateddynamics.modcompat.thaumcraft.aspect.read.Aspects.Read.Aspect.LIST_ASPECTCONTAINER,
+					org.cyclops.integrateddynamics.modcompat.thaumcraft.aspect.read.Aspects.Read.Aspect.ASPECT
+			));
 
 			// List proxy factories
 			POSITIONED_ASPECTCONTAINER = ValueTypeListProxyFactories.REGISTRY.register(new ValueTypeListProxyNBTFactory<>("positionedAspectContainer", ValueTypeListProxyPositionedAspectContainer.class));
