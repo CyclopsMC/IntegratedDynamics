@@ -432,4 +432,334 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>minecraft:cobblestone</item>
+					<item>minecraft:dirt</item>
+					<item>minecraft:cobblestone</item>
+				</gridrow>
+				<gridrow>
+					<item>minecraft:dirt</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:dirt</item>
+				</gridrow>
+				<gridrow>
+					<item>minecraft:cobblestone</item>
+					<item>minecraft:dirt</item>
+					<item>minecraft:cobblestone</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_blockReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:porkchop</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:porkchop</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:porkchop</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:porkchop</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_entityReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:ender_eye</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:ender_pearl</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:ender_pearl</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:ender_eye</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_extradimensionalReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:water_bucket</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:bucket</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:bucket</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_fluidReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:chest</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:chest</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:chest</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_inventoryReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:furnace</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:iron_ingot</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:iron_ingot</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:crafting_table</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_machineReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<condition type="config">cable</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:cable</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:cable</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>integrateddynamics:cable</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:cable</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_networkReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:redstone_block</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:redstone</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:redstone</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:redstone_block</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_redstoneReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>minecraft:dirt</item>
+					<item>minecraft:obsidian</item>
+					<item>minecraft:dirt</item>
+				</gridrow>
+				<gridrow>
+					<item>minecraft:obsidian</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:obsidian</item>
+				</gridrow>
+				<gridrow>
+					<item>minecraft:dirt</item>
+					<item>minecraft:obsidian</item>
+					<item>minecraft:dirt</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_worldReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:redstone</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:redstone_block</item>
+					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item>minecraft:redstone_block</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:redstone</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_redstoneWriterItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<condition type="config">menrilBerries</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:menrilBerries</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menrilBerries</item>
+					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item>minecraft:redstone</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menrilBerries</item>
+					<item />
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_staticLightPanelItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:redstone</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:redstone</item>
+					<item>integrateddynamics:part_staticLightPanelItem</item>
+					<item>minecraft:redstone</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:redstone</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_dynamicLightPanelItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<condition type="config">menrilBerries</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:menrilBerries</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:part_staticLightPanelItem</item>
+					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item>integrateddynamics:part_staticLightPanelItem</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:menrilBerries</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_displayPanelItem</item>
+		</output>
+	</recipe>
+
 </recipes>
