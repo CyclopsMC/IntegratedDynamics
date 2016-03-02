@@ -15,8 +15,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -289,6 +291,21 @@ public class AspectReadBuilders {
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "inventory");
         public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
                 BUILDER_ITEMSTACK = BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET_SLOT, "inventory").withProperties(PROPERTIES);
+
+    }
+
+    public static final class Machine {
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IWorker> PROP_GET_WORKER = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IWorker>() {
+            @Override
+            public IWorker getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.WORKER);
+            }
+        };
+
+        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IWorker>
+                BUILDER_WORKER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_WORKER, "machine");
 
     }
 

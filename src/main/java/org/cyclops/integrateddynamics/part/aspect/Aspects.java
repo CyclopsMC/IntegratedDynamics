@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -395,6 +396,28 @@ public class Aspects {
         }
 
         public static final class Machine {
+
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISWORKER =
+                    AspectReadBuilders.Machine.BUILDER_WORKER_BOOLEAN.handle(new IAspectValuePropagator<IWorker, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IWorker worker) {
+                            return worker != null;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isworker").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_HASWORK =
+                    AspectReadBuilders.Machine.BUILDER_WORKER_BOOLEAN.handle(new IAspectValuePropagator<IWorker, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IWorker worker) {
+                            return worker != null && worker.hasWork();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "haswork").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_CANWORK =
+                    AspectReadBuilders.Machine.BUILDER_WORKER_BOOLEAN.handle(new IAspectValuePropagator<IWorker, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IWorker worker) {
+                            return worker != null && worker.canWork();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "canwork").build();
 
         }
 

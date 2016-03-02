@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
  * A machine reader part.
@@ -15,7 +16,9 @@ public class PartTypeMachineReader extends PartTypeReadBase<PartTypeMachineReade
     public PartTypeMachineReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
-
+                Aspects.Read.Machine.BOOLEAN_ISWORKER,
+                Aspects.Read.Machine.BOOLEAN_HASWORK,
+                Aspects.Read.Machine.BOOLEAN_CANWORK
         ));
     }
 

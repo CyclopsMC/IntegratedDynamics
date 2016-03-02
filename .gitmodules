@@ -1,3 +1,6 @@
 [submodule "src/api/java/thaumcraft/api"]
 	path = src/api/java/thaumcraft/api
 	url = https://github.com/Azanor/thaumcraft-5-api.git
+[submodule "src/main/java/org/cyclops/commoncapabilities/api"]
+	path = src/main/java/org/cyclops/commoncapabilities/api
+	url = https://github.com/CyclopsMC/CommonCapabilitiesAPI.git
