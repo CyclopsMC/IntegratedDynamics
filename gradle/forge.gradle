@@ -27,9 +27,6 @@ dependencies {
         compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
     }
 
-    compile ("org.cyclops.commoncapabilities:CommonCapabilities:${config.minecraft_version}-${config.commoncapabilities_version}:deobf") {
-        exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
-    }
     compile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:deobf" // http://maven.amadornes.com/
     compile "mcp.mobius.waila:Waila:${config.waila_version}:dev" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
     deobfCompile "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
