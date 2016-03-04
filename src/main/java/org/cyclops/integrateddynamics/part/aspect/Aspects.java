@@ -418,6 +418,13 @@ public class Aspects {
                             return worker != null && worker.canWork();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "canwork").build();
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISWORKING =
+                    AspectReadBuilders.Machine.BUILDER_WORKER_BOOLEAN.handle(new IAspectValuePropagator<IWorker, Boolean>() {
+                        @Override
+                        public Boolean getOutput(IWorker worker) {
+                            return worker != null && worker.canWork() && worker.hasWork();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isworking").build();
 
         }
 

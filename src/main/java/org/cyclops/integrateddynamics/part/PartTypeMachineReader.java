@@ -18,7 +18,8 @@ public class PartTypeMachineReader extends PartTypeReadBase<PartTypeMachineReade
         AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
                 Aspects.Read.Machine.BOOLEAN_ISWORKER,
                 Aspects.Read.Machine.BOOLEAN_HASWORK,
-                Aspects.Read.Machine.BOOLEAN_CANWORK
+                Aspects.Read.Machine.BOOLEAN_CANWORK,
+                Aspects.Read.Machine.BOOLEAN_ISWORKING
         ));
     }
 

@@ -238,13 +238,15 @@ aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.info=Get a list
 aspect.aspects.integrateddynamics.read.itemstack.inventory.name=Slot Item
 aspect.aspects.integrateddynamics.read.itemstack.inventory.info=Get the Item in the active slot
 
-## Network aspects
+## Machine aspects
 aspect.aspects.integrateddynamics.read.boolean.machine.isworker.name=Is Worker
 aspect.aspects.integrateddynamics.read.boolean.machine.isworker.info=If the target is a worker machine
 aspect.aspects.integrateddynamics.read.boolean.machine.haswork.name=Has Work
 aspect.aspects.integrateddynamics.read.boolean.machine.haswork.info=If the target has work to process
 aspect.aspects.integrateddynamics.read.boolean.machine.canwork.name=Can Work
 aspect.aspects.integrateddynamics.read.boolean.machine.canwork.info=If the target would be able to start working in its current state
+aspect.aspects.integrateddynamics.read.boolean.machine.isworking.name=Is Working
+aspect.aspects.integrateddynamics.read.boolean.machine.isworking.info=If the target is currently working
 
 ## Network aspects
 aspect.aspects.integrateddynamics.read.boolean.network.applicable.name=Is Network
