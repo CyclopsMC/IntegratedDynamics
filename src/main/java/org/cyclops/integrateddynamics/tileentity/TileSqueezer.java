@@ -62,8 +62,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
 
                     @Override
                     public boolean isKeyEqual(ItemStack cacheKey, ItemStack newKey) {
-                        return cacheKey == null || newKey == null ||
-                                ItemStack.areItemStacksEqual(cacheKey, newKey);
+                        return ItemStack.areItemStacksEqual(cacheKey, newKey);
                     }
                 });
     }
@@ -73,7 +72,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
         return BlockSqueezer.getInstance().getRecipeRegistry();
     }
 
-    protected IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
+    public IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
         return recipeCache.get(getStackInSlot(0));
     }
 

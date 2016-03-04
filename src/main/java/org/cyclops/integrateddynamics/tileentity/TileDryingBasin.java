@@ -91,7 +91,7 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
         return BlockDryingBasin.getInstance().getRecipeRegistry();
     }
 
-    protected IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getCurrentRecipe() {
+    public IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getCurrentRecipe() {
         return recipeCache.get(Pair.of(getStackInSlot(0), FluidHelpers.copy(getTank().getFluid())));
     }
 
