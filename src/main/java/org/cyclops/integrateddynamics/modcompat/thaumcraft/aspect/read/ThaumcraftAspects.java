@@ -21,7 +21,7 @@ import thaumcraft.api.aspects.IAspectContainer;
  * Builders for thaumcraft aspects
  * @author rubensworks
  */
-public class Aspects {
+public class ThaumcraftAspects {
 
     public static final class Read {
 

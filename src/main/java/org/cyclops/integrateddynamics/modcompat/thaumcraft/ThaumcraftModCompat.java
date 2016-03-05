@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.modcompat.thaumcraft.aspect.read.ThaumcraftAspects;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.client.render.valuetype.AspectValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.operator.OperatorBuilders;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueObjectTypeAspect;
@@ -57,9 +58,9 @@ public class ThaumcraftModCompat implements IModCompat {
 
 			// Part types
 			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Sets.<IAspect>newHashSet(
-					org.cyclops.integrateddynamics.modcompat.thaumcraft.aspect.read.Aspects.Read.Aspect.BOOLEAN_ISASPECTCONTAINER,
-					org.cyclops.integrateddynamics.modcompat.thaumcraft.aspect.read.Aspects.Read.Aspect.LIST_ASPECTCONTAINER,
-					org.cyclops.integrateddynamics.modcompat.thaumcraft.aspect.read.Aspects.Read.Aspect.ASPECT
+					ThaumcraftAspects.Read.Aspect.BOOLEAN_ISASPECTCONTAINER,
+					ThaumcraftAspects.Read.Aspect.LIST_ASPECTCONTAINER,
+					ThaumcraftAspects.Read.Aspect.ASPECT
 			));
 
 			// List proxy factories
