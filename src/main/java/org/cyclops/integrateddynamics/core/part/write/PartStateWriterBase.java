@@ -30,6 +30,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     private String activeAspectName = null;
     @NBTPersist
     private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
+    private boolean firstTick = true;
 
     public PartStateWriterBase(int inventorySize) {
         super(inventorySize);
@@ -113,6 +114,15 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     @Override
     public Class<? extends IPartState> getPartStateClass() {
         return IPartStateWriter.class;
+    }
+
+    @Override
+    public boolean checkAndResetFirstTick() {
+        if(firstTick) {
+            firstTick = false;
+            return true;
+        }
+        return false;
     }
 
     public static class Validator implements IVariableFacade.IValidator {

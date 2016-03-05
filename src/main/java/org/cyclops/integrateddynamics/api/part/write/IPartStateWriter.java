@@ -85,4 +85,10 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      */
     public void setDeactivated(boolean deactivated);
 
+    /**
+     * If this state is at its first tick, will be reset after calling this.
+     * @return If this is the first time this state is ticking.
+     */
+    public boolean checkAndResetFirstTick();
+
 }

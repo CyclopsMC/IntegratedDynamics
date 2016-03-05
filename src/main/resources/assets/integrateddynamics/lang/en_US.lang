@@ -117,6 +117,9 @@ parttype.parttypes.integrateddynamics.redstoneReader.name=Redstone Reader
 parttype.parttypes.integrateddynamics.redstoneReader.info=Reads redstone values
 parttype.parttypes.integrateddynamics.worldReader.name=World Reader
 parttype.parttypes.integrateddynamics.worldReader.info=Reads things related to the world, blocks and entities
+
+parttype.parttypes.integrateddynamics.inventoryWriter.name=Inventory Writer
+parttype.parttypes.integrateddynamics.inventoryWriter.info=Writes to inventories
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 parttype.parttypes.integrateddynamics.redstoneWriter.info=Writes to redstone
 parttype.parttypes.integrateddynamics.dataDrivenPanel.error.invalidType=This panel does not accept a %s.
@@ -536,6 +539,13 @@ aspect.aspects.integrateddynamics.read.boolean.charsetpipe.hascontents.name=Pipe
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.hascontents.info=If an item is going through this pipe.
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.applicable.name=Is Pipe
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.applicable.info=If the target block is a pipe.
+
+aspect.aspects.integrateddynamics.write.boolean.charsetpipe.shifter.name=Pipe Shift
+aspect.aspects.integrateddynamics.write.boolean.charsetpipe.shifter.info=Enable pipe item shifting
+aspect.aspects.integrateddynamics.write.itemstack.charsetpipe.shifter.name=Single Filtered Pipe Shift
+aspect.aspects.integrateddynamics.write.itemstack.charsetpipe.shifter.info=Enable pipe item shifting for the given item
+aspect.aspects.integrateddynamics.write.list.charsetpipe.shifter.name=Filtered Pipe Shift
+aspect.aspects.integrateddynamics.write.list.charsetpipe.shifter.info=Enable pipe item shifting for the given items
 
 ## ----- Thaumcraft ----- ##
 
