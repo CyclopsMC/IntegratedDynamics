@@ -3,7 +3,9 @@ package org.cyclops.integrateddynamics.part.aspect.write;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -35,14 +37,20 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
     public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
         if(partType instanceof IPartTypeWriter && state instanceof IPartStateWriter
                 && ((IPartStateWriter) state).getActiveAspect() == this) {
-            IVariable variable = ((IPartTypeWriter) partType).getActiveVariable(network, target, (IPartStateWriter) state);
+            IPartStateWriter writerState = (IPartStateWriter) state;
+            IVariable variable = ((IPartTypeWriter) partType).getActiveVariable(network, target, writerState);
             if(variable != null
-                    && ((IPartStateWriter) state).getErrors(this).isEmpty()
-                    && ((IPartStateWriter) state).getActiveAspect().getValueType().correspondsTo(variable.getType())) {
-                if(((IPartStateWriter) state).isDeactivated() || ((IPartStateWriter) state).checkAndResetFirstTick()) {
-                    ((IPartStateWriter) state).getActiveAspect().onActivate((IPartTypeWriter) partType, target, (IPartStateWriter) state);
+                    && writerState.getErrors(this).isEmpty()
+                    && writerState.getActiveAspect().getValueType().correspondsTo(variable.getType())) {
+                if(writerState.isDeactivated() || writerState.checkAndResetFirstTick()) {
+                    writerState.getActiveAspect().onActivate((IPartTypeWriter) partType, target, writerState);
                 }
-                write((IPartTypeWriter) partType, target, (IPartStateWriter) state, variable);
+                try {
+                    write((IPartTypeWriter) partType, target, writerState, variable);
+                } catch (EvaluationException e) {
+                    writerState.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
+                    writerState.setDeactivated(true);
+                }
             } else if(!((IPartStateWriter) state).isDeactivated()) {
                 ((IPartStateWriter) state).getActiveAspect().onDeactivate((IPartTypeWriter) partType, target, (IPartStateWriter) state);
             }

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.modcompat.charset.aspect.write;
 
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -39,15 +38,10 @@ public class AspectWriteItemStackCharsetPipesShifter extends AspectWriteItemStac
 
     @Override
     public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void write(P partType, PartTarget target,
-                                                                                       S state, IVariable<ValueObjectTypeItemStack.ValueItemStack> variable) {
-        try {
-            ValueObjectTypeItemStack.ValueItemStack value = variable.getValue();
-            ShifterPart shifter = (ShifterPart) state.getCapability(CharsetPipesModCompat.SHIFTER);
-            shifter.setFilter(Collections.singleton(value));
-            shifter.setShifting(true);
-        } catch (EvaluationException e) {
-            state.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
-            state.setDeactivated(true);
-        }
+                                                                                       S state, IVariable<ValueObjectTypeItemStack.ValueItemStack> variable)
+            throws EvaluationException {
+        ShifterPart shifter = (ShifterPart) state.getCapability(CharsetPipesModCompat.SHIFTER);
+        shifter.setFilter(Collections.singleton(variable.getValue()));
+        shifter.setShifting(true);
     }
 }

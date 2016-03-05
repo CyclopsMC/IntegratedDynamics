@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -23,15 +22,9 @@ public class AspectWriteBooleanRedstone extends AspectWriteBooleanBase {
 
     @Override
     public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void write(P partType, PartTarget target,
-                                                                                       S state, IVariable<ValueTypeBoolean.ValueBoolean> variable) {
-        try {
-            ValueTypeBoolean.ValueBoolean value = variable.getValue();
-            WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, value.getRawValue() ? 15 : 0);
-        } catch (EvaluationException e) {
-            state.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
-            state.setDeactivated(true);
-        }
-
+                                                                                       S state, IVariable<ValueTypeBoolean.ValueBoolean> variable)
+            throws EvaluationException {
+        WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, variable.getValue().getRawValue() ? 15 : 0);
     }
 
     @Override

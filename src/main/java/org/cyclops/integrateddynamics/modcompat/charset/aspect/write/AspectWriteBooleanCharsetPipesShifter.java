@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.modcompat.charset.aspect.write;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -43,14 +42,9 @@ public class AspectWriteBooleanCharsetPipesShifter extends AspectWriteBooleanBas
 
     @Override
     public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void write(P partType, PartTarget target,
-                                                                                       S state, IVariable<ValueTypeBoolean.ValueBoolean> variable) {
-        try {
-            ValueTypeBoolean.ValueBoolean value = variable.getValue();
-            ShifterPart shifter = (ShifterPart) state.getCapability(CharsetPipesModCompat.SHIFTER);
-            shifter.setShifting(value.getRawValue());
-        } catch (EvaluationException e) {
-            state.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
-            state.setDeactivated(true);
-        }
+                                                                                       S state, IVariable<ValueTypeBoolean.ValueBoolean> variable)
+            throws EvaluationException {
+        ShifterPart shifter = (ShifterPart) state.getCapability(CharsetPipesModCompat.SHIFTER);
+        shifter.setShifting(variable.getValue().getRawValue());
     }
 }

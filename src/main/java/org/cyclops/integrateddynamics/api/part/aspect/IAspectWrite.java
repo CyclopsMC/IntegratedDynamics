@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -21,9 +22,11 @@ public interface IAspectWrite<V extends IValue, T extends IValueType<V>> extends
      * @param variable The variable to write.
      * @param <P> The part type type.
      * @param <S> The part state.
+     * @throws EvaluationException If something went wrong while evaluating the variable to write.
      */
     public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void write(P partType, PartTarget target,
-                                                                                       S state, IVariable<V> variable);
+                                                                                       S state, IVariable<V> variable)
+            throws EvaluationException;
 
     /**
      * When this aspect has become active.

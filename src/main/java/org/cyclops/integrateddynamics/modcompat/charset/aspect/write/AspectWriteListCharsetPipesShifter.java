@@ -41,8 +41,8 @@ public class AspectWriteListCharsetPipesShifter extends AspectWriteListBase {
 
     @Override
     public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void write(P partType, PartTarget target,
-                                                                                       S state, IVariable<ValueTypeList.ValueList> variable) {
-        try {
+                                                                                       S state, IVariable<ValueTypeList.ValueList> variable)
+            throws EvaluationException {
             ValueTypeList.ValueList value = variable.getValue();
             if(value.getRawValue().getValueType() == ValueTypes.OBJECT_ITEMSTACK) {
                 IValueTypeListProxy<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> listProxy = value.getRawValue();
@@ -55,9 +55,5 @@ public class AspectWriteListCharsetPipesShifter extends AspectWriteListBase {
                         new L10NHelpers.UnlocalizedString(value.getRawValue().getValueType().getUnlocalizedName())));
                 state.setDeactivated(true);
             }
-        } catch (EvaluationException e) {
-            state.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
-            state.setDeactivated(true);
-        }
     }
 }
