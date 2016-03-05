@@ -241,6 +241,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     public S fromNBT(NBTTagCompound tag) {
         S partState = constructDefaultState();
         partState.readFromNBT(tag);
+        partState.gatherCapabilities((P) this);
         return partState;
     }
 
@@ -253,6 +254,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     public final S getDefaultState() {
         S defaultState = constructDefaultState();
         defaultState.generateId();
+        defaultState.gatherCapabilities((P) this);
         return defaultState;
     }
 

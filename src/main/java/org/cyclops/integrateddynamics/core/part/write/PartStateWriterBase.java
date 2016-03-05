@@ -62,6 +62,9 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         if(activeAspect != null && activeAspect != newAspect) {
             activeAspect.onDeactivate(partType, target, this);
         }
+        if(newAspect != null && activeAspect != newAspect) {
+            newAspect.onActivate(partType, target, this);
+        }
         this.activeAspectName = newAspect == null ? null : newAspect.getUnlocalizedName();
     }
 

@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
@@ -467,5 +468,43 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Override
     public boolean shouldRenderInPass(int pass) {
         return true;
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if(facing == null) {
+            for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
+                IPartState partState = entry.getValue().getState();
+                if(partState != null && partState.hasCapability(capability)) {
+                    return true;
+                }
+            }
+        } else {
+            if(hasPart(facing)) {
+                IPartState partState = getPartState(facing);
+                if (partState != null && partState.hasCapability(capability)) {
+                    return true;
+                }
+            }
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if(facing == null) {
+            for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
+                IPartState partState = entry.getValue().getState();
+                if(partState != null && partState.hasCapability(capability)) {
+                    return (T) partState.getCapability(capability);
+                }
+            }
+        } else {
+            IPartState partState = getPartState(facing);
+            if(partState != null && partState.hasCapability(capability)) {
+                return (T) partState.getCapability(capability);
+            }
+        }
+        return super.getCapability(capability, facing);
     }
 }

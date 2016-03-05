@@ -26,6 +26,17 @@ public interface IAspectWrite<V extends IValue, T extends IValueType<V>> extends
                                                                                        S state, IVariable<V> variable);
 
     /**
+     * When this aspect has become active.
+     * @param partType The part type.
+     * @param target The position that is targeted by the given part.
+     * @param state The current state of the given part.
+     * @param <P> The part type type.
+     * @param <S> The part state.
+     */
+    public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onActivate(P partType,
+                                                                                              PartTarget target, S state);
+
+    /**
      * When this aspect has become inactive.
      * @param partType The part type.
      * @param target The position that is targeted by the given part.

@@ -37,11 +37,19 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
                 && ((IPartStateWriter) state).getActiveAspect() == this) {
             IVariable variable = ((IPartTypeWriter) partType).getActiveVariable(network, target, (IPartStateWriter) state);
             if(variable != null && ((IPartStateWriter) state).getActiveAspect().getValueType().correspondsTo(variable.getType())) {
+                if(((IPartStateWriter) state).isDeactivated()) {
+                    ((IPartStateWriter) state).getActiveAspect().onActivate((IPartTypeWriter) partType, target, (IPartStateWriter) state);
+                }
                 write((IPartTypeWriter) partType, target, (IPartStateWriter) state, variable);
             } else if(!((IPartStateWriter) state).isDeactivated()) {
                 ((IPartStateWriter) state).getActiveAspect().onDeactivate((IPartTypeWriter) partType, target, (IPartStateWriter) state);
             }
         }
+    }
+
+    @Override
+    public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onActivate(P partType, PartTarget target, S state) {
+        state.setDeactivated(false);
     }
 
     @Override

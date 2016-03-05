@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
@@ -95,5 +96,41 @@ public interface IPartState<P extends IPartType> {
      * @return If the part should work.
      */
     public boolean isEnabled();
+
+    /**
+     * Gathers the capabilities of this part state.
+     * Don't call this unless you know what you're doing!
+     * @param partType The part type this state is associated with.
+     */
+    public void gatherCapabilities(P partType);
+
+    /**
+     * If this part state has the given capability.
+     * @param capability The capability to check.
+     * @return If this has the given capability/
+     */
+    boolean hasCapability(Capability<?> capability);
+
+    /**
+     * Get the given capability.
+     * @param capability The capability to get.
+     * @param <T> The capability type.
+     * @return The capability instance.
+     */
+    <T> T getCapability(Capability<T> capability);
+
+    /**
+     * Add a capability to this state that will not be automatically persisted to NBT.
+     * @param capability The capability.
+     * @param value The capability instance.
+     * @param <T> The capability type.
+     */
+    public <T> void addVolatileCapability(Capability<T> capability, T value);
+
+    /**
+     * Remove a non-persisted capability.
+     * @param capability The capability.
+     */
+    public void removeVolatileCapability(Capability<?> capability);
 
 }
