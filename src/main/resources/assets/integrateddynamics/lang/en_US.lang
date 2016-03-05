@@ -529,13 +529,9 @@ operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s
 
 ## ----- Charset ----- ##
 
-# Part types
-parttype.parttypes.integrateddynamics.charsetReader.name=Charset Reader
-parttype.parttypes.integrateddynamics.charsetReader.info=Read from Charset pipes
-
 ## Aspects
-aspect.aspects.integrateddynamics.read.object.itemstack.charsetpipe.contents.name=Pipe Contents
-aspect.aspects.integrateddynamics.read.object.itemstack.charsetpipe.contents.info=The item currently going through this pipe.
+aspect.aspects.integrateddynamics.read.itemstack.charsetpipe.contents.name=Pipe Contents
+aspect.aspects.integrateddynamics.read.itemstack.charsetpipe.contents.info=The item currently going through this pipe.
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.hascontents.name=Pipe Has Contents
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.hascontents.info=If an item is going through this pipe.
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.applicable.name=Is Pipe
