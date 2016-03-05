@@ -42,7 +42,7 @@ public abstract class OperatorBase implements IOperator {
         }
     }
 
-    protected static IValueType[] constructInputVariables(int length, IValueType defaultType) {
+    public static IValueType[] constructInputVariables(int length, IValueType defaultType) {
         IValueType[] values = new IValueType[length];
         Arrays.fill(values, defaultType);
         return values;
@@ -127,7 +127,7 @@ public abstract class OperatorBase implements IOperator {
         if(error != null) {
             throw new EvaluationException(error.localize());
         }
-        return function.evaluate(input);
+        return function.evaluate(new SafeVariablesGetter(input));
     }
 
     @Override
@@ -172,15 +172,33 @@ public abstract class OperatorBase implements IOperator {
         return renderPattern;
     }
 
+    public static class SafeVariablesGetter {
+
+        private final IVariable[] variables;
+
+        public SafeVariablesGetter(IVariable... variables) {
+            this.variables = variables;
+        }
+
+        public <V extends IValue> V getValue(int i) throws EvaluationException {
+            return (V) variables[i].getValue();
+        }
+
+        public IVariable[] getVariables() {
+            return this.variables;
+        }
+
+    }
+
     public static interface IFunction {
 
         /**
          * Evaluate this function for the given input.
-         * @param variables The input variables. They can be considered type-safe.
+         * @param variables The input variables holder.
          * @return The output value.
          * @throws EvaluationException If an exception occurs while evaluating
          */
-        public IValue evaluate(IVariable... variables) throws EvaluationException;
+        public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException;
 
     }
 

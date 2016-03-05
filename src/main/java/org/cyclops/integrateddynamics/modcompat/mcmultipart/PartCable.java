@@ -4,10 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.block.TileMultipart;
-import mcmultipart.multipart.IMultipart;
-import mcmultipart.multipart.IMultipartContainer;
-import mcmultipart.multipart.MultipartHelper;
-import mcmultipart.multipart.PartSlot;
+import mcmultipart.multipart.*;
 import mcmultipart.raytrace.PartMOP;
 import mcmultipart.raytrace.RayTraceUtils;
 import net.minecraft.block.Block;
@@ -68,7 +65,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @NBTPersist
     private Map<Integer, Boolean> connected = Maps.newHashMap();
     @NBTPersist
-    private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
+    private Map<Integer, Boolean> forceDisconnected;
     @NBTPersist
     private int lightLevel = 0;
     @NBTPersist
@@ -78,13 +75,15 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     private IPartNetwork network = null;
     private IPartContainer partContainer = null;
     private boolean addSilent = false;
+    private boolean sendFurtherUpdates = true;
 
     public PartCable() {
-        this(Maps.<EnumFacing, PartHelpers.PartStateHolder<?, ?>>newHashMap());
+        this(Maps.<EnumFacing, PartHelpers.PartStateHolder<?, ?>>newHashMap(), Maps.<Integer, Boolean>newHashMap());
     }
 
-    public PartCable(Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData) {
+    public PartCable(Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData, Map<Integer, Boolean> forceDisconnected) {
         this.partData = partData;
+        this.forceDisconnected = forceDisconnected;
     }
 
     /**
@@ -92,6 +91,13 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
      */
     public Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> getPartData() {
         return this.partData;
+    }
+
+    /**
+     * @return The raw force disconnection data.
+     */
+    public Map<Integer, Boolean> getForceDisconnected() {
+        return this.forceDisconnected;
     }
 
     @Override
@@ -105,7 +111,6 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         for(EnumFacing side : EnumFacing.VALUES) {
             extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()], isConnected(side));
             boolean hasPart = hasPart(side);
-            extendedState = extendedState.withProperty(BlockCable.PART[side.ordinal()], hasPart);
             if(hasPart) {
                 extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
             } else {
@@ -118,7 +123,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public BlockState createBlockState() {
         return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[0],
-                ArrayUtils.addAll(BlockCable.PART_RENDERPOSITIONS, ArrayUtils.addAll(BlockCable.CONNECTED, BlockCable.PART)));
+                ArrayUtils.addAll(BlockCable.PART_RENDERPOSITIONS, BlockCable.CONNECTED));
     }
 
     @Override
@@ -145,7 +150,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
             if(isConnected(side)) {
                 list.add(BlockCable.getInstance().getCableBoundingBox(side));
             } else if(hasPart(side)) {
-                list.add(BlockCable.getInstance().getCableBoundingBoxWithPart(side));
+                list.add(getPart(side).getRenderPosition().getSidedCableBoundingBox(side));
             }
         }
     }
@@ -158,7 +163,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     protected void addCollisionBoxWithPartConditional(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity, EnumFacing side) {
-        AxisAlignedBB box = BlockCable.getInstance().getCableBoundingBoxWithPart(side);
+        AxisAlignedBB box = getPart(side).getRenderPosition().getSidedCableBoundingBox(side);
         if(box.intersectsWith(mask)) {
             list.add(box);
         }
@@ -237,13 +242,18 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
-    public void onRemoved() {
+    public void harvest(EntityPlayer player, PartMOP hit) {
         World world = getWorld();
         BlockPos pos = getPos();
         networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, false);
         cableNetworkComponent.onPreBlockDestroyed(world, pos);
+        super.harvest(player, hit);
+    }
+
+    @Override
+    public void onRemoved() {
         super.onRemoved();
-        cableNetworkComponent.onPostBlockDestroyed(world, pos);
+        cableNetworkComponent.onPostBlockDestroyed(getWorld(), getPos());
     }
 
     @Override
@@ -259,6 +269,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         super.onNeighborBlockChange(neighborBlock);
         World world = getWorld();
         BlockPos pos = getPos();
+        cableNetworkComponent.updateConnections(world, pos);
         networkElementProviderComponent.onBlockNeighborChange(getNetwork(world, pos), world, pos, neighborBlock);
     }
 
@@ -292,6 +303,14 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     public void setConnected(EnumFacing side, boolean connected) {
         this.connected.put(side.ordinal(), connected);
+    }
+
+    @Override
+    public void onPartChanged(IMultipart part) {
+        super.onPartChanged(part);
+        if(sendFurtherUpdates) {
+            updateConnections();
+        }
     }
 
     /* --------------- Start element Providers--------------- */
@@ -351,7 +370,10 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     public void remove(World world, BlockPos pos, EntityPlayer player) {
+        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, false);
+        cableNetworkComponent.onPreBlockDestroyed(world, pos);
         cableNetworkComponent.remove(world, pos, player);
+        cableNetworkComponent.onPostBlockDestroyed(world, pos);
     }
 
     @Override
@@ -415,18 +437,21 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     public boolean canConnect(ICable connector, EnumFacing side) {
-        return !isForceDisconnected(side) && getContainer().getPartInSlot(PartSlot.getFaceSlot(side)) == null;
+        return !isForceDisconnected(side)
+                && getContainer().getPartInSlot(PartSlot.getFaceSlot(side)) == null
+                && OcclusionHelper.occlusionTest(getContainer().getParts(), this, BlockCable.getInstance().getCableBoundingBox(side));
     }
 
     @Override
     public void updateConnections() {
         World world = getWorld();
         for(EnumFacing side : EnumFacing.VALUES) {
-            boolean cableConnected = CableNetworkComponent.canSideConnect(world, getPos(), side, this);
+            boolean canConnectThis = this.canConnect(this, side);
+            boolean cableConnected = canConnectThis && CableNetworkComponent.canSideConnect(world, getPos(), side, this);
             setConnected(side, cableConnected);
 
             // Remove any already existing force-disconnects for this side.
-            if(!cableConnected) {
+            if (!cableConnected && canConnectThis) {
                 forceDisconnected.put(side.ordinal(), false);
             }
         }
@@ -516,6 +541,10 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     public boolean isAddSilent() {
         return this.addSilent;
+    }
+
+    public void setSendFurtherUpdates(boolean sendFurtherUpdates) {
+        this.sendFurtherUpdates = sendFurtherUpdates;
     }
 
     public class VirtualPartContainer implements IPartContainer {
@@ -617,6 +646,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
             synchronized (partData) {
                 PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
                 if(partStateHolder != null) {
+                    NBTTagCompound tag = new NBTTagCompound();
+                    partStateHolder.getState().writeToNBT(tag);
                     return partStateHolder.getState();
                 }
             }

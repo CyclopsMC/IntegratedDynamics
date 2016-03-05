@@ -5,7 +5,6 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 
 import java.util.List;
@@ -23,8 +22,8 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     public CastOperator(final T1 from, final T2 to, final IValueCastRegistry.IMapping<T1, T2, V1, V2> mapping) {
         super("()", from.getUnlocalizedName() + "$" + to.getUnlocalizedName(), constructInputVariables(1, from), to, new IFunction() {
             @Override
-            public IValue evaluate(IVariable... variables) throws EvaluationException {
-                IValue value = variables[0].getValue();
+            public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
+                IValue value = variables.getValue(0);
                 if(value.getType() != from) {
                     throw new EvaluationException(String.format("The value of type %s does not correspond to the " +
                             "expected type %s to cast to %s", value.getType(), from, to));

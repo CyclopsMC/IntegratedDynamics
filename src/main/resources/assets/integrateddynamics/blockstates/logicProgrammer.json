@@ -1,4 +1,8 @@
 {
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block"
+  },
   "variants": {
     "facing=south": { "model": "integrateddynamics:logicProgrammer" },
     "facing=west" : { "model": "integrateddynamics:logicProgrammer", "y": 90 },

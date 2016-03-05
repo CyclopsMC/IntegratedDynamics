@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+	<recipe type="shapeless">
+		<condition type="config">menrilLog</condition>
+		<condition type="config">menrilPlanks</condition>
+		<input>
+			<item>integrateddynamics:menrilLog</item>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:menrilPlanks</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<item>integrateddynamics:crystalizedMenrilBlock</item>
+		</input>
+		<output>
+			<item amount="9">integrateddynamics:crystalizedMenrilChunk</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
+		<condition type="config">logicProgrammer</condition>
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<input>
+			<item>integrateddynamics:crystalizedMenrilBlock</item>
+			<item>minecraft:crafting_table</item>
+		</input>
+		<output>
+			<item>integrateddynamics:logicProgrammer</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
+		<condition type="config">coalGenerator</condition>
+		<condition type="config">energyBattery</condition>
+		<input>
+			<item>integrateddynamics:energyBattery</item>
+			<item>minecraft:furnace</item>
+		</input>
+		<output>
+			<item>integrateddynamics:coalGenerator</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
+		<condition type="config">menrilTorch</condition>
+		<condition type="config">menrilBerries</condition>
+		<input>
+			<item type="oredict">stickWood</item>
+			<item>integrateddynamics:menrilBerries</item>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:menrilTorch</item>
+		</output>
+	</recipe>
+
+</recipes>

@@ -8,7 +8,10 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.client.model.DynamicModel;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -31,8 +34,7 @@ public abstract class CableModelBase extends DynamicModel {
     private static final int INV_LENGTH_CONNECTION = TEXTURE_SIZE - LENGTH_CONNECTION;
     public static final float MIN = (float) LENGTH_CONNECTION / (float) TEXTURE_SIZE;
     public static final float MAX = 1.0F - MIN;
-    public static final float PART_DEPTH_FACTOR = 0.125F;
-    private static final IPartType.RenderPosition CABLE_RENDERPOSITION = new IPartType.RenderPosition(
+    private static final IPartType.RenderPosition CABLE_RENDERPOSITION = new IPartType.RenderPosition(-1,
             (((float) TEXTURE_SIZE - (float) RADIUS) / 2 / (float) TEXTURE_SIZE),
             (float) RADIUS / (float) TEXTURE_SIZE, (float) RADIUS / (float) TEXTURE_SIZE);
 
@@ -146,27 +148,26 @@ public abstract class CableModelBase extends DynamicModel {
     public List<BakedQuad> getGeneralQuads() {
         List<BakedQuad> ret = Lists.newLinkedList();
         TextureAtlasSprite texture = getParticleTexture();
-        boolean realCable = isItemStack() || isRealCable();
-
-        if(realCable) {
-            Optional<IBlockState> blockStateHolder = getFacade();
-            for (EnumFacing side : EnumFacing.values()) {
-                boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
-                boolean hasPart = !isItemStack() && hasPart(side);
+        boolean renderCable = isItemStack() || (isRealCable() && MinecraftForgeClient.getRenderLayer() == EnumWorldBlockLayer.TRANSLUCENT);
+        Optional<IBlockState> blockStateHolder = getFacade();
+        for (EnumFacing side : EnumFacing.values()) {
+            boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
+            boolean hasPart = !isItemStack() && hasPart(side);
+            if(hasPart && shouldRenderParts()) {
+                ret.addAll(getPartModel(side).getGeneralQuads());
+            }
+            if(renderCable) {
                 IPartType.RenderPosition renderPosition = IPartType.RenderPosition.NONE;
-                if(isConnected) {
+                if (isConnected) {
                     renderPosition = CABLE_RENDERPOSITION;
                 }
                 if (isConnected || hasPart) {
                     int i = 0;
                     float[][][] quadVertexes = this.quadVertexes;
-                    if(hasPart) {
+                    if (hasPart) {
                         renderPosition = getPartRenderPosition(side);
                         float depthFactor = renderPosition == IPartType.RenderPosition.NONE ? 0F : renderPosition.getDepthFactor();
                         quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
-                        if(shouldRenderParts()) {
-                            ret.addAll(getPartModel(side).getGeneralQuads());
-                        }
                     }
                     for (float[][] v : quadVertexes) {
                         Vec3 v1 = rotate(new Vec3(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
@@ -189,6 +190,7 @@ public abstract class CableModelBase extends DynamicModel {
                                         LENGTH_CONNECTION, invert ? 0 : length)
                         );
                         i++;
+                        ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
                         ret.add(new BakedQuad(data, -1, realSide));
                     }
                 } else {
@@ -196,7 +198,7 @@ public abstract class CableModelBase extends DynamicModel {
                 }
 
                 // Render facade if present
-                if(blockStateHolder.isPresent()) {
+                if (blockStateHolder.isPresent()) {
                     ret.addAll(getFacadeQuads(blockStateHolder.get(), side, renderPosition));
                 }
             }

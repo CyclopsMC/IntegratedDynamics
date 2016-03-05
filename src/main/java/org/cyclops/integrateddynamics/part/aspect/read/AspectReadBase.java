@@ -26,7 +26,19 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> extends AspectBase<V, T>
         implements IAspectRead<V, T> {
 
+    private final String unlocalizedTypeSuffix;
+
+    @Deprecated
     public AspectReadBase() {
+        this(null, null);
+    }
+
+    public AspectReadBase(String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
+        super(defaultProperties);
+        if(unlocalizedTypeSuffix == null) {
+            unlocalizedTypeSuffix = "";
+        }
+        this.unlocalizedTypeSuffix = unlocalizedTypeSuffix;
         if(MinecraftHelpers.isClientSide()) {
             registerModelResourceLocation();
         }
@@ -44,7 +56,7 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
     }
 
     protected String getUnlocalizedType() {
-        return "read";
+        return "read" + this.unlocalizedTypeSuffix;
     }
 
     @SideOnly(Side.CLIENT)

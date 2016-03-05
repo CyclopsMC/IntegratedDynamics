@@ -40,12 +40,6 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
     public abstract int getSlotRead();
 
-    @Override
-    public void setNetwork(IPartNetwork network) {
-        super.setNetwork(network);
-        updateReadVariable();
-    }
-
     public boolean hasVariable() {
         return getStackInSlot(getSlotRead()) != null;
     }
@@ -71,12 +65,21 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
         if (network == null) {
             addError(new L10NHelpers.UnlocalizedString(L10NValues.GENERAL_ERROR_NONETWORK));
         } else if (this.variableStored != null) {
-            variableStored.validate(network, this, ValueTypes.CATEGORY_ANY);
+            preValidate(variableStored);
+            try {
+                variableStored.validate(network, this, ValueTypes.CATEGORY_ANY);
+            } catch (IllegalArgumentException e) {
+                addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            }
         }
         if(network != null && lastVariabledId != variableId) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }
         sendUpdate();
+    }
+
+    protected void preValidate(IVariableFacade variableStored) {
+
     }
 
     @Override
@@ -87,8 +90,13 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
     }
 
     public IVariable<?> getVariable(IPartNetwork network) {
-        if(variableStored == null) return null;
-        return variableStored.getVariable(network);
+        if(variableStored == null || !getErrors().isEmpty()) return null;
+        try {
+            return variableStored.getVariable(network);
+        } catch (IllegalArgumentException e) {
+            addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            return null;
+        }
     }
 
     @Override
@@ -106,11 +114,16 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
         return Sets.<Class<? extends INetworkEvent<IPartNetwork>>>newHashSet(VariableContentsUpdatedEvent.class);
     }
 
-
     @Override
     public void onEvent(INetworkEvent<IPartNetwork> event, E networkElement) {
         if(event instanceof VariableContentsUpdatedEvent) {
             updateReadVariable();
         }
+    }
+
+    @Override
+    public void afterNetworkReAlive() {
+        super.afterNetworkReAlive();
+        updateReadVariable();
     }
 }

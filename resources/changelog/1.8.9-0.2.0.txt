@@ -1,0 +1,19 @@
+Make sure to backup your world before updating!
+Requires CyclopsCore version 0.5.0.
+
+Features:
+* Expose API
+* Add light panels
+* Add MCMultiPart support
+* Add Thaumcraft support
+* Add many aspects
+* Add many operators
+* Add Waila support
+* Add Materializer
+* Add Proxy
+* Add optional energy system
+
+Changes:
+* Improve display rendering
+* Improve part rendering
+* Add object value types

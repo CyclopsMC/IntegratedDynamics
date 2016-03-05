@@ -12,6 +12,7 @@ public class L10NValues {
 
     public static final String GENERAL_ENERGY_UNIT = "general." + NS + ".energyUnit.name";
     public static final String GENERAL_ERROR_NONETWORK = "general." + NS + ".error.noNetwork";
+    public static final String GENERAL_ITEM_ID = "item.items." + NS + ".general.id";
 
     public static final String PART_PANEL_ERROR_INVALIDTYPE = "parttype.parttypes." + NS + ".dataDrivenPanel.error.invalidType";
     public static final String PART_ERROR_LOWENERGY = "parttype.parttypes." + NS + ".error.lowEnergy";
@@ -31,6 +32,7 @@ public class L10NValues {
     public static final String VALUETYPE_ERROR_INVALIDLISTELEMENT = "valuetype." + NS + ".error.invalidListElement";
     public static final String VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK = "valuetype." + NS + ".error.block.noBlock";
     public static final String VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID = "valuetype." + NS + ".error.fluid.noFluid";
+    public static final String VALUETYPE_OBJECT_THAUMCRAFTASPECT_ERROR_NOASPECT = "valuetype." + NS + ".error.thaumcraftaspect.noAspect";
 
     public static final String ASPECT_TOOLTIP_PARTID = "aspect." + NS + ".tooltip.partId";
     public static final String ASPECT_TOOLTIP_ASPECTNAME = "aspect." + NS + ".tooltip.aspectName";
@@ -45,6 +47,7 @@ public class L10NValues {
 
     public static final String VARIABLE_ERROR_INVALIDITEM = "variable." + NS + ".error.invalidItem";
     public static final String VARIABLE_ERROR_PARTNOTINNETWORK = "variable." + NS + ".error.partNotInNetwork";
+    public static final String VARIABLE_ERROR_RECURSION = "variable." + NS + ".error.recursion";
 
     public static final String OPERATOR_TOOLTIP_OPERATORNAME = "operator." + NS + ".tooltip.operatorName";
     public static final String OPERATOR_TOOLTIP_OPERATORCATEGORY = "operator." + NS + ".tooltip.operatorCategory";

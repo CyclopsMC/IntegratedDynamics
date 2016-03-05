@@ -31,6 +31,7 @@ import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
+import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -75,7 +76,13 @@ public class PartPartType extends MultipartBase {
     @Override
     public List<ItemStack> getDrops() {
         List<ItemStack> drops = Lists.newLinkedList();
-        getPartType().addDrops(getPartTarget(), getDelegatedPartState(), drops, true);
+        IPartState partState = getDelegatedPartState();
+        // partstate can be null if there is not cable in this block
+        if(partState != null) {
+            getPartType().addDrops(getPartTarget(), partState, drops, true);
+        } else {
+            drops.add(getItemStack());
+        }
         return drops;
     }
 
@@ -111,7 +118,7 @@ public class PartPartType extends MultipartBase {
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return BlockCable.getInstance().getPartBoundingBox(getFacing());
+        return getPartType().getRenderPosition().getBoundingBox(getFacing());
     }
 
     @Override
@@ -123,17 +130,17 @@ public class PartPartType extends MultipartBase {
 
     @Override
     public void addOcclusionBoxes(List<AxisAlignedBB> list) {
-        list.add(BlockCable.getInstance().getPartBoundingBox(getFacing()));
+        list.add(getRenderBoundingBox());
     }
 
     @Override
     public void addSelectionBoxes(List<AxisAlignedBB> list) {
-        list.add(BlockCable.getInstance().getPartBoundingBox(getFacing()));
+        list.add(getRenderBoundingBox());
     }
 
     @Override
     public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-        AxisAlignedBB boundingBox = BlockCable.getInstance().getPartBoundingBox(getFacing());
+        AxisAlignedBB boundingBox = getRenderBoundingBox();
         if(mask.intersectsWith(boundingBox)) {
             list.add(boundingBox);
         }
@@ -176,6 +183,7 @@ public class PartPartType extends MultipartBase {
                 } else {
                     PartHelpers.removePart(world, pos, getFacing(), player, false);
                 }
+                ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
             }
             return true;
         } else {

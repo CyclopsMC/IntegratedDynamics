@@ -35,7 +35,9 @@ public class NetworkEventBus<N extends INetwork<N>> implements INetworkEventBus<
     @Override
     public void unregister(IEventListenableNetworkElement<N, ?> target, Class<? extends INetworkEvent<N>> eventType) {
         Set<IEventListenableNetworkElement<N, ?>> listeners = this.listeners.get(eventType);
-        listeners.remove(target);
+        if(listeners != null) {
+            listeners.remove(target);
+        }
     }
 
     @Override

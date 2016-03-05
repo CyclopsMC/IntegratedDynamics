@@ -2,7 +2,10 @@ package org.cyclops.integrateddynamics.client.render.part;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.client.gui.image.Images;
@@ -50,7 +53,14 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     public void renderPartOverlay(IPartContainer partContainer, double x, double y, double z, float partialTick,
                                   int destroyStage, EnumFacing direction, IPartType partType,
                                   TileEntityRendererDispatcher rendererDispatcher) {
-        if(!shouldRender(partContainer.getPosition().getBlockPos())) return;
+        BlockPos pos = partContainer.getPosition().getBlockPos();
+        if(!shouldRender(pos)) return;
+
+        // Calculate the alpha to be used when the player is almost out of rendering bounds.
+        Entity renderEntity = FMLClientHandler.instance().getClient().thePlayer;
+        float distanceFactor = (float) ((getMaxRenderDistance() - renderEntity.getDistance(pos.getX(), pos.getY(), pos.getZ())) / 5);
+        float distanceAlpha = Math.min(1.0F, distanceFactor);
+        if(distanceAlpha < 0.05F) distanceAlpha = 0.05F; // Can't be 0 because the MC font renderer doesn't handle 0 alpha's properly.
 
         GlStateManager.enableRescaleNormal();
         GlStateManager.alphaFunc(516, 0.1F);
@@ -70,7 +80,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
 
         PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) partContainer.getPartState(direction);
         if(partState == null || partState.getFacingRotation() == null) {
-            Images.ERROR.drawWorld(rendererDispatcher.renderEngine, 12.5F, 12.5F);
+            drawError(rendererDispatcher, distanceAlpha);
         } else {
             int rotation = partState.getFacingRotation().ordinal() - 2;
             GlStateManager.translate(6, 6, 0);
@@ -84,9 +94,9 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
                 if (renderer == null) {
                     renderer = ValueTypeWorldRenderers.DEFAULT;
                 }
-                renderer.renderValue(partContainer, x, y, z, partialTick, destroyStage, direction, partType, value, rendererDispatcher);
+                renderer.renderValue(partContainer, x, y, z, partialTick, destroyStage, direction, partType, value, rendererDispatcher, distanceAlpha);
             } else if (!partState.getInventory().isEmpty()) {
-                Images.ERROR.drawWorld(rendererDispatcher.renderEngine, 12.5F, 12.5F);
+                drawError(rendererDispatcher, distanceAlpha);
             }
         }
 
@@ -95,5 +105,9 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         GlStateManager.disableRescaleNormal();
         GlStateManager.disableBlend();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    protected void drawError(TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {
+        Images.ERROR.drawWorldWithAlpha(rendererDispatcher.renderEngine, 12.5F, 12.5F, distanceAlpha);
     }
 }

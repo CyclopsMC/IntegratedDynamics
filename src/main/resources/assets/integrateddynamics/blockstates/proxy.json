@@ -1,4 +1,8 @@
 {
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block"
+  },
   "variants": {
     "facing=south": { "model": "integrateddynamics:proxy" },
     "facing=west" : { "model": "integrateddynamics:proxy", "y": 90 },

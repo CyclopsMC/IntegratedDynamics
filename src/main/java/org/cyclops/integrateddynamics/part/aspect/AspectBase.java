@@ -37,8 +37,13 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     @Getter
     private final IGuiContainerProvider propertiesGuiProvider;
 
+    @Deprecated
     public AspectBase() {
-        this.defaultProperties = createDefaultProperties();
+        this(null);
+    }
+
+    public AspectBase(IAspectProperties defaultProperties) {
+        this.defaultProperties = defaultProperties == null ? createDefaultProperties() : defaultProperties;
         if(hasProperties()) {
             int guiIDSettings = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
             getMod().getGuiHandler().registerGUI((propertiesGuiProvider = constructSettingsGuiProvider(guiIDSettings)), ExtendedGuiHandler.ASPECT);
@@ -108,6 +113,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
      * Creates the default properties for this aspect, only called once.
      * @return The default properties.
      */
+    @Deprecated
     protected IAspectProperties createDefaultProperties() {
         return null;
     }

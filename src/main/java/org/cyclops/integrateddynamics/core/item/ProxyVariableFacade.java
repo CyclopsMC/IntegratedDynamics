@@ -32,6 +32,8 @@ import java.util.List;
 public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVariableFacade {
 
     private final int proxyId;
+    private boolean isValidatingVariable = false;
+    private boolean isGettingVariable = false;
 
     public ProxyVariableFacade(boolean generateId, int proxyId) {
         super(generateId);
@@ -63,7 +65,14 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     @Override
     public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(isValid()) {
-            return getTargetVariable(network);
+            // Check if we are entering an infinite recursion (e.g. proxies refering to each other)
+            if(this.isGettingVariable) {
+                throw new VariableRecursionException("Detected infinite recursion for variable references.");
+            }
+            this.isGettingVariable = true;
+            IVariable<V> variable = getTargetVariable(network);
+            this.isGettingVariable = false;
+            return variable;
         }
         return null;
     }
@@ -88,6 +97,14 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
                     new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                     new L10NHelpers.UnlocalizedString(getTargetVariable(network).getType().getUnlocalizedName())));
         }
+
+        // Check if we are entering an infinite recursion (e.g. proxies refering to each other)
+        if(this.isValidatingVariable) {
+            throw new VariableRecursionException("Detected infinite recursion for variable references.");
+        }
+        this.isValidatingVariable = true;
+        getVariable(network);
+        this.isValidatingVariable = false;
     }
 
     @Override
@@ -111,5 +128,13 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
         if(isValid()) {
             quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.PROXY).getBakedModel().getGeneralQuads());
         }
+    }
+
+    public static class VariableRecursionException extends IllegalArgumentException {
+
+        public VariableRecursionException(String msg) {
+            super(msg);
+        }
+
     }
 }

@@ -13,10 +13,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeEntity;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeDouble;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -450,6 +447,32 @@ public class TestEntityOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeIsEating() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISEATING.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MODNAME -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityModName() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{eZombie});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Minecraft", "modname(zombie) = Minecraft");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeModNameLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{eZombie, eZombie});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeModNameSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeModName() throws EvaluationException {
+        Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

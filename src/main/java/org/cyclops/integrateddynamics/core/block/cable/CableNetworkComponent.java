@@ -1,11 +1,14 @@
 package org.cyclops.integrateddynamics.core.block.cable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
@@ -17,6 +20,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
+import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.PartNetwork;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
@@ -97,7 +101,9 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
 
     @Override
     public void remove(World world, BlockPos pos, EntityPlayer player) {
-        world.destroyBlock(pos, true);
+        //world.destroyBlock(pos, true); // We don't call this directly because we don't want breaking sounds to play
+        ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
+        world.setBlockState(pos, Blocks.air.getDefaultState(), 3);
     }
 
     @Override
@@ -112,7 +118,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
     public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
         ITileCableNetwork tile = getTileNetwork(world, pos);
         if(tile != null) {
-            if(tile.getNetwork() != null) {
+            if(network != null && tile.getNetwork() != null) {
                 IntegratedDynamics.clog(Level.WARN, "Tried to set a new network for a tile without the previous one being removed.");
             }
             tile.setNetwork(network);
@@ -188,6 +194,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
                     }
                 }
             }
+            setNetwork(null, world, pos);
         }
         return true;
     }

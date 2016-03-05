@@ -4,16 +4,15 @@ import com.google.common.collect.Sets;
 import lombok.Getter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ProxyVariableFacade;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 import org.cyclops.integrateddynamics.network.ProxyNetworkElement;
@@ -22,7 +21,7 @@ import org.cyclops.integrateddynamics.network.ProxyNetworkElement;
  * A tile entity for the variable proxy.
  * @author rubensworks
  */
-public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> implements IDirtyMarkListener, IVariableFacade.IValidator, INetworkEventListener<IPartNetwork, ProxyNetworkElement> {
+public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
 
     public static final int SLOT_READ = 0;
     public static final int SLOT_WRITE_IN = 1;
@@ -49,11 +48,20 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
         return slot != SLOT_WRITE_OUT && super.canInsertItem(slot, itemStack, side);
     }
 
+    /**
+     * This will generate a new proxy id.
+     * Be careful when calling this!
+     */
+    public void generateNewProxyId() {
+        this.proxyId = IntegratedDynamics.globalCounters.getNext(GLOBALCOUNTER_KEY);
+        markDirty();
+    }
+
     @Override
     public void onLoad() {
         super.onLoad();
         if(!MinecraftHelpers.isClientSide() && this.proxyId == -1) {
-            this.proxyId = IntegratedDynamics.globalCounters.getNext(GLOBALCOUNTER_KEY);
+            generateNewProxyId();
         }
     }
 
@@ -87,5 +95,16 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
                 return new ProxyVariableFacade(id, proxyId);
             }
         });
+    }
+
+    @Override
+    protected void preValidate(IVariableFacade variableStored) {
+        super.preValidate(variableStored);
+        // Hard check to make sure the variable is not directly referring to this proxy.
+        if(variableStored instanceof IProxyVariableFacade) {
+            if(((IProxyVariableFacade) variableStored).getProxyId() == getProxyId()) {
+                addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_RECURSION, variableStored.getId()));
+            }
+        }
     }
 }

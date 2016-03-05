@@ -4,17 +4,13 @@ import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
@@ -24,7 +20,7 @@ import org.cyclops.integrateddynamics.network.MaterializerNetworkElement;
  * A tile entity for the variable materializer.
  * @author rubensworks
  */
-public class TileMaterializer extends TileActiveVariableBase<MaterializerNetworkElement> implements IDirtyMarkListener, IVariableFacade.IValidator, INetworkEventListener<IPartNetwork, MaterializerNetworkElement> {
+public class TileMaterializer extends TileActiveVariableBase<MaterializerNetworkElement> {
 
     public static final int SLOT_READ = 0;
     public static final int SLOT_WRITE_IN = 1;

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Maps;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -106,7 +107,7 @@ public class LabelsWorldStorage extends WorldStorage {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if(!MinecraftHelpers.isClientSide()) {
-            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), event.player);
+            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (EntityPlayerMP) event.player);
         }
     }
 

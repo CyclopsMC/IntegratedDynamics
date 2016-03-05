@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -62,7 +62,7 @@ public class NetworkWorldStorage extends WorldStorage {
      * @return A thread-safe copy of the current network set.
      */
     public synchronized Set<INetwork<?>> getNetworks() {
-        return ImmutableSet.copyOf(networks);
+        return Collections.unmodifiableSet(Sets.newHashSet(networks));
     }
 
     @Override

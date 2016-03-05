@@ -45,11 +45,10 @@ public class GeneralConfig extends DummyConfig {
     public static int energyConsumptionMultiplier = 0;
 
     /**
-     * If parts should be rendered using the TESR if the static block rendering is wonky.
-     * TODO: this should be set to a default false eventually.
+     * The maximum render distance for part overlays to render. The higher, the more resource intensive.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "If parts should be rendered using the TESR if the static block rendering is wonky.", isCommandable = true)
-    public static boolean TESRPartRendering = true;
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The maximum render distance for part overlays to render. The higher, the more resource intensive.", isCommandable = true)
+    public static int partOverlayRenderdistance = 15;
     
     /**
      * Create a new instance.

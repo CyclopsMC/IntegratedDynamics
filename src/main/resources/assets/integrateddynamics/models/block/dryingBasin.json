@@ -1,0 +1,10 @@
+{
+  "parent": "block/cauldron_empty",
+  "textures": {
+    "particle": "integrateddynamics:blocks/dryingBasin_side",
+    "top"     : "integrateddynamics:blocks/dryingBasin_top",
+    "bottom"  : "integrateddynamics:blocks/dryingBasin_bottom",
+    "side"    : "integrateddynamics:blocks/dryingBasin_side",
+    "inside"  : "integrateddynamics:blocks/dryingBasin_inner"
+  }
+}

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.base.Optional;
-import net.minecraft.block.state.IBlockState;
+import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -10,8 +10,14 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameData;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -22,8 +28,12 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
+import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
+import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.Collections;
 
@@ -54,111 +64,115 @@ public final class Operators {
     /**
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_AND = REGISTRY.register(new LogicalOperator("&&", "and", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
-            if (!a) {
-                return ValueTypeBoolean.ValueBoolean.of(false);
-            } else {
-                return variables[1].getValue();
-            }
-        }
-    }));
+    public static final IOperator LOGICAL_AND = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("&&").operatorName("and")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeBoolean.ValueBoolean a = variables.getValue(0);
+                    if (!a.getRawValue()) {
+                        return ValueTypeBoolean.ValueBoolean.of(false);
+                    } else {
+                        return variables.getValue(1);
+                    }
+                }
+            }).build());
 
     /**
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_OR = REGISTRY.register(new LogicalOperator("||", "or", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
-            if (a) {
-                return ValueTypeBoolean.ValueBoolean.of(true);
-            } else {
-                return variables[1].getValue();
-            }
-        }
-    }));
+    public static final IOperator LOGICAL_OR = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("||").operatorName("or")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeBoolean.ValueBoolean a = variables.getValue(0);
+                    if (a.getRawValue()) {
+                        return ValueTypeBoolean.ValueBoolean.of(true);
+                    } else {
+                        return variables.getValue(1);
+                    }
+                }
+            }).build());
 
     /**
      * Logical NOT operator with one input booleans and one output boolean.
      */
-    public static final LogicalOperator LOGICAL_NOT = REGISTRY.register(new LogicalOperator("!", "not", 1, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            boolean a = ((ValueTypeBoolean.ValueBoolean) variables[0].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(!a);
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator LOGICAL_NOT = REGISTRY.register(OperatorBuilders.LOGICAL_1_PREFIX.symbol("!").operatorName("not")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypeBoolean.ValueBoolean.of(!((ValueTypeBoolean.ValueBoolean) variables.getValue(0)).getRawValue());
+                }
+            }).build());
 
     /**
      * ----------------------------------- ARITHMETIC OPERATORS -----------------------------------
      */
 
-    private static final ValueTypeInteger.ValueInteger ZERO = ValueTypeInteger.ValueInteger.of(0);
-
     /**
      * Arithmetic ADD operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_ADDITION = REGISTRY.register(new ArithmeticOperator("+", "addition", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.add(variables[0], variables[1]);
-        }
-    }));
+    public static final IOperator ARITHMETIC_ADDITION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("+").operatorName("addition")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.add(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic MINUS operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(new ArithmeticOperator("-", "subtraction", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.subtract(variables[0], variables[1]);
-        }
-    }));
+    public static final IOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("-").operatorName("subtraction")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.subtract(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic MULTIPLY operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(new ArithmeticOperator("*", "multiplication", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.multiply(variables[0], variables[1]);
-        }
-    }));
+    public static final IOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("*").operatorName("multiplication")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.multiply(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic DIVIDE operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_DIVISION = REGISTRY.register(new ArithmeticOperator("/", "division", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.divide(variables[0], variables[1]);
-        }
-    }));
+    public static final IOperator ARITHMETIC_DIVISION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("/").operatorName("division")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.divide(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic MAX operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MAXIMUM = REGISTRY.register(new ArithmeticOperator("max", "maximum", new OperatorBase.IFunction() {
-
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.max(variables[0], variables[1]);
-        }
-    }, IConfigRenderPattern.PREFIX_2));
+    public static final IOperator ARITHMETIC_MAXIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("max").operatorName("maximum")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.max(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
     /**
      * Arithmetic MIN operator with two input integers and one output integer.
      */
-    public static final ArithmeticOperator ARITHMETIC_MINIMUM = REGISTRY.register(new ArithmeticOperator("min", "minimum", new OperatorBase.IFunction() {
-
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypes.CATEGORY_NUMBER.min(variables[0], variables[1]);
-        }
-    }, IConfigRenderPattern.PREFIX_2));
+    public static final IOperator ARITHMETIC_MINIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("min").operatorName("minimum")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypes.CATEGORY_NUMBER.min(variables.getVariables()[0], variables.getVariables()[1]);
+                }
+            }).build());
 
 
 
@@ -166,46 +180,50 @@ public final class Operators {
      * ----------------------------------- INTEGER OPERATORS -----------------------------------
      */
 
+    private static final ValueTypeInteger.ValueInteger ZERO = ValueTypeInteger.ValueInteger.of(0);
+
     /**
      * Integer MODULO operator with two input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_MODULUS = REGISTRY.register(new IntegerOperator("%", "modulus", new OperatorBase.IFunction() {
-
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            if (b == 0) { // You can not divide by zero
-                throw new EvaluationException("Division by zero");
-            } else if (b == 1) { // If b is neutral element for division
-                return ZERO;
-            } else {
-                int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-                return ValueTypeInteger.ValueInteger.of(a % b);
-            }
-        }
-    }));
-
-    /**
-     * Integer INCREMENT operator with one input integers and one output integer.
-     */
-    public static final IntegerOperator INTEGER_INCREMENT = REGISTRY.register(new IntegerOperator("++", "increment", 1, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a + 1);
-        }
-    }, IConfigRenderPattern.SUFFIX_1));
+    public static final IOperator INTEGER_MODULUS = REGISTRY.register(OperatorBuilders.INTEGER_2.symbol("%").operatorName("modulus")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    if (b.getRawValue() == 0) { // You can not divide by zero
+                        throw new EvaluationException("Division by zero");
+                    } else if (b.getRawValue() == 1) { // If b is neutral element for division
+                        return ZERO;
+                    } else {
+                        ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                        return ValueTypeInteger.ValueInteger.of(a.getRawValue() % b.getRawValue());
+                    }
+                }
+            }).build());
 
     /**
      * Integer INCREMENT operator with one input integers and one output integer.
      */
-    public static final IntegerOperator INTEGER_DECREMENT = REGISTRY.register(new IntegerOperator("--", "decrement", 1, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a - 1);
-        }
-    }, IConfigRenderPattern.SUFFIX_1));
+    public static final IOperator INTEGER_INCREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("++").operatorName("increment")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() + 1);
+                }
+            }).build());
+
+    /**
+     * Integer INCREMENT operator with one input integers and one output integer.
+     */
+    public static final IOperator INTEGER_DECREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("--").operatorName("decrement")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() - 1);
+                }
+            }).build());
 
     /**
      * ----------------------------------- RELATIONAL OPERATORS -----------------------------------
@@ -214,31 +232,71 @@ public final class Operators {
     /**
      * Relational == operator with two inputs of any type (but equal) and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_EQUALS = REGISTRY.register(new RelationalEqualsOperator("==", "equals"));
+    public static final IOperator RELATIONAL_EQUALS = REGISTRY.register(OperatorBuilders.RELATIONAL
+            .inputTypes(2, ValueTypes.CATEGORY_ANY).renderPattern(IConfigRenderPattern.INFIX)
+            .symbol("==").operatorName("equals")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypeBoolean.ValueBoolean.of(variables.getValue(0).equals(variables.getValue(1)));
+                }
+            })
+            .typeValidator(new OperatorBuilder.ITypeValidator() {
+                @Override
+                public L10NHelpers.UnlocalizedString validateTypes(OperatorBase operator, IValueType[] input) {
+                    // Input size checking
+                    int requiredInputLength = operator.getRequiredInputLength();
+                    if(input.length != requiredInputLength) {
+                        return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+                                operator.getOperatorName(), input.length, requiredInputLength);
+                    }
+                    // Input types checking
+                    IValueType temporarySecondInputType = null;
+                    for(int i = 0; i < requiredInputLength; i++) {
+                        IValueType inputType = input[i];
+                        if(inputType == null) {
+                            return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, operator.getOperatorName(), Integer.toString(i));
+                        }
+                        if(i == 0) {
+                            temporarySecondInputType = inputType;
+                        } else if(i == 1) {
+                            if(temporarySecondInputType != inputType) {
+                                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                        operator.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
+                                        Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getUnlocalizedName()));
+                            }
+                        }
+                    }
+                    return null;
+                }
+            })
+            .build());
 
     /**
      * Relational &gt; operator with two input integers and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_GT = REGISTRY.register(new RelationalOperator(">", "gt", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a > b);
-        }
-    }));
+    public static final IOperator RELATIONAL_GT = REGISTRY.register(OperatorBuilders.RELATIONAL_2.symbol(">").operatorName("gt")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue() > b.getRawValue());
+                }
+            }).build());
 
     /**
      * Relational &gt; operator with two input integers and one output boolean.
      */
-    public static final RelationalOperator RELATIONAL_LT = REGISTRY.register(new RelationalOperator("<", "lt", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a < b);
-        }
-    }));
+    public static final IOperator RELATIONAL_LT = REGISTRY.register(OperatorBuilders.RELATIONAL_2.symbol("<").operatorName("lt")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue() < b.getRawValue());
+                }
+            }).build());
 
     /**
      * Relational != operator with two inputs of any type (but equal) and one output boolean.
@@ -268,85 +326,92 @@ public final class Operators {
     /**
      * Binary AND operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_AND = REGISTRY.register(new BinaryOperator("&", "and", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a & b);
-        }
-    }));
+    public static final IOperator BINARY_AND = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("&").operatorName("and")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() & b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary OR operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_OR = REGISTRY.register(new BinaryOperator("|", "or", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a | b);
-        }
-    }));
+    public static final IOperator BINARY_OR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("|").operatorName("or")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() | b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary XOR operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_XOR = REGISTRY.register(new BinaryOperator("^", "xor", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a ^ b);
-        }
-    }));
+    public static final IOperator BINARY_XOR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("^").operatorName("xor")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() ^ b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary COMPLEMENT operator with one input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_COMPLEMENT = REGISTRY.register(new BinaryOperator("~", "complement", 1, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(~a);
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator BINARY_COMPLEMENT = REGISTRY.register(OperatorBuilders.BINARY_1_PREFIX.symbol("~").operatorName("complement")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of(~a.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary &lt;&lt; operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_LSHIFT = REGISTRY.register(new BinaryOperator("<<", "lshift", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a << b);
-        }
-    }));
+    public static final IOperator BINARY_LSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("<<").operatorName("lshift")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() << b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary &gt;&gt; operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_RSHIFT = REGISTRY.register(new BinaryOperator(">>", "rshift", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a >> b);
-        }
-    }));
+    public static final IOperator BINARY_RSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>").operatorName("rshift")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() >> b.getRawValue());
+                }
+            }).build());
 
     /**
      * Binary &gt;&gt;&gt; operator with two input integers and one output integers.
      */
-    public static final BinaryOperator BINARY_RZSHIFT = REGISTRY.register(new BinaryOperator(">>>", "rzshift", new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            int a = ((ValueTypeInteger.ValueInteger) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a >>> b);
-        }
-    }));
+    public static final IOperator BINARY_RZSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>>").operatorName("rzshift")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() >>> b.getRawValue());
+                }
+            }).build());
 
     /**
      * ----------------------------------- STRING OPERATORS -----------------------------------
@@ -355,35 +420,39 @@ public final class Operators {
     /**
      * String length operator with one input string and one output integer.
      */
-    public static final StringOperator STRING_LENGTH = REGISTRY.register(new StringOperator("len", "length", new IValueType[]{ValueTypes.STRING}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            String a = ((ValueTypeString.ValueString) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a.length());
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator STRING_LENGTH = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX.symbol("len").operatorName("length")
+            .output(ValueTypes.INTEGER).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue().length());
+                }
+            }).build());
 
     /**
      * String concat operator with two input strings and one output string.
      */
-    public static final StringOperator STRING_CONCAT = REGISTRY.register(new StringOperator("+", "concat", 2, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            String a = ((ValueTypeString.ValueString) variables[0].getValue()).getRawValue();
-            String b = ((ValueTypeString.ValueString) variables[1].getValue()).getRawValue();
-            return ValueTypeString.ValueString.of(a + b);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator STRING_CONCAT = REGISTRY.register(OperatorBuilders.STRING_2.symbol("+").operatorName("concat")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString a = variables.getValue(0);
+                    ValueTypeString.ValueString b = variables.getValue(1);
+                    return ValueTypeString.ValueString.of(a.getRawValue() + b.getRawValue());
+                }
+            }).build());
 
     /**
      * Get a name value type name.
      */
-    public static final StringOperator NAMED_NAME = REGISTRY.register(new StringOperator("name", "name", new IValueType[]{ValueTypes.CATEGORY_NAMED}, ValueTypes.STRING, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            return ValueTypeString.ValueString.of(ValueTypes.CATEGORY_NAMED.getName(variables[0]));
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator NAMED_NAME = REGISTRY.register(OperatorBuilders.STRING_2.symbol("name").operatorName("name")
+            .inputType(ValueTypes.CATEGORY_NAMED).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypeString.ValueString.of(ValueTypes.CATEGORY_NAMED.getName(variables.getVariables()[0]));
+                }
+            }).build());
 
     /**
      * ----------------------------------- DOUBLE OPERATORS -----------------------------------
@@ -392,35 +461,38 @@ public final class Operators {
     /**
      * Double round operator with one input double and one output integers.
      */
-    public static final DoubleOperator DOUBLE_ROUND = REGISTRY.register(new DoubleOperator("|| ||", "round", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of((int) Math.round(a));
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator DOUBLE_ROUND = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("|| ||").operatorName("round")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of((int) Math.round(a.getRawValue()));
+                }
+            }).build());
 
     /**
      * Double ceil operator with one input double and one output integers.
      */
-    public static final DoubleOperator DOUBLE_CEIL = REGISTRY.register(new DoubleOperator("⌈ ⌉", "ceil", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of((int) Math.ceil(a));
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator DOUBLE_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of((int) Math.ceil(a.getRawValue()));
+                }
+            }).build());
 
     /**
      * Double floor operator with one input double and one output integers.
      */
-    public static final DoubleOperator DOUBLE_FLOOR = REGISTRY.register(new DoubleOperator("⌊ ⌋", "floor", new IValueType[]{ValueTypes.DOUBLE}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            double a = ((ValueTypeDouble.ValueDouble) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of((int) Math.floor(a));
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator DOUBLE_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
+                    return ValueTypeInteger.ValueInteger.of((int) Math.floor(a.getRawValue()));
+                }
+            }).build());
 
     /**
      * ----------------------------------- LIST OPERATORS -----------------------------------
@@ -429,39 +501,43 @@ public final class Operators {
     /**
      * List operator with one input list and one output integer
      */
-    public static final ListOperator LIST_LENGTH = REGISTRY.register(new ListOperator("| |", "length", new IValueType[]{ValueTypes.LIST}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a.getLength());
-        }
-    }, IConfigRenderPattern.PREFIX_1));
+    public static final IOperator LIST_LENGTH = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX.output(ValueTypes.INTEGER).symbol("| |").operatorName("length")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    return ValueTypeInteger.ValueInteger.of(a.getLength());
+                }
+            }).build());
 
     /**
      * List operator with one input list and one output integer
      */
-    public static final ListOperator LIST_ELEMENT = REGISTRY.register(new ListOperator("get", "get", new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER}, ValueTypes.CATEGORY_ANY, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            IValueTypeListProxy a = ((ValueTypeList.ValueList) variables[0].getValue()).getRawValue();
-            int b = ((ValueTypeInteger.ValueInteger) variables[1].getValue()).getRawValue();
-            if(b < a.getLength()) {
-                return a.get(b);
-            } else {
-                throw new EvaluationException(String.format("Index %s out of bounds for list of length %s.", b, a.getLength()));
-            }
-        }
-    }, IConfigRenderPattern.INFIX) {
-        @Override
-        public IValueType getConditionalOutputType(IVariable[] input) {
-            try {
-                IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
-                return a.getValueType();
-            } catch (EvaluationException e) {
-                return super.getConditionalOutputType(input);
-            }
-        }
-    });
+    public static final IOperator LIST_ELEMENT = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER}).output(ValueTypes.CATEGORY_ANY)
+            .renderPattern(IConfigRenderPattern.INFIX).symbolOperator("get")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    if (b.getRawValue() < a.getLength()) {
+                        return a.get(b.getRawValue());
+                    } else {
+                        return a.getValueType().getDefault();
+                    }
+                }
+            }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
+                @Override
+                public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
+                    try {
+                        IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
+                        return a.getValueType();
+                    } catch (EvaluationException e) {
+                        return operator.getConditionalOutputType(input);
+                    }
+                }
+            }).build());
 
     /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
@@ -470,24 +546,41 @@ public final class Operators {
     /**
      * Block isOpaque operator with one input block and one output boolean.
      */
-    public static final ObjectBlockOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(new ObjectBlockOperator("opaque", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<IBlockState> a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a.isPresent() && a.get().getBlock().isOpaqueCube());
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("opaque")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && a.getRawValue().get().getBlock().isOpaqueCube());
+                }
+            }).build());
 
     /**
      * The itemstack representation of the block
      */
-    public static final ObjectBlockOperator OBJECT_BLOCK_ITEMSTACK = REGISTRY.register(new ObjectBlockOperator("itemstack", new IValueType[]{ValueTypes.OBJECT_BLOCK}, ValueTypes.OBJECT_ITEMSTACK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<IBlockState> a = ((ValueObjectTypeBlock.ValueBlock) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeItemStack.ValueItemStack.of(a.isPresent() ? BlockHelpers.getItemStackFromBlockState(a.get()) : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_BLOCK_ITEMSTACK = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("itemstack")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    return ValueObjectTypeItemStack.ValueItemStack.of(a.getRawValue().isPresent() ? BlockHelpers.getItemStackFromBlockState(a.getRawValue().get()) : null);
+                }
+            }).build());
+
+    /**
+     * The name of the mod owning this block
+     */
+    public static final IOperator OBJECT_BLOCK_MODNAME = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+            .function(new IterativeFunction(Lists.newArrayList(
+                    new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, ResourceLocation>() {
+                        @Override
+                        public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                            ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                            return a.getRawValue().isPresent() ? GameData.getBlockRegistry().getNameForObject(a.getRawValue().get().getBlock()) : null;
+                        }
+                    },
+                    OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
+            ))).build());
 
     /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
@@ -496,206 +589,258 @@ public final class Operators {
     /**
      * Item Stack size operator with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_SIZE = REGISTRY.register(ObjectItemStackOperator.toInt("size", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.stackSize;
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_SIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("size")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.stackSize : 0;
+                }
+            })).build());
 
     /**
      * Item Stack maxsize operator with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_MAXSIZE = REGISTRY.register(ObjectItemStackOperator.toInt("maxsize", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.getMaxStackSize();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_MAXSIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("maxsize")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.getMaxStackSize() : 0;
+                }
+            })).build());
 
     /**
      * Item Stack isstackable operator with one input itemstack and one output boolean.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISSTACKABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("stackable", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.isStackable();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISSTACKABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("stackable")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && itemStack.isStackable();
+                }
+            })).build());
 
     /**
      * Item Stack isdamageable operator with one input itemstack and one output boolean.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISDAMAGEABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("damageable", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.isItemStackDamageable();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISDAMAGEABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("damageable")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && itemStack.isItemStackDamageable();
+                }
+            })).build());
 
     /**
      * Item Stack damage operator with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_DAMAGE = REGISTRY.register(ObjectItemStackOperator.toInt("damage", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.getItemDamage();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_DAMAGE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("damage")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.getItemDamage() : 0;
+                }
+            })).build());
 
     /**
      * Item Stack maxdamage operator with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_MAXDAMAGE = REGISTRY.register(ObjectItemStackOperator.toInt("maxdamage", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.getMaxDamage();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_MAXDAMAGE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("maxdamage")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.getMaxDamage() : 0;
+                }
+            })).build());
 
     /**
      * Item Stack isenchanted operator with one input itemstack and one output boolean.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(ObjectItemStackOperator.toBoolean("enchanted", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.isItemEnchanted();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("enchanted")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && itemStack.isItemEnchanted();
+                }
+            })).build());
 
     /**
      * Item Stack isenchantable operator with one input itemstack and one output boolean.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(ObjectItemStackOperator.toBoolean("enchantable", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.isItemEnchantable();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("enchantable")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && itemStack.isItemEnchantable();
+                }
+            })).build());
 
     /**
      * Item Stack repair cost with one input itemstack and one output integer.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_REPAIRCOST = REGISTRY.register(ObjectItemStackOperator.toInt("repaircost", new ObjectItemStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(ItemStack itemStack) throws EvaluationException {
-            return itemStack.getRepairCost();
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_REPAIRCOST = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("repaircost")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? itemStack.getRepairCost() : 0;
+                }
+            })).build());
 
     /**
      * Get the rarity of an itemstack.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(new ObjectItemStackOperator("rarity", "rarity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getRarity().rarityName : "");
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("rarity")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueTypeString.ValueString.of(a.getRawValue().isPresent() ? a.getRawValue().get().getRarity().rarityName : "");
+                }
+            }).build());
 
     /**
      * Get the strength of an itemstack against a block as a double.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(new ObjectItemStackOperator("strength", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.DOUBLE, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            Optional<IBlockState> b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
-            return ValueTypeDouble.ValueDouble.of(a.isPresent() && b.isPresent() ? a.get().getStrVsBlock(b.get().getBlock()) : 0);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}).output(ValueTypes.DOUBLE)
+            .symbolOperator("strength")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
+                    return ValueTypeDouble.ValueDouble.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() ? a.getRawValue().get().getStrVsBlock(b.getRawValue().get().getBlock()) : 0);
+                }
+            }).build());
 
     /**
      * If the given itemstack can be used to harvest the given block.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(new ObjectItemStackOperator("canharvest", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            Optional<IBlockState> b = ((ValueObjectTypeBlock.ValueBlock) variables[1].getValue()).getRawValue();
-            return ValueTypeBoolean.ValueBoolean.of(a.isPresent() && b.isPresent() ? a.get().canHarvestBlock(b.get().getBlock()) : false);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}).output(ValueTypes.BOOLEAN)
+            .symbolOperator("canharvest")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() && a.getRawValue().get().canHarvestBlock(b.getRawValue().get().getBlock()));
+                }
+            }).build());
 
     /**
      * The block from the stack
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_BLOCK = REGISTRY.register(new ObjectItemStackOperator("block", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeBlock.ValueBlock.of((a.isPresent() && a.get().getItem() instanceof ItemBlock) ? BlockHelpers.getBlockStateFromItemStack(a.get()) : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ITEMSTACK_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueObjectTypeBlock.ValueBlock.of((a.getRawValue().isPresent() && a.getRawValue().get().getItem() instanceof ItemBlock) ? BlockHelpers.getBlockStateFromItemStack(a.getRawValue().get()) : null);
+                }
+            }).build());
 
     /**
      * If the given stack has a fluid.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISFLUIDSTACK = REGISTRY.register(ObjectItemStackOperator.toBoolean("isfluidstack", new ObjectItemStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(ItemStack itemStack) throws EvaluationException {
-            return Helpers.getFluidStack(itemStack) != null;
-        }
-    }));
+    public static final IOperator OBJECT_ITEMSTACK_ISFLUIDSTACK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isfluidstack")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && Helpers.getFluidStack(itemStack) != null;
+                }
+            })).build());
 
     /**
      * The fluidstack from the stack
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_FLUIDSTACK = REGISTRY.register(new ObjectItemStackOperator("fluidstack", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.OBJECT_FLUIDSTACK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeFluidStack.ValueFluidStack.of(a.isPresent() ? Helpers.getFluidStack(a.get()) : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ITEMSTACK_FLUIDSTACK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("fluidstack")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueObjectTypeFluidStack.ValueFluidStack.of(a.getRawValue().isPresent() ? Helpers.getFluidStack(a.getRawValue().get()) : null);
+                }
+            }).build());
 
     /**
      * The capacity of the fluidstack from the stack.
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = REGISTRY.register(new ObjectItemStackOperator("fluidstackcapacity", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.INTEGER, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            return ValueTypeInteger.ValueInteger.of(a.isPresent() ? Helpers.getFluidStackCapacity(a.get()) : 0);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("fluidstackcapacity")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? Helpers.getFluidStackCapacity(itemStack) : 0;
+                }
+            })).build());
 
     /**
      * If the NBT tags of the given stacks are equal
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(new ObjectItemStackOperator("=NBT=", "isnbtequal", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
-            boolean equal = false;
-            if(a.isPresent() && b.isPresent()) {
-                equal = a.get().isItemEqual(b.get()) && ItemStack.areItemStackTagsEqual(a.get(), b.get());
-            } else if(!a.isPresent() && !b.isPresent()) {
-                equal = true;
-            }
-            return ValueTypeBoolean.ValueBoolean.of(equal);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=NBT=").operatorName("isnbtequal")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+                    Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
+                    boolean equal = false;
+                    if(a.isPresent() && b.isPresent()) {
+                        equal = a.get().isItemEqual(b.get()) && ItemStack.areItemStackTagsEqual(a.get(), b.get());
+                    } else if(!a.isPresent() && !b.isPresent()) {
+                        equal = true;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(equal);
+                }
+            }).build());
 
     /**
      * If the raw items of the given stacks are equal
      */
-    public static final ObjectItemStackOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(new ObjectItemStackOperator("=Raw=", "israwitemequal", new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables[0].getValue()).getRawValue();
-            Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables[1].getValue()).getRawValue();
-            boolean equal = false;
-            if(a.isPresent() && b.isPresent()) {
-                equal = ItemStack.areItemsEqual(a.get(), b.get());
-            } else if(!a.isPresent() && !b.isPresent()) {
-                equal = true;
-            }
-            return ValueTypeBoolean.ValueBoolean.of(equal);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwitemequal")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+                    Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
+                    boolean equal = false;
+                    if(a.isPresent() && b.isPresent()) {
+                        equal = ItemStack.areItemsEqual(a.get(), b.get());
+                    } else if(!a.isPresent() && !b.isPresent()) {
+                        equal = true;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(equal);
+                }
+            }).build());
+
+    /**
+     * The name of the mod owning this item
+     */
+    public static final IOperator OBJECT_ITEMSTACK_MODNAME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+            .function(new IterativeFunction(Lists.newArrayList(
+                    new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, ResourceLocation>() {
+                        @Override
+                        public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                            ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                            return a.getRawValue().isPresent() ? GameData.getItemRegistry().getNameForObject(a.getRawValue().get().getItem()) : null;
+                        }
+                    },
+                    OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
+            ))).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
@@ -704,155 +849,205 @@ public final class Operators {
     /**
      * If the entity is a mob
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISMOB = REGISTRY.register(ObjectEntityOperator.toBoolean("ismob", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof IMob;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISMOB = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("ismob")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity instanceof IMob;
+                }
+            })).build());
 
     /**
      * If the entity is an animal
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(ObjectEntityOperator.toBoolean("isanimal", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof IAnimals && !(entity instanceof IMob);
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isanimal")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity instanceof IAnimals && !(entity instanceof IMob);
+                }
+            })).build());
 
     /**
      * If the entity is an item
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISITEM = REGISTRY.register(ObjectEntityOperator.toBoolean("isitem", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof EntityItem;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISITEM = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isitem")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity instanceof EntityItem;
+                }
+            })).build());
 
     /**
      * If the entity is a player
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISPLAYER = REGISTRY.register(ObjectEntityOperator.toBoolean("isplayer", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity instanceof EntityPlayer;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISPLAYER = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isplayer")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity instanceof EntityPlayer;
+                }
+            })).build());
 
     /**
      * The itemstack from the entity
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ITEMSTACK = REGISTRY.register(new ObjectEntityOperator("item", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.OBJECT_ITEMSTACK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ENTITY_ITEMSTACK = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("item")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
+                    return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : null);
+                }
+            }).build());
 
     /**
      * The entity health
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_HEALTH = REGISTRY.register(ObjectEntityOperator.toDouble("health", new ObjectEntityOperator.IDoubleFunction() {
-        @Override
-        public double evaluate(Entity entity) throws EvaluationException {
-            return (entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHealth() : 0;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_HEALTH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.DOUBLE).symbolOperator("health")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(new IOperatorValuePropagator<Entity, Double>() {
+                @Override
+                public Double getOutput(Entity entity) throws EvaluationException {
+                    return (entity instanceof EntityLivingBase) ? (double) ((EntityLivingBase) entity).getHealth() : 0;
+                }
+            })).build());
 
     /**
      * The entity width
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_WIDTH = REGISTRY.register(ObjectEntityOperator.toDouble("width", new ObjectEntityOperator.IDoubleFunction() {
-        @Override
-        public double evaluate(Entity entity) throws EvaluationException {
-            return entity.width;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_WIDTH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.DOUBLE).symbolOperator("width")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(new IOperatorValuePropagator<Entity, Double>() {
+                @Override
+                public Double getOutput(Entity entity) throws EvaluationException {
+                    return (entity != null) ? (double) entity.width : 0;
+                }
+            })).build());
 
     /**
      * The entity width
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_HEIGHT = REGISTRY.register(ObjectEntityOperator.toDouble("height", new ObjectEntityOperator.IDoubleFunction() {
-        @Override
-        public double evaluate(Entity entity) throws EvaluationException {
-            return entity.height;
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_HEIGHT = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.DOUBLE).symbolOperator("height")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(new IOperatorValuePropagator<Entity, Double>() {
+                @Override
+                public Double getOutput(Entity entity) throws EvaluationException {
+                    return (entity != null) ? (double) entity.height : 0;
+                }
+            })).build());
 
     /**
      * If the entity is burning
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISBURNING = REGISTRY.register(ObjectEntityOperator.toBoolean("isburning", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity.isBurning();
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISBURNING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isburning")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity != null && entity.isBurning();
+                }
+            })).build());
 
     /**
      * If the entity is wet
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISWET = REGISTRY.register(ObjectEntityOperator.toBoolean("iswet", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity.isWet();
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISWET = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("iswet")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity != null && entity.isWet();
+                }
+            })).build());
 
     /**
      * If the entity is sneaking
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISSNEAKING = REGISTRY.register(ObjectEntityOperator.toBoolean("issneaking", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity.isSneaking();
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISSNEAKING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("issneaking")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity != null && entity.isSneaking();
+                }
+            })).build());
 
     /**
      * If the entity is eating
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ISEATING = REGISTRY.register(ObjectEntityOperator.toBoolean("iseating", new ObjectEntityOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(Entity entity) throws EvaluationException {
-            return entity.isEating();
-        }
-    }));
+    public static final IOperator OBJECT_ENTITY_ISEATING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("iseating")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
+                @Override
+                public Boolean getOutput(Entity entity) throws EvaluationException {
+                    return entity != null && entity.isEating();
+                }
+            })).build());
 
     /**
      * The list of armor itemstacks from an entity
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_ARMORINVENTORY = REGISTRY.register(new ObjectEntityOperator("armorinventory", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.LIST, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
-            if(a.isPresent()) {
-                Entity entity = a.get();
-                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.worldObj, entity));
-            } else {
-                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.EMPTY_LIST);
-            }
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ENTITY_ARMORINVENTORY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("armorinventory")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
+                    if(a.isPresent()) {
+                        Entity entity = a.get();
+                        return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.worldObj, entity));
+                    } else {
+                        return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.<ValueObjectTypeEntity.ValueEntity>emptyList());
+                    }
+                }
+            }).build());
 
     /**
      * The list of itemstacks from an entity
      */
-    public static final ObjectEntityOperator OBJECT_ENTITY_INVENTORY = REGISTRY.register(new ObjectEntityOperator("inventory", new IValueType[]{ValueTypes.OBJECT_ENTITY}, ValueTypes.LIST, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables[0].getValue()).getRawValue();
-            if(a.isPresent()) {
-                Entity entity = a.get();
-                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.worldObj, entity));
-            } else {
-                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.EMPTY_LIST);
-            }
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_ENTITY_INVENTORY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("inventory")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
+                    if(a.isPresent()) {
+                        Entity entity = a.get();
+                        return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.worldObj, entity));
+                    } else {
+                        return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.<ValueObjectTypeEntity.ValueEntity>emptyList());
+                    }
+                }
+            }).build());
+
+    /**
+     * The name of the mod owning this entity
+     */
+    public static final IOperator OBJECT_ENTITY_MODNAME = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    String modName = "";
+                    if(a.getRawValue().isPresent()) {
+                        try {
+                            Entity entity = a.getRawValue().get();
+                            EntityRegistry.EntityRegistration entityRegistration = EntityRegistry.instance().lookupModSpawn(entity.getClass(), true);
+                            modName = entityRegistration.getContainer().getName();
+                        } catch (NullPointerException e) {
+                            modName = "Minecraft";
+                        }
+                    }
+                    return ValueTypeString.ValueString.of(modName);
+                }
+            }).build());
 
     /**
      * ----------------------------------- FLUID STACK OBJECT OPERATORS -----------------------------------
@@ -861,92 +1056,138 @@ public final class Operators {
     /**
      * The amount of fluid in the fluidstack
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(ObjectFluidStackOperator.toInt("amount", new ObjectFluidStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.amount;
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("amount")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(new IOperatorValuePropagator<FluidStack, Integer>() {
+                @Override
+                public Integer getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null ? fluidStack.amount : 0;
+                }
+            })).build());
 
     /**
      * The block from the fluidstack
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_BLOCK = REGISTRY.register(new ObjectFluidStackOperator("block", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.OBJECT_BLOCK, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
-            return ValueObjectTypeBlock.ValueBlock.of(a.isPresent() ? a.get().getFluid().getBlock().getDefaultState() : null);
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_FLUIDSTACK_BLOCK = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();
+                    return ValueObjectTypeBlock.ValueBlock.of(a.isPresent() ? a.get().getFluid().getBlock().getDefaultState() : null);
+                }
+            }).build());
 
     /**
      * The fluidstack luminosity
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("luminosity", new ObjectFluidStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.getFluid().getLuminosity(fluidStack);
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("luminosity")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(new IOperatorValuePropagator<FluidStack, Integer>() {
+                @Override
+                public Integer getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null ? fluidStack.getFluid().getLuminosity(fluidStack) : 0;
+                }
+            })).build());
 
     /**
      * The fluidstack density
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("density", new ObjectFluidStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.getFluid().getDensity(fluidStack);
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("density")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(new IOperatorValuePropagator<FluidStack, Integer>() {
+                @Override
+                public Integer getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null ? fluidStack.getFluid().getDensity(fluidStack) : 0;
+                }
+            })).build());
 
     /**
      * The fluidstack viscosity
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(ObjectFluidStackOperator.toInt("viscosity", new ObjectFluidStackOperator.IIntegerFunction() {
-        @Override
-        public int evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.getFluid().getViscosity(fluidStack);
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("viscosity")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(new IOperatorValuePropagator<FluidStack, Integer>() {
+                @Override
+                public Integer getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null ? fluidStack.getFluid().getViscosity(fluidStack) : 0;
+                }
+            })).build());
 
     /**
      * If the fluidstack is gaseous
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(ObjectFluidStackOperator.toBoolean("isgaseous", new ObjectFluidStackOperator.IBooleanFunction() {
-        @Override
-        public boolean evaluate(FluidStack fluidStack) throws EvaluationException {
-            return fluidStack.getFluid().isGaseous(fluidStack);
-        }
-    }));
+    public static final IOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isgaseous")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<FluidStack, Boolean>() {
+                @Override
+                public Boolean getOutput(FluidStack fluidStack) throws EvaluationException {
+                    return fluidStack != null && fluidStack.getFluid().isGaseous(fluidStack);
+                }
+            })).build());
 
     /**
      * The rarity of the fluidstack
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_RARITY = REGISTRY.register(new ObjectFluidStackOperator("rarity", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.STRING, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
-            return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getFluid().getRarity(a.get()).rarityName : "");
-        }
-    }, IConfigRenderPattern.SUFFIX_1_LONG));
+    public static final IOperator OBJECT_FLUIDSTACK_RARITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("rarity")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();
+                    return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getFluid().getRarity(a.get()).rarityName : "");
+                }
+            }).build());
 
     /**
      * If the fluid types of the two given fluidstacks are equal
      */
-    public static final ObjectFluidStackOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(new ObjectFluidStackOperator("=Raw=", "israwfluidequal", new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.BOOLEAN, new OperatorBase.IFunction() {
-        @Override
-        public IValue evaluate(IVariable... variables) throws EvaluationException {
-            Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[0].getValue()).getRawValue();
-            Optional<FluidStack> b = ((ValueObjectTypeFluidStack.ValueFluidStack) variables[1].getValue()).getRawValue();
-            boolean equal = false;
-            if(a.isPresent() && b.isPresent()) {
-                equal = a.get().isFluidEqual(b.get());
-            } else if(!a.isPresent() && !b.isPresent()) {
-                equal = true;
-            }
-            return ValueTypeBoolean.ValueBoolean.of(equal);
-        }
-    }, IConfigRenderPattern.INFIX));
+    public static final IOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwfluidequal")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<FluidStack> a = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(0)).getRawValue();
+                    Optional<FluidStack> b = ((ValueObjectTypeFluidStack.ValueFluidStack) variables.getValue(1)).getRawValue();
+                    boolean equal = false;
+                    if(a.isPresent() && b.isPresent()) {
+                        equal = a.get().isFluidEqual(b.get());
+                    } else if(!a.isPresent() && !b.isPresent()) {
+                        equal = true;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(equal);
+                }
+            }).build());
+
+    /**
+     * The name of the mod owning this fluid
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_MODNAME = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0);
+                    String modName = "";
+                    if (a.getRawValue().isPresent()) {
+                        try {
+                            Fluid fluid = a.getRawValue().get().getFluid();
+                            String modDomain = null;
+                            if (fluid.getStill() != null) {
+                                modDomain = fluid.getStill().getResourceDomain();
+                            } else if (fluid.getFlowing() != null) {
+                                modDomain = fluid.getFlowing().getResourceDomain();
+                            } else if (fluid.getBlock() != null) {
+                                modDomain = GameData.getBlockRegistry().getNameForObject(fluid.getBlock()).getResourceDomain();
+                            }
+                            String modId = org.cyclops.cyclopscore.helper.Helpers.getModId(modDomain);
+                            modName = Loader.instance().getIndexedModList().get(modId).getName();
+                        } catch (NullPointerException e) {
+                            modName = "Minecraft";
+                        }
+                    }
+                    return ValueTypeString.ValueString.of(modName);
+                }
+            }).build());
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

@@ -3,11 +3,13 @@ package org.cyclops.integrateddynamics;
 import com.google.common.collect.Maps;
 import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
+import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.client.gui.GuiHandler;
 import org.cyclops.cyclopscore.command.CommandMod;
 import org.cyclops.cyclopscore.config.ConfigHandler;
@@ -16,9 +18,16 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
+import org.cyclops.cyclopscore.item.BucketRegistry;
+import org.cyclops.cyclopscore.item.IBucketRegistry;
+import org.cyclops.cyclopscore.modcompat.ICapabilityCompat;
 import org.cyclops.cyclopscore.modcompat.ModCompatLoader;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
+import org.cyclops.cyclopscore.recipe.custom.SuperRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.xml.IRecipeConditionHandler;
+import org.cyclops.cyclopscore.recipe.xml.IRecipeTypeHandler;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRendererRegistry;
@@ -53,11 +62,21 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
+import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandler;
+import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
+import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGeneratorTileCompat;
+import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTileCompat;
+import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
+import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
+import org.cyclops.integrateddynamics.modcompat.thaumcraft.ThaumcraftModCompat;
 import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
+import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
+import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
+import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
 import java.util.Map;
 
@@ -106,9 +125,22 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
     @Override
     protected RecipeHandler constructRecipeHandler() {
-        return new ExtendedRecipeHandler(this
-                // TODO
-        );
+        return new ExtendedRecipeHandler(this,
+                "shaped.xml",
+                "shapeless.xml",
+                "dryingbasin.xml",
+                "dryingbasin_convenience.xml",
+                "squeezer.xml",
+                "squeezer_convenience.xml",
+                "squeezer_ores.xml"
+        ) {
+            @Override
+            protected void registerHandlers(Map<String, IRecipeTypeHandler> recipeTypeHandlers, Map<String, IRecipeConditionHandler> recipeConditionHandlers) {
+                super.registerHandlers(recipeTypeHandlers, recipeConditionHandlers);
+                recipeTypeHandlers.put("integrateddynamics:dryingbasin", new DryingBasinRecipeTypeHandler());
+                recipeTypeHandlers.put("integrateddynamics:squeezer", new SqueezerRecipeTypeHandler());
+            }
+        };
     }
 
     @Override
@@ -123,14 +155,31 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     protected void loadModCompats(ModCompatLoader modCompatLoader) {
         super.loadModCompats(modCompatLoader);
+        // Mod compats
         modCompatLoader.addModCompat(new CharsetPipesModCompat());
         modCompatLoader.addModCompat(new McMultiPartModCompat());
         modCompatLoader.addModCompat(new WailaModCompat());
+        modCompatLoader.addModCompat(new ThaumcraftModCompat());
+        modCompatLoader.addModCompat(new JEIModCompat());
+
+        // Capabilities
+        ICapabilityCompat.ICapabilityReference<IWorker> workerReference = new ICapabilityCompat.ICapabilityReference<IWorker>() {
+            @Override
+            public Capability<IWorker> getCapability() {
+                return Capabilities.WORKER;
+            }
+        };
+        modCompatLoader.addCapabilityCompat(TileDryingBasin.class, workerReference, new WorkerDryingBasinTileCompat());
+        modCompatLoader.addCapabilityCompat(TileSqueezer.class, workerReference, new WorkerSqueezerTileCompat());
+        modCompatLoader.addCapabilityCompat(TileCoalGenerator.class, workerReference, new WorkerCoalGeneratorTileCompat());
     }
 
     @Mod.EventHandler
     @Override
     public final void preInit(FMLPreInitializationEvent event) {
+        getRegistryManager().addRegistry(IBucketRegistry.class, new BucketRegistry());
+        getRegistryManager().addRegistry(ISuperRecipeRegistry.class, new SuperRecipeRegistry(this));
+
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IValueCastRegistry.class, ValueCastRegistry.getInstance());

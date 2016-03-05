@@ -40,7 +40,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         extends PartTypeAspects<P, S> implements IPartTypeWriter<P, S> {
 
     public PartTypeWriteBase(String name) {
-        super(name, new RenderPosition(0.3125F, 0.25F, 0.25F));
+        super(name, new RenderPosition(0.3125F, 0.3125F, 0.25F, 0.25F));
     }
 
     @Override
@@ -127,14 +127,16 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @Override
     public IBlockState getBlockState(IPartContainer partContainer,
                                      EnumFacing side) {
-        IPartStateWriter state = (IPartStateWriter) partContainer.getPartState(side);
         IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
-        IAspectWrite aspectWrite = state.getActiveAspect();
-        if(aspectWrite != null) {
-            if(state.hasVariable() && state.isEnabled()) {
-                status = IgnoredBlockStatus.Status.ACTIVE;
-            } else {
-                status = IgnoredBlockStatus.Status.ERROR;
+        if(partContainer != null) {
+            IPartStateWriter state = (IPartStateWriter) partContainer.getPartState(side);
+            IAspectWrite aspectWrite = state.getActiveAspect();
+            if (aspectWrite != null) {
+                if (state.hasVariable() && state.isEnabled()) {
+                    status = IgnoredBlockStatus.Status.ACTIVE;
+                } else {
+                    status = IgnoredBlockStatus.Status.ERROR;
+                }
             }
         }
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).

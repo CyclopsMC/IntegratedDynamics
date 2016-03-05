@@ -6,10 +6,12 @@ import org.apache.http.util.Asserts;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -26,11 +28,13 @@ public class TestBlockOperators {
 
     private DummyVariableBlock bAir;
     private DummyVariableBlock bCoal;
+    private DummyVariableBlock bLogicProgrammer;
 
     @IntegrationBefore
     public void before() {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.air.getDefaultState()));
         bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.coal_block.getDefaultState()));
+        bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(BlockLogicProgrammer.getInstance().getDefaultState()));
     }
 
     /**
@@ -89,6 +93,35 @@ public class TestBlockOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeItemStack() throws EvaluationException {
         Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MODNAME -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockModName() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{bAir});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Minecraft", "modname(air) = Minecraft");
+
+        IValue res2 = Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{bLogicProgrammer});
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Integrated Dynamics", "modname(logicprogrammer) = Integrated Dynamics");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeModNameLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{bAir, bAir});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeModNameSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeModName() throws EvaluationException {
+        Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.block;
 import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -98,6 +100,25 @@ public interface ICollidable<P> {
         public boolean isActive(B block, World world, BlockPos pos, P position);
         public List<AxisAlignedBB> getBounds(B block, World world, BlockPos pos, P position);
         public ItemStack getPickBlock(World world, BlockPos pos, P position);
+
+        /**
+         * Destroy this component
+         * @param world The world
+         * @param pos The position
+         * @param position The component position
+         * @param player The player destroying the component.
+         * @return If the complete block was destroyed
+         */
+        public boolean destroy(World world, BlockPos pos, P position, EntityPlayer player);
+
+        /**
+         * @param world The world
+         * @param pos The position
+         * @param position The component position
+         * @return The model that will be used to render the breaking overlay.
+         */
+        @SideOnly(Side.CLIENT)
+        public @Nullable IBakedModel getBreakingBaseModel(World world, BlockPos pos, P position);
     }
 
 }

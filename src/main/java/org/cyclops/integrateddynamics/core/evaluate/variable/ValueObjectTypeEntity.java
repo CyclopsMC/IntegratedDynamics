@@ -2,10 +2,12 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.base.Optional;
 import lombok.ToString;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 
 /**
@@ -58,9 +60,13 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
             try {
                 int world = Integer.parseInt(split[0]);
                 int id = Integer.parseInt(split[1]);
-                WorldServer[] servers = MinecraftServer.getServer().worldServers;
-                if(servers.length > world) {
-                    entity = servers[world].getEntityByID(id);
+                if(MinecraftHelpers.isClientSide()) {
+                    entity = Minecraft.getMinecraft().theWorld.getEntityByID(id);
+                } else {
+                    WorldServer[] servers = MinecraftServer.getServer().worldServers;
+                    if (servers.length > world) {
+                        entity = servers[world].getEntityByID(id);
+                    }
                 }
             } catch (NumberFormatException e) {}
         }

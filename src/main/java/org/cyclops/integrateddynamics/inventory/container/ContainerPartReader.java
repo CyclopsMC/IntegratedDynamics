@@ -159,7 +159,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
                         IValue value = variable.getValue();
                         readValue = value.getType().toCompactString(value);
                         readValueColor = variable.getType().getDisplayColor();
-                    } catch (EvaluationException e) {
+                    } catch (EvaluationException | NullPointerException e) {
                         readValue = "ERROR";
                         readValueColor = Helpers.RGBToInt(255, 0, 0);
                     }

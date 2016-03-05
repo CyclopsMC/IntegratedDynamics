@@ -15,12 +15,15 @@ public final class PartTypes {
     public static void load() {}
 
     // Readers
-    public static final PartTypeRedstoneReader REDSTONE_READER = REGISTRY.register(new PartTypeRedstoneReader("redstoneReader"));
-    public static final PartTypeInventoryReader INVENTORY_READER = REGISTRY.register(new PartTypeInventoryReader("inventoryReader"));
-    public static final PartTypeWorldReader WORLD_READER = REGISTRY.register(new PartTypeWorldReader("worldReader"));
+    public static final PartTypeBlockReader BLOCK_READER = REGISTRY.register(new PartTypeBlockReader("blockReader"));
+    public static final PartTypeEntityReader ENTITY_READER = REGISTRY.register(new PartTypeEntityReader("entityReader"));
+    public static final PartTypeExtraDimensionalReader EXTRADIMENSIONAL_READER = REGISTRY.register(new PartTypeExtraDimensionalReader("extradimensionalReader"));
     public static final PartTypeFluidReader FLUID_READER = REGISTRY.register(new PartTypeFluidReader("fluidReader"));
-    public static final PartTypeMinecraftReader MINECRAFT_READER = REGISTRY.register(new PartTypeMinecraftReader("minecraftReader"));
+    public static final PartTypeInventoryReader INVENTORY_READER = REGISTRY.register(new PartTypeInventoryReader("inventoryReader"));
+    public static final PartTypeMachineReader MACHINE_READER = REGISTRY.register(new PartTypeMachineReader("machineReader"));
     public static final PartTypeNetworkReader NETWORK_READER = REGISTRY.register(new PartTypeNetworkReader("networkReader"));
+    public static final PartTypeRedstoneReader REDSTONE_READER = REGISTRY.register(new PartTypeRedstoneReader("redstoneReader"));
+    public static final PartTypeWorldReader WORLD_READER = REGISTRY.register(new PartTypeWorldReader("worldReader"));
 
     // Writers
     public static final PartTypeRedstoneWriter REDSTONE_WRITER = REGISTRY.register(new PartTypeRedstoneWriter("redstoneWriter"));

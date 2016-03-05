@@ -7,6 +7,7 @@ import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.expression.IExpression;
@@ -35,6 +36,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     private final IOperator operator;
     private final int[] variableIds;
     private IExpression expression = null;
+    private int lastNetworkHash = -1;
 
     public OperatorVariableFacade(boolean generateId, IOperator operator, int[] variableIds) {
         super(generateId);
@@ -51,7 +53,9 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     @Override
     public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(isValid()) {
-            if(expression == null || expression.hasErrored()) {
+            int newNetworkHash = network != null ? network.hashCode() : -1;
+            if(expression == null || expression.hasErrored() || newNetworkHash != this.lastNetworkHash) {
+                this.lastNetworkHash = newNetworkHash;
                 IVariable[] variables = new IVariable[variableIds.length];
                 for (int i = 0; i < variableIds.length; i++) {
                     int variableId = variableIds[i];
@@ -80,7 +84,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     }
 
     @Override
-    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
+    public void validate(IPartNetwork network, final IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
@@ -106,13 +110,22 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                         checkFurther = false;
                     } else if (variableFacade != null) {
                         IValueType valueType = getOperator().getInputTypes()[i];
-                        variableFacade.validate(network, validator, valueType);
-                        if (variableFacade.isValid()) {
+                        final Wrapper<Boolean> isValid = new Wrapper<>(true);
+                        variableFacade.validate(network, new IValidator() {
+                            @Override
+                            public void addError(L10NHelpers.UnlocalizedString error) {
+                                validator.addError(error);
+                                isValid.set(false);
+                            }
+                        }, valueType);
+                        if (isValid.get()) {
                             IVariable variable = variableFacade.getVariable(network);
                             if (variable != null) {
                                 variables [i] = variable;
                                 valueTypes[i] = variable.getType();
                             }
+                        } else {
+                            checkFurther = false;
                         }
                     }
                 }

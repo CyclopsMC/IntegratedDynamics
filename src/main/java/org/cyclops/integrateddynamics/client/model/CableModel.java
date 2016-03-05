@@ -8,9 +8,10 @@ import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -46,7 +47,7 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean hasPart(EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PART[side.ordinal()], false);
+        return getPartRenderPosition(side) != IPartType.RenderPosition.NONE;
     }
 
     @Override
@@ -57,13 +58,13 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean shouldRenderParts() {
-        return !GeneralConfig.TESRPartRendering;
+        return MinecraftForgeClient.getRenderLayer() == EnumWorldBlockLayer.CUTOUT;
     }
 
     @Override
     protected IBakedModel getPartModel(EnumFacing side) {
         IPartContainer partContainer = BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PARTCONTAINER, null);
-        IBlockState blockState = partContainer != null ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
+        IBlockState blockState = partContainer != null && partContainer.hasPart(side) ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
         Minecraft mc = Minecraft.getMinecraft();
         BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRendererDispatcher();
         BlockModelShapes blockModelShapes = blockRendererDispatcher.getBlockModelShapes();

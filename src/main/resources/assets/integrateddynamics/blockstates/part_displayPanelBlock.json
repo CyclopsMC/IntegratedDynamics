@@ -1,21 +1,22 @@
 {
   "forge_marker": 1,
   "defaults": {
+    "transform": "forge:default-block",
     "model": "integrateddynamics:panel"
   },
   "variants": {
     "status": {
       "active": {"textures": {
-        "back" : "integrateddynamics:blocks/panel_back_active",
-        "front": "integrateddynamics:blocks/panel_front_dark"
+        "back" : "integrateddynamics:parts/panel_back_active",
+        "front": "integrateddynamics:parts/panel_front_dark"
       }},
       "inactive": {"textures": {
-        "back" : "integrateddynamics:blocks/panel_back_inactive",
-        "front": "integrateddynamics:blocks/panel_front_dark"
+        "back" : "integrateddynamics:parts/panel_back_inactive",
+        "front": "integrateddynamics:parts/panel_front_dark"
       }},
       "error": {"textures": {
-        "back" : "integrateddynamics:blocks/panel_back_error",
-        "front": "integrateddynamics:blocks/panel_front_dark"
+        "back" : "integrateddynamics:parts/panel_back_error",
+        "front": "integrateddynamics:parts/panel_front_dark"
       }}
     },
     "facing": {

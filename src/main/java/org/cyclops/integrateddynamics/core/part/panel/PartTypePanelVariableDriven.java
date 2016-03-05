@@ -120,7 +120,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     protected void onValueChanged(IPartNetwork network, PartTarget target, S state, IValue lastValue, IValue newValue) {
-        state.setDisplayValue(newValue);
+        state.setDisplayValue(newValue != null ? newValue.getType().materialize(newValue) : null);
     }
 
     @Override
@@ -177,7 +177,6 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
     @Override
     public void loadTooltip(S state, List<String> lines) {
-        super.loadTooltip(state, lines);
         if (!state.getInventory().isEmpty()) {
             if (state.hasVariable() && state.isEnabled()) {
                 IValue value = state.getDisplayValue();
@@ -197,6 +196,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         } else {
             lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_INACTIVE));
         }
+        super.loadTooltip(state, lines);
     }
 
     public static abstract class State<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartStateActiveVariableBase<P> {
@@ -217,10 +217,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.writeToNBT(tag);
             IValue value = getDisplayValue();
             if(value != null) {
-                tag.setString("displayValueType", value.getType().getUnlocalizedName());
-                if(!MinecraftHelpers.isClientSide()) {
-                    value = value.getType().materialize(value);
-                }
+                tag.setString("displayValueType", value.getType().getUnlocalizedName());;
                 tag.setString("displayValue", value.getType().serialize(value));
             }
             tag.setInteger("facingRotation", facingRotation.ordinal());
@@ -233,7 +230,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     && tag.hasKey("displayValue", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("displayValueType"));
                 if(valueType != null) {
-                    setDisplayValue(valueType.deserialize(tag.getString("displayValue")));
+                    String serializedValue = tag.getString("displayValue");
+                    L10NHelpers.UnlocalizedString deserializationError = valueType.canDeserialize(serializedValue);
+                    if(deserializationError == null) {
+                        setDisplayValue(valueType.deserialize(serializedValue));
+                    } else {
+                        IntegratedDynamics.clog(Level.ERROR, deserializationError.localize());
+                    }
                 } else {
                     IntegratedDynamics.clog(Level.ERROR,
                             String.format("Tried to deserialize the value \"%s\" for type \"%s\" which could not be found.",

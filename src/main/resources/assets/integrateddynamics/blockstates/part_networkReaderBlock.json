@@ -1,10 +1,11 @@
 {
   "forge_marker": 1,
   "defaults": {
+    "transform": "forge:default-block",
     "model": "integrateddynamics:reader",
     "textures": {
-      "back" : "integrateddynamics:blocks/networkReader_back",
-      "front": "integrateddynamics:blocks/networkReader_front"
+      "back" : "integrateddynamics:parts/networkReader_back",
+      "front": "integrateddynamics:parts/networkReader_front"
     }
   },
   "variants": {

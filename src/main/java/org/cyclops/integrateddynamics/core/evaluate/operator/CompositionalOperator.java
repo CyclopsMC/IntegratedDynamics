@@ -153,8 +153,8 @@ public class CompositionalOperator extends OperatorBase {
         public IOperator build(String symbol, String operatorName, IConfigRenderPattern renderPattern, String unlocalizedType) {
             return new CompositionalOperator(symbol, operatorName, getInputTypes(), this.base.getOutputType(), new IFunction() {
                 @Override
-                public IValue evaluate(IVariable... variables) throws EvaluationException {
-                    return AppliedOperatorBuilder.this.evaluate(variables);
+                public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
+                    return AppliedOperatorBuilder.this.evaluate(variables.getVariables());
                 }
             }, renderPattern, unlocalizedType) {
                 @Override

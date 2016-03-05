@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.client.gui.GuiProxy;
@@ -52,6 +53,13 @@ public class BlockProxy extends BlockContainerGuiCabled {
     @Override
     public Collection<INetworkElement<IPartNetwork>> createNetworkElements(World world, BlockPos blockPos) {
         return Sets.<INetworkElement<IPartNetwork>>newHashSet(new ProxyNetworkElement(DimPos.of(world, blockPos)));
+    }
+
+    @Override
+    protected void onPreBlockDestroyed(World world, BlockPos pos) {
+        TileProxy tile = TileHelpers.getSafeTile(world, pos, TileProxy.class);
+        tile.updateConnections();
+        super.onPreBlockDestroyed(world, pos);
     }
 
     @Override

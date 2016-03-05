@@ -13,6 +13,10 @@ repositories {
         name "Mobius Repo"
         url "http://mobiusstrip.eu/maven"
     }
+    maven {
+        name 'DVS1 Maven FS'
+        url 'http://dvs1.progwml6.com/files/maven'
+    }
 }
 
 dependencies {
@@ -25,6 +29,7 @@ dependencies {
 
     compile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:deobf" // http://maven.amadornes.com/
     compile "mcp.mobius.waila:Waila:${config.waila_version}:dev" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
+    deobfCompile "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
 
     // Project lombok
     compile "org.projectlombok:lombok:1.16.4"

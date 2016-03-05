@@ -1,10 +1,11 @@
 {
   "forge_marker": 1,
   "defaults": {
+    "transform": "forge:default-block",
     "model": "integrateddynamics:panel",
     "textures": {
-      "back" : "integrateddynamics:blocks/panel_back_inactive",
-      "front": "integrateddynamics:blocks/panel_front_light"
+      "back" : "integrateddynamics:parts/panel_back_inactive",
+      "front": "integrateddynamics:parts/panel_front_light"
     }
   },
   "variants": {

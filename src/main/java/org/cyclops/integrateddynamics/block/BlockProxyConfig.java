@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.item.ItemBlock;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.item.ItemBlockProxy;
 
 /**
  * Config for {@link BlockProxy}.
@@ -25,5 +27,10 @@ public class BlockProxyConfig extends BlockContainerConfig {
             null,
             BlockProxy.class
         );
+    }
+
+    @Override
+    public Class<? extends ItemBlock> getItemBlockClass() {
+        return ItemBlockProxy.class;
     }
 }

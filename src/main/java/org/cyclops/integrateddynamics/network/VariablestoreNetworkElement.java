@@ -32,6 +32,6 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
 
     @Override
     protected Class<TileVariablestore> getTileClass() {
-        return null;
+        return TileVariablestore.class;
     }
 }

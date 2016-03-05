@@ -1,4 +1,8 @@
 {
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block"
+  },
   "variants": {
     "facing=south": { "model": "integrateddynamics:materializer" },
     "facing=west" : { "model": "integrateddynamics:materializer", "y": 90 },

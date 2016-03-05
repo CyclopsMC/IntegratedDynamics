@@ -277,6 +277,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public void afterNetworkReAlive(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
     public void onNetworkAddition(IPartNetwork network, PartTarget target, S state) {
 
     }
@@ -358,6 +363,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         if(!state.isEnabled()) {
             lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_DISABLED));
         }
+        lines.add(L10NHelpers.localize(L10NValues.GENERAL_ITEM_ID, state.getId()));
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {

@@ -30,7 +30,11 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyBas
 
     @Override
     public int getLength() {
-        return getInventory().getSizeInventory();
+        IInventory inventory = getInventory();
+        if(inventory == null) {
+            return 0;
+        }
+        return inventory.getSizeInventory();
     }
 
     @Override

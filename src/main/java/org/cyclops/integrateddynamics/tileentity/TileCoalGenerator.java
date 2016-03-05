@@ -15,7 +15,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory {
 
     public static final int MAX_PROGRESS = 13;
     public static final int ENERGY_PER_TICK = 20;
-    protected static final int SLOT_FUEL = 0;
+    public static final int SLOT_FUEL = 0;
 
     @NBTPersist
     private int currentlyBurningMax;
@@ -45,7 +45,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory {
         return currentlyBurning < currentlyBurningMax;
     }
 
-    protected boolean canAddEnergy(int energy) {
+    public boolean canAddEnergy(int energy) {
         IEnergyNetwork network = getNetwork();
         return network != null && network.addEnergy(energy, true) == energy;
     }

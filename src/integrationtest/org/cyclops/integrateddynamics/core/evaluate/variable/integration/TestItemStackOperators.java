@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
+import org.cyclops.integrateddynamics.item.ItemWrench;
 
 /**
  * Test the different logical operators.
@@ -39,6 +40,7 @@ public class TestItemStackOperators {
     private DummyVariableItemStack iPickaxe;
     private DummyVariableItemStack iStone;
     private DummyVariableItemStack iBucketLava;
+    private DummyVariableItemStack iWrench;
 
     private DummyVariableBlock bStone;
     private DummyVariableBlock bObsidian;
@@ -58,6 +60,7 @@ public class TestItemStackOperators {
         iPickaxe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.diamond_pickaxe)));
         iStone = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.stone)));
         iBucketLava = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.lava_bucket)));
+        iWrench = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(ItemWrench.getInstance())));
 
         bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.stone.getDefaultState()));
         bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.obsidian.getDefaultState()));
@@ -592,6 +595,35 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeIsRawItemEqual() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MODNAME -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackModName() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_MODNAME.evaluate(new IVariable[]{iHoe});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Minecraft", "modname(hoe) = Minecraft");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_MODNAME.evaluate(new IVariable[]{iWrench});
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Integrated Dynamics", "modname(wrench) = Integrated Dynamics");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeModNameLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_MODNAME.evaluate(new IVariable[]{iHoe, iHoe});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeModNameSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_MODNAME.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeModName() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

@@ -2,8 +2,8 @@
   "forge_marker": 1,
   "parent": "integrateddynamics:block/panel",
   "textures": {
-    "back" : "integrateddynamics:blocks/panel_back_inactive",
-    "front": "integrateddynamics:blocks/panel_front_light"
+    "back" : "integrateddynamics:parts/panel_back_inactive",
+    "front": "integrateddynamics:parts/panel_front_light"
   },
   "display": {
     "thirdperson": {

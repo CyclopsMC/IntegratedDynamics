@@ -178,6 +178,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
                 // Remove the element from the network.
                 getNetwork().removeNetworkElementPost(networkElement);
+            } else {
+                ItemStackHelpers.spawnItemStackToPlayer(getWorld(), pos, new ItemStack(removed.getItem()), player);
             }
             // Finally remove the part data from this tile.
             IPartType ret = partData.remove(side).getPart();
@@ -252,13 +254,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         for(EnumFacing side : EnumFacing.VALUES) {
             extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()],
                     !isForceDisconnected(side) && connected.get(side.ordinal()));
-            boolean hasPart = hasPart(side);
-            extendedState = extendedState.withProperty(BlockCable.PART[side.ordinal()], hasPart);
-            if(hasPart) {
-                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
-            } else {
-                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
-            }
+            extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
+                    hasPart(side) ? getPart(side).getRenderPosition() : IPartType.RenderPosition.NONE);
         }
         extendedState = extendedState.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
         extendedState = extendedState.withProperty(BlockCable.PARTCONTAINER, this);
@@ -443,10 +440,32 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     /**
+     * @return The raw force disconnection data.
+     */
+    public Map<Integer, Boolean> getForceDisconnected() {
+        return this.forceDisconnected;
+    }
+
+    public void setForceDisconnected(Map<Integer, Boolean> forceDisconnected) {
+        this.forceDisconnected.clear();
+        this.forceDisconnected.putAll(forceDisconnected);
+    }
+
+    /**
      * Reset the part data without signaling any neighbours or the network.
      * Is used in block conversion.
      */
     public void silentResetPartData() {
         this.partData.clear();
+    }
+
+    @Override
+    public boolean canRenderBreaking() {
+        return true;
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return true;
     }
 }
