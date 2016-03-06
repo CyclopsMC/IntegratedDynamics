@@ -118,10 +118,13 @@ parttype.parttypes.integrateddynamics.redstoneReader.info=Reads redstone values
 parttype.parttypes.integrateddynamics.worldReader.name=World Reader
 parttype.parttypes.integrateddynamics.worldReader.info=Reads things related to the world, blocks and entities
 
+parttype.parttypes.integrateddynamics.audioWriter.name=Audio Writer
+parttype.parttypes.integrateddynamics.audioWriter.info=Outputs audio and music
 parttype.parttypes.integrateddynamics.inventoryWriter.name=Inventory Writer
 parttype.parttypes.integrateddynamics.inventoryWriter.info=Writes to inventories
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
 parttype.parttypes.integrateddynamics.redstoneWriter.info=Writes to redstone
+
 parttype.parttypes.integrateddynamics.dataDrivenPanel.error.invalidType=This panel does not accept a %s.
 parttype.parttypes.integrateddynamics.staticLightPanel.name=Static Light Panel
 parttype.parttypes.integrateddynamics.staticLightPanel.info=A simply light panel that is always active
@@ -146,6 +149,18 @@ aspect.integrateddynamics.tooltip.aspectName=§eAspect: §r%s
 aspect.integrateddynamics.tooltip.valueTypeName=§eType: §r%s
 aspect.integrateddynamics.tooltip.partId=§e§oPart ID: §r§o%s
 aspect.integrateddynamics.error.invalidType=This aspect expects %s, but %s was given.
+
+## Audio aspects
+aspect.aspects.integrateddynamics.write.integer.instrument.piano.name=Piano Note
+aspect.aspects.integrateddynamics.write.integer.instrument.piano.info=Output a piano note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.instrument.bassdrum.name=Bass Drum Note
+aspect.aspects.integrateddynamics.write.integer.instrument.bassdrum.info=Output a bass drum note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.instrument.snare.name=Snare Note
+aspect.aspects.integrateddynamics.write.integer.instrument.snare.info=Output a snare note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.instrument.clicks.name=Clicks Note
+aspect.aspects.integrateddynamics.write.integer.instrument.clicks.info=Output a clicks note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.instrument.bassguitar.name=Bass Guitar Note
+aspect.aspects.integrateddynamics.write.integer.instrument.bassguitar.info=Output a bass guitar note, expected range [0, 24]
 
 ## Block aspects
 aspect.aspects.integrateddynamics.read.boolean.block.block.name=Has Block
@@ -330,6 +345,7 @@ aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target wo
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
 aspect.aspecttypes.integrateddynamics.integer.listindex.name=List Element
+aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
 
 # Operators
 operator.integrateddynamics.tooltip.operatorName=§eOperator: §r%s (%s)

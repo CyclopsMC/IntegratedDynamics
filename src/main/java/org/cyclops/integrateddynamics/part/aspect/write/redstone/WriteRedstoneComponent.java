@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.part.aspect.write;
+package org.cyclops.integrateddynamics.part.aspect.write.redstone;
 
 import net.minecraft.block.Block;
 import org.cyclops.cyclopscore.datastructure.DimPos;

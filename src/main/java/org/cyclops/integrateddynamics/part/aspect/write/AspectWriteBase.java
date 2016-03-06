@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.part.aspect.AspectBase;
@@ -26,7 +27,18 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>> extends AspectBase<V, T>
         implements IAspectWrite<V, T> {
 
+    protected final String unlocalizedTypeSuffix;
+
     public AspectWriteBase() {
+        this(null, null);
+    }
+
+    public AspectWriteBase(String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
+        super(defaultProperties);
+        if(unlocalizedTypeSuffix == null) {
+            unlocalizedTypeSuffix = "";
+        }
+        this.unlocalizedTypeSuffix = unlocalizedTypeSuffix;
         if(MinecraftHelpers.isClientSide()) {
             registerModelResourceLocation();
         }

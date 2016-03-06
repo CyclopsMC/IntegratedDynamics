@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.part.aspect.write;
+package org.cyclops.integrateddynamics.part.aspect.write.redstone;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;

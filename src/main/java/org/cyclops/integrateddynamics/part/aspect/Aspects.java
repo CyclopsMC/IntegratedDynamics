@@ -30,8 +30,8 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
-import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBooleanRedstone;
-import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteIntegerRedstone;
+import org.cyclops.integrateddynamics.part.aspect.write.redstone.AspectWriteBooleanRedstone;
+import org.cyclops.integrateddynamics.part.aspect.write.redstone.AspectWriteIntegerRedstone;
 
 import javax.annotation.Nullable;
 import java.util.List;

@@ -1,0 +1,20 @@
+{
+  "forge_marker": 1,
+  "parent": "integrateddynamics:block/writer",
+  "textures": {
+    "back" : "integrateddynamics:parts/audioReader_back",
+    "front": "integrateddynamics:parts/audioWriter_front_inactive"
+  },
+  "display": {
+    "thirdperson": {
+      "rotation": [ 10, -45, 170 ],
+      "translation": [ 0, 1.5, -2.75 ],
+      "scale": [ 0.375, 0.375, 0.375 ]
+    },
+    "gui": {
+      "rotation": [ 0, 90, 0 ],
+      "translation": [ -1.5, 2, -2.75 ],
+      "scale": [ 1.375, 1.375, 1.375 ]
+    }
+  }
+}
