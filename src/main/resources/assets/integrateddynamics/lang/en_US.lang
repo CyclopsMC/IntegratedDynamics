@@ -120,6 +120,8 @@ parttype.parttypes.integrateddynamics.worldReader.info=Reads things related to t
 
 parttype.parttypes.integrateddynamics.audioWriter.name=Audio Writer
 parttype.parttypes.integrateddynamics.audioWriter.info=Outputs audio and music
+parttype.parttypes.integrateddynamics.effectWriter.name=Effect Writer
+parttype.parttypes.integrateddynamics.effectWriter.info=Outputs particles
 parttype.parttypes.integrateddynamics.inventoryWriter.name=Inventory Writer
 parttype.parttypes.integrateddynamics.inventoryWriter.info=Writes to inventories
 parttype.parttypes.integrateddynamics.redstoneWriter.name=Redstone Writer
@@ -164,6 +166,76 @@ aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassguitar.info
 
 aspect.aspects.integrateddynamics.write.string.audio.sound.name=Sound
 aspect.aspects.integrateddynamics.write.string.audio.sound.info=Play the given sound name
+
+## Effect aspects
+aspect.aspects.integrateddynamics.write.double.effect.particle.fireworksSpark.name=Particle: Fireworks Spark
+aspect.aspects.integrateddynamics.write.double.effect.particle.fireworksSpark.info=Emit a fireworks spark particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.bubble.name=Particle: Bubble
+aspect.aspects.integrateddynamics.write.double.effect.particle.bubble.info=Emit a bubble particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.splash.name=Particle: Water Splash
+aspect.aspects.integrateddynamics.write.double.effect.particle.splash.info=Emit a water splash particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.wake.name=Particle: Water Wake
+aspect.aspects.integrateddynamics.write.double.effect.particle.wake.info=Emit a water wake particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.suspended.name=Particle: Suspend
+aspect.aspects.integrateddynamics.write.double.effect.particle.suspended.info=Emit a suspend particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.depthsuspend.name=Particle: Suspend Depth
+aspect.aspects.integrateddynamics.write.double.effect.particle.depthsuspend.info=Emit a depth suspend particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.crit.name=Particle: Critical
+aspect.aspects.integrateddynamics.write.double.effect.particle.crit.info=Emit a critical particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.magicCrit.name=Particle: Critical Magic
+aspect.aspects.integrateddynamics.write.double.effect.particle.magicCrit.info=Emit a critical magic particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.smoke.name=Particle: Smoke
+aspect.aspects.integrateddynamics.write.double.effect.particle.smoke.info=Emit a smoke particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.largesmoke.name=Particle: Large Smoke
+aspect.aspects.integrateddynamics.write.double.effect.particle.largesmoke.info=Emit a large smoke particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.spell.name=Particle: Spell
+aspect.aspects.integrateddynamics.write.double.effect.particle.spell.info=Emit a spell particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.instantSpell.name=Particle: Instant Spell
+aspect.aspects.integrateddynamics.write.double.effect.particle.instantSpell.info=Emit an instant spell particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.mobSpell.name=Particle: Mob Spell
+aspect.aspects.integrateddynamics.write.double.effect.particle.mobSpell.info=Emit a mob spell particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.mobSpellAmbient.name=Particle: Ambient Mob Spell
+aspect.aspects.integrateddynamics.write.double.effect.particle.mobSpellAmbient.info=Emit an ambient mob spell particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.witchMagic.name=Particle: Witch Magic
+aspect.aspects.integrateddynamics.write.double.effect.particle.witchMagic.info=Emit a witch magic particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.dripWater.name=Particle: Drip Water
+aspect.aspects.integrateddynamics.write.double.effect.particle.dripWater.info=Emit a water drip particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.dripLava.name=Particle: Drip Lava
+aspect.aspects.integrateddynamics.write.double.effect.particle.dripLava.info=Emit a lava drip particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.angryVillager.name=Particle: Angry Villager
+aspect.aspects.integrateddynamics.write.double.effect.particle.angryVillager.info=Emit an angry villager particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.happyVillager.name=Particle: Happy Villager
+aspect.aspects.integrateddynamics.write.double.effect.particle.happyVillager.info=Emit a happy villager particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.townaura.name=Particle: Town Aura
+aspect.aspects.integrateddynamics.write.double.effect.particle.townaura.info=Emit a town aura particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.note.name=Particle: Note
+aspect.aspects.integrateddynamics.write.double.effect.particle.note.info=Emit a note particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.portal.name=Particle: Portal
+aspect.aspects.integrateddynamics.write.double.effect.particle.portal.info=Emit a portal particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.enchantmenttable.name=Particle: Enchantment Table
+aspect.aspects.integrateddynamics.write.double.effect.particle.enchantmenttable.info=Emit an enchantment table particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.flame.name=Particle: Flame
+aspect.aspects.integrateddynamics.write.double.effect.particle.flame.info=Emit a bubble flame with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.lava.name=Particle: Lava
+aspect.aspects.integrateddynamics.write.double.effect.particle.lava.info=Emit a lava particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.footstep.name=Particle: Footstep
+aspect.aspects.integrateddynamics.write.double.effect.particle.footstep.info=Emit a footstep particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.cloud.name=Particle: Cloud
+aspect.aspects.integrateddynamics.write.double.effect.particle.cloud.info=Emit a cloud particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.reddust.name=Particle: Redstone Dust
+aspect.aspects.integrateddynamics.write.double.effect.particle.reddust.info=Emit a redstone dust particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.snowballpoof.name=Particle: Snowball
+aspect.aspects.integrateddynamics.write.double.effect.particle.snowballpoof.info=Emit a snowball particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.snowshovel.name=Particle: Snow Shovel
+aspect.aspects.integrateddynamics.write.double.effect.particle.snowshovel.info=Emit a snow shovel particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.slime.name=Particle: Slime
+aspect.aspects.integrateddynamics.write.double.effect.particle.slime.info=Emit a slime particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.heart.name=Particle: Heart
+aspect.aspects.integrateddynamics.write.double.effect.particle.heart.info=Emit a heart particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.barrier.name=Particle: Barrier
+aspect.aspects.integrateddynamics.write.double.effect.particle.barrier.info=Emit a barrier particle with a certain velocity.
+aspect.aspects.integrateddynamics.write.double.effect.particle.droplet.name=Particle: Water Drop
+aspect.aspects.integrateddynamics.write.double.effect.particle.droplet.info=Emit a water drop particle with a certain velocity.
 
 ## Block aspects
 aspect.aspects.integrateddynamics.read.boolean.block.block.name=Has Block
@@ -348,8 +420,18 @@ aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target wo
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
 aspect.aspecttypes.integrateddynamics.integer.listindex.name=List Element
+
 aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
 aspect.aspecttypes.integrateddynamics.double.frequency.name=Frequency
+
+aspect.aspecttypes.integrateddynamics.double.offsetX.name=X Offset
+aspect.aspecttypes.integrateddynamics.double.offsetY.name=Y Offset
+aspect.aspecttypes.integrateddynamics.double.offsetZ.name=Z Offset
+aspect.aspecttypes.integrateddynamics.integer.particles.name=Particle Count
+aspect.aspecttypes.integrateddynamics.double.spreadX.name=X Spread
+aspect.aspecttypes.integrateddynamics.double.spreadY.name=Y Spread
+aspect.aspecttypes.integrateddynamics.double.spreadZ.name=Z Spread
+aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name=Force Spawning
 
 # Operators
 operator.integrateddynamics.tooltip.operatorName=§eOperator: §r%s (%s)

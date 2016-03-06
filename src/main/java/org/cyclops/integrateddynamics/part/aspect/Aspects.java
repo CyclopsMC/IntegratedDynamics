@@ -10,10 +10,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.*;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -27,6 +25,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
@@ -655,6 +654,41 @@ public class Aspects {
                                     return null;
                                 }
                             }, "sound").buildWrite();
+
+        }
+
+        public static final class Effect {
+
+            public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticle(final EnumParticleTypes particle) {
+                return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(particle.getParticleName())
+                        .handle(new IAspectValuePropagator<Triple<PartTarget,IAspectProperties,Double>, Void>() {
+                            @Override
+                            public Void getOutput(Triple<PartTarget, IAspectProperties, Double> input) throws EvaluationException {
+                                IAspectProperties properties = input.getMiddle();
+                                PartPos pos = input.getLeft().getTarget();
+
+                                boolean force = properties.getValue(AspectWriteBuilders.Effect.PROP_FORCE).getRawValue();
+                                double x = pos.getPos().getBlockPos().getX() + properties.getValue(AspectWriteBuilders.Effect.PROP_OFFSET_X).getRawValue();
+                                double y = pos.getPos().getBlockPos().getY() + properties.getValue(AspectWriteBuilders.Effect.PROP_OFFSET_Y).getRawValue();
+                                double z = pos.getPos().getBlockPos().getZ() + properties.getValue(AspectWriteBuilders.Effect.PROP_OFFSET_Z).getRawValue();
+                                int numberOfParticles = properties.getValue(AspectWriteBuilders.Effect.PROP_PARTICLES).getRawValue();
+
+                                double xDir = properties.getValue(AspectWriteBuilders.Effect.PROP_SPREAD_X).getRawValue();
+                                double yDir = properties.getValue(AspectWriteBuilders.Effect.PROP_SPREAD_Y).getRawValue();
+                                double zDir = properties.getValue(AspectWriteBuilders.Effect.PROP_SPREAD_Z).getRawValue();
+                                double velocity = input.getRight();
+
+                                int[] aint = new int[particle.getArgumentCount()];
+                                for (int i = 0; i < aint.length; i++) {
+                                    aint[i] = 0;
+                                }
+                                ((WorldServer) pos.getPos().getWorld()).spawnParticle(
+                                        particle, force, x, y, z, numberOfParticles,
+                                        xDir, yDir, zDir, velocity, aint);
+                                return null;
+                            }
+                        }).buildWrite();
+            }
 
         }
 

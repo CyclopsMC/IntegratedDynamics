@@ -42,6 +42,8 @@ public class AspectWriteBuilders {
             BUILDER_BOOLEAN = getValue(AspectBuilder.forWriteType(ValueTypes.BOOLEAN));
     public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Triple<PartTarget, IAspectProperties, ValueTypeInteger.ValueInteger>>
             BUILDER_INTEGER = getValue(AspectBuilder.forWriteType(ValueTypes.INTEGER));
+    public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Triple<PartTarget, IAspectProperties, ValueTypeDouble.ValueDouble>>
+            BUILDER_DOUBLE = getValue(AspectBuilder.forWriteType(ValueTypes.DOUBLE));
     public static final AspectBuilder<ValueTypeString.ValueString, ValueTypeString, Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString>>
             BUILDER_STRING = getValue(AspectBuilder.forWriteType(ValueTypes.STRING));
     public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, Triple<PartTarget, IAspectProperties, ValueTypeList.ValueList>>
@@ -164,6 +166,53 @@ public class AspectWriteBuilders {
                 BUILDER_INTEGER_INSTRUMENT = BUILDER_INTEGER.appendKind("instrument").withProperties(PROPERTIES_NOTE);
         public static final AspectBuilder<ValueTypeString.ValueString, ValueTypeString, Triple<PartTarget, IAspectProperties, String>>
                 BUILDER_STRING = AspectWriteBuilders.BUILDER_STRING.appendKind("audio").handle(PROP_GET_STRING);
+
+    }
+
+    public static final class Effect {
+
+        public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_OFFSET_X =
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetX.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_OFFSET_Y =
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetY.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_OFFSET_Z =
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetZ.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_PARTICLES =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.particles.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_SPREAD_X =
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadX.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_SPREAD_Y =
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadY.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_SPREAD_Z =
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadZ.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROP_FORCE =
+                new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name");
+        public static final IAspectProperties PROPERTIES_PARTICLE = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+                PROP_OFFSET_X,
+                PROP_OFFSET_Y,
+                PROP_OFFSET_Z,
+                PROP_PARTICLES,
+                PROP_SPREAD_X,
+                PROP_SPREAD_Y,
+                PROP_SPREAD_Z,
+                PROP_FORCE
+        ));
+
+        static {
+            PROPERTIES_PARTICLE.setValue(PROP_OFFSET_X, ValueTypeDouble.ValueDouble.of(0.5D));
+            PROPERTIES_PARTICLE.setValue(PROP_OFFSET_Y, ValueTypeDouble.ValueDouble.of(0.5D));
+            PROPERTIES_PARTICLE.setValue(PROP_OFFSET_Z, ValueTypeDouble.ValueDouble.of(0.5D));
+            PROPERTIES_PARTICLE.setValue(PROP_PARTICLES, ValueTypeInteger.ValueInteger.of(1));
+            PROPERTIES_PARTICLE.setValue(PROP_SPREAD_X, ValueTypeDouble.ValueDouble.of(0.0D));
+            PROPERTIES_PARTICLE.setValue(PROP_SPREAD_Y, ValueTypeDouble.ValueDouble.of(0.0D));
+            PROPERTIES_PARTICLE.setValue(PROP_SPREAD_Z, ValueTypeDouble.ValueDouble.of(0.0D));
+            PROPERTIES_PARTICLE.setValue(PROP_FORCE, ValueTypeBoolean.ValueBoolean.of(false));
+        }
+
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Triple<PartTarget, IAspectProperties, Double>>
+                BUILDER_DOUBLE = AspectWriteBuilders.BUILDER_DOUBLE.appendKind("effect").handle(PROP_GET_DOUBLE);
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Triple<PartTarget, IAspectProperties, Double>>
+                BUILDER_DOUBLE_PARTICLE = BUILDER_DOUBLE.withProperties(PROPERTIES_PARTICLE);
 
     }
 

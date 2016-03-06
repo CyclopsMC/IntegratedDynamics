@@ -27,6 +27,7 @@ public final class PartTypes {
 
     // Writers
     public static final PartTypeAudioWriter AUDIO_WRITER = REGISTRY.register(new PartTypeAudioWriter("audioWriter"));
+    public static final PartTypeEffectWriter EFFECT_WRITER = REGISTRY.register(new PartTypeEffectWriter("effectWriter"));
     public static final PartTypeInventoryWriter INVENTORY_WRITER = REGISTRY.register(new PartTypeInventoryWriter("inventoryWriter"));
     public static final PartTypeRedstoneWriter REDSTONE_WRITER = REGISTRY.register(new PartTypeRedstoneWriter("redstoneWriter"));
 
