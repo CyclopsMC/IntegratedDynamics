@@ -151,16 +151,16 @@ aspect.integrateddynamics.tooltip.partId=§e§oPart ID: §r§o%s
 aspect.integrateddynamics.error.invalidType=This aspect expects %s, but %s was given.
 
 ## Audio aspects
-aspect.aspects.integrateddynamics.write.integer.instrument.piano.name=Piano Note
-aspect.aspects.integrateddynamics.write.integer.instrument.piano.info=Output a piano note, expected range [0, 24]
-aspect.aspects.integrateddynamics.write.integer.instrument.bassdrum.name=Bass Drum Note
-aspect.aspects.integrateddynamics.write.integer.instrument.bassdrum.info=Output a bass drum note, expected range [0, 24]
-aspect.aspects.integrateddynamics.write.integer.instrument.snare.name=Snare Note
-aspect.aspects.integrateddynamics.write.integer.instrument.snare.info=Output a snare note, expected range [0, 24]
-aspect.aspects.integrateddynamics.write.integer.instrument.clicks.name=Clicks Note
-aspect.aspects.integrateddynamics.write.integer.instrument.clicks.info=Output a clicks note, expected range [0, 24]
-aspect.aspects.integrateddynamics.write.integer.instrument.bassguitar.name=Bass Guitar Note
-aspect.aspects.integrateddynamics.write.integer.instrument.bassguitar.info=Output a bass guitar note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.piano.name=Piano Note
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.piano.info=Output a piano note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassdrum.name=Bass Drum Note
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassdrum.info=Output a bass drum note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.snare.name=Snare Note
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.snare.info=Output a snare note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.clicks.name=Clicks Note
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.clicks.info=Output a clicks note, expected range [0, 24]
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassguitar.name=Bass Guitar Note
+aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassguitar.info=Output a bass guitar note, expected range [0, 24]
 
 ## Block aspects
 aspect.aspects.integrateddynamics.read.boolean.block.block.name=Has Block

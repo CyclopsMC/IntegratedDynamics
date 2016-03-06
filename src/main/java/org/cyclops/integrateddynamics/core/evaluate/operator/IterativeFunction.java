@@ -32,7 +32,7 @@ public class IterativeFunction implements OperatorBase.IFunction {
 
     /**
      * A builder for iterative smart functions.
-     * The idea is that this builder will build two lists, one for the value propagators before
+     * The idea is that this builder will buildReader two lists, one for the value propagators before
      * the core propagator, and one for the value propagators after the core propagators.
      * This is so that the pre- and post- list can be shared and only the core propagators
      * is variable.

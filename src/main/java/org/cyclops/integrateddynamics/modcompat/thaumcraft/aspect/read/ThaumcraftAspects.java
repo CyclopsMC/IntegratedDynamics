@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
-import org.cyclops.integrateddynamics.core.part.aspect.build.AspectReadBuilder;
+import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.ThaumcraftModCompat;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.evaluate.variable.ValueObjectTypeAspect;
@@ -34,7 +34,7 @@ public class ThaumcraftAspects {
                             DimPos dimPos = input.getLeft().getTarget().getPos();
                             return TileHelpers.getSafeTile(dimPos.getWorld(), dimPos.getBlockPos(), IAspectContainer.class) != null;
                         }
-                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isaspectcontainer").build();
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isaspectcontainer").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ASPECTCONTAINER =
                     AspectReadBuilders.BUILDER_LIST.appendKind("thaumcraft").handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
@@ -42,10 +42,10 @@ public class ThaumcraftAspects {
                         public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
                             return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedAspectContainer(input.getLeft().getTarget().getPos()));
                         }
-                    }).appendKind("aspectcontainer").build();
+                    }).appendKind("aspectcontainer").buildRead();
 
             public static final IAspectRead<ValueObjectTypeAspect.ValueAspect, ValueObjectTypeAspect> ASPECT =
-                    AspectReadBuilder.forType(ThaumcraftModCompat.OBJECT_ASPECT).appendKind("thaumcraft").withProperties(AspectReadBuilders.LIST_PROPERTIES)
+                    AspectBuilder.forReadType(ThaumcraftModCompat.OBJECT_ASPECT).appendKind("thaumcraft").withProperties(AspectReadBuilders.LIST_PROPERTIES)
                             .handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueObjectTypeAspect.ValueAspect>() {
                                 @Override
                                 public ValueObjectTypeAspect.ValueAspect getOutput(Pair<PartTarget, IAspectProperties> input) {
@@ -60,7 +60,7 @@ public class ThaumcraftAspects {
                                         return ValueObjectTypeAspect.ValueAspect.of(aspect, aspectList.getAmount(aspect));
                                     }
                                 }
-                            }).appendKind("aspectcontainer").build();
+                            }).appendKind("aspectcontainer").buildRead();
 
         }
 

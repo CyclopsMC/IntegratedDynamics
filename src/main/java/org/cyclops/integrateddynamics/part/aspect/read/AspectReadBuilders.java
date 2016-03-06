@@ -26,7 +26,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.core.part.aspect.build.AspectReadBuilder;
+import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
@@ -41,27 +41,27 @@ import java.util.List;
 public class AspectReadBuilders {
 
     // --------------- Value type builders ---------------
-    public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Pair<PartTarget, IAspectProperties>>
-            BUILDER_BOOLEAN = AspectReadBuilder.forType(ValueTypes.BOOLEAN);
-    public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
-            BUILDER_INTEGER = AspectReadBuilder.forType(ValueTypes.INTEGER);
-    public static final AspectReadBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Pair<PartTarget, IAspectProperties>>
-            BUILDER_DOUBLE = AspectReadBuilder.forType(ValueTypes.DOUBLE);
-    public static final AspectReadBuilder<ValueTypeLong.ValueLong, ValueTypeLong, Pair<PartTarget, IAspectProperties>>
-            BUILDER_LONG = AspectReadBuilder.forType(ValueTypes.LONG);
-    public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, Pair<PartTarget, IAspectProperties>>
-            BUILDER_STRING = AspectReadBuilder.forType(ValueTypes.STRING);
-    public static final AspectReadBuilder<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity, Pair<PartTarget, IAspectProperties>>
-            BUILDER_ENTITY = AspectReadBuilder.forType(ValueTypes.OBJECT_ENTITY);
-    public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, Pair<PartTarget, IAspectProperties>>
-            BUILDER_LIST = AspectReadBuilder.forType(ValueTypes.LIST);
+    public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Pair<PartTarget, IAspectProperties>>
+            BUILDER_BOOLEAN = AspectBuilder.forReadType(ValueTypes.BOOLEAN);
+    public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
+            BUILDER_INTEGER = AspectBuilder.forReadType(ValueTypes.INTEGER);
+    public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Pair<PartTarget, IAspectProperties>>
+            BUILDER_DOUBLE = AspectBuilder.forReadType(ValueTypes.DOUBLE);
+    public static final AspectBuilder<ValueTypeLong.ValueLong, ValueTypeLong, Pair<PartTarget, IAspectProperties>>
+            BUILDER_LONG = AspectBuilder.forReadType(ValueTypes.LONG);
+    public static final AspectBuilder<ValueTypeString.ValueString, ValueTypeString, Pair<PartTarget, IAspectProperties>>
+            BUILDER_STRING = AspectBuilder.forReadType(ValueTypes.STRING);
+    public static final AspectBuilder<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity, Pair<PartTarget, IAspectProperties>>
+            BUILDER_ENTITY = AspectBuilder.forReadType(ValueTypes.OBJECT_ENTITY);
+    public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, Pair<PartTarget, IAspectProperties>>
+            BUILDER_LIST = AspectBuilder.forReadType(ValueTypes.LIST);
 
-    public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
-            BUILDER_OBJECT_ITEMSTACK = AspectReadBuilder.forType(ValueTypes.OBJECT_ITEMSTACK);
-    public static final AspectReadBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, Pair<PartTarget, IAspectProperties>>
-            BUILDER_OBJECT_BLOCK = AspectReadBuilder.forType(ValueTypes.OBJECT_BLOCK);
-    public static final AspectReadBuilder<ValueObjectTypeFluidStack.ValueFluidStack, ValueObjectTypeFluidStack, Pair<PartTarget, IAspectProperties>>
-            BUILDER_OBJECT_FLUIDSTACK = AspectReadBuilder.forType(ValueTypes.OBJECT_FLUIDSTACK);
+    public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
+            BUILDER_OBJECT_ITEMSTACK = AspectBuilder.forReadType(ValueTypes.OBJECT_ITEMSTACK);
+    public static final AspectBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, Pair<PartTarget, IAspectProperties>>
+            BUILDER_OBJECT_BLOCK = AspectBuilder.forReadType(ValueTypes.OBJECT_BLOCK);
+    public static final AspectBuilder<ValueObjectTypeFluidStack.ValueFluidStack, ValueObjectTypeFluidStack, Pair<PartTarget, IAspectProperties>>
+            BUILDER_OBJECT_FLUIDSTACK = AspectBuilder.forReadType(ValueTypes.OBJECT_FLUIDSTACK);
 
     // --------------- Value type propagators ---------------
     public static final IAspectValuePropagator<Boolean, ValueTypeBoolean.ValueBoolean> PROP_GET_BOOLEAN = new IAspectValuePropagator<Boolean, ValueTypeBoolean.ValueBoolean>() {
@@ -132,11 +132,11 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "block");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "block");
-        public static final AspectReadBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, DimPos>
+        public static final AspectBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, DimPos>
                 BUILDER_BLOCK = AspectReadBuilders.BUILDER_OBJECT_BLOCK.handle(PROP_GET, "block");
 
     }
@@ -150,13 +150,13 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity, Pair<PartTarget, IAspectProperties>>
+        public static final AspectBuilder<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity, Pair<PartTarget, IAspectProperties>>
                 BUILDER_ENTITY = AspectReadBuilders.BUILDER_ENTITY.appendKind("entity");
-        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, DimPos>
+        public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, DimPos>
                 BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "entity");
-        public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
+        public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
                 BUILDER_ITEMSTACK = AspectReadBuilders.BUILDER_OBJECT_ITEMSTACK.appendKind("entity");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
                 BUILDER_INTEGER_ALL = AspectReadBuilders.BUILDER_INTEGER.appendKind("entity");
 
     }
@@ -170,9 +170,9 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "extradimensional");
-        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, MinecraftServer>
+        public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, MinecraftServer>
                 BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "extradimensional");
 
     }
@@ -237,13 +237,13 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, FluidTankInfo[]>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, FluidTankInfo[]>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "fluid");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, FluidTankInfo[]>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, FluidTankInfo[]>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "fluid");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, FluidTankInfo>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, FluidTankInfo>
                 BUILDER_INTEGER_ACTIVATABLE = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
-        public static final AspectReadBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, FluidTankInfo>
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, FluidTankInfo>
                 BUILDER_DOUBLE_ACTIVATABLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
 
     }
@@ -285,11 +285,11 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IItemHandler>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IItemHandler>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "inventory");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IItemHandler>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IItemHandler>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "inventory");
-        public static final AspectReadBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
+        public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
                 BUILDER_ITEMSTACK = BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET_SLOT, "inventory").withProperties(PROPERTIES);
 
     }
@@ -304,7 +304,7 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IWorker>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IWorker>
                 BUILDER_WORKER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_WORKER, "machine");
 
     }
@@ -323,9 +323,9 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, INetwork>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, INetwork>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_NETWORK, "network");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, INetwork>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, INetwork>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_NETWORK, "network");
 
     }
@@ -347,11 +347,11 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "redstone");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "redstone");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
                 BUILDER_INTEGER_COMPARATOR = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_COMPARATOR, "redstone");
 
     }
@@ -398,15 +398,15 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectReadBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueTypeLong.ValueLong, ValueTypeLong, DimPos>
+        public static final AspectBuilder<ValueTypeLong.ValueLong, ValueTypeLong, DimPos>
                 BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueTypeString.ValueString, ValueTypeString, DimPos>
+        public static final AspectBuilder<ValueTypeString.ValueString, ValueTypeString, DimPos>
                 BUILDER_STRING = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET, "world");
-        public static final AspectReadBuilder<ValueTypeList.ValueList, ValueTypeList, DimPos>
+        public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, DimPos>
                 BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "world");
 
     }

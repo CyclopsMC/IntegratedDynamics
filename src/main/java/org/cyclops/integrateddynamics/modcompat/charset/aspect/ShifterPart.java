@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.modcompat.charset.aspect.write;
+package org.cyclops.integrateddynamics.modcompat.charset.aspect;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;

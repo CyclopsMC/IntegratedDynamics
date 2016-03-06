@@ -65,7 +65,7 @@ import java.util.*;
 
 
 /**
- * A block that is build up from different parts.
+ * A block that is buildReader up from different parts.
  * This block refers to a ticking tile entity.
  * Ray tracing code is partially based on BuildCraft's pipe code.
  * @author rubensworks

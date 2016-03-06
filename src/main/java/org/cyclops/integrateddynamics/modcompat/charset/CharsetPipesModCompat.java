@@ -7,10 +7,7 @@ import org.cyclops.cyclopscore.modcompat.IModCompat;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
-import org.cyclops.integrateddynamics.modcompat.charset.aspect.read.CharsetAspects;
-import org.cyclops.integrateddynamics.modcompat.charset.aspect.write.AspectWriteBooleanCharsetPipesShifter;
-import org.cyclops.integrateddynamics.modcompat.charset.aspect.write.AspectWriteItemStackCharsetPipesShifter;
-import org.cyclops.integrateddynamics.modcompat.charset.aspect.write.AspectWriteListCharsetPipesShifter;
+import org.cyclops.integrateddynamics.modcompat.charset.aspect.CharsetAspects;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import pl.asie.charset.api.pipes.IShifter;
 
@@ -33,9 +30,9 @@ public class CharsetPipesModCompat implements IModCompat {
 					CharsetAspects.Read.Pipe.ITEMSTACK_CONTENTS
 			));
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Sets.<IAspect>newHashSet(
-					new AspectWriteBooleanCharsetPipesShifter(),
-					new AspectWriteItemStackCharsetPipesShifter(),
-					new AspectWriteListCharsetPipesShifter()
+					CharsetAspects.Write.Pipe.SHIFTER_BOOLEAN,
+					CharsetAspects.Write.Pipe.SHIFTER_ITEMSTACK,
+					CharsetAspects.Write.Pipe.SHIFTER_LIST
 			));
 		}
 	}

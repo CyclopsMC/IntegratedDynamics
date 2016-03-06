@@ -29,6 +29,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
 
     protected final String unlocalizedTypeSuffix;
 
+    @Deprecated
     public AspectWriteBase() {
         this(null, null);
     }
@@ -80,7 +81,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
     }
 
     protected String getUnlocalizedType() {
-        return "write";
+        return "write" + unlocalizedTypeSuffix;
     }
 
     @SideOnly(Side.CLIENT)

@@ -6,7 +6,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 /**
- * A block that is build up from different parts.
+ * A block that is buildReader up from different parts.
  * This block refers to a ticking tile entity.
  * @author rubensworks
  */
