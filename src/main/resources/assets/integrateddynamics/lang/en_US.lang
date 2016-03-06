@@ -162,6 +162,9 @@ aspect.aspects.integrateddynamics.write.integer.audio.instrument.clicks.info=Out
 aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassguitar.name=Bass Guitar Note
 aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassguitar.info=Output a bass guitar note, expected range [0, 24]
 
+aspect.aspects.integrateddynamics.write.string.audio.sound.name=Sound
+aspect.aspects.integrateddynamics.write.string.audio.sound.info=Play the given sound name
+
 ## Block aspects
 aspect.aspects.integrateddynamics.read.boolean.block.block.name=Has Block
 aspect.aspects.integrateddynamics.read.boolean.block.block.info=If the target space has a block
@@ -346,6 +349,7 @@ aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
 aspect.aspecttypes.integrateddynamics.integer.listindex.name=List Element
 aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
+aspect.aspecttypes.integrateddynamics.double.frequency.name=Frequency
 
 # Operators
 operator.integrateddynamics.tooltip.operatorName=§eOperator: §r%s (%s)

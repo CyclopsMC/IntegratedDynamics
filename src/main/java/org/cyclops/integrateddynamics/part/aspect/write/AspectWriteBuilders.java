@@ -42,6 +42,8 @@ public class AspectWriteBuilders {
             BUILDER_BOOLEAN = getValue(AspectBuilder.forWriteType(ValueTypes.BOOLEAN));
     public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Triple<PartTarget, IAspectProperties, ValueTypeInteger.ValueInteger>>
             BUILDER_INTEGER = getValue(AspectBuilder.forWriteType(ValueTypes.INTEGER));
+    public static final AspectBuilder<ValueTypeString.ValueString, ValueTypeString, Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString>>
+            BUILDER_STRING = getValue(AspectBuilder.forWriteType(ValueTypes.STRING));
     public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, Triple<PartTarget, IAspectProperties, ValueTypeList.ValueList>>
             BUILDER_LIST = getValue(AspectBuilder.forWriteType(ValueTypes.LIST));
     public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>>
@@ -104,11 +106,19 @@ public class AspectWriteBuilders {
 
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_VOLUME =
                 new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.volume.name");
-        public static final IAspectProperties PROPERTIES = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+        public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_FREQUENCY =
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.frequency.name");
+        public static final IAspectProperties PROPERTIES_NOTE = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
                 PROP_VOLUME
         ));
+        public static final IAspectProperties PROPERTIES_SOUND = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+                PROP_VOLUME,
+                PROP_FREQUENCY
+        ));
         static {
-            PROPERTIES.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
+            PROPERTIES_NOTE.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
+            PROPERTIES_SOUND.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
+            PROPERTIES_SOUND.setValue(PROP_FREQUENCY, ValueTypeDouble.ValueDouble.of(1D));
         }
 
         private static final List<String> INSTRUMENTS = Lists.newArrayList(new String[]{"harp", "bd", "snare", "hat", "bassattack"});
@@ -130,7 +140,7 @@ public class AspectWriteBuilders {
                 if(eventParam >= 0 && eventParam <= 24) {
                     float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
                     float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                    IntegratedDynamics.proxy.playSoundMinecraft(
+                    IntegratedDynamics.proxy.sendSoundMinecraft(
                             (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
                             "note." + getInstrument(eventID), volume, f);
                 }
@@ -151,7 +161,9 @@ public class AspectWriteBuilders {
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Triple<PartTarget, IAspectProperties, Integer>>
                 BUILDER_INTEGER = AspectWriteBuilders.BUILDER_INTEGER.appendKind("audio").handle(PROP_GET_INTEGER);
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Triple<PartTarget, IAspectProperties, Integer>>
-                BUILDER_INTEGER_INSTRUMENT = BUILDER_INTEGER.appendKind("instrument").withProperties(PROPERTIES);
+                BUILDER_INTEGER_INSTRUMENT = BUILDER_INTEGER.appendKind("instrument").withProperties(PROPERTIES_NOTE);
+        public static final AspectBuilder<ValueTypeString.ValueString, ValueTypeString, Triple<PartTarget, IAspectProperties, String>>
+                BUILDER_STRING = AspectWriteBuilders.BUILDER_STRING.appendKind("audio").handle(PROP_GET_STRING);
 
     }
 

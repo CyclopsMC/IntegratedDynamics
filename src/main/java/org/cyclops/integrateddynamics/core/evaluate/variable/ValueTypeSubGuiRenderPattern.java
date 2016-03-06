@@ -42,7 +42,6 @@ public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C
         int searchY = getY() + 6;
         this.searchField = new GuiTextField(0, fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth, fontRenderer.FONT_HEIGHT);
         this.searchField.setMaxStringLength(64);
-        this.searchField.setMaxStringLength(15);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
         this.searchField.setTextColor(16777215);

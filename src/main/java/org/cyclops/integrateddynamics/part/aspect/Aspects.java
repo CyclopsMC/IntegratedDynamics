@@ -13,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -631,10 +632,29 @@ public class Aspects {
                     AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
                             .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockEvent.Instrument.CLICKS), "clicks")
                             .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
-            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> NOTE_INTEGER_BASSGUITAR =
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_BASSGUITAR_NOTE =
                     AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
                             .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockEvent.Instrument.BASSGUITAR), "bassguitar")
                             .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
+
+            public static final IAspectWrite<ValueTypeString.ValueString, ValueTypeString> STRING_SOUND =
+                    AspectWriteBuilders.Audio.BUILDER_STRING.withProperties(AspectWriteBuilders.Audio.PROPERTIES_SOUND)
+                            .handle(new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, String>, Void>() {
+                                @Override
+                                public Void getOutput(Triple<PartTarget, IAspectProperties, String> input) throws EvaluationException {
+                                    IAspectProperties properties = input.getMiddle();
+                                    BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
+                                    if(!StringUtils.isNullOrEmpty(input.getRight())) {
+                                        float f = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_FREQUENCY).getRawValue();
+                                        float volume = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_VOLUME).getRawValue();
+
+                                        IntegratedDynamics.proxy.sendSoundMinecraft(
+                                                (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
+                                                input.getRight(), volume, f);
+                                    }
+                                    return null;
+                                }
+                            }, "sound").buildWrite();
 
         }
 
