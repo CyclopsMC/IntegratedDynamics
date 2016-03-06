@@ -261,10 +261,12 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
 
             // Update updateable network elements
             for (INetworkElement<N> element : updateableElements) {
-                if (updateableElementsTicks.get(element) <= 0 && canUpdate(element)) {
-                    updateableElementsTicks.put(element, element.getUpdateInterval());
-                    element.update(getMaterializedThis());
-                    postUpdate(element);
+                if (canUpdate(element)) {
+                    if(updateableElementsTicks.get(element) <= 0) {
+                        updateableElementsTicks.put(element, element.getUpdateInterval());
+                        element.update(getMaterializedThis());
+                        postUpdate(element);
+                    }
                 } else {
                     onSkipUpdate(element);
                 }
