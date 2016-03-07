@@ -2,15 +2,20 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -36,6 +41,7 @@ import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Collection of available operators.
@@ -1046,6 +1052,103 @@ public final class Operators {
                         }
                     }
                     return ValueTypeString.ValueString.of(modName);
+                }
+            }).build());
+
+    /**
+     * The block the given player is currently looking at.
+     */
+    public static final IOperator OBJECT_PLAYER_TARGETBLOCK = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_BLOCK).symbolOperator("targetblock")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    IBlockState blockState = null;
+                    if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        EntityLivingBase entity = (EntityLivingBase) a.getRawValue().get();
+                        double reachDistance = 5;
+                        double eyeHeight = entity.getEyeHeight();
+                        if(entity instanceof EntityPlayerMP) {
+                            reachDistance = ((EntityPlayerMP) entity).theItemInWorldManager.getBlockReachDistance();
+                        }
+                        Vec3 lookVec = entity.getLookVec();
+                        Vec3 origin = new Vec3(entity.posX, entity.posY + eyeHeight, entity.posZ);
+                        Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
+
+                        MovingObjectPosition mop = entity.worldObj.rayTraceBlocks(origin, direction, true);
+                        if(mop != null && mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                            blockState = entity.worldObj.getBlockState(mop.getBlockPos());
+                        }
+                    }
+                    return ValueObjectTypeBlock.ValueBlock.of(blockState);
+                }
+            }).build());
+
+    /**
+     * The entity the given player is currently looking at.
+     */
+    public static final IOperator OBJECT_PLAYER_TARGETENTITY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ENTITY).symbolOperator("targetentity")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    Entity entityOut = null;
+                    if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        EntityLivingBase entity = (EntityLivingBase) a.getRawValue().get();
+                        double reachDistance = 5;
+                        double eyeHeight = entity.getEyeHeight();
+                        if(entity instanceof EntityPlayerMP) {
+                            reachDistance = ((EntityPlayerMP) entity).theItemInWorldManager.getBlockReachDistance();
+                        }
+                        Vec3 lookVec = entity.getLookVec();
+                        Vec3 origin = new Vec3(entity.posX, entity.posY + eyeHeight, entity.posZ);
+                        Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
+
+                        float size = entity.getCollisionBorderSize();
+                        List<Entity> list = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity,
+                                entity.getEntityBoundingBox().addCoord(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance)
+                                        .expand((double) size, (double) size, (double) size));
+                        for (Entity e : list) {
+                            if (e.canBeCollidedWith()) {
+                                float f10 = e.getCollisionBorderSize();
+                                AxisAlignedBB axisalignedbb = e.getEntityBoundingBox().expand((double) f10, (double) f10, (double) f10);
+                                MovingObjectPosition mop = axisalignedbb.calculateIntercept(origin, direction);
+
+                                if (axisalignedbb.isVecInside(origin)) {
+                                    entityOut = e;
+                                } else if (mop != null) {
+                                    double distance = origin.distanceTo(mop.hitVec);
+                                    if (distance < reachDistance || reachDistance == 0.0D) {
+                                        if (e == entity.ridingEntity && !entity.canRiderInteract()) {
+                                            if (reachDistance == 0.0D) {
+                                                entityOut = e;
+                                            }
+                                        } else {
+                                            entityOut = e;
+                                            reachDistance = distance;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return ValueObjectTypeEntity.ValueEntity.of(entityOut);
+                }
+            }).build());
+
+    /**
+     * The currently held item of the entity.
+     */
+    public static final IOperator OBJECT_ENTITY_HELDITEM = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("helditem")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    ItemStack itemStack = null;
+                    if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItem();
+                    }
+                    return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
                 }
             }).build());
 
