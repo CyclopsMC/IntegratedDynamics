@@ -362,6 +362,8 @@ aspect.aspects.integrateddynamics.read.boolean.redstone.low.name=Redstone Low
 aspect.aspects.integrateddynamics.read.boolean.redstone.low.info=If there is no redstone level
 aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.name=Redstone
 aspect.aspects.integrateddynamics.read.boolean.redstone.nonlow.info=If there is a redstone level
+aspect.aspects.integrateddynamics.read.boolean.redstone.clock.name=Redstone Clock
+aspect.aspects.integrateddynamics.read.boolean.redstone.clock.info=Pulses with a configurable length and interval.
 aspect.aspects.integrateddynamics.read.integer.redstone.value.name=Redstone
 aspect.aspects.integrateddynamics.read.integer.redstone.value.info=Get the exact redstone level
 aspect.aspects.integrateddynamics.read.integer.redstone.comparator.name=Comparator
@@ -420,6 +422,9 @@ aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target wo
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
 aspect.aspecttypes.integrateddynamics.integer.listindex.name=List Element
+
+aspect.aspecttypes.integrateddynamics.integer.interval.name=Pulse Interval
+aspect.aspecttypes.integrateddynamics.integer.length.name=Pulse Length
 
 aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
 aspect.aspecttypes.integrateddynamics.double.frequency.name=Frequency

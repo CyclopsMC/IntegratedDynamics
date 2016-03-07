@@ -25,6 +25,7 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
                 Aspects.Read.Redstone.BOOLEAN_LOW,
                 Aspects.Read.Redstone.BOOLEAN_NONLOW,
                 Aspects.Read.Redstone.BOOLEAN_HIGH,
+                Aspects.Read.Redstone.BOOLEAN_CLOCK,
                 Aspects.Read.Redstone.INTEGER_VALUE,
                 Aspects.Read.Redstone.INTEGER_COMPARATOR
         ));

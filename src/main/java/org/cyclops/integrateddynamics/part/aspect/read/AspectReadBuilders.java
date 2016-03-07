@@ -332,6 +332,19 @@ public class AspectReadBuilders {
 
     public static final class Redstone {
 
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_INTERVAL =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.interval.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_LENGTH =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.length.name");
+        public static final IAspectProperties PROPERTIES_CLOCK = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+                PROPERTY_INTERVAL,
+                PROPERTY_LENGTH
+        ));
+        static {
+            PROPERTIES_CLOCK.setValue(PROPERTY_INTERVAL, ValueTypeInteger.ValueInteger.of(20));
+            PROPERTIES_CLOCK.setValue(PROPERTY_LENGTH, ValueTypeInteger.ValueInteger.of(1));
+        }
+
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
             @Override
             public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
@@ -346,9 +359,24 @@ public class AspectReadBuilders {
                 return dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock().getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
             }
         };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean>() {
+            @Override
+            public Boolean getOutput(Pair<PartTarget, IAspectProperties> input) {
+                int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());
+                int length = Math.max(1, input.getRight().getValue(PROPERTY_LENGTH).getRawValue());
+                /*if(length * 2 > interval) {
+                    throw new EvaluationException(String.format("A true and false pulse of length %s do not " +
+                            "fit into an interval of %s.", length, interval));
+                }*/
+                return (input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() / length) % (interval / length) == 0;
+            }
+        };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "redstone");
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Boolean>
+                BUILDER_BOOLEAN_CLOCK = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_CLOCK, "redstone")
+                    .withProperties(PROPERTIES_CLOCK);
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "redstone");
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer>
