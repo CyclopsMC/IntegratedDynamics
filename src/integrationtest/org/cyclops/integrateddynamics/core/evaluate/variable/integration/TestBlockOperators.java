@@ -124,4 +124,44 @@ public class TestBlockOperators {
         Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- SOUNDS -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockSound() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{bCoal});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "dig.stone", "placesound(coal) = dig.stone");
+
+        IValue res2 = Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{bCoal});
+        Asserts.check(res2 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "dig.stone", "placesound(coal) = dig.stone");
+
+        IValue res3 = Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{bCoal});
+        Asserts.check(res3 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), "step.stone", "placesound(coal) = step.stone");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeSoundLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{bAir, bAir});
+        Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{bAir, bAir});
+        Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{bAir, bAir});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeSoundSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{});
+        Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{});
+        Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeSound() throws EvaluationException {
+        Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
 }

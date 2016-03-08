@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
+import com.google.common.base.Optional;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -46,6 +48,12 @@ public class OperatorBuilders {
         @Override
         public IValue getOutput(Double input) throws EvaluationException {
             return ValueTypeDouble.ValueDouble.of(input);
+        }
+    };
+    public static final IOperatorValuePropagator<String, IValue> PROPAGATOR_STRING_VALUE = new IOperatorValuePropagator<String, IValue>() {
+        @Override
+        public IValue getOutput(String input) throws EvaluationException {
+            return ValueTypeString.ValueString.of(input);
         }
     };
     public static final IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString> PROPAGATOR_RESOURCELOCATION_MODNAME = new IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString>() {
@@ -108,6 +116,16 @@ public class OperatorBuilders {
     // --------------- Block builders ---------------
     public static final OperatorBuilder BLOCK = OperatorBuilder.forType(ValueTypes.OBJECT_BLOCK).appendKind("block");
     public static final OperatorBuilder BLOCK_1_SUFFIX_LONG = BLOCK.inputTypes(1, ValueTypes.OBJECT_BLOCK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+    public static final IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Optional<Block.SoundType>> BLOCK_SOUND = new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Optional<Block.SoundType>>() {
+        @Override
+        public Optional<Block.SoundType> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+            ValueObjectTypeBlock.ValueBlock block = input.getValue(0);
+            if(block.getRawValue().isPresent()) {
+                return Optional.of(block.getRawValue().get().getBlock().stepSound);
+            }
+            return Optional.absent();
+        }
+    };
 
     // --------------- ItemStack builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK = OperatorBuilder.forType(ValueTypes.OBJECT_ITEMSTACK).appendKind("itemstack");

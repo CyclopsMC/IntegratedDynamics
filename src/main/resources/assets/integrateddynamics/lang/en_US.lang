@@ -543,6 +543,12 @@ operator.operators.integrateddynamics.block.itemstack.name=Item
 operator.operators.integrateddynamics.block.itemstack.info=The item representation of the given block
 operator.operators.integrateddynamics.block.mod.name=Mod
 operator.operators.integrateddynamics.block.mod.info=The name of the mod owning the given block
+operator.operators.integrateddynamics.block.breaksound.name=Block Break Sound
+operator.operators.integrateddynamics.block.breaksound.info=The break sound of the given block
+operator.operators.integrateddynamics.block.placesound.name=Block Place Sound
+operator.operators.integrateddynamics.block.placesound.info=The place sound of the given block
+operator.operators.integrateddynamics.block.stepsound.name=Block Step Sound
+operator.operators.integrateddynamics.block.stepsound.info=The step sound of the given block
 
 operator.operators.integrateddynamics.itemstack.name=Item
 operator.operators.integrateddynamics.itemstack.basename=Item %s

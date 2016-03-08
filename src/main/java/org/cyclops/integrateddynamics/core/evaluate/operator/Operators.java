@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -587,6 +588,58 @@ public final class Operators {
                         }
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
+            ))).build());
+
+    /**
+     * The breaksound of the block
+     */
+    public static final IOperator OBJECT_BLOCK_BREAKSOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("breaksound")
+            .function(new IterativeFunction(Lists.newArrayList(
+                    OperatorBuilders.BLOCK_SOUND,
+                    new IOperatorValuePropagator<Optional<Block.SoundType>, String>() {
+                        @Override
+                        public String getOutput(Optional<Block.SoundType> sound) throws EvaluationException {
+                            if (sound.isPresent()) {
+                                return sound.get().getBreakSound();
+                            }
+                            return "";
+                        }
+                    },
+                    OperatorBuilders.PROPAGATOR_STRING_VALUE
+            ))).build());
+    /**
+     * The placesound of the block
+     */
+    public static final IOperator OBJECT_BLOCK_PLACESOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("placesound")
+            .function(new IterativeFunction(Lists.newArrayList(
+                    OperatorBuilders.BLOCK_SOUND,
+                    new IOperatorValuePropagator<Optional<Block.SoundType>, String>() {
+                        @Override
+                        public String getOutput(Optional<Block.SoundType> sound) throws EvaluationException {
+                            if (sound.isPresent()) {
+                                return sound.get().getPlaceSound();
+                            }
+                            return "";
+                        }
+                    },
+                    OperatorBuilders.PROPAGATOR_STRING_VALUE
+            ))).build());
+    /**
+     * The stepsound of the block
+     */
+    public static final IOperator OBJECT_BLOCK_STEPSOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("stepsound")
+            .function(new IterativeFunction(Lists.newArrayList(
+                    OperatorBuilders.BLOCK_SOUND,
+                    new IOperatorValuePropagator<Optional<Block.SoundType>, String>() {
+                        @Override
+                        public String getOutput(Optional<Block.SoundType> sound) throws EvaluationException {
+                            if (sound.isPresent()) {
+                                return sound.get().getStepSound();
+                            }
+                            return "";
+                        }
+                    },
+                    OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
 
     /**
