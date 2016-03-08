@@ -437,6 +437,32 @@
 		<input>
 			<grid>
 				<gridrow>
+					<item />
+					<item>minecraft:noteblock</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:noteblock</item>
+					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item>minecraft:noteblock</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:noteblock</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_audioReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
 					<item>minecraft:cobblestone</item>
 					<item>minecraft:dirt</item>
 					<item>minecraft:cobblestone</item>
@@ -654,6 +680,79 @@
 		</input>
 		<output>
 			<item>integrateddynamics:part_worldReaderItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:noteblock</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:noteblock</item>
+					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item>minecraft:noteblock</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:noteblock</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_audioWriterItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:firework_charge</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:firework_charge</item>
+					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item>minecraft:firework_charge</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:firework_charge</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_effectWriterItem</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variableTransformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:chest</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:chest</item>
+					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item>minecraft:chest</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_inventoryWriterItem</item>
 		</output>
 	</recipe>
 
