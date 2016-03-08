@@ -99,6 +99,9 @@ parttype.parttypes.integrateddynamics.tooltip.inactive=Inactive
 parttype.parttypes.integrateddynamics.tooltip.errors=Errors:
 parttype.parttypes.integrateddynamics.tooltip.writer.activeAspect=Aspect: %s (%s)
 parttype.parttypes.integrateddynamics.tooltip.display.activeValue=Value: %s (%s)
+
+parttype.parttypes.integrateddynamics.audioReader.name=Audio Reader
+parttype.parttypes.integrateddynamics.audioReader.info=Reads audio information
 parttype.parttypes.integrateddynamics.blockReader.name=Block Reader
 parttype.parttypes.integrateddynamics.blockReader.info=Reads block information
 parttype.parttypes.integrateddynamics.entityReader.name=Entity Reader
@@ -153,6 +156,17 @@ aspect.integrateddynamics.tooltip.partId=§e§oPart ID: §r§o%s
 aspect.integrateddynamics.error.invalidType=This aspect expects %s, but %s was given.
 
 ## Audio aspects
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.piano.name=Piano Note
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.piano.info=Reads a piano note, expected range [0, 24]
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.bassdrum.name=Bass Drum Note
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.bassdrum.info=Reads a bass drum note, expected range [0, 24]
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.snare.name=Snare Note
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.snare.info=Reads a snare note, expected range [0, 24]
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.clicks.name=Clicks Note
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.clicks.info=Reads a clicks note, expected range [0, 24]
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.bassguitar.name=Bass Guitar Note
+aspect.aspects.integrateddynamics.read.integer.audio.instrument.bassguitar.info=Reads a bass guitar note, expected range [0, 24]
+
 aspect.aspects.integrateddynamics.write.integer.audio.instrument.piano.name=Piano Note
 aspect.aspects.integrateddynamics.write.integer.audio.instrument.piano.info=Output a piano note, expected range [0, 24]
 aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassdrum.name=Bass Drum Note
@@ -422,6 +436,7 @@ aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target wo
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
 aspect.aspecttypes.integrateddynamics.integer.listindex.name=List Element
+aspect.aspecttypes.integrateddynamics.integer.range.name=Range
 
 aspect.aspecttypes.integrateddynamics.integer.interval.name=Pulse Interval
 aspect.aspecttypes.integrateddynamics.integer.length.name=Pulse Length

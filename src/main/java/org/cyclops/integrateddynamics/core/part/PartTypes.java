@@ -15,6 +15,7 @@ public final class PartTypes {
     public static void load() {}
 
     // Readers
+    public static final PartTypeAudioReader AUDIO_READER = REGISTRY.register(new PartTypeAudioReader("audioReader"));
     public static final PartTypeBlockReader BLOCK_READER = REGISTRY.register(new PartTypeBlockReader("blockReader"));
     public static final PartTypeEntityReader ENTITY_READER = REGISTRY.register(new PartTypeEntityReader("entityReader"));
     public static final PartTypeExtraDimensionalReader EXTRADIMENSIONAL_READER = REGISTRY.register(new PartTypeExtraDimensionalReader("extradimensionalReader"));

@@ -52,6 +52,26 @@ public class Aspects {
 
     public static final class Read {
 
+        public static final class Audio {
+
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PIANO_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockEvent.Instrument.PIANO)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_BASSDRUM_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockEvent.Instrument.BASSDRUM)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_SNARE_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockEvent.Instrument.SNARE)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CLICKS_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockEvent.Instrument.CLICKS)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_BASSGUITAR_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockEvent.Instrument.BASSGUITAR)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+
+        }
+
         public static final class Block {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_BLOCK =
                     AspectReadBuilders.Block.BUILDER_BOOLEAN.handle(new IAspectValuePropagator<DimPos, Boolean>() {

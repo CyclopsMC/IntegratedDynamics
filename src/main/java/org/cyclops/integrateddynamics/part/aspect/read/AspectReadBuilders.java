@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -19,12 +20,14 @@ import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
+import org.cyclops.integrateddynamics.core.NoteBlockEventReceiver;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
@@ -33,6 +36,7 @@ import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTy
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Collection of aspect read builders and value propagators.
@@ -121,6 +125,40 @@ public class AspectReadBuilders {
     ));
     static {
         LIST_PROPERTIES.setValue(PROPERTY_LISTINDEX, ValueTypeInteger.ValueInteger.of(0));
+    }
+
+    public static final class Audio {
+
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_RANGE =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.range.name");
+        public static final IAspectProperties NOTE_PROPERTIES = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+                PROPERTY_RANGE
+        ));
+        static {
+            NOTE_PROPERTIES.setValue(PROPERTY_RANGE, ValueTypeInteger.ValueInteger.of(64));
+        }
+
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
+                BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.appendKind("audio");
+
+        public static AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer> forInstrument(final NoteBlockEvent.Instrument instrument) {
+            return BUILDER_INTEGER.appendKind("instrument").handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
+                @Override
+                public Integer getOutput(Pair<PartTarget, IAspectProperties> input) throws EvaluationException {
+                    for (NoteBlockEvent.Play event : NoteBlockEventReceiver.getInstance().getEvents().get(instrument)) {
+                        net.minecraft.world.World world = input.getLeft().getTarget().getPos().getWorld();
+                        BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
+                        int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
+                        if (world.provider.getDimensionId() == event.world.provider.getDimensionId()
+                                && pos.distanceSq(event.pos) <= range * range) {
+                            return event.getVanillaNoteId();
+                        }
+                    }
+                    return -1;
+                }
+            }, instrument.name().toLowerCase(Locale.ENGLISH)).withProperties(NOTE_PROPERTIES);
+        }
+
     }
 
     public static final class Block {

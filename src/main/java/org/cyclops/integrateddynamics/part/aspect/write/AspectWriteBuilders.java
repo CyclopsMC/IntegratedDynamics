@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -140,11 +141,15 @@ public class AspectWriteBuilders {
                 int eventID = input.getRight().getLeft().ordinal();
                 int eventParam = input.getRight().getRight();
                 if(eventParam >= 0 && eventParam <= 24) {
-                    float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
-                    float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                    IntegratedDynamics.proxy.sendSoundMinecraft(
-                            (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                            "note." + getInstrument(eventID), volume, f);
+                    World world = input.getLeft().getTarget().getPos().getWorld();
+                    NoteBlockEvent.Play e = new NoteBlockEvent.Play(world, pos, world.getBlockState(pos), eventParam, eventID);
+                    if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
+                        float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
+                        float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
+                        IntegratedDynamics.proxy.sendSoundMinecraft(
+                                (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
+                                "note." + getInstrument(eventID), volume, f);
+                    }
                 }
                 return null;
             }

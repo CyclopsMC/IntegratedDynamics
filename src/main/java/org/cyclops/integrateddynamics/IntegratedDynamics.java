@@ -3,8 +3,8 @@ package org.cyclops.integrateddynamics;
 import com.google.common.collect.Maps;
 import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
@@ -46,6 +46,7 @@ import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRendererRegistry;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
 import org.cyclops.integrateddynamics.command.CommandTest;
+import org.cyclops.integrateddynamics.core.NoteBlockEventReceiver;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviderRegistry;
@@ -65,10 +66,10 @@ import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
-import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGeneratorTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
+import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.thaumcraft.ThaumcraftModCompat;
@@ -214,7 +215,8 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
         super.preInit(event);
 
-        FMLCommonHandler.instance().bus().register(TickHandler.getInstance());
+        MinecraftForge.EVENT_BUS.register(TickHandler.getInstance());
+        MinecraftForge.EVENT_BUS.register(NoteBlockEventReceiver.getInstance());
     }
 
     @Mod.EventHandler
