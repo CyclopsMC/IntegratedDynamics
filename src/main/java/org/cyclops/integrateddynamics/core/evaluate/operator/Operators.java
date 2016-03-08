@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1149,6 +1150,54 @@ public final class Operators {
                         itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItem();
                     }
                     return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
+                }
+            }).build());
+
+    /**
+     * The entity's mounted entity
+     */
+    public static final IOperator OBJECT_ENTITY_MOUNTED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ENTITY).symbolOperator("mounted")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    Entity entityOut = null;
+                    if(a.getRawValue().isPresent()) {
+                        entityOut = a.getRawValue().get().riddenByEntity;
+                    }
+                    return ValueObjectTypeEntity.ValueEntity.of(entityOut);
+                }
+            }).build());
+
+    /**
+     * The item frame's contents
+     */
+    public static final IOperator OBJECT_ITEMFRAME_CONTENTS = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("itemframecontents")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    ItemStack itemStack = null;
+                    if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityItemFrame) {
+                        itemStack = ((EntityItemFrame) a.getRawValue().get()).getDisplayedItem();
+                    }
+                    return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
+                }
+            }).build());
+
+    /**
+     * The item frame's rotation
+     */
+    public static final IOperator OBJECT_ITEMFRAME_ROTATION = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.INTEGER).symbolOperator("itemframerotation")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    Integer rotation = 0;
+                    if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityItemFrame) {
+                        rotation = ((EntityItemFrame) a.getRawValue().get()).getRotation();
+                    }
+                    return ValueTypeInteger.ValueInteger.of(rotation);
                 }
             }).build());
 
