@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.http.util.Asserts;
 import org.cyclops.cyclopscore.helper.EnchantmentHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -45,6 +46,9 @@ public class TestItemStackOperators {
     private DummyVariableBlock bStone;
     private DummyVariableBlock bObsidian;
 
+    private DummyVariable<ValueTypeString.ValueString> sStickWood;
+    private DummyVariable<ValueTypeString.ValueString> sPlankWood;
+
     @IntegrationBefore
     public void before() {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.apple)));
@@ -64,6 +68,9 @@ public class TestItemStackOperators {
 
         bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.stone.getDefaultState()));
         bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.obsidian.getDefaultState()));
+
+        sStickWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("stickWood"));
+        sPlankWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("plankWood"));
     }
 
     /**
@@ -682,6 +689,35 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeOreDict() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- OREDICT_STACKS -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackOreDictStacks() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sStickWood});
+        Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), OreDictionary.getOres("stickWood").size(), "size(oredict_stacks(stickWood))");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sPlankWood});
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), OreDictionary.getOres("plankWood").size(), "size(oredict_stacks(plankWood))");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeOreDictStacksLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sStickWood, sStickWood});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeOreDictStacksSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeOreDictStacks() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

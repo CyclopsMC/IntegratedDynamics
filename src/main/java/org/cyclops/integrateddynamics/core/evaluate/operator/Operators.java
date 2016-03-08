@@ -15,10 +15,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -932,6 +929,25 @@ public final class Operators {
                         }
                     }
                     return ValueTypeList.ValueList.ofList(ValueTypes.STRING, names);
+                }
+            }).build());
+
+    /**
+     * Get a list of items that correspond to the given oredict key.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_OREDICT_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX.symbolOperator("oredict")
+            .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString a = variables.getValue(0);
+                    List<ValueObjectTypeItemStack.ValueItemStack> stacks = Lists.newArrayList();
+                    if (!StringUtils.isNullOrEmpty(a.getRawValue())) {
+                        for (ItemStack itemStack : OreDictionary.getOres(a.getRawValue())) {
+                            stacks.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                        }
+                    }
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, stacks);
                 }
             }).build());
 
