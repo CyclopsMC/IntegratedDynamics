@@ -626,4 +626,62 @@ public class TestItemStackOperators {
         Operators.OBJECT_ITEMSTACK_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- FUELBURNTIME -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackFuelBurnTime() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_FUELBURNTIME.evaluate(new IVariable[]{iBucketLava});
+        Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 20000, "fuelburntime(bucketlava) = 20000");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_FUELBURNTIME.evaluate(new IVariable[]{iApple});
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), 0, "fuelburntime(apple) = 0");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputFuelBurnTimeFuelBurnTimeLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_FUELBURNTIME.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputFuelBurnTimeFuelBurnTimeSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_FUELBURNTIME.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeFuelBurnTime() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_FUELBURNTIME.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- OREDICT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackOreDict() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{iStone});
+        Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 1, "size(oredict(stone)) = 1");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{iWrench});
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 0, "size(oredict(wrench)) = 0");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeOreDictLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{iHoe, iHoe});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeOreDictSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeOreDict() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
 }

@@ -590,6 +590,10 @@ operator.operators.integrateddynamics.itemstack.israwitemequal.name=Raw item equ
 operator.operators.integrateddynamics.itemstack.israwitemequal.info=If the raw item of the items are equal
 operator.operators.integrateddynamics.itemstack.mod.name=Mod
 operator.operators.integrateddynamics.itemstack.mod.info=The name of the mod owning the given item
+operator.operators.integrateddynamics.itemstack.burntime.name=Fuel Burn Time
+operator.operators.integrateddynamics.itemstack.burntime.info=The fuel burn time in ticks of the given item
+operator.operators.integrateddynamics.itemstack.oredict.name=Oredictionary Names
+operator.operators.integrateddynamics.itemstack.oredict.info=The oredictionary names of the given item
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s

@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
@@ -23,6 +24,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.oredict.OreDictionary;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -901,6 +903,37 @@ public final class Operators {
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
+
+    /**
+     * The fuel burn time of the given item
+     */
+    public static final IOperator OBJECT_ITEMSTACK_FUELBURNTIME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("burntime")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
+                @Override
+                public Integer getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null ? TileEntityFurnace.getItemBurnTime(itemStack) : 0;
+                }
+            })).build());
+
+    /**
+     * The oredict entries of the given item
+     */
+    public static final IOperator OBJECT_ITEMSTACK_OREDICT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("oredict")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    List<ValueTypeString.ValueString> names = Lists.newArrayList();
+                    if(a.getRawValue().isPresent()) {
+                        for (int i : OreDictionary.getOreIDs(a.getRawValue().get())) {
+                            names.add(ValueTypeString.ValueString.of(OreDictionary.getOreName(i)));
+                        }
+                    }
+                    return ValueTypeList.ValueList.ofList(ValueTypes.STRING, names);
+                }
+            }).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
