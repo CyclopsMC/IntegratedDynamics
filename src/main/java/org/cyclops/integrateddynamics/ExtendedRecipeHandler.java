@@ -6,7 +6,10 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.integrateddynamics.item.ItemFacadeConfig;
+import org.cyclops.integrateddynamics.item.ItemVariableConfig;
 import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipe;
+import org.cyclops.integrateddynamics.recipe.ItemVariableClearRecipe;
+import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipe;
 
 /**
  * An extended recipe handler.
@@ -23,15 +26,25 @@ public class ExtendedRecipeHandler extends RecipeHandler {
         super.registerRecipeSorters();
         RecipeSorter.register(Reference.MOD_ID + "facadecombination", ItemFacadeRecipe.class,
                 RecipeSorter.Category.SHAPELESS, "after:forge:shapedore");
+        RecipeSorter.register(Reference.MOD_ID + "variablecopy", ItemVariableCopyRecipe.class,
+                RecipeSorter.Category.SHAPELESS, "after:forge:shapedore");
+        RecipeSorter.register(Reference.MOD_ID + "variableclear", ItemVariableClearRecipe.class,
+                RecipeSorter.Category.SHAPELESS, "after:forge:shapedore");
     }
 
     @Override
     protected void registerCustomRecipes() {
         super.registerCustomRecipes();
 
-        // Dark tank upgrades
+        // Facade recipes
         if(ConfigHandler.isEnabled(ItemFacadeConfig.class)) {
             GameRegistry.addRecipe(new ItemFacadeRecipe());
+        }
+
+        // Variable copy and clear recipes
+        if(ConfigHandler.isEnabled(ItemVariableConfig.class)) {
+            GameRegistry.addRecipe(new ItemVariableCopyRecipe());
+            GameRegistry.addRecipe(new ItemVariableClearRecipe());
         }
     }
 
