@@ -40,6 +40,7 @@ import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
 
 import java.util.Collections;
 import java.util.List;
@@ -1300,6 +1301,44 @@ public final class Operators {
                         rotation = ((EntityItemFrame) a.getRawValue().get()).getRotation();
                     }
                     return ValueTypeInteger.ValueInteger.of(rotation);
+                }
+            }).build());
+
+    /**
+     * The hurtsound of this entity.
+     */
+    public static final IOperator OBJECT_ENTITY_HURTSOUND = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("hurtsound")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    String hurtSound = "";
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        String sound = ObfuscationHelpers.getEntityLivingBaseHurtSound((EntityLivingBase) a.getRawValue().get());
+                        if (sound != null) {
+                            hurtSound = sound;
+                        }
+                    }
+                    return ValueTypeString.ValueString.of(hurtSound);
+                }
+            }).build());
+
+    /**
+     * The deathsound of this entity.
+     */
+    public static final IOperator OBJECT_ENTITY_DEATHSOUND = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("deathsound")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    String hurtSound = "";
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        String sound = ObfuscationHelpers.getEntityLivingBaseDeathSound((EntityLivingBase) a.getRawValue().get());
+                        if (sound != null) {
+                            hurtSound = sound;
+                        }
+                    }
+                    return ValueTypeString.ValueString.of(hurtSound);
                 }
             }).build());
 

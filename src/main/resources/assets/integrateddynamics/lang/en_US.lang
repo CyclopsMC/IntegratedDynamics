@@ -638,9 +638,13 @@ operator.operators.integrateddynamics.entity.helditem.info=The item the given en
 operator.operators.integrateddynamics.entity.mounted.name=Mounted Entity
 operator.operators.integrateddynamics.entity.mounted.info=The entity that is currently mounted on the given entity.
 operator.operators.integrateddynamics.entity.itemframecontents.name=Item Frame Contents
-operator.operators.integrateddynamics.entity.itemframecontents.info=The contents from the given Item Frame
+operator.operators.integrateddynamics.entity.itemframecontents.info=The contents from the given Item Frame.
 operator.operators.integrateddynamics.entity.itemframerotation.name=Item Frame Rotation
-operator.operators.integrateddynamics.entity.itemframerotation.info=The rotation from the given Item Frame
+operator.operators.integrateddynamics.entity.itemframerotation.info=The rotation from the given Item Frame.
+operator.operators.integrateddynamics.entity.hurtsound.name=Entity Hurt Sound
+operator.operators.integrateddynamics.entity.hurtsound.info=The hurt sound of the given entity.
+operator.operators.integrateddynamics.entity.deathsound.name=Entity Death Sound
+operator.operators.integrateddynamics.entity.deathsound.info=The death sound of the given entity.
 
 operator.operators.integrateddynamics.fluidstack.name=Fluid
 operator.operators.integrateddynamics.fluidstack.basename=Fluid %s
