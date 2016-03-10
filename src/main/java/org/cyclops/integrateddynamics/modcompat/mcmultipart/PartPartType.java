@@ -16,6 +16,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -244,4 +245,21 @@ public class PartPartType extends MultipartBase {
         return null;
     }
 
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        IPartState partState = getDelegatedPartState();
+        if (partState != null && getFacing() == facing && partState.hasCapability(capability)) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        IPartState partState = getDelegatedPartState();
+        if (partState != null && getFacing() == facing && partState.hasCapability(capability)) {
+            return (T) partState.getCapability(capability);
+        }
+        return super.getCapability(capability, facing);
+    }
 }
