@@ -62,6 +62,15 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
     public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory);
 
     /**
+     * Copy the given itemstack and (possibly) assign a new id.
+     * @param generateId If a new id should be generated. Otherwise -1 will be used.
+     * @param itemStack The itemstack to copy, it is assumed to refer to a valid variable facade.
+     * @return A copy of the given itemstack with the written variable facade.
+     * @param <F> The variable facade type.
+     */
+    public <F extends IVariableFacade> ItemStack copy(boolean generateId, ItemStack itemStack);
+
+    /**
      * Factory for creating variable facades.
      * @param <F> The variable facade type.
      */

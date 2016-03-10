@@ -110,6 +110,14 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         return variableFacade;
     }
 
+    @Override
+    public <F extends IVariableFacade> ItemStack copy(boolean generateId, ItemStack itemStack) {
+        ItemStack copy = itemStack.copy();
+        int newId = generateId ? VariableFacadeBase.generateId() : -1;
+        copy.getTagCompound().setInteger("_id", newId);
+        return copy;
+    }
+
     /**
      * Variable facade used for items that have no (valid) information on them.
      */

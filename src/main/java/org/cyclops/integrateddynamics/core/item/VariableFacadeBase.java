@@ -19,11 +19,18 @@ public abstract class VariableFacadeBase implements IVariableFacade {
     private final int id;
 
     public VariableFacadeBase(boolean generateId) {
-        this.id = generateId ? IntegratedDynamics.globalCounters.getNext("variable") : -1;
+        this.id = generateId ? generateId() : -1;
     }
 
     public VariableFacadeBase(int id) {
         this.id = id;
+    }
+
+    /**
+     * @return A unique new variable id.
+     */
+    public static int generateId() {
+        return IntegratedDynamics.globalCounters.getNext("variable");
     }
 
     @Override
