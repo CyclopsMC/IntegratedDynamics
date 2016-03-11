@@ -343,8 +343,8 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
         int toAdd = energy;
         for(IEnergyBattery energyBattery : getMaterializedEnergyBatteries()) {
             int maxAdd = Math.min(energyBattery.getMaxStoredEnergy() - energyBattery.getStoredEnergy(), toAdd);
-            if(maxAdd > 0 && !simulate) {
-                energyBattery.addEnergy(maxAdd);
+            if(maxAdd > 0) {
+                energyBattery.addEnergy(maxAdd, simulate);
             }
             toAdd -= maxAdd;
         }

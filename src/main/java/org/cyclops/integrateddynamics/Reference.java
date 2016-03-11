@@ -37,6 +37,7 @@ public final class Reference {
     public static final String MOD_WAILA = "Waila";
     public static final String MOD_THAUMCRAFT = "Thaumcraft";
     public static final String MOD_JEI = "JEI";
+    public static final String MOD_RF_API = "CoFHAPI";
 
     public static final String MOD_DEPENDENCIES =
             "required-after:" + MOD_FORGE       + "@[" + MOD_FORGE_VERSION_MIN       + ",);" +

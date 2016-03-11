@@ -1,17 +1,23 @@
 package org.cyclops.integrateddynamics.tileentity;
 
+import cofh.api.energy.IEnergyConnection;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.Optional;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
+import org.cyclops.integrateddynamics.modcompat.rf.RfHelpers;
 
 /**
  * A tile entity for the coal energy generator.
  * @author rubensworks
  */
-public class TileCoalGenerator extends TileCableConnectableInventory {
+@Optional.Interface(iface = "cofh.api.energy.IEnergyConnection", modid = Reference.MOD_RF_API, striprefs = true)
+public class TileCoalGenerator extends TileCableConnectableInventory implements IEnergyConnection {
 
     public static final int MAX_PROGRESS = 13;
     public static final int ENERGY_PER_TICK = 20;
@@ -45,13 +51,28 @@ public class TileCoalGenerator extends TileCableConnectableInventory {
         return currentlyBurning < currentlyBurningMax;
     }
 
-    public boolean canAddEnergy(int energy) {
-        IEnergyNetwork network = getNetwork();
-        return network != null && network.addEnergy(energy, true) == energy;
+    protected boolean isRf() {
+        return RfHelpers.isRf();
     }
 
-    protected void addEnergy(int energy) {
-        getNetwork().addEnergy(energy, false);
+    public boolean canAddEnergy(int energy) {
+        IEnergyNetwork network = getNetwork();
+        if(network != null && network.addEnergy(energy, true) == energy) {
+            return true;
+        }
+        return isRf() && addEnergyRf(energy, true) == energy;
+    }
+
+    protected int addEnergy(int energy) {
+        IEnergyNetwork network = getNetwork();
+        int toFill = energy;
+        if(network != null) {
+            toFill -= network.addEnergy(toFill, false);
+        }
+        if(toFill > 0 && isRf()) {
+            toFill -= addEnergyRf(toFill, false);
+        }
+        return energy - toFill;
     }
 
     @Override
@@ -64,7 +85,8 @@ public class TileCoalGenerator extends TileCableConnectableInventory {
                     currentlyBurningMax = 0;
                     sendUpdate();
                 }
-                addEnergy(ENERGY_PER_TICK);
+                int toFill = ENERGY_PER_TICK;
+                addEnergy(toFill);
                 markDirty();
             }
             if (!isBurning()) {
@@ -81,4 +103,19 @@ public class TileCoalGenerator extends TileCableConnectableInventory {
             }
         }
     }
+
+    protected int addEnergyRf(int energy, boolean simulate) {
+        return RfHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+    }
+
+    /*
+     * ------------------ RF API ------------------
+     */
+
+    @Optional.Method(modid = Reference.MOD_RF_API)
+    @Override
+    public boolean canConnectEnergy(EnumFacing from) {
+        return true;
+    }
+
 }

@@ -1,16 +1,19 @@
 package org.cyclops.integrateddynamics.core.item;
 
+import cofh.api.energy.IEnergyContainerItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.block.IEnergyContainer;
 import org.cyclops.integrateddynamics.api.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
@@ -24,7 +27,8 @@ import java.util.List;
  * @author rubensworks
  *
  */
-public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyContainer {
+@Optional.Interface(iface = "cofh.api.energy.IEnergyContainerItem", modid = Reference.MOD_RF_API, striprefs = true)
+public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyContainer, IEnergyContainerItem {
 
 	private IEnergyContainerBlock block;
 
@@ -74,9 +78,13 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
     }
 
     @Override
-    public void addEnergy(ItemStack itemStack, int energy) {
-        int newEnergy = getStoredEnergy(itemStack) + energy;
-        setEnergy(itemStack, Math.min(newEnergy, getMaxStoredEnergy(itemStack)));
+    public int addEnergy(ItemStack itemStack, int energy, boolean simulate) {
+        int stored = getStoredEnergy(itemStack);
+        int newEnergy = Math.min(stored + energy, getMaxStoredEnergy(itemStack));
+        if(!simulate) {
+            setEnergy(itemStack, newEnergy);
+        }
+        return newEnergy - stored;
     }
 
     @Override
@@ -99,5 +107,33 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
         double amount = getStoredEnergy(itemStack);
         double capacity = getMaxStoredEnergy(itemStack);
         return (capacity - amount) / capacity;
+    }
+
+    /*
+     * ------------------ RF API ------------------
+     */
+
+    @Optional.Method(modid = Reference.MOD_RF_API)
+    @Override
+    public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
+        return addEnergy(container, maxReceive, simulate);
+    }
+
+    @Optional.Method(modid = Reference.MOD_RF_API)
+    @Override
+    public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
+        return consume(container, maxExtract, simulate);
+    }
+
+    @Optional.Method(modid = Reference.MOD_RF_API)
+    @Override
+    public int getEnergyStored(ItemStack container) {
+        return getStoredEnergy(container);
+    }
+
+    @Optional.Method(modid = Reference.MOD_RF_API)
+    @Override
+    public int getMaxEnergyStored(ItemStack container) {
+        return getMaxStoredEnergy(container);
     }
 }

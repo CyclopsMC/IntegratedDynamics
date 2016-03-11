@@ -24,8 +24,10 @@ public interface IEnergyContainer {
      * Add the given energy amount to the item.
      * @param itemStack The item stack carrying the energy.
      * @param energy The energy amount to add.
+     * @param simulate If the addition should be stimulated.
+     * @return The amount of energy that was added.
      */
-    public void addEnergy(ItemStack itemStack, int energy);
+    public int addEnergy(ItemStack itemStack, int energy, boolean simulate);
 
     /**
      * Remove the given energy amount from the item.
