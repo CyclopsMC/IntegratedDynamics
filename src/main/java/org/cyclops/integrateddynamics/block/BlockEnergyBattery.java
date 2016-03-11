@@ -48,7 +48,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
         ItemStack empty = new ItemStack(this);
         ItemStack full = new ItemStack(this);
         ItemBlockEnergyContainer container = ((ItemBlockEnergyContainer) full.getItem());
-        container.addEnergy(full, container.getMaxStoredEnergy(full));
+        container.addEnergy(full, container.getMaxStoredEnergy(full), false);
         list.add(empty);
         list.add(full);
     }

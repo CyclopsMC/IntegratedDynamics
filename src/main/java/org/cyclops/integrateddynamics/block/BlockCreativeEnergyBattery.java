@@ -42,7 +42,7 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
     public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         ItemStack full = new ItemStack(this);
         ItemBlockEnergyContainer container = ((ItemBlockEnergyContainer) full.getItem());
-        container.addEnergy(full, container.getMaxStoredEnergy(full));
+        container.addEnergy(full, container.getMaxStoredEnergy(full), false);
         list.add(full);
     }
 

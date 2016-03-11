@@ -700,10 +700,6 @@ aspect.aspects.integrateddynamics.write.list.charsetpipe.shifter.info=Enable pip
 
 ## ----- Thaumcraft ----- ##
 
-## Part types
-parttype.parttypes.integrateddynamics.thaumcraftReader.name=Thaumcraft Reader
-parttype.parttypes.integrateddynamics.thaumcraftReader.info=Read from Thaumcraft blocks
-
 ## Value Types
 valuetype.valuetypes.integrateddynamics.thaumcraftaspect.name=Thaumcraft Aspect
 valuetype.integrateddynamics.error.thaumcraftaspect.noAspect=The inserted item contains no aspects.
@@ -730,3 +726,29 @@ operator.operators.integrateddynamics.thaumcraft.aspect.getcompoundaspects.name=
 operator.operators.integrateddynamics.thaumcraft.aspect.getcompoundaspects.info=The list of aspects this aspect is made up of
 operator.operators.integrateddynamics.thaumcraft.aspect.isprimal.name=Is Aspect Primal
 operator.operators.integrateddynamics.thaumcraft.aspect.isprimal.info=If the given aspect is a primal aspect
+
+## ----- RF ----- ##
+
+## Aspects
+aspect.aspects.integrateddynamics.read.boolean.rf.applicable.name=Is RF Handler
+aspect.aspects.integrateddynamics.read.boolean.rf.applicable.info=If the target in some way handles RF
+aspect.aspects.integrateddynamics.read.boolean.rf.isreceiver.name=Is RF Receiver
+aspect.aspects.integrateddynamics.read.boolean.rf.isreceiver.info=If the target can receive RF
+aspect.aspects.integrateddynamics.read.boolean.rf.isprovider.name=Is RF Provider
+aspect.aspects.integrateddynamics.read.boolean.rf.isprovider.info=If the target can provide RF
+aspect.aspects.integrateddynamics.read.boolean.rf.canextract.name=Can Extract RF
+aspect.aspects.integrateddynamics.read.boolean.rf.canextract.info=If RF can really be extracted from the target, takes into account storage
+aspect.aspects.integrateddynamics.read.boolean.rf.caninsert.name=Can Insert RF
+aspect.aspects.integrateddynamics.read.boolean.rf.caninsert.info=If RF can really be inserted into the target, takes into account storage and capacity
+aspect.aspects.integrateddynamics.read.boolean.rf.isfull.name=Is RF Buffer Full
+aspect.aspects.integrateddynamics.read.boolean.rf.isfull.info=If the target's RF buffer is completely full
+aspect.aspects.integrateddynamics.read.boolean.rf.isempty.name=Is RF Buffer Empty
+aspect.aspects.integrateddynamics.read.boolean.rf.isempty.info=If the target's RF buffer is completely empty
+aspect.aspects.integrateddynamics.read.boolean.rf.isnonempty.name=Is RF Buffer Not Empty
+aspect.aspects.integrateddynamics.read.boolean.rf.isnonempty.info=If the target's RF buffer is not empty
+aspect.aspects.integrateddynamics.read.integer.rf.amount.name=Stored RF
+aspect.aspects.integrateddynamics.read.integer.rf.amount.info=The amount of RF stored in the target
+aspect.aspects.integrateddynamics.read.integer.rf.capacity.name=RF Capacity
+aspect.aspects.integrateddynamics.read.integer.rf.capacity.info=The RF capacity of the target
+aspect.aspects.integrateddynamics.read.double.rf.fillratio.name=RF Fill Ratio
+aspect.aspects.integrateddynamics.read.double.rf.fillratio.info=The amount of RF in the target divided by its capacity
