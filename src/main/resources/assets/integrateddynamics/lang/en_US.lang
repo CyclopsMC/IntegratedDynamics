@@ -752,3 +752,11 @@ aspect.aspects.integrateddynamics.read.integer.rf.capacity.name=RF Capacity
 aspect.aspects.integrateddynamics.read.integer.rf.capacity.info=The RF capacity of the target
 aspect.aspects.integrateddynamics.read.double.rf.fillratio.name=RF Fill Ratio
 aspect.aspects.integrateddynamics.read.double.rf.fillratio.info=The amount of RF in the target divided by its capacity
+
+## Operators
+operator.operators.integrateddynamics.itemstack.isrfcontainer.name=Is RF Container
+operator.operators.integrateddynamics.itemstack.isrfcontainer.info=If the given item can hold RF
+operator.operators.integrateddynamics.itemstack.storedrf.name=RF Stored
+operator.operators.integrateddynamics.itemstack.storedrf.info=The amount of RF stored in this item
+operator.operators.integrateddynamics.itemstack.rfcapacity.name=RF Capacity
+operator.operators.integrateddynamics.itemstack.rfcapacity.info=The maximum amount of RF that can be stored in this item

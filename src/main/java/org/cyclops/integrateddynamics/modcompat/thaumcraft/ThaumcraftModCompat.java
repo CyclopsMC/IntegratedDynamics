@@ -56,7 +56,7 @@ public class ThaumcraftModCompat implements IModCompat {
 			// Value types
 			OBJECT_ASPECT = ValueTypes.REGISTRY.register(new ValueObjectTypeAspect());
 
-			// Part types
+			// Apects
 			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Sets.<IAspect>newHashSet(
 					ThaumcraftAspects.Read.Aspect.BOOLEAN_ISASPECTCONTAINER,
 					ThaumcraftAspects.Read.Aspect.LIST_ASPECTCONTAINER,
