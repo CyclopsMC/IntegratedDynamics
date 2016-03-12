@@ -21,6 +21,9 @@ public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryR
                 Aspects.Read.Inventory.BOOLEAN_NONEMPTY,
                 Aspects.Read.Inventory.BOOLEAN_APPLICABLE,
                 Aspects.Read.Inventory.INTEGER_COUNT,
+                Aspects.Read.Inventory.INTEGER_SLOTS,
+                Aspects.Read.Inventory.INTEGER_SLOTSFILLED,
+                Aspects.Read.Inventory.DOUBLE_FILLRATIO,
                 Aspects.Read.Inventory.LIST_ITEMSTACKS,
                 Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT
         ));

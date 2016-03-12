@@ -409,6 +409,46 @@ public class Aspects {
                             return count;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "count").buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_SLOTS =
+                    AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(new IAspectValuePropagator<IItemHandler, Integer>() {
+                        @Override
+                        public Integer getOutput(IItemHandler inventory) {
+                            return inventory.getSlots();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "slots").buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_SLOTSFILLED =
+                    AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(new IAspectValuePropagator<IItemHandler, Integer>() {
+                        @Override
+                        public Integer getOutput(IItemHandler inventory) {
+                            int count = 0;
+                            if(inventory != null) {
+                                for (int i = 0; i < inventory.getSlots(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if (itemStack != null) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            return count;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "slotsfilled").buildRead();
+
+            public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_FILLRATIO =
+                    AspectReadBuilders.Inventory.BUILDER_DOUBLE.handle(new IAspectValuePropagator<IItemHandler, Double>() {
+                        @Override
+                        public Double getOutput(IItemHandler inventory) {
+                            int count = 0;
+                            if(inventory != null) {
+                                for (int i = 0; i < inventory.getSlots(); i++) {
+                                    ItemStack itemStack = inventory.getStackInSlot(i);
+                                    if (itemStack != null) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            return ((double) count) / (double) inventory.getSlots();
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "fillratio").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ITEMSTACKS =
                     AspectReadBuilders.BUILDER_LIST.appendKind("inventory").handle(AspectReadBuilders.Inventory.PROP_GET_LIST, "itemstacks").buildRead();

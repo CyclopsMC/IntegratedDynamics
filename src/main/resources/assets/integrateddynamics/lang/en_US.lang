@@ -340,6 +340,13 @@ aspect.aspects.integrateddynamics.read.integer.inventory.count.name=Inventory Co
 aspect.aspects.integrateddynamics.read.integer.inventory.count.info=Get the total amount of items
 aspect.aspects.integrateddynamics.read.integer.inventory.countslot.name=Slot Stacksize
 aspect.aspects.integrateddynamics.read.integer.inventory.countslot.info=Get the stack size in the active slot
+aspect.aspects.integrateddynamics.read.integer.inventory.slots.name=Slots
+aspect.aspects.integrateddynamics.read.integer.inventory.slots.info=The number of slots in the inventory
+aspect.aspects.integrateddynamics.read.integer.inventory.slotsfilled.name=Slots Filled
+aspect.aspects.integrateddynamics.read.integer.inventory.slotsfilled.info=The number of slots that have an item
+
+aspect.aspects.integrateddynamics.read.double.inventory.fillratio.name=Fill Ratio
+aspect.aspects.integrateddynamics.read.double.inventory.fillratio.info=The number of non-empty slots divided by the total number of slots
 
 aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.name=Items
 aspect.aspects.integrateddynamics.read.list.inventory.itemstacks.info=Get a list of the items in the inventory
