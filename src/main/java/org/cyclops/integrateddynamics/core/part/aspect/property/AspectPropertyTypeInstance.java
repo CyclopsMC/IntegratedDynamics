@@ -6,7 +6,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 
 /**
- * An instance of a property type with a label.
+ * An instance of a property type with a onLabelPacket.
  * @author rubensworks
  */
 @Data

@@ -50,17 +50,17 @@ public class LabelsWorldStorage extends WorldStorage {
     }
 
     /**
-     * Put a label mapping for a variable id getting a label.
+     * Put a onLabelPacket mapping for a variable id getting a onLabelPacket.
      * Should only be called from within packets.
      * @param variableId The variable id.
-     * @param label The label
+     * @param label The onLabelPacket
      */
     public synchronized void putUnsafe(int variableId, String label) {
         labels.put(variableId, label);
     }
 
     /**
-     * Remove a label mapping by variable id.
+     * Remove a onLabelPacket mapping by variable id.
      * Should only be called from within packets.
      * @param variableId The variable id.
      */
@@ -69,9 +69,9 @@ public class LabelsWorldStorage extends WorldStorage {
     }
 
     /**
-     * Put a label mapping for a variable id getting a label.
+     * Put a onLabelPacket mapping for a variable id getting a onLabelPacket.
      * @param variableId The variable id.
-     * @param label The label
+     * @param label The onLabelPacket
      */
     public void put(int variableId, String label) {
         if(MinecraftHelpers.isClientSide()) {
@@ -83,7 +83,7 @@ public class LabelsWorldStorage extends WorldStorage {
     }
 
     /**
-     * Remove a label mapping by variable id.
+     * Remove a onLabelPacket mapping by variable id.
      * @param variableId The variable id.
      */
     public void remove(int variableId) {
@@ -96,9 +96,9 @@ public class LabelsWorldStorage extends WorldStorage {
     }
 
     /**
-     * Get a label by variable id.
+     * Get a onLabelPacket by variable id.
      * @param variableId The variable id.
-     * @return The corresponding variable label or null.
+     * @return The corresponding variable onLabelPacket or null.
      */
     public synchronized String getLabel(int variableId) {
         return labels.get(variableId);

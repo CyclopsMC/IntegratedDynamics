@@ -117,7 +117,7 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
         protected abstract ResourceLocation getTexture();
 
         protected int getSignalX() {
-            return getWidth() - 19;
+            return getWidth() - 22;
         }
 
         protected int getSignalY() {

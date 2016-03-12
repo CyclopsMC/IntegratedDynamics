@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import java.util.Map;
 
 /**
- * Packet for notifying label changes.
+ * Packet for notifying onLabelPacket changes.
  * @author rubensworks
  *
  */

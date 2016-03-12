@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 /**
- * Packet for notifying label changes.
+ * Packet for notifying onLabelPacket changes.
  * @author rubensworks
  *
  */

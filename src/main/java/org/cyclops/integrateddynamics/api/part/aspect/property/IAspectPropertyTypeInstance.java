@@ -4,7 +4,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 /**
- * An instance of a property type with a label.
+ * An instance of a property type with a onLabelPacket.
  * @author rubensworks
  */
 public interface IAspectPropertyTypeInstance<T extends IValueType<V>, V extends IValue> {

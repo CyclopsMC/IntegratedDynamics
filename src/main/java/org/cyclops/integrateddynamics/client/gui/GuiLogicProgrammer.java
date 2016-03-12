@@ -2,10 +2,15 @@ package org.cyclops.integrateddynamics.client.gui;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -22,7 +27,10 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.item.ItemLabeller;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerLabelPacket;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.io.IOException;
@@ -38,6 +46,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
     private static final Rectangle ITEM_POSITION = new Rectangle(19, 18, 56, BOX_HEIGHT - 1);
 
     protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
+    private final boolean hasLabeller;
     protected SubGuiConfigRenderPattern operatorConfigPattern = null;
 
     /**
@@ -48,6 +57,8 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         super(new ContainerLogicProgrammer(inventoryPlayer));
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
         container.setGui(this);
+
+        this.hasLabeller = inventoryPlayer.hasItemStack(new ItemStack(ItemLabeller.getInstance()));
     }
 
     @Override
@@ -175,7 +186,9 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
     protected void onActivateElement(ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> element) {
         subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammer) getContainer()));
         operatorConfigPattern.initGui(guiLeft, guiTop);
-        subGuiHolder.addSubGui(new SubGuiOperatorInfo(element));
+        SubGuiOperatorInfo operatorInfoPattern;
+        subGuiHolder.addSubGui(operatorInfoPattern = new SubGuiOperatorInfo(element));
+        operatorInfoPattern.initGui(guiLeft, guiTop);
     }
 
     protected void onDeactivateElement(ILogicProgrammerElement element) {
@@ -227,10 +240,51 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
+    protected void label(String label) {
+        IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerLabelPacket(label));
+    }
+
+    protected boolean hasLabeller() {
+        return this.hasLabeller;
+    }
+
     public class SubGuiOperatorInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> {
+
+        public static final int BUTTON_EDIT = 1;
+
+        private GuiTextField searchField;
+        private GuiButtonText button = null;
 
         public SubGuiOperatorInfo(IGuiInputElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> element) {
             super(GuiLogicProgrammer.this, (ContainerLogicProgrammer) GuiLogicProgrammer.this.container, element, 88, 106, 139, 20);
+
+            if(hasLabeller()) {
+                buttonList.add(button = new GuiButtonText(BUTTON_EDIT, 0, 0, 6, 10, "E", true));
+            }
+
+            int searchWidth = 113;
+            this.searchField = new GuiTextField(0, GuiLogicProgrammer.this.fontRendererObj, 0, 0, searchWidth, 11);
+            this.searchField.setMaxStringLength(64);
+            this.searchField.setEnableBackgroundDrawing(true);
+            this.searchField.setVisible(false);
+            this.searchField.setTextColor(16777215);
+            this.searchField.setCanLoseFocus(true);
+            this.searchField.setText("");
+            this.searchField.width = searchWidth;
+        }
+
+        @Override
+        public void initGui(int guiLeft, int guiTop) {
+            super.initGui(guiLeft, guiTop);
+            int searchX = 90;
+            int searchY = 110;
+            this.searchField.xPosition = guiLeft + searchX;
+            this.searchField.yPosition = guiTop + searchY;
+
+            if (hasLabeller()) {
+                button.xPosition = guiLeft + 220;
+                button.yPosition = guiTop + 111;
+            }
         }
 
         @Override
@@ -248,6 +302,47 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             return texture;
         }
 
+        @Override
+        public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException {
+            if (!checkHotbarKeys) {
+                if (!this.searchField.getVisible() || !this.searchField.textboxKeyTyped(typedChar, keyCode)) {
+                    return super.keyTyped(checkHotbarKeys, typedChar, keyCode);
+                } else {
+                    label(this.searchField.getText());
+                    return true;
+                }
+            }
+            return super.keyTyped(checkHotbarKeys, typedChar, keyCode);
+        }
+
+        @Override
+        public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+            if(this.searchField.getVisible()) {
+                this.searchField.mouseClicked(mouseX, mouseY, mouseButton);
+            }
+            super.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+
+        @Override
+        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+            Keyboard.enableRepeatEvents(true);
+            this.searchField.drawTextBox();
+        }
+
+        @Override
+        protected void actionPerformed(GuiButton guibutton) {
+            super.actionPerformed(guibutton);
+            if(guibutton.id == BUTTON_EDIT) {
+                this.searchField.setVisible(!this.searchField.getVisible());
+                if(this.searchField.getVisible()) {
+                    this.searchField.setFocused(true);
+                    label(this.searchField.getText());
+                } else {
+                    label("");
+                }
+            }
+        }
     }
 
 }

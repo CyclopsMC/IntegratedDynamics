@@ -184,7 +184,7 @@ public abstract class SubGuiBox extends Gui implements ISubGuiBox {
 
         @Override
         public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-
+            super.mouseClicked(mouseX, mouseY, mouseButton);
         }
 
     }

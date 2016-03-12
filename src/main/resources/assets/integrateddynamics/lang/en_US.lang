@@ -6,6 +6,7 @@ general.integrateddynamics.error.noNetwork=No valid network found
 
 # Gui
 gui.integrateddynamics.button.save=Save
+gui.integrateddynamics.button.rename=Rename
 gui.integrateddynamics.partsettings.updateInterval=Freq.
 gui.integrateddynamics.part.properties=Properties:
 gui.integrateddynamics.logicprogrammer.filter=Filter
@@ -47,7 +48,7 @@ item.items.integrateddynamics.variable.name=Variable Card
 item.items.integrateddynamics.variable.info=Clear or copy in a crafting grid
 item.items.integrateddynamics.variable.id=§e§oVariable ID: §r§o%s
 item.items.integrateddynamics.labeller.name=Labeller
-item.items.integrateddynamics.labeller.info=Labels your variables
+item.items.integrateddynamics.labeller.info=Labels your variables. Also works in the Logic Programmer.
 item.items.integrateddynamics.labeller.button.write=Write
 item.items.integrateddynamics.facade.name=Facade
 item.items.integrateddynamics.facade.info=Combine with a block in crafting table

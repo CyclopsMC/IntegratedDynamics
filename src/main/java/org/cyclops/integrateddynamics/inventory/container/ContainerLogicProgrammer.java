@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,6 +25,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
+import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
@@ -59,6 +61,8 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
 
     @SideOnly(Side.CLIENT)
     private GuiLogicProgrammer gui;
+
+    private String lastLabel = "";
 
     /**
      * Make a new instance.
@@ -174,6 +178,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
                 addSlotToContainer(slot);
             }
         }
+        this.lastLabel = "";
     }
 
     public boolean canWriteActiveElementPre() {
@@ -206,9 +211,28 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
         }
     }
 
+    public void onLabelPacket(String label) {
+        this.lastLabel = label;
+        labelCurrent();
+    }
+
+    protected void labelCurrent() {
+        ItemStack itemStack = writeSlot.getStackInSlot(0);
+        if(itemStack != null) {
+            IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
+            if(variableFacade.isValid()) {
+                LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableFacade.getId(), this.lastLabel);
+            }
+        }
+    }
+
     protected ItemStack writeElementInfo() {
         ItemStack itemStack = writeSlot.getStackInSlot(0);
-        return getActiveElement().writeElement(itemStack.copy());
+        ItemStack result = getActiveElement().writeElement(itemStack.copy());
+        if(!StringUtils.isNullOrEmpty(this.lastLabel)) {
+            labelCurrent();
+        }
+        return result;
     }
 
     @Override

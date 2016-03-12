@@ -25,7 +25,7 @@ public interface IVariableFacade {
     public int getId();
 
     /**
-     * @return The optional label for this facade.
+     * @return The optional onLabelPacket for this facade.
      */
     public String getLabel();
 
