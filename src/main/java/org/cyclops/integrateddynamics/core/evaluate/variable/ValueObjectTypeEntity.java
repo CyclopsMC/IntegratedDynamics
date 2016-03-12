@@ -9,12 +9,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 
 /**
  * Value type with values that are itemstacks.
  * @author rubensworks
  */
-public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEntity.ValueEntity> implements IValueTypeNamed<ValueObjectTypeEntity.ValueEntity> {
+public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEntity.ValueEntity> implements
+        IValueTypeNamed<ValueObjectTypeEntity.ValueEntity>, IValueTypeNullable<ValueObjectTypeEntity.ValueEntity> {
 
     private static final String DELIMITER = ";";
 
@@ -76,6 +78,11 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     @Override
     public String getName(ValueEntity a) {
         return toCompactString(a);
+    }
+
+    @Override
+    public boolean isNull(ValueEntity a) {
+        return !a.getRawValue().isPresent();
     }
 
     @ToString

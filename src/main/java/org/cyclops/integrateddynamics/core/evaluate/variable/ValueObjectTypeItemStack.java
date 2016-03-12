@@ -8,12 +8,14 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 
 /**
  * Value type with values that are itemstacks.
  * @author rubensworks
  */
-public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTypeItemStack.ValueItemStack> implements IValueTypeNamed<ValueObjectTypeItemStack.ValueItemStack> {
+public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTypeItemStack.ValueItemStack> implements
+        IValueTypeNamed<ValueObjectTypeItemStack.ValueItemStack>, IValueTypeNullable<ValueObjectTypeItemStack.ValueItemStack> {
 
     public ValueObjectTypeItemStack() {
         super("itemstack");
@@ -52,6 +54,11 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     @Override
     public String getName(ValueItemStack a) {
         return toCompactString(a);
+    }
+
+    @Override
+    public boolean isNull(ValueItemStack a) {
+        return !a.getRawValue().isPresent();
     }
 
     @ToString

@@ -94,4 +94,54 @@ public class TestGeneralOperators {
         Operators.GENERAL_IDENTITY.evaluate(new IVariable[]{});
     }
 
+    /**
+     * ----------------------------------- ISNULL -----------------------------------
+     */
+
+    @Test
+    public void testLogicalIsNull() throws EvaluationException {
+        DummyVariableInteger i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
+
+        IValue res1 = Operators.NULLABLE_ISNULL.evaluate(new IVariable[]{i1});
+        assertThat("result is false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+
+        IValue res2 = Operators.NULLABLE_ISNULL.evaluate(new IVariable[]{bFalse});
+        assertThat("result is false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsNullLarge() throws EvaluationException {
+        Operators.NULLABLE_ISNULL.evaluate(new IVariable[]{bTrue, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsNullSmall() throws EvaluationException {
+        Operators.NULLABLE_ISNULL.evaluate(new IVariable[]{});
+    }
+
+    /**
+     * ----------------------------------- ISNOTNULL -----------------------------------
+     */
+
+    @Test
+    public void testLogicalIsNotNull() throws EvaluationException {
+        DummyVariableInteger i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
+
+        IValue res1 = Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{i1});
+        assertThat("result is true", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+
+        IValue res2 = Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{bFalse});
+        assertThat("result is true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsNotNullLarge() throws EvaluationException {
+        Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{bTrue, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsNotNullSmall() throws EvaluationException {
+        Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{});
+    }
+
 }

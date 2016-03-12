@@ -6,12 +6,14 @@ import net.minecraft.block.state.IBlockState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 
 /**
  * Value type with values that are blocks (these are internally stored as blockstates).
  * @author rubensworks
  */
-public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlock.ValueBlock> implements IValueTypeNamed<ValueObjectTypeBlock.ValueBlock> {
+public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlock.ValueBlock> implements
+        IValueTypeNamed<ValueObjectTypeBlock.ValueBlock>, IValueTypeNullable<ValueObjectTypeBlock.ValueBlock> {
 
     public ValueObjectTypeBlock() {
         super("block");
@@ -51,6 +53,11 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     @Override
     public String getName(ValueBlock a) {
         return toCompactString(a);
+    }
+
+    @Override
+    public boolean isNull(ValueBlock a) {
+        return !a.getRawValue().isPresent();
     }
 
     @ToString

@@ -7,12 +7,14 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 
 /**
  * Value type with values that are fluidstacks.
  * @author rubensworks
  */
-public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTypeFluidStack.ValueFluidStack> implements IValueTypeNamed<ValueObjectTypeFluidStack.ValueFluidStack> {
+public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTypeFluidStack.ValueFluidStack> implements
+        IValueTypeNamed<ValueObjectTypeFluidStack.ValueFluidStack>, IValueTypeNullable<ValueObjectTypeFluidStack.ValueFluidStack> {
 
     public ValueObjectTypeFluidStack() {
         super("fluidstack");
@@ -51,6 +53,11 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     @Override
     public String getName(ValueFluidStack a) {
         return toCompactString(a);
+    }
+
+    @Override
+    public boolean isNull(ValueFluidStack a) {
+        return !a.getRawValue().isPresent();
     }
 
     @ToString

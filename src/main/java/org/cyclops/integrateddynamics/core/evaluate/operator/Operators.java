@@ -503,6 +503,30 @@ public final class Operators {
             }).build());
 
     /**
+     * ----------------------------------- NULLABLE OPERATORS -----------------------------------
+     */
+
+    /**
+     * Check if something is null
+     */
+    public static final IOperator NULLABLE_ISNULL = REGISTRY.register(OperatorBuilders.NULLABLE_1_PREFIX.symbol("o").operatorName("isnull")
+            .inputType(ValueTypes.CATEGORY_ANY).output(ValueTypes.BOOLEAN).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    if(ValueHelpers.correspondsTo(variables.getVariables()[0].getType(), ValueTypes.CATEGORY_NULLABLE)) {
+                        return ValueTypeBoolean.ValueBoolean.of(ValueTypes.CATEGORY_NULLABLE.isNull(variables.getVariables()[0]));
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(false);
+                }
+            }).build());
+
+    /**
+     * Check if something is not null
+     */
+    public static final IOperator NULLABLE_ISNOTNULL = REGISTRY.register(new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT)
+            .apply(NULLABLE_ISNULL).build("∅", "isnotnull", IConfigRenderPattern.PREFIX_1, "general"));
+
+    /**
      * ----------------------------------- LIST OPERATORS -----------------------------------
      */
 
