@@ -22,10 +22,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItem
  */
 public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
-    private static final int MAX_LINES = 20;
-    private static final float MAX = 12.5F;
-    private static final float MARGIN_FACTOR = 1.1F;
-
     @Override
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
                             int destroyStage, EnumFacing direction, IPartType partType, IValue value,

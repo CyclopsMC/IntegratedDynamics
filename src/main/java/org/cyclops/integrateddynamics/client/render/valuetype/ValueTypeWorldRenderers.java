@@ -16,6 +16,7 @@ public class ValueTypeWorldRenderers {
 
     public static void load() {
         REGISTRY.register(ValueTypes.OBJECT_ITEMSTACK, new ItemValueTypeWorldRenderer());
+        REGISTRY.register(ValueTypes.OBJECT_BLOCK, new BlockValueTypeWorldRenderer());
         REGISTRY.register(ValueTypes.LIST, new ListValueTypeWorldRenderer());
     }
 
