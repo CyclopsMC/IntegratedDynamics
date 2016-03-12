@@ -15,6 +15,7 @@ public class ValueTypeWorldRenderers {
     public static final TextValueTypeWorldRenderer DEFAULT = new TextValueTypeWorldRenderer();
 
     public static void load() {
+        REGISTRY.register(ValueTypes.OBJECT_ITEMSTACK, new ItemValueTypeWorldRenderer());
         REGISTRY.register(ValueTypes.LIST, new ListValueTypeWorldRenderer());
     }
 
