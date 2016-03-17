@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/CyclopsMC/IntegratedDynamics.svg?branch=master-1.8)](https://travis-ci.org/CyclopsMC/IntegratedDynamics)
 [![Download](https://api.bintray.com/packages/cyclopsmc/dev/IntegratedDynamics/images/download.svg) ](https://bintray.com/cyclopsmc/dev/IntegratedDynamics/_latestVersion)
 
+All stable releases (including deobfuscated builds) can be found on [CurseForge](http://minecraft.curseforge.com/projects/integrated-dynamics/files).
+
 ### Contributing
 * Before submitting a pull request containing a new feature, please discuss this first with one of the lead developers.
 * When fixing an accepted bug, make sure to declare this in the issue so that no duplicate fixes exist.
