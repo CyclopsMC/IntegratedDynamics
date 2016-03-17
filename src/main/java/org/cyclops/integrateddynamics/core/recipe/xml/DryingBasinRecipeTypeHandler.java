@@ -46,7 +46,7 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler {
 		int duration = Integer.parseInt(properties.getElementsByTagName("duration").item(0).getTextContent());
 
         ItemAndFluidStackRecipeComponent inputRecipeComponent;
-        if(inputItem instanceof ItemStack) {
+        if(inputItem == null || inputItem instanceof ItemStack) {
             inputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) inputItem, inputFluid);
         } else {
             inputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) inputItem, inputFluid);

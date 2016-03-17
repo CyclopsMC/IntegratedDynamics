@@ -49,7 +49,7 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler {
         }
 
         ItemAndFluidStackRecipeComponent outputRecipeComponent;
-        if(outputItem instanceof ItemStack) {
+        if(outputItem == null || outputItem instanceof ItemStack) {
             outputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) outputItem, outputFluid);
         } else {
             outputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) outputItem, outputFluid);
