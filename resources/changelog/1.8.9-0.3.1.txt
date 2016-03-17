@@ -1,0 +1,5 @@
+Make sure to backup your world before updating!
+Requires CyclopsCore version 0.5.2.
+
+Fixes:
+* Fix crash when a metal-ore-adding-mod is available
