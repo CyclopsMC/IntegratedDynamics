@@ -31,7 +31,7 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler {
         }
 
         if(output.getElementsByTagName("item").getLength() > 0) {
-            outputItem = (ItemStack) getItem(recipeHandler, output.getElementsByTagName("item").item(0));
+            outputItem = getItem(recipeHandler, output.getElementsByTagName("item").item(0));
         }
         if(output.getElementsByTagName("fluid").getLength() > 0) {
             outputFluid = getFluid(recipeHandler, output.getElementsByTagName("fluid").item(0));
