@@ -1,0 +1,31 @@
+Make sure to backup your world before updating!
+Requires CyclopsCore version 0.5.2.
+
+Features:
+* Add Charset integration
+* Add some more convenience inventory aspects
+* Add operators for null-checking
+* Add Fluid, ItemStack and Block value world renderers
+* Allow variable labeling in Logic Programmer. This can only be done when a Labeller is present in the player's inventory.
+* Add RF support, aspects and operators to get information from items
+* Add recipes for clearing and copying variables
+* Add operators to get hurt and death sounds of entities
+* Add operators to handle the oredict
+* Add operators to get block sounds
+* Add mounted entity and item frame operators
+* Add recipes for all parts
+* Add Audio Reader for reading note sounds
+* Add new advanced operators on entities
+* Add convenience clock read aspect with configurable pulse
+* Add effect writer with particle aspects
+* Add Audio Writer. It can play notes by id from five instrument with a configurable volume.
+* Add Charset Shifter writing aspects
+* Add worker capabilities for machines
+* Add worker capability aspects
+* Add Menril Tree, Fluid, Berries and Torches
+* Add Squeezer and Drying Basin
+* Add JEI support for the Squeezer and Drying Basin
+* Add Meneglin biome. It spawns Menril trees
+
+Fixes:
+* Fix incorrect part disabling with lower frequency updating parts
