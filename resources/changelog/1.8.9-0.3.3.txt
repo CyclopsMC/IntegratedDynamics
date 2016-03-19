@@ -1,0 +1,22 @@
+Make sure to backup your world before updating!
+Requires CyclopsCore version 0.5.3.
+
+Additions:
+* Add cast from numbers to number, Closes #15
+* Allow searching in Logic Programmer by symbol, Closes #14
+
+Changes:
+* Make redstone parts less expensive, Closes #10
+* Reduce wild Menril Tree spawnrate, Closes #20, This also makes this rate configurable
+* Make taking items out of squeezers and drying basins easier, Closes #7
+
+Fixes:
+* Fix MCMP-converted cables not always being removable
+* Fix crash when breaking a part after MCMP conversion, Closes #21
+* Fix elements not correctly being removed from networks when broken
+* Fix division by zero in redstone clock aspect, Closes #18
+* Fix inconsistent aspect property order, Closes #17
+* Fix missing cast operator translation
+* Add safety check for avoiding parts or states to be null, might solve #13
+* Fix Menril blocks not having a breaking tool, Closes #6
+* Fix part breaking crash without a wrench, Closes #16
