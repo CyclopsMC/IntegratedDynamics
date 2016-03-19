@@ -44,7 +44,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
 
         @Override
         public boolean apply(ILogicProgrammerElement item, Pattern pattern) {
-            return pattern.matcher(item.getMatchString()).matches();
+            return pattern.matcher(item.getMatchString()).matches() || pattern.matcher(item.getSymbol()).matches();
         }
     };
 
