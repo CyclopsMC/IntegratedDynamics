@@ -114,7 +114,7 @@ public class AspectWriteBuilders {
         public static final IAspectProperties PROPERTIES_NOTE = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
                 PROP_VOLUME
         ));
-        public static final IAspectProperties PROPERTIES_SOUND = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+        public static final IAspectProperties PROPERTIES_SOUND = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
                 PROP_VOLUME,
                 PROP_FREQUENCY
         ));
@@ -192,7 +192,7 @@ public class AspectWriteBuilders {
                 new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadZ.name");
         public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROP_FORCE =
                 new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name");
-        public static final IAspectProperties PROPERTIES_PARTICLE = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
+        public static final IAspectProperties PROPERTIES_PARTICLE = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
                 PROP_OFFSET_X,
                 PROP_OFFSET_Y,
                 PROP_OFFSET_Z,

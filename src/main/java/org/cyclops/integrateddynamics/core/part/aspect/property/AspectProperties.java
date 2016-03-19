@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class AspectProperties implements IAspectProperties {
 
-    private final Map<IAspectPropertyTypeInstance, IValue> values = Maps.newHashMap();
+    private final Map<IAspectPropertyTypeInstance, IValue> values = Maps.newLinkedHashMap();
 
     /**
      * Make a new instance.
