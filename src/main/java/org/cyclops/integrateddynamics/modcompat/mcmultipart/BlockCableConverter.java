@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
@@ -47,8 +48,10 @@ public class BlockCableConverter implements IPartConverter.IPartConverter2 {
             parts.add(new PartPartType(entry.getKey(), entry.getValue().getPart()));
         }
         boolean wasRealCable = tile.isRealCable();
+        IPartNetwork network = null;
         if(!simulate) {
             tile.silentResetPartData();
+            network = tile.getNetwork();
             tile.resetCurrentNetwork();
             tile.setRealCable(false);
             BlockCable.IS_MCMP_CONVERTING = true;
@@ -67,6 +70,9 @@ public class BlockCableConverter implements IPartConverter.IPartConverter2 {
                 }
             }
             PartCable partCable = new PartCable(partData, forceDisconnected);
+            if(!simulate) {
+                partCable.setNetwork(network);
+            }
             partCable.setAddSilent(true);
             parts.add(partCable);
         }

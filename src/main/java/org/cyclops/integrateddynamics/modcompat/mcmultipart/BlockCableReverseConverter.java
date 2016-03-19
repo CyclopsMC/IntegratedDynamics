@@ -8,6 +8,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -33,11 +34,13 @@ public class BlockCableReverseConverter implements IPartConverter.IReversePartCo
             Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData = null;
             Map<Integer, Boolean> forceDisconnected = null;
             boolean hasParts = false;
+            IPartNetwork network = null;
             for(IMultipart part : parts) {
                 if(part instanceof PartCable) {
                     partData = ((PartCable) part).getPartData();
                     forceDisconnected = ((PartCable) part).getForceDisconnected();
                     ((PartCable) part).setSendFurtherUpdates(false);
+                    network = ((PartCable) part).getNetwork();
                 } else if(part instanceof PartPartType) {
                     hasParts = true;
                 }
@@ -61,6 +64,7 @@ public class BlockCableReverseConverter implements IPartConverter.IReversePartCo
                     }
                 }
             }
+            tile.setNetwork(network);
             tile.setPartData(partData);
             tile.setForceDisconnected(forceDisconnected);
             tile.sendImmediateUpdate();
