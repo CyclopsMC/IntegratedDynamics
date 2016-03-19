@@ -51,16 +51,11 @@ public class CablePathElement implements ICablePathElement {
 
     @Override
     public int compareTo(ICablePathElement o) {
-        if(cable.hashCode() == o.getCable().hashCode()) {
-            return position.compareTo(o.getPosition());
-        }
-        return Integer.compare(cable.hashCode(), o.getCable().hashCode());
+        return position.compareTo(o.getPosition());
     }
 
     @Override
     public int hashCode() {
-        int result = cable.hashCode();
-        result = 31 * result + position.hashCode();
-        return result;
+        return position.hashCode();
     }
 }

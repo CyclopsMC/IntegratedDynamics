@@ -298,6 +298,8 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
         } else {
             Thread.dumpStack();
             IntegratedDynamics.clog(Level.WARN, "Tried to remove a cable from a network it was not present in.");
+            System.out.println("Cluster: " + baseCluster);
+            System.out.println("Tried removing element: " + cablePathElement);
         }
         return false;
     }
