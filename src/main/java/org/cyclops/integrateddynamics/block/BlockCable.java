@@ -840,6 +840,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public void remove(World world, BlockPos pos, EntityPlayer player) {
+        // PRE
+        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
+        cableNetworkComponent.onPreBlockDestroyed(world, pos);
+        // POST
         cableNetworkComponent.remove(world, pos, player);
     }
 
