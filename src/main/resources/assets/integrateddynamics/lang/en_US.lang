@@ -688,7 +688,7 @@ operator.operators.integrateddynamics.general.isnotnull.name=Is Not Null
 operator.operators.integrateddynamics.general.isnotnull.info=If the given value is not null
 
 operator.operators.integrateddynamics.cast.name=Cast
-operator.operators.integrateddynamics.binary.basename=Cast
+operator.operators.integrateddynamics.cast.basename=Cast
 operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s
 
 ### ----- Mod Compats ----- ###
