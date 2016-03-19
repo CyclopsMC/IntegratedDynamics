@@ -42,6 +42,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A ticking tile entity which is made up of different parts.
@@ -131,7 +132,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public void setPart(final EnumFacing side, final IPartType part, final IPartState partState) {
-        PartHelpers.setPart(getNetwork(), getWorld(), getPos(), side, part, partState, new PartHelpers.IPartStateHolderCallback() {
+        PartHelpers.setPart(getNetwork(), getWorld(), getPos(), side, Objects.requireNonNull(part),
+                Objects.requireNonNull(partState), new PartHelpers.IPartStateHolderCallback() {
             @Override
             public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
                 partData.put(side, PartHelpers.PartStateHolder.of(part, partState));
