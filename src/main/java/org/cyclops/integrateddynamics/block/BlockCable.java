@@ -140,8 +140,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                 if (cable.getPartContainer(world, pos).hasParts()) {
                     cable.setRealCable(world, pos, false);
                     ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
+                    return false;
                 } else {
                     cable.remove(world, pos, player);
+                    return true;
                 }
             }
             return false;
@@ -223,7 +225,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         @Override
         public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
             if(!world.isRemote) {
-                PartHelpers.removePart(world, pos, position, player, true);
+                return PartHelpers.removePart(world, pos, position, player, true);
             }
             return false;
         }

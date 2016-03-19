@@ -168,8 +168,9 @@ public class PartHelpers {
      * @param side The side.
      * @param player The player that is removing the part or null.
      * @param destroyIfEmpty If the cable block must be removed if no other parts are present after this removal.
+     * @return If the block was set to air (removed).
      */
-    public static void removePart(World world, BlockPos pos, EnumFacing side, @Nullable EntityPlayer player, boolean destroyIfEmpty) {
+    public static boolean removePart(World world, BlockPos pos, EnumFacing side, @Nullable EntityPlayer player, boolean destroyIfEmpty) {
         IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
         ICable cable = CableHelpers.getInterface(world, pos, ICable.class);
         IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
@@ -178,7 +179,9 @@ public class PartHelpers {
         // Remove full cable block if this was the last part and if it was already an unreal cable.
         if(destroyIfEmpty && (!(cable instanceof ICableFakeable) || !((ICableFakeable) cable).isRealCable(world, pos)) && !partContainer.hasParts()) {
             world.setBlockState(pos, Blocks.air.getDefaultState(), 3);
+            return true;
         }
+        return false;
     }
 
     /**
