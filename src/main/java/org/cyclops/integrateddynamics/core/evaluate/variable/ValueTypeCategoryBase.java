@@ -78,4 +78,8 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
         return Reference.MOD_ID;
     }
 
+    @Override
+    public Set<IValueType<?>> getElements() {
+        return Collections.unmodifiableSet(elements);
+    }
 }
