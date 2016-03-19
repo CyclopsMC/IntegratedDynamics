@@ -34,8 +34,10 @@ public class BlockCrystalizedMenrilBlockConfig extends BlockConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return (ConfigurableBlock) new ConfigurableBlock(this, Material.craftedSnow)
+        ConfigurableBlock block = (ConfigurableBlock) new ConfigurableBlock(this, Material.clay)
         .setHardness(1.5F).setStepSound(Block.soundTypeSnow);
+        block.setHarvestLevel("pickaxe", 0);
+        return block;
     }
     
 }
