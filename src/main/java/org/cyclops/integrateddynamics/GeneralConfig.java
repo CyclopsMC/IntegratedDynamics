@@ -49,6 +49,12 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The maximum render distance for part overlays to render. The higher, the more resource intensive.", isCommandable = true)
     public static int partOverlayRenderdistance = 15;
+
+    /**
+     * The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.")
+    public static int wildMenrilTreeChance = 1000;
     
     /**
      * Create a new instance.

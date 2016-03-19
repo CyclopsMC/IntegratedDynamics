@@ -14,6 +14,7 @@ import org.cyclops.cyclopscore.config.configurable.ConfigurableBiome;
 import org.cyclops.cyclopscore.config.extendedconfig.BiomeConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 
 import java.util.Random;
 
@@ -89,7 +90,7 @@ public class BiomeMeneglin extends ConfigurableBiome {
     @SubscribeEvent
     public void onDecorate(DecorateBiomeEvent.Decorate decorateBiomeEvent) {
         if(decorateBiomeEvent.type == DecorateBiomeEvent.Decorate.EventType.TREE) {
-            if(decorateBiomeEvent.rand.nextInt(100) == 0) {
+            if(decorateBiomeEvent.rand.nextInt(GeneralConfig.wildMenrilTreeChance) == 0) {
                 int k6 = decorateBiomeEvent.rand.nextInt(16) + 8;
                 int l = decorateBiomeEvent.rand.nextInt(16) + 8;
                 MeneglinBiomeDecorator.MENRIL_TREE_GEN.func_175904_e();
