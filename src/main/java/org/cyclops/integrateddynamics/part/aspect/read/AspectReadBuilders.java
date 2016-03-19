@@ -408,7 +408,7 @@ public class AspectReadBuilders {
                     throw new EvaluationException(String.format("A true and false pulse of length %s do not " +
                             "fit into an interval of %s.", length, interval));
                 }*/
-                return (input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() / length) % (interval / length) == 0;
+                return (input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() / length) % Math.max(1, interval / length) == 0;
             }
         };
 
