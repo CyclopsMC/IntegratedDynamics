@@ -645,11 +645,6 @@
 					<item meta="1">integrateddynamics:variableTransformer</item>
 					<item>minecraft:redstone</item>
 				</gridrow>
-				<gridrow>
-					<item />
-					<item>minecraft:redstone_block</item>
-					<item />
-				</gridrow>
 			</grid>
 		</input>
 		<output>
@@ -769,11 +764,6 @@
 					<item>minecraft:redstone_block</item>
 					<item meta="0">integrateddynamics:variableTransformer</item>
 					<item>minecraft:redstone_block</item>
-				</gridrow>
-				<gridrow>
-					<item />
-					<item>minecraft:redstone</item>
-					<item />
 				</gridrow>
 			</grid>
 		</input>
