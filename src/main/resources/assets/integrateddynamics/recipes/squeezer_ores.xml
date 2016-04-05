@@ -93,17 +93,6 @@
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">pulpWood</condition>
-        <input>
-            <item type="oredict">logWood</item>
-        </input>
-        <output>
-            <item type="oredict">pulpWood</item>
-        </output>
-    </recipe>
-
-    <recipe type="integrateddynamics:squeezer">
-        <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:reeds</item>
         </input>
