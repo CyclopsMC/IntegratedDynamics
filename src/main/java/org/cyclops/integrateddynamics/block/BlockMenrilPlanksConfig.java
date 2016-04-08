@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlock;
@@ -36,8 +36,12 @@ public class BlockMenrilPlanksConfig extends BlockConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return (ConfigurableBlock) new ConfigurableBlock(this, Material.wood).
-                setHardness(2.0F).setStepSound(Block.soundTypeWood);
+        return (ConfigurableBlock) new ConfigurableBlock(this, Material.wood) {
+            @Override
+            public SoundType getStepSound() {
+                return SoundType.WOOD;
+            }
+        }.setHardness(2.0F);
     }
     
     @Override

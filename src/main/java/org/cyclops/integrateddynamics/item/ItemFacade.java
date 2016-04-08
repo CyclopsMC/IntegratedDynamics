@@ -3,13 +3,15 @@ package org.cyclops.integrateddynamics.item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -53,7 +55,7 @@ public class ItemFacade extends ConfigurableItem {
     }
 
     public IBlockState getFacadeBlock(ItemStack itemStack) {
-        if(itemStack.hasTagCompound()) {
+        if(itemStack != null && itemStack.hasTagCompound()) {
             NBTTagCompound tag = itemStack.getTagCompound();
             String blockName = tag.getString("blockName");
             int meta = tag.getInteger("meta");
@@ -79,7 +81,7 @@ public class ItemFacade extends ConfigurableItem {
 
     @Override
     public String getItemStackDisplayName(ItemStack itemStack) {
-        String suffix = EnumChatFormatting.ITALIC + L10NHelpers.localize("general.integrateddynamics.info.none");
+        String suffix = TextFormatting.ITALIC + L10NHelpers.localize("general.integrateddynamics.info.none");
         ItemStack itemStackInner = getFacadeBlockItem(itemStack);
         if(itemStackInner != null) {
             suffix = getFacadeBlockItem(itemStack).getDisplayName();
@@ -88,8 +90,8 @@ public class ItemFacade extends ConfigurableItem {
     }
 
     @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumFacing side,
-                             float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos,
+                                      EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if(!world.isRemote) {
             ITileCableFacadeable facadeContainer = TileHelpers.getSafeTile(world, pos, ITileCableFacadeable.class);
             IBlockState blockState = getFacadeBlock(itemStack);
@@ -101,9 +103,9 @@ public class ItemFacade extends ConfigurableItem {
                     itemStack.stackSize--;
                 }
             }
-            return true;
+            return EnumActionResult.SUCCESS;
         }
-        return super.onItemUse(itemStack, playerIn, world, pos, side, hitX, hitY, hitZ);
+        return super.onItemUse(itemStack, playerIn, world, pos, hand, facing, hitX, hitY, hitZ);
     }
 
     @Override
@@ -121,7 +123,7 @@ public class ItemFacade extends ConfigurableItem {
     @Override
     public void onModelBakeEvent(ModelBakeEvent event){
         // Don't throw away the original model, but use if for displaying an unbound facade item.
-        IBakedModel oldModel = (IBakedModel) event.modelRegistry.getObject(eConfig.dynamicItemVariantLocation);
+        IBakedModel oldModel = event.getModelRegistry().getObject(eConfig.dynamicItemVariantLocation);
         FacadeModel.emptyModel = oldModel;
         super.onModelBakeEvent(event);
     }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 
@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implements IValueTypeNumber<ValueTypeLong.ValueLong> {
 
     public ValueTypeLong() {
-        super("long", Helpers.RGBToInt(215, 254, 23), EnumChatFormatting.YELLOW.toString());
+        super("long", Helpers.RGBToInt(215, 254, 23), TextFormatting.YELLOW.toString());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.block;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -10,6 +11,7 @@ import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * A block that is not visible to the player.
@@ -18,7 +20,7 @@ import java.util.Collection;
  */
 public class IgnoredBlockStatus extends IgnoredBlock {
     @BlockProperty(excludeFromMeta = true)
-    public static final PropertyStatus STATUS = PropertyStatus.create("status", Status.class);
+    public static final PropertyStatus STATUS = PropertyStatus.<Status>create("status", Status.class);
 
     /**
      * Make a new blockState instance.
@@ -29,23 +31,28 @@ public class IgnoredBlockStatus extends IgnoredBlock {
         super(eConfig);
     }
 
-    public static class PropertyStatus extends PropertyHelper {
+    public static class PropertyStatus extends PropertyHelper<Status> {
 
-        private final ImmutableSet allowedValues;
+        private final ImmutableSet<Status> allowedValues;
 
-        protected PropertyStatus(String name, Collection values) {
+        protected PropertyStatus(String name, Collection<Status> values) {
             super(name, Status.class);
             this.allowedValues = ImmutableSet.copyOf(values);
         }
 
-        public Collection getAllowedValues()
+        public Collection<Status> getAllowedValues()
         {
             return this.allowedValues;
         }
 
         @Override
-        public String getName(Comparable value) {
-            return value.toString();
+        public Optional<Status> parseValue(String value) {
+            return Optional.fromNullable(Status.valueOf(value.toUpperCase(Locale.ENGLISH)));
+        }
+
+        @Override
+        public String getName(Status value) {
+            return value.toString().toLowerCase(Locale.ENGLISH);
         }
 
         /**
@@ -54,8 +61,8 @@ public class IgnoredBlockStatus extends IgnoredBlock {
          * @param clazz The property class.
          * @return The property
          */
-        public static PropertyStatus create(String name, Class clazz) {
-            return create(name, clazz, Predicates.alwaysTrue());
+        public static PropertyStatus create(String name, Class<Status> clazz) {
+            return create(name, clazz, Predicates.<Status>alwaysTrue());
         }
 
         /**
@@ -65,7 +72,7 @@ public class IgnoredBlockStatus extends IgnoredBlock {
          * @param filter The filter for checking property values.
          * @return The property
          */
-        public static PropertyStatus create(String name, Class clazz, Predicate filter) {
+        public static PropertyStatus create(String name, Class<Status> clazz, Predicate<Status> filter) {
             return create(name, clazz, Collections2.filter(Lists.newArrayList(clazz.getEnumConstants()), filter));
         }
 
@@ -76,7 +83,7 @@ public class IgnoredBlockStatus extends IgnoredBlock {
          * @param values The possible property values.
          * @return The property
          */
-        public static PropertyStatus create(String name, Class clazz, Collection values) {
+        public static PropertyStatus create(String name, Class<Status> clazz, Collection<Status> values) {
             return new PropertyStatus(name, values);
         }
 

@@ -3,14 +3,13 @@ package org.cyclops.integrateddynamics.core.block;
 import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,12 +45,13 @@ public interface ICollidable<P> {
 
     /**
      * The the selected bounding box.
+     * @param blockState The block state
      * @param worldIn The world
      * @param pos The position
      * @return The selected bounding box
      */
     @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos);
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos);
 
     /**
      * Do a ray trace for the current look direction of the player.
@@ -64,13 +64,14 @@ public interface ICollidable<P> {
 
     /**
      * Ray trace the given direction.
+     * @param blockState The block state
      * @param world The world
      * @param pos The position
      * @param origin The origin vector
      * @param direction The direction vector
      * @return The position object holder
      */
-    public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction);
+    public net.minecraft.util.math.RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d origin, Vec3d direction);
 
     /**
      * Result from ray tracing
@@ -78,7 +79,7 @@ public interface ICollidable<P> {
      */
     @Data
     public static class RayTraceResult<P> {
-        private final MovingObjectPosition movingObjectPosition;
+        private final net.minecraft.util.math.RayTraceResult movingObjectPosition;
         private final AxisAlignedBB boundingBox;
         private final P positionHit;
         private final IComponent<P, ?> collisionType;
@@ -118,7 +119,8 @@ public interface ICollidable<P> {
          * @return The model that will be used to render the breaking overlay.
          */
         @SideOnly(Side.CLIENT)
-        public @Nullable IBakedModel getBreakingBaseModel(World world, BlockPos pos, P position);
+        public @Nullable
+        IBakedModel getBreakingBaseModel(World world, BlockPos pos, P position);
     }
 
 }

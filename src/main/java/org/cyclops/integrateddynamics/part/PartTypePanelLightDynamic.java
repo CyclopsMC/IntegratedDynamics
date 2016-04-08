@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.ConfigHandler;

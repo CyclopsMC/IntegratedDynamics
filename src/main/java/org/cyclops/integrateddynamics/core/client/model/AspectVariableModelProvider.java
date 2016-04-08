@@ -2,18 +2,17 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.model.IModelState;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class AspectVariableModelProvider implements IVariableModelProvider<Baked
                 IModel model = ModelLoaderRegistry.getModel(Aspects.REGISTRY.getAspectModel(aspect));
                 IBakedModel bakedAspectModel = model.bake(state, format, bakedTextureGetter);
                 bakedModels.put(aspect, bakedAspectModel);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

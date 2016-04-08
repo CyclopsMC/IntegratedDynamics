@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.item;
 
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItemFood;
@@ -49,7 +50,7 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
             }
         };
         if(nightVision) {
-            food = (ConfigurableItemFood) food.setPotionEffect(Potion.nightVision.id, 20, 1, 1);
+            food = (ConfigurableItemFood) food.setPotionEffect(new PotionEffect(MobEffects.nightVision, 20, 1), 1);
         }
         return food;
     }

@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.*;
@@ -20,7 +20,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> {
     private static final Map<IValueTypeNumber, Integer> INVERTED_ELEMENTS = Collections.unmodifiableMap(constructInvertedArray(ELEMENTS));
 
     public ValueTypeCategoryNumber() {
-        super("number", Helpers.RGBToInt(243, 245, 4), EnumChatFormatting.GOLD.toString(),
+        super("number", Helpers.RGBToInt(243, 245, 4), TextFormatting.GOLD.toString(),
                 Sets.<IValueType<?>>newHashSet(ELEMENTS));
     }
 

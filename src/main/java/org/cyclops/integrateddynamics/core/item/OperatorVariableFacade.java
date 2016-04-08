@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -184,7 +184,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
             IValueType valueType = getOperator().getOutputType();
             IBakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType);
             if(bakedModel != null) {
-                quads.addAll(bakedModel.getGeneralQuads());
+                quads.addAll(bakedModel.getQuads(null, null, 0L));
             }
         }
     }

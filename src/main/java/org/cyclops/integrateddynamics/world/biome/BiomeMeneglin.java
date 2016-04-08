@@ -2,9 +2,8 @@ package org.cyclops.integrateddynamics.world.biome;
 
 import net.minecraft.block.BlockFlower;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.BiomeDecorator;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -42,11 +41,9 @@ public class BiomeMeneglin extends ConfigurableBiome {
     }
 
     public BiomeMeneglin(ExtendedConfig<BiomeConfig> eConfig) {
-        super(eConfig.downCast());
-        this.setHeight(new BiomeGenBase.Height(0.4F, 0.4F));
-        this.setTemperatureRainfall(0.75F, 0.25F);
-        this.setColor(Helpers.RGBToInt(178, 226, 222));
-        this.waterColorMultiplier = Helpers.RGBToInt(85, 221, 168);
+        super(constructProperties(eConfig.downCast()).setBaseHeight(0.4F)
+                .setHeightVariation(0.4F).setTemperature(0.75F)
+                .setRainfall(0.25F).setWaterColor(Helpers.RGBToInt(85, 221, 168)), eConfig.downCast());
 
         this.theBiomeDecorator.treesPerChunk = 3;
         this.theBiomeDecorator.flowersPerChunk = 70;
@@ -89,13 +86,13 @@ public class BiomeMeneglin extends ConfigurableBiome {
 
     @SubscribeEvent
     public void onDecorate(DecorateBiomeEvent.Decorate decorateBiomeEvent) {
-        if(decorateBiomeEvent.type == DecorateBiomeEvent.Decorate.EventType.TREE) {
-            if(decorateBiomeEvent.rand.nextInt(GeneralConfig.wildMenrilTreeChance) == 0) {
-                int k6 = decorateBiomeEvent.rand.nextInt(16) + 8;
-                int l = decorateBiomeEvent.rand.nextInt(16) + 8;
+        if(decorateBiomeEvent.getType() == DecorateBiomeEvent.Decorate.EventType.TREE) {
+            if(decorateBiomeEvent.getRand().nextInt(GeneralConfig.wildMenrilTreeChance) == 0) {
+                int k6 = decorateBiomeEvent.getRand().nextInt(16) + 8;
+                int l = decorateBiomeEvent.getRand().nextInt(16) + 8;
                 MeneglinBiomeDecorator.MENRIL_TREE_GEN.func_175904_e();
-                BlockPos blockpos = decorateBiomeEvent.world.getHeight(decorateBiomeEvent.pos.add(k6, 0, l));
-                MeneglinBiomeDecorator.MENRIL_TREE_GEN.growTree(decorateBiomeEvent.world, decorateBiomeEvent.rand, blockpos);
+                BlockPos blockpos = decorateBiomeEvent.getWorld().getHeight(decorateBiomeEvent.getPos().add(k6, 0, l));
+                MeneglinBiomeDecorator.MENRIL_TREE_GEN.growTree(decorateBiomeEvent.getWorld(), decorateBiomeEvent.getRand(), blockpos);
             }
         }
     }

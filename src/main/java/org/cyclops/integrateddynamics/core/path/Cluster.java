@@ -5,9 +5,9 @@ import lombok.Data;
 import lombok.experimental.Delegate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
@@ -48,7 +48,7 @@ public class Cluster<E extends IPathElement> implements Collection<E>, INBTSeria
 
         for(IPathElement e : elements) {
             NBTTagCompound elementTag = new NBTTagCompound();
-            elementTag.setInteger("dimension", e.getPosition().getWorld().provider.getDimensionId());
+            elementTag.setInteger("dimension", e.getPosition().getWorld().provider.getDimension());
             elementTag.setLong("pos", e.getPosition().getBlockPos().toLong());
             list.appendTag(elementTag);
         }
@@ -66,11 +66,11 @@ public class Cluster<E extends IPathElement> implements Collection<E>, INBTSeria
             int dimensionId = elementTag.getInteger("dimension");
             BlockPos pos = BlockPos.fromLong(elementTag.getLong("pos"));
 
-            if(dimensionId < 0 || dimensionId >= MinecraftServer.getServer().worldServers.length) {
+            if(dimensionId < 0 || dimensionId >= FMLCommonHandler.instance().getMinecraftServerInstance().worldServers.length) {
                 IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at the " +
                         "invalid dimension id %s.", dimensionId));
             } else {
-                World world = MinecraftServer.getServer().worldServers[dimensionId];
+                World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers[dimensionId];
                 IPathElementProvider pathElementProvider = CableHelpers.getInterface(world, pos, IPathElementProvider.class);
                 if(pathElementProvider == null) {
                     IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +

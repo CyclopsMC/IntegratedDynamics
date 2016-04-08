@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
@@ -58,7 +58,7 @@ public class TestItemStackOperators {
         iHoe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.diamond_hoe)));
         iHoe100 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.diamond_hoe, 1, 100)));
         ItemStack hoeEnchanted = new ItemStack(Items.diamond_hoe);
-        EnchantmentHelpers.setEnchantmentLevel(hoeEnchanted, Enchantment.aquaAffinity, 1);
+        EnchantmentHelpers.setEnchantmentLevel(hoeEnchanted, Enchantments.aquaAffinity, 1);
         hoeEnchanted.setRepairCost(10);
         iHoeEnchanted = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(hoeEnchanted));
         iPickaxe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.diamond_pickaxe)));

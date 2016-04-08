@@ -3,14 +3,14 @@ package org.cyclops.integrateddynamics.core.part;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurabletypeaction.BlockAction;
@@ -98,7 +98,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             }
         };
         Block block = createBlock(blockConfig);
-        BlockAction.register(block, blockConfig.getSubUniqueName(), blockConfig.getTargetTab());
+        BlockAction.register(block, blockConfig, blockConfig.getTargetTab());
         return block;
     }
 
@@ -124,7 +124,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             }
         };
         Item item = createItem(itemConfig);
-        ItemAction.register(item, itemConfig.getSubUniqueName(), itemConfig.getTargetTab());
+        ItemAction.register(item, itemConfig, itemConfig.getTargetTab());
         return item;
     }
 
@@ -336,7 +336,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public BlockState getBaseBlockState() {
+    public BlockStateContainer getBaseBlockState() {
         return getBlock().getBlockState();
     }
 

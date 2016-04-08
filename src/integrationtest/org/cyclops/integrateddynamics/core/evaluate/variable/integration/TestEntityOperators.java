@@ -6,8 +6,8 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.http.util.Asserts;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -40,7 +40,7 @@ public class TestEntityOperators {
 
     @IntegrationBefore
     public void before() {
-        World world = MinecraftServer.getServer().getEntityWorld();
+        World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
         eZombie = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityZombie(world)));
         EntityZombie zombieBurning = new EntityZombie(world);
         zombieBurning.setFire(10);
@@ -57,7 +57,7 @@ public class TestEntityOperators {
         zombieSneaking.setSneaking(true);
         eZombieSneaking = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(zombieSneaking));
         EntityZombie zombieEating = new EntityZombie(world);
-        zombieEating.setEating(true);
+        //zombieEating.getItemInUseCount(true); // TODO
         eZombieEating = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(zombieEating));
         eChicken = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityChicken(world)));
         eItem = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityItem(world)));

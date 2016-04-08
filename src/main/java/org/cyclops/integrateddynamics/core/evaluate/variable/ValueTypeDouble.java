@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 
@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> implements IValueTypeNumber<ValueTypeDouble.ValueDouble> {
 
     public ValueTypeDouble() {
-        super("double", Helpers.RGBToInt(235, 234, 23), EnumChatFormatting.YELLOW.toString());
+        super("double", Helpers.RGBToInt(235, 234, 23), TextFormatting.YELLOW.toString());
     }
 
     @Override

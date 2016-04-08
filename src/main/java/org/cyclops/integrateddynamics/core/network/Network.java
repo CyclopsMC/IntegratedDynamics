@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.network;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.integrateddynamics.IntegratedDynamics;

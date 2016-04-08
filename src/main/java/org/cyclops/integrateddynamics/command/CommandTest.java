@@ -3,8 +3,9 @@ package org.cyclops.integrateddynamics.command;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import org.cyclops.cyclopscore.command.CommandMod;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
@@ -37,18 +38,18 @@ public class CommandTest extends CommandMod {
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] parts, BlockPos blockPos) {
+    public List getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
         return null;
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] parts) {
-        sender.addChatMessage(new ChatComponentText("Running tests..."));
+    public void execute(MinecraftServer server, ICommandSender sender, String[] parts) {
+        sender.addChatMessage(new TextComponentString("Running tests..."));
         try {
             if(!test()) {
-                sender.addChatMessage(new ChatComponentText("There were failing tests, see results in console."));
+                sender.addChatMessage(new TextComponentString("There were failing tests, see results in console."));
             } else {
-                sender.addChatMessage(new ChatComponentText("All tests succeeded!"));
+                sender.addChatMessage(new TextComponentString("All tests succeeded!"));
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();

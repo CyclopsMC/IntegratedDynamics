@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -243,7 +243,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * @return The default block state representation of this part.
      */
-    public BlockState getBaseBlockState();
+    public BlockStateContainer getBaseBlockState();
 
     /**
      * Called when this element is about to be removed.
@@ -342,7 +342,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
         public AxisAlignedBB getSidedCableBoundingBox(EnumFacing side) {
             float[] b = sidedCableCollisionBoxes[side.ordinal()];
-            return AxisAlignedBB.fromBounds(b[0], b[1], b[2], b[3], b[4], b[5]);
+            return new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]);
         }
 
         public AxisAlignedBB getBoundingBox(EnumFacing side) {
@@ -353,7 +353,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
             // Transform bounds
             MatrixHelpers.transform(bounds, side);
-            return AxisAlignedBB.fromBounds(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+            return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
         }
 
     }

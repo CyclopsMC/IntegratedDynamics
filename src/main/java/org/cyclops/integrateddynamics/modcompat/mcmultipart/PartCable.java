@@ -9,13 +9,16 @@ import mcmultipart.raytrace.PartMOP;
 import mcmultipart.raytrace.RayTraceUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -121,7 +124,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
-    public BlockState createBlockState() {
+    public BlockStateContainer createBlockState() {
         return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[0],
                 ArrayUtils.addAll(BlockCable.PART_RENDERPOSITIONS, BlockCable.CONNECTED));
     }
@@ -202,8 +205,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
-    public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
-        return layer == EnumWorldBlockLayer.TRANSLUCENT;
+    public boolean canRenderInLayer(BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override
@@ -510,8 +513,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Nullable
     @Override
     public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
-        Vec3 start = RayTraceUtils.getStart(player);
-        Vec3 end = RayTraceUtils.getEnd(player);
+        Vec3d start = RayTraceUtils.getStart(player);
+        Vec3d end = RayTraceUtils.getEnd(player);
         RayTraceUtils.RayTraceResultPart result = ((TileMultipart) world.getTileEntity(pos)).getPartContainer().collisionRayTrace(start, end);
         if(result == null || result.hit == null) return null;
         IMultipart multipart = result.hit.partHit;

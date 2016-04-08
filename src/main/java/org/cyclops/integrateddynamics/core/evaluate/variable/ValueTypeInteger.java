@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 
@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueInteger> implements IValueTypeNumber<ValueTypeInteger.ValueInteger> {
 
     public ValueTypeInteger() {
-        super("integer", Helpers.RGBToInt(243, 150, 4), EnumChatFormatting.GOLD.toString());
+        super("integer", Helpers.RGBToInt(243, 150, 4), TextFormatting.GOLD.toString());
     }
 
     @Override

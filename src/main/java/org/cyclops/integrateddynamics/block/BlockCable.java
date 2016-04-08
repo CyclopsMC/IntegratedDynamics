@@ -6,17 +6,24 @@ import com.google.common.collect.Sets;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -333,7 +340,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         super(eConfig, BLOCK_MATERIAL, TileMultipartTicking.class);
 
         setHardness(BLOCK_HARDNESS);
-        setStepSound(soundTypeMetal);
+        setStepSound(SoundType.METAL);
         if(MinecraftHelpers.isClientSide()) {
             eConfig.getMod().getIconProvider().registerIconHolderObject(this);
         }
@@ -400,17 +407,18 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+    public boolean removedByPlayer(IBlockState blockState, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
         RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
         if(rayTraceResult != null && rayTraceResult.getCollisionType() != null) {
             return rayTraceResult.getCollisionType().destroy(world, pos, rayTraceResult.getPositionHit(), player);
         }
-        return super.removedByPlayer(world, pos, player, willHarvest);
+        return super.removedByPlayer(blockState, world, pos, player, willHarvest);
     }
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-                                    EnumFacing side, float hitX, float hitY, float hitZ) {
+                                    EnumHand hand, ItemStack heldItem, EnumFacing side,
+                                    float hitX, float hitY, float hitZ) {
         /*
             Wrench: sneak + right-click anywhere on cable to remove cable
                     right-click on a cable side to disconnect on that side
@@ -452,7 +460,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                 }
             }
         }
-        return super.onBlockActivated(world, pos, state, player , side, hitX, hitY, hitZ);
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     public static boolean onCableActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, EnumFacing cableConnectionHit) {
@@ -534,13 +542,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player) {
+    public ItemStack getPickBlock(IBlockState blockState, net.minecraft.util.math.RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
         if(rayTraceResult != null) {
             EnumFacing positionHit = rayTraceResult.getPositionHit();
             return rayTraceResult.getCollisionType().getPickBlock(world, pos, positionHit);
         }
-        return new ItemStack(getItem(world, pos), 1, getDamageValue(world, pos));
+        return getItem(world, pos, blockState);
     }
 
     @Override
@@ -570,19 +578,19 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     /* --------------- Start ICollidable and rendering --------------- */
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
         if(disableCollisionBox) return null;
-        return super.getCollisionBoundingBox(worldIn, pos, state);
+        return super.getCollisionBoundingBox(blockState, worldIn, pos);
     }
 
     @Override
-    public int getLightOpacity(IBlockAccess world, BlockPos pos) {
+    public int getLightOpacity(IBlockState blockState, IBlockAccess world, BlockPos pos) {
         return hasFacade(world, pos) ? 255 : 0;
     }
 
     @Override
-    public int getRenderType() {
-        return 3;
+    public EnumBlockRenderType getRenderType(IBlockState blockState) {
+        return EnumBlockRenderType.MODEL;
     }
 
     @Override
@@ -597,41 +605,41 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState blockState) {
         return false;
     }
 
     @Override
-    public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return super.doesSideBlockRendering(world, pos, face) || hasFacade(world, pos);
+    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return super.doesSideBlockRendering(state, world, pos, face) || hasFacade(world, pos);
     }
 
     @Override
-    public boolean isFullCube() {
+    public boolean isFullCube(IBlockState blockState) {
         return false;
     }
 
     @Override
-    public boolean isNormalCube() {
+    public boolean isNormalCube(IBlockState blockState) {
         return false;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(World world, MovingObjectPosition target, EffectRenderer effectRenderer) {
+    public boolean addHitEffects(IBlockState blockState, World world, net.minecraft.util.math.RayTraceResult target, EffectRenderer effectRenderer) {
         BlockPos blockPos = target.getBlockPos();
         if(hasFacade(world, blockPos)) {
-            IBlockState blockState = getFacade(world, blockPos);
-            RenderHelpers.addBlockHitEffects(effectRenderer, world, blockState, blockPos, target.sideHit);
+            IBlockState facadeState = getFacade(world, blockPos);
+            RenderHelpers.addBlockHitEffects(effectRenderer, world, facadeState, blockPos, target.sideHit);
             return true;
         } else {
-            return super.addHitEffects(world, target, effectRenderer);
+            return super.addHitEffects(blockState, world, target, effectRenderer);
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public boolean isSideSolid(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
         if(hasFacade(world, pos)) {
             return true;
         }
@@ -640,11 +648,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             IPartType partType = partContainer.getPart(side);
             return partType.isSolid(partContainer.getPartState(side));
         }
-        return super.isSideSolid(world, pos, side);
+        return super.isSideSolid(blockState, world, pos, side);
     }
 
     @Override
-    public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
+    public boolean canRenderInLayer(IBlockState blockState, BlockRenderLayer layer) {
         return true;
     }
 
@@ -652,10 +660,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         float min = CableModel.MIN;
         float max = CableModel.MAX;
         if (side == null) {
-            return AxisAlignedBB.fromBounds(min, min, min, max, max, max);
+            return new AxisAlignedBB(min, min, min, max, max, max);
         } else {
             float[] b = CABLE_COLLISION_BOXES[side.ordinal()];
-            return AxisAlignedBB.fromBounds(b[0], b[1], b[2], b[3], b[4], b[5]);
+            return new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]);
         }
     }
 
@@ -669,7 +677,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         float min = CableModel.MIN;
         float max = CableModel.MAX;
         if (side == null) {
-            return AxisAlignedBB.fromBounds(min, min, min, max, max, max);
+            return new AxisAlignedBB(min, min, min, max, max, max);
         } else {
             return getPartRenderPosition(world, pos, side).getSidedCableBoundingBox(side);
         }
@@ -680,19 +688,19 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public void addCollisionBoxesToListParent(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask,
-                                              List list, Entity collidingEntity) {
-        super.addCollisionBoxesToList(worldIn, pos, state, mask, list, collidingEntity);
+    public void addCollisionBoxesToListParent(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB mask,
+                                              List<AxisAlignedBB> list, Entity collidingEntity) {
+        super.addCollisionBoxToList(state, worldIn, pos, mask, list, collidingEntity);
     }
 
     @Override
-    public AxisAlignedBB getSelectedBoundingBoxParent(World worldIn, BlockPos pos) {
-        return super.getSelectedBoundingBox(worldIn, pos);
+    public AxisAlignedBB getSelectedBoundingBoxParent(IBlockState blockState, World worldIn, BlockPos pos) {
+        return super.getSelectedBoundingBox(blockState, worldIn, pos);
     }
 
     @Override
-    public MovingObjectPosition collisionRayTraceParent(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
-        return super.collisionRayTrace(world, pos, origin, direction);
+    public net.minecraft.util.math.RayTraceResult collisionRayTraceParent(IBlockState blockState, World world, BlockPos pos, Vec3d origin, Vec3d direction) {
+        return super.collisionRayTrace(blockState, world, pos, origin, direction);
     }
 
     /* --------------- Start IDynamicRedstoneBlock --------------- */
@@ -740,12 +748,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public boolean canProvidePower() {
+    public boolean canProvidePower(IBlockState blockState) {
         return true;
     }
 
     @Override
-    public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public boolean canConnectRedstone(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
         if(side == null) {
             for(EnumFacing dummySide : EnumFacing.VALUES) {
                 if(getRedstoneLevel(world, pos, dummySide) >= 0 || isAllowRedstoneInput(world, pos, dummySide)) {
@@ -758,12 +766,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+    public int getStrongPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return 0;
     }
 
     @Override
-    public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+    public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return getRedstoneLevel(world, pos, side.getOpposite());
     }
 
@@ -787,7 +795,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, BlockPos pos) {
+    public int getLightValue(IBlockState blockState, IBlockAccess world, BlockPos pos) {
         int light = 0;
         for(EnumFacing side : EnumFacing.values()) {
             light = Math.max(light, getLightLevel(world, pos, side));

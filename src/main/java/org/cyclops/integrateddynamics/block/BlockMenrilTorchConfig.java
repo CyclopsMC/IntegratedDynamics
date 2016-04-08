@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockTorch;
 import org.cyclops.cyclopscore.config.configurable.IConfigurable;
@@ -39,7 +39,7 @@ public class BlockMenrilTorchConfig extends BlockConfig {
     protected IConfigurable initSubInstance() {
         return new ConfigurableBlockTorch(this) {
             @Override
-            public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+            public void randomDisplayTick(IBlockState state, World worldIn, BlockPos pos, Random rand) {
                 // No particles
             }
         };

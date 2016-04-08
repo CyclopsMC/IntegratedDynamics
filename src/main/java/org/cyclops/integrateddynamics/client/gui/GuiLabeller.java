@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.C17PacketCustomPayload;
+import net.minecraft.network.play.client.CPacketCustomPayload;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerConfigurable;
@@ -105,7 +105,7 @@ public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
                 String label = StringUtils.isBlank(searchField.getText()) ? "" : searchField.getText();
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableId, label);
             } else if(itemStack != null) {
-                this.mc.thePlayer.sendQueue.addToSendQueue(new C17PacketCustomPayload("MC|ItemName", (new PacketBuffer(Unpooled.buffer())).writeString(searchField.getText())));
+                this.mc.thePlayer.sendQueue.addToSendQueue(new CPacketCustomPayload("MC|ItemName", (new PacketBuffer(Unpooled.buffer())).writeString(searchField.getText())));
                 String name = searchField.getText();
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(new ItemStackRenamePacket(name));
                 getContainer().setItemStackName(name);

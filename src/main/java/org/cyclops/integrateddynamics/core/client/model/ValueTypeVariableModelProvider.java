@@ -2,18 +2,17 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.model.IModelState;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class ValueTypeVariableModelProvider implements IVariableModelProvider<Ba
                     IBakedModel bakedValueTypeModel = model.bake(state, format, bakedTextureGetter);
                     bakedModels.put(valueType, bakedValueTypeModel);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

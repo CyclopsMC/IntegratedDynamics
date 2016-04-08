@@ -5,12 +5,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.item.ItemBlockMetadata;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -65,8 +69,9 @@ public class ItemBlockCable extends ItemBlockMetadata {
     }
 
     protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable) {
-        Block block = world.getBlockState(pos).getBlock();
-        if(!block.isAir(world, pos)) {
+        IBlockState blockState = world.getBlockState(pos);
+        Block block = blockState.getBlock();
+        if(!block.isAir(blockState, world, pos)) {
             ICableFakeable cable = CableHelpers.getInterface(world, pos, ICableFakeable.class);
             if (cable != null && !cable.isRealCable(world, pos)) {
                 cable.setRealCable(world, pos, true);
@@ -91,8 +96,8 @@ public class ItemBlockCable extends ItemBlockMetadata {
 
     public static void playPlaceSound(World world, BlockPos pos) {
         Block block = BlockCable.getInstance();
-        world.playSoundEffect((double)((float)pos.getX() + 0.5F), (double)((float)pos.getY() + 0.5F), (double)((float)pos.getZ() + 0.5F),
-                block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getFrequency() * 0.8F);
+        IntegratedDynamics.proxy.playSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
+                block.getStepSound().getPlaceSound().getSoundName().toString(), SoundCategory.BLOCKS, (block.getStepSound().getVolume() + 1.0F) / 2.0F, block.getStepSound().getPitch() * 0.8F);
     }
 
     public static void playBreakSound(World world, BlockPos pos, IBlockState blockState) {
@@ -100,7 +105,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side,
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side,
                              float hitX, float hitY, float hitZ) {
         // Skips server-side entity collision detection for placing cables.
         // We temporary disable the collision box of the cable so that it can be placed even if an entity is in the way.
@@ -110,17 +115,17 @@ public class ItemBlockCable extends ItemBlockMetadata {
         // Avoid regular block placement when the target is an unreal cable.
         if(attempItemUseTarget(stack, worldIn, pos, blockCable)) {
             afterItemUse(stack, worldIn, pos, blockCable, false);
-            return true;
+            return EnumActionResult.SUCCESS;
         }
 
         // Change pos and side when we are targeting a block that is blocked by an unreal cable, so we want to target
         // the unreal cable.
         if(attempItemUseTarget(stack, worldIn, pos.offset(side), blockCable)) {
             afterItemUse(stack, worldIn, pos, blockCable, false);
-            return true;
+            return EnumActionResult.SUCCESS;
         }
 
-        boolean ret = super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
+        EnumActionResult ret = super.onItemUse(stack, playerIn, worldIn, pos, hand, side, hitX, hitY, hitZ);
         afterItemUse(stack, worldIn, pos, blockCable, true);
         return ret;
     }

@@ -3,15 +3,15 @@ package org.cyclops.integrateddynamics.core.client.model;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelState;
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
@@ -75,9 +75,9 @@ public class VariableModel implements IModel {
     }
 
     @Override
-    public IFlexibleBakedModel bake(IModelState state, VertexFormat format,
+    public IBakedModel bake(IModelState state, VertexFormat format,
                                     Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-        IFlexibleBakedModel baseModel = ModelHelpers.bakeModel(base, bakedTextureGetter);
+        IBakedModel baseModel = ModelHelpers.bakeModel(base, bakedTextureGetter);
         VariableModelBaked bakedModel = new VariableModelBaked(baseModel);
 
         for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {

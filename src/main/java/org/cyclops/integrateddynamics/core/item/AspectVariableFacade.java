@@ -96,8 +96,8 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
         if(isValid()) {
             IAspect aspect = getAspect();
             IValueType valueType = aspect.getValueType();
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType).getGeneralQuads());
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.ASPECT).getBakedModels().get(aspect).getGeneralQuads());
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType).getQuads(null, null, 0L));
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.ASPECT).getBakedModels().get(aspect).getQuads(null, null, 0L));
         }
     }
 }

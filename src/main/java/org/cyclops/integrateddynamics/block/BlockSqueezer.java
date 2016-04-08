@@ -10,12 +10,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
@@ -60,7 +66,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumFacing side, float motionX, float motionY, float motionZ) {
+    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float motionX, float motionY, float motionZ) {
         if (world.isRemote) {
             return true;
         } else if(world.getBlockState(blockPos).getValue(BlockSqueezer.HEIGHT) == 1) {
@@ -141,59 +147,44 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
     }
 
     @Override
-    public void addCollisionBoxesToList(World world, BlockPos blockPos, IBlockState blockState, AxisAlignedBB area, List<AxisAlignedBB> collisionBoxes, Entity entity) {
+    public void addCollisionBoxToList(IBlockState blockState, World world, BlockPos blockPos, AxisAlignedBB area, List<AxisAlignedBB> collisionBoxes, Entity entity) {
         // Bottom
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F);
-        super.addCollisionBoxesToList(world, blockPos, blockState, area, collisionBoxes, entity);
-        float f = 0.125F;
+        BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F));
 
         // Sticks
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, f, 1.0F, f);
-        super.addCollisionBoxesToList(world, blockPos, blockState, area, collisionBoxes, entity);
-        this.setBlockBounds(1.0F, 0.0F, 0.0F, 1.0F - f, 1.0F, f);
-        super.addCollisionBoxesToList(world, blockPos, blockState, area, collisionBoxes, entity);
-        this.setBlockBounds(0.0F, 0.0F, 1.0F, f, 1.0F, 1.0F - f);
-        super.addCollisionBoxesToList(world, blockPos, blockState, area, collisionBoxes, entity);
-        this.setBlockBounds(1.0F, 0.0F, 1.0F, 1.0F - f, 1.0F, 1.0F - f);
-        super.addCollisionBoxesToList(world, blockPos, blockState, area, collisionBoxes, entity);
+        float f = 0.125F;
+        BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, 0.0F, 0.0F, f, 1.0F, f));
+        BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(1.0F, 0.0F, 0.0F, 1.0F - f, 1.0F, f));
+        BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, 0.0F, 1.0F, f, 1.0F, 1.0F - f));
+        BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(1.0F, 0.0F, 1.0F, 1.0F - f, 1.0F, 1.0F - f));
 
         // Dynamic top
         float offset = (8 - blockState.getValue(HEIGHT)) * 0.125F;
-        this.setBlockBounds(0.0F, offset - 0.125F, 0.0F, 1.0F, offset, 1.0F);
-        super.addCollisionBoxesToList(world, blockPos, blockState, area, collisionBoxes, entity);
-
-        setBlockBoundsBasedOnState(world, blockPos);
+        BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(1.0F, 0.0F, 1.0F, 1.0F - f, 1.0F, 1.0F - f));
     }
 
     @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
-        IBlockState state = worldIn.getBlockState(pos);
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, this.getRelativeTopPositionTop(worldIn, pos, state), 1.0F);
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, this.getRelativeTopPositionTop(world, pos, state), 1.0F);
     }
 
     @Override
-    public void setBlockBoundsForItemRender() {
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-    }
-
-    @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState blockState) {
         return false;
     }
 
     @Override
-    public boolean isNormalCube() {
+    public boolean isNormalCube(IBlockState blockState) {
         return false;
     }
 
     @Override
-    public boolean hasComparatorInputOverride() {
+    public boolean hasComparatorInputOverride(IBlockState blockState) {
         return true;
     }
 
     @Override
-    public int getComparatorInputOverride(World world, BlockPos blockPos) {
-        IBlockState blockState = world.getBlockState(blockPos);
+    public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos blockPos) {
         return (int) (((double) blockState.getValue(HEIGHT) - 1) / 6D * 15D);
     }
 

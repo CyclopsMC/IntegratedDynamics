@@ -126,7 +126,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     @Override
     public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads) {
         if(isValid()) {
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.PROXY).getBakedModel().getGeneralQuads());
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.PROXY).getBakedModel().getQuads(null, null, 0L));
         }
     }
 

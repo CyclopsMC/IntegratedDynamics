@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.path;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**

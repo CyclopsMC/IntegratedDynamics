@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -109,7 +109,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
         if(isValid()) {
             IBakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(getValueType());
             if(bakedModel != null) {
-                quads.addAll(bakedModel.getGeneralQuads());
+                quads.addAll(bakedModel.getQuads(null, null, 0L));
             }
         }
     }

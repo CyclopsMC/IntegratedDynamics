@@ -9,9 +9,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
@@ -188,9 +188,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                             L10NHelpers.localize(valueType.getUnlocalizedName())));
                 }
             } else {
-                lines.add(EnumChatFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
+                lines.add(TextFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
                 for (L10NHelpers.UnlocalizedString error : state.getGlobalErrors()) {
-                    lines.add(EnumChatFormatting.RED + error.localize());
+                    lines.add(TextFormatting.RED + error.localize());
                 }
             }
         } else {

@@ -6,8 +6,10 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -65,8 +67,8 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     }
 
     @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumFacing side,
-                             float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand,
+                             EnumFacing side, float hitX, float hitY, float hitZ) {
         if(!world.isRemote) {
             IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
             if(partContainerFacade != null) {
@@ -75,12 +77,12 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 if(addPart(world, pos, side, partContainer, itemStack) && !playerIn.capabilities.isCreativeMode) {
                     itemStack.stackSize--;
                 }
-                return true;
+                return EnumActionResult.SUCCESS;
             } else {
                 // Check all third party actions
                 for (IUseAction useAction : USE_ACTIONS) {
                     if (useAction.attempItemUseTarget(this, itemStack, world, pos, side)) {
-                        return true;
+                        return EnumActionResult.SUCCESS;
                     }
                 }
 
@@ -88,7 +90,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 BlockPos target = pos.offset(side);
                 if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
                     ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
-                    if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, side, hitX, hitY, hitZ)) {
+                    if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
                         partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
                         if (partContainerFacade != null) {
                             IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
@@ -98,7 +100,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                             } else {
                                 IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable, got %s", world.getBlockState(target).getBlock()));
                             }
-                            return true;
+                            return EnumActionResult.SUCCESS;
                         }
                     }
                 } else {
@@ -108,12 +110,12 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                         if(addPart(world, pos, side.getOpposite(), partContainer, itemStack) && !playerIn.capabilities.isCreativeMode) {
                             itemStack.stackSize--;
                         }
-                        return true;
+                        return EnumActionResult.SUCCESS;
                     }
                 }
             }
         }
-        return super.onItemUse(itemStack, playerIn, world, pos, side, hitX, hitY, hitZ);
+        return super.onItemUse(itemStack, playerIn, world, pos, hand, side, hitX, hitY, hitZ);
     }
 
     protected boolean addPart(World world, BlockPos pos, EnumFacing side, IPartContainer partContainer, ItemStack itemStack) {

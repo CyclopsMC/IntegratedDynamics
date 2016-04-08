@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.cyclops.integrateddynamics.api.item.IWrench;
 
 /**
@@ -18,17 +18,17 @@ public final class WrenchHelpers {
      * @return If the wrenching can continue with the held item.
      */
     public static boolean isWrench(EntityPlayer player, BlockPos pos) {
-        if(player.getCurrentEquippedItem() == null) {
+        if(player.getActiveItemStack() == null) {
             return false;
         }
-        Item item = player.getCurrentEquippedItem().getItem();
+        Item item = player.getActiveItemStack().getItem();
         // TODO: add support for other mod wrenches, like the one from BC.
         return item instanceof IWrench && ((IWrench) item).canUse(player, pos);
     }
 
     /**
      * Wrench a given position.
-     * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, net.minecraft.util.BlockPos)}
+     * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, BlockPos)}
      * to be passed.
      * Takes an extra parameter of any type that is forwarded to the wrench action.
      * @param player The player.
@@ -38,7 +38,7 @@ public final class WrenchHelpers {
      * @param <P> The type of parameter to pass.
      */
     public static <P> void wrench(EntityPlayer player, BlockPos pos, IWrenchAction<P> action, P parameter) {
-        Item item = player.getCurrentEquippedItem().getItem();
+        Item item = player.getActiveItemStack().getItem();
         // TODO: add support for other mod wrenches, like the one from BC.
         if(item instanceof IWrench) {
             ((IWrench) item).beforeUse(player, pos);
@@ -49,7 +49,7 @@ public final class WrenchHelpers {
 
     /**
      * Wrench a given position.
-     * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, net.minecraft.util.BlockPos)}
+     * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, BlockPos)}
      * to be passed.
      * @param player The player.
      * @param pos The position that is being wrenched.

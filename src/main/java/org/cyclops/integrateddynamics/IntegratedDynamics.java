@@ -71,10 +71,7 @@ import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTi
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
 import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
-import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
-import org.cyclops.integrateddynamics.modcompat.thaumcraft.ThaumcraftModCompat;
-import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
@@ -159,9 +156,9 @@ public class IntegratedDynamics extends ModBaseVersionable {
         super.loadModCompats(modCompatLoader);
         // Mod compats
         modCompatLoader.addModCompat(new CharsetPipesModCompat());
-        modCompatLoader.addModCompat(new McMultiPartModCompat());
-        modCompatLoader.addModCompat(new WailaModCompat());
-        modCompatLoader.addModCompat(new ThaumcraftModCompat());
+        //modCompatLoader.addModCompat(new McMultiPartModCompat());
+        //modCompatLoader.addModCompat(new WailaModCompat());
+        //modCompatLoader.addModCompat(new ThaumcraftModCompat());
         modCompatLoader.addModCompat(new JEIModCompat());
         modCompatLoader.addApiCompat(new RfApiCompat());
 

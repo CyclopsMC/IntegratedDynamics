@@ -10,11 +10,17 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.*;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.StringUtils;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -85,7 +91,7 @@ public class Aspects {
                     AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
                         @Override
                         public Integer getOutput(net.minecraft.world.World world) {
-                            return world.provider.getDimensionId();
+                            return world.provider.getDimension();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "dimension").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSX =
@@ -133,7 +139,7 @@ public class Aspects {
                         @Override
                         public ValueTypeList.ValueList getOutput(DimPos dimPos) {
                             List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
-                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.selectAnything);
+                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.NOT_SPECTATING);
                             return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities, new Function<net.minecraft.entity.Entity, ValueObjectTypeEntity.ValueEntity>() {
                                 @Nullable
                                 @Override
@@ -164,7 +170,7 @@ public class Aspects {
                             int i = input.getRight().getValue(AspectReadBuilders.PROPERTY_LISTINDEX).getRawValue();
                             DimPos dimPos = input.getLeft().getTarget().getPos();
                             List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
-                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.selectAnything);
+                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntitySelectors.NOT_SPECTATING);
                             return ValueObjectTypeEntity.ValueEntity.of(i < entities.size() ? entities.get(i) : null);
                         }
                     }).buildRead();
@@ -209,7 +215,7 @@ public class Aspects {
                     AspectReadBuilders.ExtraDimensional.BUILDER_LIST.handle(new IAspectValuePropagator<MinecraftServer, ValueTypeList.ValueList>() {
                         @Override
                         public ValueTypeList.ValueList getOutput(MinecraftServer minecraft) {
-                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(minecraft.getConfigurationManager().playerEntityList, new Function<EntityPlayerMP, ValueObjectTypeEntity.ValueEntity>() {
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(minecraft.getPlayerList().getPlayerList(), new Function<EntityPlayerMP, ValueObjectTypeEntity.ValueEntity>() {
                                 @Nullable
                                 @Override
                                 public ValueObjectTypeEntity.ValueEntity apply(EntityPlayerMP input) {
@@ -614,7 +620,7 @@ public class Aspects {
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(new IAspectValuePropagator<net.minecraft.world.World, Integer>() {
                         @Override
                         public Integer getOutput(net.minecraft.world.World world) {
-                            return (int) DoubleMath.mean(MinecraftServer.getServer().worldTickTimes.get(world.provider.getDimensionId()));
+                            return (int) DoubleMath.mean(FMLCommonHandler.instance().getMinecraftServerInstance().worldTickTimes.get(world.provider.getDimension()));
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
@@ -711,7 +717,7 @@ public class Aspects {
 
                                         IntegratedDynamics.proxy.sendSoundMinecraft(
                                                 (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                                                input.getRight(), volume, f);
+                                                input.getRight(), SoundCategory.MUSIC, volume, f);
                                     }
                                     return null;
                                 }

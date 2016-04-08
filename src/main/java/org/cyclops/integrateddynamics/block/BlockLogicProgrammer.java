@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.Container;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,7 +48,7 @@ public class BlockLogicProgrammer extends ConfigurableBlockGui {
         super(eConfig, Material.glass);
 
         setHardness(3.0F);
-        setStepSound(soundTypeMetal);
+        setStepSound(SoundType.METAL);
     }
 
     @Override

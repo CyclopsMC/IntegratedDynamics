@@ -5,15 +5,19 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import org.cyclops.cyclopscore.client.model.DynamicModel;
+import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -24,7 +28,7 @@ import java.util.List;
  * A base dynamic model for cables.
  * @author rubensworks
  */
-public abstract class CableModelBase extends DynamicModel {
+public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel {
 
     private static final int RADIUS = 4;
     private static final int TEXTURE_SIZE = 16;
@@ -40,8 +44,12 @@ public abstract class CableModelBase extends DynamicModel {
 
     private final float[][][] quadVertexes = makeQuadVertexes(MIN, MAX, 1.00F);
 
-    public CableModelBase(IExtendedBlockState state, boolean isItemStack) {
-        super(state, isItemStack);
+    public CableModelBase(IBlockState blockState, EnumFacing facing, long rand) {
+        super(blockState, facing, rand);
+    }
+
+    public CableModelBase(ItemStack itemStack, World world, EntityLivingBase entity) {
+        super(itemStack, world, entity);
     }
 
     public CableModelBase() {
@@ -77,7 +85,7 @@ public abstract class CableModelBase extends DynamicModel {
         };
     }
 
-    private EnumFacing getSideFromVecs(Vec3 a, Vec3 b, Vec3 c) {
+    private EnumFacing getSideFromVecs(Vec3d a, Vec3d b, Vec3d c) {
         int dir = a.yCoord == b.yCoord && b.yCoord == c.yCoord ? 0 : (a.xCoord == b.xCoord && b.xCoord == c.xCoord ? 2 : 4);
         if (dir == 0) {
             dir += (c.yCoord >= 0.5) ? 1 : 0;
@@ -148,13 +156,13 @@ public abstract class CableModelBase extends DynamicModel {
     public List<BakedQuad> getGeneralQuads() {
         List<BakedQuad> ret = Lists.newLinkedList();
         TextureAtlasSprite texture = getParticleTexture();
-        boolean renderCable = isItemStack() || (isRealCable() && MinecraftForgeClient.getRenderLayer() == EnumWorldBlockLayer.TRANSLUCENT);
+        boolean renderCable = isItemStack() || (isRealCable() && MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT);
         Optional<IBlockState> blockStateHolder = getFacade();
         for (EnumFacing side : EnumFacing.values()) {
             boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
             boolean hasPart = !isItemStack() && hasPart(side);
             if(hasPart && shouldRenderParts()) {
-                ret.addAll(getPartModel(side).getGeneralQuads());
+                ret.addAll(getPartModel(side).getQuads(this.blockState, this.facing, this.rand));
             }
             if(renderCable) {
                 IPartType.RenderPosition renderPosition = IPartType.RenderPosition.NONE;
@@ -170,10 +178,10 @@ public abstract class CableModelBase extends DynamicModel {
                         quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
                     }
                     for (float[][] v : quadVertexes) {
-                        Vec3 v1 = rotate(new Vec3(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3 v2 = rotate(new Vec3(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3 v3 = rotate(new Vec3(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3 v4 = rotate(new Vec3(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).addVector(.5, .5, .5);
+                        Vec3d v1 = rotate(new Vec3d(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
+                        Vec3d v2 = rotate(new Vec3d(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).addVector(.5, .5, .5);
+                        Vec3d v3 = rotate(new Vec3d(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);
+                        Vec3d v4 = rotate(new Vec3d(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).addVector(.5, .5, .5);
                         EnumFacing realSide = getSideFromVecs(v1, v2, v3);
 
                         boolean invert = i == 2 || i == 1;
@@ -191,7 +199,7 @@ public abstract class CableModelBase extends DynamicModel {
                         );
                         i++;
                         ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
-                        ret.add(new BakedQuad(data, -1, realSide));
+                        ret.add(new BakedQuad(data, -1, realSide, texture, true, Attributes.DEFAULT_BAKED_FORMAT));
                     }
                 } else {
                     addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
@@ -216,6 +224,10 @@ public abstract class CableModelBase extends DynamicModel {
     @Override
     public TextureAtlasSprite getParticleTexture() {
         return BlockCable.getInstance().texture;
+    }
+
+    public IExtendedBlockState getState() {
+        return (IExtendedBlockState) this.blockState;
     }
 
 }

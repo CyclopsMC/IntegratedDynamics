@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -21,7 +21,7 @@ public class DisplayErrorsComponent {
                 List<String> lines = Lists.newLinkedList();
                 for(L10NHelpers.UnlocalizedString error : errors) {
                     lines.addAll(StringHelpers.splitLines(error.localize(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
-                            EnumChatFormatting.RED.toString()));
+                            TextFormatting.RED.toString()));
                 }
                 gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
             }

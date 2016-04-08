@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,15 +13,19 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.oredict.OreDictionary;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -583,7 +588,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
-                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && a.getRawValue().get().getBlock().isOpaqueCube());
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && a.getRawValue().get().isOpaqueCube());
                 }
             }).build());
 
@@ -608,7 +613,7 @@ public final class Operators {
                         @Override
                         public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                             ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
-                            return a.getRawValue().isPresent() ? GameData.getBlockRegistry().getNameForObject(a.getRawValue().get().getBlock()) : null;
+                            return a.getRawValue().isPresent() ? Block.blockRegistry.getNameForObject(a.getRawValue().get().getBlock()) : null;
                         }
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
@@ -620,11 +625,11 @@ public final class Operators {
     public static final IOperator OBJECT_BLOCK_BREAKSOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("breaksound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    new IOperatorValuePropagator<Optional<Block.SoundType>, String>() {
+                    new IOperatorValuePropagator<Optional<SoundType>, String>() {
                         @Override
-                        public String getOutput(Optional<Block.SoundType> sound) throws EvaluationException {
+                        public String getOutput(Optional<SoundType> sound) throws EvaluationException {
                             if (sound.isPresent()) {
-                                return sound.get().getBreakSound();
+                                return sound.get().getBreakSound().getSoundName().toString();
                             }
                             return "";
                         }
@@ -637,11 +642,11 @@ public final class Operators {
     public static final IOperator OBJECT_BLOCK_PLACESOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("placesound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    new IOperatorValuePropagator<Optional<Block.SoundType>, String>() {
+                    new IOperatorValuePropagator<Optional<SoundType>, String>() {
                         @Override
-                        public String getOutput(Optional<Block.SoundType> sound) throws EvaluationException {
+                        public String getOutput(Optional<SoundType> sound) throws EvaluationException {
                             if (sound.isPresent()) {
-                                return sound.get().getPlaceSound();
+                                return sound.get().getPlaceSound().getSoundName().toString();
                             }
                             return "";
                         }
@@ -654,11 +659,11 @@ public final class Operators {
     public static final IOperator OBJECT_BLOCK_STEPSOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("stepsound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    new IOperatorValuePropagator<Optional<Block.SoundType>, String>() {
+                    new IOperatorValuePropagator<Optional<SoundType>, String>() {
                         @Override
-                        public String getOutput(Optional<Block.SoundType> sound) throws EvaluationException {
+                        public String getOutput(Optional<SoundType> sound) throws EvaluationException {
                             if (sound.isPresent()) {
-                                return sound.get().getStepSound();
+                                return sound.get().getStepSound().getSoundName().toString();
                             }
                             return "";
                         }
@@ -802,7 +807,7 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
-                    return ValueTypeDouble.ValueDouble.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() ? a.getRawValue().get().getStrVsBlock(b.getRawValue().get().getBlock()) : 0);
+                    return ValueTypeDouble.ValueDouble.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() ? a.getRawValue().get().getStrVsBlock(b.getRawValue().get()) : 0);
                 }
             }).build());
 
@@ -817,7 +822,7 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
-                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() && a.getRawValue().get().canHarvestBlock(b.getRawValue().get().getBlock()));
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() && a.getRawValue().get().canHarvestBlock(b.getRawValue().get()));
                 }
             }).build());
 
@@ -920,7 +925,7 @@ public final class Operators {
                         @Override
                         public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                             ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                            return a.getRawValue().isPresent() ? GameData.getItemRegistry().getNameForObject(a.getRawValue().get().getItem()) : null;
+                            return a.getRawValue().isPresent() ? Item.itemRegistry.getNameForObject(a.getRawValue().get().getItem()) : null;
                         }
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
@@ -1121,7 +1126,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(new IOperatorValuePropagator<Entity, Boolean>() {
                 @Override
                 public Boolean getOutput(Entity entity) throws EvaluationException {
-                    return entity != null && entity.isEating();
+                    return entity != null && entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getItemInUseCount() > 0;
                 }
             })).build());
 
@@ -1197,14 +1202,14 @@ public final class Operators {
                         double reachDistance = 5;
                         double eyeHeight = entity.getEyeHeight();
                         if(entity instanceof EntityPlayerMP) {
-                            reachDistance = ((EntityPlayerMP) entity).theItemInWorldManager.getBlockReachDistance();
+                            reachDistance = ((EntityPlayerMP) entity).interactionManager.getBlockReachDistance();
                         }
-                        Vec3 lookVec = entity.getLookVec();
-                        Vec3 origin = new Vec3(entity.posX, entity.posY + eyeHeight, entity.posZ);
-                        Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
+                        Vec3d lookVec = entity.getLookVec();
+                        Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
+                        Vec3d direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
-                        MovingObjectPosition mop = entity.worldObj.rayTraceBlocks(origin, direction, true);
-                        if(mop != null && mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                        RayTraceResult mop = entity.worldObj.rayTraceBlocks(origin, direction, true);
+                        if(mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
                             blockState = entity.worldObj.getBlockState(mop.getBlockPos());
                         }
                     }
@@ -1226,11 +1231,11 @@ public final class Operators {
                         double reachDistance = 5;
                         double eyeHeight = entity.getEyeHeight();
                         if(entity instanceof EntityPlayerMP) {
-                            reachDistance = ((EntityPlayerMP) entity).theItemInWorldManager.getBlockReachDistance();
+                            reachDistance = ((EntityPlayerMP) entity).interactionManager.getBlockReachDistance();
                         }
-                        Vec3 lookVec = entity.getLookVec();
-                        Vec3 origin = new Vec3(entity.posX, entity.posY + eyeHeight, entity.posZ);
-                        Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
+                        Vec3d lookVec = entity.getLookVec();
+                        Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
+                        Vec3d direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
                         float size = entity.getCollisionBorderSize();
                         List<Entity> list = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity,
@@ -1240,14 +1245,14 @@ public final class Operators {
                             if (e.canBeCollidedWith()) {
                                 float f10 = e.getCollisionBorderSize();
                                 AxisAlignedBB axisalignedbb = e.getEntityBoundingBox().expand((double) f10, (double) f10, (double) f10);
-                                MovingObjectPosition mop = axisalignedbb.calculateIntercept(origin, direction);
+                                RayTraceResult mop = axisalignedbb.calculateIntercept(origin, direction);
 
                                 if (axisalignedbb.isVecInside(origin)) {
                                     entityOut = e;
                                 } else if (mop != null) {
                                     double distance = origin.distanceTo(mop.hitVec);
                                     if (distance < reachDistance || reachDistance == 0.0D) {
-                                        if (e == entity.ridingEntity && !entity.canRiderInteract()) {
+                                        if (e == entity.getRidingEntity() && !entity.canRiderInteract()) {
                                             if (reachDistance == 0.0D) {
                                                 entityOut = e;
                                             }
@@ -1274,7 +1279,7 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     ItemStack itemStack = null;
                     if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                        itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItem();
+                        itemStack = ((EntityLivingBase) a.getRawValue().get()).getActiveItemStack();
                     }
                     return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
                 }
@@ -1290,7 +1295,7 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     Entity entityOut = null;
                     if(a.getRawValue().isPresent()) {
-                        entityOut = a.getRawValue().get().riddenByEntity;
+                        //entityOut = a.getRawValue().get().getPassengers(); // TODO: transform this to a list
                     }
                     return ValueObjectTypeEntity.ValueEntity.of(entityOut);
                 }
@@ -1494,7 +1499,7 @@ public final class Operators {
                             } else if (fluid.getFlowing() != null) {
                                 modDomain = fluid.getFlowing().getResourceDomain();
                             } else if (fluid.getBlock() != null) {
-                                modDomain = GameData.getBlockRegistry().getNameForObject(fluid.getBlock()).getResourceDomain();
+                                modDomain = Block.blockRegistry.getNameForObject(fluid.getBlock()).getResourceDomain();
                             }
                             String modId = org.cyclops.cyclopscore.helper.Helpers.getModId(modDomain);
                             modName = Loader.instance().getIndexedModList().get(modId).getName();

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.google.common.collect.Iterables;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,7 +23,7 @@ public class ValueTypeListProxyEntityArmorInventory extends ValueTypeListProxyEn
     protected ItemStack[] getInventory() {
         Entity e = getEntity();
         if(e != null) {
-            ItemStack[] inventory = e.getInventory();
+            ItemStack[] inventory = Iterables.toArray(e.getArmorInventoryList(), ItemStack.class);
             if(inventory != null) {
                 return inventory;
             }

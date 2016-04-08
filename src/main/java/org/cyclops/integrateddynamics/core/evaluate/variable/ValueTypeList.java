@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
 import lombok.ToString;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -20,7 +20,7 @@ import java.util.List;
 public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> {
 
     public ValueTypeList() {
-        super("list", Helpers.RGBToInt(175, 3, 1), EnumChatFormatting.DARK_RED.toString());
+        super("list", Helpers.RGBToInt(175, 3, 1), TextFormatting.DARK_RED.toString());
     }
 
     @Override

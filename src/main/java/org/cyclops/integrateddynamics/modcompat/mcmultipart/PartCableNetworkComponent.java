@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;

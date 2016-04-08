@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,7 +36,7 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
         super(eConfig);
 
         setHardness(5.0F);
-        setStepSound(soundTypeMetal);
+        setStepSound(SoundType.METAL);
     }
 
     @Override

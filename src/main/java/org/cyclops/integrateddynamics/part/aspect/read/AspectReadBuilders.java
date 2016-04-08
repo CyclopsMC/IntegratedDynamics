@@ -6,13 +6,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
@@ -149,8 +150,8 @@ public class AspectReadBuilders {
                         net.minecraft.world.World world = input.getLeft().getTarget().getPos().getWorld();
                         BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
                         int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
-                        if (world.provider.getDimensionId() == event.world.provider.getDimensionId()
-                                && pos.distanceSq(event.pos) <= range * range) {
+                        if (world.provider.getDimension() == event.getWorld().provider.getDimension()
+                                && pos.distanceSq(event.getPos()) <= range * range) {
                             return event.getVanillaNoteId();
                         }
                     }
@@ -204,7 +205,7 @@ public class AspectReadBuilders {
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer>() {
             @Override
             public MinecraftServer getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return MinecraftServer.getServer();
+                return FMLCommonHandler.instance().getMinecraftServerInstance();
             }
         };
 
@@ -396,7 +397,8 @@ public class AspectReadBuilders {
             @Override
             public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos dimPos = input.getLeft().getTarget().getPos();
-                return dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock().getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
+                IBlockState blockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+                return blockState.getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
             }
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean>() {

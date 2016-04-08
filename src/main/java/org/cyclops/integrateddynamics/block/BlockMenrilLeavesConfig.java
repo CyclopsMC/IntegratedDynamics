@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
@@ -69,7 +69,12 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
                 }
                 return drops;
             }
-        }.setHardness(0.2F).setLightLevel(0.65F).setLightOpacity(1).setStepSound(Block.soundTypeGrass);
+
+            @Override
+            public SoundType getStepSound() {
+                return SoundType.GROUND;
+            }
+        }.setHardness(0.2F).setLightLevel(0.65F).setLightOpacity(1);
     }
     
     @Override

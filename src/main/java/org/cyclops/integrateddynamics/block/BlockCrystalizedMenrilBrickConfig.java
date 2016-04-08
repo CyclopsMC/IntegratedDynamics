@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlock;
 import org.cyclops.cyclopscore.config.configurable.IConfigurable;
@@ -34,8 +34,12 @@ public class BlockCrystalizedMenrilBrickConfig extends BlockConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        ConfigurableBlock block = (ConfigurableBlock) new ConfigurableBlock(this, Material.clay)
-        .setHardness(1.5F).setStepSound(Block.soundTypeSnow);
+        ConfigurableBlock block = (ConfigurableBlock) new ConfigurableBlock(this, Material.clay) {
+            @Override
+            public SoundType getStepSound() {
+                return SoundType.SNOW;
+            }
+        }.setHardness(1.5F);
         block.setHarvestLevel("pickaxe", 0);
         return block;
     }

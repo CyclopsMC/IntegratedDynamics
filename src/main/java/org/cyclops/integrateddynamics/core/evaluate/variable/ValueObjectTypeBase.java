@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 
@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 public abstract class ValueObjectTypeBase<V extends IValue> extends ValueTypeBase<V> {
 
     public ValueObjectTypeBase(String typeName) {
-        this(typeName, Helpers.RGBToInt(243, 243, 243), EnumChatFormatting.GRAY.toString());
+        this(typeName, Helpers.RGBToInt(243, 243, 243), TextFormatting.GRAY.toString());
     }
 
     public ValueObjectTypeBase(String typeName, int color, String colorFormat) {

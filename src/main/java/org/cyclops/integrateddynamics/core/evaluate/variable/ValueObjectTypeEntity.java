@@ -5,8 +5,8 @@ import lombok.ToString;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -47,7 +47,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     public String serialize(ValueEntity value) {
         Optional<Entity> entity = value.getRawValue();
         if(entity.isPresent()) {
-            int world = entity.get().worldObj.provider.getDimensionId();
+            int world = entity.get().worldObj.provider.getDimension();
             int id = entity.get().getEntityId();
             return world + DELIMITER + id;
         }
@@ -65,7 +65,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
                 if(MinecraftHelpers.isClientSide()) {
                     entity = Minecraft.getMinecraft().theWorld.getEntityByID(id);
                 } else {
-                    WorldServer[] servers = MinecraftServer.getServer().worldServers;
+                    WorldServer[] servers = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers;
                     if (servers.length > world) {
                         entity = servers[world].getEntityByID(id);
                     }

@@ -8,6 +8,8 @@ import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeCateg
 import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeHandler;
 import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeJEI;
 
+import javax.annotation.Nonnull;
+
 /**
  * Helper for registering JEI manager.
  * @author rubensworks
@@ -19,18 +21,9 @@ public class JEIIntegratedDynamicsConfig implements IModPlugin {
     public static IJeiHelpers JEI_HELPER;
 
     @Override
-    public void onJeiHelpersAvailable(IJeiHelpers jeiHelpers) {
-        JEI_HELPER = jeiHelpers;
-    }
-
-    @Override
-    public void onItemRegistryAvailable(IItemRegistry itemRegistry) {
-
-    }
-
-    @Override
-    public void register(IModRegistry registry) {
+    public void register(@Nonnull IModRegistry registry) {
         if(JEIModCompat.canBeUsed) {
+            JEI_HELPER = registry.getJeiHelpers();
             // Drying Basin
             registry.addRecipes(DryingBasinRecipeJEI.getAllRecipes());
             registry.addRecipeCategories(new DryingBasinRecipeCategory(JEI_HELPER.getGuiHelper()));
@@ -44,7 +37,7 @@ public class JEIIntegratedDynamicsConfig implements IModPlugin {
     }
 
     @Override
-    public void onRecipeRegistryAvailable(IRecipeRegistry recipeRegistry) {
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 
     }
 }

@@ -5,8 +5,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
@@ -159,11 +159,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
                         L10NHelpers.localize(aspectWrite.getUnlocalizedName()),
                         aspectWrite.getValueType().getDisplayColorFormat()
                                 + L10NHelpers.localize(aspectWrite.getValueType().getUnlocalizedName())
-                                + EnumChatFormatting.RESET));
+                                + TextFormatting.RESET));
             } else {
-                lines.add(EnumChatFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
+                lines.add(TextFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
                 for (L10NHelpers.UnlocalizedString error : state.getErrors(aspectWrite)) {
-                    lines.add(EnumChatFormatting.RED + error.localize());
+                    lines.add(TextFormatting.RED + error.localize());
                 }
             }
         } else {

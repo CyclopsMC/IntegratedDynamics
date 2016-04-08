@@ -5,10 +5,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
@@ -22,8 +24,12 @@ import org.cyclops.integrateddynamics.block.BlockCable;
  */
 public class CableModel extends CableModelBase {
 
-    public CableModel(IExtendedBlockState state, boolean isItemStack) {
-        super(state, isItemStack);
+    public CableModel(IExtendedBlockState state, EnumFacing facing, long rand) {
+        super(state, facing, rand);
+    }
+
+    public CableModel(ItemStack itemStack, World world, EntityLivingBase entity) {
+        super(itemStack, world, entity);
     }
 
     public CableModel() {
@@ -58,7 +64,7 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean shouldRenderParts() {
-        return MinecraftForgeClient.getRenderLayer() == EnumWorldBlockLayer.CUTOUT;
+        return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT;
     }
 
     @Override
@@ -72,12 +78,12 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
-    public IBakedModel handleBlockState(IBlockState state) {
-        return new CableModel((IExtendedBlockState) state, false);
+    public IBakedModel handleBlockState(IBlockState state, EnumFacing side, long rand) {
+        return new CableModel((IExtendedBlockState) state, side, rand);
     }
 
     @Override
-    public IBakedModel handleItemState(ItemStack stack) {
-        return new CableModel((IExtendedBlockState) BlockCable.getInstance().getDefaultState(), true);
+    public IBakedModel handleItemState(ItemStack stack, World world, EntityLivingBase entity) {
+        return new CableModel(stack, world, entity);
     }
 }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.item;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Indicates items that can be used as wrench.

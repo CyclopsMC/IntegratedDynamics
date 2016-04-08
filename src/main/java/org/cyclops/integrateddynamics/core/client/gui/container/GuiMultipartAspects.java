@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonImage;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
@@ -173,9 +173,9 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
                     int y = button.yPosition - guiTop;
                     if(isPointInRegion(x, y, button.width, button.height, mouseX, mouseY)) {
                         List<String> lines = Lists.newLinkedList();
-                        lines.add(EnumChatFormatting.WHITE + L10NHelpers.localize("gui.integrateddynamics.part.properties"));
+                        lines.add(TextFormatting.WHITE + L10NHelpers.localize("gui.integrateddynamics.part.properties"));
                         for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
-                            lines.add("-" + EnumChatFormatting.YELLOW + L10NHelpers.localize(property.getUnlocalizedName()));
+                            lines.add("-" + TextFormatting.YELLOW + L10NHelpers.localize(property.getUnlocalizedName()));
                         }
                         drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
                     }

@@ -1,21 +1,22 @@
 package org.cyclops.integrateddynamics.client.render.tileentity;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.SimpleBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.SimpleBakedModel;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
-import net.minecraftforge.client.model.pipeline.WorldRendererConsumer;
+import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -54,16 +55,17 @@ public class RenderCable extends TileEntitySpecialRenderer<TileMultipartTicking>
             }
 
             if (model != null) {
-                EnumWorldBlockLayer layer = EnumWorldBlockLayer.TRANSLUCENT;
+                BlockRenderLayer layer = BlockRenderLayer.TRANSLUCENT;
                 ForgeHooksClient.setRenderLayer(layer);
-                IBakedModel layerModel = new SimpleBakedModel.Builder(model, Minecraft.getMinecraft().getTextureMapBlocks()
-                        .getAtlasSprite("minecraft:blocks/destroy_stage_" + destroyStage)).makeBakedModel();
+                IBlockState blockState = getWorld().getBlockState(tile.getPos());
+                IBakedModel layerModel = new SimpleBakedModel.Builder(blockState, model, Minecraft.getMinecraft().getTextureMapBlocks()
+                        .getAtlasSprite("minecraft:blocks/destroy_stage_" + destroyStage), tile.getPos()).makeBakedModel();
                 rendererDispatcher.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
                 startTessellating(x, y, z);
-                IVertexConsumer consumer = new WorldRendererConsumer(Tessellator.getInstance().getWorldRenderer());
-                renderBreaking(layerModel, consumer);
+                IVertexConsumer consumer = new VertexBufferConsumer(Tessellator.getInstance().getBuffer());
+                renderBreaking(blockState, layerModel, consumer);
                 finishTessellating();
-                ForgeHooksClient.setRenderLayer(EnumWorldBlockLayer.SOLID);
+                ForgeHooksClient.setRenderLayer(BlockRenderLayer.SOLID);
             }
 
             finishBreaking();
@@ -93,29 +95,21 @@ public class RenderCable extends TileEntitySpecialRenderer<TileMultipartTicking>
     }
 
     private void startTessellating(double x, double y, double z) {
-        Tessellator.getInstance().getWorldRenderer().begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
-        Tessellator.getInstance().getWorldRenderer().setTranslation(x, y, z);
-        Tessellator.getInstance().getWorldRenderer().noColor();
+        Tessellator.getInstance().getBuffer().begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
+        Tessellator.getInstance().getBuffer().setTranslation(x, y, z);
+        Tessellator.getInstance().getBuffer().noColor();
     }
 
     private void finishTessellating() {
-        Tessellator.getInstance().getWorldRenderer().setTranslation(0, 0, 0);
+        Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
         Tessellator.getInstance().draw();
     }
 
-    private static void renderBreaking(IBakedModel model, IVertexConsumer consumer) {
-        for (BakedQuad quad : model.getGeneralQuads()) {
-            quad.pipe(consumer);
-        }
+    private static void renderBreaking(IBlockState blockState, IBakedModel model, IVertexConsumer consumer) {
         for (EnumFacing face : EnumFacing.VALUES) {
-            for (BakedQuad quad : model.getFaceQuads(face)) {
+            for (BakedQuad quad : model.getQuads(blockState, face, 0L)) {
                 quad.pipe(consumer);
             }
         }
-    }
-
-    @Override
-    public boolean func_181055_a() {
-        return true;
     }
 }

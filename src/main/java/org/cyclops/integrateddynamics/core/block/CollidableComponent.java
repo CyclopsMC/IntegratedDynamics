@@ -7,7 +7,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,7 +49,7 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
             if(component.isActive(getBlock(), world, pos, position)) {
                 for(AxisAlignedBB bb : component.getBounds(getBlock(), world, pos, position)) {
                     setBlockBounds(bb);
-                    getBlock().addCollisionBoxesToListParent(world, pos, state, axisalignedbb, list, collidingEntity);
+                    getBlock().addCollisionBoxesToListParent(state, world, pos, axisalignedbb, list, collidingEntity);
                 }
             }
         }
@@ -62,23 +65,23 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         }
 
         // Reset the bounding box to prevent any entity glitches.
-        getBlock().setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+        //getBlock().setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F); // TODO?
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World world, BlockPos pos) {
         RayTraceResult rayTraceResult = doRayTrace(world, pos, Minecraft.getMinecraft().thePlayer);
         if (rayTraceResult != null && rayTraceResult.getBoundingBox() != null) {
             AxisAlignedBB box = rayTraceResult.getBoundingBox();
             return box.offset(pos.getX(), pos.getY(), pos.getZ());
         }
         // Happens when client hovers away from a block.
-        return getBlock().getSelectedBoundingBoxParent(world, pos).expand(-0.625F, -0.625F, -0.625F);
+        return getBlock().getSelectedBoundingBoxParent(blockState, world, pos).expand(-0.625F, -0.625F, -0.625F);
     }
 
     @Override
-    public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
+    public net.minecraft.util.math.RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d origin, Vec3d direction) {
         RayTraceResult raytraceResult = doRayTrace(world, pos, origin, direction);
         if (raytraceResult == null) {
             return null;
@@ -97,22 +100,22 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
     public RayTraceResult doRayTrace(World world, BlockPos pos, EntityPlayer player) {
         double reachDistance;
         if (player instanceof EntityPlayerMP) {
-            reachDistance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
+            reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
         } else {
             reachDistance = 5;
         }
 
         double eyeHeight = world.isRemote ? player.getEyeHeight(): player.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
-        Vec3 lookVec = player.getLookVec();
-        Vec3 origin = new Vec3(player.posX, player.posY + eyeHeight, player.posZ);
-        Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
+        Vec3d lookVec = player.getLookVec();
+        Vec3d origin = new Vec3d(player.posX, player.posY + eyeHeight, player.posZ);
+        Vec3d direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
         return doRayTrace(world, pos, origin, direction);
     }
 
     private int doRayTraceComponent(IComponent<P, B> component, int countStart,
-                                        World world, BlockPos pos, Vec3 origin, Vec3 direction,
-                                        MovingObjectPosition[] hits, AxisAlignedBB[] boxes, P[] sideHit,
+                                        World world, BlockPos pos, Vec3d origin, Vec3d direction,
+                                        net.minecraft.util.math.RayTraceResult[] hits, AxisAlignedBB[] boxes, P[] sideHit,
                                         IComponent<P, B>[] components) {
         int i = countStart;
         for(P position : component.getPossiblePositions()) {
@@ -121,7 +124,7 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
                 for(AxisAlignedBB bb : component.getBounds(getBlock(), world, pos, position)) {
                     setBlockBounds(bb);
                     boxes[i + offset] = bb;
-                    hits[i + offset] = getBlock().collisionRayTraceParent(world, pos, origin, direction);
+                    hits[i + offset] = getBlock().collisionRayTraceParent(world.getBlockState(pos), world, pos, origin, direction);
                     sideHit[i + offset] = position;
                     components[i + offset] = component;
                     offset++;
@@ -132,9 +135,9 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         return i;
     }
 
-    private RayTraceResult doRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
+    private RayTraceResult doRayTrace(World world, BlockPos pos, Vec3d origin, Vec3d direction) {
         // Perform a ray trace for all six sides.
-        MovingObjectPosition[] hits = new MovingObjectPosition[totalComponents];
+        net.minecraft.util.math.RayTraceResult[] hits = new net.minecraft.util.math.RayTraceResult[totalComponents];
         AxisAlignedBB[] boxes = new AxisAlignedBB[totalComponents];
         @SuppressWarnings("unchecked")
         P[] sideHit = (P[]) new Object[totalComponents];
@@ -162,7 +165,7 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         }
 
         // Reset bounds
-        getBlock().setBlockBounds(0, 0, 0, 1, 1, 1);
+        //getBlock().setBlockBounds(0, 0, 0, 1, 1, 1); // TODO?
 
         if (minIndex != -1) {
             return new RayTraceResult<P>(hits[minIndex], boxes[minIndex], sideHit[minIndex], componentsOutput[minIndex]);
@@ -171,8 +174,9 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
     }
 
     private void setBlockBounds(AxisAlignedBB bounds) {
-        getBlock().setBlockBounds((float) bounds.minX, (float) bounds.minY, (float) bounds.minZ,
-                                  (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ);
+        // TODO?
+        /*getBlock().setBlockBounds((float) bounds.minX, (float) bounds.minY, (float) bounds.minZ,
+                                  (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ);*/
     }
 
 }

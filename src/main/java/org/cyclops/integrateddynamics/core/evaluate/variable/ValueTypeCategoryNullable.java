@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 public class ValueTypeCategoryNullable extends ValueTypeCategoryBase<IValue> {
 
     public ValueTypeCategoryNullable() {
-        super("nullable", Helpers.RGBToInt(100, 100, 100), EnumChatFormatting.DARK_GRAY.toString());
+        super("nullable", Helpers.RGBToInt(100, 100, 100), TextFormatting.DARK_GRAY.toString());
     }
 
     public boolean isNull(IVariable a) throws EvaluationException {

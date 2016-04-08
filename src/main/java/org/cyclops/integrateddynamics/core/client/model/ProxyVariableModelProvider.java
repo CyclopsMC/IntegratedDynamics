@@ -2,17 +2,16 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.model.IModelState;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
-import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -29,7 +28,7 @@ public class ProxyVariableModelProvider implements IVariableModelProvider<BakedS
         try {
             IModel model = ModelLoaderRegistry.getModel(this.model);
             bakedModel = model.bake(state, format, bakedTextureGetter);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new BakedSingleVariableModelProvider(bakedModel);

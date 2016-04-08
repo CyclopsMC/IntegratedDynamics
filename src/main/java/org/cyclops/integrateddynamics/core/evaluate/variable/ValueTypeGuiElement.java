@@ -8,8 +8,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.Container;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
@@ -155,7 +155,7 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
                 if (lastError != null && gui.isPointInRegion(x + getSignalX(), y + getSignalY() - 1, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
                     List<String> lines = Lists.newLinkedList();
                     lines.addAll(StringHelpers.splitLines(lastError.localize(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
-                            EnumChatFormatting.RED.toString()));
+                            TextFormatting.RED.toString()));
                     gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
                 }
             }

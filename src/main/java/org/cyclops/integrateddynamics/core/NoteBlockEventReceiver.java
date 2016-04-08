@@ -31,7 +31,7 @@ public final class NoteBlockEventReceiver {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onNoteEvent(NoteBlockEvent.Play event) {
         if(!event.isCanceled()) {
-            currentEvents.put(event.instrument, event);
+            currentEvents.put(event.getInstrument(), event);
         }
     }
 

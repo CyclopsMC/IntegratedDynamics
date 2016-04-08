@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Maps;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -29,7 +29,7 @@ public class LabelsWorldStorage extends WorldStorage {
 
     private LabelsWorldStorage(ModBase mod) {
         super(mod);
-        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public static LabelsWorldStorage getInstance(ModBase mod) {

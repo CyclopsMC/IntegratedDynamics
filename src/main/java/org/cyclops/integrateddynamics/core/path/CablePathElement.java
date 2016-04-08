@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.core.path;
 
 import com.google.common.collect.Sets;
 import lombok.Data;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
