@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.collect.Lists;
+import mcmultipart.client.multipart.AdvancedEffectRenderer;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IMultipartContainer;
 import mcmultipart.multipart.PartSlot;
@@ -12,9 +13,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -60,12 +63,12 @@ public class PartPartType extends MultipartBase {
         this.partType = partType;
     }
 
-    public static String getType(IPartType partType) {
-        return Reference.MOD_ID + ":part_" + partType.getUnlocalizedName();
+    public static ResourceLocation getType(IPartType partType) {
+        return new ResourceLocation(Reference.MOD_ID, "part_" + partType.getUnlocalizedName());
     }
 
     @Override
-    public String getType() {
+    public ResourceLocation getType() {
         return getType(getPartType());
     }
 
@@ -153,7 +156,7 @@ public class PartPartType extends MultipartBase {
     }
 
     @Override
-    public String getModelPath() {
+    public ResourceLocation getModelPath() {
         return getPartType().getBlockModelPath();
     }
 
@@ -169,7 +172,7 @@ public class PartPartType extends MultipartBase {
     }
 
     @Override
-    public boolean onActivated(EntityPlayer player, ItemStack stack, PartMOP hit) {
+    public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack stack, PartMOP hit) {
         World world = player.worldObj;
         BlockPos pos = hit.getBlockPos();
         if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
@@ -192,7 +195,7 @@ public class PartPartType extends MultipartBase {
             if(partState != null) {
                 return getPartType().onPartActivated(getWorld(), getPos(), partState,
                         player, getFacing(), (float) hit.hitVec.xCoord, (float) hit.hitVec.yCoord, (float) hit.hitVec.zCoord)
-                        || super.onActivated(player, stack, hit);
+                        || super.onActivated(player, hand, stack, hit);
             }
         }
         return false;

@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -129,13 +130,13 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public String getBlockModelPath() {
-        return getMod().getModId() + ":" + "part_" + getName() + "Block";
+    public ResourceLocation getBlockModelPath() {
+        return new ResourceLocation(getMod().getModId(), "part_" + getName() + "Block");
     }
 
     @Override
-    public String getItemModelPath() {
-        return getMod().getModId() + ":" + "part_" + getName() + "Item";
+    public ResourceLocation getItemModelPath() {
+        return new ResourceLocation(getMod().getModId(), "part_" + getName() + "Item");
     }
 
     /**

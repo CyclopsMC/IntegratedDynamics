@@ -3,9 +3,9 @@ package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 import com.google.common.collect.Maps;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IMultipartContainer;
-import mcmultipart.multipart.IPartConverter;
-import net.minecraft.util.math.BlockPos;
+import mcmultipart.multipart.IReversePartConverter;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -20,7 +20,7 @@ import java.util.Map;
  * Converter for the multipart form to its original cable block.
  * @author rubensworks
  */
-public class BlockCableReverseConverter implements IPartConverter.IReversePartConverter {
+public class BlockCableReverseConverter implements IReversePartConverter {
 
     @Override
     public boolean convertToBlock(IMultipartContainer multipartContainer) {

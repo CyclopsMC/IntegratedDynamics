@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.base.Optional;
-import mcmultipart.client.multipart.ISmartMultipartModel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -16,10 +16,14 @@ import org.cyclops.integrateddynamics.client.model.CableModelBase;
  * A dynamic model for cables.
  * @author rubensworks
  */
-public class PartCableModel extends CableModelBase implements ISmartMultipartModel {
+public class PartCableModel extends CableModelBase {
 
-    public PartCableModel(IExtendedBlockState state, boolean isItemStack) {
-        super(state, isItemStack);
+    public PartCableModel(IBlockState blockState, EnumFacing facing, long rand) {
+        super(blockState, facing, rand);
+    }
+
+    public PartCableModel(ItemStack itemStack, World world, EntityLivingBase entity) {
+        super(itemStack, world, entity);
     }
 
     public PartCableModel() {
@@ -62,17 +66,12 @@ public class PartCableModel extends CableModelBase implements ISmartMultipartMod
     }
 
     @Override
-    public IBakedModel handleBlockState(IBlockState state) {
-        return new PartCableModel((IExtendedBlockState) state, false);
+    public IBakedModel handleBlockState(IBlockState state, EnumFacing side, long rand) {
+        return new PartCableModel(state, side, rand);
     }
 
     @Override
-    public IBakedModel handleItemState(ItemStack stack) {
-        return new PartCableModel((IExtendedBlockState) BlockCable.getInstance().getDefaultState(), true);
-    }
-
-    @Override
-    public IBakedModel handlePartState(IBlockState state) {
-        return handleBlockState(state);
+    public IBakedModel handleItemState(ItemStack stack, World world, EntityLivingBase entity) {
+        return new PartCableModel(stack, world, entity);
     }
 }

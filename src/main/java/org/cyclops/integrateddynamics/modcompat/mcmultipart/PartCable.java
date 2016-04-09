@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
-import mcmultipart.block.TileMultipart;
+import mcmultipart.block.TileMultipartContainer;
+import mcmultipart.client.multipart.AdvancedEffectRenderer;
 import mcmultipart.multipart.*;
 import mcmultipart.raytrace.PartMOP;
 import mcmultipart.raytrace.RayTraceUtils;
@@ -210,8 +212,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
-    public String getModelPath() {
-        return IntegratedDynamics._instance.getModId() + ":" + BlockCableConfig._instance.getNamedId();
+    public ResourceLocation getModelPath() {
+        return new ResourceLocation(IntegratedDynamics._instance.getModId(), BlockCableConfig._instance.getNamedId());
     }
 
     @Override
@@ -260,11 +262,11 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
-    public boolean onActivated(EntityPlayer player, ItemStack stack, PartMOP hit) {
+    public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack stack, PartMOP hit) {
         EnumFacing cableConnectionHit = getSubHitSide(hit.subHit);
         return !getWorld().isRemote ?
                 BlockCable.onCableActivated(getWorld(), getPos(), BlockCable.getInstance().getDefaultState(), player, hit.sideHit, cableConnectionHit)
-                : super.onActivated(player, stack, hit);
+                : super.onActivated(player, hand, stack, hit);
     }
 
     @Override
@@ -442,7 +444,12 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     public boolean canConnect(ICable connector, EnumFacing side) {
         return !isForceDisconnected(side)
                 && getContainer().getPartInSlot(PartSlot.getFaceSlot(side)) == null
-                && OcclusionHelper.occlusionTest(getContainer().getParts(), this, BlockCable.getInstance().getCableBoundingBox(side));
+                && OcclusionHelper.occlusionTest(getContainer().getParts(), new Predicate<IMultipart>() {
+            @Override
+            public boolean apply(@Nullable IMultipart input) {
+                return input == PartCable.this;
+            }
+        }, BlockCable.getInstance().getCableBoundingBox(side));
     }
 
     @Override
@@ -515,7 +522,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
         Vec3d start = RayTraceUtils.getStart(player);
         Vec3d end = RayTraceUtils.getEnd(player);
-        RayTraceUtils.RayTraceResultPart result = ((TileMultipart) world.getTileEntity(pos)).getPartContainer().collisionRayTrace(start, end);
+        RayTraceUtils.AdvancedRayTraceResultPart result = ((TileMultipartContainer) world.getTileEntity(pos)).getPartContainer().collisionRayTrace(start, end);
         if(result == null || result.hit == null) return null;
         IMultipart multipart = result.hit.partHit;
         if(!(multipart instanceof PartPartType)) return null;

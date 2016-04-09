@@ -19,7 +19,7 @@ public class McMultiPartEventListener {
     @SubscribeEvent
     public void onModelBakeEvent(ModelBakeEvent event){
         IBakedModel cableModel = new PartCableModel();
-        event.modelRegistry.putObject(McMultiPartHelpers.CABLE_MODEL_LOCATION, cableModel);
+        event.getModelRegistry().putObject(McMultiPartHelpers.CABLE_MODEL_LOCATION, cableModel);
     }
 
 }

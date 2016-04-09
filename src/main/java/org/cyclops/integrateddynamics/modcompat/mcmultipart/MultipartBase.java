@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.collect.Lists;
 import lombok.experimental.Delegate;
-import mcmultipart.client.multipart.IHitEffectsPart;
-import mcmultipart.multipart.IOccludingPart;
+import mcmultipart.client.multipart.AdvancedEffectRenderer;
+import mcmultipart.multipart.INormallyOccludingPart;
 import mcmultipart.multipart.ISlottedPart;
 import mcmultipart.multipart.Multipart;
 import mcmultipart.raytrace.PartMOP;
@@ -25,7 +25,7 @@ import java.util.List;
  * Base implementation of a part.
  * @author rubensworks
  */
-public abstract class MultipartBase extends Multipart implements ISlottedPart, IHitEffectsPart, IOccludingPart, INBTProvider {
+public abstract class MultipartBase extends Multipart implements ISlottedPart, INormallyOccludingPart, INBTProvider {
 
     @Delegate
     private final INBTProvider nbtProvider = new NBTProviderComponent(this);

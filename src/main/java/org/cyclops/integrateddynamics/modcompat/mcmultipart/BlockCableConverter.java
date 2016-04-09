@@ -7,8 +7,8 @@ import mcmultipart.multipart.IPartConverter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
@@ -30,7 +30,7 @@ import java.util.Map;
  * Converter for the original cable block to its multipart form.
  * @author rubensworks
  */
-public class BlockCableConverter implements IPartConverter.IPartConverter2 {
+public class BlockCableConverter implements IPartConverter {
     @Override
     public Collection<Block> getConvertableBlocks() {
         return Collections.<Block>singleton(BlockCable.getInstance());

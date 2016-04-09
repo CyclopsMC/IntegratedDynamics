@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -56,12 +57,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * @return JSON model path for the block representation of this part.
      */
-    public String getBlockModelPath();
+    public ResourceLocation getBlockModelPath();
 
     /**
      * @return JSON model path for the item representation of this part.
      */
-    public String getItemModelPath();
+    public ResourceLocation getItemModelPath();
 
     /**
      * @return The item associated with this part type.

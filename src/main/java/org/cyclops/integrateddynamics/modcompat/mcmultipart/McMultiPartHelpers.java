@@ -7,8 +7,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -46,12 +47,12 @@ public class McMultiPartHelpers {
             // Force dummy initialization for all parts so that default blockstate doesn't fail.
             MultipartRegistry.registerPartFactory(new IPartFactory() {
                 @Override
-                public IMultipart createPart(String s, boolean b) {
+                public IMultipart createPart(ResourceLocation s, boolean b) {
                     PartPartType partPart = new PartPartType();
                     partPart.init(EnumFacing.NORTH, partType);
                     return partPart;
                 }
-            }, PartPartType.getType(partType));
+            }, PartPartType.getType(partType).toString());
         }
         CableHelpers.addInterfaceRetriever(new CableHelpers.IInterfaceRetriever() {
             @Override
