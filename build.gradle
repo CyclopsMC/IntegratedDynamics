@@ -67,7 +67,6 @@ idea {
 sourceSets {
     main {
         java {
-            exclude '**/modcompat/waila/**'
             exclude '**/modcompat/thaumcraft/**'
         }
     }
