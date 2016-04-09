@@ -96,7 +96,7 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
         GlStateManager.pushMatrix();
         float yTop = (9 - tile.getItemHeight()) * 0.125F;
         GlStateManager.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
-        GlStateManager.scale(1.4F, 1.4F, 1.4F);
+        GlStateManager.scale(0.7F, 0.7F, 0.7F);
         GlStateManager.scale(1F, yTop - 0.125F, 1F);
         
         GlStateManager.pushAttrib();
@@ -110,7 +110,7 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
 
     @Override
     public void renderFluid(FluidStack fluid) {
-        double height = Math.max(0.0625D + OFFSET, ((double) fluid.amount) * 0.0625D / FluidContainerRegistry.BUCKET_VOLUME + 0.0625D + OFFSET);
+        double height = Math.max(0.0625D - OFFSET, ((double) fluid.amount) * 0.0625D / FluidContainerRegistry.BUCKET_VOLUME + 0.0625D - OFFSET);
         int brightness = lastTile.getWorld().getCombinedLight(lastTile.getPos(), fluid.getFluid().getLuminosity(fluid));
         int l2 = brightness >> 0x10 & 0xFFFF;
         int i3 = brightness & 0xFFFF;

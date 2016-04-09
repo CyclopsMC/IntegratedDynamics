@@ -160,7 +160,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
 
         // Dynamic top
         float offset = (8 - blockState.getValue(HEIGHT)) * 0.125F;
-        BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(1.0F, 0.0F, 1.0F, 1.0F - f, 1.0F, 1.0F - f));
+        BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, offset - 0.125F, 0.0F, 1.0F, offset, 1.0F));
     }
 
     @Override
