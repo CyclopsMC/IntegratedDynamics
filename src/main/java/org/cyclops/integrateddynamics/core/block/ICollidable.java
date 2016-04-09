@@ -40,7 +40,7 @@ public interface ICollidable<P> {
      * @param list The list to add to
      * @param collidingEntity The entity that is colliding
      */
-    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask,
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB mask,
                                         List list, Entity collidingEntity);
 
     /**

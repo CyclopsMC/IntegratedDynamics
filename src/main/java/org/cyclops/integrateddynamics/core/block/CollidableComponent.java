@@ -14,6 +14,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,13 +44,12 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         this.totalComponents = count;
     }
 
-    private void addComponentCollisionBoxesToList(IComponent<EnumFacing, B> component, World world, BlockPos pos, IBlockState state,
-                         AxisAlignedBB axisalignedbb, List list, Entity collidingEntity) {
+    private void addComponentCollisionBoxesToList(IComponent<EnumFacing, B> component, IBlockState state, World world, BlockPos pos,
+                         AxisAlignedBB axisalignedbb, List<AxisAlignedBB> list, Entity collidingEntity) {
         for(EnumFacing position : component.getPossiblePositions()) {
             if(component.isActive(getBlock(), world, pos, position)) {
                 for(AxisAlignedBB bb : component.getBounds(getBlock(), world, pos, position)) {
-                    setBlockBounds(bb);
-                    getBlock().addCollisionBoxesToListParent(state, world, pos, axisalignedbb, list, collidingEntity);
+                    BlockHelpers.addCollisionBoxToList(pos, axisalignedbb, list, bb);
                 }
             }
         }
@@ -57,15 +57,12 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
 
     @SuppressWarnings("unchecked")
     @Override
-    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB axisalignedbb,
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB axisalignedbb,
                                         List list, Entity collidingEntity) {
         // Add bounding boxes for all active components.
         for(IComponent component : components) {
-            addComponentCollisionBoxesToList(component, world, pos, state, axisalignedbb, list, collidingEntity);
+            addComponentCollisionBoxesToList(component, state, world, pos, axisalignedbb, list, collidingEntity);
         }
-
-        // Reset the bounding box to prevent any entity glitches.
-        //getBlock().setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F); // TODO?
     }
 
     @SideOnly(Side.CLIENT)
@@ -98,6 +95,9 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
      * @return A holder object with information on the ray tracing.
      */
     public RayTraceResult doRayTrace(World world, BlockPos pos, EntityPlayer player) {
+        if(player == null) {
+            return null;
+        }
         double reachDistance;
         if (player instanceof EntityPlayerMP) {
             reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
@@ -122,9 +122,8 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
             if(component.isActive(getBlock(), world, pos, position)) {
                 int offset = 0;
                 for(AxisAlignedBB bb : component.getBounds(getBlock(), world, pos, position)) {
-                    setBlockBounds(bb);
                     boxes[i + offset] = bb;
-                    hits[i + offset] = getBlock().collisionRayTraceParent(world.getBlockState(pos), world, pos, origin, direction);
+                    hits[i + offset] = getBlock().rayTraceParent(pos, origin, direction, bb);
                     sideHit[i + offset] = position;
                     components[i + offset] = component;
                     offset++;
@@ -164,19 +163,10 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
             }
         }
 
-        // Reset bounds
-        //getBlock().setBlockBounds(0, 0, 0, 1, 1, 1); // TODO?
-
         if (minIndex != -1) {
             return new RayTraceResult<P>(hits[minIndex], boxes[minIndex], sideHit[minIndex], componentsOutput[minIndex]);
         }
         return null;
-    }
-
-    private void setBlockBounds(AxisAlignedBB bounds) {
-        // TODO?
-        /*getBlock().setBlockBounds((float) bounds.minX, (float) bounds.minY, (float) bounds.minZ,
-                                  (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ);*/
     }
 
 }

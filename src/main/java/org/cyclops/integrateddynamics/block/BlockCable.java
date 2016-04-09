@@ -13,7 +13,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -579,7 +578,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-        if(disableCollisionBox) return null;
+        if(disableCollisionBox) return new AxisAlignedBB(0, 0, 0, 0, 0, 0);
         return super.getCollisionBoundingBox(blockState, worldIn, pos);
     }
 
@@ -688,19 +687,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public void addCollisionBoxesToListParent(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB mask,
-                                              List<AxisAlignedBB> list, Entity collidingEntity) {
-        super.addCollisionBoxToList(state, worldIn, pos, mask, list, collidingEntity);
-    }
-
-    @Override
     public AxisAlignedBB getSelectedBoundingBoxParent(IBlockState blockState, World worldIn, BlockPos pos) {
         return super.getSelectedBoundingBox(blockState, worldIn, pos);
     }
 
     @Override
-    public net.minecraft.util.math.RayTraceResult collisionRayTraceParent(IBlockState blockState, World world, BlockPos pos, Vec3d origin, Vec3d direction) {
-        return super.collisionRayTrace(blockState, world, pos, origin, direction);
+    public net.minecraft.util.math.RayTraceResult rayTraceParent(BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB boundingBox) {
+        return super.rayTrace(pos, start, end, boundingBox);
     }
 
     /* --------------- Start IDynamicRedstoneBlock --------------- */
