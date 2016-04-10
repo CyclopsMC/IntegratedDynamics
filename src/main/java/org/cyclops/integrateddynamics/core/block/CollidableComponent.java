@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -31,6 +32,8 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
     private final B block;
     private final List<IComponent<P, B>> components;
     private final int totalComponents;
+
+    private AxisAlignedBB lastBounds = Block.FULL_BLOCK_AABB;
 
     public CollidableComponent(B block, List<IComponent<P, B>> components) {
         this.block = block;
@@ -83,8 +86,14 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         if (raytraceResult == null) {
             return null;
         } else {
+            this.lastBounds = raytraceResult.getBoundingBox();
             return raytraceResult.getMovingObjectPosition();
         }
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState blockState, IBlockAccess world, BlockPos pos) {
+        return lastBounds.offset(pos);
     }
 
     /**

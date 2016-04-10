@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -72,6 +73,15 @@ public interface ICollidable<P> {
      * @return The position object holder
      */
     public net.minecraft.util.math.RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d origin, Vec3d direction);
+
+    /**
+     * Get the bounding box.
+     * @param state The block state
+     * @param world The world
+     * @param pos The position
+     * @return The bounding box
+     */
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos);
 
     /**
      * Result from ray tracing
