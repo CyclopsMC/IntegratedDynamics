@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.cyclops.integrateddynamics.api.item.IWrench;
 
@@ -14,21 +15,22 @@ public final class WrenchHelpers {
     /**
      * Checks if the given player can wrench something.
      * @param player The player.
+     * @param heldItem The item the player is holding.
      * @param pos The position that is being wrenched.
      * @return If the wrenching can continue with the held item.
      */
-    public static boolean isWrench(EntityPlayer player, BlockPos pos) {
-        if(player.getActiveItemStack() == null) {
+    public static boolean isWrench(EntityPlayer player, ItemStack heldItem, BlockPos pos) {
+        if(heldItem == null) {
             return false;
         }
-        Item item = player.getActiveItemStack().getItem();
+        Item item = heldItem.getItem();
         // TODO: add support for other mod wrenches, like the one from BC.
         return item instanceof IWrench && ((IWrench) item).canUse(player, pos);
     }
 
     /**
      * Wrench a given position.
-     * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, BlockPos)}
+     * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, ItemStack, BlockPos)}
      * to be passed.
      * Takes an extra parameter of any type that is forwarded to the wrench action.
      * @param player The player.
@@ -49,7 +51,7 @@ public final class WrenchHelpers {
 
     /**
      * Wrench a given position.
-     * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, BlockPos)}
+     * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, ItemStack, BlockPos)}
      * to be passed.
      * @param player The player.
      * @param pos The position that is being wrenched.

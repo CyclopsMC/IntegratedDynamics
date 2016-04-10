@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -223,14 +224,16 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param pos The position of the block this part is part of.
      * @param partState The state of this part.
      * @param player The player activating the part.
+     * @param hand The hand in use by the player.
+     * @param heldItem The held item.
      * @param side The side this part is attached on.
      * @param hitX The X hit position.
      * @param hitY The Y hit position.
      * @param hitZ The Z hit position.
      * @return True if the further processing should be stopped.
      */
-    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player,
-                                   EnumFacing side, float hitX, float hitY, float hitZ);
+    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player, EnumHand hand,
+                                   ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ);
 
     /**
      * Get the base block state that will be rendered for this part.

@@ -10,6 +10,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -161,9 +162,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, final S partState, EntityPlayer player,
-                                   EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(WrenchHelpers.isWrench(player, pos)) {
+    public boolean onPartActivated(World world, BlockPos pos, final S partState, EntityPlayer player, EnumHand hand,
+                                   ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if(WrenchHelpers.isWrench(player, heldItem, pos)) {
             WrenchHelpers.wrench(player, pos, new WrenchHelpers.IWrenchAction<Void>() {
                 @Override
                 public void onWrench(EntityPlayer player, BlockPos pos, Void parameter) {
@@ -172,7 +173,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             });
             return true;
         }
-        return super.onPartActivated(world, pos, partState, player, side, hitX, hitY, hitZ);
+        return super.onPartActivated(world, pos, partState, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     @Override

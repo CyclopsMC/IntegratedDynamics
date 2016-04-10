@@ -265,7 +265,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack stack, PartMOP hit) {
         EnumFacing cableConnectionHit = getSubHitSide(hit.subHit);
         return !getWorld().isRemote ?
-                BlockCable.onCableActivated(getWorld(), getPos(), BlockCable.getInstance().getDefaultState(), player, hit.sideHit, cableConnectionHit)
+                BlockCable.onCableActivated(getWorld(), getPos(), BlockCable.getInstance().getDefaultState(), player, hand, player.getHeldItem(hand), hit.sideHit, cableConnectionHit)
                 : super.onActivated(player, hand, stack, hit);
     }
 

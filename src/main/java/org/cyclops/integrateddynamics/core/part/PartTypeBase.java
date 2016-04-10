@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -304,8 +305,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player,
-                                   EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player, EnumHand hand,
+                                   ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         // Drop through if the player is sneaking
         if(player.isSneaking() || !partState.isEnabled()) {
             return false;

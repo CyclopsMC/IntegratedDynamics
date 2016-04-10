@@ -68,6 +68,6 @@ public class ItemWrench extends ConfigurableItem implements IWrench {
             player.swingArm(hand);
             return !world.isRemote ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         }
-        return EnumActionResult.FAIL;
+        return EnumActionResult.PASS;
     }
 }

@@ -172,10 +172,10 @@ public class PartPartType extends MultipartBase {
     }
 
     @Override
-    public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack stack, PartMOP hit) {
+    public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack heldItem, PartMOP hit) {
         World world = player.worldObj;
         BlockPos pos = hit.getBlockPos();
-        if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
+        if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, pos)) {
             // Remove part from cable
             if(player.isSneaking()) {
                 PartCable cable = getPartCable();
@@ -194,8 +194,8 @@ public class PartPartType extends MultipartBase {
             IPartState partState = getDelegatedPartState();
             if(partState != null) {
                 return getPartType().onPartActivated(getWorld(), getPos(), partState,
-                        player, getFacing(), (float) hit.hitVec.xCoord, (float) hit.hitVec.yCoord, (float) hit.hitVec.zCoord)
-                        || super.onActivated(player, hand, stack, hit);
+                        player, hand, heldItem, getFacing(), (float) hit.hitVec.xCoord, (float) hit.hitVec.yCoord, (float) hit.hitVec.zCoord)
+                        || super.onActivated(player, hand, heldItem, hit);
             }
         }
         return false;

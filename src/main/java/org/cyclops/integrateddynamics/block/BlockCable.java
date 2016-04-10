@@ -430,14 +430,14 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             if(rayTraceResult != null) {
                 EnumFacing positionHit = rayTraceResult.getPositionHit();
                 if(rayTraceResult.getCollisionType() == FACADE_COMPONENT) {
-                    if(!world.isRemote && WrenchHelpers.isWrench(player, pos) && player.isSneaking()) {
+                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, pos) && player.isSneaking()) {
                         FACADE_COMPONENT.destroy(world, pos, side, player);
                         world.notifyNeighborsOfStateChange(pos, this);
                         return true;
                     }
                     return false;
                 } else if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {
-                    if(!world.isRemote && WrenchHelpers.isWrench(player, pos)) {
+                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, pos)) {
                         // Remove part from cable
                         if(player.isSneaking()) {
                             PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
@@ -447,12 +447,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     } else if(isRealCable(world, pos)) {
                         // Delegate activated call to part
                         return getPartContainer(world, pos).getPart(positionHit).onPartActivated(world, pos,
-                                getPartContainer(world, pos).getPartState(positionHit), player, positionHit, hitX, hitY, hitZ);
+                                getPartContainer(world, pos).getPartState(positionHit), player, hand, heldItem, positionHit, hitX, hitY, hitZ);
                     }
                 } else if (!world.isRemote
                         && (rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT
                             || rayTraceResult.getCollisionType() == CENTER_COMPONENT)) {
-                    if(onCableActivated(world, pos, state, player, side,
+                    if(onCableActivated(world, pos, state, player, hand, heldItem, side,
                             rayTraceResult.getCollisionType() == CENTER_COMPONENT ? null : rayTraceResult.getPositionHit())) {
                         return true;
                     }
@@ -462,9 +462,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
-    public static boolean onCableActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, EnumFacing cableConnectionHit) {
+    public static boolean onCableActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                           ItemStack heldItem, EnumFacing side, EnumFacing cableConnectionHit) {
         ICableNetwork<?, ?> cable = CableHelpers.getInterface(world, pos, ICableNetwork.class);
-        if(WrenchHelpers.isWrench(player, pos)) {
+        if(WrenchHelpers.isWrench(player, heldItem, pos)) {
             if (player.isSneaking()) {
                 if (!(cable instanceof IPartContainerFacade) || !((IPartContainerFacade) cable).getPartContainer(world, pos).hasParts() || !(cable instanceof ICableFakeable)) {
                     // Remove full cable
