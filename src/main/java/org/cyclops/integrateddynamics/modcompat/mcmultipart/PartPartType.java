@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -64,7 +63,7 @@ public class PartPartType extends MultipartBase {
     }
 
     public static ResourceLocation getType(IPartType partType) {
-        return new ResourceLocation(Reference.MOD_ID, "part_" + partType.getUnlocalizedName());
+        return partType.getBlockModelPath();
     }
 
     @Override
