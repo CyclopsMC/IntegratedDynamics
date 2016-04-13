@@ -1,7 +1,6 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "transform": "forge:default-block",
     "model": "integrateddynamics:reader",
     "textures": {
       "back" : "integrateddynamics:parts/worldReader_back",

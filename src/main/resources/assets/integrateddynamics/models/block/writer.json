@@ -1,4 +1,5 @@
 {
+    "parent": "integrateddynamics:block/part",
     "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
     "elements": [
         {

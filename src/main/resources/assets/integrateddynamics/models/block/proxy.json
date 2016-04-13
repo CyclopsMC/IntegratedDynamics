@@ -1,5 +1,5 @@
 {
-    "parent": "block/cube_all",
+    "parent": "block/cube",
     "textures": {
         "particle": "integrateddynamics:blocks/proxy_top",
         "down": "integrateddynamics:blocks/proxy_top",

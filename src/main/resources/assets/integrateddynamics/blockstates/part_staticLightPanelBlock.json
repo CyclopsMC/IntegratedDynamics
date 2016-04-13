@@ -1,7 +1,6 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "transform": "forge:default-block",
     "model": "integrateddynamics:panel",
     "textures": {
       "back" : "integrateddynamics:parts/panel_back_inactive",

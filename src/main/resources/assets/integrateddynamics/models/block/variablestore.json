@@ -1,12 +1,8 @@
 {
-    "parent": "block/cube_all",
+    "parent": "block/orientable",
     "textures": {
-        "particle": "integrateddynamics:blocks/variablestore_front",
-        "down": "integrateddynamics:blocks/variablestore_top",
-        "up": "integrateddynamics:blocks/variablestore_top",
-        "north": "integrateddynamics:blocks/variablestore_front",
-        "east": "integrateddynamics:blocks/variablestore_side",
-        "south": "integrateddynamics:blocks/variablestore_side",
-        "west": "integrateddynamics:blocks/variablestore_side"
+        "top": "integrateddynamics:blocks/variablestore_top",
+        "front": "integrateddynamics:blocks/variablestore_front",
+        "side": "integrateddynamics:blocks/variablestore_side"
     }
 }

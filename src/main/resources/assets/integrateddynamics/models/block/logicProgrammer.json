@@ -1,5 +1,5 @@
 {
-    "parent": "block/cube_all",
+    "parent": "block/cube",
     "textures": {
         "particle": "integrateddynamics:blocks/logicProgrammer_top",
         "down": "integrateddynamics:blocks/variablestore_top",
