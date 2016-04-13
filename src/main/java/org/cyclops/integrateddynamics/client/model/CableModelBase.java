@@ -199,7 +199,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                         );
                         i++;
                         ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
-                        ret.add(new BakedQuad(data, -1, realSide, texture, true, Attributes.DEFAULT_BAKED_FORMAT));
+                        ret.add(new BakedQuad(data, -1, realSide, texture, false, Attributes.DEFAULT_BAKED_FORMAT));
                     }
                 } else {
                     addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);

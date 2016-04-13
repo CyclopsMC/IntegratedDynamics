@@ -656,6 +656,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return true;
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.TRANSLUCENT;
+    }
+
     public AxisAlignedBB getCableBoundingBox(EnumFacing side) {
         float min = CableModel.MIN;
         float max = CableModel.MAX;
