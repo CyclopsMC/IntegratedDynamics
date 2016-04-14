@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui;
 
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -63,6 +64,8 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
         // This could be cached if this would prove to be a bottleneck
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(ItemVariable.getInstance()), aspect);
         Rectangle pos = getElementPosition(container, index, true);
+
+        RenderHelper.enableGUIStandardItemLighting();
         itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
     }
 

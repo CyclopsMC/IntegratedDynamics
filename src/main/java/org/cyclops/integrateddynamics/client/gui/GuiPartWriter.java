@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui;
 
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
@@ -58,6 +59,7 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
         // This could be cached if this would prove to be a bottleneck
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(ItemVariable.getInstance()), aspect);
         Rectangle pos = getElementPosition(container, index, true);
+        RenderHelper.enableGUIStandardItemLighting();
         itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
 
         // Render error symbol
