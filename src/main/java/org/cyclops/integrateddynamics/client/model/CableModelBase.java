@@ -1,11 +1,13 @@
 package org.cyclops.integrateddynamics.client.model;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -16,12 +18,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.Attributes;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
+import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
 
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 import java.util.List;
 
 /**
@@ -43,6 +51,20 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             (float) RADIUS / (float) TEXTURE_SIZE, (float) RADIUS / (float) TEXTURE_SIZE);
 
     private final float[][][] quadVertexes = makeQuadVertexes(MIN, MAX, 1.00F);
+
+    protected static final ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> TRANSFORMS =
+            ModelHelpers.modifyDefaultTransforms(ImmutableMap.of(
+                    ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                            new Vector3f(0, 1f / 32, 0),
+                            TRSRTransformation.quatFromXYZDegrees(new Vector3f(0, 45, 0)),
+                            new Vector3f(0.4F, 0.4F, 0.4F),
+                            null)),
+                    ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                            new Vector3f(0, 1f / 32, 0),
+                            TRSRTransformation.quatFromXYZDegrees(new Vector3f(0, 225, 0)),
+                            new Vector3f(0.4F, 0.4F, 0.4F),
+                            null))
+            ));
 
     public CableModelBase(IBlockState blockState, EnumFacing facing, long rand) {
         super(blockState, facing, rand);
@@ -230,4 +252,8 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         return (IExtendedBlockState) this.blockState;
     }
 
+    @Override
+    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
+        return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, TRANSFORMS, cameraTransformType);
+    }
 }
