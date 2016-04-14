@@ -1,9 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.google.common.base.Optional;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
@@ -44,13 +42,8 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     public static void renderItemStack(ItemStack itemStack, float alpha) {
         // ItemStack
         GlStateManager.pushMatrix();
-        IBakedModel ibakedmodel = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(itemStack);
-        if(ibakedmodel.isGui3d()) {
-            GlStateManager.scale(0.775F, 0.775F, 0.01);
-        } else {
-            GlStateManager.translate(3F, 3F, 0);
-            GlStateManager.scale(0.4, 0.4, 0.01);
-        }
+        GlStateManager.translate(3F, 3F, 0);
+        GlStateManager.scale(0.4, 0.4, 0.01);
         RenderHelpers.renderItem(itemStack, ItemCameraTransforms.TransformType.NONE);
         GlStateManager.popMatrix();
     }
