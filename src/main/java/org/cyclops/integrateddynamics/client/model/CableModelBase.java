@@ -254,6 +254,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
+
         return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, TRANSFORMS, cameraTransformType);
     }
 }

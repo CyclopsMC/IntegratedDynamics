@@ -42,7 +42,7 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
     @SuppressWarnings("unchecked")
     @Override
     public List<BakedQuad> getGeneralQuads() {
-        return baseModel.getQuads(this.blockState, this.facing, this.rand);
+        return baseModel.getQuads(this.blockState, getRenderingSide(), this.rand);
     }
 
     @Override

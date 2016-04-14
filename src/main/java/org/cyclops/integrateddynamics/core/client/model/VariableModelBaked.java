@@ -52,7 +52,7 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
     public IBakedModel handleItemState(ItemStack itemStack, World world, EntityLivingBase entity) {
         List<BakedQuad> quads = Lists.newLinkedList();
         // Add regular quads for variable
-        quads.addAll(this.baseModel.getQuads(null, null, 0L));
+        quads.addAll(this.baseModel.getQuads(null, getRenderingSide(), 0L));
 
         // Add variable type overlay
         IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
