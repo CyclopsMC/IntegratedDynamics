@@ -10,10 +10,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -714,10 +711,13 @@ public class Aspects {
                                     if(!StringUtils.isNullOrEmpty(input.getRight())) {
                                         float f = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_FREQUENCY).getRawValue();
                                         float volume = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_VOLUME).getRawValue();
+                                        SoundEvent soundEvent = SoundEvent.soundEventRegistry.getObject(new ResourceLocation(input.getRight()));
 
-                                        IntegratedDynamics.proxy.sendSoundMinecraft(
-                                                (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                                                input.getRight(), SoundCategory.MUSIC, volume, f);
+                                        if (soundEvent != null) {
+                                            IntegratedDynamics.proxy.sendSound(
+                                                    (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
+                                                    soundEvent, SoundCategory.RECORDS, volume, f);
+                                        }
                                     }
                                     return null;
                                 }

@@ -4,8 +4,10 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.NoteBlockEvent;
@@ -125,8 +127,8 @@ public class AspectWriteBuilders {
             PROPERTIES_SOUND.setValue(PROP_FREQUENCY, ValueTypeDouble.ValueDouble.of(1D));
         }
 
-        private static final List<String> INSTRUMENTS = Lists.newArrayList(new String[]{"harp", "bd", "snare", "hat", "bassattack"});
-        private static String getInstrument(int id) {
+        private static final List<SoundEvent> INSTRUMENTS = Lists.newArrayList(new SoundEvent[] {SoundEvents.block_note_harp, SoundEvents.block_note_basedrum, SoundEvents.block_note_snare, SoundEvents.block_note_hat, SoundEvents.block_note_bass});
+        private static SoundEvent getInstrument(int id) {
             if (id < 0 || id >= INSTRUMENTS.size()) {
                 id = 0;
             }
@@ -147,9 +149,9 @@ public class AspectWriteBuilders {
                     if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
                         float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
                         float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                        IntegratedDynamics.proxy.sendSoundMinecraft(
+                        IntegratedDynamics.proxy.sendSound(
                                 (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                                "note." + getInstrument(eventID), SoundCategory.RECORDS, volume, f);
+                                getInstrument(eventID), SoundCategory.RECORDS, volume, f);
                     }
                 }
                 return null;
