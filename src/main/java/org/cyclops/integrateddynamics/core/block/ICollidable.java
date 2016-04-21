@@ -45,13 +45,12 @@ public interface ICollidable<P> {
                                         List list, Entity collidingEntity);
 
     /**
-     * The the selected bounding box.
+     * The selected bounding box.
      * @param blockState The block state
      * @param worldIn The world
      * @param pos The position
      * @return The selected bounding box
      */
-    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos);
 
     /**

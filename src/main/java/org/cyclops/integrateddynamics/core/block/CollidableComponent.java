@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.block;
 import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,8 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 
 import java.util.Arrays;
@@ -68,18 +65,6 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World world, BlockPos pos) {
-        RayTraceResult rayTraceResult = doRayTrace(world, pos, Minecraft.getMinecraft().thePlayer);
-        if (rayTraceResult != null && rayTraceResult.getBoundingBox() != null) {
-            AxisAlignedBB box = rayTraceResult.getBoundingBox();
-            return box.offset(pos.getX(), pos.getY(), pos.getZ());
-        }
-        // Happens when client hovers away from a block.
-        return getBlock().getSelectedBoundingBoxParent(blockState, world, pos).expand(-0.625F, -0.625F, -0.625F);
-    }
-
     @Override
     public net.minecraft.util.math.RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d origin, Vec3d direction) {
         RayTraceResult raytraceResult = doRayTrace(world, pos, origin, direction);
@@ -92,8 +77,13 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState blockState, IBlockAccess world, BlockPos pos) {
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World world, BlockPos pos) {
         return lastBounds.offset(pos);
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return lastBounds;
     }
 
     /**
