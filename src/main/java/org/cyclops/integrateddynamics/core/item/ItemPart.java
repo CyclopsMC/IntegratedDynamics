@@ -68,31 +68,36 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
 
     @Override
     public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand,
-                             EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(!world.isRemote) {
-            IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
-            if(partContainerFacade != null) {
-                // Add part to existing cable
-                IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
-                if(addPart(world, pos, side, partContainer, itemStack) && !playerIn.capabilities.isCreativeMode) {
+                                      EnumFacing side, float hitX, float hitY, float hitZ) {
+        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
+        if(partContainerFacade != null) {
+            // Add part to existing cable
+            IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
+            if(addPart(world, pos, side, partContainer, itemStack)) {
+                if(world.isRemote) {
+                    ItemBlockCable.playPlaceSound(world, pos);
+                }
+                if(!playerIn.capabilities.isCreativeMode) {
                     itemStack.stackSize--;
                 }
-                return EnumActionResult.SUCCESS;
-            } else {
-                // Check all third party actions
-                for (IUseAction useAction : USE_ACTIONS) {
-                    if (useAction.attempItemUseTarget(this, itemStack, world, pos, side)) {
-                        return EnumActionResult.SUCCESS;
-                    }
+            }
+            return EnumActionResult.SUCCESS;
+        } else {
+            // Check all third party actions
+            for (IUseAction useAction : USE_ACTIONS) {
+                if (useAction.attempItemUseTarget(this, itemStack, world, pos, side)) {
+                    return EnumActionResult.SUCCESS;
                 }
+            }
 
-                // Place part at a new position with an unreal cable
-                BlockPos target = pos.offset(side);
-                if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
-                    ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
-                    if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                        partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
-                        if (partContainerFacade != null) {
+            // Place part at a new position with an unreal cable
+            BlockPos target = pos.offset(side);
+            if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
+                ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
+                if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+                    partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
+                    if (partContainerFacade != null) {
+                        if(!world.isRemote) {
                             IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
                             addPart(world, pos, side.getOpposite(), partContainer, itemStack);
                             if (world.getBlockState(target).getBlock() instanceof ICableFakeable) {
@@ -100,18 +105,20 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                             } else {
                                 IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable, got %s", world.getBlockState(target).getBlock()));
                             }
-                            return EnumActionResult.SUCCESS;
-                        }
-                    }
-                } else {
-                    partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
-                    if(partContainerFacade != null) {
-                        IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
-                        if(addPart(world, pos, side.getOpposite(), partContainer, itemStack) && !playerIn.capabilities.isCreativeMode) {
-                            itemStack.stackSize--;
                         }
                         return EnumActionResult.SUCCESS;
                     }
+                }
+            } else {
+                partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
+                if(partContainerFacade != null) {
+                    if(!world.isRemote) {
+                        IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
+                        if (addPart(world, pos, side.getOpposite(), partContainer, itemStack) && !playerIn.capabilities.isCreativeMode) {
+                            itemStack.stackSize--;
+                        }
+                    }
+                    return EnumActionResult.SUCCESS;
                 }
             }
         }
@@ -121,9 +128,10 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     protected boolean addPart(World world, BlockPos pos, EnumFacing side, IPartContainer partContainer, ItemStack itemStack) {
         IPartType partType = getPart();
         if(partContainer.canAddPart(side, partType)) {
-            partContainer.setPart(side, getPart(), partType.getState(itemStack));
+            if(!world.isRemote) {
+                partContainer.setPart(side, getPart(), partType.getState(itemStack));
+            }
             System.out.println("Setting part " + getPart());
-            ItemBlockCable.playPlaceSound(world, pos);
             return true;
         } else {
             System.out.println("Side occupied!");
