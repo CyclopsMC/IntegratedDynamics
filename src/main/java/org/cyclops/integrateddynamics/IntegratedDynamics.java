@@ -164,7 +164,11 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new ThaumcraftModCompat());
         modCompatLoader.addModCompat(new JEIModCompat());
         modCompatLoader.addApiCompat(new RfApiCompat());
+    }
 
+    @Mod.EventHandler
+    @Override
+    public final void preInit(FMLPreInitializationEvent event) {
         // Capabilities
         ICapabilityCompat.ICapabilityReference<IWorker> workerReference = new ICapabilityCompat.ICapabilityReference<IWorker>() {
             @Override
@@ -172,14 +176,11 @@ public class IntegratedDynamics extends ModBaseVersionable {
                 return Capabilities.WORKER;
             }
         };
+        ModCompatLoader modCompatLoader = getModCompatLoader();
         modCompatLoader.addCapabilityCompat(TileDryingBasin.class, workerReference, new WorkerDryingBasinTileCompat());
         modCompatLoader.addCapabilityCompat(TileSqueezer.class, workerReference, new WorkerSqueezerTileCompat());
         modCompatLoader.addCapabilityCompat(TileCoalGenerator.class, workerReference, new WorkerCoalGeneratorTileCompat());
-    }
 
-    @Mod.EventHandler
-    @Override
-    public final void preInit(FMLPreInitializationEvent event) {
         getRegistryManager().addRegistry(IBucketRegistry.class, new BucketRegistry());
         getRegistryManager().addRegistry(ISuperRecipeRegistry.class, new SuperRecipeRegistry(this));
 
