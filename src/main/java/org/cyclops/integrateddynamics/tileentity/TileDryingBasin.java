@@ -109,7 +109,11 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
             } else if (getCurrentRecipe() != null) {
                 IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe = getCurrentRecipe();
                 if (progress >= recipe.getProperties().getDuration()) {
-                    setInventorySlotContents(0, recipe.getOutput().getItemStack());
+                    ItemStack output = recipe.getOutput().getItemStack();
+                    if (output != null) {
+                        output = output.copy();
+                    }
+                    setInventorySlotContents(0, output);
                     int amount = FluidHelpers.getAmount(recipe.getInput().getFluidStack());
                     drain(amount, true);
                     if (recipe.getOutput().getFluidStack() != null) {

@@ -99,6 +99,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                         setInventorySlotContents(0, null);
                         ItemStack resultStack = recipe.getOutput().getItemStack();
                         if(resultStack != null) {
+                            resultStack = resultStack.copy();
                             for(EnumFacing side : EnumFacing.VALUES) {
                                 if(resultStack != null && side != EnumFacing.UP) {
                                     IItemHandler itemHandler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
@@ -106,7 +107,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                                 }
                             }
                             if(resultStack != null) {
-                                ItemStackHelpers.spawnItemStack(getWorld(), getPos(), resultStack.copy());
+                                ItemStackHelpers.spawnItemStack(getWorld(), getPos(), resultStack);
                             }
                         }
                         if (recipe.getOutput().getFluidStack() != null) {
