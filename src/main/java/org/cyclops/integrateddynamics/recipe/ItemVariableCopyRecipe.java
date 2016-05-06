@@ -36,7 +36,7 @@ public class ItemVariableCopyRecipe implements IRecipe {
                     withoutData = element;
                 }
                 if(facade.isValid() && withData == null && element.stackSize == 1) {
-                    withData = element;
+                    withData = element.copy();
                 }
             }
         }
