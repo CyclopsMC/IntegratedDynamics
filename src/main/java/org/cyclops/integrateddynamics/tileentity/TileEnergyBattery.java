@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.tileentity;
 
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.Optional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -50,8 +51,11 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
 
     public void updateBlockState() {
         if(!isCreative()) {
-            int fill = (int) Math.floor(((float) energy * (BlockEnergyBattery.FILL.getAllowedValues().size() - 1)) / (float) getMaxStoredEnergy());
-            getWorld().setBlockState(getPos(), getWorld().getBlockState(getPos()).withProperty(BlockEnergyBattery.FILL, fill));
+            IBlockState blockState = getWorld().getBlockState(getPos());
+            if (blockState.getBlock() == BlockEnergyBattery.getInstance()) {
+                int fill = (int) Math.floor(((float) energy * (BlockEnergyBattery.FILL.getAllowedValues().size() - 1)) / (float) getMaxStoredEnergy());
+                getWorld().setBlockState(getPos(), blockState.withProperty(BlockEnergyBattery.FILL, fill));
+            }
         }
     }
 
