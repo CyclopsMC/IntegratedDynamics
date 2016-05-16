@@ -125,7 +125,7 @@ public class OperatorBuilders {
         public Optional<SoundType> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
             ValueObjectTypeBlock.ValueBlock block = input.getValue(0);
             if(block.getRawValue().isPresent()) {
-                return Optional.of(block.getRawValue().get().getBlock().getStepSound());
+                return Optional.of(block.getRawValue().get().getBlock().getSoundType());
             }
             return Optional.absent();
         }

@@ -104,7 +104,7 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                                 block = loopBlockState.getBlock();
 
                                 if (block != null && !(block.isLeaves(loopBlockState, world, loopPos) ||
-                                        block == Blocks.air ||
+                                        block == Blocks.AIR ||
                                         block.canBeReplacedByLeaves(loopBlockState, world, loopPos))) {
                                     return false;
                                 }
@@ -137,7 +137,7 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                                 if ((xPos != center | zPos != center) &&
                                         !((yOffset == y + treeHeight || yOffset == y - 5 + treeHeight) && (xPos == center || zPos == center)) &&
                                         (block == null || block.isLeaves(loopBlockState, world, loopPos) ||
-                                                block == Blocks.air ||
+                                                block == Blocks.AIR ||
                                                 block.canBeReplacedByLeaves(loopBlockState, world, loopPos))) {
                                     this.setBlockAndNotifyAdequately(world, loopPos, getLeaves().getDefaultState());
                                 }
@@ -168,7 +168,7 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                     for(Pair<Boolean, BlockPos> pair : logLocations) {
                         BlockPos loopPos = pair.getRight();
                         IBlockState loopBlockState = world.getBlockState(loopPos);
-                        if (block == null || block == Blocks.air ||
+                        if (block == null || block == Blocks.AIR ||
                                 block.isLeaves(loopBlockState, world, loopPos) ||
                                 block.isReplaceable(world, loopPos)) {
                             this.setBlockAndNotifyAdequately(world, loopPos,

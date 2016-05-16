@@ -51,23 +51,23 @@ public class TestItemStackOperators {
 
     @IntegrationBefore
     public void before() {
-        iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.apple)));
-        iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.apple, 2)));
-        iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.beef)));
-        iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ender_pearl)));
-        iHoe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.diamond_hoe)));
-        iHoe100 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.diamond_hoe, 1, 100)));
-        ItemStack hoeEnchanted = new ItemStack(Items.diamond_hoe);
-        EnchantmentHelpers.setEnchantmentLevel(hoeEnchanted, Enchantments.aquaAffinity, 1);
+        iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
+        iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 2)));
+        iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.BED)));
+        iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ENDER_PEARL)));
+        iHoe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
+        iHoe100 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE, 1, 100)));
+        ItemStack hoeEnchanted = new ItemStack(Items.DIAMOND_HOE);
+        EnchantmentHelpers.setEnchantmentLevel(hoeEnchanted, Enchantments.AQUA_AFFINITY, 1);
         hoeEnchanted.setRepairCost(10);
         iHoeEnchanted = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(hoeEnchanted));
-        iPickaxe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.diamond_pickaxe)));
-        iStone = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.stone)));
-        iBucketLava = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.lava_bucket)));
+        iPickaxe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_PICKAXE)));
+        iStone = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.STONE)));
+        iBucketLava = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.LAVA_BUCKET)));
         iWrench = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(ItemWrench.getInstance())));
 
-        bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.stone.getDefaultState()));
-        bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.obsidian.getDefaultState()));
+        bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState()));
+        bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.getDefaultState()));
 
         sStickWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("stickWood"));
         sPlankWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("plankWood"));
@@ -435,7 +435,7 @@ public class TestItemStackOperators {
     public void testItemStackBlock() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_BLOCK.evaluate(new IVariable[]{iStone});
         Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.stone.getDefaultState(), "block(stone) = stone");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.STONE.getDefaultState(), "block(stone) = stone");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

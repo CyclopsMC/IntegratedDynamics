@@ -49,10 +49,10 @@ public class BlockInvisibleLight extends ConfigurableBlock {
      * @param eConfig Config for this block.
      */
     public BlockInvisibleLight(ExtendedConfig eConfig) {
-        super(eConfig, Material.air);
+        super(eConfig, Material.AIR);
 
         setHardness(3.0F);
-        setStepSound(SoundType.METAL);
+        setSoundType(SoundType.METAL);
     }
 
     @SideOnly(Side.CLIENT)

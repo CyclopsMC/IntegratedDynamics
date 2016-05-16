@@ -45,10 +45,10 @@ public class BlockLogicProgrammer extends ConfigurableBlockGui {
      * @param eConfig Config for this block.
      */
     public BlockLogicProgrammer(ExtendedConfig eConfig) {
-        super(eConfig, Material.glass);
+        super(eConfig, Material.GLASS);
 
         setHardness(3.0F);
-        setStepSound(SoundType.METAL);
+        setSoundType(SoundType.METAL);
     }
 
     @Override

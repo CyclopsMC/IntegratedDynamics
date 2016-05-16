@@ -62,7 +62,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
      * @param eConfig Config for this block.
      */
     public BlockSqueezer(ExtendedConfig eConfig) {
-        super(eConfig, Material.iron, TileSqueezer.class);
+        super(eConfig, Material.IRON, TileSqueezer.class);
     }
 
     @Override

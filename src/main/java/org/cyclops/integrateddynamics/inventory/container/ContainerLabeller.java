@@ -84,7 +84,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         if (!player.worldObj.isRemote) {
             ItemStack itemStack = temporaryInputSlots.getStackInSlot(0);
             if(itemStack != null) {
-                player.dropPlayerItemWithRandomChoice(itemStack, false);
+                player.dropItem(itemStack, false);
             }
         }
     }

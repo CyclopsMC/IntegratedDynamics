@@ -25,7 +25,7 @@ public class BlockFluidMenrilResin extends ConfigurableBlockFluidClassic {
     }
 
     public BlockFluidMenrilResin(ExtendedConfig<BlockConfig> eConfig) {
-        super(eConfig, FluidMenrilResin.getInstance(), Material.water);
+        super(eConfig, FluidMenrilResin.getInstance(), Material.WATER);
         
         if (MinecraftHelpers.isClientSide())
             this.setParticleColor(0.654901961F, 0.870588235F, 0.780392157F);

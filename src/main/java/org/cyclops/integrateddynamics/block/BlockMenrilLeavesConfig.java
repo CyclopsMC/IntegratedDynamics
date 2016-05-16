@@ -71,7 +71,7 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
             }
 
             @Override
-            public SoundType getStepSound() {
+            public SoundType getSoundType() {
                 return SoundType.GROUND;
             }
         }.setHardness(0.2F).setLightLevel(0.65F).setLightOpacity(1);
@@ -84,7 +84,7 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
     
     @Override
     public void onRegistered() {
-    	Blocks.fire.setFireInfo(getBlockInstance(), 5, 20);
+    	Blocks.FIRE.setFireInfo(getBlockInstance(), 5, 20);
     }
     
 }

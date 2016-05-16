@@ -206,7 +206,7 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
         if (!player.worldObj.isRemote) {
             ItemStack itemStack = writeSlot.getStackInSlot(0);
             if(itemStack != null) {
-                player.dropPlayerItemWithRandomChoice(itemStack, false);
+                player.dropItem(itemStack, false);
             }
         }
     }

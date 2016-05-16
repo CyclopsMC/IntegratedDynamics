@@ -36,9 +36,9 @@ public class BlockMenrilPlanksConfig extends BlockConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return (ConfigurableBlock) new ConfigurableBlock(this, Material.wood) {
+        return (ConfigurableBlock) new ConfigurableBlock(this, Material.WOOD) {
             @Override
-            public SoundType getStepSound() {
+            public SoundType getSoundType() {
                 return SoundType.WOOD;
             }
         }.setHardness(2.0F);
@@ -51,7 +51,7 @@ public class BlockMenrilPlanksConfig extends BlockConfig {
     
     @Override
     public void onRegistered() {
-    	Blocks.fire.setFireInfo(getBlockInstance(), 5, 20);
+    	Blocks.FIRE.setFireInfo(getBlockInstance(), 5, 20);
     }
     
 }

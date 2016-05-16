@@ -105,7 +105,7 @@ public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
                 String label = StringUtils.isBlank(searchField.getText()) ? "" : searchField.getText();
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableId, label);
             } else if(itemStack != null) {
-                this.mc.thePlayer.sendQueue.addToSendQueue(new CPacketCustomPayload("MC|ItemName", (new PacketBuffer(Unpooled.buffer())).writeString(searchField.getText())));
+                this.mc.thePlayer.connection.sendPacket(new CPacketCustomPayload("MC|ItemName", (new PacketBuffer(Unpooled.buffer())).writeString(searchField.getText())));
                 String name = searchField.getText();
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(new ItemStackRenamePacket(name));
                 getContainer().setItemStackName(name);

@@ -40,8 +40,8 @@ public class ContainerCoalGenerator extends TileInventoryContainerConfigurable<T
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        for (int i = 0; i < this.crafters.size(); ++i) {
-            ICrafting crafting = this.crafters.get(i);
+        for (int i = 0; i < this.listeners.size(); ++i) {
+            ICrafting crafting = this.listeners.get(i);
             if(lastProgress != getTile().getProgress()) {
                 crafting.sendProgressBarUpdate(this, 0, getTile().getProgress());
             }

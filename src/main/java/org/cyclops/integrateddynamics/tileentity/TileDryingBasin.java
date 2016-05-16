@@ -101,9 +101,9 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
         if(!worldObj.isRemote) {
             if (!getTank().isEmpty() && getTank().getFluid().getFluid().getTemperature(getTank().getFluid()) >= WOOD_IGNITION_TEMPERATURE) {
                 if (++fire >= 100) {
-                    getWorld().setBlockState(getPos(), Blocks.fire.getDefaultState());
+                    getWorld().setBlockState(getPos(), Blocks.FIRE.getDefaultState());
                 } else if (getWorld().isAirBlock(getPos().offset(EnumFacing.UP)) && worldObj.rand.nextInt(10) == 0) {
-                    getWorld().setBlockState(getPos().offset(EnumFacing.UP), Blocks.fire.getDefaultState());
+                    getWorld().setBlockState(getPos().offset(EnumFacing.UP), Blocks.FIRE.getDefaultState());
                 }
 
             } else if (getCurrentRecipe() != null) {

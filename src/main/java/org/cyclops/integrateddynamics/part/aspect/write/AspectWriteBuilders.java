@@ -54,6 +54,8 @@ public class AspectWriteBuilders {
             BUILDER_LIST = getValue(AspectBuilder.forWriteType(ValueTypes.LIST));
     public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>>
             BUILDER_ITEMSTACK = getValue(AspectBuilder.forWriteType(ValueTypes.OBJECT_ITEMSTACK));
+    public static final AspectBuilder<ValueObjectTypeFluidStack.ValueFluidStack, ValueObjectTypeFluidStack, Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack>>
+            BUILDER_FLUIDSTACK = getValue(AspectBuilder.forWriteType(ValueTypes.OBJECT_FLUIDSTACK));
 
     // --------------- Value type propagators ---------------
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean>, Triple<PartTarget, IAspectProperties, Boolean>> PROP_GET_BOOLEAN = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean>, Triple<PartTarget, IAspectProperties, Boolean>>() {
@@ -127,7 +129,7 @@ public class AspectWriteBuilders {
             PROPERTIES_SOUND.setValue(PROP_FREQUENCY, ValueTypeDouble.ValueDouble.of(1D));
         }
 
-        private static final List<SoundEvent> INSTRUMENTS = Lists.newArrayList(new SoundEvent[] {SoundEvents.block_note_harp, SoundEvents.block_note_basedrum, SoundEvents.block_note_snare, SoundEvents.block_note_hat, SoundEvents.block_note_bass});
+        private static final List<SoundEvent> INSTRUMENTS = Lists.newArrayList(new SoundEvent[] {SoundEvents.BLOCK_NOTE_HARP, SoundEvents.BLOCK_NOTE_BASEDRUM, SoundEvents.BLOCK_NOTE_SNARE, SoundEvents.BLOCK_NOTE_HAT, SoundEvents.BLOCK_NOTE_BASS});
         private static SoundEvent getInstrument(int id) {
             if (id < 0 || id >= INSTRUMENTS.size()) {
                 id = 0;

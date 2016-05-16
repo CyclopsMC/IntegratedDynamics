@@ -36,7 +36,7 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
         super(eConfig);
 
         setHardness(5.0F);
-        setStepSound(SoundType.METAL);
+        setSoundType(SoundType.METAL);
     }
 
     @Override

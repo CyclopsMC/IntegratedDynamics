@@ -24,12 +24,12 @@ public class MeneglinBiomeDecorator extends BiomeDecorator {
             ++k1;
         }
 
-        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(worldIn, random, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.TREE)) {
+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(worldIn, random, chunkPos, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.TREE)) {
             for (int j2 = 0; j2 < k1; ++j2) {
                 int k6 = random.nextInt(16) + 8;
                 int l = random.nextInt(16) + 8;
-                MENRIL_TREE_GEN.func_175904_e();
-                BlockPos blockpos = worldIn.getHeight(this.field_180294_c.add(k6, 0, l));
+                MENRIL_TREE_GEN.setDecorationDefaults();
+                BlockPos blockpos = worldIn.getHeight(chunkPos.add(k6, 0, l));
                 MENRIL_TREE_GEN.growTree(worldIn, random, blockpos);
             }
         }
