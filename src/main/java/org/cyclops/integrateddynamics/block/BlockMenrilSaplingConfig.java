@@ -35,7 +35,7 @@ public class BlockMenrilSaplingConfig extends BlockConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        return new ConfigurableBlockSapling(this, Material.plants, new WorldGeneratorMenrilTree(false));
+        return new ConfigurableBlockSapling(this, Material.PLANTS, new WorldGeneratorMenrilTree(false));
     }
     
     @Override

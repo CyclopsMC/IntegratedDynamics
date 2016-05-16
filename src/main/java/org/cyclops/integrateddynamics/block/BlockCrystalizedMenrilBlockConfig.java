@@ -34,9 +34,9 @@ public class BlockCrystalizedMenrilBlockConfig extends BlockConfig {
 
     @Override
     protected IConfigurable initSubInstance() {
-        ConfigurableBlock block = (ConfigurableBlock) new ConfigurableBlock(this, Material.clay) {
+        ConfigurableBlock block = (ConfigurableBlock) new ConfigurableBlock(this, Material.CLAY) {
             @Override
-            public SoundType getStepSound() {
+            public SoundType getSoundType() {
                 return SoundType.SNOW;
             }
         }.setHardness(1.5F);

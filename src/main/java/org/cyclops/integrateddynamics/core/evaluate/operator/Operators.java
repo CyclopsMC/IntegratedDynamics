@@ -613,7 +613,7 @@ public final class Operators {
                         @Override
                         public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                             ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
-                            return a.getRawValue().isPresent() ? Block.blockRegistry.getNameForObject(a.getRawValue().get().getBlock()) : null;
+                            return a.getRawValue().isPresent() ? Block.REGISTRY.getNameForObject(a.getRawValue().get().getBlock()) : null;
                         }
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
@@ -925,7 +925,7 @@ public final class Operators {
                         @Override
                         public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                             ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                            return a.getRawValue().isPresent() ? Item.itemRegistry.getNameForObject(a.getRawValue().get().getItem()) : null;
+                            return a.getRawValue().isPresent() ? Item.REGISTRY.getNameForObject(a.getRawValue().get().getItem()) : null;
                         }
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
@@ -1499,7 +1499,7 @@ public final class Operators {
                             } else if (fluid.getFlowing() != null) {
                                 modDomain = fluid.getFlowing().getResourceDomain();
                             } else if (fluid.getBlock() != null) {
-                                modDomain = Block.blockRegistry.getNameForObject(fluid.getBlock()).getResourceDomain();
+                                modDomain = Block.REGISTRY.getNameForObject(fluid.getBlock()).getResourceDomain();
                             }
                             String modId = org.cyclops.cyclopscore.helper.Helpers.getModId(modDomain);
                             modName = Loader.instance().getIndexedModList().get(modId).getName();

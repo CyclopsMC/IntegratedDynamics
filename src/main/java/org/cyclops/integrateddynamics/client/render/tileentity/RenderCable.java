@@ -60,7 +60,7 @@ public class RenderCable extends TileEntitySpecialRenderer<TileMultipartTicking>
                 IBlockState blockState = getWorld().getBlockState(tile.getPos());
                 IBakedModel layerModel = new SimpleBakedModel.Builder(blockState, model, Minecraft.getMinecraft().getTextureMapBlocks()
                         .getAtlasSprite("minecraft:blocks/destroy_stage_" + destroyStage), tile.getPos()).makeBakedModel();
-                rendererDispatcher.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+                rendererDispatcher.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                 startTessellating(x, y, z);
                 IVertexConsumer consumer = new VertexBufferConsumer(Tessellator.getInstance().getBuffer());
                 renderBreaking(blockState, layerModel, consumer);
@@ -81,11 +81,11 @@ public class RenderCable extends TileEntitySpecialRenderer<TileMultipartTicking>
         GlStateManager.enablePolygonOffset();
         GlStateManager.alphaFunc(516, 0.1F);
         GlStateManager.enableAlpha();
-        Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+        Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
     }
 
     private void finishBreaking() {
-        Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+        Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
         GlStateManager.disableAlpha();
         GlStateManager.doPolygonOffset(0.0F, 0.0F);
         GlStateManager.disablePolygonOffset();

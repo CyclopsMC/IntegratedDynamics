@@ -37,7 +37,7 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             VertexBuffer worldRenderer = Tessellator.getInstance().getBuffer();
             worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
             TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStackOptional.get(), EnumFacing.NORTH);
-            rendererDispatcher.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            rendererDispatcher.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
             float min = 0F;
             float max = 12.5F;

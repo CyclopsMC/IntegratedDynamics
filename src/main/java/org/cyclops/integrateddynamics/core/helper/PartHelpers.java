@@ -178,7 +178,7 @@ public class PartHelpers {
         world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
         // Remove full cable block if this was the last part and if it was already an unreal cable.
         if(destroyIfEmpty && (!(cable instanceof ICableFakeable) || !((ICableFakeable) cable).isRealCable(world, pos)) && !partContainer.hasParts()) {
-            world.setBlockState(pos, Blocks.air.getDefaultState(), 3);
+            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
             return true;
         }
         return false;

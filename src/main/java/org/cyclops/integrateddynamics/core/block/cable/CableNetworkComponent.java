@@ -103,7 +103,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
     public void remove(World world, BlockPos pos, EntityPlayer player) {
         //world.destroyBlock(pos, true); // We don't call this directly because we don't want breaking sounds to play
         ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
-        world.setBlockState(pos, Blocks.air.getDefaultState(), 3);
+        world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
     }
 
     @Override

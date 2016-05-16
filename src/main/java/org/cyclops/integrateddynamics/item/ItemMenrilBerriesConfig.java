@@ -50,7 +50,7 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
             }
         };
         if(nightVision) {
-            food = (ConfigurableItemFood) food.setPotionEffect(new PotionEffect(MobEffects.nightVision, 20, 1), 1);
+            food = (ConfigurableItemFood) food.setPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 20, 1), 1);
         }
         return food;
     }

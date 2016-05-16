@@ -37,7 +37,7 @@ public class BlockMenrilLogConfig extends BlockConfig {
     protected IConfigurable initSubInstance() {
         return (ConfigurableBlockLog) new ConfigurableBlockLog(this){
             @Override
-            public SoundType getStepSound() {
+            public SoundType getSoundType() {
                 return SoundType.WOOD;
             }
         }.setHardness(2.0F);
@@ -50,7 +50,7 @@ public class BlockMenrilLogConfig extends BlockConfig {
     
     @Override
     public void onRegistered() {
-    	Blocks.fire.setFireInfo(getBlockInstance(), 5, 20);
+    	Blocks.FIRE.setFireInfo(getBlockInstance(), 5, 20);
     }
     
 }

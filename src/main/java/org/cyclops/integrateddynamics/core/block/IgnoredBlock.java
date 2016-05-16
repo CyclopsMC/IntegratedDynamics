@@ -28,7 +28,7 @@ public class IgnoredBlock extends ConfigurableBlock {
      * @param eConfig  Config for this blockState.
      */
     public IgnoredBlock(ExtendedConfig eConfig) {
-        super(eConfig, Material.glass);
+        super(eConfig, Material.GLASS);
     }
 
     @Override

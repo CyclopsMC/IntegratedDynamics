@@ -123,11 +123,11 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
                 ItemStack itemstack;
                 itemstack = inputSlots.removeStackFromSlot(i);
                 if (itemstack != null) {
-                    player.dropPlayerItemWithRandomChoice(itemstack, false);
+                    player.dropItem(itemstack, false);
                 }
                 itemstack = outputSlots.removeStackFromSlot(i);
                 if (itemstack != null) {
-                    player.dropPlayerItemWithRandomChoice(itemstack, false);
+                    player.dropItem(itemstack, false);
                 }
             }
         }

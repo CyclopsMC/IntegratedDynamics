@@ -81,7 +81,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
 
     public static final float BLOCK_HARDNESS = 3.0F;
-    public static final Material BLOCK_MATERIAL = Material.glass;
+    public static final Material BLOCK_MATERIAL = Material.GLASS;
 
     // Properties
     @BlockProperty
@@ -339,7 +339,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         super(eConfig, BLOCK_MATERIAL, TileMultipartTicking.class);
 
         setHardness(BLOCK_HARDNESS);
-        setStepSound(SoundType.METAL);
+        setSoundType(SoundType.METAL);
         if(MinecraftHelpers.isClientSide()) {
             eConfig.getMod().getIconProvider().registerIconHolderObject(this);
         }

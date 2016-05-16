@@ -41,7 +41,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
         super(eConfig);
 
         setHardness(5.0F);
-        setStepSound(SoundType.METAL);
+        setSoundType(SoundType.METAL);
     }
 
     @Override

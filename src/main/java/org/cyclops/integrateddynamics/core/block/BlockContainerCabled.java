@@ -41,10 +41,10 @@ public abstract class BlockContainerCabled extends ConfigurableBlockContainer im
      * @param tileEntity The tile class
      */
     public BlockContainerCabled(ExtendedConfig eConfig, Class<? extends CyclopsTileEntity> tileEntity) {
-        super(eConfig, Material.anvil, tileEntity);
+        super(eConfig, Material.ANVIL, tileEntity);
 
         setHardness(5.0F);
-        setStepSound(SoundType.ANVIL);
+        setSoundType(SoundType.ANVIL);
     }
 
     @Override

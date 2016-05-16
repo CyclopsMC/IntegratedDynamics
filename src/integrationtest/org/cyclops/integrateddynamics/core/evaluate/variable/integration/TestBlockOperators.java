@@ -32,8 +32,8 @@ public class TestBlockOperators {
 
     @IntegrationBefore
     public void before() {
-        bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.air.getDefaultState()));
-        bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.coal_block.getDefaultState()));
+        bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.getDefaultState()));
+        bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.COAL_BLOCK.getDefaultState()));
         bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(BlockLogicProgrammer.getInstance().getDefaultState()));
     }
 
@@ -77,7 +77,7 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().isPresent(), false, "itemstack(air) = null");
 
         IValue res2 = Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bCoal});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().isItemEqual(new ItemStack(Blocks.coal_block)), true, "itemstack(coalblock) = coalblock");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().isItemEqual(new ItemStack(Blocks.COAL_BLOCK)), true, "itemstack(coalblock) = coalblock");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

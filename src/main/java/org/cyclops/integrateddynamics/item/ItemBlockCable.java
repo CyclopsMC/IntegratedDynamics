@@ -97,11 +97,11 @@ public class ItemBlockCable extends ItemBlockMetadata {
     public static void playPlaceSound(World world, BlockPos pos) {
         Block block = BlockCable.getInstance();
         IntegratedDynamics.proxy.playSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
-                block.getStepSound().getPlaceSound(), SoundCategory.BLOCKS, (block.getStepSound().getVolume() + 1.0F) / 2.0F, block.getStepSound().getPitch() * 0.8F);
+                block.getSoundType().getPlaceSound(), SoundCategory.BLOCKS, (block.getSoundType().getVolume() + 1.0F) / 2.0F, block.getSoundType().getPitch() * 0.8F);
     }
 
     public static void playBreakSound(World world, BlockPos pos, IBlockState blockState) {
-        world.playAuxSFX(2001, pos, Block.getStateId(blockState));
+        world.playBroadcastSound(2001, pos, Block.getStateId(blockState));
     }
 
     @Override

@@ -228,7 +228,7 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().isPresent(), false, "itemstack(zombie) = null");
 
         IValue res2 = Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{eItem});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().isItemEqual(new ItemStack(Blocks.air)), true, "itemstack(item:air) = air");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().isItemEqual(new ItemStack(Blocks.AIR)), true, "itemstack(item:air) = air");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

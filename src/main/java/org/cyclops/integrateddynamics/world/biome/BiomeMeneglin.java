@@ -80,7 +80,7 @@ public class BiomeMeneglin extends ConfigurableBiome {
     @Override
     public void addDefaultFlowers() {
         for(BlockFlower.EnumFlowerType flower : FLOWERS) {
-            addFlower(Blocks.red_flower.getDefaultState().withProperty(Blocks.red_flower.getTypeProperty(), flower), 20);
+            addFlower(Blocks.RED_FLOWER.getDefaultState().withProperty(Blocks.RED_FLOWER.getTypeProperty(), flower), 20);
         }
     }
 
@@ -90,7 +90,7 @@ public class BiomeMeneglin extends ConfigurableBiome {
             if(decorateBiomeEvent.getRand().nextInt(GeneralConfig.wildMenrilTreeChance) == 0) {
                 int k6 = decorateBiomeEvent.getRand().nextInt(16) + 8;
                 int l = decorateBiomeEvent.getRand().nextInt(16) + 8;
-                MeneglinBiomeDecorator.MENRIL_TREE_GEN.func_175904_e();
+                MeneglinBiomeDecorator.MENRIL_TREE_GEN.setDecorationDefaults();
                 BlockPos blockpos = decorateBiomeEvent.getWorld().getHeight(decorateBiomeEvent.getPos().add(k6, 0, l));
                 MeneglinBiomeDecorator.MENRIL_TREE_GEN.growTree(decorateBiomeEvent.getWorld(), decorateBiomeEvent.getRand(), blockpos);
             }

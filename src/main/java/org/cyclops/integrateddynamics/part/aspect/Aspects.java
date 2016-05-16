@@ -81,7 +81,7 @@ public class Aspects {
                         @Override
                         public Boolean getOutput(DimPos dimPos) {
                             net.minecraft.block.Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
-                            return block != Blocks.air;
+                            return block != Blocks.AIR;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DIMENSION =
@@ -711,7 +711,7 @@ public class Aspects {
                                     if(!StringUtils.isNullOrEmpty(input.getRight())) {
                                         float f = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_FREQUENCY).getRawValue();
                                         float volume = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_VOLUME).getRawValue();
-                                        SoundEvent soundEvent = SoundEvent.soundEventRegistry.getObject(new ResourceLocation(input.getRight()));
+                                        SoundEvent soundEvent = SoundEvent.REGISTRY.getObject(new ResourceLocation(input.getRight()));
 
                                         if (soundEvent != null) {
                                             IntegratedDynamics.proxy.sendSound(

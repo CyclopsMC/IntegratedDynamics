@@ -51,7 +51,7 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
      * @param eConfig Config for this block.
      */
     public BlockDryingBasin(ExtendedConfig eConfig) {
-        super(eConfig, Material.wood, TileDryingBasin.class);
+        super(eConfig, Material.WOOD, TileDryingBasin.class);
     }
 
     @Override
