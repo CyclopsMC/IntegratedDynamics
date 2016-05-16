@@ -2,7 +2,9 @@ package org.cyclops.integrateddynamics.modcompat.charset.aspect;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import pl.asie.charset.api.pipes.IShifter;
 
@@ -14,12 +16,13 @@ public class ShifterPart implements IShifter {
 
     private final EnumFacing direction;
     private boolean shifting;
-    private Iterable<ValueObjectTypeItemStack.ValueItemStack> filter;
+    private Iterable<ValueObjectTypeItemStack.ValueItemStack> filterItem;
+    private Iterable<ValueObjectTypeFluidStack.ValueFluidStack> filterFluid;
 
     public ShifterPart(EnumFacing direction) {
         this.direction = direction;
         this.shifting = false;
-        this.filter = null;
+        this.filterItem = null;
     }
 
     @Override
@@ -48,20 +51,41 @@ public class ShifterPart implements IShifter {
 
     @Override
     public boolean hasFilter() {
-        return filter != null;
+        return filterItem != null || filterFluid != null;
     }
 
-    public void setFilter(Iterable<ValueObjectTypeItemStack.ValueItemStack> filter) {
-        this.filter = filter;
+    public void setFilterItem(Iterable<ValueObjectTypeItemStack.ValueItemStack> filterItem) {
+        this.filterItem = filterItem;
+    }
+
+    public void setFilterFluid(Iterable<ValueObjectTypeFluidStack.ValueFluidStack> filterFluid) {
+        this.filterFluid = filterFluid;
     }
 
     @Override
     public boolean matches(ItemStack source) {
-        if(filter != null) {
-            for(ValueObjectTypeItemStack.ValueItemStack itemStack : filter) {
+        if(filterItem != null) {
+            for(ValueObjectTypeItemStack.ValueItemStack itemStack : filterItem) {
                 if(itemStack.getRawValue().isPresent()
                         && ItemStackHelpers.areItemStacksIdentical(itemStack.getRawValue().get(), source)) {
                     return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean matches(FluidStack source) {
+        if(filterFluid != null) {
+            for(ValueObjectTypeFluidStack.ValueFluidStack fluidStack : filterFluid) {
+                if (fluidStack.getRawValue().isPresent()) {
+                    FluidStack self = fluidStack.getRawValue().get();
+                    if ((self == null && source == null)
+                            || (self != null && source != null && self.getFluid() == source.getFluid())) {
+                        return true;
+                    }
                 }
             }
             return false;

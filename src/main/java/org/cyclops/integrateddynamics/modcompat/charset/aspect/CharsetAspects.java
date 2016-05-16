@@ -16,10 +16,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
@@ -143,13 +140,13 @@ public class CharsetAspects {
                                 @Override
                                 public Void getOutput(Pair<ShifterPart, ValueObjectTypeItemStack.ValueItemStack> input) throws EvaluationException {
                                     ShifterPart shifter = input.getLeft();
-                                    shifter.setFilter(Collections.singleton(input.getRight()));
+                                    shifter.setFilterItem(Collections.singleton(input.getRight()));
                                     shifter.setShifting(true);
                                     return null;
                                 }
                             }).buildWrite();
 
-            public static final IAspectWrite<ValueTypeList.ValueList, ValueTypeList> SHIFTER_LIST =
+            public static final IAspectWrite<ValueTypeList.ValueList, ValueTypeList> SHIFTER_LISTITEMSTACK =
                     getShifter(AspectWriteBuilders.BUILDER_LIST.appendKind("charsetpipe")
                             .appendActivator(ACTIVATOR).appendDeactivator(DEACTIVATOR).appendKind("shifter"))
                             .handle(new IAspectValuePropagator<Pair<ShifterPart, ValueTypeList.ValueList>, Void>() {
@@ -157,11 +154,43 @@ public class CharsetAspects {
                                 public Void getOutput(Pair<ShifterPart, ValueTypeList.ValueList> input) throws EvaluationException {
                                     ShifterPart shifter = input.getLeft();
                                     if (input.getRight().getRawValue().getValueType() == ValueTypes.OBJECT_ITEMSTACK) {
-                                        shifter.setFilter(input.getRight().getRawValue());
+                                        shifter.setFilterItem(input.getRight().getRawValue());
                                         shifter.setShifting(true);
                                     } else {
                                         throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
                                                 new L10NHelpers.UnlocalizedString(ValueTypes.OBJECT_ITEMSTACK.getUnlocalizedName()),
+                                                new L10NHelpers.UnlocalizedString(input.getRight().getRawValue().getValueType().getUnlocalizedName())).localize());
+                                    }
+                                    return null;
+                                }
+                            }).buildWrite();
+
+            public static final IAspectWrite<ValueObjectTypeFluidStack.ValueFluidStack, ValueObjectTypeFluidStack> SHIFTER_FLUIDSTACK =
+                    getShifter(AspectWriteBuilders.BUILDER_FLUIDSTACK.appendKind("charsetpipe")
+                            .appendActivator(ACTIVATOR).appendDeactivator(DEACTIVATOR).appendKind("shifterfluid"))
+                            .handle(new IAspectValuePropagator<Pair<ShifterPart, ValueObjectTypeFluidStack.ValueFluidStack>, Void>() {
+                                @Override
+                                public Void getOutput(Pair<ShifterPart, ValueObjectTypeFluidStack.ValueFluidStack> input) throws EvaluationException {
+                                    ShifterPart shifter = input.getLeft();
+                                    shifter.setFilterFluid(Collections.singleton(input.getRight()));
+                                    shifter.setShifting(true);
+                                    return null;
+                                }
+                            }).buildWrite();
+
+            public static final IAspectWrite<ValueTypeList.ValueList, ValueTypeList> SHIFTER_LISTFLUIDSTACK =
+                    getShifter(AspectWriteBuilders.BUILDER_LIST.appendKind("charsetpipe")
+                            .appendActivator(ACTIVATOR).appendDeactivator(DEACTIVATOR).appendKind("shifterfluid"))
+                            .handle(new IAspectValuePropagator<Pair<ShifterPart, ValueTypeList.ValueList>, Void>() {
+                                @Override
+                                public Void getOutput(Pair<ShifterPart, ValueTypeList.ValueList> input) throws EvaluationException {
+                                    ShifterPart shifter = input.getLeft();
+                                    if (input.getRight().getRawValue().getValueType() == ValueTypes.OBJECT_FLUIDSTACK) {
+                                        shifter.setFilterFluid(input.getRight().getRawValue());
+                                        shifter.setShifting(true);
+                                    } else {
+                                        throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
+                                                new L10NHelpers.UnlocalizedString(ValueTypes.OBJECT_FLUIDSTACK.getUnlocalizedName()),
                                                 new L10NHelpers.UnlocalizedString(input.getRight().getRawValue().getValueType().getUnlocalizedName())).localize());
                                     }
                                     return null;
