@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.collect.Lists;
 import lombok.experimental.Delegate;
-import mcmultipart.client.multipart.AdvancedEffectRenderer;
+import mcmultipart.client.multipart.AdvancedParticleManager;
 import mcmultipart.multipart.INormallyOccludingPart;
 import mcmultipart.multipart.ISlottedPart;
 import mcmultipart.multipart.Multipart;
@@ -54,7 +54,7 @@ public abstract class MultipartBase extends Multipart implements ISlottedPart, I
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(PartMOP partMOP, AdvancedEffectRenderer advancedEffectRenderer) {
+    public boolean addHitEffects(PartMOP partMOP, AdvancedParticleManager advancedParticleManager) {
         return true;
     }
 
@@ -65,9 +65,10 @@ public abstract class MultipartBase extends Multipart implements ISlottedPart, I
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        tag = super.writeToNBT(tag);
         nbtProvider.writeGeneratedFieldsToNBT(tag);
+        return tag;
     }
 
     @Override

@@ -70,9 +70,10 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     private IPartNetwork network;
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {this.markDirty();
-        super.writeToNBT(tag);
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {this.markDirty();
+        tag = super.writeToNBT(tag);
         PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
+        return tag;
     }
 
     @Override

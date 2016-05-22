@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.collect.Lists;
-import mcmultipart.client.multipart.AdvancedEffectRenderer;
+import mcmultipart.client.multipart.AdvancedParticleManager;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IMultipartContainer;
 import mcmultipart.multipart.PartSlot;
@@ -102,11 +102,12 @@ public class PartPartType extends MultipartBase {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        tag = super.writeToNBT(tag);
         NBTTagCompound partTag = new NBTTagCompound();
         PartHelpers.writePartTypeToNBT(partTag, getFacing(), getPartType());
         tag.setTag("part", partTag);
+        return tag;
     }
 
     @Override
@@ -126,8 +127,8 @@ public class PartPartType extends MultipartBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addDestroyEffects(AdvancedEffectRenderer advancedEffectRenderer) {
-        advancedEffectRenderer.addBlockDestroyEffects(getPos(), BlockCable.getInstance().texture);
+    public boolean addDestroyEffects(AdvancedParticleManager advancedParticleManager) {
+        advancedParticleManager.addBlockDestroyEffects(getPos(), BlockCable.getInstance().texture);
         return true;
     }
 

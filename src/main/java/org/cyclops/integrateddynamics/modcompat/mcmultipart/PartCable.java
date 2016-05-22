@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.block.TileMultipartContainer;
-import mcmultipart.client.multipart.AdvancedEffectRenderer;
+import mcmultipart.client.multipart.AdvancedParticleManager;
 import mcmultipart.multipart.*;
 import mcmultipart.raytrace.PartMOP;
 import mcmultipart.raytrace.RayTraceUtils;
@@ -138,8 +138,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addDestroyEffects(AdvancedEffectRenderer advancedEffectRenderer) {
-        advancedEffectRenderer.addBlockDestroyEffects(getPos(), BlockCable.getInstance().texture);
+    public boolean addDestroyEffects(AdvancedParticleManager advancedParticleManager) {
+        advancedParticleManager.addBlockDestroyEffects(getPos(), BlockCable.getInstance().texture);
         return true;
     }
 
@@ -279,9 +279,10 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        tag = super.writeToNBT(tag);
         PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
+        return tag;
     }
 
     @Override

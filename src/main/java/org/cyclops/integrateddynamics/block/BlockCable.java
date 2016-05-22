@@ -10,7 +10,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
@@ -626,14 +626,14 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(IBlockState blockState, World world, net.minecraft.util.math.RayTraceResult target, EffectRenderer effectRenderer) {
+    public boolean addHitEffects(IBlockState blockState, World world, net.minecraft.util.math.RayTraceResult target, ParticleManager particleManager) {
         BlockPos blockPos = target.getBlockPos();
         if(hasFacade(world, blockPos)) {
             IBlockState facadeState = getFacade(world, blockPos);
-            RenderHelpers.addBlockHitEffects(effectRenderer, world, facadeState, blockPos, target.sideHit);
+            RenderHelpers.addBlockHitEffects(particleManager, world, facadeState, blockPos, target.sideHit);
             return true;
         } else {
-            return super.addHitEffects(blockState, world, target, effectRenderer);
+            return super.addHitEffects(blockState, world, target, particleManager);
         }
     }
 
@@ -891,8 +891,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
-        super.onNeighborBlockChange(world, pos, state, neighborBlock);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
+        super.neighborChanged(state, world, pos, neighborBlock);
         cableNetworkComponent.updateConnections(world, pos);
         networkElementProviderComponent.onBlockNeighborChange(getNetwork(world, pos), world, pos, neighborBlock);
     }

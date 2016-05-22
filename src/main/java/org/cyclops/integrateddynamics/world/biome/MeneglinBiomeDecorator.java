@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.world.biome;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
-import net.minecraft.world.biome.BiomeGenBase;
 import org.cyclops.integrateddynamics.world.gen.WorldGeneratorMenrilTree;
 
 import java.util.Random;
@@ -17,7 +17,7 @@ public class MeneglinBiomeDecorator extends BiomeDecorator {
     public static final WorldGeneratorMenrilTree MENRIL_TREE_GEN = new WorldGeneratorMenrilTree(false);
 
     @Override
-    protected void genDecorations(BiomeGenBase biomeGenBaseIn, World worldIn, Random random) {
+    protected void genDecorations(Biome biomeGenBaseIn, World worldIn, Random random) {
         super.genDecorations(biomeGenBaseIn, worldIn, random);
         int k1 = this.treesPerChunk / 3;
         if (random.nextInt(10) == 0) {

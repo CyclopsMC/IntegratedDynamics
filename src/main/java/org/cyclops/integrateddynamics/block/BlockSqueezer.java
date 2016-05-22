@@ -121,8 +121,8 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
     }
 
     @Override
-    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-        super.onNeighborBlockChange(worldIn, pos, state, neighborBlock);
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block neighborBlock) {
+        super.neighborChanged(state, worldIn, pos, neighborBlock);
         if(!worldIn.isRemote) {
             for (EnumFacing enumfacing : EnumFacing.values()) {
                 if (worldIn.isSidePowered(pos.offset(enumfacing), enumfacing)) {

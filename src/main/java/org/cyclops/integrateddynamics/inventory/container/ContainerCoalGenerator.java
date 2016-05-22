@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotFurnaceFuel;
@@ -41,7 +41,7 @@ public class ContainerCoalGenerator extends TileInventoryContainerConfigurable<T
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         for (int i = 0; i < this.listeners.size(); ++i) {
-            ICrafting crafting = this.listeners.get(i);
+            IContainerListener crafting = this.listeners.get(i);
             if(lastProgress != getTile().getProgress()) {
                 crafting.sendProgressBarUpdate(this, 0, getTile().getProgress());
             }
