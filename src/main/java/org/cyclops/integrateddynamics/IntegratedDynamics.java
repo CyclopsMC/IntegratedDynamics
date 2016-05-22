@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics;
 
 import com.google.common.collect.Maps;
+import net.darkhax.tesla.api.ITeslaConsumer;
+import net.darkhax.tesla.api.ITeslaHolder;
+import net.darkhax.tesla.api.ITeslaProducer;
 import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
@@ -73,10 +76,16 @@ import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
+import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
+import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.TeslaConsumerEnergyBatteryTileCompat;
+import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.TeslaHolderEnergyBatteryTileCompat;
+import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.TeslaProducerCoalGeneratorTileCompat;
+import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.TeslaProducerEnergyBatteryTileCompat;
 import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
+import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
 import java.util.Map;
@@ -163,6 +172,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         //modCompatLoader.addModCompat(new ThaumcraftModCompat());
         modCompatLoader.addModCompat(new JEIModCompat());
         modCompatLoader.addApiCompat(new RfApiCompat());
+        modCompatLoader.addApiCompat(new TeslaApiCompat());
     }
 
     @Mod.EventHandler
@@ -175,11 +185,34 @@ public class IntegratedDynamics extends ModBaseVersionable {
                 return Capabilities.WORKER;
             }
         };
+        ICapabilityCompat.ICapabilityReference<ITeslaConsumer> teslaConsumerReference = new ICapabilityCompat.ICapabilityReference<ITeslaConsumer>() {
+            @Override
+            public Capability<ITeslaConsumer> getCapability() {
+                return Capabilities.TESLA_CONSUMER;
+            }
+        };
+        ICapabilityCompat.ICapabilityReference<ITeslaProducer> teslaProducerReference = new ICapabilityCompat.ICapabilityReference<ITeslaProducer>() {
+            @Override
+            public Capability<ITeslaProducer> getCapability() {
+                return Capabilities.TESLA_PRODUCER;
+            }
+        };
+        ICapabilityCompat.ICapabilityReference<ITeslaHolder> teslaHolderReference = new ICapabilityCompat.ICapabilityReference<ITeslaHolder>() {
+            @Override
+            public Capability<ITeslaHolder> getCapability() {
+                return Capabilities.TESLA_HOLDER;
+            }
+        };
         ModCompatLoader modCompatLoader = getModCompatLoader();
         modCompatLoader.addCapabilityCompat(TileDryingBasin.class, workerReference, new WorkerDryingBasinTileCompat());
         modCompatLoader.addCapabilityCompat(TileSqueezer.class, workerReference, new WorkerSqueezerTileCompat());
         modCompatLoader.addCapabilityCompat(TileCoalGenerator.class, workerReference, new WorkerCoalGeneratorTileCompat());
+        modCompatLoader.addCapabilityCompat(TileCoalGenerator.class, teslaProducerReference, new TeslaProducerCoalGeneratorTileCompat());
+        modCompatLoader.addCapabilityCompat(TileEnergyBattery.class, teslaConsumerReference, new TeslaConsumerEnergyBatteryTileCompat());
+        modCompatLoader.addCapabilityCompat(TileEnergyBattery.class, teslaProducerReference, new TeslaProducerEnergyBatteryTileCompat());
+        modCompatLoader.addCapabilityCompat(TileEnergyBattery.class, teslaHolderReference, new TeslaHolderEnergyBatteryTileCompat());
 
+        // Registries
         getRegistryManager().addRegistry(IBucketRegistry.class, new BucketRegistry());
         getRegistryManager().addRegistry(ISuperRecipeRegistry.class, new SuperRecipeRegistry(this));
 

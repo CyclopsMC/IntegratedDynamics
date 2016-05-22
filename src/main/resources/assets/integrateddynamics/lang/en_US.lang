@@ -772,3 +772,33 @@ operator.operators.integrateddynamics.itemstack.storedrf.name=RF Stored
 operator.operators.integrateddynamics.itemstack.storedrf.info=The amount of RF stored in this item
 operator.operators.integrateddynamics.itemstack.rfcapacity.name=RF Capacity
 operator.operators.integrateddynamics.itemstack.rfcapacity.info=The maximum amount of RF that can be stored in this item
+
+## ----- Tesla ----- ##
+
+## Aspects
+aspect.aspects.integrateddynamics.read.boolean.tesla.applicable.name=Is Tesla Handler
+aspect.aspects.integrateddynamics.read.boolean.tesla.applicable.info=If the target in some way handles Tesla
+aspect.aspects.integrateddynamics.read.boolean.tesla.isreceiver.name=Is Tesla Receiver
+aspect.aspects.integrateddynamics.read.boolean.tesla.isreceiver.info=If the target can receive Tesla
+aspect.aspects.integrateddynamics.read.boolean.tesla.isprovider.name=Is Tesla Provider
+aspect.aspects.integrateddynamics.read.boolean.tesla.isprovider.info=If the target can provide Tesla
+aspect.aspects.integrateddynamics.read.boolean.tesla.canextract.name=Can Extract Tesla
+aspect.aspects.integrateddynamics.read.boolean.tesla.canextract.info=If Tesla can really be extracted from the target, takes into account storage
+aspect.aspects.integrateddynamics.read.boolean.tesla.caninsert.name=Can Insert Tesla
+aspect.aspects.integrateddynamics.read.boolean.tesla.caninsert.info=If Tesla can really be inserted into the target, takes into account storage and capacity
+aspect.aspects.integrateddynamics.read.boolean.tesla.isfull.name=Is Tesla Buffer Full
+aspect.aspects.integrateddynamics.read.boolean.tesla.isfull.info=If the target's Tesla buffer is completely full
+aspect.aspects.integrateddynamics.read.boolean.tesla.isempty.name=Is Tesla Buffer Empty
+aspect.aspects.integrateddynamics.read.boolean.tesla.isempty.info=If the target's Tesla buffer is completely empty
+aspect.aspects.integrateddynamics.read.boolean.tesla.isnonempty.name=Is Tesla Buffer Not Empty
+aspect.aspects.integrateddynamics.read.boolean.tesla.isnonempty.info=If the target's Tesla buffer is not empty
+aspect.aspects.integrateddynamics.read.long.tesla.amount.name=Stored Tesla
+aspect.aspects.integrateddynamics.read.long.tesla.amount.info=The amount of Tesla stored in the target
+aspect.aspects.integrateddynamics.read.long.tesla.capacity.name=Tesla Capacity
+aspect.aspects.integrateddynamics.read.long.tesla.capacity.info=The Tesla capacity of the target
+aspect.aspects.integrateddynamics.read.double.tesla.fillratio.name=Tesla Fill Ratio
+aspect.aspects.integrateddynamics.read.double.tesla.fillratio.info=The amount of Tesla in the target divided by its capacity
+aspect.aspects.integrateddynamics.read.string.tesla.amount.name=Stored Tesla
+aspect.aspects.integrateddynamics.read.string.tesla.amount.info=The formatted amount of Tesla stored in the target
+aspect.aspects.integrateddynamics.read.string.tesla.capacity.name=Tesla Capacity
+aspect.aspects.integrateddynamics.read.string.tesla.capacity.info=The formatted Tesla capacity of the target

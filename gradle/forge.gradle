@@ -21,6 +21,10 @@ repositories {
         name = "bdew"
         url = "http://jenkins.bdew.net/maven"
     }
+    maven {
+        name = "Dankhax"
+        url = "http://maven.rubbix.net"
+    }
 }
 
 dependencies {
@@ -35,6 +39,7 @@ dependencies {
     deobfCompile "mcp.mobius.waila:Waila:${config.waila_version}" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
     deobfCompile "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
     compile "net.bdew.thirdparty:rfapi:${config.rfapi_version}-mc1.8.9:api" // http://jenkins.bdew.net/maven/net/bdew/thirdparty/rfapi/
+    compile "net.darkhax.tesla:Tesla:${config.minecraft_version}-${config.teslaapi_version}:deobf" // http://maven.rubbix.net/net/darkhax/tesla/Tesla/
 
     // Project lombok
     compile "org.projectlombok:lombok:1.16.4"
