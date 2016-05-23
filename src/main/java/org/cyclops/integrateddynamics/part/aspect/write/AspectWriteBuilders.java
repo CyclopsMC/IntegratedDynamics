@@ -27,7 +27,7 @@ import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
-import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectWriteActivator;
+import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectWriteDeactivator;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.part.aspect.write.redstone.IWriteRedstoneComponent;
@@ -238,17 +238,17 @@ public class AspectWriteBuilders {
             }
         };
 
-        public static final IAspectWriteActivator ACTIVATOR = new IAspectWriteActivator() {
+        public static final IAspectWriteDeactivator DEACTIVATOR = new IAspectWriteDeactivator() {
             @Override
-            public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onActivate(P partType, PartTarget target, S state) {
+            public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onDeactivate(P partType, PartTarget target, S state) {
                 WRITE_REDSTONE_COMPONENT.deactivate(target);
             }
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Triple<PartTarget, IAspectProperties, Boolean>>
-                BUILDER_BOOLEAN = AspectWriteBuilders.BUILDER_BOOLEAN.appendKind("redstone").handle(PROP_GET_BOOLEAN).appendActivator(ACTIVATOR);
+                BUILDER_BOOLEAN = AspectWriteBuilders.BUILDER_BOOLEAN.appendKind("redstone").handle(PROP_GET_BOOLEAN).appendDeactivator(DEACTIVATOR);
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Triple<PartTarget, IAspectProperties, Integer>>
-                BUILDER_INTEGER = AspectWriteBuilders.BUILDER_INTEGER.appendKind("redstone").handle(PROP_GET_INTEGER).appendActivator(ACTIVATOR);
+                BUILDER_INTEGER = AspectWriteBuilders.BUILDER_INTEGER.appendKind("redstone").handle(PROP_GET_INTEGER).appendDeactivator(DEACTIVATOR);
 
     }
 
