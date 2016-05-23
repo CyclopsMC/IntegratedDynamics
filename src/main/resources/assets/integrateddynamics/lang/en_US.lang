@@ -441,6 +441,9 @@ aspect.aspects.integrateddynamics.read.long.world.totaltime.info=The world time 
 aspect.aspects.integrateddynamics.read.string.world.worldname.name=World Name
 aspect.aspects.integrateddynamics.read.string.world.worldname.info=The target world name
 
+aspect.aspects.integrateddynamics.read.list.world.players.name=Players
+aspect.aspects.integrateddynamics.read.list.world.players.info=The players that are in this world
+
 # Aspect property types
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=Tank ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
