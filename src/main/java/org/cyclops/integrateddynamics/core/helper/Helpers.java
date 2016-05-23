@@ -1,11 +1,15 @@
 package org.cyclops.integrateddynamics.core.helper;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -13,6 +17,12 @@ import java.util.List;
  * @author rubensworks
  */
 public final class Helpers {
+
+    public static final Predicate<Entity> SELECTOR_IS_PLAYER = new Predicate<Entity>() {
+        public boolean apply(@Nullable Entity p_apply_1_) {
+            return p_apply_1_ instanceof EntityPlayer;
+        }
+    };
 
     /**
      * Get the fluidstack from the given itemstack.

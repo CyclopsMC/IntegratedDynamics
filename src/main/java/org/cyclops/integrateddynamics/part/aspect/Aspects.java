@@ -35,6 +35,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
@@ -150,10 +151,12 @@ public class Aspects {
                     AspectReadBuilders.Entity.BUILDER_LIST.handle(new IAspectValuePropagator<DimPos, ValueTypeList.ValueList>() {
                         @Override
                         public ValueTypeList.ValueList getOutput(DimPos dimPos) {
-                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(dimPos.getWorld().playerEntities, new Function<EntityPlayer, ValueObjectTypeEntity.ValueEntity>() {
+                            List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+                                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), Helpers.SELECTOR_IS_PLAYER);
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities, new Function<net.minecraft.entity.Entity, ValueObjectTypeEntity.ValueEntity>() {
                                 @Nullable
                                 @Override
-                                public ValueObjectTypeEntity.ValueEntity apply(EntityPlayer input) {
+                                public ValueObjectTypeEntity.ValueEntity apply(net.minecraft.entity.Entity input) {
                                     return ValueObjectTypeEntity.ValueEntity.of(input);
                                 }
                             }));
