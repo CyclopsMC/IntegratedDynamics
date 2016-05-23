@@ -252,18 +252,20 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     public IExtendedBlockState getConnectionState() {
         IExtendedBlockState extendedState = (IExtendedBlockState) getBlock().getDefaultState();
-        extendedState = extendedState.withProperty(BlockCable.REALCABLE, isRealCable());
-        if(connected.isEmpty()) {
-            updateConnections();
+        if (partData != null) { // Can be null in rare cases where rendering happens before data sync
+            extendedState = extendedState.withProperty(BlockCable.REALCABLE, isRealCable());
+            if (connected.isEmpty()) {
+                updateConnections();
+            }
+            for (EnumFacing side : EnumFacing.VALUES) {
+                extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()],
+                        !isForceDisconnected(side) && connected.get(side.ordinal()));
+                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
+                        hasPart(side) ? getPart(side).getRenderPosition() : IPartType.RenderPosition.NONE);
+            }
+            extendedState = extendedState.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
+            extendedState = extendedState.withProperty(BlockCable.PARTCONTAINER, this);
         }
-        for(EnumFacing side : EnumFacing.VALUES) {
-            extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()],
-                    !isForceDisconnected(side) && connected.get(side.ordinal()));
-            extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
-                    hasPart(side) ? getPart(side).getRenderPosition() : IPartType.RenderPosition.NONE);
-        }
-        extendedState = extendedState.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
-        extendedState = extendedState.withProperty(BlockCable.PARTCONTAINER, this);
         return extendedState;
     }
 
