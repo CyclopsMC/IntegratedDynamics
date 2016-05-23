@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.part;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -22,6 +23,7 @@ import org.cyclops.integrateddynamics.client.model.CableModel;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A type of part that can be inserted into a {@link IPartContainer}.
@@ -312,14 +314,14 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
         private final float depthFactor;
         private final float widthFactor;
         private final float heightFactor;
-        private final float[][] sidedCableCollisionBoxes;
-        private final float[][] collisionBoxes;
+        private final Map<EnumFacing, AxisAlignedBB> sidedCableCollisionBoxes;
+        private final Map<EnumFacing, AxisAlignedBB> collisionBoxes;
 
         public RenderPosition(float selectionDepthFactor, float depthFactor, float widthFactor, float heightFactor) {
             this.depthFactor = depthFactor;
             this.widthFactor = widthFactor;
             this.heightFactor = heightFactor;
-            this.sidedCableCollisionBoxes = new float[][]{
+            float[][] sidedCableCollisionBoxesRaw = new float[][]{
                     {CableModel.MIN, selectionDepthFactor, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX}, // DOWN
                     {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1 - selectionDepthFactor, CableModel.MAX}, // UP
                     {CableModel.MIN, CableModel.MIN, selectionDepthFactor, CableModel.MAX, CableModel.MAX, CableModel.MIN}, // NORTH
@@ -327,9 +329,29 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
                     {selectionDepthFactor, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX}, // WEST
                     {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1 - selectionDepthFactor, CableModel.MAX, CableModel.MAX}, // EAST
             };
-            this.collisionBoxes = new float[][]{
+
+            ImmutableMap.Builder<EnumFacing, AxisAlignedBB> sidedCableCollisionBoxesBuilder = ImmutableMap.builder();
+            for (EnumFacing side : EnumFacing.VALUES) {
+                float[] b = sidedCableCollisionBoxesRaw[side.ordinal()];
+                sidedCableCollisionBoxesBuilder.put(side, new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]));
+            }
+            this.sidedCableCollisionBoxes = sidedCableCollisionBoxesBuilder.build();
+
+            float[][] collisionBoxesRaw = new float[][]{
                     {0.19F, 0.81F}, {0.005F, selectionDepthFactor}, {0.19F, 0.81F}
             };
+            ImmutableMap.Builder<EnumFacing, AxisAlignedBB> collisionBoxesBuilder = ImmutableMap.builder();
+            for (EnumFacing side : EnumFacing.VALUES) {
+                // Copy bounds
+                float[][] bounds = new float[collisionBoxesRaw.length][collisionBoxesRaw[0].length];
+                for (int i = 0; i < bounds.length; i++)
+                    bounds[i] = Arrays.copyOf(collisionBoxesRaw[i], collisionBoxesRaw[i].length);
+
+                // Transform bounds
+                MatrixHelpers.transform(bounds, side);
+                collisionBoxesBuilder.put(side, new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]));
+            }
+            this.collisionBoxes = collisionBoxesBuilder.build();
         }
 
         public float getDepthFactor() {
@@ -345,19 +367,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
         }
 
         public AxisAlignedBB getSidedCableBoundingBox(EnumFacing side) {
-            float[] b = sidedCableCollisionBoxes[side.ordinal()];
-            return new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]);
+            return sidedCableCollisionBoxes.get(side);
         }
 
         public AxisAlignedBB getBoundingBox(EnumFacing side) {
-            // Copy bounds
-            float[][] bounds = new float[collisionBoxes.length][collisionBoxes[0].length];
-            for (int i = 0; i < bounds.length; i++)
-                bounds[i] = Arrays.copyOf(collisionBoxes[i], collisionBoxes[i].length);
-
-            // Transform bounds
-            MatrixHelpers.transform(bounds, side);
-            return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+            return collisionBoxes.get(side);
         }
 
     }
