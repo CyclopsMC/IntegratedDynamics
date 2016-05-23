@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.base.Strings;
 import lombok.ToString;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -26,7 +27,15 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
     @Override
     public String toCompactString(ValueBlock value) {
-        return value.getRawValue().isPresent() ? value.getRawValue().get().getBlock().getLocalizedName() : "";
+        if (value.getRawValue().isPresent()) {
+            IBlockState blockState = value.getRawValue().get();
+            ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockState);
+            if (itemStack != null) {
+                return itemStack.getDisplayName();
+            }
+            return blockState.getBlock().getLocalizedName();
+        }
+        return "";
     }
 
     @Override
