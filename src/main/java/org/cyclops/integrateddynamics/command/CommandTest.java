@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.command;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.command.ICommandSender;
@@ -26,7 +27,7 @@ public class CommandTest extends CommandMod {
     public static final String NAME = "test";
 
     private static final String P = "org.cyclops.integrateddynamics.core.evaluate.variable.integration.";
-    public static final List<String> CLASSES = Lists.newArrayList(
+    public static final List<String> CLASSES = ImmutableList.of(
             P + "TestBlockOperators",
             P + "TestItemStackOperators",
             P + "TestEntityOperators",

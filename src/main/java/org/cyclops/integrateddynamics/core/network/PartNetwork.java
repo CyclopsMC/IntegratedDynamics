@@ -77,7 +77,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     protected void onConstruct() {
         super.onConstruct();
         partPositions = Maps.newHashMap();
-        variableContainerPositions = Lists.newLinkedList();
+        variableContainerPositions = Lists.newArrayList();
         compositeVariableCache = null;
         lazyExpressionValueCache = Maps.newHashMap();
         energyBatteryPositions = Maps.newHashMap();

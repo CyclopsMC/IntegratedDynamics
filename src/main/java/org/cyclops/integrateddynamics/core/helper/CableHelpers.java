@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class CableHelpers {
 
-    private static final List<IInterfaceRetriever> INTERFACE_RETRIEVERS = Lists.newLinkedList();
+    private static final List<IInterfaceRetriever> INTERFACE_RETRIEVERS = Lists.newArrayList();
     static {
         addInterfaceRetriever(new IInterfaceRetriever() {
             @Override

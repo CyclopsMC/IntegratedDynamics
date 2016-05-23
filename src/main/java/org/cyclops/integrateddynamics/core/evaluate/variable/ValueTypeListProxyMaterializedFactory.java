@@ -1,11 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-
-import java.util.List;
 
 /**
  * Factory for {@link ValueTypeListProxyMaterialized}.
@@ -49,12 +47,12 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
         String[] values = new String[split.length - 1];
         System.arraycopy(split, 1, values, 0, split.length - 1);
 
-        List<IValue> list = Lists.newArrayList();
+        ImmutableList.Builder<IValue> builder = ImmutableList.builder();
         for (String serializedValue : values) {
             IValue deserializedValue = valueType.deserialize(serializedValue.replaceAll(ELEMENT_DELIMITER_ESCAPED, ELEMENT_DELIMITER));
-            list.add(deserializedValue);
+            builder.add(deserializedValue);
         }
 
-        return new ValueTypeListProxyMaterialized<>(valueType, list);
+        return new ValueTypeListProxyMaterialized<>(valueType, builder.build());
     }
 }

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import lombok.ToString;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
 
     @Override
     public ValueList getDefault() {
-        return ValueList.ofList(ValueTypes.CATEGORY_ANY, Lists.<IValue>newArrayList());
+        return ValueList.ofList(ValueTypes.CATEGORY_ANY, Collections.<IValue>emptyList());
     }
 
     @Override
@@ -67,10 +68,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     @Override
     public ValueList materialize(ValueList value) {
         IValueTypeListProxy<IValueType<IValue>, IValue> list = value.getRawValue();
-        List<IValue> values = Lists.newArrayListWithExpectedSize(list.getLength());
-        for(IValue element : list) {
-            values.add(element);
-        }
+        List<IValue> values = ImmutableList.copyOf(list);
         return ValueList.ofList(list.getValueType(), values);
     }
 
@@ -89,7 +87,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         }
 
         public static <V extends IValue> ValueList ofAll(V... values) {
-            return values.length == 0 ? ValueTypes.LIST.getDefault() : ofList(values[0].getType(), Lists.newArrayList(values));
+            return values.length == 0 ? ValueTypes.LIST.getDefault() : ofList(values[0].getType(), ImmutableList.copyOf(values));
         }
 
         public static <T extends IValueType<V>, V extends IValue> ValueList ofFactory(IValueTypeListProxy<T, V> proxy) {

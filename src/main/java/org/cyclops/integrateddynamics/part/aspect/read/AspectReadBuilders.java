@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.ItemStack;
@@ -121,7 +121,7 @@ public class AspectReadBuilders {
     // --------------- Generic properties ---------------
     public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_LISTINDEX =
             new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.listindex.name");
-    public static final IAspectProperties LIST_PROPERTIES = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
+    public static final IAspectProperties LIST_PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
             PROPERTY_LISTINDEX
     ));
     static {
@@ -132,7 +132,7 @@ public class AspectReadBuilders {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_RANGE =
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.range.name");
-        public static final IAspectProperties NOTE_PROPERTIES = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
+        public static final IAspectProperties NOTE_PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_RANGE
         ));
         static {
@@ -220,7 +220,7 @@ public class AspectReadBuilders {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_TANKID =
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.tankid.name");
-        public static final IAspectProperties PROPERTIES = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
+        public static final IAspectProperties PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROP_TANKID
         ));
         static {
@@ -291,7 +291,7 @@ public class AspectReadBuilders {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_SLOTID =
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid.name");
-        public static final IAspectProperties PROPERTIES = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
+        public static final IAspectProperties PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_SLOTID
         ));
         static {
@@ -377,7 +377,7 @@ public class AspectReadBuilders {
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.interval.name");
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_LENGTH =
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.length.name");
-        public static final IAspectProperties PROPERTIES_CLOCK = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
+        public static final IAspectProperties PROPERTIES_CLOCK = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_INTERVAL,
                 PROPERTY_LENGTH
         ));

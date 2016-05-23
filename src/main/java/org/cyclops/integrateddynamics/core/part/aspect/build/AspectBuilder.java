@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.aspect.build;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -172,7 +172,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
      * @return The builder instance.
      */
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Pair<PartTarget, IAspectProperties>> forReadType(T valueType) {
-        return new AspectBuilder<>(true, valueType, Lists.newArrayList(valueType.getTypeName()), null,
+        return new AspectBuilder<>(true, valueType, ImmutableList.of(valueType.getTypeName()), null,
                 Collections.<IAspectValuePropagator>emptyList(), Collections.<IAspectWriteActivator>emptyList(),
                 Collections.<IAspectWriteDeactivator>emptyList());
     }
@@ -185,7 +185,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
      * @return The builder instance.
      */
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Triple<PartTarget, IAspectProperties, IVariable<V>>> forWriteType(T valueType) {
-        return new AspectBuilder<>(false, valueType, Lists.newArrayList(valueType.getTypeName()), null,
+        return new AspectBuilder<>(false, valueType, ImmutableList.of(valueType.getTypeName()), null,
                 Collections.<IAspectValuePropagator>emptyList(), Collections.<IAspectWriteActivator>emptyList(),
                 Collections.<IAspectWriteDeactivator>emptyList());
     }

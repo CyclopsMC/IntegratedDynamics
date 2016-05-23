@@ -112,7 +112,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     };
 
     // Collision components
-    private static final List<IComponent<EnumFacing, BlockCable>> COLLIDABLE_COMPONENTS = Lists.newLinkedList();
+    private static final List<IComponent<EnumFacing, BlockCable>> COLLIDABLE_COMPONENTS = Lists.newArrayList();
     private static final IComponent<EnumFacing, BlockCable> CENTER_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
         @Override
         public Collection<EnumFacing> getPossiblePositions() {

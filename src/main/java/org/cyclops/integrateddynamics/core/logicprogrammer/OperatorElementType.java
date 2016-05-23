@@ -30,7 +30,7 @@ public class OperatorElementType implements ILogicProgrammerElementType<Operator
 
     @Override
     public List<OperatorElement> createElements() {
-        List<OperatorElement> elements = Lists.newLinkedList();
+        List<OperatorElement> elements = Lists.newArrayList();
         for(IOperator operator : Operators.REGISTRY.getOperators()) {
             elements.add(new OperatorElement(operator));
         }

@@ -18,7 +18,7 @@ public class LogicProgrammerElementTypeRegistry implements ILogicProgrammerEleme
     private static final LogicProgrammerElementTypeRegistry INSTANCE = new LogicProgrammerElementTypeRegistry();
 
     private final Map<String, ILogicProgrammerElementType> namedTypes = Maps.newHashMap();
-    private final List<ILogicProgrammerElementType> types = Lists.newLinkedList();
+    private final List<ILogicProgrammerElementType> types = Lists.newArrayList();
 
     /**
      * @return The unique instance.

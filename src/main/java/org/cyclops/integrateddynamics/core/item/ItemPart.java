@@ -38,7 +38,7 @@ import java.util.List;
 @Data
 public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extends ConfigurableItem {
 
-    private static final List<IUseAction> USE_ACTIONS = Lists.newLinkedList();
+    private static final List<IUseAction> USE_ACTIONS = Lists.newArrayList();
 
     private final IPartType<P, S> part;
 

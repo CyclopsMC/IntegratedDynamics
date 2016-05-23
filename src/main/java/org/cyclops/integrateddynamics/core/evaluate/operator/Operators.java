@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -952,13 +953,13 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                    List<ValueTypeString.ValueString> names = Lists.newArrayList();
+                    ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
                     if(a.getRawValue().isPresent()) {
                         for (int i : OreDictionary.getOreIDs(a.getRawValue().get())) {
-                            names.add(ValueTypeString.ValueString.of(OreDictionary.getOreName(i)));
+                            builder.add(ValueTypeString.ValueString.of(OreDictionary.getOreName(i)));
                         }
                     }
-                    return ValueTypeList.ValueList.ofList(ValueTypes.STRING, names);
+                    return ValueTypeList.ValueList.ofList(ValueTypes.STRING, builder.build());
                 }
             }).build());
 
@@ -971,13 +972,13 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueTypeString.ValueString a = variables.getValue(0);
-                    List<ValueObjectTypeItemStack.ValueItemStack> stacks = Lists.newArrayList();
+                    ImmutableList.Builder<ValueObjectTypeItemStack.ValueItemStack> builder = ImmutableList.builder();
                     if (!StringUtils.isNullOrEmpty(a.getRawValue())) {
                         for (ItemStack itemStack : OreDictionary.getOres(a.getRawValue())) {
-                            stacks.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                            builder.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
                         }
                     }
-                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, stacks);
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, builder.build());
                 }
             }).build());
 

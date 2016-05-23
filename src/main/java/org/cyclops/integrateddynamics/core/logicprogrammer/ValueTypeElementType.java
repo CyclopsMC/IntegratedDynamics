@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -39,26 +39,26 @@ public class ValueTypeElementType implements ILogicProgrammerElementType<ValueTy
 
     @Override
     public List<ValueTypeElement> createElements() {
-        List<ValueTypeElement> elements = Lists.newLinkedList();
+        ImmutableList.Builder<ValueTypeElement> builder = ImmutableList.builder();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             if(!valueType.isCategory() && !valueType.isObject()) {
-                elements.add(new ValueTypeElement(valueType));
+                builder.add(new ValueTypeElement(valueType));
             }
         }
-        return elements;
+        return builder.build();
     }
 
     /**
      * @return All possible value types in this element type.
      */
     public List<IValueType> getValueTypes() {
-        List<IValueType> elements = Lists.newLinkedList();
+        ImmutableList.Builder<IValueType> builder = ImmutableList.builder();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             if(!valueType.isCategory() && !valueType.isObject()) {
-                elements.add(valueType);
+                builder.add(valueType);
             }
         }
-        return elements;
+        return builder.build();
     }
 
 }

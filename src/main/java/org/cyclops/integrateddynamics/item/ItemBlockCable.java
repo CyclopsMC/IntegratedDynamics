@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ItemBlockCable extends ItemBlockMetadata {
 
-    private static final List<IUseAction> USE_ACTIONS = Lists.newLinkedList();
+    private static final List<IUseAction> USE_ACTIONS = Lists.newArrayList();
 
     /**
      * Make a new instance.

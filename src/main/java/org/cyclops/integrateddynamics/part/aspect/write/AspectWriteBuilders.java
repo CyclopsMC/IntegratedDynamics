@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
@@ -119,7 +120,7 @@ public class AspectWriteBuilders {
         public static final IAspectProperties PROPERTIES_NOTE = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
                 PROP_VOLUME
         ));
-        public static final IAspectProperties PROPERTIES_SOUND = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
+        public static final IAspectProperties PROPERTIES_SOUND = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROP_VOLUME,
                 PROP_FREQUENCY
         ));
@@ -197,7 +198,7 @@ public class AspectWriteBuilders {
                 new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadZ.name");
         public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROP_FORCE =
                 new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name");
-        public static final IAspectProperties PROPERTIES_PARTICLE = new AspectProperties(Lists.<IAspectPropertyTypeInstance>newArrayList(
+        public static final IAspectProperties PROPERTIES_PARTICLE = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROP_OFFSET_X,
                 PROP_OFFSET_Y,
                 PROP_OFFSET_Z,

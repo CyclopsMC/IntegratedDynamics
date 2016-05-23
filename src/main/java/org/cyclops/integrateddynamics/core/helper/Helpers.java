@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -57,12 +57,11 @@ public final class Helpers {
      * @return The new joined list.
      */
     public static <T> List<T> joinList(List<T> list, T newElement) {
-        List<T> newList = Lists.newArrayListWithExpectedSize(list.size() + 1);
-        newList.addAll(list);
+        ImmutableList.Builder<T> builder = ImmutableList.<T>builder().addAll(list);
         if(newElement != null) {
-            newList.add(newElement);
+            builder.add(newElement);
         }
-        return newList;
+        return builder.build();
     }
 
 }

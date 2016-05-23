@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 
@@ -37,7 +37,7 @@ public class SingleElementType<E extends ILogicProgrammerElement> implements ILo
 
     @Override
     public List<E> createElements() {
-        return Lists.newArrayList(constructor.construct());
+        return ImmutableList.of(constructor.construct());
     }
 
     public static interface ILogicProgrammerElementConstructor<E extends ILogicProgrammerElement> {
