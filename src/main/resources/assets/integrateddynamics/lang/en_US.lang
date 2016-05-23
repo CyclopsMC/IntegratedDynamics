@@ -38,7 +38,7 @@ tile.blocks.integrateddynamics.blockMenrilResin.name=Menril Resin
 tile.blocks.integrateddynamics.dryingBasin.name=Drying Basin
 tile.blocks.integrateddynamics.dryingBasin.info=For drying items and fluids
 tile.blocks.integrateddynamics.squeezer.name=Squeezer
-tile.blocks.integrateddynamics.squeezer.info=For squeezing, flattening and crushing things
+tile.blocks.integrateddynamics.squeezer.info=Squeezes, flattens and crushes by jumping on it
 tile.blocks.integrateddynamics.menrilTorch.name=Menril Torch
 
 # Items
