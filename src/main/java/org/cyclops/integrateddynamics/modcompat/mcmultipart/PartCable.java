@@ -28,6 +28,7 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
+import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -112,17 +113,17 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     public IBlockState getExtendedState(IBlockState state) {
-        IExtendedBlockState extendedState = (IExtendedBlockState) state;
+        ExtendedBlockStateBuilder builder = ExtendedBlockStateBuilder.builder((IExtendedBlockState) state);
         for(EnumFacing side : EnumFacing.VALUES) {
-            extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()], isConnected(side));
+            builder.withProperty(BlockCable.CONNECTED[side.ordinal()], isConnected(side));
             boolean hasPart = hasPart(side);
             if(hasPart) {
-                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
+                builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
             } else {
-                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
+                builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
             }
         }
-        return extendedState;
+        return builder.build();
     }
 
     @Override
