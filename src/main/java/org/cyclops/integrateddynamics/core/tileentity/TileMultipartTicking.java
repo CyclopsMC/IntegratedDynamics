@@ -18,6 +18,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
+import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
@@ -251,22 +252,22 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     public IExtendedBlockState getConnectionState() {
-        IExtendedBlockState extendedState = (IExtendedBlockState) getBlock().getDefaultState();
+        ExtendedBlockStateBuilder builder = ExtendedBlockStateBuilder.builder((IExtendedBlockState) getBlock().getDefaultState());
         if (partData != null) { // Can be null in rare cases where rendering happens before data sync
-            extendedState = extendedState.withProperty(BlockCable.REALCABLE, isRealCable());
+            builder.withProperty(BlockCable.REALCABLE, isRealCable());
             if (connected.isEmpty()) {
                 updateConnections();
             }
             for (EnumFacing side : EnumFacing.VALUES) {
-                extendedState = extendedState.withProperty(BlockCable.CONNECTED[side.ordinal()],
+                builder.withProperty(BlockCable.CONNECTED[side.ordinal()],
                         !isForceDisconnected(side) && connected.get(side.ordinal()));
-                extendedState = extendedState.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
+                builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
                         hasPart(side) ? getPart(side).getRenderPosition() : IPartType.RenderPosition.NONE);
             }
-            extendedState = extendedState.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
-            extendedState = extendedState.withProperty(BlockCable.PARTCONTAINER, this);
+            builder.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
+            builder.withProperty(BlockCable.PARTCONTAINER, this);
         }
-        return extendedState;
+        return builder.build();
     }
 
     public boolean isForceDisconnected(EnumFacing side) {
