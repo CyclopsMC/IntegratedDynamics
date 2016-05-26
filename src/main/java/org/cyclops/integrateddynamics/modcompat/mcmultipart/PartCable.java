@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -67,11 +68,11 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     private final PartCableNetworkComponent cableNetworkComponent = new PartCableNetworkComponent(this);
     private final NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
 
-    private final Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData;
+    private final EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData;
     @NBTPersist
-    private Map<Integer, Boolean> connected = Maps.newHashMap();
+    private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
     @NBTPersist
-    private Map<Integer, Boolean> forceDisconnected;
+    private EnumFacingMap<Boolean> forceDisconnected;
     @NBTPersist
     private int lightLevel = 0;
     @NBTPersist
@@ -84,10 +85,10 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     private boolean sendFurtherUpdates = true;
 
     public PartCable() {
-        this(Maps.<EnumFacing, PartHelpers.PartStateHolder<?, ?>>newHashMap(), Maps.<Integer, Boolean>newHashMap());
+        this(EnumFacingMap.<PartHelpers.PartStateHolder<?, ?>>newMap(), EnumFacingMap.<Boolean>newMap());
     }
 
-    public PartCable(Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData, Map<Integer, Boolean> forceDisconnected) {
+    public PartCable(EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData, EnumFacingMap<Boolean> forceDisconnected) {
         this.partData = partData;
         this.forceDisconnected = forceDisconnected;
     }
@@ -95,14 +96,14 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     /**
      * @return The raw part data.
      */
-    public Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> getPartData() {
+    public EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> getPartData() {
         return this.partData;
     }
 
     /**
      * @return The raw force disconnection data.
      */
-    public Map<Integer, Boolean> getForceDisconnected() {
+    public EnumFacingMap<Boolean> getForceDisconnected() {
         return this.forceDisconnected;
     }
 
@@ -304,12 +305,12 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     public boolean isForceDisconnected(EnumFacing side) {
         if(hasPart(side)) return true;
-        if(!forceDisconnected.containsKey(side.ordinal())) return false;
-        return forceDisconnected.get(side.ordinal());
+        if(!forceDisconnected.containsKey(side)) return false;
+        return forceDisconnected.get(side);
     }
 
     public void setConnected(EnumFacing side, boolean connected) {
-        this.connected.put(side.ordinal(), connected);
+        this.connected.put(side, connected);
     }
 
     @Override
@@ -464,7 +465,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
             // Remove any already existing force-disconnects for this side.
             if (!cableConnected && canConnectThis) {
-                forceDisconnected.put(side.ordinal(), false);
+                forceDisconnected.put(side, false);
             }
         }
         markDirty();
@@ -479,17 +480,17 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         if(connected.isEmpty()) {
             updateConnections();
         }
-        return !isForceDisconnected(side) && connected != null && connected.get(side.ordinal());
+        return !isForceDisconnected(side) && connected != null && connected.get(side);
     }
 
     @Override
     public void disconnect(EnumFacing side) {
-        forceDisconnected.put(side.ordinal(), true);
+        forceDisconnected.put(side, true);
     }
 
     @Override
     public void reconnect(EnumFacing side) {
-        forceDisconnected.remove(side.ordinal());
+        forceDisconnected.remove(side);
     }
 
     @Override

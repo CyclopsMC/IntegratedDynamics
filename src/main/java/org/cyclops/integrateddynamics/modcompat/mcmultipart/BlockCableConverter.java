@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IPartConverter;
 import net.minecraft.block.Block;
@@ -11,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
@@ -42,8 +42,8 @@ public class BlockCableConverter implements IPartConverter {
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, blockPos, TileMultipartTicking.class);
 
         // Add parts
-        Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData = Maps.newHashMap(tile.getPartData());
-        Map<Integer, Boolean> forceDisconnected = Maps.newHashMap(tile.getForceDisconnected());
+        EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData = EnumFacingMap.newMap(tile.getPartData());
+        EnumFacingMap<Boolean> forceDisconnected = EnumFacingMap.newMap(tile.getForceDisconnected());
         for(Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
             parts.add(new PartPartType(entry.getKey(), entry.getValue().getPart()));
         }
@@ -62,11 +62,11 @@ public class BlockCableConverter implements IPartConverter {
             // Move all force disconnection info to the current block, because this
             // is slightly easier to handle along the way.
             for(EnumFacing side : EnumFacing.VALUES) {
-                boolean cableConnected = (!forceDisconnected.containsKey(side.ordinal()) || !forceDisconnected.get(side.ordinal()))
+                boolean cableConnected = (!forceDisconnected.containsKey(side) || !forceDisconnected.get(side))
                         && CableNetworkComponent.canSideConnect((World) world, blockPos, side, (ICable) tile.getBlock());
                 ICable neighbourCable = CableHelpers.getInterface(world, blockPos.offset(side), ICable.class);
                 if(neighbourCable != null) {
-                    forceDisconnected.put(side.ordinal(), !cableConnected);
+                    forceDisconnected.put(side, !cableConnected);
                 }
             }
             PartCable partCable = new PartCable(partData, forceDisconnected);

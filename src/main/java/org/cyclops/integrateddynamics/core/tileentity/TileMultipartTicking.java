@@ -20,6 +20,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -52,17 +53,17 @@ import java.util.Objects;
 public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTileEntity.ITickingTile,
         IPartContainer, ITileCableNetwork, ITileCableFacadeable, PartHelpers.IPartStateHolderCallback {
 
-    private final Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData = Maps.newHashMap();
+    private final EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData = EnumFacingMap.newMap();
     @Delegate
     protected final ITickingTile tickingTileComponent = new TickingTileComponent(this);
 
     @NBTPersist private boolean realCable = true;
-    @NBTPersist private Map<Integer, Boolean> connected = Maps.newHashMap();
-    @NBTPersist private Map<Integer, Boolean> forceDisconnected = Maps.newHashMap();
-    @NBTPersist private Map<Integer, Integer> redstoneLevels = Maps.newHashMap();
-    @NBTPersist private Map<Integer, Boolean> redstoneInputs = Maps.newHashMap();
-    @NBTPersist private Map<Integer, Integer> lightLevels = Maps.newHashMap();
-    private Map<Integer, Integer> previousLightLevels;
+    @NBTPersist private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
+    @NBTPersist private EnumFacingMap<Boolean> forceDisconnected = EnumFacingMap.newMap();
+    @NBTPersist private EnumFacingMap<Integer> redstoneLevels = EnumFacingMap.newMap();
+    @NBTPersist private EnumFacingMap<Boolean> redstoneInputs = EnumFacingMap.newMap();
+    @NBTPersist private EnumFacingMap<Integer> lightLevels = EnumFacingMap.newMap();
+    private EnumFacingMap<Integer> previousLightLevels;
     @NBTPersist private String facadeBlockName = null;
     @NBTPersist private int facadeMeta = 0;
 
@@ -258,7 +259,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             }
             for (EnumFacing side : EnumFacing.VALUES) {
                 builder.withProperty(BlockCable.CONNECTED[side.ordinal()],
-                        !isForceDisconnected(side) && connected.get(side.ordinal()));
+                        !isForceDisconnected(side) && connected.get(side));
                 builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
                         hasPart(side) ? getPart(side).getRenderPosition() : IPartType.RenderPosition.NONE);
             }
@@ -270,8 +271,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     public boolean isForceDisconnected(EnumFacing side) {
         if(!isRealCable() || hasPart(side)) return true;
-        if(!forceDisconnected.containsKey(side.ordinal())) return false;
-        return forceDisconnected.get(side.ordinal());
+        if(!forceDisconnected.containsKey(side)) return false;
+        return forceDisconnected.get(side);
     }
 
     @Override
@@ -304,14 +305,14 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     public void setRedstoneLevel(EnumFacing side, int level) {
         if(!getWorld().isRemote) {
             boolean sendUpdate = false;
-            if(redstoneLevels.containsKey(side.ordinal())) {
-                if(redstoneLevels.get(side.ordinal()) != level) {
+            if(redstoneLevels.containsKey(side)) {
+                if(redstoneLevels.get(side) != level) {
                     sendUpdate = true;
-                    redstoneLevels.put(side.ordinal(), level);
+                    redstoneLevels.put(side, level);
                 }
             } else {
                 sendUpdate = true;
-                redstoneLevels.put(side.ordinal(), level);
+                redstoneLevels.put(side, level);
             }
             if(sendUpdate) {
                 updateRedstoneInfo(side);
@@ -320,26 +321,26 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     public int getRedstoneLevel(EnumFacing side) {
-        if(redstoneLevels.containsKey(side.ordinal())) {
-            return redstoneLevels.get(side.ordinal());
+        if(redstoneLevels.containsKey(side)) {
+            return redstoneLevels.get(side);
         }
         return -1;
     }
 
     public void setAllowRedstoneInput(EnumFacing side, boolean allow) {
-        redstoneInputs.put(side.ordinal(), allow);
+        redstoneInputs.put(side, allow);
     }
 
     public boolean isAllowRedstoneInput(EnumFacing side) {
-        if(redstoneInputs.containsKey(side.ordinal())) {
-            return redstoneInputs.get(side.ordinal());
+        if(redstoneInputs.containsKey(side)) {
+            return redstoneInputs.get(side);
         }
         return false;
     }
 
     public void disableRedstoneLevel(EnumFacing side) {
         if(!getWorld().isRemote) {
-            redstoneLevels.remove(side.ordinal());
+            redstoneLevels.remove(side);
             updateRedstoneInfo(side);
         }
     }
@@ -351,14 +352,14 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     public void setLightLevel(EnumFacing side, int level) {
         if(!getWorld().isRemote) {
             boolean sendUpdate = false;
-            if(lightLevels.containsKey(side.ordinal())) {
-                if(lightLevels.get(side.ordinal()) != level) {
+            if(lightLevels.containsKey(side)) {
+                if(lightLevels.get(side) != level) {
                     sendUpdate = true;
-                    lightLevels.put(side.ordinal(), level);
+                    lightLevels.put(side, level);
                 }
             } else {
                 sendUpdate = true;
-                lightLevels.put(side.ordinal(), level);
+                lightLevels.put(side, level);
             }
             if(sendUpdate) {
                 updateLightInfo(side);
@@ -367,8 +368,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     public int getLightLevel(EnumFacing side) {
-        if(lightLevels.containsKey(side.ordinal())) {
-            return lightLevels.get(side.ordinal());
+        if(lightLevels.containsKey(side)) {
+            return lightLevels.get(side);
         }
         return 0;
     }
@@ -398,11 +399,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         World world = getWorld();
         for(EnumFacing side : EnumFacing.VALUES) {
             boolean cableConnected = CableNetworkComponent.canSideConnect(world, pos, side, (ICable) getBlock());
-            connected.put(side.ordinal(), cableConnected);
+            connected.put(side, cableConnected);
 
             // Remove any already existing force-disconnects for this side.
             if(!cableConnected) {
-                forceDisconnected.put(side.ordinal(), false);
+                forceDisconnected.put(side, false);
             }
         }
         markDirty();
@@ -411,17 +412,17 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public boolean isConnected(EnumFacing side) {
-        return connected.containsKey(side.ordinal()) && connected.get(side.ordinal());
+        return connected.containsKey(side) && connected.get(side);
     }
 
     @Override
     public void disconnect(EnumFacing side) {
-        forceDisconnected.put(side.ordinal(), true);
+        forceDisconnected.put(side, true);
     }
 
     @Override
     public void reconnect(EnumFacing side) {
-        forceDisconnected.remove(side.ordinal());
+        forceDisconnected.remove(side);
     }
 
     @Override
@@ -432,7 +433,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     /**
      * @return The raw part data.
      */
-    public Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> getPartData() {
+    public EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> getPartData() {
         return this.partData;
     }
 
@@ -448,11 +449,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     /**
      * @return The raw force disconnection data.
      */
-    public Map<Integer, Boolean> getForceDisconnected() {
+    public EnumFacingMap<Boolean> getForceDisconnected() {
         return this.forceDisconnected;
     }
 
-    public void setForceDisconnected(Map<Integer, Boolean> forceDisconnected) {
+    public void setForceDisconnected(EnumFacingMap<Boolean> forceDisconnected) {
         this.forceDisconnected.clear();
         this.forceDisconnected.putAll(forceDisconnected);
     }

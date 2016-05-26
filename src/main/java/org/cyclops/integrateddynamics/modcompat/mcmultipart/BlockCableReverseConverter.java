@@ -1,12 +1,11 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
-import com.google.common.collect.Maps;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IMultipartContainer;
 import mcmultipart.multipart.IReversePartConverter;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -14,7 +13,6 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Converter for the multipart form to its original cable block.
@@ -31,8 +29,8 @@ public class BlockCableReverseConverter implements IReversePartConverter {
             }
         }
         if(parts.size() > 0) {
-            Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData = null;
-            Map<Integer, Boolean> forceDisconnected = null;
+            EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData = null;
+            EnumFacingMap<Boolean> forceDisconnected = null;
             boolean hasParts = false;
             IPartNetwork network = null;
             for(IMultipart part : parts) {
@@ -54,7 +52,7 @@ public class BlockCableReverseConverter implements IReversePartConverter {
                 // The cable is not real
                 // We now have to check manually for disabled parts
                 tile.setRealCable(false);
-                partData = Maps.newHashMap();
+                partData = EnumFacingMap.newMap();
                 if(hasParts) {
                     for (IMultipart part : parts) {
                         if (part instanceof PartPartType) {
