@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -16,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MatrixHelpers;
 import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.integrateddynamics.api.network.*;
@@ -24,7 +24,6 @@ import org.cyclops.integrateddynamics.client.model.CableModel;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A type of part that can be inserted into a {@link IPartContainer}.
@@ -325,8 +324,8 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
         private final float depthFactor;
         private final float widthFactor;
         private final float heightFactor;
-        private final Map<EnumFacing, AxisAlignedBB> sidedCableCollisionBoxes;
-        private final Map<EnumFacing, AxisAlignedBB> collisionBoxes;
+        private final EnumFacingMap<AxisAlignedBB> sidedCableCollisionBoxes;
+        private final EnumFacingMap<AxisAlignedBB> collisionBoxes;
 
         public RenderPosition(float selectionDepthFactor, float depthFactor, float widthFactor, float heightFactor) {
             this.depthFactor = depthFactor;
@@ -341,17 +340,16 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
                     {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1 - selectionDepthFactor, CableModel.MAX, CableModel.MAX}, // EAST
             };
 
-            ImmutableMap.Builder<EnumFacing, AxisAlignedBB> sidedCableCollisionBoxesBuilder = ImmutableMap.builder();
+            sidedCableCollisionBoxes = EnumFacingMap.newMap();
             for (EnumFacing side : EnumFacing.VALUES) {
                 float[] b = sidedCableCollisionBoxesRaw[side.ordinal()];
-                sidedCableCollisionBoxesBuilder.put(side, new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]));
+                sidedCableCollisionBoxes.put(side, new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]));
             }
-            this.sidedCableCollisionBoxes = sidedCableCollisionBoxesBuilder.build();
 
             float[][] collisionBoxesRaw = new float[][]{
                     {0.19F, 0.81F}, {0.005F, selectionDepthFactor}, {0.19F, 0.81F}
             };
-            ImmutableMap.Builder<EnumFacing, AxisAlignedBB> collisionBoxesBuilder = ImmutableMap.builder();
+            collisionBoxes = EnumFacingMap.newMap();
             for (EnumFacing side : EnumFacing.VALUES) {
                 // Copy bounds
                 float[][] bounds = new float[collisionBoxesRaw.length][collisionBoxesRaw[0].length];
@@ -360,9 +358,8 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
                 // Transform bounds
                 MatrixHelpers.transform(bounds, side);
-                collisionBoxesBuilder.put(side, new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]));
+                collisionBoxes.put(side, new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]));
             }
-            this.collisionBoxes = collisionBoxesBuilder.build();
         }
 
         public float getDepthFactor() {

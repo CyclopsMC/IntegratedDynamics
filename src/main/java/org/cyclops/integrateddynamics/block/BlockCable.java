@@ -37,6 +37,7 @@ import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
@@ -102,14 +103,16 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     public static final IUnlistedProperty<IPartContainer> PARTCONTAINER = new UnlistedProperty<>("partcontainer", IPartContainer.class);
 
     // Collision boxes
-    public static final float[][] CABLE_COLLISION_BOXES = {
-            {CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX}, // DOWN
-            {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX}, // UP
-            {CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MIN}, // NORTH
-            {CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1}, // SOUTH
-            {0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX}, // WEST
-            {CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX}, // EAST
-    };
+    private final static AxisAlignedBB CABLE_CENTER_BOUNDINGBOX = new AxisAlignedBB(
+            CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX);
+    private final static EnumFacingMap<AxisAlignedBB> CABLE_SIDE_BOUNDINGBOXES = EnumFacingMap.forAllValues(
+            new AxisAlignedBB(CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX), // DOWN
+            new AxisAlignedBB(CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX), // UP
+            new AxisAlignedBB(CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MIN), // NORTH
+            new AxisAlignedBB(CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1), // SOUTH
+            new AxisAlignedBB(0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX), // WEST
+            new AxisAlignedBB(CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX) // EAST
+    );
 
     // Collision components
     private static final List<IComponent<EnumFacing, BlockCable>> COLLIDABLE_COMPONENTS = Lists.newArrayList();
@@ -663,13 +666,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     public AxisAlignedBB getCableBoundingBox(EnumFacing side) {
-        float min = CableModel.MIN;
-        float max = CableModel.MAX;
         if (side == null) {
-            return new AxisAlignedBB(min, min, min, max, max, max);
+            return CABLE_CENTER_BOUNDINGBOX;
         } else {
-            float[] b = CABLE_COLLISION_BOXES[side.ordinal()];
-            return new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]);
+            return CABLE_SIDE_BOUNDINGBOXES.get(side);
         }
     }
 
@@ -680,10 +680,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     }
 
     private AxisAlignedBB getCableBoundingBoxWithPart(World world, BlockPos pos, EnumFacing side) {
-        float min = CableModel.MIN;
-        float max = CableModel.MAX;
         if (side == null) {
-            return new AxisAlignedBB(min, min, min, max, max, max);
+            return CABLE_CENTER_BOUNDINGBOX;
         } else {
             return getPartRenderPosition(world, pos, side).getSidedCableBoundingBox(side);
         }
