@@ -37,6 +37,8 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     @Getter
     private final IGuiContainerProvider propertiesGuiProvider;
 
+    private String unlocalizedName = null;
+
     @Deprecated
     public AspectBase() {
         this(null);
@@ -58,7 +60,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     @Override
     public String getUnlocalizedName() {
-        return getUnlocalizedPrefix() + ".name";
+        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedPrefix() + ".name");
     }
 
     protected String getUnlocalizedPrefix() {

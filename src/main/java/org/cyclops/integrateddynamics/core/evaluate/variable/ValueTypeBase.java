@@ -22,6 +22,8 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     private final int color;
     private final String colorFormat;
 
+    private String unlocalizedName = null;
+
     public ValueTypeBase(String typeName, int color, String colorFormat) {
         this.typeName = typeName;
         this.color = color;
@@ -51,7 +53,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public String getUnlocalizedName() {
-        return getUnlocalizedPrefix() + ".name";
+        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedPrefix() + ".name");
     }
 
     @Override

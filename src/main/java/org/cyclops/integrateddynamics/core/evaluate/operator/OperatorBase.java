@@ -27,6 +27,8 @@ public abstract class OperatorBase implements IOperator {
     private final IFunction function;
     private final IConfigRenderPattern renderPattern;
 
+    private String unlocalizedName = null;
+
     protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                            IFunction function, IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
@@ -57,7 +59,7 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public String getUnlocalizedName() {
-        return getUnlocalizedPrefix() + ".name";
+        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedPrefix() + ".name");
     }
 
     @Override
