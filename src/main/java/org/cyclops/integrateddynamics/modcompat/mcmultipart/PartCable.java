@@ -289,7 +289,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         synchronized (this.partData) {
-            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData);
+            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
         }
         super.readFromNBT(tag);
     }

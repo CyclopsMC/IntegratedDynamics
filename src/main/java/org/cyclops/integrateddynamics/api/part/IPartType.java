@@ -21,6 +21,7 @@ import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -306,6 +307,16 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param lines The list to add lines to.
      */
     public void loadTooltip(S state, List<String> lines);
+
+    /**
+     * Check if the given state change should trigger a block render update.
+     * This is only called client-side.
+     * The new and old partstates are never both null, at most one will be null.
+     * @param oldPartState The old part state.
+     * @param newPartState The new part state.
+     * @return If it should trigger a block render update.
+     */
+    public boolean shouldTriggerBlockRenderUpdate(@Nullable S oldPartState, @Nullable S newPartState);
 
     public static class RenderPosition {
 

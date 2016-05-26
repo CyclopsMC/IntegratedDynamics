@@ -38,6 +38,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -368,6 +369,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_DISABLED));
         }
         lines.add(L10NHelpers.localize(L10NValues.GENERAL_ITEM_ID, state.getId()));
+    }
+
+    @Override
+    public boolean shouldTriggerBlockRenderUpdate(@Nullable S oldPartState, @Nullable S newPartState) {
+        return oldPartState == null || newPartState == null;
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {

@@ -34,13 +34,14 @@ public final class WrenchHelpers {
      * to be passed.
      * Takes an extra parameter of any type that is forwarded to the wrench action.
      * @param player The player.
+     * @param heldItem The item the player is holding.
      * @param pos The position that is being wrenched.
      * @param action The actual wrench action.
      * @param parameter An extra parameter that is forwarded to the action.
      * @param <P> The type of parameter to pass.
      */
-    public static <P> void wrench(EntityPlayer player, BlockPos pos, IWrenchAction<P> action, P parameter) {
-        Item item = player.getActiveItemStack().getItem();
+    public static <P> void wrench(EntityPlayer player, ItemStack heldItem, BlockPos pos, IWrenchAction<P> action, P parameter) {
+        Item item = heldItem.getItem();
         // TODO: add support for other mod wrenches, like the one from BC.
         if(item instanceof IWrench) {
             ((IWrench) item).beforeUse(player, pos);
@@ -54,11 +55,12 @@ public final class WrenchHelpers {
      * Requires the {@link WrenchHelpers#isWrench(net.minecraft.entity.player.EntityPlayer, ItemStack, BlockPos)}
      * to be passed.
      * @param player The player.
+     * @param heldItem The item the player is holding.
      * @param pos The position that is being wrenched.
      * @param action The actual wrench action.
      */
-    public static void wrench(EntityPlayer player, BlockPos pos, IWrenchAction<Void> action) {
-        wrench(player, pos, action, null);
+    public static void wrench(EntityPlayer player, ItemStack heldItem, BlockPos pos, IWrenchAction<Void> action) {
+        wrench(player, heldItem, pos, action, null);
     }
 
     /**

@@ -29,6 +29,7 @@ import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -124,21 +125,23 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         state.onVariableContentsUpdated((P) this, target);
     }
 
+    protected IgnoredBlockStatus.Status getStatus(IPartStateWriter state) {
+        IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
+        if (state != null && !state.getInventory().isEmpty()) {
+            if (state.hasVariable() && state.isEnabled()) {
+                status = IgnoredBlockStatus.Status.ACTIVE;
+            } else {
+                status = IgnoredBlockStatus.Status.ERROR;
+            }
+        }
+        return status;
+    }
+
     @Override
     public IBlockState getBlockState(IPartContainer partContainer,
                                      EnumFacing side) {
-        IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
-        if(partContainer != null) {
-            IPartStateWriter state = (IPartStateWriter) partContainer.getPartState(side);
-            IAspectWrite aspectWrite = state.getActiveAspect();
-            if (aspectWrite != null) {
-                if (state.hasVariable() && state.isEnabled()) {
-                    status = IgnoredBlockStatus.Status.ACTIVE;
-                } else {
-                    status = IgnoredBlockStatus.Status.ERROR;
-                }
-            }
-        }
+        IgnoredBlockStatus.Status status = getStatus(partContainer != null
+                ? (IPartStateWriter) partContainer.getPartState(side) : null);
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).
                 withProperty(IgnoredBlockStatus.STATUS, status);
     }
@@ -175,6 +178,12 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @SideOnly(Side.CLIENT)
     public Class<? extends GuiScreen> getGui() {
         return GuiPartWriter.class;
+    }
+
+    @Override
+    public boolean shouldTriggerBlockRenderUpdate(@Nullable S oldPartState, @Nullable S newPartState) {
+        return super.shouldTriggerBlockRenderUpdate(oldPartState, newPartState)
+                || getStatus(oldPartState) != getStatus(newPartState);
     }
 
 }

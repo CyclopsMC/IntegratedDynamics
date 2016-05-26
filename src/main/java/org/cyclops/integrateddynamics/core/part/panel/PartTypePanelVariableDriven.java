@@ -38,6 +38,7 @@ import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdated
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -139,20 +140,23 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         return GuiPartDisplay.class;
     }
 
+    protected IgnoredBlockStatus.Status getStatus(PartTypePanelVariableDriven.State state) {
+        IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
+        if (state != null && !state.getInventory().isEmpty()) {
+            if (state.hasVariable() && state.isEnabled()) {
+                status = IgnoredBlockStatus.Status.ACTIVE;
+            } else {
+                status = IgnoredBlockStatus.Status.ERROR;
+            }
+        }
+        return status;
+    }
+
     @Override
     public IBlockState getBlockState(IPartContainer partContainer,
                                      EnumFacing side) {
-        IgnoredBlockStatus.Status status = IgnoredBlockStatus.Status.INACTIVE;
-        if(partContainer != null) {
-            PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) partContainer.getPartState(side);
-            if (state != null && !state.getInventory().isEmpty()) {
-                if (state.hasVariable() && state.isEnabled()) {
-                    status = IgnoredBlockStatus.Status.ACTIVE;
-                } else {
-                    status = IgnoredBlockStatus.Status.ERROR;
-                }
-            }
-        }
+        IgnoredBlockStatus.Status status = getStatus(partContainer != null
+                ? (PartTypePanelVariableDriven.State) partContainer.getPartState(side) : null);
         return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).
                 withProperty(IgnoredBlockStatus.STATUS, status);
     }
@@ -165,7 +169,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     public boolean onPartActivated(World world, BlockPos pos, final S partState, EntityPlayer player, EnumHand hand,
                                    ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(WrenchHelpers.isWrench(player, heldItem, pos)) {
-            WrenchHelpers.wrench(player, pos, new WrenchHelpers.IWrenchAction<Void>() {
+            WrenchHelpers.wrench(player, heldItem, pos, new WrenchHelpers.IWrenchAction<Void>() {
                 @Override
                 public void onWrench(EntityPlayer player, BlockPos pos, Void parameter) {
                     partState.setFacingRotation(partState.getFacingRotation().rotateAround(EnumFacing.Axis.Y));
@@ -198,6 +202,12 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_INACTIVE));
         }
         super.loadTooltip(state, lines);
+    }
+
+    @Override
+    public boolean shouldTriggerBlockRenderUpdate(@Nullable S oldPartState, @Nullable S newPartState) {
+        return super.shouldTriggerBlockRenderUpdate(oldPartState, newPartState)
+                || getStatus(oldPartState) != getStatus(newPartState);
     }
 
     public static abstract class State<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartStateActiveVariableBase<P> {

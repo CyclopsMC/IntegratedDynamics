@@ -79,7 +79,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData);
+        PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
         super.readFromNBT(tag);
     }
 
@@ -129,7 +129,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     protected void onPartsChanged() {
         markDirty();
         sendUpdate();
-        //getWorld().markBlockRangeForRenderUpdate(pos, pos);
     }
 
     @Override
@@ -243,7 +242,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public void onUpdateReceived() {
-        getWorld().markBlockRangeForRenderUpdate(pos, pos);
         if(!lightLevels.equals(previousLightLevels)) {
             previousLightLevels = lightLevels;
             getWorld().checkLight(getPos());
