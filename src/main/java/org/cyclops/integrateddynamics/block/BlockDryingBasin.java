@@ -11,11 +11,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
@@ -62,6 +64,8 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
             ItemStack itemStack = player.inventory.getCurrentItem();
             TileDryingBasin tile = TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class);
             if (tile != null) {
+                IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
+                SingleUseTank tank = tile.getTank();
                 ItemStack tileStack = tile.getStackInSlot(0);
                 if ((itemStack == null || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && itemStack.stackSize < itemStack.getMaxStackSize())) && tileStack != null) {
                     if(itemStack != null) {
@@ -71,24 +75,19 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                     tile.setInventorySlotContents(0, null);
                     tile.sendUpdate();
                     return true;
-                } else if (itemStack != null && !tile.getTank().isFull() && FluidContainerRegistry.isFilledContainer(itemStack)) {
-                    FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(itemStack);
-                    if(tile.canFill(EnumFacing.UP, fluidStack.getFluid()) && tile.getTank().canCompletelyFill(fluidStack)) {
-                        tile.fill(FluidContainerRegistry.getFluidForFilledItem(itemStack), true);
-                        ItemStack newItemStack = FluidContainerRegistry.drainFluidContainer(itemStack);
+                } else if (itemFluidHandler != null && !tank.isFull()
+                        && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false) != null) {
+                    if(FluidHelpers.canCompletelyFill(itemFluidHandler, tank)) {
+                        ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
                         InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
                         tile.sendUpdate();
                         return true;
                     }
-                } else if (itemStack != null && !tile.getTank().isEmpty() && FluidContainerRegistry.isEmptyContainer(itemStack)) {
-                    if(FluidContainerRegistry.isContainer(itemStack)) {
-                        ItemStack newItemStack = FluidContainerRegistry.fillFluidContainer(tile.getTank().getFluid(), itemStack);
-                        if(newItemStack != null) {
-                            tile.drain(FluidContainerRegistry.getFluidForFilledItem(newItemStack), true);
-                            InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
-                            return true;
-                        }
-                    }
+                } else if (itemFluidHandler != null && !tank.isEmpty() &&
+                        FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false) != null) {
+                    ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
+                    InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                    return true;
                 } else if (itemStack != null && tileStack == null) {
                     tile.setInventorySlotContents(0, itemStack.splitStack(1));
                     if(itemStack.stackSize <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, null);

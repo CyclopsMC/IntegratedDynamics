@@ -2,8 +2,9 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
@@ -30,7 +31,7 @@ public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListPr
     }
 
     protected IFluidHandler getTank() {
-        return TileHelpers.getSafeTile(pos.getWorld(), pos.getBlockPos(), IFluidHandler.class);
+        return TileHelpers.getCapability(pos, side, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
     }
 
     @Override
@@ -39,7 +40,7 @@ public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListPr
         if(tank == null) {
             return 0;
         }
-        FluidTankInfo[] tanks = tank.getTankInfo(side);
+        IFluidTankProperties[] tanks = tank.getTankProperties();
         if(tanks == null) {
             return 0;
         }
@@ -48,7 +49,7 @@ public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListPr
 
     @Override
     public ValueObjectTypeFluidStack.ValueFluidStack get(int index) {
-        return ValueObjectTypeFluidStack.ValueFluidStack.of(getTank().getTankInfo(side)[index].fluid);
+        return ValueObjectTypeFluidStack.ValueFluidStack.of(getTank().getTankProperties()[index].getContents());
     }
 
     @Override

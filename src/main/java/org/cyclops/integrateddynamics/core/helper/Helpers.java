@@ -5,9 +5,10 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidContainerItem;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -30,11 +31,7 @@ public final class Helpers {
      * @return The fluidstack or null.
      */
     public static FluidStack getFluidStack(ItemStack itemStack) {
-        FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(itemStack);
-        if(fluidStack == null && itemStack.getItem() instanceof IFluidContainerItem) {
-            fluidStack = ((IFluidContainerItem) itemStack.getItem()).getFluid(itemStack);
-        }
-        return fluidStack;
+        return FluidUtil.getFluidContained(itemStack);
     }
 
     /**
@@ -43,10 +40,13 @@ public final class Helpers {
      * @return The capacity
      */
     public static int getFluidStackCapacity(ItemStack itemStack) {
-        if(itemStack.getItem() instanceof IFluidContainerItem) {
-            return ((IFluidContainerItem) itemStack.getItem()).getCapacity(itemStack);
+        IFluidHandler fluidHandler = FluidUtil.getFluidHandler(itemStack);
+        if (fluidHandler != null) {
+            for (IFluidTankProperties properties : fluidHandler.getTankProperties()) {
+                return properties.getCapacity();
+            }
         }
-        return FluidContainerRegistry.getContainerCapacity(itemStack);
+        return 0;
     }
 
     /**

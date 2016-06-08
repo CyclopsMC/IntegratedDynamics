@@ -11,8 +11,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -227,24 +228,26 @@ public class AspectReadBuilders {
             PROPERTIES.setValue(PROP_TANKID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         }
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, FluidTankInfo[]> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, FluidTankInfo[]>() {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties[]> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties[]>() {
             @Override
-            public FluidTankInfo[] getOutput(Pair<PartTarget, IAspectProperties> input) {
+            public IFluidTankProperties[] getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos dimPos = input.getLeft().getTarget().getPos();
-                IFluidHandler fluidHandler = TileHelpers.getSafeTile(dimPos, IFluidHandler.class);
+                IFluidHandler fluidHandler = TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
+                        CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
                 if(fluidHandler != null) {
-                    return fluidHandler.getTankInfo(input.getLeft().getTarget().getSide());
+                    return fluidHandler.getTankProperties();
                 }
-                return new FluidTankInfo[0];
+                return new IFluidTankProperties[0];
             }
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, FluidTankInfo> PROP_GET_ACTIVATABLE = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, FluidTankInfo>() {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties> PROP_GET_ACTIVATABLE = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties>() {
             @Override
-            public FluidTankInfo getOutput(Pair<PartTarget, IAspectProperties> input) {
+            public IFluidTankProperties getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos dimPos = input.getLeft().getTarget().getPos();
-                IFluidHandler fluidHandler = TileHelpers.getSafeTile(dimPos, IFluidHandler.class);
+                IFluidHandler fluidHandler = TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
+                        CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
                 if(fluidHandler != null) {
-                    FluidTankInfo[] tankInfo = fluidHandler.getTankInfo(input.getLeft().getTarget().getSide());
+                    IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
                     int i = input.getRight().getValue(PROP_TANKID).getRawValue();
                     if(tankInfo != null && i < tankInfo.length) {
                         return tankInfo[i];
@@ -253,10 +256,10 @@ public class AspectReadBuilders {
                 return null;
             }
         };
-        public static final IAspectValuePropagator<FluidTankInfo, FluidStack> PROP_GET_FLUIDSTACK = new IAspectValuePropagator<FluidTankInfo, FluidStack>() {
+        public static final IAspectValuePropagator<IFluidTankProperties, FluidStack> PROP_GET_FLUIDSTACK = new IAspectValuePropagator<IFluidTankProperties, FluidStack>() {
             @Override
-            public FluidStack getOutput(FluidTankInfo tankInfo) {
-                return tankInfo != null ? tankInfo.fluid : null;
+            public FluidStack getOutput(IFluidTankProperties tankInfo) {
+                return tankInfo != null ? tankInfo.getContents() : null;
             }
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST_FLUIDSTACKS = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
@@ -276,13 +279,13 @@ public class AspectReadBuilders {
             }
         };
 
-        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, FluidTankInfo[]>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IFluidTankProperties[]>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "fluid");
-        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, FluidTankInfo[]>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IFluidTankProperties[]>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "fluid");
-        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, FluidTankInfo>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IFluidTankProperties>
                 BUILDER_INTEGER_ACTIVATABLE = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
-        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, FluidTankInfo>
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, IFluidTankProperties>
                 BUILDER_DOUBLE_ACTIVATABLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
 
     }

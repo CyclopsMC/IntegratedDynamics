@@ -5,7 +5,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -493,7 +493,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().isPresent(), false, "fluidstack(hoe) = null");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACK.evaluate(new IVariable[]{iBucketLava});
-        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue().get().isFluidStackIdentical(new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME)), true, "fluidstack(bucketlava) = lava:1000");
+        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue().get().isFluidStackIdentical(new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME)), true, "fluidstack(bucketlava) = lava:1000");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -522,7 +522,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "fluidstackcapacity(hoe) = 0");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY.evaluate(new IVariable[]{iBucketLava});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), FluidContainerRegistry.BUCKET_VOLUME, "fluidstackcapacity(bucketlava) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), Fluid.BUCKET_VOLUME, "fluidstackcapacity(bucketlava) = 1000");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

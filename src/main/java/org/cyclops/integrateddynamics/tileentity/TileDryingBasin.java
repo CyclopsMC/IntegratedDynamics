@@ -8,7 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
@@ -46,7 +46,7 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
             IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>> recipeCache;
 
     public TileDryingBasin() {
-        super(1, "dryingBasingInventory", 1, FluidContainerRegistry.BUCKET_VOLUME, "dryingBasingTank");
+        super(1, "dryingBasingInventory", 1, Fluid.BUCKET_VOLUME, "dryingBasingTank");
 
         addSlotsToSide(EnumFacing.UP, Sets.newHashSet(0));
         addSlotsToSide(EnumFacing.DOWN, Sets.newHashSet(0));

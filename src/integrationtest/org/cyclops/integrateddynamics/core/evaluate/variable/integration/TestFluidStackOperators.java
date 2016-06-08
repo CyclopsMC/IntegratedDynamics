@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumRarity;
-import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.http.util.Asserts;
@@ -31,8 +31,8 @@ public class TestFluidStackOperators {
 
     @IntegrationBefore
     public void before() {
-        eBucketLava = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME)));
-        eBucketWater = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME)));
+        eBucketLava = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME)));
+        eBucketWater = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME)));
         eWater100 = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 100)));
     }
 
@@ -44,10 +44,10 @@ public class TestFluidStackOperators {
     public void testAmount() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), FluidContainerRegistry.BUCKET_VOLUME, "amount(lava:1000) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), Fluid.BUCKET_VOLUME, "amount(lava:1000) = 1000");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), FluidContainerRegistry.BUCKET_VOLUME, "amount(water:1000) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), Fluid.BUCKET_VOLUME, "amount(water:1000) = 1000");
 
         IValue res3 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eWater100});
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), 100, "amount(water:100) = 100");

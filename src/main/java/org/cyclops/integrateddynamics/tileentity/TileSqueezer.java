@@ -5,9 +5,10 @@ import lombok.Getter;
 import lombok.experimental.Delegate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -41,7 +42,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
             IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent>> recipeCache;
 
     public TileSqueezer() {
-        super(1, "squeezerInventory", 1, FluidContainerRegistry.BUCKET_VOLUME, "squeezerTank");
+        super(1, "squeezerInventory", 1, Fluid.BUCKET_VOLUME, "squeezerTank");
 
         addSlotsToSide(EnumFacing.UP, Sets.newHashSet(0));
         addSlotsToSide(EnumFacing.DOWN, Sets.newHashSet(0));
@@ -83,12 +84,12 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
             if(!getTank().isEmpty()) {
                 EnumFacing[] sides = getWorld().getBlockState(getPos()).getValue(BlockSqueezer.AXIS).getSides();
                 for (EnumFacing side : sides) {
-                    IFluidHandler handler = TileHelpers.getSafeTile(getWorld(), getPos().offset(side), IFluidHandler.class);
+                    IFluidHandler handler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
                     if (!getTank().isEmpty() && handler != null) {
                         FluidStack fluidStack = new FluidStack(getTank().getFluidType(),
                                 Math.min(100, getTank().getFluidAmount()));
-                        if (handler.fill(side.getOpposite(), fluidStack, false) > 0) {
-                            int filled = handler.fill(side.getOpposite(), fluidStack, true);
+                        if (handler.fill(fluidStack, false) > 0) {
+                            int filled = handler.fill(fluidStack, true);
                             drain(filled, true);
                         }
                     }

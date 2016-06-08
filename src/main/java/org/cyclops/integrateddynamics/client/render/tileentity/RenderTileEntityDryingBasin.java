@@ -11,7 +11,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
@@ -68,7 +68,7 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
 
     @Override
     public void renderFluid(FluidStack fluid) {
-        double height = (fluid.amount * 0.7D) / FluidContainerRegistry.BUCKET_VOLUME + 0.23D + 0.01D;
+        double height = (fluid.amount * 0.7D) / Fluid.BUCKET_VOLUME + 0.23D + 0.01D;
         int brightness = lastTile.getWorld().getCombinedLight(lastTile.getPos(), fluid.getFluid().getLuminosity(fluid));
         int l2 = brightness >> 0x10 & 0xFFFF;
         int i3 = brightness & 0xFFFF;
