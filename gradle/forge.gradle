@@ -25,6 +25,10 @@ repositories {
         name = "Charset Maven"
         url = "http://charset.asie.pl/maven"
     }
+    maven {
+        name = "Dankhax"
+        url = "http://maven.epoxide.xyz"
+    }
 }
 
 dependencies {
@@ -40,6 +44,7 @@ dependencies {
     deobfCompile "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
     compile "net.bdew.thirdparty:rfapi:${config.rfapi_version}-mc1.8.9:api" // http://jenkins.bdew.net/maven/net/bdew/thirdparty/rfapi/
     deobfCompile "pl.asie.charset:charset-api:0.3.0-pre8" // http://charset.asie.pl/maven/pl/asie/charset/charset-api/maven-metadata.xml
+    compile "net.darkhax.tesla:Tesla:${config.minecraft_version}-${config.teslaapi_version}:deobf" // http://maven.rubbix.net/net/darkhax/tesla/Tesla/
 
     // Only needed for testing
     deobfCompile "pl.asie.charset:charset-lib:0.3.0-pre8" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml

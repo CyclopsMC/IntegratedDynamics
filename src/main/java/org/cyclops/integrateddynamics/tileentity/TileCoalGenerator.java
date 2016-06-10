@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 import org.cyclops.integrateddynamics.modcompat.rf.RfHelpers;
+import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
 
 /**
  * A tile entity for the coal energy generator.
@@ -55,12 +56,16 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
         return RfHelpers.isRf();
     }
 
+    protected boolean isTesla() {
+        return TeslaHelpers.isTesla();
+    }
+
     public boolean canAddEnergy(int energy) {
         IEnergyNetwork network = getNetwork();
         if(network != null && network.addEnergy(energy, true) == energy) {
             return true;
         }
-        return isRf() && addEnergyRf(energy, true) == energy;
+        return (isRf() && addEnergyRf(energy, true) == energy) || (isTesla() && addEnergyTesla(energy, true) == energy);
     }
 
     protected int addEnergy(int energy) {
@@ -106,6 +111,10 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
 
     protected int addEnergyRf(int energy, boolean simulate) {
         return RfHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+    }
+
+    protected int addEnergyTesla(int energy, boolean simulate) {
+        return TeslaHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
     }
 
     /*
