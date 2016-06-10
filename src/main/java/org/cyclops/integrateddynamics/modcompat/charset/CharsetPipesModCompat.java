@@ -32,7 +32,9 @@ public class CharsetPipesModCompat implements IModCompat {
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Sets.<IAspect>newHashSet(
 					CharsetAspects.Write.Pipe.SHIFTER_BOOLEAN,
 					CharsetAspects.Write.Pipe.SHIFTER_ITEMSTACK,
-					CharsetAspects.Write.Pipe.SHIFTER_LIST
+					CharsetAspects.Write.Pipe.SHIFTER_FLUIDSTACK,
+					CharsetAspects.Write.Pipe.SHIFTER_LISTITEMSTACK,
+					CharsetAspects.Write.Pipe.SHIFTER_LISTFLUIDSTACK
 			));
 		}
 	}

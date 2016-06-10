@@ -708,10 +708,14 @@ aspect.aspects.integrateddynamics.read.boolean.charsetpipe.applicable.info=If th
 
 aspect.aspects.integrateddynamics.write.boolean.charsetpipe.shifter.name=Pipe Shift
 aspect.aspects.integrateddynamics.write.boolean.charsetpipe.shifter.info=Enable pipe item shifting
-aspect.aspects.integrateddynamics.write.itemstack.charsetpipe.shifter.name=Single Filtered Pipe Shift
+aspect.aspects.integrateddynamics.write.itemstack.charsetpipe.shifter.name=Single Filtered Item Pipe Shift
 aspect.aspects.integrateddynamics.write.itemstack.charsetpipe.shifter.info=Enable pipe item shifting for the given item
-aspect.aspects.integrateddynamics.write.list.charsetpipe.shifter.name=Filtered Pipe Shift
+aspect.aspects.integrateddynamics.write.fluidstack.charsetpipe.shifterfluid.name=Single Filtered Fluid Pipe Shift
+aspect.aspects.integrateddynamics.write.fluidstack.charsetpipe.shifterfluid.info=Enable pipe fluid shifting for the given item
+aspect.aspects.integrateddynamics.write.list.charsetpipe.shifter.name=Filtered Pipe Item Shift
 aspect.aspects.integrateddynamics.write.list.charsetpipe.shifter.info=Enable pipe item shifting for the given items
+aspect.aspects.integrateddynamics.write.list.charsetpipe.shifterfluid.name=Filtered Pipe Fluid Shift
+aspect.aspects.integrateddynamics.write.list.charsetpipe.shifterfluid.info=Enable pipe item shifting for the given items
 
 ## ----- Thaumcraft ----- ##
 
