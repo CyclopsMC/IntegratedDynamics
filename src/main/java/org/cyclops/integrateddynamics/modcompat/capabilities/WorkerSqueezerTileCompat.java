@@ -1,19 +1,30 @@
 package org.cyclops.integrateddynamics.modcompat.capabilities;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
-import org.cyclops.cyclopscore.modcompat.ICapabilityCompat;
+import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
+import org.cyclops.cyclopscore.modcompat.capabilities.ICapabilityConstructor;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
+
+import javax.annotation.Nullable;
 
 /**
  * Compatibility for squeezer worker capability.
  * @author rubensworks
  */
-public class WorkerSqueezerTileCompat implements ICapabilityCompat<TileSqueezer> {
+public class WorkerSqueezerTileCompat implements ICapabilityConstructor<IWorker, TileSqueezer> {
 
     @Override
-    public void attach(final TileSqueezer provider) {
-        provider.addCapabilityInternal(Capabilities.WORKER, new Worker(provider));
+    public Capability<IWorker> getCapability() {
+        return Capabilities.WORKER;
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider createProvider(TileSqueezer host) {
+        return new DefaultCapabilityProvider<>(Capabilities.WORKER, new Worker(host));
     }
 
     public static class Worker implements IWorker {

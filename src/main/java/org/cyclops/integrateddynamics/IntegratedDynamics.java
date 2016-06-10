@@ -1,18 +1,13 @@
 package org.cyclops.integrateddynamics;
 
 import com.google.common.collect.Maps;
-import net.darkhax.tesla.api.ITeslaConsumer;
-import net.darkhax.tesla.api.ITeslaHolder;
-import net.darkhax.tesla.api.ITeslaProducer;
 import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
-import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.client.gui.GuiHandler;
 import org.cyclops.cyclopscore.command.CommandMod;
 import org.cyclops.cyclopscore.config.ConfigHandler;
@@ -23,7 +18,6 @@ import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.item.BucketRegistry;
 import org.cyclops.cyclopscore.item.IBucketRegistry;
-import org.cyclops.cyclopscore.modcompat.ICapabilityCompat;
 import org.cyclops.cyclopscore.modcompat.ModCompatLoader;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
@@ -179,38 +173,13 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     public final void preInit(FMLPreInitializationEvent event) {
         // Capabilities
-        ICapabilityCompat.ICapabilityReference<IWorker> workerReference = new ICapabilityCompat.ICapabilityReference<IWorker>() {
-            @Override
-            public Capability<IWorker> getCapability() {
-                return Capabilities.WORKER;
-            }
-        };
-        ICapabilityCompat.ICapabilityReference<ITeslaConsumer> teslaConsumerReference = new ICapabilityCompat.ICapabilityReference<ITeslaConsumer>() {
-            @Override
-            public Capability<ITeslaConsumer> getCapability() {
-                return Capabilities.TESLA_CONSUMER;
-            }
-        };
-        ICapabilityCompat.ICapabilityReference<ITeslaProducer> teslaProducerReference = new ICapabilityCompat.ICapabilityReference<ITeslaProducer>() {
-            @Override
-            public Capability<ITeslaProducer> getCapability() {
-                return Capabilities.TESLA_PRODUCER;
-            }
-        };
-        ICapabilityCompat.ICapabilityReference<ITeslaHolder> teslaHolderReference = new ICapabilityCompat.ICapabilityReference<ITeslaHolder>() {
-            @Override
-            public Capability<ITeslaHolder> getCapability() {
-                return Capabilities.TESLA_HOLDER;
-            }
-        };
-        ModCompatLoader modCompatLoader = getModCompatLoader();
-        modCompatLoader.addCapabilityCompat(TileDryingBasin.class, workerReference, new WorkerDryingBasinTileCompat());
-        modCompatLoader.addCapabilityCompat(TileSqueezer.class, workerReference, new WorkerSqueezerTileCompat());
-        modCompatLoader.addCapabilityCompat(TileCoalGenerator.class, workerReference, new WorkerCoalGeneratorTileCompat());
-        modCompatLoader.addCapabilityCompat(TileCoalGenerator.class, teslaProducerReference, new TeslaProducerCoalGeneratorTileCompat());
-        modCompatLoader.addCapabilityCompat(TileEnergyBattery.class, teslaConsumerReference, new TeslaConsumerEnergyBatteryTileCompat());
-        modCompatLoader.addCapabilityCompat(TileEnergyBattery.class, teslaProducerReference, new TeslaProducerEnergyBatteryTileCompat());
-        modCompatLoader.addCapabilityCompat(TileEnergyBattery.class, teslaHolderReference, new TeslaHolderEnergyBatteryTileCompat());
+        getCapabilityConstructorRegistry().registerTile(TileDryingBasin.class, new WorkerDryingBasinTileCompat());
+        getCapabilityConstructorRegistry().registerTile(TileSqueezer.class, new WorkerSqueezerTileCompat());
+        getCapabilityConstructorRegistry().registerTile(TileCoalGenerator.class, new WorkerCoalGeneratorTileCompat());
+        getCapabilityConstructorRegistry().registerTile(TileCoalGenerator.class, new TeslaProducerCoalGeneratorTileCompat());
+        getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaConsumerEnergyBatteryTileCompat());
+        getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaProducerEnergyBatteryTileCompat());
+        getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaHolderEnergyBatteryTileCompat());
 
         // Registries
         getRegistryManager().addRegistry(IBucketRegistry.class, new BucketRegistry());

@@ -1,19 +1,30 @@
 package org.cyclops.integrateddynamics.modcompat.tesla.capabilities;
 
 import net.darkhax.tesla.api.ITeslaHolder;
-import org.cyclops.cyclopscore.modcompat.ICapabilityCompat;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
+import org.cyclops.cyclopscore.modcompat.capabilities.ICapabilityConstructor;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
+
+import javax.annotation.Nullable;
 
 /**
  * Compatibility for energy battery tesla holder capability.
  * @author rubensworks
  */
-public class TeslaHolderEnergyBatteryTileCompat implements ICapabilityCompat<TileEnergyBattery> {
+public class TeslaHolderEnergyBatteryTileCompat implements ICapabilityConstructor<ITeslaHolder, TileEnergyBattery> {
 
     @Override
-    public void attach(final TileEnergyBattery provider) {
-        provider.addCapabilityInternal(Capabilities.TESLA_HOLDER, new TeslaHolder(provider));
+    public Capability<ITeslaHolder> getCapability() {
+        return Capabilities.TESLA_HOLDER;
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider createProvider(TileEnergyBattery host) {
+        return new DefaultCapabilityProvider<>(Capabilities.TESLA_HOLDER, new TeslaHolder(host));
     }
 
     public static class TeslaHolder implements ITeslaHolder {
