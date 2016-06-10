@@ -52,6 +52,7 @@ import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypeRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
@@ -71,10 +72,7 @@ import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
-import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.TeslaConsumerEnergyBatteryTileCompat;
-import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.TeslaHolderEnergyBatteryTileCompat;
-import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.TeslaProducerCoalGeneratorTileCompat;
-import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.TeslaProducerEnergyBatteryTileCompat;
+import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.*;
 import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
@@ -180,6 +178,9 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaConsumerEnergyBatteryTileCompat());
         getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaProducerEnergyBatteryTileCompat());
         getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaHolderEnergyBatteryTileCompat());
+        getCapabilityConstructorRegistry().registerItem(ItemBlockEnergyContainer.class, new TeslaConsumerEnergyContainerItemCompat());
+        getCapabilityConstructorRegistry().registerItem(ItemBlockEnergyContainer.class, new TeslaProducerEnergyContainerItemCompat());
+        getCapabilityConstructorRegistry().registerItem(ItemBlockEnergyContainer.class, new TeslaHolderEnergyContainerItemCompat());
 
         // Registries
         getRegistryManager().addRegistry(IBucketRegistry.class, new BucketRegistry());
