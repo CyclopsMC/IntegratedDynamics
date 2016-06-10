@@ -809,3 +809,23 @@ aspect.aspects.integrateddynamics.read.string.tesla.amount.name=Stored Tesla
 aspect.aspects.integrateddynamics.read.string.tesla.amount.info=The formatted amount of Tesla stored in the target
 aspect.aspects.integrateddynamics.read.string.tesla.capacity.name=Tesla Capacity
 aspect.aspects.integrateddynamics.read.string.tesla.capacity.info=The formatted Tesla capacity of the target
+
+## Operators
+operator.operators.integrateddynamics.itemstack.isteslacontainer.name=Is Tesla Container
+operator.operators.integrateddynamics.itemstack.isteslacontainer.info=If the given item can hold Tesla
+operator.operators.integrateddynamics.itemstack.teslastored.name=Tesla Stored
+operator.operators.integrateddynamics.itemstack.teslastored.info=The amount of Tesla stored in this item
+operator.operators.integrateddynamics.itemstack.teslacapacity.name=Tesla Capacity
+operator.operators.integrateddynamics.itemstack.teslacapacity.info=The maximum amount of Tesla that can be stored in this item
+operator.operators.integrateddynamics.itemstack.isteslareceiver.name=Is Tesla Receiver
+operator.operators.integrateddynamics.itemstack.isteslareceiver.info=If the given item can receiver Tesla
+operator.operators.integrateddynamics.itemstack.isteslaprovider.name=Is Tesla Provider
+operator.operators.integrateddynamics.itemstack.isteslaprovider.info=If the given item can provide Tesla
+operator.operators.integrateddynamics.itemstack.isteslafull.name=Is Tesla Buffer Full
+operator.operators.integrateddynamics.itemstack.isteslafull.info=If the given item is full of Tesla energy
+operator.operators.integrateddynamics.itemstack.isteslaempty.name=Is Tesla Buffer Empty
+operator.operators.integrateddynamics.itemstack.isteslaempty.info=If the given item has no Tesla energy
+operator.operators.integrateddynamics.itemstack.isteslanonempty.name=Is Tesla Buffer Not Empty
+operator.operators.integrateddynamics.itemstack.isteslanonempty.info=If the given item has Tesla energy
+operator.operators.integrateddynamics.itemstack.teslafillratio.name=Tesla Fill Ratio
+operator.operators.integrateddynamics.itemstack.teslafillratio.info=The amount of Tesla in the item divided by its capacity

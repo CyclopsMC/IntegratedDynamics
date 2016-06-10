@@ -5,6 +5,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -19,6 +20,8 @@ import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IterativeFunction;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+
+import javax.annotation.Nullable;
 
 /**
  * Collection of operator builders.
@@ -36,6 +39,12 @@ public class OperatorBuilders {
         @Override
         public IValue getOutput(Integer input) throws EvaluationException {
             return ValueTypeInteger.ValueInteger.of(input);
+        }
+    };
+    public static final IOperatorValuePropagator<Long, IValue> PROPAGATOR_LONG_VALUE = new IOperatorValuePropagator<Long, IValue>() {
+        @Override
+        public IValue getOutput(Long input) throws EvaluationException {
+            return ValueTypeLong.ValueLong.of(input);
         }
     };
     public static final IOperatorValuePropagator<Boolean, IValue> PROPAGATOR_BOOLEAN_VALUE = new IOperatorValuePropagator<Boolean, IValue>() {
@@ -180,5 +189,29 @@ public class OperatorBuilders {
             FUNCTION_FLUIDSTACK.appendPost(PROPAGATOR_INTEGER_VALUE);
     public static final IterativeFunction.PrePostBuilder<FluidStack, Boolean> FUNCTION_FLUIDSTACK_TO_BOOLEAN =
             FUNCTION_FLUIDSTACK.appendPost(PROPAGATOR_BOOLEAN_VALUE);
+
+    /**
+     * Helper function to create an operator function builder for deriving capabilities from an itemstack.
+     * @param capabilityReference The capability instance reference.
+     * @param <T> The capability type.
+     * @return The builder.
+     */
+    public static <T> IterativeFunction.PrePostBuilder<T, IValue> getItemCapability(@Nullable final ICapabilityReference<T> capabilityReference) {
+        return IterativeFunction.PrePostBuilder.begin()
+                .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, T>() {
+                    @Override
+                    public T getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                        ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0);
+                        if(a.getRawValue().isPresent() && a.getRawValue().get().hasCapability(capabilityReference.getReference(), null)) {
+                            return a.getRawValue().get().getCapability(capabilityReference.getReference(), null);
+                        }
+                        return null;
+                    }
+                });
+    }
+
+    public static interface ICapabilityReference<T> {
+        public Capability<T> getReference();
+    }
 
 }

@@ -85,7 +85,7 @@ public class RfApiCompat implements IApiCompat {
 
 	@Override
 	public String getComment() {
-		return "RF readers aspects.";
+		return "RF readers aspects and operators.";
 	}
 
 }
