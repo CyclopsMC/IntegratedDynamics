@@ -17,7 +17,6 @@ import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
@@ -77,12 +76,10 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                     return true;
                 } else if (itemFluidHandler != null && !tank.isFull()
                         && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false) != null) {
-                    if(FluidHelpers.canCompletelyFill(itemFluidHandler, tank)) {
-                        ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
-                        InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
-                        tile.sendUpdate();
-                        return true;
-                    }
+                    ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
+                    InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                    tile.sendUpdate();
+                    return true;
                 } else if (itemFluidHandler != null && !tank.isEmpty() &&
                         FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false) != null) {
                     ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);

@@ -43,7 +43,6 @@ public class Configs {
         configHandler.add(new ItemVariableConfig());
         configHandler.add(new ItemLabellerConfig());
         configHandler.add(new ItemFacadeConfig());
-        configHandler.add(new ItemBucketMenrilResinConfig());
         configHandler.add(new ItemCrystalizedMenrilChunkConfig());
         configHandler.add(new ItemVariableTransformerConfig());
         configHandler.add(new ItemMenrilBerriesConfig());
