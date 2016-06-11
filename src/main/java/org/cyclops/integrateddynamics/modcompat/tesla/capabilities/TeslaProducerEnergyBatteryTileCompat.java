@@ -37,7 +37,7 @@ public class TeslaProducerEnergyBatteryTileCompat implements ICapabilityConstruc
 
         @Override
         public long takePower(long power, boolean simulated) {
-            return provider.consume((int) Long.min(power, Integer.MAX_VALUE), simulated);
+            return provider.consume((int) Math.min(power, Integer.MAX_VALUE), simulated);
         }
     }
 }

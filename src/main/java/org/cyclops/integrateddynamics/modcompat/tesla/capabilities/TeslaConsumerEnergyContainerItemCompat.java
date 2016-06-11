@@ -38,7 +38,7 @@ public class TeslaConsumerEnergyContainerItemCompat implements ICapabilityConstr
 
         @Override
         public long givePower(long power, boolean simulated) {
-            return ((ItemBlockEnergyContainer) provider.getItem()).addEnergy(provider, (int) Long.min(power, Integer.MAX_VALUE), simulated);
+            return ((ItemBlockEnergyContainer) provider.getItem()).addEnergy(provider, (int) Math.min(power, Integer.MAX_VALUE), simulated);
         }
     }
 }
