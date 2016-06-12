@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.modcompat.jei;
 
 import mezz.jei.api.*;
+import net.minecraft.item.ItemStack;
+import org.cyclops.integrateddynamics.block.BlockDryingBasin;
+import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeCategory;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeHandler;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeJEI;
@@ -28,11 +31,13 @@ public class JEIIntegratedDynamicsConfig implements IModPlugin {
             registry.addRecipes(DryingBasinRecipeJEI.getAllRecipes());
             registry.addRecipeCategories(new DryingBasinRecipeCategory(JEI_HELPER.getGuiHelper()));
             registry.addRecipeHandlers(new DryingBasinRecipeHandler());
+            registry.addRecipeCategoryCraftingItem(new ItemStack(BlockDryingBasin.getInstance()), DryingBasinRecipeHandler.CATEGORY);
 
             // Squeezer
             registry.addRecipes(SqueezerRecipeJEI.getAllRecipes());
             registry.addRecipeCategories(new SqueezerRecipeCategory(JEI_HELPER.getGuiHelper()));
             registry.addRecipeHandlers(new SqueezerRecipeHandler());
+            registry.addRecipeCategoryCraftingItem(new ItemStack(BlockSqueezer.getInstance()), SqueezerRecipeHandler.CATEGORY);
         }
     }
 
