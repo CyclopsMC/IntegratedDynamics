@@ -64,4 +64,23 @@ public final class Helpers {
         return builder.build();
     }
 
+    /**
+     * Create a string of 'length' times '%s' seperated by ','.
+     * @param length The length for the series of '%s'.
+     * @return The string.
+     */
+    public static String createPatternOfLength(int length) {
+        StringBuilder pattern = new StringBuilder();
+        boolean first = true;
+        for (int i = 0; i < length; i++) {
+            if (first) {
+                first = false;
+            } else {
+                pattern.append(",");
+            }
+            pattern.append("%s");
+        }
+        return pattern.toString();
+    }
+
 }

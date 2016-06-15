@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -41,6 +42,20 @@ public class ValueHelpers {
             valueTypes[i] = variableFacade == null ? null : variableFacade.getOutputType();
         }
         return valueTypes;
+    }
+
+    /**
+     * Create a new unlocalized name array from the given variableFacades array element-wise.
+     * @param valueTypes The value types.
+     * @return The unlocalized names array corresponding element-wise to the value types array.
+     */
+    public static L10NHelpers.UnlocalizedString[] from(IValueType[] valueTypes) {
+        L10NHelpers.UnlocalizedString[] names = new L10NHelpers.UnlocalizedString[valueTypes.length];
+        for(int i = 0; i < valueTypes.length; i++) {
+            IValueType valueType = valueTypes[i];
+            names[i] = new L10NHelpers.UnlocalizedString(valueType.getUnlocalizedName());
+        }
+        return names;
     }
 
     /**

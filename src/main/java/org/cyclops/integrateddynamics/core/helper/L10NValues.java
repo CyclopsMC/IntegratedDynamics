@@ -32,6 +32,8 @@ public class L10NValues {
     public static final String VALUETYPE_ERROR_INVALIDINPUT = "valuetype." + NS + ".error.invalidInput";
     public static final String VALUETYPE_ERROR_INVALIDINPUTITEM = "valuetype." + NS + ".error.invalidInputItem";
     public static final String VALUETYPE_ERROR_INVALIDLISTELEMENT = "valuetype." + NS + ".error.invalidListElement";
+    public static final String VALUETYPE_ERROR_INVALIDOPERATOROPERATOR = "valuetype." + NS + ".error.invalidOperatorOperator";
+    public static final String VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE = "valuetype." + NS + ".error.invalidOperatorSignature";
     public static final String VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK = "valuetype." + NS + ".error.block.noBlock";
     public static final String VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID = "valuetype." + NS + ".error.fluid.noFluid";
     public static final String VALUETYPE_OBJECT_THAUMCRAFTASPECT_ERROR_NOASPECT = "valuetype." + NS + ".error.thaumcraftaspect.noAspect";

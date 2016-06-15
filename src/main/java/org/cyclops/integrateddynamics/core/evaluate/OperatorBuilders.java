@@ -9,8 +9,11 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
@@ -20,8 +23,10 @@ import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IterativeFunction;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 /**
  * Collection of operator builders.
@@ -189,6 +194,75 @@ public class OperatorBuilders {
             FUNCTION_FLUIDSTACK.appendPost(PROPAGATOR_INTEGER_VALUE);
     public static final IterativeFunction.PrePostBuilder<FluidStack, Boolean> FUNCTION_FLUIDSTACK_TO_BOOLEAN =
             FUNCTION_FLUIDSTACK.appendPost(PROPAGATOR_BOOLEAN_VALUE);
+
+    // --------------- Operator builders ---------------
+    public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Pair<IOperator, OperatorBase.SafeVariablesGetter>>() {
+                @Override
+                public Pair<IOperator, OperatorBase.SafeVariablesGetter> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input.getValue(0)).getRawValue();
+                    IValue applyingValue = input.getValue(1);
+                    L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
+                    if (error != null) {
+                        throw new EvaluationException(error.localize());
+                    }
+                    return Pair.<IOperator, OperatorBase.SafeVariablesGetter>of(innerOperator,
+                            new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
+                }
+            });
+    public static final OperatorBuilder.IConditionalOutputTypeDeriver OPERATOR_CONDITIONAL_OUTPUT_DERIVER = new OperatorBuilder.IConditionalOutputTypeDeriver() {
+        @Override
+        public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
+            try {
+                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input[0].getValue()).getRawValue();
+                IVariable[] innerVariables = Arrays.copyOfRange(input, 1, input.length);
+                L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(ValueHelpers.from(innerVariables));
+                if (error != null) {
+                    return innerOperator.getOutputType();
+                }
+                return innerOperator.getConditionalOutputType(innerVariables);
+            } catch (EvaluationException e) {
+                return ValueTypes.CATEGORY_ANY;
+            }
+        }
+    };
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> OPERATOR = OperatorBuilder
+            .forType(ValueTypes.OPERATOR).appendKind("operator")
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> OPERATOR_2_INFIX_LONG = OPERATOR
+            .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY})
+            .renderPattern(IConfigRenderPattern.INFIX);
+
+    /**
+     * Create a type validator for operator operator type validators.
+     * @param expectedSubTypes The expected types that must be present in the operator (not including the first
+     *                         operator type itself.
+     * @return The type validator instance.
+     */
+    public static OperatorBuilder.ITypeValidator createOperatorTypeValidator(final IValueType... expectedSubTypes) {
+        final int subOperatorLength = expectedSubTypes.length;
+        final L10NHelpers.UnlocalizedString expected = new L10NHelpers.UnlocalizedString(
+                org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(subOperatorLength), ValueHelpers.from(expectedSubTypes));
+        return new OperatorBuilder.ITypeValidator() {
+            @Override
+            public L10NHelpers.UnlocalizedString validateTypes(OperatorBase operator, IValueType[] input) {
+                if (input.length == 0 || input[0] != ValueTypes.OPERATOR) {
+                    String givenName = input.length == 0 ? "null" : input[0].getUnlocalizedName();
+                    return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDOPERATOROPERATOR,
+                            0, givenName);
+                }
+                if (input.length != subOperatorLength + 1) {
+                    IValueType[] operatorInputs = Arrays.copyOfRange(input, 1, input.length);
+                    L10NHelpers.UnlocalizedString given = new L10NHelpers.UnlocalizedString(
+                            org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(operatorInputs.length), ValueHelpers.from(operatorInputs));
+                    return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE,
+                            expected, given);
+                }
+
+                return null;
+            }
+        };
+    }
 
     /**
      * Helper function to create an operator function builder for deriving capabilities from an itemstack.

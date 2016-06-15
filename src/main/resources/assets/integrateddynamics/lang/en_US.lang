@@ -73,6 +73,8 @@ valuetype.integrateddynamics.operator.tooltip.signature=§eSignature: §r%s
 valuetype.integrateddynamics.error.invalidInput=The input "%s" could not be parsed for this value type.
 valuetype.integrateddynamics.error.invalidInputItem=This value type requires an input item.
 valuetype.integrateddynamics.error.invalidListElement=Element %s is invalid: %s
+valuetype.integrateddynamics.error.invalidOperatorOperator=An operator value type was expected at position %s, while %s was given
+valuetype.integrateddynamics.error.invalidOperatorSignature=The operator value %s expected value types (%s), while (%s) was given.
 valuetype.integrateddynamics.error.block.noBlock=The inserted item is no block.
 valuetype.integrateddynamics.error.fluid.noFluid=The inserted item contains no fluid.
 
@@ -680,6 +682,11 @@ operator.operators.integrateddynamics.fluidstack.israwfluidequal.name=Raw fluid 
 operator.operators.integrateddynamics.fluidstack.israwfluidequal.info=If the raw fluids are equal
 operator.operators.integrateddynamics.fluidstack.mod.name=Mod
 operator.operators.integrateddynamics.fluidstack.mod.info=The name of the mod owning the given fluid
+
+operator.operators.integrateddynamics.operator.name=Operator
+operator.operators.integrateddynamics.operator.basename=Operator %s
+operator.operators.integrateddynamics.operator.apply.name=apply
+operator.operators.integrateddynamics.operator.apply.info=Apply for a given operator a given value.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

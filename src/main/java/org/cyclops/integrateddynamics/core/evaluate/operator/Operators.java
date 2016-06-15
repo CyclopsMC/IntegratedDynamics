@@ -28,6 +28,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -1511,6 +1512,26 @@ public final class Operators {
                     return ValueTypeString.ValueString.of(modName);
                 }
             }).build());
+
+    /**
+     * ----------------------------------- OPERTATOR OPERATORS -----------------------------------
+     */
+
+    /**
+     * Apply for a given operator a given value.
+     */
+    public static final IOperator OPERATOR_APPLY = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
+            .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply")
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY))
+            .function(OperatorBuilders.FUNCTION_OPERATOR.build(
+                    new IOperatorValuePropagator<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue>() {
+                        @Override
+                        public IValue getOutput(Pair<IOperator, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                            IOperator innerOperator = input.getLeft();
+                            OperatorBase.SafeVariablesGetter variables = input.getRight();
+                            return innerOperator.evaluate(new IVariable[]{variables.getVariables()[0]});
+                        }
+                    })).build());
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

@@ -190,6 +190,12 @@ public abstract class OperatorBase implements IOperator {
             return this.variables;
         }
 
+        public static class Shifted extends SafeVariablesGetter {
+
+            public Shifted(int start, IVariable... variables) {
+                super(Arrays.copyOfRange(variables, start, variables.length));
+            }
+        }
     }
 
     public static interface IFunction {
