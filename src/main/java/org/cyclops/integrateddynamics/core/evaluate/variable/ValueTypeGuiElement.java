@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -21,26 +19,32 @@ import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Element for value type.
  * @author rubensworks
  */
 @Data
-public class ValueTypeGuiElement<G extends Gui, C extends Container> implements IGuiInputElement<SubGuiConfigRenderPattern, G, C> {
+public class ValueTypeGuiElement<G extends Gui, C extends Container> implements IGuiInputElement<SubGuiConfigRenderPattern, G, C>, IDropdownEntryListener {
 
     private final IValueType valueType;
-    private final String defaultInputString;
-    @Getter
-    @Setter
+    private final IConfigRenderPattern renderPattern;
+    private String defaultInputString;
     private String inputString;
+    private Set<IDropdownEntry<?>> dropdownPossibilities = Collections.emptySet();
+    private IDropdownEntryListener dropdownEntryListener = null;
 
-    public ValueTypeGuiElement(IValueType valueType) {
+    public ValueTypeGuiElement(IValueType valueType, IConfigRenderPattern renderPattern) {
         this.valueType = valueType;
+        this.renderPattern = renderPattern;
         defaultInputString = getValueType().toCompactString(getValueType().getDefault());
     }
 
@@ -58,12 +62,12 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
 
     @Override
     public void loadTooltip(List<String> lines) {
-        getValueType().loadTooltip(lines, true);
+        getValueType().loadTooltip(lines, true, null);
     }
 
     @Override
     public IConfigRenderPattern getRenderPattern() {
-        return IConfigRenderPattern.NONE;
+        return renderPattern;
     }
 
     @Override
@@ -89,6 +93,13 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
     @Override
     public String getSymbol() {
         return L10NHelpers.localize(getValueType().getUnlocalizedName());
+    }
+
+    @Override
+    public void onSetDropdownPossiblity(IDropdownEntry<?> dropdownEntry) {
+        if (dropdownEntryListener != null) {
+            dropdownEntryListener.onSetDropdownPossiblity(dropdownEntry);
+        }
     }
 
     @Override

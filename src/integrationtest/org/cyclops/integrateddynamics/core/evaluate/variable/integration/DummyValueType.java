@@ -41,7 +41,7 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
+    public void loadTooltip(List<String> lines, boolean appendOptionalInfo, DummyValue value) {
 
     }
 
@@ -83,6 +83,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     @Override
     public DummyValue materialize(DummyValue value) {
         return value;
+    }
+
+    @Override
+    public boolean hasDefaultLogicProgrammerElement() {
+        return true;
     }
 
     @ToString

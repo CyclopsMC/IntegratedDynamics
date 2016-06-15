@@ -4,29 +4,32 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.core.client.gui.GuiTextFieldDropdown;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeValueChangedPacket;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C extends Container> extends SubGuiConfigRenderPattern<ValueTypeGuiElement<G, C>, G, C> {
+public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C extends Container> extends SubGuiConfigRenderPattern<ValueTypeGuiElement<G, C>, G, C> implements IDropdownEntryListener {
 
+    @Getter
     protected final ValueTypeGuiElement<G, C> element;
     @Getter
-    private GuiTextField searchField = null;
+    private GuiTextFieldDropdown searchField = null;
 
     public ValueTypeSubGuiRenderPattern(ValueTypeGuiElement<G, C> element, int baseX, int baseY, int maxWidth, int maxHeight,
                                         G gui, C container) {
@@ -37,30 +40,36 @@ public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C
     @Override
     public void initGui(int guiLeft, int guiTop) {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-        int searchWidth = 71;
+        int searchWidth = getElement().getRenderPattern().getWidth() - 28;
         int searchX = getX() + 14;
         int searchY = getY() + 6;
-        this.searchField = new GuiTextField(0, fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth, fontRenderer.FONT_HEIGHT);
+        this.searchField = new GuiTextFieldDropdown(0, fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
+                fontRenderer.FONT_HEIGHT + 3, true, getDropdownPossibilities());
+        this.searchField.setDropdownEntryListener(this);
         this.searchField.setMaxStringLength(64);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
         this.searchField.setTextColor(16777215);
         this.searchField.setCanLoseFocus(true);
-        String value = StringUtils.isEmpty(element.getInputString()) ? element.getValueType().toCompactString(element.getValueType().getDefault()) : element.getInputString();
+        String value = element.getInputString();
+        if (value == null) {
+            value = element.getDefaultInputString();
+        }
         this.searchField.setText(value);
         element.setInputString(searchField.getText());
         this.searchField.width = searchWidth;
         this.searchField.xPosition = guiLeft + (searchX + searchWidth) - this.searchField.width;
     }
 
+    protected Set<IDropdownEntry<?>> getDropdownPossibilities() {
+        return element.getDropdownPossibilities();
+    }
+
     @Override
     public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-
-        textureManager.bindTexture(TEXTURE);
-        this.drawTexturedModalRect(searchField.xPosition - 1, searchField.yPosition - 1, 37, 0, searchField.width + 1, 12);
         // Textbox
-        searchField.drawTextBox();
+        searchField.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
     }
 
     @Override
@@ -85,4 +94,8 @@ public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
+    @Override
+    public void onSetDropdownPossiblity(IDropdownEntry<?> dropdownEntry) {
+        element.onSetDropdownPossiblity(dropdownEntry);
+    }
 }

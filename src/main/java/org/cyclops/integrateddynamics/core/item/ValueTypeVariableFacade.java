@@ -96,8 +96,9 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     @Override
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {
         if(isValid()) {
-            getValueType().loadTooltip(list, false);
-            list.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(getValue())));
+            V value = getValue();
+            getValueType().loadTooltip(list, false, value);
+            list.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
         }
         super.addInformation(list, entityPlayer);
     }

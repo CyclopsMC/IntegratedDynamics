@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -83,7 +84,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
+    public void loadTooltip(List<String> lines, boolean appendOptionalInfo, @Nullable V value) {
         String typeName = L10NHelpers.localize(getUnlocalizedName());
         lines.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
@@ -109,6 +110,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     @Override
     public String toString() {
         return L10NHelpers.localize(getUnlocalizedName());
+    }
+
+    @Override
+    public boolean hasDefaultLogicProgrammerElement() {
+        return !isObject();
     }
 
     protected String getModId() {

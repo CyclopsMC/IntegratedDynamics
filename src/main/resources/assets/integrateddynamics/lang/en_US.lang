@@ -69,6 +69,7 @@ biomes.integrateddynamics.biomeMeneglin=Meneglin
 valuetype.integrateddynamics.valueType=Value Type
 valuetype.integrateddynamics.tooltip.typeName=§eType: §r%s
 valuetype.integrateddynamics.tooltip.value=§e§oValue: §r%s
+valuetype.integrateddynamics.operator.tooltip.signature=§eSignature: §r%s
 valuetype.integrateddynamics.error.invalidInput=The input "%s" could not be parsed for this value type.
 valuetype.integrateddynamics.error.invalidInputItem=This value type requires an input item.
 valuetype.integrateddynamics.error.invalidListElement=Element %s is invalid: %s
@@ -87,6 +88,7 @@ valuetype.valuetypes.integrateddynamics.integer.name=Integer
 valuetype.valuetypes.integrateddynamics.double.name=Double
 valuetype.valuetypes.integrateddynamics.long.name=Long
 valuetype.valuetypes.integrateddynamics.string.name=String
+valuetype.valuetypes.integrateddynamics.operator.name=Operator
 
 valuetype.valuetypes.integrateddynamics.list.name=List
 valuetype.valuetypes.integrateddynamics.block.name=Block

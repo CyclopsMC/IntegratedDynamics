@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
+import lombok.Getter;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -26,6 +27,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class SubGuiConfigRenderPattern<E extends IGuiInputElement, G extends Gui, C extends Container> extends SubGuiBox implements ISubGuiBox {
 
+    @Getter
     protected final E element;
     private final int x, y;
     protected final G gui;

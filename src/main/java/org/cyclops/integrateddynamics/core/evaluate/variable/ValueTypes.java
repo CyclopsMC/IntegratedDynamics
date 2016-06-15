@@ -13,12 +13,13 @@ public class ValueTypes {
     public static final IValueTypeRegistry REGISTRY = constructRegistry();
 
     // Raw value types
-    public static ValueTypeBoolean BOOLEAN = REGISTRY.register(new ValueTypeBoolean());
-    public static ValueTypeInteger INTEGER = REGISTRY.register(new ValueTypeInteger());
-    public static ValueTypeDouble  DOUBLE  = REGISTRY.register(new ValueTypeDouble());
-    public static ValueTypeLong    LONG    = REGISTRY.register(new ValueTypeLong());
-    public static ValueTypeString  STRING  = REGISTRY.register(new ValueTypeString());
-    public static ValueTypeList    LIST    = REGISTRY.register(new ValueTypeList());
+    public static ValueTypeBoolean  BOOLEAN  = REGISTRY.register(new ValueTypeBoolean());
+    public static ValueTypeInteger  INTEGER  = REGISTRY.register(new ValueTypeInteger());
+    public static ValueTypeDouble   DOUBLE   = REGISTRY.register(new ValueTypeDouble());
+    public static ValueTypeLong     LONG     = REGISTRY.register(new ValueTypeLong());
+    public static ValueTypeString   STRING   = REGISTRY.register(new ValueTypeString());
+    public static ValueTypeList     LIST     = REGISTRY.register(new ValueTypeList());
+    public static ValueTypeOperator OPERATOR = REGISTRY.register(new ValueTypeOperator());
 
     // Object types
     public static ValueObjectTypeBlock      OBJECT_BLOCK      = REGISTRY.register(new ValueObjectTypeBlock());

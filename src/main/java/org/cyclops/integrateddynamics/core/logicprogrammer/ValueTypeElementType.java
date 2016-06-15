@@ -41,7 +41,7 @@ public class ValueTypeElementType implements ILogicProgrammerElementType<ValueTy
     public List<ValueTypeElement> createElements() {
         ImmutableList.Builder<ValueTypeElement> builder = ImmutableList.builder();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
-            if(!valueType.isCategory() && !valueType.isObject()) {
+            if(valueType.hasDefaultLogicProgrammerElement()) {
                 builder.add(new ValueTypeElement(valueType));
             }
         }

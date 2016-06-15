@@ -92,7 +92,7 @@ public class GuiPartSettings extends GuiContainerExtended {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        numberField.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+        numberField.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
         fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.updateInterval"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
     }
 

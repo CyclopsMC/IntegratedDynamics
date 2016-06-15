@@ -20,6 +20,7 @@ public class LogicProgrammerElementTypes {
 
     // Specific types
     public static final ValueTypeListElementType             LIST_ELEMENT_TYPE      = REGISTRY.addType(new ValueTypeListElementType());
+    public static final ValueTypeOperatorElementType         OPERATOR_ELEMENT_TYPE  = REGISTRY.addType(new ValueTypeOperatorElementType());
     public static final ValueObjectTypeBlockElementType      OBJECT_BLOCK_TYPE      = REGISTRY.addType(new ValueObjectTypeBlockElementType());
     public static final ValueObjectTypeItemStackElementType  OBJECT_ITEMSTACK_TYPE  = REGISTRY.addType(new ValueObjectTypeItemStackElementType());
     public static final ValueObjectTypeFluidStackElementType OBJECT_FLUIDSTACK_TYPE = REGISTRY.addType(new ValueObjectTypeFluidStackElementType());

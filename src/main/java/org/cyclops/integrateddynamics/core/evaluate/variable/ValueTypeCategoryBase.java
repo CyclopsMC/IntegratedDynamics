@@ -82,4 +82,9 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     public Set<IValueType<?>> getElements() {
         return Collections.unmodifiableSet(elements);
     }
+
+    @Override
+    public boolean hasDefaultLogicProgrammerElement() {
+        return false;
+    }
 }

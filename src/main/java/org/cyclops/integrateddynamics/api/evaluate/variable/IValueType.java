@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -41,8 +42,9 @@ public interface IValueType<V extends IValue> {
      * Add tooltip lines for this aspect when hovered in a gui.
      * @param lines The list to add lines to.
      * @param appendOptionalInfo If shift-to-show info should be added.
+     * @param value The value to show the tooltip for.
      */
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo);
+    public void loadTooltip(List<String> lines, boolean appendOptionalInfo, @Nullable V value);
 
     /**
      * @param value The value
@@ -95,6 +97,11 @@ public interface IValueType<V extends IValue> {
      * @return The materialized value.
      */
     public V materialize(V value);
+
+    /**
+     * @return If a default logic programmer element has to be generated.
+     */
+    public boolean hasDefaultLogicProgrammerElement();
 
     /**
      * Use this comparator for any comparisons with value types.
