@@ -470,6 +470,8 @@ aspect.aspecttypes.integrateddynamics.double.spreadZ.name=Z Spread
 aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name=Force Spawning
 
 # Operators
+operator.integrateddynamics.applied.operatorName=%s [%s]
+operator.integrateddynamics.applied.type=§Applied to: §r%s
 operator.integrateddynamics.tooltip.operatorName=§eOperator: §r%s (%s)
 operator.integrateddynamics.tooltip.operatorCategory=§eCategory: §r%s
 operator.integrateddynamics.tooltip.variableIds=§e§oVariable IDs: §r§o%s
@@ -478,6 +480,7 @@ operator.integrateddynamics.tooltip.outputTypeName=§eOutput Type: §r%s
 operator.integrateddynamics.error.wrongInputLength=The operator %s received an input of length %s while it needs a length of %s.
 operator.integrateddynamics.error.nullType=The operator %s received an input with a null variable at position %s.
 operator.integrateddynamics.error.wrongType=The operator %s received an input with type %s at position %s while the type %s was expected.
+operator.integrateddynamics.error.wrongCurryingType=The operator %s received an input with type %s at position %s while the type %s was expected for currying.
 operator.integrateddynamics.error.variableNotInNetwork=Variable with id %s could not be found within the current network.
 operator.integrateddynamics.error.cyclicReference=Variable with id %s depends on itself, infinite recursion.
 

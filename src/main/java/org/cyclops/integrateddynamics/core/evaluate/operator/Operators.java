@@ -1514,7 +1514,7 @@ public final class Operators {
             }).build());
 
     /**
-     * ----------------------------------- OPERTATOR OPERATORS -----------------------------------
+     * ----------------------------------- OPERATOR OPERATORS -----------------------------------
      */
 
     /**
@@ -1523,13 +1523,18 @@ public final class Operators {
     public static final IOperator OPERATOR_APPLY = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply")
             .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY))
-            .function(OperatorBuilders.FUNCTION_OPERATOR.build(
+            .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
                     new IOperatorValuePropagator<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue>() {
                         @Override
                         public IValue getOutput(Pair<IOperator, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                             IOperator innerOperator = input.getLeft();
                             OperatorBase.SafeVariablesGetter variables = input.getRight();
-                            return innerOperator.evaluate(new IVariable[]{variables.getVariables()[0]});
+                            IVariable variable = variables.getVariables()[0];
+                            if (innerOperator.getRequiredInputLength() == 1) {
+                                return innerOperator.evaluate(new IVariable[]{variable});
+                            } else {
+                                return ValueTypeOperator.ValueOperator.of(new CurriedOperator(innerOperator, variable));
+                            }
                         }
                     })).build());
 

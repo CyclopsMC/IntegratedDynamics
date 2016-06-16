@@ -196,15 +196,27 @@ public class OperatorBuilders {
             FUNCTION_FLUIDSTACK.appendPost(PROPAGATOR_BOOLEAN_VALUE);
 
     // --------------- Operator builders ---------------
-    public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR = IterativeFunction.PrePostBuilder.begin()
+    public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR_TAKE_OPERATOR = IterativeFunction.PrePostBuilder.begin()
             .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Pair<IOperator, OperatorBase.SafeVariablesGetter>>() {
                 @Override
                 public Pair<IOperator, OperatorBase.SafeVariablesGetter> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                     IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input.getValue(0)).getRawValue();
-                    IValue applyingValue = input.getValue(1);
-                    L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
-                    if (error != null) {
-                        throw new EvaluationException(error.localize());
+                    if (innerOperator.getRequiredInputLength() == 1) {
+                        IValue applyingValue = input.getValue(1);
+                        L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
+                        if (error != null) {
+                            throw new EvaluationException(error.localize());
+                        }
+                    } else {
+                        if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
+                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
+                                    new L10NHelpers.UnlocalizedString(innerOperator.getUnlocalizedName()),
+                                    new L10NHelpers.UnlocalizedString(input.getVariables()[0].getType().getUnlocalizedName()),
+                                    0,
+                                    new L10NHelpers.UnlocalizedString(innerOperator.getInputTypes()[0].getUnlocalizedName())
+                                    );
+                            throw new EvaluationException(error.localize());
+                        }
                     }
                     return Pair.<IOperator, OperatorBase.SafeVariablesGetter>of(innerOperator,
                             new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
@@ -215,12 +227,16 @@ public class OperatorBuilders {
         public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
             try {
                 IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input[0].getValue()).getRawValue();
-                IVariable[] innerVariables = Arrays.copyOfRange(input, 1, input.length);
-                L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(ValueHelpers.from(innerVariables));
-                if (error != null) {
-                    return innerOperator.getOutputType();
+                if (innerOperator.getRequiredInputLength() == 1) {
+                    IVariable[] innerVariables = Arrays.copyOfRange(input, 1, input.length);
+                    L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(ValueHelpers.from(innerVariables));
+                    if (error != null) {
+                        return innerOperator.getOutputType();
+                    }
+                    return innerOperator.getConditionalOutputType(innerVariables);
+                } else {
+                    return ValueTypes.OPERATOR;
                 }
-                return innerOperator.getConditionalOutputType(innerVariables);
             } catch (EvaluationException e) {
                 return ValueTypes.CATEGORY_ANY;
             }
@@ -246,7 +262,7 @@ public class OperatorBuilders {
         return new OperatorBuilder.ITypeValidator() {
             @Override
             public L10NHelpers.UnlocalizedString validateTypes(OperatorBase operator, IValueType[] input) {
-                if (input.length == 0 || input[0] != ValueTypes.OPERATOR) {
+                if (input.length == 0 || !ValueHelpers.correspondsTo(input[0], ValueTypes.OPERATOR)) {
                     String givenName = input.length == 0 ? "null" : input[0].getUnlocalizedName();
                     return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDOPERATOROPERATOR,
                             0, givenName);

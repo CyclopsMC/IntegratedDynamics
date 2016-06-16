@@ -38,7 +38,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
 
     @Override
     public String serialize(ValueOperator value) {
-        return value.getRawValue().getUnlocalizedName();
+        return value.getRawValue().getUniqueName();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
                     .append(L10NHelpers.localize(inputType.getUnlocalizedName()))
                     .append(TextFormatting.RESET);
         }
-        sb.append(") ");
+        sb.append(")");
 
         sb = switchSignatureLineContext(lines, sb);
         sb.append(SIGNATURE_LINK + " ")

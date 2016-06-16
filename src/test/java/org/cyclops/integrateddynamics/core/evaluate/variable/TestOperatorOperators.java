@@ -4,6 +4,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -29,6 +30,7 @@ public class TestOperatorOperators {
 
     private DummyVariableOperator oGeneralIdentity;
     private DummyVariableOperator oLogicalNot;
+    private DummyVariableOperator oLogicalAnd;
 
     @Before
     public void before() {
@@ -39,6 +41,7 @@ public class TestOperatorOperators {
 
         oGeneralIdentity = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
         oLogicalNot      = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
+        oLogicalAnd      = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_AND));
     }
 
     /**
@@ -46,7 +49,7 @@ public class TestOperatorOperators {
      */
 
     @Test
-    public void testRelationalEquals() throws EvaluationException {
+    public void testRelationalApply() throws EvaluationException {
         IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oGeneralIdentity, bFalse});
         assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
         assertThat("id(false) == false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
@@ -61,35 +64,73 @@ public class TestOperatorOperators {
         assertThat("not(true) == false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
     }
 
+    @Test
+    public void testRelationalApplyCurring() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bTrue});
+        assertThat("result is an operator", res1, instanceOf(ValueTypeOperator.ValueOperator.class));
+        assertThat("result is a curriedoperator", ((ValueTypeOperator.ValueOperator) res1).getRawValue(), instanceOf(CurriedOperator.class));
+
+        DummyVariableOperator oLogicalAndCurriedTrue = new DummyVariableOperator((ValueTypeOperator.ValueOperator) res1);
+        IValue res2_1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAndCurriedTrue, bTrue});
+        assertThat("result is a boolean", res2_1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("and(true)(true) == true", ((ValueTypeBoolean.ValueBoolean) res2_1).getRawValue(), is(true));
+        IValue res2_2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAndCurriedTrue, bFalse});
+        assertThat("and(true)(false) == false", ((ValueTypeBoolean.ValueBoolean) res2_2).getRawValue(), is(false));
+
+        IValue res3 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bFalse});
+        assertThat("result is a curriedoperator", ((ValueTypeOperator.ValueOperator) res3).getRawValue(), instanceOf(CurriedOperator.class));
+
+        DummyVariableOperator oLogicalAndCurriedFalse = new DummyVariableOperator((ValueTypeOperator.ValueOperator) res3);
+        IValue res4_1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAndCurriedFalse, bTrue});
+        assertThat("result is a boolean", res2_1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("and(false)(true) == false", ((ValueTypeBoolean.ValueBoolean) res4_1).getRawValue(), is(false));
+        IValue res4_2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAndCurriedFalse, bFalse});
+        assertThat("and(false)(false) == false", ((ValueTypeBoolean.ValueBoolean) res4_2).getRawValue(), is(false));
+    }
+
     @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeEqualsLarge() throws EvaluationException {
+    public void testInvalidInputSizeApplyLarge() throws EvaluationException {
         Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oGeneralIdentity, bFalse, bFalse});
     }
 
     @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeEqualsSmall() throws EvaluationException {
+    public void testInvalidInputSizeApplyCurryingLarge() throws EvaluationException {
+        DummyVariableOperator curriedOperatorValue = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bTrue}));
+        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{curriedOperatorValue, bFalse, bFalse});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeApplySmall() throws EvaluationException {
         Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oGeneralIdentity});
     }
 
     @Test(expected = EvaluationException.class)
-    public void testInvalidOperatorType() throws EvaluationException {
+    public void testInvalidInputSizeApplyCurringSmall() throws EvaluationException {
+        DummyVariableOperator curriedOperatorValue = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bTrue}));
+        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{curriedOperatorValue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypeApply() throws EvaluationException {
         Operators.OPERATOR_APPLY.evaluate(new IVariable[]{bFalse, bFalse});
     }
 
     @Test(expected = EvaluationException.class)
-    public void testInvalidOperatorInputType() throws EvaluationException {
+    public void testInvalidOperatorInputTypeApply() throws EvaluationException {
         Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalNot, oGeneralIdentity});
     }
 
     @Test
-    public void testValidateTypes() {
+    public void testValidateTypesApply() {
         assertThat(Operators.OPERATOR_APPLY.validateTypes(new IValueType[]{}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), nullValue());
     }
 
     @Test
-    public void testConditionalOutputTypes() {
+    public void testConditionalOutputTypesApply() {
         assertThat(Operators.OPERATOR_APPLY.getConditionalOutputType(new IVariable[]{oGeneralIdentity, bFalse}),
                 CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
         assertThat(Operators.OPERATOR_APPLY.getConditionalOutputType(new IVariable[]{oGeneralIdentity, i0}),
@@ -98,6 +139,15 @@ public class TestOperatorOperators {
                 CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
 
         assertThat(Operators.OPERATOR_APPLY.getConditionalOutputType(new IVariable[]{oLogicalNot, bFalse}),
+                CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
+    }
+
+    @Test
+    public void testConditionalOutputTypesApplyCurring() throws EvaluationException {
+        DummyVariableOperator curriedOperatorValue = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bTrue}));
+
+        assertThat(Operators.OPERATOR_APPLY.getConditionalOutputType(new IVariable[]{curriedOperatorValue, bFalse}),
                 CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
     }
 
