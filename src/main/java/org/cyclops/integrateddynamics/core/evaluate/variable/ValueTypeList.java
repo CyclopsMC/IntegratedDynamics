@@ -5,6 +5,7 @@ import lombok.ToString;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
@@ -116,12 +117,21 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
 
         @Override
         public boolean hasNext() {
-            return index < value.getLength();
+            try {
+                return index < value.getLength();
+            } catch (EvaluationException e) {
+                return false;
+            }
         }
 
         @Override
         public V next() {
-            return value.get(index++);
+            try {
+                return value.get(index++);
+            } catch (EvaluationException e) {
+                e.printStackTrace();
+                return value.getValueType().getDefault();
+            }
         }
 
         @Override

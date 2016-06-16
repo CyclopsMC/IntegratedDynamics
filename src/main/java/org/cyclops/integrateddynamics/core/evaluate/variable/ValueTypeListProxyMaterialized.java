@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
@@ -20,12 +21,12 @@ public class ValueTypeListProxyMaterialized<T extends IValueType<V>, V extends I
     }
 
     @Override
-    public int getLength() {
+    public int getLength() throws EvaluationException {
         return list.size();
     }
 
     @Override
-    public V get(int index) {
+    public V get(int index) throws EvaluationException {
         return list.get(index);
     }
 }

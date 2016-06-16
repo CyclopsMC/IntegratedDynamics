@@ -1521,8 +1521,9 @@ public final class Operators {
      * Apply for a given operator a given value.
      */
     public static final IOperator OPERATOR_APPLY = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply")
-            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY))
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
                     new IOperatorValuePropagator<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue>() {
                         @Override
@@ -1535,6 +1536,24 @@ public final class Operators {
                             } else {
                                 return ValueTypeOperator.ValueOperator.of(new CurriedOperator(innerOperator, variable));
                             }
+                        }
+                    })).build());
+
+    /**
+     * Apply the given operator on all elements of a list, resulting in a new list of mapped values.
+     */
+    public static final IOperator OPERATOR_MAP = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("map")
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST))
+            .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR_LIST.build(
+                    new IOperatorValuePropagator<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue>() {
+                        @Override
+                        public IValue getOutput(Pair<IOperator, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                            final IOperator innerOperator = input.getLeft();
+                            OperatorBase.SafeVariablesGetter variables = input.getRight();
+                            ValueTypeList.ValueList inputList = variables.getValue(0);
+                            return ValueTypeList.ValueList.ofFactory(
+                                    new ValueTypeListProxyOperatorMapped(innerOperator, inputList.getRawValue()));
                         }
                     })).build());
 

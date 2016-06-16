@@ -222,6 +222,30 @@ public class OperatorBuilders {
                             new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
                 }
             });
+    public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR_TAKE_OPERATOR_LIST = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Pair<IOperator, OperatorBase.SafeVariablesGetter>>() {
+                @Override
+                public Pair<IOperator, OperatorBase.SafeVariablesGetter> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input.getValue(0)).getRawValue();
+                    IValue applyingValue = input.getValue(1);
+                    if (!(applyingValue instanceof ValueTypeList.ValueList)) {
+                        L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                "?",
+                                new L10NHelpers.UnlocalizedString(applyingValue.getType().getUnlocalizedName()),
+                                0,
+                                new L10NHelpers.UnlocalizedString(ValueTypes.LIST.getUnlocalizedName())
+                        );
+                        throw new EvaluationException(error.localize());
+                    }
+                    ValueTypeList.ValueList applyingList = (ValueTypeList.ValueList) applyingValue;
+                    L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(new IValueType[]{applyingList.getRawValue().getValueType()});
+                    if (error != null) {
+                        throw new EvaluationException(error.localize());
+                    }
+                    return Pair.<IOperator, OperatorBase.SafeVariablesGetter>of(innerOperator,
+                            new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
+                }
+            });
     public static final OperatorBuilder.IConditionalOutputTypeDeriver OPERATOR_CONDITIONAL_OUTPUT_DERIVER = new OperatorBuilder.IConditionalOutputTypeDeriver() {
         @Override
         public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
@@ -243,8 +267,7 @@ public class OperatorBuilders {
         }
     };
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> OPERATOR = OperatorBuilder
-            .forType(ValueTypes.OPERATOR).appendKind("operator")
-            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER);
+            .forType(ValueTypes.OPERATOR).appendKind("operator");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> OPERATOR_2_INFIX_LONG = OPERATOR
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY})
             .renderPattern(IConfigRenderPattern.INFIX);

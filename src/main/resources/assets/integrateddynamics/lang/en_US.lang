@@ -690,6 +690,8 @@ operator.operators.integrateddynamics.operator.name=Operator
 operator.operators.integrateddynamics.operator.basename=Operator %s
 operator.operators.integrateddynamics.operator.apply.name=apply
 operator.operators.integrateddynamics.operator.apply.info=Apply for a given operator a given value.
+operator.operators.integrateddynamics.operator.map.name=map
+operator.operators.integrateddynamics.operator.map.info=Apply the given operator on all elements of a list, resulting in a new list of mapped values.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

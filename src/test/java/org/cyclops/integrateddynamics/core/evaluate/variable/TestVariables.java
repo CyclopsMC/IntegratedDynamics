@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -102,7 +103,7 @@ public class TestVariables {
     }
 
     @Test
-    public void testListTypeMaterialized() {
+    public void testListTypeMaterialized() throws EvaluationException {
         ValueTypeListProxyFactories.load();
 
         DummyVariableList l0 = new DummyVariableList(ValueTypeList.ValueList.ofAll());
