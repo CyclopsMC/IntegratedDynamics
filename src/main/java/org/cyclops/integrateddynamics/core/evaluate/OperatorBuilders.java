@@ -222,6 +222,13 @@ public class OperatorBuilders {
                             new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
                 }
             });
+    public static final IterativeFunction.PrePostBuilder<IOperator, IValue> FUNCTION_ONE_OPERATOR = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, IOperator>() {
+                @Override
+                public IOperator getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    return getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), ValueTypes.CATEGORY_ANY);
+                }
+            });
     public static final IterativeFunction.PrePostBuilder<IOperator, IValue> FUNCTION_ONE_PREDICATE = IterativeFunction.PrePostBuilder.begin()
             .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, IOperator>() {
                 @Override

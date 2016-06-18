@@ -18,8 +18,13 @@ public class CombinedOperator extends OperatorBase {
     private final String unlocalizedType;
 
     public CombinedOperator(String symbol, String operatorName, OperatorsFunction function, IValueType outputType) {
-        super(symbol, operatorName, new IValueType[]{ValueTypes.CATEGORY_ANY},
-                outputType, function, IConfigRenderPattern.PREFIX_1);
+        this(symbol, operatorName, function, new IValueType[]{ValueTypes.CATEGORY_ANY}, outputType, IConfigRenderPattern.PREFIX_1);
+    }
+
+    public CombinedOperator(String symbol, String operatorName, OperatorsFunction function, IValueType[] inputTypes,
+                            IValueType outputType, IConfigRenderPattern configRenderPattern) {
+        super(symbol, operatorName, inputTypes,
+                outputType, function, configRenderPattern);
         this.unlocalizedType = "virtual";
     }
 
@@ -110,6 +115,23 @@ public class CombinedOperator extends OperatorBase {
                 value = ValueHelpers.evaluateOperator(operator, value);
             }
             return value;
+        }
+    }
+
+    public static class Flip extends OperatorsFunction {
+
+        public Flip(IOperator operator) {
+            super(new IOperator[]{operator});
+        }
+
+        @Override
+        public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
+            int size = variables.getVariables().length;
+            IValue[] values = new IValue[size];
+            for (int i = 0; i < size; i++) {
+                values[size - i - 1] = variables.getValue(i);
+            }
+            return ValueHelpers.evaluateOperator(getOperators()[0], values);
         }
     }
 }

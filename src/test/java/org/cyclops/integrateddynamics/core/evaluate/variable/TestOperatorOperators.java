@@ -494,6 +494,59 @@ public class TestOperatorOperators {
     }
 
     /**
+     * ----------------------------------- PREDICATE FLIP -----------------------------------
+     */
+
+    @Test
+    public void testPredicateFlip() throws EvaluationException {
+        DummyVariableOperator lessThanFlipped = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_FLIP.evaluate(new IVariable[]{oRelationalLessThan}));
+        DummyVariableOperator lessThan2 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{lessThanFlipped, i2}));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{lessThan2, i0});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("<2(0) == true", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{lessThan2, i1});
+        assertThat("<2(1) == true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+        IValue res3 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{lessThan2, i2});
+        assertThat("<2(2) == false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(false));
+        IValue res4 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{lessThan2, i3});
+        assertThat("<2(3) == false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateFlipLarge() throws EvaluationException {
+        Operators.OPERATOR_FLIP.evaluate(new IVariable[]{oRelationalLessThan, oRelationalLessThan});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateFlipSmall() throws EvaluationException {
+        Operators.OPERATOR_FLIP.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypePredicateFlip() throws EvaluationException {
+        Operators.OPERATOR_FLIP.evaluate(new IVariable[]{bFalse});
+    }
+
+    @Test
+    public void testValidateTypesPredicateFlip() {
+        assertThat(Operators.OPERATOR_FLIP.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_FLIP.validateTypes(new IValueType[]{ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_FLIP.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesPredicateFlip() throws EvaluationException {
+        DummyVariableOperator lessThanFlipped = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_FLIP.evaluate(new IVariable[]{oRelationalLessThan}));
+
+        assertThat(Operators.OPERATOR_FLIP.getConditionalOutputType(new IVariable[]{lessThanFlipped}),
+                CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
+    }
+
+    /**
      * ----------------------------------- FILTER -----------------------------------
      */
 
@@ -521,6 +574,24 @@ public class TestOperatorOperators {
         IValueTypeListProxy list2 = ((ValueTypeList.ValueList) res2).getRawValue();
         assertThat("length(<2 && >0([0, 1, 2, 3])) == 1", list2.getLength(), is(1));
         assertThat("<2 && >0([0, 1, 2, 3])[0] == 1", ((ValueTypeInteger.ValueInteger) list2.get(0)).getRawValue(), is(1));
+        assertThat(list2.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
+
+        // Filter: all even numbers
+        DummyVariableOperator modulusFlipped = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_FLIP.evaluate(new IVariable[]{oIntegerModulus}));
+        DummyVariableOperator modulus2 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{modulusFlipped, i2}));
+        DummyVariableOperator isZero = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i0}));
+        DummyVariableOperator isEvenUnsafe = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{modulus2, isZero}));
+        DummyVariableOperator isEven = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{isZero, isEvenUnsafe}));
+        IValue res3 = Operators.OPERATOR_FILTER.evaluate(new IVariable[]{isEven, lintegers});
+        IValueTypeListProxy list3 = ((ValueTypeList.ValueList) res3).getRawValue();
+        assertThat("length(even([0, 1, 2, 3])) == 2", list3.getLength(), is(2));
+        assertThat("even([0, 1, 2, 3])[0] == 0", ((ValueTypeInteger.ValueInteger) list3.get(0)).getRawValue(), is(0));
+        assertThat("even([0, 1, 2, 3])[1] == 2", ((ValueTypeInteger.ValueInteger) list3.get(1)).getRawValue(), is(2));
         assertThat(list2.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
     }
 

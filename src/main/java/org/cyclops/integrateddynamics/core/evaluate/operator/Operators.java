@@ -1648,6 +1648,27 @@ public final class Operators {
             })).build());
 
     /**
+     * Flip the input parameters of an operator with two inputs.
+     */
+    public static final IOperator OPERATOR_FLIP = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
+            .inputTypes(new IValueType[]{ValueTypes.OPERATOR})
+            .output(ValueTypes.OPERATOR).symbolOperator("flip")
+            .function(OperatorBuilders.FUNCTION_ONE_OPERATOR.build(new IOperatorValuePropagator<IOperator, IValue>() {
+                @Override
+                public IValue getOutput(IOperator input) throws EvaluationException {
+                    CombinedOperator.Flip flip = new CombinedOperator.Flip(input);
+                    IValueType[] originalInputTypes = input.getInputTypes();
+                    IValueType[] flippedInputTypes = new IValueType[originalInputTypes.length];
+                    for (int i = 0; i < flippedInputTypes.length; i++) {
+                        flippedInputTypes[flippedInputTypes.length - i - 1] = originalInputTypes[i];
+                    }
+                    return ValueTypeOperator.ValueOperator.of(
+                            new CombinedOperator(":flip:", "flipped", flip, flippedInputTypes, input.getOutputType(),
+                                    IConfigRenderPattern.INFIX));
+                }
+            })).build());
+
+    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 

@@ -704,6 +704,8 @@ operator.operators.integrateddynamics.operator.negation.name=Negation
 operator.operators.integrateddynamics.operator.negation.info=Takes the negation of a predicate.
 operator.operators.integrateddynamics.operator.pipe.name=Pipe
 operator.operators.integrateddynamics.operator.pipe.info=Create a new operator that pipes the output from the first operator to the second operator.
+operator.operators.integrateddynamics.operator.flip.name=Flip
+operator.operators.integrateddynamics.operator.flip.info=Flip the input parameters of an operator with two inputs.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
@@ -724,6 +726,8 @@ operator.operators.integrateddynamics.virtual.p_disjunction.name=Predicate Disju
 operator.operators.integrateddynamics.virtual.p_disjunction.info=The disjunction of two predicates
 operator.operators.integrateddynamics.virtual.p_negation.name=Predicate Negation
 operator.operators.integrateddynamics.virtual.p_negation.info=The disjunction of a predicate
+operator.operators.integrateddynamics.virtual.piped.name=Piped Operator
+operator.operators.integrateddynamics.virtual.piped.info=A chain of operators
 
 operator.operators.integrateddynamics.cast.name=Cast
 operator.operators.integrateddynamics.cast.basename=Cast
