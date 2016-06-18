@@ -45,6 +45,9 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
     @ToString
     public static class ValueBoolean extends ValueBase {
 
+        private static final ValueBoolean TRUE = new ValueBoolean(true);
+        private static final ValueBoolean FALSE = new ValueBoolean(false);
+
         private final boolean value;
 
         private ValueBoolean(boolean value) {
@@ -53,7 +56,7 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
         }
 
         public static ValueBoolean of(boolean value) {
-            return new ValueBoolean(value);
+            return value ? TRUE : FALSE;
         }
 
         public boolean getRawValue() {

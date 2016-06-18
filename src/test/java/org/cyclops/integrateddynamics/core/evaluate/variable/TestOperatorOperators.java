@@ -37,6 +37,10 @@ public class TestOperatorOperators {
     private DummyVariableOperator oLogicalNot;
     private DummyVariableOperator oLogicalAnd;
     private DummyVariableOperator oIntegerIncrement;
+    private DummyVariableOperator oRelationalEquals;
+    private DummyVariableOperator oRelationalGreaterThan;
+    private DummyVariableOperator oRelationalLessThan;
+    private DummyVariableOperator oIntegerModulus;
 
     private DummyVariableList lintegers;
     private DummyVariableList lbooleans;
@@ -52,10 +56,14 @@ public class TestOperatorOperators {
         i3 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3));
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
 
-        oGeneralIdentity  = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
-        oLogicalNot       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
-        oLogicalAnd       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_AND));
-        oIntegerIncrement = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
+        oGeneralIdentity       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
+        oLogicalNot            = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
+        oLogicalAnd            = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_AND));
+        oIntegerIncrement      = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
+        oRelationalEquals      = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
+        oRelationalGreaterThan = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_GT));
+        oRelationalLessThan    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_LT));
+        oIntegerModulus        = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_MODULUS));
 
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
@@ -181,6 +189,7 @@ public class TestOperatorOperators {
         assertThat("map([0, 1, 2, 3], ++)[0] == 2", ((ValueTypeInteger.ValueInteger) list1.get(1)).getRawValue(), is(2));
         assertThat("map([0, 1, 2, 3], ++)[0] == 3", ((ValueTypeInteger.ValueInteger) list1.get(2)).getRawValue(), is(3));
         assertThat("map([0, 1, 2, 3], ++)[0] == 4", ((ValueTypeInteger.ValueInteger) list1.get(3)).getRawValue(), is(4));
+        assertThat(list1.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
 
         IValue res2 = Operators.OPERATOR_MAP.evaluate(new IVariable[]{oLogicalNot, lbooleans});
         IValueTypeListProxy list2 = ((ValueTypeList.ValueList) res2).getRawValue();
@@ -188,6 +197,7 @@ public class TestOperatorOperators {
         assertThat("map([false, true, false, true], !)[1] == false", ((ValueTypeBoolean.ValueBoolean) list2.get(1)).getRawValue(), is(false));
         assertThat("map([false, true, false, true], !)[2] == true", ((ValueTypeBoolean.ValueBoolean) list2.get(2)).getRawValue(), is(true));
         assertThat("map([false, true, false, true], !)[3] == false", ((ValueTypeBoolean.ValueBoolean) list2.get(3)).getRawValue(), is(false));
+        assertThat(list2.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
 
         DummyVariableOperator curriedOperatorValue = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bTrue}));
@@ -197,6 +207,7 @@ public class TestOperatorOperators {
         assertThat("map([false, true, false, true], true&&)[1] == true", ((ValueTypeBoolean.ValueBoolean) list3.get(1)).getRawValue(), is(true));
         assertThat("map([false, true, false, true], true&&)[2] == false", ((ValueTypeBoolean.ValueBoolean) list3.get(2)).getRawValue(), is(false));
         assertThat("map([false, true, false, true], true&&)[3] == true", ((ValueTypeBoolean.ValueBoolean) list3.get(3)).getRawValue(), is(true));
+        assertThat(list3.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
     }
 
     @Test(expected = EvaluationException.class)
@@ -223,6 +234,7 @@ public class TestOperatorOperators {
     public void testValidateTypesMap() {
         assertThat(Operators.OPERATOR_MAP.validateTypes(new IValueType[]{}), notNullValue());
         assertThat(Operators.OPERATOR_MAP.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_MAP.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN}), notNullValue());
         assertThat(Operators.OPERATOR_MAP.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), nullValue());
     }
 
@@ -236,6 +248,273 @@ public class TestOperatorOperators {
         DummyVariableOperator curriedOperatorValue = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bTrue}));
         assertThat(Operators.OPERATOR_MAP.getConditionalOutputType(new IVariable[]{curriedOperatorValue, lbooleans}),
+                CoreMatchers.<IValueType>is(ValueTypes.LIST));
+    }
+
+    /**
+     * ----------------------------------- PREDICATE CONJUNCTION -----------------------------------
+     */
+
+    @Test
+    public void testPredicateConjunction() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+        DummyVariableOperator twoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalGreaterThan, i2}));
+        DummyVariableOperator zeroLessThanandTwoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{zeroLessThan, twoGreaterThan}));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{zeroLessThanandTwoGreaterThan, i0});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("0< && 2>(0) == false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{zeroLessThanandTwoGreaterThan, i1});
+        assertThat("0< && 2>(1) == true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+        IValue res3 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{zeroLessThanandTwoGreaterThan, i2});
+        assertThat("0< && 2>(2) == false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateConjunctionLarge() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+
+        Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan, zeroLessThan});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateConjunctionSmall() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+        Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{zeroLessThan});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypePredicateConjunction() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+        Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{bFalse, zeroLessThan});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypePredicateConjunction() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+        Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{equalsTwo, i0});
+    }
+
+    @Test
+    public void testValidateTypesPredicateConjunction() {
+        assertThat(Operators.OPERATOR_CONJUNCTION.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_CONJUNCTION.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_CONJUNCTION.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_CONJUNCTION.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesPredicateConjunction() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+
+        assertThat(Operators.OPERATOR_CONJUNCTION.getConditionalOutputType(new IVariable[]{equalsTwo, equalsTwo}),
+                CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
+    }
+
+    /**
+     * ----------------------------------- PREDICATE DISJUNCTION -----------------------------------
+     */
+
+    @Test
+    public void testPredicateDisjunction() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+        DummyVariableOperator twoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalGreaterThan, i2}));
+        DummyVariableOperator zeroLessThanorTwoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{zeroLessThan, twoGreaterThan}));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{zeroLessThanorTwoGreaterThan, i0});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("0< || 2>(0) == false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{zeroLessThanorTwoGreaterThan, i1});
+        assertThat("0< || 2>(1) == true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+        IValue res3 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{zeroLessThanorTwoGreaterThan, i2});
+        assertThat("0< || 2>(2) == false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateDisjunctionLarge() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+
+        Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan, zeroLessThan});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateDisjunctionSmall() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+        Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{zeroLessThan});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypePredicateDisjunction() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+        Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{bFalse, zeroLessThan});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypePredicateDisjunction() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+        Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{equalsTwo, i0});
+    }
+
+    @Test
+    public void testValidateTypesPredicateDisjunction() {
+        assertThat(Operators.OPERATOR_DISJUNCTION.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_DISJUNCTION.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_DISJUNCTION.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_DISJUNCTION.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesPredicateDisjunction() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+
+        assertThat(Operators.OPERATOR_DISJUNCTION.getConditionalOutputType(new IVariable[]{equalsTwo, equalsTwo}),
+                CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
+    }
+
+    /**
+     * ----------------------------------- PREDICATE NEGATION -----------------------------------
+     */
+
+    @Test
+    public void testPredicateNegation() throws EvaluationException {
+        DummyVariableOperator twoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalGreaterThan, i2}));
+        DummyVariableOperator notTwoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{twoGreaterThan}));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{notTwoGreaterThan, i0});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("!2>(0) == false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{notTwoGreaterThan, i1});
+        assertThat("!2>(1) == false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
+        IValue res3 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{notTwoGreaterThan, i2});
+        assertThat("!2>(2) == true", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
+        IValue res4 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{notTwoGreaterThan, i3});
+        assertThat("!2>(3) == true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateNegationLarge() throws EvaluationException {
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+
+        Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateNegationSmall() throws EvaluationException {
+        Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypePredicateNegation() throws EvaluationException {
+        Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{bFalse});
+    }
+
+    @Test
+    public void testValidateTypesPredicateNegation() {
+        assertThat(Operators.OPERATOR_NEGATION.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_NEGATION.validateTypes(new IValueType[]{ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_NEGATION.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesPredicateNegation() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+
+        assertThat(Operators.OPERATOR_NEGATION.getConditionalOutputType(new IVariable[]{equalsTwo}),
+                CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
+    }
+
+    /**
+     * ----------------------------------- FILTER -----------------------------------
+     */
+
+    @Test
+    public void testFilter() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+
+        IValue res1 = Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo, lintegers});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy list1 = ((ValueTypeList.ValueList) res1).getRawValue();
+        assertThat("length(filter([0, 1, 2, 3], 2==)) == 1", list1.getLength(), is(1));
+        assertThat("filter([0, 1, 2, 3], 2==)[0] == 2", ((ValueTypeInteger.ValueInteger) list1.get(0)).getRawValue(), is(2));
+        assertThat(list1.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
+
+        DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
+        DummyVariableOperator twoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalGreaterThan, i2}));
+        DummyVariableOperator zeroLessThanandTwoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{zeroLessThan, twoGreaterThan}));
+        IValue res2 = Operators.OPERATOR_FILTER.evaluate(new IVariable[]{zeroLessThanandTwoGreaterThan, lintegers});
+        IValueTypeListProxy list2 = ((ValueTypeList.ValueList) res2).getRawValue();
+        assertThat("length(<2 && >0([0, 1, 2, 3])) == 1", list2.getLength(), is(1));
+        assertThat("<2 && >0([0, 1, 2, 3])[0] == 1", ((ValueTypeInteger.ValueInteger) list2.get(0)).getRawValue(), is(1));
+        assertThat(list2.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeFilterLarge() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+
+        Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo, lintegers, lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeFilterSmall() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+
+        Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypeFilter() throws EvaluationException {
+        Operators.OPERATOR_FILTER.evaluate(new IVariable[]{bFalse, lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypeFilter() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+
+        Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo, oIntegerIncrement});
+    }
+
+    @Test
+    public void testValidateTypesFilter() {
+        assertThat(Operators.OPERATOR_FILTER.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_FILTER.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_FILTER.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_FILTER.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.LIST}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesFilter() throws EvaluationException {
+        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+
+        assertThat(Operators.OPERATOR_FILTER.getConditionalOutputType(new IVariable[]{equalsTwo, lintegers}),
                 CoreMatchers.<IValueType>is(ValueTypes.LIST));
     }
 

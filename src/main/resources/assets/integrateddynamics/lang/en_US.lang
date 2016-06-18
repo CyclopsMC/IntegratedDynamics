@@ -481,6 +481,8 @@ operator.integrateddynamics.error.wrongInputLength=The operator %s received an i
 operator.integrateddynamics.error.nullType=The operator %s received an input with a null variable at position %s.
 operator.integrateddynamics.error.wrongType=The operator %s received an input with type %s at position %s while the type %s was expected.
 operator.integrateddynamics.error.wrongCurryingType=The operator %s received an input with type %s at position %s while the type %s was expected for currying.
+operator.integrateddynamics.error.wrongFilterPredicate=The filter operator received an input operator that outputs the type %s while the type %s was expected.
+operator.integrateddynamics.error.illegalPredicate=Predicates are expected to output %s, while %s was found for operator %s.
 operator.integrateddynamics.error.variableNotInNetwork=Variable with id %s could not be found within the current network.
 operator.integrateddynamics.error.cyclicReference=Variable with id %s depends on itself, infinite recursion.
 
@@ -688,10 +690,18 @@ operator.operators.integrateddynamics.fluidstack.mod.info=The name of the mod ow
 
 operator.operators.integrateddynamics.operator.name=Operator
 operator.operators.integrateddynamics.operator.basename=Operator %s
-operator.operators.integrateddynamics.operator.apply.name=apply
+operator.operators.integrateddynamics.operator.apply.name=Apply
 operator.operators.integrateddynamics.operator.apply.info=Apply for a given operator a given value.
-operator.operators.integrateddynamics.operator.map.name=map
+operator.operators.integrateddynamics.operator.map.name=Map
 operator.operators.integrateddynamics.operator.map.info=Apply the given operator on all elements of a list, resulting in a new list of mapped values.
+operator.operators.integrateddynamics.operator.filter.name=Filter
+operator.operators.integrateddynamics.operator.filter.info=Filter a list of elements by matching them all with the given predicate.
+operator.operators.integrateddynamics.operator.conjunction.name=Conjunction
+operator.operators.integrateddynamics.operator.conjunction.info=Takes the conjunction of two predicates.
+operator.operators.integrateddynamics.operator.disjunction.name=Disjunction
+operator.operators.integrateddynamics.operator.disjunction.info=Takes the disjunction of two predicates.
+operator.operators.integrateddynamics.operator.negation.name=Negation
+operator.operators.integrateddynamics.operator.negation.info=Takes the negation of a predicate.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
@@ -703,6 +713,15 @@ operator.operators.integrateddynamics.general.isnull.name=Is Null
 operator.operators.integrateddynamics.general.isnull.info=If the given value is null
 operator.operators.integrateddynamics.general.isnotnull.name=Is Not Null
 operator.operators.integrateddynamics.general.isnotnull.info=If the given value is not null
+
+operator.operators.integrateddynamics.virtual.name=Virtual Operator
+operator.operators.integrateddynamics.virtual.basename=Virtual Operator %s
+operator.operators.integrateddynamics.virtual.p_conjunction.name=Predicate Conjunction
+operator.operators.integrateddynamics.virtual.p_conjunction.info=The conjunction of two predicates
+operator.operators.integrateddynamics.virtual.p_disjunction.name=Predicate Disjunction
+operator.operators.integrateddynamics.virtual.p_disjunction.info=The disjunction of two predicates
+operator.operators.integrateddynamics.virtual.p_negation.name=Predicate Negation
+operator.operators.integrateddynamics.virtual.p_negation.info=The disjunction of a predicate
 
 operator.operators.integrateddynamics.cast.name=Cast
 operator.operators.integrateddynamics.cast.basename=Cast

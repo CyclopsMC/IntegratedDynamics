@@ -5,7 +5,6 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 
 /**
  * A list proxy for a list that is mapped to another list by an operator.
@@ -29,6 +28,6 @@ public class ValueTypeListProxyOperatorMapped extends ValueTypeListProxyBase<IVa
     @Override
     public IValue get(int index) throws EvaluationException {
         IValue value = listProxy.get(index);
-        return operator.evaluate(new IVariable[]{new Variable<>(value.getType(), value)});
+        return ValueHelpers.evaluateOperator(operator, value);
     }
 }

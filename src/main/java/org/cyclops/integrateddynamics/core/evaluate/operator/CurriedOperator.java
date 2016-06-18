@@ -7,7 +7,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.Arrays;
@@ -81,11 +80,7 @@ public class CurriedOperator implements IOperator {
 
     @Override
     public IValueType getOutputType() {
-        if (baseOperator.getRequiredInputLength() == 1) {
-            return baseOperator.getOutputType();
-        } else {
-            return ValueTypes.OPERATOR;
-        }
+        return baseOperator.getOutputType();
     }
 
     protected IVariable[] deriveFullInputVariables(IVariable[] partialInput) {

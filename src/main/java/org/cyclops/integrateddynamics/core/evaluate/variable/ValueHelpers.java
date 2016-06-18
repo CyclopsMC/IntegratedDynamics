@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -77,6 +79,22 @@ public class ValueHelpers {
      */
     public static boolean correspondsTo(IValueType t1, IValueType t2) {
         return t1.correspondsTo(t2) || t2.correspondsTo(t1);
+    }
+
+    /**
+     * Evaluate an operator for the given values.
+     * @param operator The operator.
+     * @param values The values.
+     * @return The resulting value.
+     * @throws EvaluationException If something went wrong during operator evaluation.
+     */
+    public static IValue evaluateOperator(IOperator operator, IValue... values) throws EvaluationException {
+        IVariable[] variables = new IVariable[values.length];
+        for (int i = 0; i < variables.length; i++) {
+            IValue value = values[i];
+            variables[i] = new Variable(value.getType(), value);
+        }
+        return operator.evaluate(variables);
     }
 
 }
