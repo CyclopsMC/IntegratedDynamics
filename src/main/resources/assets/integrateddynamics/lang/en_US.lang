@@ -482,7 +482,7 @@ operator.integrateddynamics.error.nullType=The operator %s received an input wit
 operator.integrateddynamics.error.wrongType=The operator %s received an input with type %s at position %s while the type %s was expected.
 operator.integrateddynamics.error.wrongCurryingType=The operator %s received an input with type %s at position %s while the type %s was expected for currying.
 operator.integrateddynamics.error.wrongFilterPredicate=The filter operator received an input operator that outputs the type %s while the type %s was expected.
-operator.integrateddynamics.error.illegalPredicate=Predicates are expected to output %s, while %s was found for operator %s.
+operator.integrateddynamics.error.illegalProperty=The property is expected to output %s, while %s was found for operator %s.
 operator.integrateddynamics.error.variableNotInNetwork=Variable with id %s could not be found within the current network.
 operator.integrateddynamics.error.cyclicReference=Variable with id %s depends on itself, infinite recursion.
 
@@ -702,6 +702,8 @@ operator.operators.integrateddynamics.operator.disjunction.name=Disjunction
 operator.operators.integrateddynamics.operator.disjunction.info=Takes the disjunction of two predicates.
 operator.operators.integrateddynamics.operator.negation.name=Negation
 operator.operators.integrateddynamics.operator.negation.info=Takes the negation of a predicate.
+operator.operators.integrateddynamics.operator.pipe.name=Pipe
+operator.operators.integrateddynamics.operator.pipe.info=Create a new operator that pipes the output from the first operator to the second operator.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

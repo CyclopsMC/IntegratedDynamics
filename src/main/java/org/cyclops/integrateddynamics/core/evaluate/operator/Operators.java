@@ -1633,6 +1633,21 @@ public final class Operators {
             })).build());
 
     /**
+     * Create a new operator that pipes the output from the first operator to the second operator.
+     */
+    public static final IOperator OPERATOR_PIPE = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
+            .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR})
+            .output(ValueTypes.OPERATOR).symbol(".").operatorName("pipe")
+            .function(OperatorBuilders.FUNCTION_TWO_OPERATORS.build(new IOperatorValuePropagator<Pair<IOperator, IOperator>, IValue>() {
+                @Override
+                public IValue getOutput(Pair<IOperator, IOperator> input) throws EvaluationException {
+                    CombinedOperator.Pipe pipe = new CombinedOperator.Pipe(input.getLeft(), input.getRight());
+                    return ValueTypeOperator.ValueOperator.of(
+                            new CombinedOperator(":.:", "piped", pipe, input.getRight().getOutputType()));
+                }
+            })).build());
+
+    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 

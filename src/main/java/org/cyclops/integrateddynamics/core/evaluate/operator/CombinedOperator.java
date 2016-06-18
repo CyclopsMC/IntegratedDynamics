@@ -96,4 +96,20 @@ public class CombinedOperator extends OperatorBase {
             return ValueTypeBoolean.ValueBoolean.of(!((ValueTypeBoolean.ValueBoolean) result).getRawValue());
         }
     }
+
+    public static class Pipe extends OperatorsFunction {
+
+        public Pipe(IOperator... operators) {
+            super(operators);
+        }
+
+        @Override
+        public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
+            IValue value = variables.getValue(0);
+            for (IOperator operator : getOperators()) {
+                value = ValueHelpers.evaluateOperator(operator, value);
+            }
+            return value;
+        }
+    }
 }

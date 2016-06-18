@@ -444,6 +444,56 @@ public class TestOperatorOperators {
     }
 
     /**
+     * ----------------------------------- PREDICATE PIPE -----------------------------------
+     */
+
+    @Test
+    public void testPredicatePipe() throws EvaluationException {
+        DummyVariableOperator increment2 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oIntegerIncrement, oIntegerIncrement}));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{increment2, i0});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("++ ++(0) == 2", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(2));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{increment2, i1});
+        assertThat("++ ++(1) == 3", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(3));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicatePipeLarge() throws EvaluationException {
+        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oIntegerIncrement, oIntegerIncrement, oIntegerIncrement});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicatePipeSmall() throws EvaluationException {
+        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oIntegerIncrement});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypePredicatePipe() throws EvaluationException {
+        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{bFalse, oIntegerIncrement});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypePredicatePipe() throws EvaluationException {
+        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oIntegerIncrement, i0});
+    }
+
+    @Test
+    public void testValidateTypesPredicatePipe() {
+        assertThat(Operators.OPERATOR_PIPE.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_PIPE.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_PIPE.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_PIPE.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesPredicatePipe() throws EvaluationException {
+        assertThat(Operators.OPERATOR_PIPE.getConditionalOutputType(new IVariable[]{oIntegerIncrement, oIntegerIncrement}),
+                CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
+    }
+
+    /**
      * ----------------------------------- FILTER -----------------------------------
      */
 
@@ -452,6 +502,7 @@ public class TestOperatorOperators {
         DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
 
+        // Filter: equal to 2
         IValue res1 = Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo, lintegers});
         assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
         IValueTypeListProxy list1 = ((ValueTypeList.ValueList) res1).getRawValue();
@@ -459,6 +510,7 @@ public class TestOperatorOperators {
         assertThat("filter([0, 1, 2, 3], 2==)[0] == 2", ((ValueTypeInteger.ValueInteger) list1.get(0)).getRawValue(), is(2));
         assertThat(list1.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
 
+        // Filter: greater than 0 and less than 2
         DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
         DummyVariableOperator twoGreaterThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)

@@ -37,7 +37,7 @@ public class L10NValues {
     // 0: given-output, 1: expected-output
     public static final String VALUETYPE_ERROR_WRONGFILTERPREDICATE = "valuetype." + NS + ".error.wrongFilterPredicate";
     // 0: expected-output, 1:given-output, 2:given-operator
-    public static final String VALUETYPE_ERROR_ILLEGALPREDICATE = "valuetype." + NS + ".error.illegalPredicate";
+    public static final String VALUETYPE_ERROR_ILLEGALPROPERY = "valuetype." + NS + ".error.illegalProperty";
     public static final String VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK = "valuetype." + NS + ".error.block.noBlock";
     public static final String VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID = "valuetype." + NS + ".error.fluid.noFluid";
     public static final String VALUETYPE_OBJECT_THAUMCRAFTASPECT_ERROR_NOASPECT = "valuetype." + NS + ".error.thaumcraftaspect.noAspect";
