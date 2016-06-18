@@ -72,6 +72,16 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
         return StringUtils.join(getSignatureLines(operator, false), " ");
     }
 
+    /**
+     * Pretty formatted signature of an operator.
+     * @param inputTypes The input types.
+     * @param outputType The output types.
+     * @return The signature.
+     */
+    public static String getSignature(IValueType[] inputTypes, IValueType outputType) {
+        return StringUtils.join(getSignatureLines(inputTypes, outputType, false), " ");
+    }
+
     protected static StringBuilder switchSignatureLineContext(List<String> lines, StringBuilder sb) {
         lines.add(sb.toString());
         return new StringBuilder();
@@ -79,14 +89,13 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
 
     /**
      * Pretty formatted signature of an operator.
-     * @param operator The operator.
+     * @param inputTypes The input types.
+     * @param outputType The output types.
      * @param indent If the lines should be indented.
      * @return The signature.
      */
-    public static List<String> getSignatureLines(IOperator operator, boolean indent) {
+    public static List<String> getSignatureLines(IValueType[] inputTypes, IValueType outputType, boolean indent) {
         List<String> lines = Lists.newArrayList();
-        IValueType[] inputTypes = operator.getInputTypes();
-        IValueType outputType = operator.getOutputType();
         StringBuilder sb = new StringBuilder();
         sb.append("(");
         boolean first = true;
@@ -110,6 +119,16 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
                 .append(TextFormatting.RESET);
         switchSignatureLineContext(lines, sb);
         return lines;
+    }
+
+    /**
+     * Pretty formatted signature of an operator.
+     * @param operator The operator.
+     * @param indent If the lines should be indented.
+     * @return The signature.
+     */
+    public static List<String> getSignatureLines(IOperator operator, boolean indent) {
+        return getSignatureLines(operator.getInputTypes(), operator.getOutputType(), indent);
     }
 
     @ToString

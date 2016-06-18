@@ -7,6 +7,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -16,6 +17,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
+import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -109,7 +111,7 @@ public class CharsetAspects {
             public static final IAspectWriteActivator ACTIVATOR = new IAspectWriteActivator() {
                 @Override
                 public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onActivate(P partType, PartTarget target, S state) {
-                    state.addVolatileCapability(CharsetPipesModCompat.SHIFTER, new ShifterPart(target.getCenter().getSide()));
+                    state.addVolatileCapability(CharsetPipesModCompat.SHIFTER, new ShifterPart<>(target.getCenter().getSide(), partType, state));
                     notifyNeighbours(target);
                 }
             };
@@ -165,6 +167,27 @@ public class CharsetAspects {
                                 }
                             }).buildWrite();
 
+            public static final IAspectWrite<ValueTypeOperator.ValueOperator, ValueTypeOperator> SHIFTER_PREDICATEITEMSTACK =
+                    getShifter(AspectWriteBuilders.BUILDER_OPERATOR.appendKind("charsetpipe")
+                            .appendActivator(ACTIVATOR).appendDeactivator(DEACTIVATOR).appendKind("shifter"))
+                            .handle(new IAspectValuePropagator<Pair<ShifterPart, ValueTypeOperator.ValueOperator>, Void>() {
+                                @Override
+                                public Void getOutput(Pair<ShifterPart, ValueTypeOperator.ValueOperator> input) throws EvaluationException {
+                                    ShifterPart shifter = input.getLeft();
+                                    IOperator predicate = OperatorBuilders.getSafePredictate(input.getRight());
+                                    if (predicate.getInputTypes().length == 1 && predicate.getInputTypes()[0] == ValueTypes.OBJECT_ITEMSTACK) {
+                                        shifter.setFilterItemPredicate(predicate);
+                                        shifter.setShifting(true);
+                                    } else {
+                                        String current = ValueTypeOperator.getSignature(predicate);
+                                        String expected = ValueTypeOperator.getSignature(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK}, ValueTypes.BOOLEAN);
+                                        throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
+                                                expected, current).localize());
+                                    }
+                                    return null;
+                                }
+                            }).buildWrite();
+
             public static final IAspectWrite<ValueObjectTypeFluidStack.ValueFluidStack, ValueObjectTypeFluidStack> SHIFTER_FLUIDSTACK =
                     getShifter(AspectWriteBuilders.BUILDER_FLUIDSTACK.appendKind("charsetpipe")
                             .appendActivator(ACTIVATOR).appendDeactivator(DEACTIVATOR).appendKind("shifterfluid"))
@@ -192,6 +215,27 @@ public class CharsetAspects {
                                         throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
                                                 new L10NHelpers.UnlocalizedString(ValueTypes.OBJECT_FLUIDSTACK.getUnlocalizedName()),
                                                 new L10NHelpers.UnlocalizedString(input.getRight().getRawValue().getValueType().getUnlocalizedName())).localize());
+                                    }
+                                    return null;
+                                }
+                            }).buildWrite();
+
+            public static final IAspectWrite<ValueTypeOperator.ValueOperator, ValueTypeOperator> SHIFTER_PREDICATEFLUIDSTACK =
+                    getShifter(AspectWriteBuilders.BUILDER_OPERATOR.appendKind("charsetpipe")
+                            .appendActivator(ACTIVATOR).appendDeactivator(DEACTIVATOR).appendKind("shifterfluid"))
+                            .handle(new IAspectValuePropagator<Pair<ShifterPart, ValueTypeOperator.ValueOperator>, Void>() {
+                                @Override
+                                public Void getOutput(Pair<ShifterPart, ValueTypeOperator.ValueOperator> input) throws EvaluationException {
+                                    ShifterPart shifter = input.getLeft();
+                                    IOperator predicate = OperatorBuilders.getSafePredictate(input.getRight());
+                                    if (predicate.getInputTypes().length == 1 && predicate.getInputTypes()[0] == ValueTypes.OBJECT_FLUIDSTACK) {
+                                        shifter.setFilterFluidPredicate(predicate);
+                                        shifter.setShifting(true);
+                                    } else {
+                                        String current = ValueTypeOperator.getSignature(predicate);
+                                        String expected = ValueTypeOperator.getSignature(new IValueType[]{ValueTypes.OBJECT_FLUIDSTACK}, ValueTypes.BOOLEAN);
+                                        throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
+                                                expected, current).localize());
                                     }
                                     return null;
                                 }

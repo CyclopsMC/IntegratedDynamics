@@ -34,7 +34,9 @@ public class CharsetPipesModCompat implements IModCompat {
 					CharsetAspects.Write.Pipe.SHIFTER_ITEMSTACK,
 					CharsetAspects.Write.Pipe.SHIFTER_FLUIDSTACK,
 					CharsetAspects.Write.Pipe.SHIFTER_LISTITEMSTACK,
-					CharsetAspects.Write.Pipe.SHIFTER_LISTFLUIDSTACK
+					CharsetAspects.Write.Pipe.SHIFTER_LISTFLUIDSTACK,
+					CharsetAspects.Write.Pipe.SHIFTER_PREDICATEITEMSTACK,
+					CharsetAspects.Write.Pipe.SHIFTER_PREDICATEFLUIDSTACK
 			));
 		}
 	}
