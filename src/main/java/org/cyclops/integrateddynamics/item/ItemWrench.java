@@ -3,21 +3,25 @@ package org.cyclops.integrateddynamics.item;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.cyclops.commoncapabilities.api.capability.wrench.DefaultWrench;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.api.item.IWrench;
+import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
+import org.cyclops.integrateddynamics.Capabilities;
 
 /**
  * The default wrench for this mod.
  * @author rubensworks
  */
-public class ItemWrench extends ConfigurableItem implements IWrench {
+public class ItemWrench extends ConfigurableItem {
 
     private static ItemWrench _instance = null;
 
@@ -44,21 +48,6 @@ public class ItemWrench extends ConfigurableItem implements IWrench {
     }
 
     @Override
-    public boolean canUse(EntityPlayer player, BlockPos pos) {
-        return true;
-    }
-
-    @Override
-    public void beforeUse(EntityPlayer player, BlockPos pos) {
-
-    }
-
-    @Override
-    public void afterUse(EntityPlayer player, BlockPos pos) {
-
-    }
-
-    @Override
     public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
                                   float hitX, float hitY, float hitZ, EnumHand hand) {
         Block block = world.getBlockState(pos).getBlock();
@@ -69,5 +58,10 @@ public class ItemWrench extends ConfigurableItem implements IWrench {
             return !world.isRemote ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         }
         return EnumActionResult.PASS;
+    }
+
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+        return new DefaultCapabilityProvider<>(Capabilities.WRENCH, new DefaultWrench());
     }
 }

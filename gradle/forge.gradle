@@ -39,12 +39,15 @@ dependencies {
         compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
     }
 
+    deobfCompile("org.cyclops.commoncapabilities:CommonCapabilities:${config.minecraft_version}-${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
+        exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+    }
     deobfCompile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:universal" // http://maven.amadornes.com/
     deobfCompile "mcp.mobius.waila:Waila:${config.waila_version}" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
     deobfCompile "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
     compile "net.bdew.thirdparty:rfapi:${config.rfapi_version}-mc1.8.9:api" // http://jenkins.bdew.net/maven/net/bdew/thirdparty/rfapi/
     deobfCompile "pl.asie.charset:charset-api:0.3.0-pre8" // http://charset.asie.pl/maven/pl/asie/charset/charset-api/maven-metadata.xml
-    compile "net.darkhax.tesla:Tesla:${config.minecraft_version}-${config.teslaapi_version}:deobf" // http://maven.epoxide.xyz/net/darkhax/tesla/Tesla/
+    deobfCompile "net.darkhax.tesla:Tesla:${config.minecraft_version}-${config.teslaapi_version}" // http://maven.epoxide.xyz/net/darkhax/tesla/Tesla/
 
     // Only needed for testing
     deobfCompile "pl.asie.charset:charset-lib:0.3.0-pre8" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml

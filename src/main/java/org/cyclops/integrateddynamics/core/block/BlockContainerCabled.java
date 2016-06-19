@@ -50,7 +50,7 @@ public abstract class BlockContainerCabled extends ConfigurableBlockContainer im
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
                                     ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote && WrenchHelpers.isWrench(player, heldItem, pos) && player.isSneaking()) {
+        if (!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
             destroyBlock(world, pos, true);
             return true;
         }

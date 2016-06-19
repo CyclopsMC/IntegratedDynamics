@@ -175,7 +175,7 @@ public class PartPartType extends MultipartBase {
     public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack heldItem, PartMOP hit) {
         World world = player.worldObj;
         BlockPos pos = hit.getBlockPos();
-        if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, pos)) {
+        if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, hit.sideHit)) {
             // Remove part from cable
             if(player.isSneaking()) {
                 PartCable cable = getPartCable();

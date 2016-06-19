@@ -168,8 +168,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     @Override
     public boolean onPartActivated(World world, BlockPos pos, final S partState, EntityPlayer player, EnumHand hand,
                                    ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(WrenchHelpers.isWrench(player, heldItem, pos)) {
-            WrenchHelpers.wrench(player, heldItem, pos, new WrenchHelpers.IWrenchAction<Void>() {
+        if(WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
+            WrenchHelpers.wrench(player, heldItem, world, pos, side, new WrenchHelpers.IWrenchAction<Void>() {
                 @Override
                 public void onWrench(EntityPlayer player, BlockPos pos, Void parameter) {
                     partState.setFacingRotation(partState.getFacingRotation().rotateAround(EnumFacing.Axis.Y));

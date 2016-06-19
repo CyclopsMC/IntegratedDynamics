@@ -433,14 +433,14 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             if(rayTraceResult != null) {
                 EnumFacing positionHit = rayTraceResult.getPositionHit();
                 if(rayTraceResult.getCollisionType() == FACADE_COMPONENT) {
-                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, pos) && player.isSneaking()) {
+                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
                         FACADE_COMPONENT.destroy(world, pos, side, player);
                         world.notifyNeighborsOfStateChange(pos, this);
                         return true;
                     }
                     return false;
                 } else if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {
-                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, pos)) {
+                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
                         // Remove part from cable
                         if(player.isSneaking()) {
                             PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
@@ -468,7 +468,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     public static boolean onCableActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
                                            ItemStack heldItem, EnumFacing side, EnumFacing cableConnectionHit) {
         ICableNetwork<?, ?> cable = CableHelpers.getInterface(world, pos, ICableNetwork.class);
-        if(WrenchHelpers.isWrench(player, heldItem, pos)) {
+        if(WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
             if (player.isSneaking()) {
                 if (!(cable instanceof IPartContainerFacade) || !((IPartContainerFacade) cable).getPartContainer(world, pos).hasParts() || !(cable instanceof ICableFakeable)) {
                     // Remove full cable
