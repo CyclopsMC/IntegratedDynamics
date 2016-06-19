@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
  * Compatibility for energy battery item tesla holder capability.
  * @author rubensworks
  */
-public class TeslaConsumerEnergyContainerItemCompat implements ICapabilityConstructor<ITeslaConsumer, ItemStack> {
+public class TeslaConsumerEnergyContainerItemCompat implements ICapabilityConstructor<ITeslaConsumer, ItemBlockEnergyContainer, ItemStack> {
 
     @Override
     public Capability<ITeslaConsumer> getCapability() {
@@ -24,7 +24,7 @@ public class TeslaConsumerEnergyContainerItemCompat implements ICapabilityConstr
 
     @Nullable
     @Override
-    public ICapabilityProvider createProvider(ItemStack host) {
+    public ICapabilityProvider createProvider(ItemBlockEnergyContainer hostType, ItemStack host) {
         return new DefaultCapabilityProvider<>(Capabilities.TESLA_CONSUMER, new TeslaHolder(host));
     }
 

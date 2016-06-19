@@ -4,7 +4,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
-import org.cyclops.cyclopscore.modcompat.capabilities.ICapabilityConstructor;
+import org.cyclops.cyclopscore.modcompat.capabilities.SimpleCapabilityConstructor;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 
@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  * Compatibility for coal generator worker capability.
  * @author rubensworks
  */
-public class WorkerCoalGeneratorTileCompat implements ICapabilityConstructor<IWorker, TileCoalGenerator> {
+public class WorkerCoalGeneratorTileCompat extends SimpleCapabilityConstructor<IWorker, TileCoalGenerator> {
 
     @Override
     public Capability<IWorker> getCapability() {
