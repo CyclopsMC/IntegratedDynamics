@@ -175,7 +175,7 @@ public class CharsetAspects {
                                 public Void getOutput(Pair<ShifterPart, ValueTypeOperator.ValueOperator> input) throws EvaluationException {
                                     ShifterPart shifter = input.getLeft();
                                     IOperator predicate = OperatorBuilders.getSafePredictate(input.getRight());
-                                    if (predicate.getInputTypes().length == 1 && predicate.getInputTypes()[0] == ValueTypes.OBJECT_ITEMSTACK) {
+                                    if (predicate.getInputTypes().length == 1 && ValueHelpers.correspondsTo(predicate.getInputTypes()[0], ValueTypes.OBJECT_ITEMSTACK)) {
                                         shifter.setFilterItemPredicate(predicate);
                                         shifter.setShifting(true);
                                     } else {
@@ -228,7 +228,7 @@ public class CharsetAspects {
                                 public Void getOutput(Pair<ShifterPart, ValueTypeOperator.ValueOperator> input) throws EvaluationException {
                                     ShifterPart shifter = input.getLeft();
                                     IOperator predicate = OperatorBuilders.getSafePredictate(input.getRight());
-                                    if (predicate.getInputTypes().length == 1 && predicate.getInputTypes()[0] == ValueTypes.OBJECT_FLUIDSTACK) {
+                                    if (predicate.getInputTypes().length == 1 && ValueHelpers.correspondsTo(predicate.getInputTypes()[0], ValueTypes.OBJECT_FLUIDSTACK)) {
                                         shifter.setFilterFluidPredicate(predicate);
                                         shifter.setShifting(true);
                                     } else {

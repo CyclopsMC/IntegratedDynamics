@@ -579,6 +579,50 @@ public final class Operators {
             }).build());
 
     /**
+     * List contains operator that takes a list, a list element to look for and returns a boolean.
+     */
+    public static final IOperator LIST_CONTAINS = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
+            .renderPattern(IConfigRenderPattern.PREFIX_2_LONG)
+            .output(ValueTypes.BOOLEAN).symbolOperator("contains")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    IValue input = variables.getValue(1);
+                    for (IValue value : list) {
+                        if (value.equals(input)) {
+                            return ValueTypeBoolean.ValueBoolean.of(true);
+                        }
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(false);
+                }
+            }).build());
+
+    /**
+     * List contains operator that takes a list, a predicate that maps two list elements to a boolean, a list element and returns a boolean.
+     */
+    public static final IOperator LIST_CONTAINS_PREDICATE = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY})
+            .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
+            .output(ValueTypes.BOOLEAN).symbolOperator("contains_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    IOperator operator = OperatorBuilders.getSafePredictate((ValueTypeOperator.ValueOperator) variables.getValue(1));
+                    IVariable container = variables.getVariables()[2];
+                    for (IValue value : list) {
+                        IValue result = operator.evaluate(new IVariable[]{container, new Variable(value.getType(), value)});
+                        if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
+                            return ValueTypeBoolean.ValueBoolean.of(true);
+                        }
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(false);
+                }
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 
@@ -1575,7 +1619,8 @@ public final class Operators {
                                 IValue result = ValueHelpers.evaluateOperator(innerOperator, value);
                                 if (result.getType() != ValueTypes.BOOLEAN) {
                                     L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
-                                            L10NValues.VALUETYPE_ERROR_WRONGFILTERPREDICATE,
+                                            L10NValues.VALUETYPE_ERROR_WRONGPREDICATE,
+                                            OPERATOR_FILTER.getLocalizedNameFull(),
                                             result.getType(), ValueTypes.BOOLEAN);
                                     throw new EvaluationException(error.localize());
                                 } else if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {

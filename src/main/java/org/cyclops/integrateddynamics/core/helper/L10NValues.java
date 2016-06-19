@@ -34,8 +34,8 @@ public class L10NValues {
     public static final String VALUETYPE_ERROR_INVALIDLISTELEMENT = "valuetype." + NS + ".error.invalidListElement";
     public static final String VALUETYPE_ERROR_INVALIDOPERATOROPERATOR = "valuetype." + NS + ".error.invalidOperatorOperator";
     public static final String VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE = "valuetype." + NS + ".error.invalidOperatorSignature";
-    // 0: given-output, 1: expected-output
-    public static final String VALUETYPE_ERROR_WRONGFILTERPREDICATE = "valuetype." + NS + ".error.wrongFilterPredicate";
+    // 0: operator, 1: given-output, 2: expected-output
+    public static final String VALUETYPE_ERROR_WRONGPREDICATE = "valuetype." + NS + ".error.wrongPredicate";
     // 0: expected-output, 1:given-output, 2:given-operator
     public static final String VALUETYPE_ERROR_ILLEGALPROPERY = "valuetype." + NS + ".error.illegalProperty";
     public static final String VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK = "valuetype." + NS + ".error.block.noBlock";
