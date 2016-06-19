@@ -1714,6 +1714,35 @@ public final class Operators {
             })).build());
 
     /**
+     * Apply the given operator on all elements of a list to reduce the list to one value.
+     */
+    public static final IOperator OPERATOR_REDUCE = REGISTRY.register(OperatorBuilders.OPERATOR
+            .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
+            .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
+            .output(ValueTypes.CATEGORY_ANY).symbolOperator("reduce")
+            .conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
+                @Override
+                public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
+                    return input[2].getType();
+                }
+            })
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValue accumulator = variables.getValue(2);
+                    final IOperator innerOperator = OperatorBuilders.getSafeOperator((ValueTypeOperator.ValueOperator)
+                            variables.getValue(0), accumulator.getType());
+                    ValueTypeList.ValueList<IValueType<IValue>, IValue> inputList = variables.getValue(1);
+                    for (IValue listValue : inputList.getRawValue()) {
+                        accumulator = innerOperator.evaluate(new IVariable[]{
+                                new Variable(accumulator.getType(), accumulator),
+                                new Variable(listValue.getType(), listValue)});
+                    }
+                    return accumulator;
+                }
+            }).build());
+
+    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 

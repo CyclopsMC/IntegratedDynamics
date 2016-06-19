@@ -710,6 +710,8 @@ operator.operators.integrateddynamics.operator.pipe.name=Pipe
 operator.operators.integrateddynamics.operator.pipe.info=Create a new operator that pipes the output from the first operator to the second operator.
 operator.operators.integrateddynamics.operator.flip.name=Flip
 operator.operators.integrateddynamics.operator.flip.info=Flip the input parameters of an operator with two inputs.
+operator.operators.integrateddynamics.operator.reduce.name=Reduce
+operator.operators.integrateddynamics.operator.reduce.info=Apply the given operator on all elements of a list to reduce the list to one value.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

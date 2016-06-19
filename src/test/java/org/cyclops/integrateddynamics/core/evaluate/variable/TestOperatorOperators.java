@@ -41,6 +41,7 @@ public class TestOperatorOperators {
     private DummyVariableOperator oRelationalGreaterThan;
     private DummyVariableOperator oRelationalLessThan;
     private DummyVariableOperator oIntegerModulus;
+    private DummyVariableOperator oArithmeticAddition;
 
     private DummyVariableList lintegers;
     private DummyVariableList lbooleans;
@@ -64,6 +65,7 @@ public class TestOperatorOperators {
         oRelationalGreaterThan = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_GT));
         oRelationalLessThan    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_LT));
         oIntegerModulus        = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_MODULUS));
+        oArithmeticAddition    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
 
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
@@ -639,6 +641,57 @@ public class TestOperatorOperators {
 
         assertThat(Operators.OPERATOR_FILTER.getConditionalOutputType(new IVariable[]{equalsTwo, lintegers}),
                 CoreMatchers.<IValueType>is(ValueTypes.LIST));
+    }
+
+    /**
+     * ----------------------------------- REDUCE -----------------------------------
+     */
+
+    @Test
+    public void testReduce() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers, i0});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("reduce([0, 1, 2, 3], +, 0) == 6", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(6));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeReduceLarge() throws EvaluationException {
+        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers, i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeReduceSmall() throws EvaluationException {
+        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypeReduce() throws EvaluationException {
+        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{bFalse, lintegers, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypeReduce() throws EvaluationException {
+        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, i0, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorAccumulatorTypeReduce() throws EvaluationException {
+        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers, lintegers});
+    }
+
+    @Test
+    public void testValidateTypesReduce() {
+        assertThat(Operators.OPERATOR_REDUCE.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_REDUCE.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_REDUCE.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_REDUCE.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN, ValueTypes.INTEGER}), notNullValue());
+        assertThat(Operators.OPERATOR_REDUCE.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.LIST, ValueTypes.INTEGER}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesReduce() throws EvaluationException {
+        assertThat(Operators.OPERATOR_REDUCE.getConditionalOutputType(new IVariable[]{oArithmeticAddition, lintegers, i0}),
+                CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
     }
 
 }
