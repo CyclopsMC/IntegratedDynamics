@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.expression;
 
-import org.apache.logging.log4j.Level;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.IExpression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.ILazyExpressionValueCache;
@@ -51,21 +49,20 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
     }
 
     @Override
-    public V getValue() {
-        IValue value = null;
+    public V getValue() throws EvaluationException {
+        IValue value;
         try {
             value = evaluate();
         } catch (EvaluationException e) {
             errored = true;
-            e.printStackTrace(); // TODO: delegate to some error-log
-            return getType().getDefault();
+            throw new EvaluationException(e.getMessage());
         }
         try {
             return (V) value;
         } catch (ClassCastException e) {
-            IntegratedDynamics.clog(Level.ERROR, String.format("The evaluation for operator %s returned %s instead of " +
+            errored = true;
+            throw new EvaluationException(String.format("The evaluation for operator %s returned %s instead of " +
                     "the expected %s.", op, value.getType(), op.getOutputType()));
-            return null;
         }
     }
 
