@@ -573,6 +573,38 @@ public class TestItemStackOperators {
     }
 
     /**
+     * ----------------------------------- ISITEMEQUALNONBT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackIsItemEqualNoNBT() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{iHoe, iPickaxe});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "israwitemequal(hoe, pickaxe) = false");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{iHoe, iHoeEnchanted});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "israwitemequal(hoe, hoeenchanted) = true");
+
+        IValue res3 = Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{iPickaxe, iPickaxe});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), true, "israwitemequal(pickaxe, pickaxe) = true");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputIsItemEqualNoNBTLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{iApple, iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputIsItemEqualNoNBTSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeIsItemEqualNoNBT() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
      * ----------------------------------- ISRAWITEMEQUAL -----------------------------------
      */
 
@@ -587,6 +619,9 @@ public class TestItemStackOperators {
 
         IValue res3 = Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{iPickaxe, iPickaxe});
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), true, "israwitemequal(pickaxe, pickaxe) = true");
+
+        IValue res4 = Operators.OBJECT_ITEMSTACK_ISRAWITEMEQUAL.evaluate(new IVariable[]{iHoe, iHoe100});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), true, "israwitemequal(hoe, hoe:100) = true");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

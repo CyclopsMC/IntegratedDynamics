@@ -923,7 +923,7 @@ public final class Operators {
             })).build());
 
     /**
-     * If the NBT tags of the given stacks are equal
+     * If the NBT tags of the given stacks are equal.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=NBT=").operatorName("isnbtequal")
@@ -943,7 +943,27 @@ public final class Operators {
             }).build());
 
     /**
-     * If the raw items of the given stacks are equal
+     * If the raw items of the given stacks are equal, ignoring NBT but including damage value.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_ISITEMEQUALNONBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=NoNBT=").operatorName("isitemequalnonbt")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+                    Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
+                    boolean equal = false;
+                    if(a.isPresent() && b.isPresent()) {
+                        equal = ItemStack.areItemsEqual(a.get(), b.get());
+                    } else if(!a.isPresent() && !b.isPresent()) {
+                        equal = true;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(equal);
+                }
+            }).build());
+
+    /**
+     * If the raw items of the given stacks are equal, ignoring NBT and damage value.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwitemequal")
@@ -954,7 +974,7 @@ public final class Operators {
                     Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
                     boolean equal = false;
                     if(a.isPresent() && b.isPresent()) {
-                        equal = ItemStack.areItemsEqual(a.get(), b.get());
+                        equal = ItemStack.areItemsEqualIgnoreDurability(a.get(), b.get());
                     } else if(!a.isPresent() && !b.isPresent()) {
                         equal = true;
                     }
