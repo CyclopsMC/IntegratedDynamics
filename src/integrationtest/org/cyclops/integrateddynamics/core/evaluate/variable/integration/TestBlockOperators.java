@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import org.apache.http.util.Asserts;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -132,15 +133,15 @@ public class TestBlockOperators {
     public void testBlockSound() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "dig.stone", "placesound(coal) = dig.stone");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BLOCK_STONE_BREAK.getSoundName().toString(), "placesound(coal) = inecraft:block.stone.break");
 
         IValue res2 = Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res2 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "dig.stone", "placesound(coal) = dig.stone");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BLOCK_STONE_PLACE.getSoundName().toString(), "placesound(coal) = inecraft:block.stone.place");
 
         IValue res3 = Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res3 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), "step.stone", "placesound(coal) = step.stone");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), SoundEvents.BLOCK_STONE_STEP.getSoundName().toString(), "placesound(coal) = inecraft:block.stone.step");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

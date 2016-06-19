@@ -56,8 +56,12 @@ public class TestEntityOperators {
         EntityZombie zombieSneaking = new EntityZombie(world);
         zombieSneaking.setSneaking(true);
         eZombieSneaking = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(zombieSneaking));
-        EntityZombie zombieEating = new EntityZombie(world);
-        //zombieEating.getItemInUseCount(true); // TODO
+        EntityZombie zombieEating = new EntityZombie(world) {
+            @Override
+            public int getItemInUseCount() {
+                return 1;
+            }
+        };
         eZombieEating = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(zombieEating));
         eChicken = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityChicken(world)));
         eItem = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityItem(world)));
