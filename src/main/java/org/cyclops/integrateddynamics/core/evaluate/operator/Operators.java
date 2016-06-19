@@ -1354,16 +1354,18 @@ public final class Operators {
     /**
      * The entity's mounted entity
      */
-    public static final IOperator OBJECT_ENTITY_MOUNTED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ENTITY).symbolOperator("mounted")
+    public static final IOperator OBJECT_ENTITY_MOUNTED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.LIST).symbolOperator("mounted")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
-                    Entity entityOut = null;
+                    List<ValueObjectTypeEntity.ValueEntity> passengers = Lists.newArrayList();
                     if(a.getRawValue().isPresent()) {
-                        //entityOut = a.getRawValue().get().getPassengers(); // TODO: transform this to a list
+                        for (Entity passenger : a.getRawValue().get().getPassengers()) {
+                            passengers.add(ValueObjectTypeEntity.ValueEntity.of(passenger));
+                        }
                     }
-                    return ValueObjectTypeEntity.ValueEntity.of(entityOut);
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, passengers);
                 }
             }).build());
 
