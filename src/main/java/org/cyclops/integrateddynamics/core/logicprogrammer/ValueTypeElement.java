@@ -138,6 +138,18 @@ public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRen
 
     @Override
     @SideOnly(Side.CLIENT)
+    public boolean isFocused(SubGuiConfigRenderPattern subGui) {
+        return ((ValueTypeSubGuiRenderPattern) subGui).getSearchField().isFocused();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void setFocused(SubGuiConfigRenderPattern subGui, boolean focused) {
+        ((ValueTypeSubGuiRenderPattern) subGui).getSearchField().setFocused(focused);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
         return new ValueTypeElementSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);

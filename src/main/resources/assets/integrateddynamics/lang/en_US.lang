@@ -16,6 +16,11 @@ gui.integrateddynamics.waila.dryingBasinConfig=Drying Basin Information
 gui.integrateddynamics.waila.item=Item: %s
 gui.integrateddynamics.waila.fluid=Fluid: %s (%s mB)
 
+# Keybindings
+key.categories.integrateddynamics=Integrated Dynamics
+key.integrateddynamics.logicProgrammerFocusSearch=Focus Search Logic Programmer
+key.integrateddynamics.logicProgrammerOpenRename=Focus Search Logic Programmer
+
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Cable
 tile.blocks.integrateddynamics.variablestore.name=Variable Store

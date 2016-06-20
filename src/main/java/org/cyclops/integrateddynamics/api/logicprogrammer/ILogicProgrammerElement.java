@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.api.logicprogrammer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -80,5 +82,18 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @return If it can be inserted.
      */
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack);
+
+    /**
+     * @return If this element has the active focus. For typing and things like that.
+     */
+    @SideOnly(Side.CLIENT)
+    public boolean isFocused(S subGui);
+
+    /**
+     * Set the focus of this element.
+     * @param focused If it must be focused.
+     */
+    @SideOnly(Side.CLIENT)
+    public void setFocused(S subGui, boolean focused);
 
 }
