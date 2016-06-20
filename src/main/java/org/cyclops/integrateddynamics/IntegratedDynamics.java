@@ -71,6 +71,7 @@ import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
+import org.cyclops.integrateddynamics.modcompat.tconstruct.TConstructModCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.*;
 import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
@@ -163,6 +164,8 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new WailaModCompat());
         //modCompatLoader.addModCompat(new ThaumcraftModCompat());
         modCompatLoader.addModCompat(new JEIModCompat());
+        modCompatLoader.addModCompat(new TConstructModCompat());
+
         modCompatLoader.addApiCompat(new RfApiCompat());
         modCompatLoader.addApiCompat(new TeslaApiCompat());
     }

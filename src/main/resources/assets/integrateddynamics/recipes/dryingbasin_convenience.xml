@@ -89,4 +89,35 @@
 		</properties>
 	</recipe>
 
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<fluid amount="250">water</fluid>
+			<item meta="*">minecraft:stained_hardened_clay</item>
+		</input>
+		<output>
+			<item>minecraft:hardened_clay</item>
+		</output>
+		<properties>
+			<duration>100</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="mod">evilcraft</condition>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<fluid amount="10">evilcraftblood</fluid>
+			<item>minecraft:sand</item>
+		</input>
+		<output>
+			<item meta="1">minecraft:sand</item>
+		</output>
+		<properties>
+			<duration>40</duration>
+		</properties>
+	</recipe>
+
 </recipes>
