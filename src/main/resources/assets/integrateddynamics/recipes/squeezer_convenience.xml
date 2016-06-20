@@ -96,4 +96,27 @@
         </output>
     </recipe>
 
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">evilcraft</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>evilcraft:undeadLog</item>
+        </input>
+        <output>
+            <fluid amount="100">evilcraftblood</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">evilcraft</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>evilcraft:undeadLeaves</item>
+        </input>
+        <output>
+            <fluid amount="50">evilcraftblood</fluid>
+            <item>evilcraft:hardenedBloodShard</item>
+        </output>
+    </recipe>
+
 </recipes>
