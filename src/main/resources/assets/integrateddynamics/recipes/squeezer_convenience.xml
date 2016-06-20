@@ -119,4 +119,124 @@
         </output>
     </recipe>
 
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="0">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="50">seed.oil</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="1">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="180">seed.oil</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="2">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="220">seed.oil</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="3">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="400">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="4">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="100">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="5">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="50">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="6">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="600">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item meta="0">forestry:honeyDrop</item>
+        </input>
+        <output>
+            <fluid amount="180">for.honey</fluid>
+            <item>forestry:propolis</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:carrot</item>
+        </input>
+        <output>
+            <fluid amount="200">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:apple</item>
+        </input>
+        <output>
+            <fluid amount="200">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+    </recipe>
+
 </recipes>
