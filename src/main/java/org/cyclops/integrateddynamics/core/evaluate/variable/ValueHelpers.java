@@ -92,7 +92,7 @@ public class ValueHelpers {
         IVariable[] variables = new IVariable[values.length];
         for (int i = 0; i < variables.length; i++) {
             IValue value = values[i];
-            variables[i] = new Variable(value.getType(), value);
+            variables[i] = new Variable<>(value.getType(), value);
         }
         return operator.evaluate(variables);
     }

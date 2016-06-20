@@ -613,7 +613,7 @@ public final class Operators {
                     IOperator operator = OperatorBuilders.getSafePredictate((ValueTypeOperator.ValueOperator) variables.getValue(1));
                     IVariable container = variables.getVariables()[2];
                     for (IValue value : list) {
-                        IValue result = operator.evaluate(new IVariable[]{container, new Variable(value.getType(), value)});
+                        IValue result = operator.evaluate(new IVariable[]{container, new Variable<>(value.getType(), value)});
                         if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                             return ValueTypeBoolean.ValueBoolean.of(true);
                         }
@@ -1757,8 +1757,8 @@ public final class Operators {
                     ValueTypeList.ValueList<IValueType<IValue>, IValue> inputList = variables.getValue(1);
                     for (IValue listValue : inputList.getRawValue()) {
                         accumulator = innerOperator.evaluate(new IVariable[]{
-                                new Variable(accumulator.getType(), accumulator),
-                                new Variable(listValue.getType(), listValue)});
+                                new Variable<>(accumulator.getType(), accumulator),
+                                new Variable<>(listValue.getType(), listValue)});
                     }
                     return accumulator;
                 }
