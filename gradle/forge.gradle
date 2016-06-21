@@ -62,7 +62,7 @@ dependencies {
     deobfCompile "pl.asie.charset:charset-wires:0.3.0-pre8" // http://charset.asie.pl/maven/pl/asie/charset/charset-wires/maven-metadata.xml
 
     // Project lombok
-    compile "org.projectlombok:lombok:1.16.4"
+    provided "org.projectlombok:lombok:1.16.8"
     testCompile "junit:junit:4.12"
 }
 
