@@ -77,6 +77,9 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
         if(toFill > 0 && isRf()) {
             toFill -= addEnergyRf(toFill, false);
         }
+        if(toFill > 0 && isTesla()) {
+            toFill -= addEnergyTesla(toFill, false);
+        }
         return energy - toFill;
     }
 
