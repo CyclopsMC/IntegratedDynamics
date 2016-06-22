@@ -312,6 +312,7 @@ public class OperatorBuilders {
     /**
      * Get the operator from a value in a safe manner.
      * @param value The operator value.
+     * @param expectedOutput The expected output value type.
      * @return The operator.
      * @throws EvaluationException If the operator is not a predicate.
      */

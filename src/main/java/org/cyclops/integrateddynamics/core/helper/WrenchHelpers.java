@@ -60,7 +60,9 @@ public final class WrenchHelpers {
      * to be passed.
      * @param player The player.
      * @param heldItem The item the player is holding.
+     * @param world The world in which the wrenching is happening.
      * @param pos The position that is being wrenched.
+     * @param side The side that is being wrenched.
      * @param action The actual wrench action.
      */
     public static void wrench(EntityPlayer player, ItemStack heldItem, World world, BlockPos pos, EnumFacing side, IWrenchAction<Void> action) {

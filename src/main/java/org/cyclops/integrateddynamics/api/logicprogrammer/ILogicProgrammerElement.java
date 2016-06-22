@@ -84,6 +84,7 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack);
 
     /**
+     * @param subGui The corresponding sub gui of this element.
      * @return If this element has the active focus. For typing and things like that.
      */
     @SideOnly(Side.CLIENT)
@@ -91,6 +92,7 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
 
     /**
      * Set the focus of this element.
+     * @param subGui The corresponding sub gui of this element.
      * @param focused If it must be focused.
      */
     @SideOnly(Side.CLIENT)
