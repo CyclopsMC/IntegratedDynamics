@@ -372,6 +372,16 @@ aspect.aspects.integrateddynamics.read.boolean.machine.canwork.name=Can Work
 aspect.aspects.integrateddynamics.read.boolean.machine.canwork.info=If the target would be able to start working in its current state
 aspect.aspects.integrateddynamics.read.boolean.machine.isworking.name=Is Working
 aspect.aspects.integrateddynamics.read.boolean.machine.isworking.info=If the target is currently working
+aspect.aspects.integrateddynamics.read.boolean.machine.istemperature.name=Has Temperature
+aspect.aspects.integrateddynamics.read.boolean.machine.istemperature.info=If the target has a certain temperature
+aspect.aspects.integrateddynamics.read.double.temperature.temperature.name=Temperature
+aspect.aspects.integrateddynamics.read.double.temperature.temperature.info=The current temperature of the target in degrees Kelvin
+aspect.aspects.integrateddynamics.read.double.temperature.maxtemperature.name=Maximum Temperature
+aspect.aspects.integrateddynamics.read.double.temperature.maxtemperature.info=The maximum temperature of the target in degrees Kelvin
+aspect.aspects.integrateddynamics.read.double.temperature.mintemperature.name=Minimum Temperature
+aspect.aspects.integrateddynamics.read.double.temperature.mintemperature.info=The minimum temperature of the target in degrees Kelvin
+aspect.aspects.integrateddynamics.read.double.temperature.defaulttemperature.name=Default Temperature
+aspect.aspects.integrateddynamics.read.double.temperature.defaulttemperature.info=The default temperature of the target in degrees Kelvin
 
 ## Network aspects
 aspect.aspects.integrateddynamics.read.boolean.network.applicable.name=Is Network

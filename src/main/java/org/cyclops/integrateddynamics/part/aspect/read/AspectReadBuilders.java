@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.commoncapabilities.api.capability.temperature.ITemperature;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -347,10 +348,21 @@ public class AspectReadBuilders {
                 return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.WORKER);
             }
         };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ITemperature> PROP_GET_TEMPERATURE = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ITemperature>() {
+            @Override
+            public ITemperature getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.TEMPERATURE);
+            }
+        };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IWorker>
                 BUILDER_WORKER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_WORKER, "machine");
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, ITemperature>
+                BUILDER_TEMPERATURE_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_TEMPERATURE, "temperature");
 
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, ITemperature>
+                BUILDER_TEMPERATURE_DOUBLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET_TEMPERATURE, "temperature");
     }
 
     public static final class Network {

@@ -19,7 +19,12 @@ public class PartTypeMachineReader extends PartTypeReadBase<PartTypeMachineReade
                 Aspects.Read.Machine.BOOLEAN_ISWORKER,
                 Aspects.Read.Machine.BOOLEAN_HASWORK,
                 Aspects.Read.Machine.BOOLEAN_CANWORK,
-                Aspects.Read.Machine.BOOLEAN_ISWORKING
+                Aspects.Read.Machine.BOOLEAN_ISWORKING,
+                Aspects.Read.Machine.BOOLEAN_ISTEMPERATURE,
+                Aspects.Read.Machine.DOUBLE_TEMPERATURE,
+                Aspects.Read.Machine.DOUBLE_MAXTEMPERATURE,
+                Aspects.Read.Machine.DOUBLE_MINTEMPERATURE,
+                Aspects.Read.Machine.DOUBLE_DEFAULTTEMPERATURE
         ));
     }
 

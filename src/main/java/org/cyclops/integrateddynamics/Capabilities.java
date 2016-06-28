@@ -5,6 +5,7 @@ import net.darkhax.tesla.api.ITeslaHolder;
 import net.darkhax.tesla.api.ITeslaProducer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import org.cyclops.commoncapabilities.api.capability.temperature.ITemperature;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.commoncapabilities.api.capability.wrench.IWrench;
 
@@ -27,4 +28,7 @@ public class Capabilities {
 
     @CapabilityInject(IWrench.class)
     public static Capability<IWrench> WRENCH = null;
+
+    @CapabilityInject(ITemperature.class)
+    public static Capability<ITemperature> TEMPERATURE = null;
 }

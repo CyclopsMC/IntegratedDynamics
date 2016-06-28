@@ -21,6 +21,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.commoncapabilities.api.capability.temperature.ITemperature;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -494,6 +495,42 @@ public class Aspects {
                             return worker != null && worker.canWork() && worker.hasWork();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isworking").buildRead();
+
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISTEMPERATURE =
+                    AspectReadBuilders.Machine.BUILDER_TEMPERATURE_BOOLEAN.handle(new IAspectValuePropagator<ITemperature, Boolean>() {
+                        @Override
+                        public Boolean getOutput(ITemperature temperature) {
+                            return temperature != null;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "istemperature").buildRead();
+            public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TEMPERATURE =
+                    AspectReadBuilders.Machine.BUILDER_TEMPERATURE_DOUBLE.handle(new IAspectValuePropagator<ITemperature, Double>() {
+                        @Override
+                        public Double getOutput(ITemperature temperature) {
+                            return temperature != null ? temperature.getTemperature() : 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "temperature").buildRead();
+            public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_MAXTEMPERATURE =
+                    AspectReadBuilders.Machine.BUILDER_TEMPERATURE_DOUBLE.handle(new IAspectValuePropagator<ITemperature, Double>() {
+                        @Override
+                        public Double getOutput(ITemperature temperature) {
+                            return temperature != null ? temperature.getMaximumTemperature() : 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "maxtemperature").buildRead();
+            public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_MINTEMPERATURE =
+                    AspectReadBuilders.Machine.BUILDER_TEMPERATURE_DOUBLE.handle(new IAspectValuePropagator<ITemperature, Double>() {
+                        @Override
+                        public Double getOutput(ITemperature temperature) {
+                            return temperature != null ? temperature.getMinimumTemperature() : 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "mintemperature").buildRead();
+            public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_DEFAULTTEMPERATURE =
+                    AspectReadBuilders.Machine.BUILDER_TEMPERATURE_DOUBLE.handle(new IAspectValuePropagator<ITemperature, Double>() {
+                        @Override
+                        public Double getOutput(ITemperature temperature) {
+                            return temperature != null ? temperature.getDefaultTemperature() : 0;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "defaulttemperature").buildRead();
 
         }
 
