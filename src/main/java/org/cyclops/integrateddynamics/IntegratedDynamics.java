@@ -69,6 +69,7 @@ import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTi
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
 import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.forestry.ForestryModCompat;
+import org.cyclops.integrateddynamics.modcompat.ic2.Ic2ModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
@@ -167,6 +168,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new JEIModCompat());
         modCompatLoader.addModCompat(new TConstructModCompat());
         modCompatLoader.addModCompat(new ForestryModCompat());
+        modCompatLoader.addModCompat(new Ic2ModCompat());
 
         modCompatLoader.addApiCompat(new RfApiCompat());
         modCompatLoader.addApiCompat(new TeslaApiCompat());

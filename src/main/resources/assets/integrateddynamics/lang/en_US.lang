@@ -372,8 +372,8 @@ aspect.aspects.integrateddynamics.read.boolean.machine.canwork.name=Can Work
 aspect.aspects.integrateddynamics.read.boolean.machine.canwork.info=If the target would be able to start working in its current state
 aspect.aspects.integrateddynamics.read.boolean.machine.isworking.name=Is Working
 aspect.aspects.integrateddynamics.read.boolean.machine.isworking.info=If the target is currently working
-aspect.aspects.integrateddynamics.read.boolean.machine.istemperature.name=Has Temperature
-aspect.aspects.integrateddynamics.read.boolean.machine.istemperature.info=If the target has a certain temperature
+aspect.aspects.integrateddynamics.read.boolean.temperature.istemperature.name=Has Temperature
+aspect.aspects.integrateddynamics.read.boolean.temperature.istemperature.info=If the target has a certain temperature
 aspect.aspects.integrateddynamics.read.double.temperature.temperature.name=Temperature
 aspect.aspects.integrateddynamics.read.double.temperature.temperature.info=The current temperature of the target in degrees Kelvin
 aspect.aspects.integrateddynamics.read.double.temperature.maxtemperature.name=Maximum Temperature
@@ -895,3 +895,33 @@ operator.operators.integrateddynamics.itemstack.isteslanonempty.name=Is Tesla Bu
 operator.operators.integrateddynamics.itemstack.isteslanonempty.info=If the given item has Tesla energy
 operator.operators.integrateddynamics.itemstack.teslafillratio.name=Tesla Fill Ratio
 operator.operators.integrateddynamics.itemstack.teslafillratio.info=The amount of Tesla in the item divided by its capacity
+
+## ----- IC2 ----- ##
+
+## Aspects
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.applicable.name=Is EU Handler
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.applicable.info=If the target in some way handles EU
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.canextract.name=Can Extract EU
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.canextract.info=If EU can really be extracted from the target, takes into account storage
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.caninsert.name=Can Insert EU
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.caninsert.info=If EU can really be inserted into the target, takes into account storage and capacity
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.isfull.name=Is EU Buffer Full
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.isfull.info=If the target's EU buffer is completely full
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.isempty.name=Is EU Buffer Empty
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.isempty.info=If the target's EU buffer is completely empty
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.isnonempty.name=Is EU Buffer Not Empty
+aspect.aspects.integrateddynamics.read.boolean.ic2.eu.isnonempty.info=If the target's EU buffer is not empty
+aspect.aspects.integrateddynamics.read.integer.ic2.eu.amount.name=Stored EU
+aspect.aspects.integrateddynamics.read.integer.ic2.eu.amount.info=The amount of EU stored in the target
+aspect.aspects.integrateddynamics.read.integer.ic2.eu.capacity.name=EU Capacity
+aspect.aspects.integrateddynamics.read.integer.ic2.eu.capacity.info=The EU capacity of the target
+aspect.aspects.integrateddynamics.read.double.ic2.eu.fillratio.name=EU Fill Ratio
+aspect.aspects.integrateddynamics.read.double.ic2.eu.fillratio.info=The amount of EU in the target divided by its capacity
+
+## Operators
+operator.operators.integrateddynamics.itemstack.isic2eucontainer.name=Is EU Container
+operator.operators.integrateddynamics.itemstack.isic2eucontainer.info=If the given item can hold EU
+operator.operators.integrateddynamics.itemstack.storedic2eu.name=EU Stored
+operator.operators.integrateddynamics.itemstack.storedic2eu.info=The amount of EU stored in this item
+operator.operators.integrateddynamics.itemstack.ic2eucapacity.name=EU Capacity
+operator.operators.integrateddynamics.itemstack.ic2eucapacity.info=The maximum amount of EU that can be stored in this item
