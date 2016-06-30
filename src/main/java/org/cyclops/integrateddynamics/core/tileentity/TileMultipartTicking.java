@@ -80,8 +80,12 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
+        EnumFacingMap<Boolean> lastConnected = connected;
         PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
         super.readFromNBT(tag);
+        if (getWorld() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected))) {
+            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
+        }
     }
 
     /**
