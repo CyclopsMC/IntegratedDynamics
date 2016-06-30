@@ -13,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
@@ -754,7 +755,8 @@ public class Aspects {
                                         SoundEvent soundEvent = SoundEvent.REGISTRY.getObject(new ResourceLocation(input.getRight()));
 
                                         if (soundEvent != null) {
-                                            IntegratedDynamics.proxy.sendSound(
+                                            World world = input.getLeft().getTarget().getPos().getWorld();
+                                            world.playSound(null,
                                                     (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
                                                     soundEvent, SoundCategory.RECORDS, volume, f);
                                         }

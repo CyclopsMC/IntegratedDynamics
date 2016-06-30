@@ -15,7 +15,6 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -154,7 +153,7 @@ public class AspectWriteBuilders {
                     if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
                         float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
                         float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                        IntegratedDynamics.proxy.sendSound(
+                        world.playSound(null,
                                 (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
                                 getInstrument(eventID), SoundCategory.RECORDS, volume, f);
                     }
