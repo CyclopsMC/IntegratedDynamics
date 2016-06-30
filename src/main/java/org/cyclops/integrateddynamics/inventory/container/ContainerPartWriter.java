@@ -11,6 +11,7 @@ import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
@@ -92,16 +93,22 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
             String writeValue = "";
             int writeValueColor = 0;
             if(getPartContainer() instanceof ITileCableNetwork && getPartState().hasVariable()) {
-                IVariable variable = getPartState().getVariable(((ITileCableNetwork) getPartContainer()).getNetwork());
-                if (variable != null) {
-                    try {
-                        IValue value = variable.getValue();
-                        writeValue = value.getType().toCompactString(value);
-                        writeValueColor = variable.getType().getDisplayColor();
-                    } catch (EvaluationException e) {
-                        writeValue = "ERROR";
-                        writeValueColor = Helpers.RGBToInt(255, 0, 0);
+                IPartNetwork network = ((ITileCableNetwork) getPartContainer()).getNetwork();
+                if (network != null) {
+                    IVariable variable = getPartState().getVariable(network);
+                    if (variable != null) {
+                        try {
+                            IValue value = variable.getValue();
+                            writeValue = value.getType().toCompactString(value);
+                            writeValueColor = variable.getType().getDisplayColor();
+                        } catch (EvaluationException e) {
+                            writeValue = "ERROR";
+                            writeValueColor = Helpers.RGBToInt(255, 0, 0);
+                        }
                     }
+                } else {
+                    writeValue = "NETWORK CORRUPTED!";
+                    writeValueColor = Helpers.RGBToInt(255, 100, 0);
                 }
             } else {
                 writeValue = "";
