@@ -1411,7 +1411,7 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     String hurtSound = "";
                     if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                        String sound = ObfuscationHelpers.getEntityLivingBaseHurtSound((EntityLivingBase) a.getRawValue().get());
+                        String sound = ObfuscationHelpers.getEntityLivingBaseHurtSound((EntityLivingBase) a.getRawValue().get()).getSoundName().toString();
                         if (sound != null) {
                             hurtSound = sound;
                         }
@@ -1430,7 +1430,7 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     String hurtSound = "";
                     if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                        String sound = ObfuscationHelpers.getEntityLivingBaseDeathSound((EntityLivingBase) a.getRawValue().get());
+                        String sound = ObfuscationHelpers.getEntityLivingBaseDeathSound((EntityLivingBase) a.getRawValue().get()).getSoundName().toString();
                         if (sound != null) {
                             hurtSound = sound;
                         }

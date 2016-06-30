@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.helper.obfuscation;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,10 +19,10 @@ public class ObfuscationHelpers {
      * @param entity The entity.
      * @return The hurt sound.
      */
-    public static String getEntityLivingBaseHurtSound(EntityLivingBase entity) {
+    public static SoundEvent getEntityLivingBaseHurtSound(EntityLivingBase entity) {
         Method method = ReflectionHelper.findMethod(EntityLivingBase.class, entity, ObfuscationData.ENTITYLIVINGBASE_HURTSOUND);
         try {
-            return (String) method.invoke(entity);
+            return (SoundEvent) method.invoke(entity);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -33,10 +34,10 @@ public class ObfuscationHelpers {
      * @param entity The entity.
      * @return The death sound.
      */
-    public static String getEntityLivingBaseDeathSound(EntityLivingBase entity) {
+    public static SoundEvent getEntityLivingBaseDeathSound(EntityLivingBase entity) {
         Method method = ReflectionHelper.findMethod(EntityLivingBase.class, entity, ObfuscationData.ENTITYLIVINGBASE_DEATHSOUND);
         try {
-            return (String) method.invoke(entity);
+            return (SoundEvent) method.invoke(entity);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
