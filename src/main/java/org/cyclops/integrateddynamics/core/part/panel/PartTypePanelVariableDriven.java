@@ -16,6 +16,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -117,7 +118,21 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
         if(!ValueHelpers.areValuesEqual(lastValue, newValue)) {
             onValueChanged(network, target, state, lastValue, newValue);
-            state.sendUpdate();
+
+            // We can't call state.sendUpdate() here, so we must trigger a block update manually.
+            // This was the cause of issue #46 which made it so that values that change after one tick are
+            // NOT sent to the client.
+            // This was because in each server tick, all tiles are first updated and then the networks.
+            // Since sendUpdate marks a flag for the tile to update, this caused a loss of one tick.
+            // For example:
+            // tick-0: Tile tick
+            // tick-0: Part tick: update a value, and mark tile to update
+            // tick-0: -- send all block updates to client ---
+            // tick-1: Tile tick: notices and update, marks a block update
+            // tick-1: Part tick: update the value again, the old value has still not been sent here!
+            // tick-1: -- send all block updates to client --- This will contain the value that was set in tick-1.
+            state.onDirty();
+            BlockHelpers.markForUpdate(target.getCenter().getPos().getWorld(), target.getCenter().getPos().getBlockPos());
         }
     }
 
