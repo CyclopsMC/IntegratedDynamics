@@ -10,10 +10,15 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
+import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
+import org.cyclops.cyclopscore.inventory.container.button.IButtonActionServer;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.client.gui.container.GuiPartSettings;
 
 /**
  * Container for part settings.
@@ -41,7 +46,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
      * @param partContainer The part container.
      * @param partType The part type.
      */
-    public ContainerPartSettings(EntityPlayer player, PartTarget target, IPartContainer partContainer, IPartType partType) {
+    public ContainerPartSettings(final EntityPlayer player, PartTarget target, IPartContainer partContainer, IPartType partType) {
         super(player.inventory, (IGuiContainerProvider) partType);
         this.target = target;
         this.partContainer = partContainer;
@@ -52,6 +57,17 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         addPlayerInventory(player.inventory, 8, 31);
 
         lastUpdateValueId = getNextValueId();
+
+        putButtonAction(GuiPartSettings.BUTTON_SAVE, new IButtonActionServer<InventoryContainer>() {
+            @Override
+            public void onAction(int buttonId, InventoryContainer container) {
+                IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
+                BlockPos pos = getTarget().getCenter().getPos().getBlockPos();
+                if (!MinecraftHelpers.isClientSide()) {
+                    player.openGui(IntegratedDynamics._instance.getModId(), ((IGuiContainerProvider) getPartType()).getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
+                }
+            }
+        });
     }
 
     public int getLastUpdateValueId() {

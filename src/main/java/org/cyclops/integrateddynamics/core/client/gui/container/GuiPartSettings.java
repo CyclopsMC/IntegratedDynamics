@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
@@ -13,6 +12,8 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
+import org.cyclops.cyclopscore.inventory.container.button.IButtonActionClient;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -29,7 +30,7 @@ import java.io.IOException;
 @Data
 public class GuiPartSettings extends GuiContainerExtended {
 
-    private static final int BUTTON_SAVE = 0;
+    public static final int BUTTON_SAVE = 0;
 
     private final PartTarget target;
     private final IPartContainer partContainer;
@@ -49,6 +50,16 @@ public class GuiPartSettings extends GuiContainerExtended {
         this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
+
+        putButtonAction(BUTTON_SAVE, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
+            @Override
+            public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
+                try {
+                    int updateInterval = numberField.getInt();
+                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
+                } catch (NumberFormatException e) { }
+            }
+        });
     }
 
     @Override
@@ -94,16 +105,6 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         numberField.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
         fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.updateInterval"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton guibutton) {
-        if(guibutton.id == BUTTON_SAVE) {
-            try {
-                int updateInterval = numberField.getInt();
-                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
-            } catch (NumberFormatException e) { }
-        }
     }
 
     @Override
