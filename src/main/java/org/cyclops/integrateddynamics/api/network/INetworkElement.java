@@ -75,9 +75,17 @@ public interface INetworkElement<N extends INetwork> extends Comparable<INetwork
 
     /**
      * Called when this element is about to be removed.
+     * This is called before {@link INetwork#removeNetworkElementPre(INetworkElement)}.
      * @param network The network.
      */
     public void onPreRemoved(N network);
+
+    /**
+     * Called when this element has been removed.
+     * This is called after {@link INetwork#removeNetworkElementPost(INetworkElement)}.
+     * @param network The network.
+     */
+    public void onPostRemoved(N network);
 
     /**
      * Called when a neighbouring block is updated, more specifically when

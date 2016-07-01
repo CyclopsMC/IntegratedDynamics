@@ -1,12 +1,14 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -74,6 +76,12 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
+    public void onPostRemoved(IPartNetwork network, PartTarget target, State state) {
+        super.onPostRemoved(network, target, state);
+        setLightLevel(target, 0);
+    }
+
+    @Override
     public void onBlockNeighborChange(IPartNetwork network, PartTarget target, State state, IBlockAccess world, Block neighborBlock) {
         super.onBlockNeighborChange(network, target, state, world, neighborBlock);
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
@@ -98,7 +106,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
                     world.setBlockState(pos, BlockInvisibleLight.getInstance().getDefaultState().
                             withProperty(BlockInvisibleLight.LIGHT, lightLevel));
                 } else {
-                    world.setBlockToAir(pos);
+                    world.setBlockState(pos, Blocks.AIR.getDefaultState(), MinecraftHelpers.BLOCK_NOTIFY_CLIENT);
                 }
             }
         } else {

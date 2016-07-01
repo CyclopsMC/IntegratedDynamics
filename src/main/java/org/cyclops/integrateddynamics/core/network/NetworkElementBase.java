@@ -67,6 +67,11 @@ public abstract class NetworkElementBase<N extends INetwork> implements INetwork
     }
 
     @Override
+    public void onPostRemoved(N network) {
+
+    }
+
+    @Override
     public void onNeighborBlockChange(N network, IBlockAccess world, Block neighborBlock) {
 
     }

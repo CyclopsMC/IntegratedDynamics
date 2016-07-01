@@ -260,6 +260,14 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public void onPreRemoved(IPartNetwork network, PartTarget target, S state);
 
     /**
+     * Called after this element has been removed.
+     * @param network The network.
+     * @param state The state
+     * @param target The target block.
+     */
+    public void onPostRemoved(IPartNetwork network, PartTarget target, S state);
+
+    /**
      * Called when a neighbouring block is updated, more specifically when
      * {@link net.minecraft.block.Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} is called.
      * @param network The network to update in.

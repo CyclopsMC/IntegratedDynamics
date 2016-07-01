@@ -329,6 +329,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
+    public void onPostRemoved(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
     public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
 
     }

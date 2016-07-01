@@ -40,6 +40,7 @@ public class NetworkElementProviderComponent<N extends INetwork> {
                 networkElement.onPreRemoved(network);
                 network.removeNetworkElementPre(networkElement);
                 network.removeNetworkElementPost(networkElement);
+                networkElement.onPostRemoved(network);
             }
             for (ItemStack itemStack : itemStacks) {
                 Block.spawnAsEntity(world, pos, itemStack);

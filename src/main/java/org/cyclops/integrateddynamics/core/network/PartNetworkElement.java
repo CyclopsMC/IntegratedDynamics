@@ -128,6 +128,11 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
+    public void onPostRemoved(IPartNetwork network) {
+        part.onPostRemoved(network, target, getPartState());
+    }
+
+    @Override
     public void onNeighborBlockChange(IPartNetwork network, IBlockAccess world, Block neighborBlock) {
         part.onBlockNeighborChange(network, target, getPartState(), world, neighborBlock);
     }

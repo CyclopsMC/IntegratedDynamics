@@ -233,6 +233,7 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
                 networkElement.onPreRemoved(network);
                 if(network.removeNetworkElementPre(networkElement)) {
                     network.removeNetworkElementPost(networkElement);
+                    networkElement.onPostRemoved(network);
                     network.notifyPartsChanged();
                     return true;
                 }
