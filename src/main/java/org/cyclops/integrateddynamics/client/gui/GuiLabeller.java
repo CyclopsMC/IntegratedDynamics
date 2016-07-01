@@ -56,8 +56,9 @@ public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
         this.searchField.setMaxStringLength(64);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
+        this.searchField.setFocused(true);
         this.searchField.setTextColor(16777215);
-        this.searchField.setCanLoseFocus(true);
+        this.searchField.setCanLoseFocus(false);
         this.searchField.setText("");
         this.searchField.width = searchWidth;
         this.searchField.xPosition = this.guiLeft + (searchX + searchWidth) - this.searchField.width;
