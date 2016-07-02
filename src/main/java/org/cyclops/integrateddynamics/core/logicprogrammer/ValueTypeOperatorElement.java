@@ -7,6 +7,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -94,6 +96,7 @@ public class ValueTypeOperatorElement extends ValueTypeElement implements IDropd
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
         return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
