@@ -111,7 +111,7 @@ public class PartPartType extends MultipartBase {
     }
 
     @Override
-    public IBlockState getExtendedState(IBlockState state) {
+    public IBlockState getActualState(IBlockState state) {
         return getPartType().getBlockState(getPartContainer(), getFacing());
     }
 
