@@ -71,13 +71,7 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
                 case Keyboard.KEY_RIGHT:
                     if (visiblePossibilitiesIndex >= 0
                             && visiblePossibilitiesIndex < visiblePossibilities.size()) {
-                        selectedDropdownPossibility = visiblePossibilities.get(visiblePossibilitiesIndex);
-                        setText(selectedDropdownPossibility.getDisplayString());
-                        visiblePossibilities = Lists.newArrayList();
-                        visiblePossibilitiesIndex = -1;
-                        if (dropdownEntryListener != null) {
-                            dropdownEntryListener.onSetDropdownPossiblity(selectedDropdownPossibility);
-                        }
+                        selectPossibility(visiblePossibilitiesIndex);
                         return true;
                     }
             }
@@ -101,6 +95,17 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
             return true;
         }
         return false;
+    }
+
+    protected void selectPossibility(int index) {
+        visiblePossibilitiesIndex = index;
+        selectedDropdownPossibility = visiblePossibilities.get(visiblePossibilitiesIndex);
+        setText(selectedDropdownPossibility.getDisplayString());
+        visiblePossibilities = Lists.newArrayList();
+        visiblePossibilitiesIndex = -1;
+        if (dropdownEntryListener != null) {
+            dropdownEntryListener.onSetDropdownPossiblity(selectedDropdownPossibility);
+        }
     }
 
     @Override
@@ -149,6 +154,42 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
                 cy += entryHeight;
             }
         }
+    }
+
+    @Override
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (this.getVisible() && isFocused()) {
+            FontRenderer fontRenderer = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
+            int yOffset = fontRenderer.FONT_HEIGHT + 3;
+
+            int x = this.xPosition;
+            int y = this.yPosition + yOffset;
+            int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
+            int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
+            int cy = y;
+            for (int i = startIndex; i < endIndex; i++) {
+                // Initialize entry
+                IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);
+                boolean active = visiblePossibilitiesIndex == i;
+                int entryHeight = yOffset;
+
+                // Optionally initialize tooltip
+                boolean addTooltip = (active && MinecraftHelpers.isShifted())
+                        || RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
+                if (RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY)) {
+                    selectPossibility(i);
+                    return;
+                }
+                List<String> tooltipLines = null;
+                if (addTooltip) {
+                    tooltipLines = dropdownEntry.getTooltip();
+                    entryHeight += tooltipLines.size() * yOffset;
+                }
+
+                cy += entryHeight;
+            }
+        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
 }
