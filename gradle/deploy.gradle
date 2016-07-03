@@ -5,6 +5,8 @@ curseforge {
         apiKey = project.curseforge_key
     } else if(System.getenv().TRAVIS) {
         apiKey = System.getenv().CURSEFORGE_KEY_SECRET
+    } else {
+        apiKey = "DUMMY"
     }
 
     project {
