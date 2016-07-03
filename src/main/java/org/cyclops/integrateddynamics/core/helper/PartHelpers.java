@@ -18,10 +18,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
-import org.cyclops.integrateddynamics.api.part.IPartState;
-import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 
@@ -241,6 +238,25 @@ public class PartHelpers {
             return true;
         }
         return false;
+    }
+
+    /**
+     * If the given player can currently interact with the part gui at the given position.
+     * @param target The part target.
+     * @param player The player.
+     * @param expectedPartContainer The expected part container.
+     * @return If the player can interact with it.
+     */
+    public static boolean canInteractWith(PartTarget target, EntityPlayer player, IPartContainer expectedPartContainer) {
+        World world = target.getCenter().getPos().getWorld();
+        BlockPos blockPos = target.getCenter().getPos().getBlockPos();
+        IPartContainerFacade facade = CableHelpers.getInterface(target.getCenter().getPos(), IPartContainerFacade.class);
+        if (facade == null) return false;
+        IPartContainer partContainer = facade.getPartContainer(world, target.getCenter().getPos().getBlockPos());
+        return partContainer == expectedPartContainer
+                && player.getDistanceSq((double) blockPos.getX() + 0.5D,
+                (double) blockPos.getY() + 0.5D,
+                (double) blockPos.getZ() + 0.5D) <= 64.0D;
     }
 
     /**

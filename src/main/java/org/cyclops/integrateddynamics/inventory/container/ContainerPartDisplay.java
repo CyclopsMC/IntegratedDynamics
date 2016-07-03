@@ -77,11 +77,6 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
-
-    @Override
     protected int getSizeInventory() {
         return getPartState().getInventory().getSizeInventory();
     }

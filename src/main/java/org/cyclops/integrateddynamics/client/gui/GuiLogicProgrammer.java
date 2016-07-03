@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
@@ -57,8 +59,8 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
      * Make a new instance.
      * @param inventoryPlayer The player inventory.
      */
-    public GuiLogicProgrammer(InventoryPlayer inventoryPlayer) {
-        super(new ContainerLogicProgrammer(inventoryPlayer));
+    public GuiLogicProgrammer(InventoryPlayer inventoryPlayer, World world, BlockPos blockPos) {
+        super(new ContainerLogicProgrammer(inventoryPlayer, world, blockPos));
         ContainerLogicProgrammer container = (ContainerLogicProgrammer) getContainer();
         container.setGui(this);
 

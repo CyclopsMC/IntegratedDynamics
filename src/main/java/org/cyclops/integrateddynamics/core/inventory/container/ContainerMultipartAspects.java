@@ -27,6 +27,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -177,7 +178,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return true;
+        return PartHelpers.canInteractWith(getTarget(), player, this.partContainer);
     }
 
     public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {

@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
 
 import java.util.Map;
@@ -80,4 +81,8 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         return (S) partContainer.getPartState(getTarget().getCenter().getSide());
     }
 
+    @Override
+    public boolean canInteractWith(EntityPlayer playerIn) {
+        return PartHelpers.canInteractWith(getTarget(), player, this.partContainer);
+    }
 }
