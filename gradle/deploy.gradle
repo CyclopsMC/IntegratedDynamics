@@ -23,6 +23,9 @@ curseforge {
             changelog = new File("resources/changelog/${project.version}.txt").text
         }
 
+        addGameVersion '1.10'
+        addGameVersion '1.10.2'
+
         addArtifact deobfJar
         addArtifact sourceJar
         addArtifact javadocJar
