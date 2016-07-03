@@ -440,12 +440,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                     }
                     return false;
                 } else if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {
-                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
+                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
                         // Remove part from cable
-                        if(player.isSneaking()) {
-                            PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
-                            ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
-                        }
+                        PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
+                        ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
                         return true;
                     } else if(isRealCable(world, pos)) {
                         // Delegate activated call to part
