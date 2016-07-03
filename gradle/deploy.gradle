@@ -15,6 +15,7 @@ curseforge {
         mainArtifact(jar) {
             relations {
                 requiredLibrary 'cyclops-core'
+                requiredLibrary 'common-capabilities'
             }
         }
 
