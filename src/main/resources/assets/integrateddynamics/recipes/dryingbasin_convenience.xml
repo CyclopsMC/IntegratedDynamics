@@ -120,4 +120,18 @@
 		</properties>
 	</recipe>
 
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>convenience</tag>
+		<condition type="config">dryingBasin</condition>
+		<input>
+			<item meta="1">minecraft:sponge</item>
+		</input>
+		<output>
+			<item>minecraft:sponge</item>
+		</output>
+		<properties>
+			<duration>200</duration>
+		</properties>
+	</recipe>
+
 </recipes>
