@@ -45,6 +45,9 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     public int getProgress() {
         float current = currentlyBurning;
         float max = currentlyBurningMax;
+        if (max == 0) {
+            return -1;
+        }
         return Math.round((current / max) * (float) MAX_PROGRESS);
     }
 

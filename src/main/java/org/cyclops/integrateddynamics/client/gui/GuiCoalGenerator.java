@@ -23,7 +23,7 @@ public class GuiCoalGenerator extends GuiContainerConfigurable<ContainerCoalGene
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         int lastProgress = getContainer().getLastProgress();
-        if (lastProgress > 0) {
+        if (lastProgress >= 0) {
             this.drawTexturedModalRect(getGuiLeft() + 81, getGuiTop() + 30 + lastProgress, 176,
                     lastProgress, 14, TileCoalGenerator.MAX_PROGRESS - lastProgress + 1);
         }
