@@ -1,0 +1,66 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.7.0 and CommonCapabilities 1.0.0.
+
+WARNING: Changes to the fluid system has been made, so you will LOSE all Menril bucket items!
+
+Additions:
+* Add operator valuetype
+  Includes logic programmer element to define operator value types via a autocomplete dropdown menu.
+* Implement reduce operator
+* Add list contains and contains-by-predicate operator
+* Add item and fluid predicate aspects to charset shifter writers
+* Implement flip operator. To flip the inputs of an operator.
+* Implement pipe operator. Chain outputs of operators to inputs.
+* Implement filter operator. Filters a list with the given predicate.
+  This commit also includes operators for combining predicates with conjunction, disjunction and negation.
+* Implement map operator
+  It takes an operator and a list, and it applies the operator lazily on all elements of the list.
+* Add currying support for the apply operator
+* Implement apply operator
+  This operator takes an operator value and another value, and tries to apply the value to the operator.
+* Add sponge recipe to drying basin
+* Add Tesla capabilities
+* Add IC2 EU reader aspects and operators
+* Add temperature readers
+* Add Forestry recipe integration. Menril Resin can now be created in the Forestry Squeezer
+* Add EvilCraft undead log and leaves squeezin recipes
+* Add TCon convenience recipes. Crystalized Menril Block crafting can now be done in the TCon Casting Basin.
+* Add Logic Programmer power-user features
+  Allow scrolling and selecting elements with keyboard.
+  Arrow keys, tab, return and enter are supported.
+  Alt+F will focus the searcfield.
+  Alt+R will show/save-hide the label field if a labeler is present.
+* Use the IWrench capability for the wrench
+* Add Charset fluid-shifter support
+
+Changes:
+* Many changes to improve ticking and rendering efficiency
+* Return to main part gui after changing part settings
+* Always focus textbox when in Labeller gui
+* Improve error handling in LazyExpression
+* Use new fluid capabilities for items. The custom menril bucket has been removed in favor of the universal bucket.
+* Show Squeezer instructions in tooltip, Closes #44
+
+Fixes:
+* Fix display part rotation only happening client-side, Closes #58
+* Fix fuel progress in generator gui not always being correct, Closes #55
+* Fix guis staying open after breaking the block/part, Closes #53
+* Fix MCMP part parts always facing down
+* Improve variable card models, Closes #9
+* Fix Meneglin biomes spawning too frequently, Closes #24
+* Fix cable rendering not updating when adding/removing facades
+* Fix invisible light block from light panels staying after panel removal, Closes #40
+* Fix values that exist for one tick not being shown in display parts, Closes #46
+* Fix cable models not updating when disconnecting or changing neighbours
+* Fix crash when interacting with parts when network got corrupted, Closes #25
+* Fix rare crash when playing sounds
+* Fix change of return value for entity sounds in 1.9
+* Fix mounted entities operator
+* Fix failing integration tests
+* Add itemstack comparator ignoring damage values
+* Fix redstone writer deactivation not working correctly, Closes #49
+* Correctly show blockstate name, instead of the block name, Closes #47
+* Improve lighting in display rendering, Closes #45
+* Fix localization for player list aspect in world reader, Closes #48
+* Fix player aspect in entity reader reading all players from the world, instead of the target
+* Make property retrieval during rendering safer, Closes #50
