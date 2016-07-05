@@ -3,7 +3,7 @@ apply plugin: 'maven'
 curseforge {
     if(project.hasProperty("curseforge_key") && project.hasProperty("changelog")) {
         apiKey = project.curseforge_key
-    } else if(System.getenv().TRAVIS) {
+    } else if(System.getenv().TRAVIS && System.getenv().CURSEFORGE_KEY_SECRET) {
         apiKey = System.getenv().CURSEFORGE_KEY_SECRET
     } else {
         apiKey = "DUMMY"
