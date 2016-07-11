@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.7.0.
+
+Additions:
+* Create zh_CN.lang, huge thanks to @CannonFotter, @3TUSK, @bakaxyf, @Meow-J, @exzhawk and @ayasaki-hayate
