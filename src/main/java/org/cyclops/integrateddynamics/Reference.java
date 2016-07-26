@@ -43,6 +43,7 @@ public final class Reference {
     public static final String MOD_TCONSTRUCT = "tconstruct";
     public static final String MOD_FORESTRY = "forestry";
     public static final String MOD_IC2 = "IC2";
+    public static final String MOD_TOP = "theoneprobe";
 
     public static final String MOD_DEPENDENCIES =
             "required-after:" + MOD_FORGE       + "@[" + MOD_FORGE_VERSION_MIN       + ",);" +

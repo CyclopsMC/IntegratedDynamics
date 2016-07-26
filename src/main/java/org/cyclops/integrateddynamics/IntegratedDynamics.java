@@ -76,6 +76,7 @@ import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tconstruct.TConstructModCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.*;
+import org.cyclops.integrateddynamics.modcompat.top.TopModCompat;
 import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
@@ -169,6 +170,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new TConstructModCompat());
         modCompatLoader.addModCompat(new ForestryModCompat());
         modCompatLoader.addModCompat(new Ic2ModCompat());
+        modCompatLoader.addModCompat(new TopModCompat());
 
         modCompatLoader.addApiCompat(new RfApiCompat());
         modCompatLoader.addApiCompat(new TeslaApiCompat());
