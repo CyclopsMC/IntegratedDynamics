@@ -276,9 +276,10 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             } else if (isElementFocused && ClientProxy.FOCUS_LP_RENAME.isActiveAndMatches(keyCode) && hasLabeller()) {
                 // Open labeller gui
                 operatorInfoPattern.onButtonEditClick();
-            } else if (Keyboard.KEY_ESCAPE == keyCode && (isElementFocused || isSearchFieldFocussed())) {
+            } else if ((Keyboard.KEY_ESCAPE == keyCode || Keyboard.KEY_LEFT == keyCode) && (isElementFocused || isSearchFieldFocussed())) {
                 if (isElementFocused) {
                     container.getActiveElement().setFocused(operatorConfigPattern, false);
+                    setSearchFieldFocussed(true);
                 } else {
                     // Unfocus search field
                     setSearchFieldFocussed(false);
