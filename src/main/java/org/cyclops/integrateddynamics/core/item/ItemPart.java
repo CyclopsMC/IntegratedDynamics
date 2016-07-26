@@ -131,10 +131,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             if(!world.isRemote) {
                 partContainer.setPart(side, getPart(), partType.getState(itemStack));
             }
-            System.out.println("Setting part " + getPart());
             return true;
-        } else {
-            System.out.println("Side occupied!");
         }
         return false;
     }

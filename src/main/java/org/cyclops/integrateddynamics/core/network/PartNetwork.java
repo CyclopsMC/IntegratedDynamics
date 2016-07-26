@@ -230,7 +230,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     }
 
     private void onPartsChanged() {
-        System.out.println("Parts of network " + this + " are changed.");
+
     }
 
     @Override
