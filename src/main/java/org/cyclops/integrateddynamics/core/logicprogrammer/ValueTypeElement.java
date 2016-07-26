@@ -81,7 +81,7 @@ public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRen
 
     @Override
     public boolean canWriteElementPre() {
-        return getInnerGuiElement().getInputString() != null && !getInnerGuiElement().getInputString().isEmpty();
+        return getInnerGuiElement().getInputString() != null;
     }
 
     @Override
