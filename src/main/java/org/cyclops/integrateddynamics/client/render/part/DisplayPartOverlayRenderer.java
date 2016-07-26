@@ -68,6 +68,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
+        GlStateManager.disableLighting();
 
         GlStateManager.enableRescaleNormal();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -100,6 +101,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
             }
         }
 
+        GlStateManager.enableLighting();
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
         GlStateManager.disableRescaleNormal();
