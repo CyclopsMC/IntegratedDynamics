@@ -557,6 +557,7 @@ operator.operators.integrateddynamics.string.name.name=Name
 operator.operators.integrateddynamics.string.name.info=Get the name of a named object or converts it to a string
 
 operator.operators.integrateddynamics.double.name=Double
+operator.operators.integrateddynamics.double.basename=Double %s
 operator.operators.integrateddynamics.double.round.name=Round
 operator.operators.integrateddynamics.double.round.info=Round to the nearest Integer
 operator.operators.integrateddynamics.double.ceil.name=Ceil
