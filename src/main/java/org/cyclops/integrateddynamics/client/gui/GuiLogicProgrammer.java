@@ -328,6 +328,12 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             }
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
+
+        // If the search box has been selected, de-active the current element.
+        if(isSearchFieldFocussed() &&
+                container.getActiveElement() != null && container.getActiveElement().isFocused(operatorConfigPattern)) {
+            container.getActiveElement().setFocused(operatorConfigPattern, false);
+        }
     }
 
     protected void label(String label) {
