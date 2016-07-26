@@ -24,6 +24,7 @@ public class TestListOperators {
 
     private DummyVariableList labc;
     private DummyVariableList lintegers;
+    private DummyVariableList lempty;
 
     private DummyVariableInteger i0;
     private DummyVariableInteger i1;
@@ -54,6 +55,7 @@ public class TestListOperators {
                 ValueTypeString.ValueString.of("c")
         ));
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
+        lempty = new DummyVariableList(ValueTypeList.ValueList.ofAll());
     }
 
     /**
@@ -80,6 +82,64 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeLength() throws EvaluationException {
         Operators.LIST_LENGTH.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- EMPTY -----------------------------------
+     */
+
+    @Test
+    public void testListEmpty() throws EvaluationException {
+        IValue res1 = Operators.LIST_EMPTY.evaluate(new IVariable[]{labc});
+        assertThat("result is an boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("empty(abc) = false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+
+        IValue res2 = Operators.LIST_EMPTY.evaluate(new IVariable[]{lempty});
+        assertThat("empty(empty) = true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeEmptyLarge() throws EvaluationException {
+        Operators.LIST_EMPTY.evaluate(new IVariable[]{labc, labc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeEmptySmall() throws EvaluationException {
+        Operators.LIST_EMPTY.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeEmpty() throws EvaluationException {
+        Operators.LIST_EMPTY.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- NOT_EMPTY -----------------------------------
+     */
+
+    @Test
+    public void testListNotEmpty() throws EvaluationException {
+        IValue res1 = Operators.LIST_NOT_EMPTY.evaluate(new IVariable[]{labc});
+        assertThat("result is an boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("empty(abc) = false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+
+        IValue res2 = Operators.LIST_NOT_EMPTY.evaluate(new IVariable[]{lempty});
+        assertThat("empty(empty) = true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNotEmptyLarge() throws EvaluationException {
+        Operators.LIST_NOT_EMPTY.evaluate(new IVariable[]{labc, labc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNotEmptySmall() throws EvaluationException {
+        Operators.LIST_NOT_EMPTY.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNotEmpty() throws EvaluationException {
+        Operators.LIST_NOT_EMPTY.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**

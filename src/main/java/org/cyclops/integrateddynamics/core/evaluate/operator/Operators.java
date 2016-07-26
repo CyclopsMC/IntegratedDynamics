@@ -550,6 +550,25 @@ public final class Operators {
             }).build());
 
     /**
+     * Check if a list is empty
+     */
+    public static final IOperator LIST_EMPTY = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX.output(ValueTypes.BOOLEAN).symbol("∅").operatorName("empty")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    return ValueTypeBoolean.ValueBoolean.of(a.getLength() == 0);
+                }
+            }).build());
+
+    /**
+     * Check if a list is not empty
+     */
+    public static final IOperator LIST_NOT_EMPTY = REGISTRY.register(
+            new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT).apply(LIST_EMPTY).build(
+                    "o", "notempty", IConfigRenderPattern.PREFIX_1, "list"));
+
+    /**
      * List operator with one input list and one output integer
      */
     public static final IOperator LIST_ELEMENT = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
