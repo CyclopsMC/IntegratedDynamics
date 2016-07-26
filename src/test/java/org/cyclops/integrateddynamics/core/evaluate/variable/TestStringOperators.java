@@ -22,10 +22,14 @@ public class TestStringOperators {
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
 
     private DummyVariableString sabc;
+    private DummyVariableInteger i10;
+    private DummyVariableDouble d10_5;
 
     @Before
     public void before() {
         sabc = new DummyVariableString(ValueTypeString.ValueString.of("abc"));
+        i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
+        d10_5 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(10.5D));
     }
 
     /**
@@ -78,6 +82,35 @@ public class TestStringOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeConcat() throws EvaluationException {
         Operators.STRING_CONCAT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- NAMED_NAME -----------------------------------
+     */
+
+    @Test
+    public void testStringNamedName() throws EvaluationException {
+        IValue res1 = Operators.NAMED_NAME.evaluate(new IVariable[]{i10});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("name(10) = 10", ((ValueTypeString.ValueString) res1).getRawValue(), is("10"));
+
+        IValue res2 = Operators.NAMED_NAME.evaluate(new IVariable[]{d10_5});
+        assertThat("name(10.5) = 10.5", ((ValueTypeString.ValueString) res2).getRawValue(), is("10.5"));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizNamedNameLarge() throws EvaluationException {
+        Operators.NAMED_NAME.evaluate(new IVariable[]{sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNamedNameSmall() throws EvaluationException {
+        Operators.NAMED_NAME.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNamedName() throws EvaluationException {
+        Operators.NAMED_NAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

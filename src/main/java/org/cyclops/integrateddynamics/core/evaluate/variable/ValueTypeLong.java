@@ -75,6 +75,11 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
         return ValueLong.of(Math.min(a.getRawValue(), b.getRawValue()));
     }
 
+    @Override
+    public String getName(ValueLong a) {
+        return toCompactString(a);
+    }
+
     @ToString
     public static class ValueLong extends ValueBase {
 

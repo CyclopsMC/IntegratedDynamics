@@ -75,6 +75,11 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
         return ValueDouble.of(Math.min(a.getRawValue(), b.getRawValue()));
     }
 
+    @Override
+    public String getName(ValueDouble a) {
+        return toCompactString(a);
+    }
+
     @ToString
     public static class ValueDouble extends ValueBase {
 

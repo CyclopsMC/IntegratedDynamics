@@ -88,7 +88,7 @@ valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
 valuetype.valuetypes.integrateddynamics.number.name=Number
 valuetype.valuetypes.integrateddynamics.number.info=Accepts all number types.
 valuetype.valuetypes.integrateddynamics.named.name=Named
-valuetype.valuetypes.integrateddynamics.named.info=Accepts all value types that have a name.
+valuetype.valuetypes.integrateddynamics.named.info=Accepts all value types that have a name or can be converted to a String.
 
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
@@ -554,7 +554,7 @@ operator.operators.integrateddynamics.string.length.info=The length of the given
 operator.operators.integrateddynamics.string.concat.name=Concat
 operator.operators.integrateddynamics.string.concat.info=Concatenate the two given Strings to one
 operator.operators.integrateddynamics.string.name.name=Name
-operator.operators.integrateddynamics.string.name.info=Get the name of a named object
+operator.operators.integrateddynamics.string.name.info=Get the name of a named object or converts it to a string
 
 operator.operators.integrateddynamics.double.name=Double
 operator.operators.integrateddynamics.double.round.name=Round

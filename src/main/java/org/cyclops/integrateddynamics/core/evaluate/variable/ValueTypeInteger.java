@@ -76,6 +76,11 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
         return ValueInteger.of(Math.min(a.getRawValue(), b.getRawValue()));
     }
 
+    @Override
+    public String getName(ValueInteger a) {
+        return toCompactString(a);
+    }
+
     @ToString
     public static class ValueInteger extends ValueBase {
 
