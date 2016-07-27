@@ -774,6 +774,11 @@ public class Aspects {
                         .handle(new IAspectValuePropagator<Triple<PartTarget,IAspectProperties,Double>, Void>() {
                             @Override
                             public Void getOutput(Triple<PartTarget, IAspectProperties, Double> input) throws EvaluationException {
+                                double velocity = input.getRight();
+                                if (velocity < 0) {
+                                    return null;
+                                }
+
                                 IAspectProperties properties = input.getMiddle();
                                 PartPos pos = input.getLeft().getTarget();
 
@@ -786,7 +791,6 @@ public class Aspects {
                                 double xDir = properties.getValue(AspectWriteBuilders.Effect.PROP_SPREAD_X).getRawValue();
                                 double yDir = properties.getValue(AspectWriteBuilders.Effect.PROP_SPREAD_Y).getRawValue();
                                 double zDir = properties.getValue(AspectWriteBuilders.Effect.PROP_SPREAD_Z).getRawValue();
-                                double velocity = input.getRight();
 
                                 int[] aint = new int[particle.getArgumentCount()];
                                 for (int i = 0; i < aint.length; i++) {
