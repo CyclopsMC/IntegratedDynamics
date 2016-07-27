@@ -1355,16 +1355,32 @@ public final class Operators {
             }).build());
 
     /**
-     * The currently held item of the entity.
+     * The item the given entity is currently holding in its main hand.
      */
-    public static final IOperator OBJECT_ENTITY_HELDITEM = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("helditem")
+    public static final IOperator OBJECT_ENTITY_HELDITEM_MAIN = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbol("helditem1").operatorName("helditem")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     ItemStack itemStack = null;
-                    if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                        itemStack = ((EntityLivingBase) a.getRawValue().get()).getActiveItemStack();
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItemMainhand();
+                    }
+                    return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
+                }
+            }).build());
+
+    /**
+     * The item the given entity is currently holding in its off hand.
+     */
+    public static final IOperator OBJECT_ENTITY_HELDITEM_OFF = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbol("helditem2").operatorName("helditemoffhand")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    ItemStack itemStack = null;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItemOffhand();
                     }
                     return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
                 }
