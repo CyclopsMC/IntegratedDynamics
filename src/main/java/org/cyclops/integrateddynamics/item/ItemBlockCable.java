@@ -95,8 +95,8 @@ public class ItemBlockCable extends ItemBlockMetadata {
 
     public static void playPlaceSound(World world, BlockPos pos) {
         Block block = BlockCable.getInstance();
-        world.playSound(null, (double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
-                block.getSoundType().getPlaceSound(), SoundCategory.BLOCKS, (block.getSoundType().getVolume() + 1.0F) / 2.0F, block.getSoundType().getPitch() * 0.8F);
+        world.playSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
+                block.getSoundType().getPlaceSound(), SoundCategory.BLOCKS, (block.getSoundType().getVolume() + 1.0F) / 2.0F, block.getSoundType().getPitch() * 0.8F, false);
     }
 
     public static void playBreakSound(World world, BlockPos pos, IBlockState blockState) {
