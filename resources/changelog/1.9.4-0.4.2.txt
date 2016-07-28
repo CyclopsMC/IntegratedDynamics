@@ -1,0 +1,21 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.7.0 or higher.
+
+Additions:
+* Add The One Probe integration
+* Add list (not) empty operators
+
+Changes:
+* Remove debug prints
+* Don't emit particles from the effect writer when the input value is less than zero
+* Add distinction between mainhand and offhand for held item operator
+* Allow empty string variable creation
+* Deselect LP element on escape or left arrow
+* Allow conversion of numbers to strings
+
+Fixes:
+* Fix multipart crash on aspects with properties
+* Fix part placement sounds not working
+* Fix localization for round, ceil and floor
+* Fix lighting issues with display parts
+* Fix selecting LP search box not working
