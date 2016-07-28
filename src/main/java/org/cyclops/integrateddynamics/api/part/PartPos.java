@@ -5,9 +5,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 /**
  * Object holder to refer to a block side and position.
@@ -72,12 +72,15 @@ public class PartPos {
      * @return A pair of part type and part state or null if not found.
      */
     public static Pair<IPartType, IPartState> getPartData(PartPos pos) {
-        IPartContainer partContainer = TileHelpers.getSafeTile(pos.getPos().getWorld(), pos.getPos().getBlockPos(), IPartContainer.class);
-        if(partContainer != null) {
-            IPartType partType = partContainer.getPart(pos.getSide());
-            IPartState partState = partContainer.getPartState(pos.getSide());
-            if(partType != null && partState != null) {
-                return Pair.of(partType, partState);
+        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(pos.getPos(), IPartContainerFacade.class);
+        if (partContainerFacade != null) {
+            IPartContainer partContainer = partContainerFacade.getPartContainer(pos.getPos().getWorld(), pos.getPos().getBlockPos());
+            if (partContainer != null) {
+                IPartType partType = partContainer.getPart(pos.getSide());
+                IPartState partState = partContainer.getPartState(pos.getSide());
+                if (partType != null && partState != null) {
+                    return Pair.of(partType, partState);
+                }
             }
         }
         return null;
@@ -89,7 +92,7 @@ public class PartPos {
      * @return The network or null if not found.
      */
     public static IPartNetwork getNetwork(PartPos pos) {
-        ITileCableNetwork cableNetwork = TileHelpers.getSafeTile(pos.getPos().getWorld(), pos.getPos().getBlockPos(), ITileCableNetwork.class);
+        ITileCableNetwork cableNetwork = CableHelpers.getInterface(pos.getPos(), ITileCableNetwork.class);
         return cableNetwork.getNetwork();
     }
 
