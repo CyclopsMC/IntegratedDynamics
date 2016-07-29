@@ -11,6 +11,13 @@ env:
 install: ./gradlew setupCIWorkspace -S
 script: ./gradlew build -S
 
+cache:
+  directories:
+    - '$HOME/.m2'
+    - '$HOME/.gradle'
+before_cache:
+    - rm -f $HOME/.gradle/caches/*/*.lock
+
 deploy:
 - provider: script
   script: ./gradlew curseforge -S
