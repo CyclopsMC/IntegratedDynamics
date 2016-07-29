@@ -184,7 +184,11 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
             boolean hasPart = !isItemStack() && hasPart(side);
             if(hasPart && shouldRenderParts()) {
-                ret.addAll(getPartModel(side).getQuads(this.blockState, this.facing, this.rand));
+                try {
+                    ret.addAll(getPartModel(side).getQuads(this.blockState, this.facing, this.rand));
+                } catch (Exception e) {
+                    // Skip rendering this part, could occur when the player is still logging in.
+                }
             }
             if(renderCable) {
                 IPartType.RenderPosition renderPosition = IPartType.RenderPosition.NONE;
