@@ -516,9 +516,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 }
             }
         } else {
-            IPartState partState = getPartState(facing);
-            if(partState != null && partState.hasCapability(capability)) {
-                return (T) partState.getCapability(capability);
+            if(hasPart(facing)) {
+                IPartState partState = getPartState(facing);
+                if (partState != null && partState.hasCapability(capability)) {
+                    return (T) partState.getCapability(capability);
+                }
             }
         }
         return super.getCapability(capability, facing);
