@@ -351,7 +351,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
+        if(tile != null && state.getBlock() == this) {
             return tile.getConnectionState();
         }
         return getDefaultState();
