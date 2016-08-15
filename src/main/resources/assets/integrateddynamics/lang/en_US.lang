@@ -22,7 +22,7 @@ key.integrateddynamics.logicProgrammerFocusSearch=Focus Search Logic Programmer
 key.integrateddynamics.logicProgrammerOpenRename=Focus Search Logic Programmer
 
 # Blocks
-tile.blocks.integrateddynamics.cable.name=Cable
+tile.blocks.integrateddynamics.cable.name=Logic Cable
 tile.blocks.integrateddynamics.variablestore.name=Variable Store
 tile.blocks.integrateddynamics.energyBattery.name=Energy Battery
 tile.blocks.integrateddynamics.creativeEnergyBattery.name=Creative Energy Battery
