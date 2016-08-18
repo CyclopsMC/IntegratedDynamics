@@ -15,6 +15,7 @@ public class RawPartData implements IRawData {
     private final BlockPos pos;
     private final EnumFacing side;
     private final String name;
+    private final long lastTickDuration;
 
     @Override
     public String toString() {
@@ -27,12 +28,13 @@ public class RawPartData implements IRawData {
         tag.setLong("pos", pos.toLong());
         tag.setInteger("side", side.ordinal());
         tag.setString("name", name);
+        tag.setLong("lastTickDuration", lastTickDuration);
         return tag;
     }
 
     public static RawPartData fromNbt(NBTTagCompound tag) {
         return new RawPartData(tag.getInteger("dimension"), BlockPos.fromLong(tag.getLong("pos")),
-                EnumFacing.VALUES[tag.getInteger("side")], tag.getString("name"));
+                EnumFacing.VALUES[tag.getInteger("side")], tag.getString("name"), tag.getLong("lastTickDuration"));
     }
 
 }

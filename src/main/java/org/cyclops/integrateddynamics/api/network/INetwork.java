@@ -112,4 +112,16 @@ public interface INetwork<N extends INetwork<N>> extends INBTSerializable {
      */
     public int getCablesCount();
 
+    /**
+     * Get the last tick duration of the given network element.
+     * @param networkElement The networkelement
+     * @return Duration in nanoseconds
+     */
+    public long getLastSecondDuration(INetworkElement<N> networkElement);
+
+    /**
+     * Reset the last second duration counts.
+     */
+    public void resetLastSecondDurations();
+
 }

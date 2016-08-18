@@ -14,16 +14,14 @@ import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * A network instance that can hold a set of {@link INetworkElement}s.
@@ -39,6 +37,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     private final TreeSet<INetworkElement<N>> elements = Sets.newTreeSet();
     private TreeSet<INetworkElement<N>> updateableElements = null;
     private TreeMap<INetworkElement<N>, Integer> updateableElementsTicks = null;
+    private Map<INetworkElement<N>, Long> lastSecondDurations = Maps.newHashMap();
 
     private volatile boolean changed = false;
     private volatile boolean killed = false;
@@ -266,7 +265,16 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
             onUpdate();
 
             // Update updateable network elements
+            boolean isBeingDiagnozed = NetworkDiagnostics.getInstance().isBeingDiagnozed();
+            if (!isBeingDiagnozed && !lastSecondDurations.isEmpty()) {
+                // Make sure we aren't using any unnecessary memory.
+                lastSecondDurations.clear();
+            }
             for (INetworkElement<N> element : updateableElements) {
+                long startTime = 0;
+                if (isBeingDiagnozed) {
+                    startTime = System.nanoTime();
+                }
                 if (canUpdate(element)) {
                     if(updateableElementsTicks.get(element) <= 0) {
                         updateableElementsTicks.put(element, element.getUpdateInterval());
@@ -277,6 +285,15 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                     onSkipUpdate(element);
                 }
                 updateableElementsTicks.put(element, updateableElementsTicks.get(element) - 1);
+                if (isBeingDiagnozed) {
+                    long duration = System.nanoTime() - startTime;
+                    duration /= 1000;
+                    Long lastDuration = lastSecondDurations.get(element);
+                    if (lastDuration != null) {
+                        duration = duration + lastDuration;
+                    }
+                    lastSecondDurations.put(element, duration);
+                }
             }
         }
     }
@@ -345,4 +362,14 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
         return baseCluster.size();
     }
 
+    @Override
+    public long getLastSecondDuration(INetworkElement<N> networkElement) {
+        Long duration = lastSecondDurations.get(networkElement);
+        return duration == null ? 0 : duration;
+    }
+
+    @Override
+    public void resetLastSecondDurations() {
+        lastSecondDurations.clear();
+    }
 }

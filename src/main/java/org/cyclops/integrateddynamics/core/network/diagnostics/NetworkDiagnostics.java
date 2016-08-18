@@ -57,9 +57,11 @@ public class NetworkDiagnostics {
             if (networkElement instanceof IPartNetworkElement) {
                 IPartNetworkElement partNetworkElement = (IPartNetworkElement) networkElement;
                 PartPos pos = partNetworkElement.getTarget().getCenter();
+                long lastSecondDuration = network.getLastSecondDuration(networkElement);
                 rawParts.add(new RawPartData(pos.getPos().getWorld().provider.getDimension(),
                         pos.getPos().getBlockPos(), pos.getSide(),
-                        L10NHelpers.localize(partNetworkElement.getPart().getUnlocalizedName())));
+                        L10NHelpers.localize(partNetworkElement.getPart().getUnlocalizedName()),
+                        lastSecondDuration));
             } else {
                 // If needed, we can send the other part types later on as well
             }
@@ -78,6 +80,10 @@ public class NetworkDiagnostics {
                 it.remove();
             }
         }
+    }
+
+    public synchronized boolean isBeingDiagnozed() {
+        return !players.isEmpty();
     }
 
 }
