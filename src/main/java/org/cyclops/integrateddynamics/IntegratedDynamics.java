@@ -42,6 +42,7 @@ import org.cyclops.integrateddynamics.client.render.part.PartOverlayRendererRegi
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRendererRegistry;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
+import org.cyclops.integrateddynamics.command.CommandNetworkDiagnostics;
 import org.cyclops.integrateddynamics.command.CommandTest;
 import org.cyclops.integrateddynamics.core.NoteBlockEventReceiver;
 import org.cyclops.integrateddynamics.core.TickHandler;
@@ -155,6 +156,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         if(TestHelpers.canRunIntegrationTests()) {
             commands.put(CommandTest.NAME, new CommandTest(this));
         }
+        commands.put(CommandNetworkDiagnostics.NAME, new CommandNetworkDiagnostics(this));
         return new CommandMod(this, commands);
     }
 

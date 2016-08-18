@@ -97,4 +97,19 @@ public interface INetwork<N extends INetwork<N>> extends INBTSerializable {
      */
     public Set<INetworkElement<N>> getElements();
 
+    /**
+     * @return If this network has been killed.
+     */
+    public boolean isKilled();
+
+    /**
+     * @return If the network has changed structure or elements in the last tick.
+     */
+    public boolean hasChanged();
+
+    /**
+     * @return The number of cables in the network.
+     */
+    public int getCablesCount();
+
 }

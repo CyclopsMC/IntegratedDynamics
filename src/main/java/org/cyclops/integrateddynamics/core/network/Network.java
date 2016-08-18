@@ -40,6 +40,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     private TreeSet<INetworkElement<N>> updateableElements = null;
     private TreeMap<INetworkElement<N>, Integer> updateableElementsTicks = null;
 
+    private volatile boolean changed = false;
     private volatile boolean killed = false;
 
     /**
@@ -96,6 +97,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                     networkCarrier.setNetwork(getMaterializedThis(), world, pos);
                 }
             }
+            onNetworkChanged();
         }
     }
 
@@ -162,6 +164,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                 }
             }
             getEventBus().post(new NetworkElementAddEvent.Post<N>(getMaterializedThis(), element));
+            onNetworkChanged();
             return true;
         }
         return false;
@@ -194,6 +197,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
         elements.remove(element);
         removeNetworkElementUpdateable(element);
         getEventBus().post(new NetworkElementRemoveEvent.Post<N>(getMaterializedThis(), element));
+        onNetworkChanged();
     }
 
     @Override
@@ -230,6 +234,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     public boolean killIfEmpty() {
         if(baseCluster.isEmpty()) {
             kill();
+            onNetworkChanged();
             return true;
         }
         return false;
@@ -254,6 +259,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
 
     @Override
     public final void update() {
+        this.changed = false;
         if(killIfEmpty() || killed) {
             NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
         } else {
@@ -293,6 +299,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                 for (INetworkElement<N> networkElement : networkElements) {
                     removeNetworkElementPost(networkElement);
                 }
+                onNetworkChanged();
                 return true;
             }
         } else {
@@ -317,6 +324,25 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     @Override
     public Set<INetworkElement<N>> getElements() {
         return this.elements;
+    }
+
+    @Override
+    public boolean isKilled() {
+        return this.killed;
+    }
+
+    protected void onNetworkChanged() {
+        this.changed = true;
+    }
+
+    @Override
+    public boolean hasChanged() {
+        return this.changed;
+    }
+
+    @Override
+    public int getCablesCount() {
+        return baseCluster.size();
     }
 
 }
