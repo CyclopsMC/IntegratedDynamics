@@ -6,18 +6,14 @@ import com.google.common.collect.Multimap;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 import lombok.Data;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +31,7 @@ public class GuiNetworkDiagnostics extends Application {
 
     private static GuiNetworkDiagnostics gui = null;
     private static Stage primaryStage = null;
-    private TableView<ObservablePartData> table = null;
+    private static TableView<ObservablePartData> table = null;
 
     private static Multimap<Integer, ObservablePartData> networkData = ArrayListMultimap.create();
     private ObservableList<ObservablePartData> partData = FXCollections.observableArrayList(networkData.values());
@@ -54,9 +50,9 @@ public class GuiNetworkDiagnostics extends Application {
                 }
                 networkData.putAll(id, parts);
             }
-            if (gui != null) {
-                gui.updateTable();
-            }
+        }
+        if (gui != null) {
+            gui.updateTable();
         }
     }
 
@@ -69,14 +65,11 @@ public class GuiNetworkDiagnostics extends Application {
 
         Platform.setImplicitExit(false);
         if (primaryStage != null) {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        start(primaryStage);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            Platform.runLater(() -> {
+                try {
+                    start(primaryStage);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
         } else {
@@ -85,65 +78,41 @@ public class GuiNetworkDiagnostics extends Application {
     }
 
     protected void updateTable() {
-        if (table == null) {
-            table = new TableView<>();
+        synchronized (networkData) {
+            if (table == null) {
+                table = new TableView<>();
 
-            TableColumn<ObservablePartData, Integer> networkCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.network"));
-            networkCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-            networkCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservablePartData, Integer>, ObservableValue<Integer>>() {
-                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<ObservablePartData, Integer> p) {
-                    return new ReadOnlyObjectWrapper<>(p.getValue().getNetworkId());
-                }
-            });
-            TableColumn<ObservablePartData, Integer> cablesCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.cables"));
-            cablesCol.prefWidthProperty().bind(table.widthProperty().divide(12));
-            cablesCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservablePartData, Integer>, ObservableValue<Integer>>() {
-                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<ObservablePartData, Integer> p) {
-                    return new ReadOnlyObjectWrapper<>(p.getValue().getNetworkCables());
-                }
-            });
-            TableColumn<ObservablePartData, String> partCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.part"));
-            partCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-            partCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservablePartData, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservablePartData, String> p) {
-                    return new ReadOnlyObjectWrapper<>(p.getValue().getName());
-                }
-            });
-            TableColumn<ObservablePartData, Long> durationCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.ticktime"));
-            durationCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-            durationCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservablePartData, Long>, ObservableValue<Long>>() {
-                public ObservableValue<Long> call(TableColumn.CellDataFeatures<ObservablePartData, Long> p) {
-                    return new ReadOnlyObjectWrapper<>(p.getValue().getLastTickDuration());
-                }
-            });
-            TableColumn<ObservablePartData, Integer> dimCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.dimension"));
-            dimCol.prefWidthProperty().bind(table.widthProperty().divide(12));
-            dimCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservablePartData, Integer>, ObservableValue<Integer>>() {
-                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<ObservablePartData, Integer> p) {
-                    return new ReadOnlyObjectWrapper<>(p.getValue().getDimension());
-                }
-            });
-            TableColumn<ObservablePartData, String> posCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.position"));
-            posCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-            posCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservablePartData, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservablePartData, String> p) {
+                TableColumn<ObservablePartData, Integer> networkCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.network"));
+                networkCol.prefWidthProperty().bind(table.widthProperty().divide(6));
+                networkCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getNetworkId()));
+                TableColumn<ObservablePartData, Integer> cablesCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.cables"));
+                cablesCol.prefWidthProperty().bind(table.widthProperty().divide(12));
+                cablesCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getNetworkCables()));
+                TableColumn<ObservablePartData, String> partCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.part"));
+                partCol.prefWidthProperty().bind(table.widthProperty().divide(6));
+                partCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getName()));
+                TableColumn<ObservablePartData, Long> durationCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.ticktime"));
+                durationCol.prefWidthProperty().bind(table.widthProperty().divide(6));
+                durationCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getLastTickDuration()));
+                TableColumn<ObservablePartData, Integer> dimCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.dimension"));
+                dimCol.prefWidthProperty().bind(table.widthProperty().divide(12));
+                dimCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getDimension()));
+                TableColumn<ObservablePartData, String> posCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.position"));
+                posCol.prefWidthProperty().bind(table.widthProperty().divide(6));
+                posCol.setCellValueFactory(p -> {
                     BlockPos pos = p.getValue().getPos();
                     return new ReadOnlyObjectWrapper<>(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
-                }
-            });
-            TableColumn<ObservablePartData, String> sideCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.side"));
-            sideCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-            sideCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservablePartData, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservablePartData, String> p) {
-                    return new ReadOnlyObjectWrapper<>(p.getValue().getSide().name());
-                }
-            });
+                });
+                TableColumn<ObservablePartData, String> sideCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.side"));
+                sideCol.prefWidthProperty().bind(table.widthProperty().divide(6));
+                sideCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getSide().name()));
 
-            table.getColumns().addAll(networkCol, cablesCol, partCol, durationCol, dimCol, posCol, sideCol);
-            table.setItems(partData);
+                table.getColumns().addAll(networkCol, cablesCol, partCol, durationCol, dimCol, posCol, sideCol);
+                table.setItems(partData);
+            }
+            partData.setAll(networkData.values());
+            table.sort();
         }
-        partData.setAll(networkData.values());
-        table.sort();
     }
 
     @Override
@@ -158,11 +127,8 @@ public class GuiNetworkDiagnostics extends Application {
         table.autosize();
 
         primaryStage.setScene(new Scene(root, 750, 500));
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            public void handle(WindowEvent we) {
-                IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe());
-            }
-        });
+        primaryStage.setOnCloseRequest(we -> IntegratedDynamics._instance.getPacketHandler()
+                .sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe()));
         primaryStage.show();
     }
 
