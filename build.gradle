@@ -26,8 +26,8 @@ loadProperties()
 version = config.mod_version
 group = "org.cyclops.integrateddynamics"
 archivesBaseName = "IntegratedDynamics"
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 def loadProperties() {
     // Config file with custom properties

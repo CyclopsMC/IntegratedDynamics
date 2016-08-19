@@ -36,8 +36,7 @@ public class CommandNetworkDiagnostics extends CommandMod {
             public void run() {
                 GuiNetworkDiagnostics.clearNetworkData();
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.subscribe());
-                GuiNetworkDiagnostics gui = new GuiNetworkDiagnostics();
-                gui.start();
+                GuiNetworkDiagnostics.start();
             }
         }).start();
     }

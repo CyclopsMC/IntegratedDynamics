@@ -3,17 +3,6 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import lombok.Data;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -21,20 +10,28 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsSubscribePacket;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Network diagnostics gui.
  * @author rubensworks
  */
-public class GuiNetworkDiagnostics extends Application {
+public class GuiNetworkDiagnostics extends JFrame {
 
     private static GuiNetworkDiagnostics gui = null;
-    private static Stage primaryStage = null;
-    private static TableView<ObservablePartData> table = null;
+    private static JTable table = null;
+    private static Vector<String> columnNames = new Vector<>();
+    private static Vector<Vector<Object>> data = new Vector<>();
+    private static DefaultTableModel model;
 
     private static Multimap<Integer, ObservablePartData> networkData = ArrayListMultimap.create();
-    private ObservableList<ObservablePartData> partData = FXCollections.observableArrayList(networkData.values());
 
     public static void setNetworkData(int id, RawNetworkData rawNetworkData) {
         synchronized (networkData) {
@@ -60,76 +57,86 @@ public class GuiNetworkDiagnostics extends Application {
         networkData.clear();
     }
 
-    public void start() {
-        gui = this;
+    public static void start() {
+        if (gui == null) {
+            gui = new GuiNetworkDiagnostics();
 
-        Platform.setImplicitExit(false);
-        if (primaryStage != null) {
-            Platform.runLater(() -> {
-                try {
-                    start(primaryStage);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            gui.setTitle(L10NHelpers.localize("gui.integrateddynamics.diagnostics.title"));
+            gui.updateTable();
+            gui.setSize(750, 500);
+            gui.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            gui.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe());
+                    super.windowClosing(e);
                 }
             });
-        } else {
-            launch();
+            gui.setLocationRelativeTo((Component) null);
         }
+        gui.setVisible(true);
     }
 
     protected void updateTable() {
-        synchronized (networkData) {
-            if (table == null) {
-                table = new TableView<>();
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (networkData) {
+                        columnNames.clear();
+                        columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.network"));
+                        columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.cables"));
+                        columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.part"));
+                        columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.ticktime"));
+                        columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.dimension"));
+                        columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.position"));
+                        columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.side"));
 
-                TableColumn<ObservablePartData, Integer> networkCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.network"));
-                networkCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-                networkCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getNetworkId()));
-                TableColumn<ObservablePartData, Integer> cablesCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.cables"));
-                cablesCol.prefWidthProperty().bind(table.widthProperty().divide(12));
-                cablesCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getNetworkCables()));
-                TableColumn<ObservablePartData, String> partCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.part"));
-                partCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-                partCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getName()));
-                TableColumn<ObservablePartData, Long> durationCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.ticktime"));
-                durationCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-                durationCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getLastTickDuration()));
-                TableColumn<ObservablePartData, Integer> dimCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.dimension"));
-                dimCol.prefWidthProperty().bind(table.widthProperty().divide(12));
-                dimCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getDimension()));
-                TableColumn<ObservablePartData, String> posCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.position"));
-                posCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-                posCol.setCellValueFactory(p -> {
-                    BlockPos pos = p.getValue().getPos();
-                    return new ReadOnlyObjectWrapper<>(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
-                });
-                TableColumn<ObservablePartData, String> sideCol = new TableColumn<>(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.side"));
-                sideCol.prefWidthProperty().bind(table.widthProperty().divide(6));
-                sideCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getSide().name()));
+                        data.clear();
+                        for (ObservablePartData observablePartData : networkData.values()) {
+                            Vector<Object> row = new Vector<>();
+                            row.add(observablePartData.getNetworkId());
+                            row.add(observablePartData.getNetworkCables());
+                            row.add(observablePartData.getName());
+                            row.add(observablePartData.getLastTickDuration());
+                            row.add(observablePartData.getDimension());
+                            BlockPos pos = observablePartData.getPos();
+                            row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
+                            row.add(observablePartData.getSide().name());
+                            data.addElement(row);
+                        }
 
-                table.getColumns().addAll(networkCol, cablesCol, partCol, durationCol, dimCol, posCol, sideCol);
-                table.setItems(partData);
-            }
-            partData.setAll(networkData.values());
-            table.sort();
+                        if (table == null) {
+                            table = new JTable();
+                            model = new DefaultTableModel(data, columnNames) {
+                                @Override
+                                public Class getColumnClass(int column) {
+                                    // My eyes are bleeding as I write this...
+                                    // I'm terribly sorry, I must be going to hell now.
+                                    if (column == 0 || column == 1 || column == 4) {
+                                        return Integer.class;
+                                    }
+                                    if (column == 3) {
+                                        return Long.class;
+                                    }
+                                    return String.class;
+                                }
+                            };
+                            table.setModel(model);
+                            table.setAutoCreateRowSorter(true);
+                            add(new JScrollPane(table));
+                            pack();
+                        } else {
+                            table.getRowSorter().allRowsChanged();
+                            model.fireTableDataChanged();
+                        }
+                        repaint();
+                    }
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            e.printStackTrace();
         }
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        GuiNetworkDiagnostics.primaryStage = primaryStage;
-        primaryStage.setTitle(L10NHelpers.localize("gui.integrateddynamics.diagnostics.title"));
-        BorderPane root = new BorderPane();
-        root.setPadding(new Insets(10, 20, 10, 20));
-
-        updateTable();
-        root.setCenter(table);
-        table.autosize();
-
-        primaryStage.setScene(new Scene(root, 750, 500));
-        primaryStage.setOnCloseRequest(we -> IntegratedDynamics._instance.getPacketHandler()
-                .sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe()));
-        primaryStage.show();
     }
 
     @Data
