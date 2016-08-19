@@ -58,6 +58,8 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
     /**
      * Make a new instance.
      * @param inventoryPlayer The player inventory.
+     * @param world The world.
+     * @param blockPos The position.
      */
     public GuiLogicProgrammer(InventoryPlayer inventoryPlayer, World world, BlockPos blockPos) {
         super(new ContainerLogicProgrammer(inventoryPlayer, world, blockPos));

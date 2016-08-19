@@ -70,7 +70,9 @@ public class ContainerLogicProgrammer extends ScrollingInventoryContainer<ILogic
 
     /**
      * Make a new instance.
-     * @param inventory   The player inventory.
+     * @param inventory The player inventory.
+     * @param world The world.
+     * @param blockPos The position.
      */
     public ContainerLogicProgrammer(InventoryPlayer inventory, World world, BlockPos blockPos) {
         super(inventory, BlockLogicProgrammer.getInstance(), getElements(), FILTERER);
