@@ -4,6 +4,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.cyclops.cyclopscore.client.key.IKeyRegistry;
 import org.cyclops.cyclopscore.init.ModBase;
@@ -11,6 +12,7 @@ import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.model.VariableLoader;
+import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -43,6 +45,7 @@ public class ClientProxy extends ClientProxyComponent {
     public void registerEventHooks() {
         super.registerEventHooks();
         ModelLoaderRegistry.registerLoader(new VariableLoader());
+        MinecraftForge.EVENT_BUS.register(NetworkDiagnosticsPartOverlayRenderer.getInstance());
     }
 
     @Override

@@ -3,20 +3,30 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import lombok.Data;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsSubscribePacket;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -35,16 +45,40 @@ public class GuiNetworkDiagnostics extends JFrame {
 
     public static void setNetworkData(int id, RawNetworkData rawNetworkData) {
         synchronized (networkData) {
-            networkData.removeAll(id);
+            Collection<ObservablePartData> previous = networkData.removeAll(id);
+
+            // The positions that were being rendered previously
+            Set<PartPos> previousPositionsWithRender = Sets.newHashSet();
+            for (ObservablePartData partData : previous) {
+                PartPos pos = partData.toPartPos();
+                if (pos != null && NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(pos)) {
+                    previousPositionsWithRender.add(pos);
+                }
+            }
+
             if (rawNetworkData != null) {
                 List<ObservablePartData> parts = Lists.newArrayList();
                 for (RawPartData rawPartData : rawNetworkData.getParts()) {
-                    parts.add(new ObservablePartData(
+                    ObservablePartData partData = new ObservablePartData(
                             rawNetworkData.getId(), rawNetworkData.getCables(),
                             rawPartData.getDimension(), rawPartData.getPos(),
                             rawPartData.getSide(), rawPartData.getName(),
-                            rawPartData.getLastTickDuration()));
+                            rawPartData.getLastTickDuration());
+                    parts.add(partData);
+
+                    // Remove this position from the previously rendered list
+                    PartPos pos = partData.toPartPos();
+                    if (pos != null) {
+                        previousPositionsWithRender.remove(pos);
+                    }
                 }
+
+                // Remove all remaining positions from the renderlist,
+                // because those do not exist anymore.
+                for (PartPos partPos : previousPositionsWithRender) {
+                    NetworkDiagnosticsPartOverlayRenderer.getInstance().removePos(partPos);
+                }
+
                 networkData.putAll(id, parts);
             }
         }
@@ -68,7 +102,7 @@ public class GuiNetworkDiagnostics extends JFrame {
             gui.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe());
+                    onCloseGui();
                     super.windowClosing(e);
                 }
             });
@@ -91,8 +125,10 @@ public class GuiNetworkDiagnostics extends JFrame {
                         columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.dimension"));
                         columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.position"));
                         columnNames.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.side"));
+                        columnNames.addElement("_id");
 
                         data.clear();
+                        int i = 0;
                         for (ObservablePartData observablePartData : networkData.values()) {
                             Vector<Object> row = new Vector<>();
                             row.add(observablePartData.getNetworkId());
@@ -103,6 +139,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                             BlockPos pos = observablePartData.getPos();
                             row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
                             row.add(observablePartData.getSide().name());
+                            row.add(i++);
                             data.addElement(row);
                         }
 
@@ -123,7 +160,44 @@ public class GuiNetworkDiagnostics extends JFrame {
                                 }
                             };
                             table.setModel(model);
+                            table.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
+                                @Override
+                                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                                    ObservablePartData partData = getPartDataFromRow(row);
+                                    if (partData != null && NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(partData.toPartPos())) {
+                                        c.setBackground(Color.CYAN);
+                                    } else {
+                                        c.setBackground(Color.WHITE);
+                                    }
+                                    return c;
+                                }
+                            });
+                            table.getColumnModel().removeColumn(table.getColumn("_id"));
                             table.setAutoCreateRowSorter(true);
+                            table.addMouseListener(new MouseAdapter() {
+                                @Override
+                                public void mouseClicked(MouseEvent e) {
+                                    super.mouseClicked(e);
+                                    if (e.getClickCount() == 1) {
+                                        JTable target = (JTable)e.getSource();
+                                        int row = target.getSelectedRow();
+                                        ObservablePartData partData = getPartDataFromRow(row);
+                                        if (partData != null) {
+                                            PartPos pos = partData.toPartPos();
+                                            if (e.getButton() == 1) {
+                                                if (NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(pos)) {
+                                                    NetworkDiagnosticsPartOverlayRenderer.getInstance().removePos(pos);
+                                                } else {
+                                                    NetworkDiagnosticsPartOverlayRenderer.getInstance().addPos(pos);
+                                                }
+                                            } else if (e.getButton() == 2) {
+                                                // TODO: teleport
+                                            }
+                                        }
+                                    }
+                                }
+                            });
                             add(new JScrollPane(table));
                             pack();
                         } else {
@@ -139,6 +213,23 @@ public class GuiNetworkDiagnostics extends JFrame {
         }
     }
 
+    protected static ObservablePartData getPartDataFromRow(int row) {
+        Object[] data;
+        synchronized (networkData) {
+            data = networkData.values().toArray();
+        }
+        int internalId = (int) table.getModel().getValueAt(table.convertRowIndexToModel(row), 7);
+        if (internalId < data.length) {
+            return (ObservablePartData) data[internalId];
+        }
+        return null;
+    }
+
+    protected static void onCloseGui() {
+        IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe());
+        NetworkDiagnosticsPartOverlayRenderer.getInstance().clearPositions();
+    }
+
     @Data
     public static class ObservablePartData {
         private final int networkId;
@@ -148,5 +239,13 @@ public class GuiNetworkDiagnostics extends JFrame {
         private final EnumFacing side;
         private final String name;
         private final long lastTickDuration;
+
+        public PartPos toPartPos() {
+            World world = Minecraft.getMinecraft().theWorld;
+            if (getDimension() == world.provider.getDimension()) {
+                return PartPos.of(DimPos.of(world, getPos()), getSide());
+            }
+            return null;
+        }
     }
 }

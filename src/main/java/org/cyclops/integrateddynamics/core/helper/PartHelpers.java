@@ -260,6 +260,23 @@ public class PartHelpers {
     }
 
     /**
+     * Get a part at the given position.
+     * @param partPos The part position.
+     * @return The part.
+     */
+    public static @Nullable PartStateHolder<?, ?> getPart(PartPos partPos) {
+        World world = partPos.getPos().getWorld();
+        BlockPos pos = partPos.getPos().getBlockPos();
+        EnumFacing side = partPos.getSide();
+        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
+        IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
+        if (partContainer.hasPart(side)) {
+            return PartStateHolder.of(partContainer.getPart(side), partContainer.getPartState(side));
+        }
+        return null;
+    }
+
+    /**
      * A part and state holder.
      * @param <P> The part type type.
      * @param <S> The part state type.
