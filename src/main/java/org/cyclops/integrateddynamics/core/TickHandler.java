@@ -16,6 +16,7 @@ public final class TickHandler {
 
     private static TickHandler INSTANCE;
     private int tick = 0;
+    private boolean shouldCrash = false;
 
     private TickHandler() {
 
@@ -28,8 +29,15 @@ public final class TickHandler {
         return INSTANCE;
     }
 
+    public void setShouldCrash() {
+        this.shouldCrash = true;
+    }
+
     @SubscribeEvent
     public void onTick(TickEvent event) {
+        if (shouldCrash) {
+            throw new RuntimeException("Forcefully crashed the server.");
+        }
         if(event.type == TickEvent.Type.SERVER && event.phase == TickEvent.Phase.END) {
             boolean isBeingDiagnozed = NetworkDiagnostics.getInstance().isBeingDiagnozed();
             if (isBeingDiagnozed) {
