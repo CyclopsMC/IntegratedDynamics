@@ -34,6 +34,7 @@ public class CommonProxy extends CommonProxyComponent {
         packetHandler.register(LogicProgrammerValueTypeOperatorValueChangedPacket.class);
         packetHandler.register(NetworkDiagnosticsSubscribePacket.class);
         packetHandler.register(NetworkDiagnosticsNetworkPacket.class);
+        packetHandler.register(PlayerTeleportPacket.class);
 
         IntegratedDynamics.clog("Registered packet handler.");
     }

@@ -14,6 +14,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsSubscribePacket;
+import org.cyclops.integrateddynamics.network.packet.PlayerTeleportPacket;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -181,18 +182,27 @@ public class GuiNetworkDiagnostics extends JFrame {
                                     super.mouseClicked(e);
                                     if (e.getClickCount() == 1) {
                                         JTable target = (JTable)e.getSource();
-                                        int row = target.getSelectedRow();
+                                        int row = target.rowAtPoint(e.getPoint());
                                         ObservablePartData partData = getPartDataFromRow(row);
                                         if (partData != null) {
                                             PartPos pos = partData.toPartPos();
-                                            if (e.getButton() == 1) {
+                                            if (e.getButton() == MouseEvent.BUTTON1) {
                                                 if (NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(pos)) {
                                                     NetworkDiagnosticsPartOverlayRenderer.getInstance().removePos(pos);
                                                 } else {
                                                     NetworkDiagnosticsPartOverlayRenderer.getInstance().addPos(pos);
                                                 }
-                                            } else if (e.getButton() == 2) {
-                                                // TODO: teleport
+                                            } else if (e.getButton() == MouseEvent.BUTTON3) {
+                                                BlockPos blockPos = pos.getPos().getBlockPos().offset(pos.getSide());
+                                                float yaw = pos.getSide().getOpposite().getHorizontalAngle();
+                                                IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
+                                                        pos.getPos().getWorld().provider.getDimension(),
+                                                        blockPos.getX(),
+                                                        blockPos.getY() - 1,
+                                                        blockPos.getZ(),
+                                                        yaw,
+                                                        0
+                                                ));
                                             }
                                         }
                                     }
@@ -214,6 +224,9 @@ public class GuiNetworkDiagnostics extends JFrame {
     }
 
     protected static ObservablePartData getPartDataFromRow(int row) {
+        if (row < 0) {
+            return null;
+        }
         Object[] data;
         synchronized (networkData) {
             data = networkData.values().toArray();
