@@ -169,7 +169,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                                     if (partData != null && NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(partData.toPartPos())) {
                                         c.setBackground(Color.CYAN);
                                     } else {
-                                        c.setBackground(Color.WHITE);
+                                        c.setBackground(isSelected ? Color.BLUE : Color.WHITE);
                                     }
                                     return c;
                                 }
