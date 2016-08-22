@@ -137,4 +137,9 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
     public IRecipeRegistry<BlockDryingBasin, ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
         return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
+
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return side != EnumFacing.UP && side != EnumFacing.DOWN && super.isSideSolid(base_state, world, pos, side);
+    }
 }
