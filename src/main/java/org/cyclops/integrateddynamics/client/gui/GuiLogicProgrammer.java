@@ -278,7 +278,7 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
             } else if (isElementFocused && ClientProxy.FOCUS_LP_RENAME.isActiveAndMatches(keyCode) && hasLabeller()) {
                 // Open labeller gui
                 operatorInfoPattern.onButtonEditClick();
-            } else if ((Keyboard.KEY_ESCAPE == keyCode || Keyboard.KEY_LEFT == keyCode) && (isElementFocused || isSearchFieldFocussed())) {
+            } else if (Keyboard.KEY_LEFT == keyCode && (isElementFocused || isSearchFieldFocussed())) {
                 if (isElementFocused) {
                     container.getActiveElement().setFocused(operatorConfigPattern, false);
                     setSearchFieldFocussed(true);
@@ -307,7 +307,8 @@ public class GuiLogicProgrammer extends ScrollingGuiContainer {
                 if (container.getActiveElement() != null) {
                     container.getActiveElement().setFocused(operatorConfigPattern, true);
                 }
-            } else if (!subGuiHolder.keyTyped(this.checkHotbarKeys(keyCode), typedChar, keyCode) && !isElementFocused) {
+            } else if (!subGuiHolder.keyTyped(this.checkHotbarKeys(keyCode), typedChar, keyCode)
+                    && (keyCode == Keyboard.KEY_ESCAPE || !isElementFocused)) {
                 // All others
                 super.keyTyped(typedChar, keyCode);
             }
