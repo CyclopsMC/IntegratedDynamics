@@ -148,7 +148,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                 BlockCable cable = BlockCable.getInstance();
                 if (cable.getPartContainer(world, pos).hasParts()) {
                     cable.setRealCable(world, pos, false);
-                    ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
+                    if (!player.capabilities.isCreativeMode) {
+                        ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
+                    }
                     return false;
                 } else {
                     cable.remove(world, pos, player);
@@ -288,7 +290,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                 ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
                 ItemFacade.getInstance().writeFacadeBlock(itemStack, blockState);
                 BlockCable.getInstance().setFacade(world, pos, null);
-                ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
+                if (!player.capabilities.isCreativeMode) {
+                    ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
+                }
             }
             return false;
         }

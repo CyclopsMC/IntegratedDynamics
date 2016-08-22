@@ -183,7 +183,9 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 networkElement.addDrops(itemStacks, true);
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
-                        ItemStackHelpers.spawnItemStackToPlayer(getWorld(), pos, itemStack, player);
+                        if (!player.capabilities.isCreativeMode) {
+                            ItemStackHelpers.spawnItemStackToPlayer(getWorld(), pos, itemStack, player);
+                        }
                     } else {
                         Block.spawnAsEntity(getWorld(), pos, itemStack);
                     }
