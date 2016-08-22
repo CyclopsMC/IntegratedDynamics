@@ -198,7 +198,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
                 networkElement.onPostRemoved(getNetwork());
             } else {
-                IntegratedDynamics.clog(Level.WARN, "Removing a part where no network reference was found.");
                 ItemStackHelpers.spawnItemStackToPlayer(getWorld(), pos, new ItemStack(removed.getItem()), player);
             }
             // Finally remove the part data from this tile.
