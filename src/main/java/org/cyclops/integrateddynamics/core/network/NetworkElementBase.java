@@ -7,6 +7,7 @@ import net.minecraft.world.IBlockAccess;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -72,7 +73,7 @@ public abstract class NetworkElementBase<N extends INetwork> implements INetwork
     }
 
     @Override
-    public void onNeighborBlockChange(N network, IBlockAccess world, Block neighborBlock) {
+    public void onNeighborBlockChange(@Nullable N network, IBlockAccess world, Block neighborBlock) {
 
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -94,6 +95,6 @@ public interface INetworkElement<N extends INetwork> extends Comparable<INetwork
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock block type of the neighbour that was updated.
      */
-    public void onNeighborBlockChange(N network, IBlockAccess world, Block neighborBlock);
+    public void onNeighborBlockChange(@Nullable N network, IBlockAccess world, Block neighborBlock);
 
 }

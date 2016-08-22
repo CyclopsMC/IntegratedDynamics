@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.api.network;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 /**
  * Interface for blocks that are network-aware.
  * @author rubensworks
@@ -31,6 +33,6 @@ public interface INetworkCarrier<N extends INetwork> {
      * @param pos The position.
      * @return The network.
      */
-    public N getNetwork(World world, BlockPos pos);
+    public @Nullable N getNetwork(World world, BlockPos pos);
 
 }
