@@ -49,7 +49,14 @@ public final class TickHandler {
                     NetworkDiagnostics.getInstance().sendNetworkUpdate(network);
                     network.resetLastSecondDurations();
                 }
-                network.update();
+                try {
+                    if (!network.isCrashed()) {
+                        network.update();
+                    }
+                } catch (RuntimeException e) {
+                    network.setCrashed(true);
+                    throw e;
+                }
             }
         }
     }

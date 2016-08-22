@@ -124,4 +124,14 @@ public interface INetwork<N extends INetwork<N>> extends INBTSerializable {
      */
     public void resetLastSecondDurations();
 
+    /**
+     * @return If this network has crashed.
+     */
+    public boolean isCrashed();
+
+    /**
+     * @param crashed The new crashed field.
+     */
+    public void setCrashed(boolean crashed);
+
 }

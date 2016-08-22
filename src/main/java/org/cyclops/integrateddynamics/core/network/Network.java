@@ -42,6 +42,8 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     private volatile boolean changed = false;
     private volatile boolean killed = false;
 
+    private boolean crashed = false;
+
     /**
      * This constructor should not be called, except for the process of constructing networks from NBT.
      */
@@ -132,12 +134,14 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     public NBTTagCompound toNBT() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setTag("baseCluster", this.baseCluster.toNBT());
+        tag.setBoolean("crashed", this.crashed);
         return tag;
     }
 
     @Override
     public void fromNBT(NBTTagCompound tag) {
         this.baseCluster.fromNBT(tag.getCompoundTag("baseCluster"));
+        this.crashed = tag.getBoolean("crashed");
         deriveNetworkElements(baseCluster);
         initialize(true);
     }
@@ -371,5 +375,15 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     @Override
     public void resetLastSecondDurations() {
         lastSecondDurations.clear();
+    }
+
+    @Override
+    public boolean isCrashed() {
+        return crashed;
+    }
+
+    @Override
+    public void setCrashed(boolean crashed) {
+        this.crashed = crashed;
     }
 }
