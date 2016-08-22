@@ -83,10 +83,12 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         EnumFacingMap<Boolean> lastConnected = connected;
         String lastFacadeBlockName = facadeBlockName;
         int lastFacadeMeta = facadeMeta;
+        boolean lastRealCable = realCable;
         PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
         super.readFromNBT(tag);
         if (getWorld() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
-                || !Objects.equals(lastFacadeBlockName, facadeBlockName) || lastFacadeMeta != facadeMeta)) {
+                || !Objects.equals(lastFacadeBlockName, facadeBlockName) || lastFacadeMeta != facadeMeta
+                || lastRealCable != realCable)) {
             getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
