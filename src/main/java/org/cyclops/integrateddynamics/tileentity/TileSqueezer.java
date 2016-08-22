@@ -129,9 +129,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     @Override
     public void setInventorySlotContents(int slotId, ItemStack itemstack) {
         super.setInventorySlotContents(slotId, itemstack);
-        if(itemstack == null) {
-            itemHeight = 1;
-        }
+        itemHeight = 1;
         sendUpdate();
     }
 
