@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.SoundType;
 import net.minecraft.init.Blocks;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog;
-import org.cyclops.cyclopscore.config.configurable.IConfigurable;
+import org.cyclops.cyclopscore.config.ConfigurableProperty;
+import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -21,6 +20,12 @@ public class BlockMenrilLogConfig extends BlockConfig {
     public static BlockMenrilLogConfig _instance;
 
     /**
+     * The 1/x chance at which a Menril Log will be filled with Menril Resin when generated.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The 1/x chance at which a Menril Log will be filled with Menril Resin when generated.", isCommandable = true)
+    public static int filledMenrilLogChance = 10;
+
+    /**
      * Make a new instance.
      */
     public BlockMenrilLogConfig() {
@@ -29,18 +34,8 @@ public class BlockMenrilLogConfig extends BlockConfig {
                 true,
                 "menrilLog",
                 null,
-                null
+                BlockMenrilLog.class
         );
-    }
-
-    @Override
-    protected IConfigurable initSubInstance() {
-        return (ConfigurableBlockLog) new ConfigurableBlockLog(this){
-            @Override
-            public SoundType getSoundType() {
-                return SoundType.WOOD;
-            }
-        }.setHardness(2.0F);
     }
     
     @Override
@@ -52,5 +47,5 @@ public class BlockMenrilLogConfig extends BlockConfig {
     public void onRegistered() {
     	Blocks.FIRE.setFireInfo(getBlockInstance(), 5, 20);
     }
-    
+
 }

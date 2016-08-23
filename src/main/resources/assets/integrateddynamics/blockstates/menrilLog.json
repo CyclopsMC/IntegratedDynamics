@@ -4,10 +4,20 @@
         "transform": "forge:default-block"
     },
     "variants": {
-        "axis=none": { "model": "integrateddynamics:menrilLog_bark" },
-        "axis=x"   : { "model": "integrateddynamics:menrilLog_side", "y": 90 },
-        "axis=y"   : { "model": "integrateddynamics:menrilLog" },
-        "axis=z"   : { "model": "integrateddynamics:menrilLog_side" },
-        "inventory": { "model": "integrateddynamics:menrilLog" }
+        "normal": [{}],
+        "inventory": [{
+            "model": "integrateddynamics:menrilLog"
+        }],
+        "filled": {
+            "0": { "model": "integrateddynamics:menrilLog" },
+            "1": { "model": "integrateddynamics:menrilLog_filled", "y": 0 },
+            "2": { "model": "integrateddynamics:menrilLog_filled", "y": 180 }
+        },
+        "axis": {
+            "none": { "model": "integrateddynamics:menrilLog_bark" },
+            "x"   : { "model": "integrateddynamics:menrilLog_side", "y": 90 },
+            "y"   : { },
+            "z"   : { "model": "integrateddynamics:menrilLog_side" }
+        }
     }
 }

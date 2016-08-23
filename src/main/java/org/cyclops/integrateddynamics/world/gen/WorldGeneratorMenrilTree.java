@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.world.gen.WorldGeneratorTree;
 import org.cyclops.integrateddynamics.block.BlockMenrilLeavesConfig;
+import org.cyclops.integrateddynamics.block.BlockMenrilLog;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogConfig;
 import org.cyclops.integrateddynamics.block.BlockMenrilSaplingConfig;
 
@@ -171,8 +172,13 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                         if (block == null || block == Blocks.AIR ||
                                 block.isLeaves(loopBlockState, world, loopPos) ||
                                 block.isReplaceable(world, loopPos)) {
+                            int filled = BlockMenrilLogConfig.filledMenrilLogChance == 0 ? 0
+                                    : (rand.nextInt(BlockMenrilLogConfig.filledMenrilLogChance) == 0 ? 1 + rand.nextInt(2) : 0);
                             this.setBlockAndNotifyAdequately(world, loopPos,
-                                    getLogs().getDefaultState().withProperty(BlockLog.LOG_AXIS, pair.getLeft() ? BlockLog.EnumAxis.NONE : BlockLog.EnumAxis.Y));
+                                    getLogs().getDefaultState()
+                                    .withProperty(BlockLog.LOG_AXIS, pair.getLeft() ? BlockLog.EnumAxis.NONE : BlockLog.EnumAxis.Y)
+                                    .withProperty(BlockMenrilLog.FILLED, filled)
+                            );
                         }
                     }
 
