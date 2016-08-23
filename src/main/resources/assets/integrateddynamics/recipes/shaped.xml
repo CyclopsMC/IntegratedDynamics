@@ -58,9 +58,9 @@
 					<item type="oredict">logWood</item>
 				</gridrow>
 				<gridrow>
-					<item type="oredict">logWood</item>
+					<item type="oredict">ingotIron</item>
 					<item />
-					<item type="oredict">logWood</item>
+					<item type="oredict">ingotIron</item>
 				</gridrow>
 				<gridrow>
 					<item type="oredict">logWood</item>
@@ -107,7 +107,7 @@
 			<grid>
 				<gridrow>
 					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">stickWood</item>
 					<item>integrateddynamics:crystalizedMenrilChunk</item>
 				</gridrow>
 				<gridrow>
@@ -117,7 +117,7 @@
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">stickWood</item>
 					<item>integrateddynamics:crystalizedMenrilChunk</item>
 				</gridrow>
 			</grid>
@@ -138,9 +138,9 @@
 					<item>integrateddynamics:crystalizedMenrilChunk</item>
 				</gridrow>
 				<gridrow>
+					<item type="oredict">stickWood</item>
 					<item>minecraft:redstone</item>
-					<item>minecraft:redstone</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">stickWood</item>
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:crystalizedMenrilChunk</item>
