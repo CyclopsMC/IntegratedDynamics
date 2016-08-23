@@ -80,7 +80,7 @@
 			<grid>
 				<gridrow>
 					<item type="oredict">stickWood</item>
-					<item>minecraft:anvil</item>
+					<item type="oredict">blockIron</item>
 					<item type="oredict">stickWood</item>
 				</gridrow>
 				<gridrow>
@@ -400,7 +400,7 @@
 			</grid>
 		</input>
 		<output>
-			<item meta="0">integrateddynamics:variableTransformer</item>
+			<item meta="0" amount="4">integrateddynamics:variableTransformer</item>
 		</output>
 	</recipe>
 
@@ -428,7 +428,7 @@
 			</grid>
 		</input>
 		<output>
-			<item meta="1">integrateddynamics:variableTransformer</item>
+			<item meta="1" amount="4">integrateddynamics:variableTransformer</item>
 		</output>
 	</recipe>
 
