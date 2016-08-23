@@ -1,15 +1,12 @@
 package org.cyclops.integrateddynamics.block;
 
 import com.google.common.collect.Sets;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -30,9 +27,6 @@ import java.util.Collection;
  * @author rubensworks
  */
 public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implements IEnergyBatteryFacade, IEnergyContainerBlock {
-
-    @BlockProperty
-    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
     /**
      * Make a new block instance.

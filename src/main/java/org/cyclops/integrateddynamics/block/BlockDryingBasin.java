@@ -108,7 +108,7 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+        return new AxisAlignedBB(0.03125F, 0.03125F, 0.03125F, 0.96875F, 0.96875F, 0.96875F);
     }
 
     @Override

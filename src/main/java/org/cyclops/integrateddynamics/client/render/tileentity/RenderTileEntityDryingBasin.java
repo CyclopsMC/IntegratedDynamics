@@ -79,10 +79,10 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
         VertexBuffer worldRenderer = t.getBuffer();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
 
-        worldRenderer.pos(0, height, 0).tex(icon.getMinU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(0, height, 1).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(1, height, 1).tex(icon.getMaxU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(1, height, 0).tex(icon.getMaxU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+        worldRenderer.pos(0.0625F, height, 0.0625F).tex(icon.getMinU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+        worldRenderer.pos(0.0625F, height, 0.9375F).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+        worldRenderer.pos(0.9375F, height, 0.9375F).tex(icon.getMaxU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+        worldRenderer.pos(0.9375F, height, 0.0625F).tex(icon.getMaxU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
 
         t.draw();
     }

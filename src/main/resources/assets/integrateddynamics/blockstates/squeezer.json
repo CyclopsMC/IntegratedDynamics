@@ -4,8 +4,7 @@
     "transform": "forge:default-block",
     "model"    : "integrateddynamics:squeezer",
     "textures" : {
-      "0": "blocks/anvil_base",
-      "1": "blocks/planks_oak"
+      "0": "integrateddynamics:models/squeezer"
     }
   },
   "variants": {
