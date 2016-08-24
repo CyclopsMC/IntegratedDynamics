@@ -9,7 +9,7 @@ import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.item.ItemMenrilBerriesConfig;
+import org.cyclops.integrateddynamics.item.ItemCrystalizedMenrilChunkConfig;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class BlockMenrilLog extends ConfigurableBlockLog {
     public List<ItemStack> getDrops(IBlockAccess world, BlockPos blockPos, IBlockState blockStatedata, int fortune) {
         List<ItemStack> drops = super.getDrops(world, blockPos, blockStatedata, fortune);
         if (blockStatedata.getValue(FILLED) > 0) {
-            drops.add(new ItemStack(ItemMenrilBerriesConfig._instance.getItemInstance(), 1 + RANDOM.nextInt(3 + fortune)));
+            drops.add(new ItemStack(ItemCrystalizedMenrilChunkConfig._instance.getItemInstance(), 1 + RANDOM.nextInt(3 + fortune)));
         }
         return drops;
     }
