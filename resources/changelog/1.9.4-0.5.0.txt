@@ -1,0 +1,28 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.7.6 or higher.
+
+Additions:
+* Add Network Diagnostics to profile networks, highlight parts and teleport to them.
+  Run /integrateddynamics networkdiagnostics to open it.
+* Add filled Menril Log variant, they drop menril logs
+
+Changes:
+* Texture overhaul by @Yulife
+* Make squeezer and variable transformer recipes easier
+* Update Drying Basin and Logic Cable recipes for texture consistency
+* Improve logic programmer escape behaviour
+* Remove server warning when removing part that is not attached to a cable
+* Don't drop parts and cables in creative mode
+* Disable networks after a crash
+* Rename Cable to Logic Cable
+
+Fixes:
+* Fix broken Menril Sapling model
+* Fix torches can be placed on all sides of the squeezer and drying basin
+* Fix squeezer insta-squeezing items when it was squeezed before
+* Trigger block render update when removing cables with attached parts
+* Fix parts not dropping in corrupted networks
+* Fix network corruption after server crash.
+* Make cable state retrieval safe for client desyncs
+* Make getCapability safer
+* Fix render crash while logging in, Closes #61 and closes #62
