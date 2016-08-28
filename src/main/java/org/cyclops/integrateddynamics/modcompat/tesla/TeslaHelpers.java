@@ -4,7 +4,7 @@ import net.darkhax.tesla.api.ITeslaConsumer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.ModAPIManager;
+import net.minecraftforge.fml.common.Loader;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.Reference;
@@ -19,7 +19,7 @@ public class TeslaHelpers {
      * @return If the RF API is available.
      */
     public static boolean isTesla() {
-        return ModAPIManager.INSTANCE.hasAPI(Reference.MOD_TESLA_API);
+        return Loader.isModLoaded(Reference.MOD_TESLA);
     }
 
     /**

@@ -175,9 +175,9 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new ForestryModCompat());
         modCompatLoader.addModCompat(new Ic2ModCompat());
         modCompatLoader.addModCompat(new TopModCompat());
+        modCompatLoader.addModCompat(new TeslaApiCompat());
 
         modCompatLoader.addApiCompat(new RfApiCompat());
-        modCompatLoader.addApiCompat(new TeslaApiCompat());
     }
 
     @Mod.EventHandler

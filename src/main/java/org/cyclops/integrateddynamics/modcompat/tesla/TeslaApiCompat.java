@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.api.ITeslaHolder;
 import net.darkhax.tesla.api.ITeslaProducer;
-import org.cyclops.cyclopscore.modcompat.IApiCompat;
+import org.cyclops.cyclopscore.modcompat.IModCompat;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -21,7 +21,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
  * @author rubensworks
  *
  */
-public class TeslaApiCompat implements IApiCompat {
+public class TeslaApiCompat implements IModCompat {
 
 	@Override
 	public void onInit(final Step initStep) {
@@ -130,8 +130,8 @@ public class TeslaApiCompat implements IApiCompat {
 	}
 
 	@Override
-	public String getApiID() {
-		return Reference.MOD_TESLA_API;
+	public String getModID() {
+		return Reference.MOD_TESLA;
 	}
 
 	@Override
