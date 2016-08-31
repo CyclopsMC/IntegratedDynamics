@@ -12,10 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.world.gen.WorldGeneratorTree;
-import org.cyclops.integrateddynamics.block.BlockMenrilLeavesConfig;
-import org.cyclops.integrateddynamics.block.BlockMenrilLog;
-import org.cyclops.integrateddynamics.block.BlockMenrilLogConfig;
-import org.cyclops.integrateddynamics.block.BlockMenrilSaplingConfig;
+import org.cyclops.integrateddynamics.block.*;
 
 import java.util.List;
 import java.util.Random;
@@ -172,12 +169,11 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                         if (block == null || block == Blocks.AIR ||
                                 block.isLeaves(loopBlockState, world, loopPos) ||
                                 block.isReplaceable(world, loopPos)) {
-                            int filled = BlockMenrilLogConfig.filledMenrilLogChance == 0 ? 0
-                                    : (rand.nextInt(BlockMenrilLogConfig.filledMenrilLogChance) == 0 ? 1 + rand.nextInt(2) : 0);
+                            boolean filled = rand.nextInt(BlockMenrilLogFilledConfig.filledMenrilLogChance) == 0;
+                            IBlockState logs = filled ? BlockMenrilLogFilled.getInstance().getDefaultState()
+                                    .withProperty(BlockMenrilLogFilled.SIDE, rand.nextInt(4)) : getLogs().getDefaultState();
                             this.setBlockAndNotifyAdequately(world, loopPos,
-                                    getLogs().getDefaultState()
-                                    .withProperty(BlockLog.LOG_AXIS, pair.getLeft() ? BlockLog.EnumAxis.NONE : BlockLog.EnumAxis.Y)
-                                    .withProperty(BlockMenrilLog.FILLED, filled)
+                                    logs.withProperty(BlockLog.LOG_AXIS, pair.getLeft() ? BlockLog.EnumAxis.NONE : BlockLog.EnumAxis.Y)
                             );
                         }
                     }

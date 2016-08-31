@@ -1,17 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.item.ItemCrystalizedMenrilChunkConfig;
-
-import java.util.List;
+import org.cyclops.integrateddynamics.GeneralConfig;
 
 /**
  * Menril log block.
@@ -20,9 +13,6 @@ import java.util.List;
 public class BlockMenrilLog extends ConfigurableBlockLog {
 
     private static BlockMenrilLog _instance = null;
-
-    @BlockProperty
-    public static final PropertyInteger FILLED = PropertyInteger.create("filled", 0, 2);
 
     /**
      * Get the unique instance.
@@ -49,11 +39,21 @@ public class BlockMenrilLog extends ConfigurableBlockLog {
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos blockPos, IBlockState blockStatedata, int fortune) {
-        List<ItemStack> drops = super.getDrops(world, blockPos, blockStatedata, fortune);
-        if (blockStatedata.getValue(FILLED) > 0) {
-            drops.add(new ItemStack(ItemCrystalizedMenrilChunkConfig._instance.getItemInstance(), 1 + RANDOM.nextInt(3 + fortune)));
+    public IBlockState getStateFromMeta(int meta) {
+        // TODO: remove this hack in the next major version
+        // This was needed because of my derp: https://github.com/CyclopsMC/IntegratedDynamics/issues/65
+        if ("0.5.0".equals(GeneralConfig.version)) {
+            return super.getStateFromMeta(meta / 3);
         }
-        return drops;
+        return super.getStateFromMeta(meta);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        // TODO: remove this hack in the next major version
+        if ("0.5.0".equals(GeneralConfig.version)) {
+            return super.getMetaFromState(state) * 3;
+        }
+        return super.getMetaFromState(state);
     }
 }

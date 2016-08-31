@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.init.Blocks;
+import org.cyclops.cyclopscore.config.ConfigurableProperty;
+import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -10,23 +12,29 @@ import org.cyclops.integrateddynamics.Reference;
  * @author rubensworks
  *
  */
-public class BlockMenrilLogConfig extends BlockConfig {
+public class BlockMenrilLogFilledConfig extends BlockConfig {
 
     /**
      * The unique instance.
      */
-    public static BlockMenrilLogConfig _instance;
+    public static BlockMenrilLogFilledConfig _instance;
+
+    /**
+     * The 1/x chance at which a Menril Log will be filled with Menril Resin when generated.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The 1/x chance at which a Menril Log will be filled with Menril Resin when generated.", isCommandable = true)
+    public static int filledMenrilLogChance = 10;
 
     /**
      * Make a new instance.
      */
-    public BlockMenrilLogConfig() {
+    public BlockMenrilLogFilledConfig() {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "menrilLog",
+                "menrilLogFilled",
                 null,
-                BlockMenrilLog.class
+                BlockMenrilLogFilled.class
         );
     }
     

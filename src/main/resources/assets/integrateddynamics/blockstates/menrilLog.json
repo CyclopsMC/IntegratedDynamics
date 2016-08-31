@@ -1,18 +1,12 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "transform": "forge:default-block"
+        "transform": "forge:default-block",
+        "model": "integrateddynamics:menrilLog"
     },
     "variants": {
         "normal": [{}],
-        "inventory": [{
-            "model": "integrateddynamics:menrilLog"
-        }],
-        "filled": {
-            "0": { "model": "integrateddynamics:menrilLog" },
-            "1": { "model": "integrateddynamics:menrilLog_filled", "y": 0 },
-            "2": { "model": "integrateddynamics:menrilLog_filled", "y": 180 }
-        },
+        "inventory": [{}],
         "axis": {
             "none": { "model": "integrateddynamics:menrilLog_bark" },
             "x"   : { "model": "integrateddynamics:menrilLog_side", "y": 90 },

@@ -28,6 +28,7 @@ public class Configs {
         configHandler.add(new BlockProxyConfig());
         configHandler.add(new BlockMaterializerConfig());
         configHandler.add(new BlockMenrilLogConfig());
+        configHandler.add(new BlockMenrilLogFilledConfig());
         configHandler.add(new BlockMenrilLeavesConfig());
         configHandler.add(new BlockMenrilSaplingConfig());
         configHandler.add(new BlockMenrilPlanksConfig());
