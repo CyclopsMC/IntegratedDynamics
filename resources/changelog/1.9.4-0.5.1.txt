@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.7.7 or higher.
+
+Changes:
+* Improve ValueType textures
+* Improve Menril Tree stump generation
+
+Fixes:
+* Fix non-backwards compatibility with new Menril Log variants, Closes #65
+* Update Tesla support to its new lowercase mod id
+
