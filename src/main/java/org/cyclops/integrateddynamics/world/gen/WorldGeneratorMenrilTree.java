@@ -158,10 +158,10 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                     }
 
                     // Create stump
-                    logLocations.add(Pair.of(false, blockPos.add(-1, 0, 0)));
-                    logLocations.add(Pair.of(false, blockPos.add(1, 0, 0)));
-                    logLocations.add(Pair.of(false, blockPos.add(0, 0, -1)));
-                    logLocations.add(Pair.of(false, blockPos.add(0, 0, 1)));
+                    logLocations.add(Pair.of(true, blockPos.add(-1, 0, 0)));
+                    logLocations.add(Pair.of(true, blockPos.add(1, 0, 0)));
+                    logLocations.add(Pair.of(true, blockPos.add(0, 0, -1)));
+                    logLocations.add(Pair.of(true, blockPos.add(0, 0, 1)));
 
                     for(Pair<Boolean, BlockPos> pair : logLocations) {
                         BlockPos loopPos = pair.getRight();
