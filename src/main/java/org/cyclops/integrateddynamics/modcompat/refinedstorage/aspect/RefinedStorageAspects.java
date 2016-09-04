@@ -5,10 +5,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
@@ -65,12 +62,25 @@ public class RefinedStorageAspects {
                         public ValueTypeList.ValueList getOutput(INetworkMaster networkMaster) {
                             if (networkMaster != null) {
                                 return ValueTypeList.ValueList.ofFactory(
-                                        new ValueTypeListProxyPositionedNetworkMasterInventory(
+                                        new ValueTypeListProxyPositionedNetworkMasterItemInventory(
                                                 DimPos.of(networkMaster.getNetworkWorld(), networkMaster.getPosition())));
                             }
                             return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
                         }
                     }, "itemstacks").buildRead();
+
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_FLUIDSTACKS =
+                    BUILDER_LIST.appendKind("inventory").handle(new IAspectValuePropagator<INetworkMaster, ValueTypeList.ValueList>() {
+                        @Override
+                        public ValueTypeList.ValueList getOutput(INetworkMaster networkMaster) {
+                            if (networkMaster != null) {
+                                return ValueTypeList.ValueList.ofFactory(
+                                        new ValueTypeListProxyPositionedNetworkMasterFluidInventory(
+                                                DimPos.of(networkMaster.getNetworkWorld(), networkMaster.getPosition())));
+                            }
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_FLUIDSTACK, Collections.<ValueObjectTypeFluidStack.ValueFluidStack>emptyList());
+                        }
+                    }, "fluidstacks").buildRead();
 
         }
 

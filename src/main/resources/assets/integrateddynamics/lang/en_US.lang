@@ -951,3 +951,5 @@ aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable
 aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.info=If the target has a Refined Storage network.
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.name=RS network items
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.info=A list of all the items in the RS network.
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.fluidstacks.name=RS network fluids
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.fluidstacks.info=A list of all the fluids in the RS network.

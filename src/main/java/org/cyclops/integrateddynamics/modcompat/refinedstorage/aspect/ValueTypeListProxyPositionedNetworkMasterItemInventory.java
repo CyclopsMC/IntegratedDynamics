@@ -21,19 +21,19 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A list proxy for a network's grouped inventory. inventory at a certain position.
+ * A list proxy for a network's grouped item inventory at a certain position.
  */
-public class ValueTypeListProxyPositionedNetworkMasterInventory extends ValueTypeListProxyBase<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
+public class ValueTypeListProxyPositionedNetworkMasterItemInventory extends ValueTypeListProxyBase<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
 
     @NBTPersist
     private DimPos pos;
 
-    public ValueTypeListProxyPositionedNetworkMasterInventory() {
+    public ValueTypeListProxyPositionedNetworkMasterItemInventory() {
         this(null);
     }
 
-    public ValueTypeListProxyPositionedNetworkMasterInventory(DimPos pos) {
-        super(RefinedStorageModCompat.POSITIONED_MASTERINVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK);
+    public ValueTypeListProxyPositionedNetworkMasterItemInventory(DimPos pos) {
+        super(RefinedStorageModCompat.POSITIONED_MASTERITEMINVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK);
         this.pos = pos;
     }
 
