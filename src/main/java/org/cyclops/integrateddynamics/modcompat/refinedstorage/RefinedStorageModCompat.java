@@ -29,9 +29,13 @@ public class RefinedStorageModCompat implements IModCompat {
 	@Override
 	public void onInit(Step initStep) {
 		if(initStep == Step.PREINIT) {
+			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Sets.<IAspect>newHashSet(
+					RefinedStorageAspects.Read.Network.BOOLEAN_APPLICABLE
+			));
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_READER, Sets.<IAspect>newHashSet(
-					RefinedStorageAspects.Read.Network.BOOLEAN_APPLICABLE,
-					RefinedStorageAspects.Read.Inventory.LIST_ITEMSTACKS,
+					RefinedStorageAspects.Read.Inventory.LIST_ITEMSTACKS
+			));
+			Aspects.REGISTRY.register(PartTypes.FLUID_READER, Sets.<IAspect>newHashSet(
 					RefinedStorageAspects.Read.Inventory.LIST_FLUIDSTACKS
 			));
 
