@@ -13,6 +13,8 @@ import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectable;
+import org.cyclops.integrateddynamics.modcompat.rf.RfHelpers;
+import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
 
 /**
  * A tile entity used to store variables.
@@ -24,6 +26,8 @@ import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectable;
         @Optional.Interface(iface = "cofh.api.energy.IEnergyReceiver", modid = Reference.MOD_RF_API, striprefs = true)
 })
 public class TileEnergyBattery extends TileCableConnectable implements IEnergyBattery, IEnergyProvider, IEnergyReceiver {
+
+    public static final int ENERGY_PER_TICK = 20;
 
     @NBTPersist
     private int energy;
@@ -89,6 +93,42 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
             setEnergy(newEnergy);
         }
         return stored - newEnergy;
+    }
+
+    protected int addEnergyRf(int energy, boolean simulate) {
+        return RfHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+    }
+
+    protected int addEnergyTesla(int energy, boolean simulate) {
+        return TeslaHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+    }
+
+    protected boolean isRf() {
+        return RfHelpers.isRf();
+    }
+
+    protected boolean isTesla() {
+        return TeslaHelpers.isTesla();
+    }
+
+    protected int addEnergy(int energy) {
+        int toFill = energy;
+        if(toFill > 0 && isRf()) {
+            toFill -= addEnergyRf(toFill, false);
+        }
+        if(toFill > 0 && isTesla()) {
+            toFill -= addEnergyTesla(toFill, false);
+        }
+        return energy - toFill;
+    }
+
+    @Override
+    protected void updateTileEntity() {
+        super.updateTileEntity();
+        if (getStoredEnergy() > 0 && getWorld().isBlockPowered(getPos())) {
+            addEnergy(ENERGY_PER_TICK);
+            markDirty();
+        }
     }
 
     /*
