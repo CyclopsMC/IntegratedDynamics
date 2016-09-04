@@ -74,6 +74,7 @@ import org.cyclops.integrateddynamics.modcompat.forestry.ForestryModCompat;
 import org.cyclops.integrateddynamics.modcompat.ic2.Ic2ModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
+import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
 import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tconstruct.TConstructModCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
@@ -176,6 +177,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new Ic2ModCompat());
         modCompatLoader.addModCompat(new TopModCompat());
         modCompatLoader.addModCompat(new TeslaApiCompat());
+        modCompatLoader.addModCompat(new RefinedStorageModCompat());
 
         modCompatLoader.addApiCompat(new RfApiCompat());
     }

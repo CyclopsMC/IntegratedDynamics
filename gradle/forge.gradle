@@ -37,6 +37,10 @@ repositories {
         name 'tterrag'
         url 'http://maven.tterrag.com/'
     }
+    maven {
+        name "Raoulvdberge Repo"
+        url "https://dl.bintray.com/raoulvdberge/dev/"
+    }
 }
 
 dependencies {
@@ -61,6 +65,7 @@ dependencies {
     deobfCompile "net.sengir.forestry:forestry_${config.minecraft_version}:${config.forestry_version}" // http://maven.ic2.player.to/
     deobfCompile "net.industrial-craft:industrialcraft-2:${config.IC2_version}:dev" // http://maven.ic2.player.to/
     deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.top_version}" // http://maven.tterrag.com/mcjty/theoneprobe/TheOneProbe/
+    deobfCompile "refinedstorage:refinedstorage:${config.refinedstorage_version}" // https://dl.bintray.com/raoulvdberge/dev/refinedstorage/refinedstorage/
 
     // Only needed for testing
     deobfCompile "pl.asie.charset:charset-lib:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml

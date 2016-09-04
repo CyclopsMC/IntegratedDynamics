@@ -943,3 +943,11 @@ operator.operators.integrateddynamics.itemstack.storedic2eu.name=EU Stored
 operator.operators.integrateddynamics.itemstack.storedic2eu.info=The amount of EU stored in this item
 operator.operators.integrateddynamics.itemstack.ic2eucapacity.name=EU Capacity
 operator.operators.integrateddynamics.itemstack.ic2eucapacity.info=The maximum amount of EU that can be stored in this item
+
+## ----- Refined Storage ----- ##
+
+## Aspects
+aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.name=Is RS Network
+aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.info=If the target has a Refined Storage network.
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.name=RS network items
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.info=A list of all the items in the RS network.
