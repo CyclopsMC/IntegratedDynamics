@@ -28,6 +28,12 @@ public class DryingBasinRecipeHandler implements IRecipeHandler<DryingBasinRecip
 
     @Nonnull
     @Override
+    public String getRecipeCategoryUid(@Nonnull DryingBasinRecipeJEI recipe) {
+        return getRecipeCategoryUid();
+    }
+
+    @Nonnull
+    @Override
     public IRecipeWrapper getRecipeWrapper(@Nonnull DryingBasinRecipeJEI recipe) {
         return recipe;
     }

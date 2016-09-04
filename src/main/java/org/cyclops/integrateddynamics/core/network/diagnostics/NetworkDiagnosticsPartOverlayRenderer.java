@@ -59,7 +59,6 @@ public class NetworkDiagnosticsPartOverlayRenderer {
 
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.color(1.0F, 0.2F, 0.1F, 0.8F);
         GlStateManager.glLineWidth(6.0F);
         GlStateManager.disableTexture2D();
         GlStateManager.depthMask(false);
@@ -74,7 +73,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
                             .offset(partPos.getPos().getBlockPos())
                             .offset(-offsetX, -offsetY, -offsetZ)
                             .expand(0.05, 0.05, 0.05);
-                    RenderGlobal.drawSelectionBoundingBox(bb);
+                    RenderGlobal.func_189697_a(bb, 1.0F, 0.2F, 0.1F, 0.8F);
                 } else {
                     it.remove();
                 }

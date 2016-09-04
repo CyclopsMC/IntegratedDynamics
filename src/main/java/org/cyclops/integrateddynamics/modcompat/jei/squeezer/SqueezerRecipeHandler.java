@@ -28,6 +28,12 @@ public class SqueezerRecipeHandler implements IRecipeHandler<SqueezerRecipeJEI> 
 
     @Nonnull
     @Override
+    public String getRecipeCategoryUid(@Nonnull SqueezerRecipeJEI recipe) {
+        return getRecipeCategoryUid();
+    }
+
+    @Nonnull
+    @Override
     public IRecipeWrapper getRecipeWrapper(@Nonnull SqueezerRecipeJEI recipe) {
         return recipe;
     }
