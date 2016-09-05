@@ -50,7 +50,11 @@ public class AspectProperties implements IAspectProperties {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends IValueType<V>, V extends IValue> V getValue(IAspectPropertyTypeInstance<T, V> type) {
-        return (V) values.get(type);
+        IValue value = values.get(type);
+        if (value == null) {
+            value = type.getType().getDefault();
+        }
+        return (V) value;
     }
 
     @Override
