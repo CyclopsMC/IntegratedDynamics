@@ -955,8 +955,10 @@ aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable
 aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.info=If the target has a Refined Storage network.
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.name=RS network items
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.info=A list of all the items in the RS network.
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.fluidstacks.name=RS network fluids
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.fluidstacks.info=A list of all the fluids in the RS network.
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftableitems.name=RS craftable items
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftableitems.info=A list of all the craftable items in the RS network.
+aspect.aspects.integrateddynamics.read.list.refinedstorage.fluid.fluidstacks.name=RS network fluids
+aspect.aspects.integrateddynamics.read.list.refinedstorage.fluid.fluidstacks.info=A list of all the fluids in the RS network.
 
 aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.craft.name=RS craft item
 aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.craft.info=Trigger a crafting job for the given item.

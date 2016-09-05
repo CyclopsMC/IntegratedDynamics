@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.modcompat.refinedstorage.aspect;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -27,6 +28,7 @@ import refinedstorage.api.network.NetworkUtils;
 import refinedstorage.api.storage.CompareUtils;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Builders for Refined Storage aspects
@@ -82,8 +84,30 @@ public class RefinedStorageAspects {
                         }
                     }, "itemstacks").buildRead();
 
-            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_FLUIDSTACKS =
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_CRAFTABLEITEMS =
                     BUILDER_LIST.appendKind("inventory").handle(new IAspectValuePropagator<INetworkMaster, ValueTypeList.ValueList>() {
+                        @Override
+                        public ValueTypeList.ValueList getOutput(INetworkMaster networkMaster) {
+                            if (networkMaster != null) {
+                                List<ValueObjectTypeItemStack.ValueItemStack> itemStacks = Lists.newArrayList();
+                                for (ICraftingPattern craftingPattern : networkMaster.getPatterns()) {
+                                    for (ItemStack itemStack : craftingPattern.getOutputs()) {
+                                        itemStacks.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                                    }
+                                }
+
+                                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, itemStacks);
+                            }
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
+                        }
+                    }, "craftableitems").buildRead();
+
+        }
+
+        public static final class Fluid {
+
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_FLUIDSTACKS =
+                    BUILDER_LIST.appendKind("fluid").handle(new IAspectValuePropagator<INetworkMaster, ValueTypeList.ValueList>() {
                         @Override
                         public ValueTypeList.ValueList getOutput(INetworkMaster networkMaster) {
                             if (networkMaster != null) {

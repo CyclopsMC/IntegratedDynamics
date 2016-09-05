@@ -33,10 +33,11 @@ public class RefinedStorageModCompat implements IModCompat {
 					RefinedStorageAspects.Read.Network.BOOLEAN_APPLICABLE
 			));
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_READER, Sets.<IAspect>newHashSet(
-					RefinedStorageAspects.Read.Inventory.LIST_ITEMSTACKS
+					RefinedStorageAspects.Read.Inventory.LIST_ITEMSTACKS,
+					RefinedStorageAspects.Read.Inventory.LIST_CRAFTABLEITEMS
 			));
 			Aspects.REGISTRY.register(PartTypes.FLUID_READER, Sets.<IAspect>newHashSet(
-					RefinedStorageAspects.Read.Inventory.LIST_FLUIDSTACKS
+					RefinedStorageAspects.Read.Fluid.LIST_FLUIDSTACKS
 			));
 
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Sets.<IAspect>newHashSet(
