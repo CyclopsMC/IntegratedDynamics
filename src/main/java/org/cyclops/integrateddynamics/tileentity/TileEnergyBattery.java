@@ -27,8 +27,6 @@ import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
 })
 public class TileEnergyBattery extends TileCableConnectable implements IEnergyBattery, IEnergyProvider, IEnergyReceiver {
 
-    public static final int ENERGY_PER_TICK = 20;
-
     @NBTPersist
     private int energy;
 
@@ -126,7 +124,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     protected void updateTileEntity() {
         super.updateTileEntity();
         if (getStoredEnergy() > 0 && getWorld().isBlockPowered(getPos())) {
-            addEnergy(ENERGY_PER_TICK);
+            addEnergy(BlockEnergyBatteryConfig.energyPerTick);
             markDirty();
         }
     }

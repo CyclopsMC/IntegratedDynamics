@@ -25,6 +25,12 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
     public static int capacity = 100000;
 
     /**
+     * How much energy per tick it emits when activated.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "How much energy per tick it emits when activated.", isCommandable = true)
+    public static int energyPerTick = 2000;
+
+    /**
      * Make a new instance.
      */
     public BlockEnergyBatteryConfig() {
