@@ -133,8 +133,12 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
         if(!(partType instanceof IPartTypeReader)) {
             return false;
         }
-        return ((IPartTypeReader) getPartType(partId)).getVariable(
-                PartTarget.fromCenter(partPositions.get(partId)), (IPartStateReader) partState, aspect) != null;
+        try {
+            return ((IPartTypeReader) getPartType(partId)).getVariable(
+                    PartTarget.fromCenter(partPositions.get(partId)), (IPartStateReader) partState, aspect) != null;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     @Override
