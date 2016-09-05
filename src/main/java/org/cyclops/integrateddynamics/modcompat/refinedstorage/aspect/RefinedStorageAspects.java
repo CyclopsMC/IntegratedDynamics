@@ -1,17 +1,30 @@
 package org.cyclops.integrateddynamics.modcompat.refinedstorage.aspect;
 
+import com.google.common.collect.ImmutableList;
+import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
+import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
+import refinedstorage.api.autocrafting.ICraftingPattern;
+import refinedstorage.api.autocrafting.task.ICraftingTask;
 import refinedstorage.api.network.INetworkMaster;
 import refinedstorage.api.network.INetworkNode;
+import refinedstorage.api.network.NetworkUtils;
+import refinedstorage.api.storage.CompareUtils;
 
 import java.util.Collections;
 
@@ -83,6 +96,71 @@ public class RefinedStorageAspects {
                     }, "fluidstacks").buildRead();
 
         }
+
+    }
+
+    public static final class Write {
+
+        public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROPERTY_SKIPCRAFTING =
+                new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.refinedstorage.skipcrafting.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROPERTY_SKIPSTORAGE =
+                new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.refinedstorage.skipstorage.name");
+        public static final IAspectProperties CRAFTING_PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
+                PROPERTY_SKIPCRAFTING,
+                PROPERTY_SKIPSTORAGE
+        ));
+        static {
+            CRAFTING_PROPERTIES.setValue(PROPERTY_SKIPCRAFTING, ValueTypeBoolean.ValueBoolean.of(true));
+            CRAFTING_PROPERTIES.setValue(PROPERTY_SKIPSTORAGE, ValueTypeBoolean.ValueBoolean.of(false));
+        }
+
+        public static final IAspectWrite<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack>
+                ITEMSTACK_CRAFT = AspectWriteBuilders.BUILDER_ITEMSTACK.appendKind("refinedstorage")
+                .withProperties(CRAFTING_PROPERTIES).handle(
+                        new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>, Void>() {
+                            @Override
+                            public Void getOutput(Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack> input)
+                                    throws EvaluationException {
+                                if (input.getRight().getRawValue().isPresent()) {
+                                    DimPos pos = input.getLeft().getTarget().getPos();
+                                    INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                    if (networkNode != null) {
+                                        INetworkMaster networkMaster = networkNode.getNetwork();
+                                        if (networkMaster != null) {
+                                            int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
+                                            ItemStack itemStack = input.getRight().getRawValue().get();
+                                            ICraftingPattern craftingPattern = NetworkUtils.getPattern(networkMaster, itemStack);
+                                            if (craftingPattern != null) {
+                                                ICraftingTask craftingTask = NetworkUtils.createCraftingTask(networkMaster, craftingPattern);
+
+                                                if (input.getMiddle().getValue(PROPERTY_SKIPCRAFTING).getRawValue()) {
+                                                    for (ICraftingTask task : networkMaster.getCraftingTasks()) {
+                                                        for (ItemStack output : task.getPattern().getOutputs()) {
+                                                            if (CompareUtils.compareStack(output, itemStack, compareFlags)) {
+                                                                // If there's already one crafting, stop.
+                                                                return null;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                if (input.getMiddle().getValue(PROPERTY_SKIPSTORAGE).getRawValue()) {
+                                                    ItemStack present = networkMaster.getItemStorage().get(itemStack, compareFlags);
+                                                    if (present != null && present.stackSize >= itemStack.stackSize) {
+                                                        // If there's already one in the inventory, stop.
+                                                        return null;
+                                                    }
+                                                }
+
+                                                // Once we get here, we are certain that we want to shedule the task.
+                                                networkMaster.addCraftingTask(craftingTask);
+                                            }
+                                        }
+                                    }
+                                }
+                                return null;
+                            }
+                        }, "craft").buildWrite();
 
     }
 

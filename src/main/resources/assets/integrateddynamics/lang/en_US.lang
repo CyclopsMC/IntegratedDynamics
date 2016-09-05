@@ -946,6 +946,10 @@ operator.operators.integrateddynamics.itemstack.ic2eucapacity.info=The maximum a
 
 ## ----- Refined Storage ----- ##
 
+# Aspect property types
+aspect.aspecttypes.integrateddynamics.boolean.refinedstorage.skipcrafting.name=Skip If Crafting
+aspect.aspecttypes.integrateddynamics.boolean.refinedstorage.skipstorage.name=Skip If In Storage
+
 ## Aspects
 aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.name=Is RS Network
 aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.info=If the target has a Refined Storage network.
@@ -953,3 +957,6 @@ aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.info=A list of all the items in the RS network.
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.fluidstacks.name=RS network fluids
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.fluidstacks.info=A list of all the fluids in the RS network.
+
+aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.craft.name=RS craft item
+aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.craft.info=Trigger a crafting job for the given item.

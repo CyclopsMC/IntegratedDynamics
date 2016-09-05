@@ -39,6 +39,10 @@ public class RefinedStorageModCompat implements IModCompat {
 					RefinedStorageAspects.Read.Inventory.LIST_FLUIDSTACKS
 			));
 
+			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Sets.<IAspect>newHashSet(
+					RefinedStorageAspects.Write.ITEMSTACK_CRAFT
+			));
+
 			POSITIONED_MASTERITEMINVENTORY = ValueTypeListProxyFactories.REGISTRY.register(
 					new ValueTypeListProxyNBTFactory<>(getModID() + ":positionedItemInventory",
 							ValueTypeListProxyPositionedNetworkMasterItemInventory.class));
