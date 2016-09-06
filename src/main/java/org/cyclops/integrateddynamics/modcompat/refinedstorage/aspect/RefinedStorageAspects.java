@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
@@ -164,6 +165,37 @@ public class RefinedStorageAspects {
             CRAFTING_PROPERTIES.setValue(PROPERTY_SKIPSTORAGE, ValueTypeBoolean.ValueBoolean.of(false));
         }
 
+        protected static Void triggerItemStackCrafting(IAspectProperties aspectProperties, INetworkMaster networkMaster, ItemStack itemStack) {
+            int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
+            ICraftingPattern craftingPattern = NetworkUtils.getPattern(networkMaster, itemStack);
+            if (craftingPattern != null) {
+                ICraftingTask craftingTask = NetworkUtils.createCraftingTask(networkMaster, craftingPattern);
+
+                if (aspectProperties.getValue(PROPERTY_SKIPCRAFTING).getRawValue()) {
+                    for (ICraftingTask task : networkMaster.getCraftingTasks()) {
+                        for (ItemStack output : task.getPattern().getOutputs()) {
+                            if (CompareUtils.compareStack(output, itemStack, compareFlags)) {
+                                // If there's already one crafting, stop.
+                                return null;
+                            }
+                        }
+                    }
+                }
+
+                if (aspectProperties.getValue(PROPERTY_SKIPSTORAGE).getRawValue()) {
+                    ItemStack present = networkMaster.getItemStorage().get(itemStack, compareFlags);
+                    if (present != null && present.stackSize >= itemStack.stackSize) {
+                        // If there's already one in the inventory, stop.
+                        return null;
+                    }
+                }
+
+                // Once we get here, we are certain that we want to shedule the task.
+                networkMaster.addCraftingTask(craftingTask);
+            }
+            return null;
+        }
+
         public static final IAspectWrite<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack>
                 ITEMSTACK_CRAFT = AspectWriteBuilders.BUILDER_ITEMSTACK.appendKind("refinedstorage")
                 .withProperties(CRAFTING_PROPERTIES).handle(
@@ -177,33 +209,34 @@ public class RefinedStorageAspects {
                                     if (networkNode != null) {
                                         INetworkMaster networkMaster = networkNode.getNetwork();
                                         if (networkMaster != null) {
-                                            int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
                                             ItemStack itemStack = input.getRight().getRawValue().get();
-                                            ICraftingPattern craftingPattern = NetworkUtils.getPattern(networkMaster, itemStack);
-                                            if (craftingPattern != null) {
-                                                ICraftingTask craftingTask = NetworkUtils.createCraftingTask(networkMaster, craftingPattern);
+                                            return triggerItemStackCrafting(input.getMiddle(), networkMaster, itemStack);
+                                        }
+                                    }
+                                }
+                                return null;
+                            }
+                        }, "craft").buildWrite();
 
-                                                if (input.getMiddle().getValue(PROPERTY_SKIPCRAFTING).getRawValue()) {
-                                                    for (ICraftingTask task : networkMaster.getCraftingTasks()) {
-                                                        for (ItemStack output : task.getPattern().getOutputs()) {
-                                                            if (CompareUtils.compareStack(output, itemStack, compareFlags)) {
-                                                                // If there's already one crafting, stop.
-                                                                return null;
-                                                            }
-                                                        }
-                                                    }
+        public static final IAspectWrite<ValueTypeList.ValueList, ValueTypeList>
+                LIST_CRAFT = AspectWriteBuilders.BUILDER_LIST.appendKind("refinedstorage")
+                .withProperties(CRAFTING_PROPERTIES).handle(
+                        new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeList.ValueList>, Void>() {
+                            @Override
+                            public Void getOutput(Triple<PartTarget, IAspectProperties, ValueTypeList.ValueList> input)
+                                    throws EvaluationException {
+                                DimPos pos = input.getLeft().getTarget().getPos();
+                                INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                if (networkNode != null) {
+                                    INetworkMaster networkMaster = networkNode.getNetwork();
+                                    if (networkMaster != null) {
+                                        if (input.getRight().getRawValue().getValueType() == ValueTypes.OBJECT_ITEMSTACK) {
+                                            for (IValue value : (Iterable<IValue>) input.getRight().getRawValue()) {
+                                                ValueObjectTypeItemStack.ValueItemStack valueItemStack = (ValueObjectTypeItemStack.ValueItemStack) value;
+                                                if (valueItemStack.getRawValue().isPresent()) {
+                                                    ItemStack itemStack = valueItemStack.getRawValue().get();
+                                                    triggerItemStackCrafting(input.getMiddle(), networkMaster, itemStack);
                                                 }
-
-                                                if (input.getMiddle().getValue(PROPERTY_SKIPSTORAGE).getRawValue()) {
-                                                    ItemStack present = networkMaster.getItemStorage().get(itemStack, compareFlags);
-                                                    if (present != null && present.stackSize >= itemStack.stackSize) {
-                                                        // If there's already one in the inventory, stop.
-                                                        return null;
-                                                    }
-                                                }
-
-                                                // Once we get here, we are certain that we want to shedule the task.
-                                                networkMaster.addCraftingTask(craftingTask);
                                             }
                                         }
                                     }

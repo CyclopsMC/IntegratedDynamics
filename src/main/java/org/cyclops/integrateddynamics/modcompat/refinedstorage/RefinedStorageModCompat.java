@@ -42,7 +42,8 @@ public class RefinedStorageModCompat implements IModCompat {
 			));
 
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Sets.<IAspect>newHashSet(
-					RefinedStorageAspects.Write.ITEMSTACK_CRAFT
+					RefinedStorageAspects.Write.ITEMSTACK_CRAFT,
+					RefinedStorageAspects.Write.LIST_CRAFT
 			));
 
 			POSITIONED_MASTERITEMINVENTORY = ValueTypeListProxyFactories.REGISTRY.register(
