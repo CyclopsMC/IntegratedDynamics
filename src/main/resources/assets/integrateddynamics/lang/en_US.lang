@@ -957,6 +957,8 @@ aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.info=A list of all the items in the RS network.
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftableitems.name=RS craftable items
 aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftableitems.info=A list of all the craftable items in the RS network.
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftingitems.name=RS crafting items
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftingitems.info=A list of all the items that are currently being crafted in the RS network.
 aspect.aspects.integrateddynamics.read.list.refinedstorage.fluid.fluidstacks.name=RS network fluids
 aspect.aspects.integrateddynamics.read.list.refinedstorage.fluid.fluidstacks.info=A list of all the fluids in the RS network.
 

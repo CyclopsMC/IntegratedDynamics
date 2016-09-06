@@ -102,6 +102,32 @@ public class RefinedStorageAspects {
                         }
                     }, "craftableitems").buildRead();
 
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_CRAFTINGITEMS =
+                    BUILDER_LIST.appendKind("inventory").handle(new IAspectValuePropagator<INetworkMaster, ValueTypeList.ValueList>() {
+
+                        protected void addPatternItemStacks(List<ValueObjectTypeItemStack.ValueItemStack> itemStacks, ICraftingTask craftingTask) {
+                            ICraftingPattern craftingPattern = craftingTask.getPattern();
+                            for (ItemStack itemStack : craftingPattern.getOutputs()) {
+                                itemStacks.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                            }
+                            if (craftingTask.getChild() != null) {
+                                addPatternItemStacks(itemStacks, craftingTask.getChild());
+                            }
+                        }
+
+                        @Override
+                        public ValueTypeList.ValueList getOutput(INetworkMaster networkMaster) {
+                            if (networkMaster != null) {
+                                List<ValueObjectTypeItemStack.ValueItemStack> itemStacks = Lists.newArrayList();
+                                for (ICraftingTask craftingTask : networkMaster.getCraftingTasks()) {
+                                    addPatternItemStacks(itemStacks, craftingTask);
+                                }
+                                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, itemStacks);
+                            }
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
+                        }
+                    }, "craftingitems").buildRead();
+
         }
 
         public static final class Fluid {
