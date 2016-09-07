@@ -303,6 +303,95 @@ public class RefinedStorageAspects {
                             }
                         }, "craft").buildWrite();
 
+        public static final IAspectWrite<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean>
+                BOOLEAN_CANCELCRAFT = AspectWriteBuilders.BUILDER_BOOLEAN.appendKind("refinedstorage")
+                .handle(
+                        new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean>, Void>() {
+                            @Override
+                            public Void getOutput(Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean> input)
+                                    throws EvaluationException {
+                                if (input.getRight().getRawValue()) {
+                                    DimPos pos = input.getLeft().getTarget().getPos();
+                                    INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                    if (networkNode != null) {
+                                        INetworkMaster networkMaster = networkNode.getNetwork();
+                                        if (networkMaster != null) {
+                                            List<ICraftingTask> craftingTasks = Lists.newArrayList(networkMaster.getCraftingTasks());
+                                            for (ICraftingTask craftingTask : craftingTasks) {
+                                                networkMaster.cancelCraftingTask(craftingTask);
+                                            }
+                                        }
+                                    }
+                                }
+                                return null;
+                            }
+                        }, "cancelcraft").buildWrite();
+
+        public static final IAspectWrite<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack>
+                ITEMSTACK_CANCELCRAFT = AspectWriteBuilders.BUILDER_ITEMSTACK.appendKind("refinedstorage")
+                .handle(
+                        new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>, Void>() {
+                            @Override
+                            public Void getOutput(Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack> input)
+                                    throws EvaluationException {
+                                if (input.getRight().getRawValue().isPresent()) {
+                                    DimPos pos = input.getLeft().getTarget().getPos();
+                                    INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                    if (networkNode != null) {
+                                        INetworkMaster networkMaster = networkNode.getNetwork();
+                                        if (networkMaster != null) {
+                                            ItemStack itemStack = input.getRight().getRawValue().get();
+                                            List<ICraftingTask> craftingTasks = Lists.newArrayList(networkMaster.getCraftingTasks());
+                                            int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
+                                            for (ICraftingTask craftingTask : craftingTasks) {
+                                                for (ItemStack output : craftingTask.getPattern().getOutputs()) {
+                                                    if (CompareUtils.compareStack(output, itemStack, compareFlags)) {
+                                                        networkMaster.cancelCraftingTask(craftingTask);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                return null;
+                            }
+                        }, "cancelcraft").buildWrite();
+
+        public static final IAspectWrite<ValueTypeList.ValueList, ValueTypeList>
+                LIST_CANCELCRAFT = AspectWriteBuilders.BUILDER_LIST.appendKind("refinedstorage")
+                .handle(
+                        new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeList.ValueList>, Void>() {
+                            @Override
+                            public Void getOutput(Triple<PartTarget, IAspectProperties, ValueTypeList.ValueList> input)
+                                    throws EvaluationException {
+                                DimPos pos = input.getLeft().getTarget().getPos();
+                                INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                if (networkNode != null) {
+                                    INetworkMaster networkMaster = networkNode.getNetwork();
+                                    if (networkMaster != null) {
+                                        if (input.getRight().getRawValue().getValueType() == ValueTypes.OBJECT_ITEMSTACK) {
+                                            List<ICraftingTask> craftingTasks = Lists.newArrayList(networkMaster.getCraftingTasks());
+                                            int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
+                                            for (ICraftingTask craftingTask : craftingTasks) {
+                                                for (ItemStack output : craftingTask.getPattern().getOutputs()) {
+                                                    for (IValue value : (Iterable<IValue>) input.getRight().getRawValue()) {
+                                                        ValueObjectTypeItemStack.ValueItemStack valueItemStack = (ValueObjectTypeItemStack.ValueItemStack) value;
+                                                        if (valueItemStack.getRawValue().isPresent() &&
+                                                                CompareUtils.compareStack(output, valueItemStack.getRawValue().get(), compareFlags)) {
+                                                            networkMaster.cancelCraftingTask(craftingTask);
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                return null;
+                            }
+                        }, "cancelcraft").buildWrite();
+
     }
 
 }
