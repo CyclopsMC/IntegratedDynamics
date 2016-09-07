@@ -35,7 +35,8 @@ public class RefinedStorageModCompat implements IModCompat {
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_READER, Sets.<IAspect>newHashSet(
 					RefinedStorageAspects.Read.Inventory.LIST_ITEMSTACKS,
 					RefinedStorageAspects.Read.Inventory.LIST_CRAFTABLEITEMS,
-					RefinedStorageAspects.Read.Inventory.LIST_CRAFTINGITEMS
+					RefinedStorageAspects.Read.Inventory.LIST_CRAFTINGITEMS,
+					RefinedStorageAspects.Read.Inventory.LIST_MISSINGCRAFTINGITEMS
 			));
 			Aspects.REGISTRY.register(PartTypes.FLUID_READER, Sets.<IAspect>newHashSet(
 					RefinedStorageAspects.Read.Fluid.LIST_FLUIDSTACKS

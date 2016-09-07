@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.modcompat.refinedstorage.aspect;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -27,6 +28,8 @@ import refinedstorage.api.network.INetworkMaster;
 import refinedstorage.api.network.INetworkNode;
 import refinedstorage.api.network.NetworkUtils;
 import refinedstorage.api.storage.CompareUtils;
+import refinedstorage.apiimpl.autocrafting.task.CraftingTaskNormal;
+import refinedstorage.apiimpl.autocrafting.task.CraftingTaskProcessing;
 
 import java.util.Collections;
 import java.util.List;
@@ -128,6 +131,61 @@ public class RefinedStorageAspects {
                             return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
                         }
                     }, "craftingitems").buildRead();
+
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_MISSINGCRAFTINGITEMS =
+                    BUILDER_LIST.appendKind("inventory").handle(new IAspectValuePropagator<INetworkMaster, ValueTypeList.ValueList>() {
+
+                        protected List<ItemStack> getMissingItems(ICraftingTask craftingTask) {
+                            List<ItemStack> itemStacks = Lists.newArrayList();
+                            boolean[] satisfied;
+                            boolean[] checked;
+                            boolean[] childrenCreated = null;
+                            try {
+                                satisfied = ReflectionHelper.getPrivateValue(CraftingTaskNormal.class, (CraftingTaskNormal) craftingTask, "satisfied");
+                                checked = ReflectionHelper.getPrivateValue(CraftingTaskNormal.class, (CraftingTaskNormal) craftingTask, "checked");
+                            } catch (ClassCastException | ReflectionHelper.UnableToAccessFieldException e) {
+                                try {
+                                    satisfied = ReflectionHelper.getPrivateValue(CraftingTaskProcessing.class, (CraftingTaskProcessing) craftingTask, "satisfied");
+                                    checked = ReflectionHelper.getPrivateValue(CraftingTaskProcessing.class, (CraftingTaskProcessing) craftingTask, "checked");
+                                    childrenCreated = ReflectionHelper.getPrivateValue(CraftingTaskProcessing.class, (CraftingTaskProcessing) craftingTask, "childrenCreated");
+                                } catch (ClassCastException | ReflectionHelper.UnableToAccessFieldException e2) {
+                                    e2.printStackTrace();
+                                    return itemStacks;
+                                }
+                            }
+
+                            ICraftingPattern craftingPattern = craftingTask.getPattern();
+                            int i = 0;
+                            for (ItemStack itemStack : craftingPattern.getOutputs()) {
+                                if (!satisfied[i] && (childrenCreated == null || !childrenCreated[i]) && checked[i]) {
+                                    itemStacks.add(itemStack);
+                                }
+                                i++;
+                            }
+                            return itemStacks;
+                        }
+
+                        protected void addPatternItemStacksMissing(List<ValueObjectTypeItemStack.ValueItemStack> itemStacks, ICraftingTask craftingTask) {
+                            for (ItemStack itemStack : getMissingItems(craftingTask)) {
+                                itemStacks.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                            }
+                            if (craftingTask.getChild() != null) {
+                                addPatternItemStacksMissing(itemStacks, craftingTask.getChild());
+                            }
+                        }
+
+                        @Override
+                        public ValueTypeList.ValueList getOutput(INetworkMaster networkMaster) {
+                            if (networkMaster != null) {
+                                List<ValueObjectTypeItemStack.ValueItemStack> itemStacks = Lists.newArrayList();
+                                for (ICraftingTask craftingTask : networkMaster.getCraftingTasks()) {
+                                    addPatternItemStacksMissing(itemStacks, craftingTask);
+                                }
+                                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, itemStacks);
+                            }
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
+                        }
+                    }, "missingcraftingitems").buildRead();
 
         }
 
