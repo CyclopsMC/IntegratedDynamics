@@ -1067,6 +1067,25 @@ public final class Operators {
             }).build());
 
     /**
+     * ItemStack operator that applies the given stacksize to the given itemstack and creates a new ItemStack.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_WITHSIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_INTEGER_1
+            .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("withsize")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    if (a.getRawValue().isPresent()) {
+                        ItemStack itemStack = a.getRawValue().get().copy();
+                        itemStack.stackSize = b.getRawValue();
+                        return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
+                    }
+                    return a;
+                }
+            }).build());
+
+    /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
      */
 

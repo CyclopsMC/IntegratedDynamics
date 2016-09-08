@@ -33,8 +33,10 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             // Stack size
             GlStateManager.pushMatrix();
             GlStateManager.translate(7F, 8.5F, 0.1F);
-            GlStateManager.scale(0.5F, 0.5F, 1F);
-            rendererDispatcher.getFontRenderer().drawString(String.valueOf(itemStackOptional.get().stackSize),
+            String stackSize = String.valueOf(itemStackOptional.get().stackSize);
+            float scale = 1F / ((float) stackSize.length() + 1F);
+            GlStateManager.scale(scale, scale, 1F);
+            rendererDispatcher.getFontRenderer().drawString(stackSize,
                     0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)));
             GlStateManager.popMatrix();
         }

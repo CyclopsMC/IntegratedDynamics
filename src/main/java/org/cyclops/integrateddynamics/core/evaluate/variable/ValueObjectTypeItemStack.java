@@ -36,7 +36,10 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     public String serialize(ValueItemStack value) {
         NBTTagCompound tag = new NBTTagCompound();
         Optional<ItemStack> itemStack = value.getRawValue();
-        if(itemStack.isPresent()) itemStack.get().writeToNBT(tag);
+        if(itemStack.isPresent()) {
+            itemStack.get().writeToNBT(tag);
+            tag.setInteger("Count", itemStack.get().stackSize);
+        }
         return tag.toString();
     }
 
@@ -45,6 +48,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         try {
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
             ItemStack itemStack = ItemStack.loadItemStackFromNBT(tag);
+            itemStack.stackSize = tag.getInteger("Count");
             return ValueItemStack.of(itemStack);
         } catch (NBTException e) {
             return null;

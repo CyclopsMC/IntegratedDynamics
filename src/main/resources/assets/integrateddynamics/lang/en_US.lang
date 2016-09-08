@@ -654,6 +654,8 @@ operator.operators.integrateddynamics.itemstack.oredict.name=Oredictionary Names
 operator.operators.integrateddynamics.itemstack.oredict.info=The oredictionary names (strings) of the given item
 operator.operators.integrateddynamics.string.oredict.name=Oredictionary Values
 operator.operators.integrateddynamics.string.oredict.info=The oredictionary values (items) of the given name
+operator.operators.integrateddynamics.itemstack.withsize.name=Item With Stacksize
+operator.operators.integrateddynamics.itemstack.withsize.info=Set the stacksize for the given item
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s

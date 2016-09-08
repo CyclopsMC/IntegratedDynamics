@@ -49,6 +49,9 @@ public class TestItemStackOperators {
     private DummyVariable<ValueTypeString.ValueString> sStickWood;
     private DummyVariable<ValueTypeString.ValueString> sPlankWood;
 
+    private DummyVariable<ValueTypeInteger.ValueInteger> int100;
+    private DummyVariable<ValueTypeInteger.ValueInteger> int200;
+
     @IntegrationBefore
     public void before() {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
@@ -71,6 +74,9 @@ public class TestItemStackOperators {
 
         sStickWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("stickWood"));
         sPlankWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("plankWood"));
+
+        int100 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(100));
+        int200 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(200));
     }
 
     /**
@@ -753,6 +759,35 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeOreDictStacks() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITHSIZE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackWithSize() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_WITHSIZE.evaluate(new IVariable[]{iApple, int100});
+        Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an itemstack");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().stackSize, 100, "withsize(apple, 100).stacksize == 100");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_WITHSIZE.evaluate(new IVariable[]{iBeef, int200});
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().stackSize, 200, "withsize(beef, 200).stacksize == 200");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeWithSizeLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITHSIZE.evaluate(new IVariable[]{iApple, int100, int100});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeWithSizeSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITHSIZE.evaluate(new IVariable[]{iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeWithSize() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITHSIZE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }
