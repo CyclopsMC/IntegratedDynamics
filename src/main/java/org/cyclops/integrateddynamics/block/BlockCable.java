@@ -407,9 +407,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     protected void onPostBlockDestroyed(World world, BlockPos pos) {
         super.onPostBlockDestroyed(world, pos);
         if(!IS_MCMP_CONVERTING) { // Yes, this is a hack, we don't want this to be called after a MCMP block conversion
-            IS_MCMP_CONVERTING = false;
             cableNetworkComponent.onPostBlockDestroyed(world, pos);
         }
+        IS_MCMP_CONVERTING = false;
     }
 
     @Override
