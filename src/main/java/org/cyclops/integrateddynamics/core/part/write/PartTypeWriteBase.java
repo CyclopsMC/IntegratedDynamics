@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
@@ -41,7 +42,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         extends PartTypeAspects<P, S> implements IPartTypeWriter<P, S> {
 
     public PartTypeWriteBase(String name) {
-        super(name, new RenderPosition(0.3125F, 0.3125F, 0.25F, 0.25F));
+        super(name, new PartRenderPosition(0.3125F, 0.3125F, 0.25F, 0.25F));
     }
 
     @Override

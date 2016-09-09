@@ -42,6 +42,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -116,9 +117,9 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
             builder.withProperty(BlockCable.CONNECTED[side.ordinal()], isConnected(side));
             boolean hasPart = hasPart(side);
             if(hasPart) {
-                builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getRenderPosition());
+                builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], getPart(side).getPartRenderPosition());
             } else {
-                builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
+                builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], PartRenderPosition.NONE);
             }
         }
         return builder.build();
@@ -154,7 +155,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
             if(isConnected(side)) {
                 list.add(BlockCable.getInstance().getCableBoundingBox(side));
             } else if(hasPart(side)) {
-                list.add(getPart(side).getRenderPosition().getSidedCableBoundingBox(side));
+                list.add(getPart(side).getPartRenderPosition().getSidedCableBoundingBox(side));
             }
         }
     }
@@ -167,7 +168,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     protected void addCollisionBoxWithPartConditional(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity, EnumFacing side) {
-        AxisAlignedBB box = getPart(side).getRenderPosition().getSidedCableBoundingBox(side);
+        AxisAlignedBB box = getPart(side).getPartRenderPosition().getSidedCableBoundingBox(side);
         if(box.intersectsWith(mask)) {
             list.add(box);
         }

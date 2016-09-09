@@ -25,7 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
-import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 
 import javax.vecmath.Matrix4f;
@@ -46,7 +46,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     private static final int INV_LENGTH_CONNECTION = TEXTURE_SIZE - LENGTH_CONNECTION;
     public static final float MIN = (float) LENGTH_CONNECTION / (float) TEXTURE_SIZE;
     public static final float MAX = 1.0F - MIN;
-    private static final IPartType.RenderPosition CABLE_RENDERPOSITION = new IPartType.RenderPosition(-1,
+    private static final PartRenderPosition CABLE_RENDERPOSITION = new PartRenderPosition(-1,
             (((float) TEXTURE_SIZE - (float) RADIUS) / 2 / (float) TEXTURE_SIZE),
             (float) RADIUS / (float) TEXTURE_SIZE, (float) RADIUS / (float) TEXTURE_SIZE);
 
@@ -119,15 +119,15 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         return EnumFacing.getFront(dir);
     }
 
-    public List<BakedQuad> getFacadeQuads(IBlockState blockState, EnumFacing side, IPartType.RenderPosition renderPosition) {
+    public List<BakedQuad> getFacadeQuads(IBlockState blockState, EnumFacing side, PartRenderPosition partRenderPosition) {
         List<BakedQuad> ret = Lists.newLinkedList();
         IBakedModel model = RenderHelpers.getBakedModel(blockState);
         TextureAtlasSprite texture = model.getParticleTexture();
-        if(renderPosition == IPartType.RenderPosition.NONE) {
+        if(partRenderPosition == PartRenderPosition.NONE) {
             addBakedQuad(ret, 0, 1, 0, 1, 1, texture, side);
         } else {
-            float w = renderPosition.getWidthFactor();
-            float h = renderPosition.getHeightFactor();
+            float w = partRenderPosition.getWidthFactor();
+            float h = partRenderPosition.getHeightFactor();
 
             float x0 = 0F;
             float x1 = (1F - w) / 2;
@@ -169,7 +169,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     protected abstract Optional<IBlockState> getFacade();
     protected abstract boolean isConnected(EnumFacing side);
     protected abstract boolean hasPart(EnumFacing side);
-    protected abstract IPartType.RenderPosition getPartRenderPosition(EnumFacing side);
+    protected abstract PartRenderPosition getPartRenderPosition(EnumFacing side);
     protected abstract boolean shouldRenderParts();
     protected abstract IBakedModel getPartModel(EnumFacing side);
 
@@ -191,16 +191,16 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                 }
             }
             if(renderCable) {
-                IPartType.RenderPosition renderPosition = IPartType.RenderPosition.NONE;
+                PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
                 if (isConnected) {
-                    renderPosition = CABLE_RENDERPOSITION;
+                    partRenderPosition = CABLE_RENDERPOSITION;
                 }
                 if (isConnected || hasPart) {
                     int i = 0;
                     float[][][] quadVertexes = this.quadVertexes;
                     if (hasPart) {
-                        renderPosition = getPartRenderPosition(side);
-                        float depthFactor = renderPosition == IPartType.RenderPosition.NONE ? 0F : renderPosition.getDepthFactor();
+                        partRenderPosition = getPartRenderPosition(side);
+                        float depthFactor = partRenderPosition == PartRenderPosition.NONE ? 0F : partRenderPosition.getDepthFactor();
                         quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
                     }
                     for (float[][] v : quadVertexes) {
@@ -233,7 +233,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
                 // Render facade if present
                 if (blockStateHolder.isPresent()) {
-                    ret.addAll(getFacadeQuads(blockStateHolder.get(), side, renderPosition));
+                    ret.addAll(getFacadeQuads(blockStateHolder.get(), side, partRenderPosition));
                 }
             }
         }

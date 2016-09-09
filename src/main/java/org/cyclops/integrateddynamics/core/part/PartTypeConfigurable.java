@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiPartSettings;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
@@ -22,8 +23,8 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
     @Getter
     private final IGuiContainerProvider settingsGuiProvider;
 
-    public PartTypeConfigurable(String name, RenderPosition renderPosition) {
-        super(name, renderPosition);
+    public PartTypeConfigurable(String name, PartRenderPosition partRenderPosition) {
+        super(name, partRenderPosition);
         if(hasSettings()) {
             int guiIDSettings = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
             getMod().getGuiHandler().registerGUI((settingsGuiProvider = constructSettingsGuiProvider(guiIDSettings)), ExtendedGuiHandler.PART);

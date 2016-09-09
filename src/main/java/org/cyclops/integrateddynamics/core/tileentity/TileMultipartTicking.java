@@ -19,7 +19,7 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -156,7 +156,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 builder.withProperty(BlockCable.CONNECTED[side.ordinal()],
                         !isForceDisconnected(side) && connected.get(side));
                 builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
-                        partContainer.hasPart(side) ? partContainer.getPart(side).getRenderPosition() : IPartType.RenderPosition.NONE);
+                        partContainer.hasPart(side) ? partContainer.getPart(side).getPartRenderPosition() : PartRenderPosition.NONE);
             }
             builder.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
             builder.withProperty(BlockCable.PARTCONTAINER, partContainer);

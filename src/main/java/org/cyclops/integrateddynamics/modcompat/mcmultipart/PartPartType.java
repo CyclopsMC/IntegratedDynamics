@@ -122,7 +122,7 @@ public class PartPartType extends MultipartBase {
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return getPartType().getRenderPosition().getBoundingBox(getFacing());
+        return getPartType().getPartRenderPosition().getBoundingBox(getFacing());
     }
 
     @Override

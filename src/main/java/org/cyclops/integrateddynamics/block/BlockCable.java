@@ -51,6 +51,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.client.model.CableModel;
@@ -90,13 +91,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @BlockProperty
     public static final IUnlistedProperty<Boolean>[] CONNECTED = new IUnlistedProperty[6];
     @BlockProperty
-    public static final IUnlistedProperty<IPartType.RenderPosition>[] PART_RENDERPOSITIONS = new IUnlistedProperty[6];
+    public static final IUnlistedProperty<PartRenderPosition>[] PART_RENDERPOSITIONS = new IUnlistedProperty[6];
     @BlockProperty
     public static final IUnlistedProperty<Optional> FACADE = new UnlistedProperty<>("facade", Optional.class);
     static {
         for(EnumFacing side : EnumFacing.values()) {
             CONNECTED[side.ordinal()] = Properties.toUnlisted(PropertyBool.create("connect-" + side.getName()));
-            PART_RENDERPOSITIONS[side.ordinal()] = new UnlistedProperty<>("partRenderPosition-" + side.getName(), IPartType.RenderPosition.class);
+            PART_RENDERPOSITIONS[side.ordinal()] = new UnlistedProperty<>("partRenderPosition-" + side.getName(), PartRenderPosition.class);
         }
     }
     @BlockProperty
@@ -365,7 +366,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return BlockHelpers.getSafeBlockStateProperty(
                (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
                PART_RENDERPOSITIONS[side.ordinal()],
-                IPartType.RenderPosition.NONE) != IPartType.RenderPosition.NONE;
+                PartRenderPosition.NONE) != PartRenderPosition.NONE;
     }
 
     @Override
@@ -666,10 +667,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         }
     }
 
-    protected IPartType.RenderPosition getPartRenderPosition(World world, BlockPos pos, EnumFacing side) {
+    protected PartRenderPosition getPartRenderPosition(World world, BlockPos pos, EnumFacing side) {
         return BlockHelpers.getSafeBlockStateProperty((IExtendedBlockState)
                 getExtendedState(world.getBlockState(pos), world, pos), PART_RENDERPOSITIONS[side.ordinal()],
-                IPartType.RenderPosition.NONE);
+                PartRenderPosition.NONE);
     }
 
     private AxisAlignedBB getCableBoundingBoxWithPart(World world, BlockPos pos, EnumFacing side) {

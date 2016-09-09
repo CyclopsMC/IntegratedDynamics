@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.part;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -15,8 +16,8 @@ import java.util.Set;
  */
 public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPartState<P>> extends PartTypeConfigurable<P, S> {
 
-    public PartTypeAspects(String name, RenderPosition renderPosition) {
-        super(name, renderPosition);
+    public PartTypeAspects(String name, PartRenderPosition partRenderPosition) {
+        super(name, partRenderPosition);
     }
 
     /**

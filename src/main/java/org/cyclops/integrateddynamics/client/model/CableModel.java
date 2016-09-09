@@ -15,7 +15,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 
 /**
@@ -53,13 +53,13 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean hasPart(EnumFacing side) {
-        return getPartRenderPosition(side) != IPartType.RenderPosition.NONE;
+        return getPartRenderPosition(side) != PartRenderPosition.NONE;
     }
 
     @Override
-    protected IPartType.RenderPosition getPartRenderPosition(EnumFacing side) {
+    protected PartRenderPosition getPartRenderPosition(EnumFacing side) {
         return BlockHelpers.getSafeBlockStateProperty(getState(),
-                BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
+                BlockCable.PART_RENDERPOSITIONS[side.ordinal()], PartRenderPosition.NONE);
     }
 
     @Override

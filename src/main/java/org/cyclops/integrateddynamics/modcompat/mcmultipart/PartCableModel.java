@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.client.model.CableModelBase;
 
@@ -47,12 +47,12 @@ public class PartCableModel extends CableModelBase {
 
     @Override
     protected boolean hasPart(EnumFacing side) {
-        return getPartRenderPosition(side) != IPartType.RenderPosition.NONE;
+        return getPartRenderPosition(side) != PartRenderPosition.NONE;
     }
 
     @Override
-    protected IPartType.RenderPosition getPartRenderPosition(EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PART_RENDERPOSITIONS[side.ordinal()], IPartType.RenderPosition.NONE);
+    protected PartRenderPosition getPartRenderPosition(EnumFacing side) {
+        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PART_RENDERPOSITIONS[side.ordinal()], PartRenderPosition.NONE);
     }
 
     @Override

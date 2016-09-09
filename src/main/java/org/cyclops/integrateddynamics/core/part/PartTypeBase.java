@@ -31,10 +31,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
-import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartState;
-import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -64,10 +61,10 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Getter
     private final String name;
     @Getter
-    private final RenderPosition renderPosition;
+    private final PartRenderPosition partRenderPosition;
     private final Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> networkEventActions;
 
-    public PartTypeBase(String name, RenderPosition renderPosition) {
+    public PartTypeBase(String name, PartRenderPosition partRenderPosition) {
         if(hasGui()) {
             this.guiID = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
             getMod().getGuiHandler().registerGUI(this, ExtendedGuiHandler.PART);
@@ -77,7 +74,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         this.name = name;
         this.block = registerBlock();
         this.item = registerItem();
-        this.renderPosition = renderPosition;
+        this.partRenderPosition = partRenderPosition;
 
         networkEventActions = constructNetworkEventActions();
     }
