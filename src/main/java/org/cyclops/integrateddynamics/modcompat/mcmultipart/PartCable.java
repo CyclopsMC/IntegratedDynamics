@@ -23,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,6 +51,7 @@ import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -535,17 +537,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     public void update() {
-        if(!MinecraftHelpers.isClientSide()) {
-            for(PartHelpers.PartStateHolder<?, ?> partStateHolder : this.partData.values()) {
-                IPartState partState = partStateHolder.getState();
-                if (partState.isDirtyAndReset()) {
-                    markDirty();
-                }
-                if (partState.isUpdateAndReset()) {
-                    sendUpdate();
-                }
-            }
-        }
+        getPartContainer().update();
     }
 
     public void setAddSilent(boolean addSilent) {
@@ -560,6 +552,19 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         this.sendFurtherUpdates = sendFurtherUpdates;
     }
 
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return capability == PartContainerConfig.CAPABILITY || super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == PartContainerConfig.CAPABILITY) {
+            return (T) getPartContainer();
+        }
+        return super.getCapability(capability, facing);
+    }
+
     public class VirtualPartContainer implements IPartContainer {
 
         protected PartPartType getPartPart(EnumFacing side) {
@@ -571,6 +576,21 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
                 }
             }
             return null;
+        }
+
+        @Override
+        public void update() {
+            if(!MinecraftHelpers.isClientSide()) {
+                for(PartHelpers.PartStateHolder<?, ?> partStateHolder : PartCable.this.partData.values()) {
+                    IPartState partState = partStateHolder.getState();
+                    if (partState.isDirtyAndReset()) {
+                        markDirty();
+                    }
+                    if (partState.isUpdateAndReset()) {
+                        sendUpdate();
+                    }
+                }
+            }
         }
 
         @Override
@@ -665,6 +685,26 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
                 }
             }
             return null;
+        }
+
+        @Override
+        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+            return false;
+        }
+
+        @Override
+        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+            return null;
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            return null;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+
         }
     }
 

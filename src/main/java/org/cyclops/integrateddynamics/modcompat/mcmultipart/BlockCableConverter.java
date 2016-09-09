@@ -42,7 +42,7 @@ public class BlockCableConverter implements IPartConverter {
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, blockPos, TileMultipartTicking.class);
 
         // Add parts
-        EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData = EnumFacingMap.newMap(tile.getPartData());
+        EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData = EnumFacingMap.newMap(tile.getPartContainer().getPartData());
         EnumFacingMap<Boolean> forceDisconnected = EnumFacingMap.newMap(tile.getForceDisconnected());
         for(Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
             parts.add(new PartPartType(entry.getKey(), entry.getValue().getPart()));
@@ -50,7 +50,7 @@ public class BlockCableConverter implements IPartConverter {
         boolean wasRealCable = tile.isRealCable();
         IPartNetwork network = null;
         if(!simulate) {
-            tile.silentResetPartData();
+            tile.getPartContainer().silentResetPartData();
             network = tile.getNetwork();
             tile.resetCurrentNetwork();
             tile.setRealCable(false);

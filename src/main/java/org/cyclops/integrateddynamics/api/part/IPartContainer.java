@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
 import javax.annotation.Nullable;
@@ -11,7 +13,12 @@ import java.util.Map;
  * An interface for containers that can hold {@link IPartType}s.
  * @author rubensworks
  */
-public interface IPartContainer {
+public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> {
+
+    /**
+     * Should be called every tick, updates parts.
+     */
+    public void update();
 
     /**
      * @return The position this container is at.

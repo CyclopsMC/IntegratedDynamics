@@ -567,7 +567,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
-        return TileHelpers.getSafeTile(world, pos, IPartContainer.class);
+        return TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class).getPartContainer();
     }
 
     @Nullable

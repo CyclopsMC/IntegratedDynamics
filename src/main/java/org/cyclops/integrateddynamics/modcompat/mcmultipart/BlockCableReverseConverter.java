@@ -63,7 +63,7 @@ public class BlockCableReverseConverter implements IReversePartConverter {
                 }
             }
             tile.setNetwork(network);
-            tile.setPartData(partData);
+            tile.getPartContainer().setPartData(partData);
             tile.setForceDisconnected(forceDisconnected);
             tile.sendImmediateUpdate();
             return true;

@@ -26,10 +26,10 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -96,13 +96,13 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     @Override
     public IPartState getPartState(int partId) {
         PartPos partPos = partPositions.get(partId);
-        return TileMultipartTicking.get(partPos.getPos()).getPartState(partPos.getSide());
+        return PartContainerConfig.get(partPos.getPos()).getPartState(partPos.getSide());
     }
 
     @Override
     public IPartType getPartType(int partId) {
         PartPos partPos = partPositions.get(partId);
-        return TileMultipartTicking.get(partPos.getPos()).getPart(partPos.getSide());
+        return PartContainerConfig.get(partPos.getPos()).getPart(partPos.getSide());
     }
 
     @Override
@@ -116,7 +116,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
             return false;
         }
         PartPos partPos = partPositions.get(partId);
-        IPartContainer partContainer = TileMultipartTicking.get(partPos.getPos());
+        IPartContainer partContainer = PartContainerConfig.get(partPos.getPos());
         return partContainer != null && partContainer.hasPart(partPos.getSide());
     }
 

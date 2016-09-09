@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.*;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
@@ -13,6 +14,9 @@ import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 public class Configs {
 
     public static void registerBlocks(ConfigHandler configHandler) {
+
+        // Capabilities
+        configHandler.add(new PartContainerConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());
