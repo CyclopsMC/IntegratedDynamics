@@ -3,14 +3,12 @@ package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
-import mcmultipart.block.TileMultipartContainer;
 import mcmultipart.client.multipart.AdvancedParticleManager;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IMultipartContainer;
 import mcmultipart.multipart.OcclusionHelper;
 import mcmultipart.multipart.PartSlot;
 import mcmultipart.raytrace.PartMOP;
-import mcmultipart.raytrace.RayTraceUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -22,7 +20,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -44,8 +41,6 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
@@ -65,7 +60,7 @@ import java.util.*;
  * @author rubensworks
  */
 public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        INetworkElementProvider, IDynamicRedstoneBlock, IDynamicLightBlock, ITileCableNetwork, IPartContainerFacade, ITickable {
+        INetworkElementProvider, IDynamicRedstoneBlock, IDynamicLightBlock, ITileCableNetwork, ITickable {
 
     private final PartCableNetworkComponent cableNetworkComponent = new PartCableNetworkComponent(this);
     private final NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
@@ -335,7 +330,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         Set<INetworkElement> sidedElements = Sets.newHashSet();
         for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
             if(partContainer.getPartState(entry.getKey()) != null) {
-                sidedElements.add(entry.getValue().createNetworkElement(this, DimPos.of(world, blockPos), entry.getKey()));
+                sidedElements.add(entry.getValue().createNetworkElement(partContainer, DimPos.of(world, blockPos), entry.getKey()));
             }
         }
         return sidedElements;
@@ -513,24 +508,6 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public IPartNetwork getNetwork() {
         return this.network;
-    }
-
-    @Override
-    public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
-        return partContainer;
-    }
-
-    @Nullable
-    @Override
-    public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
-        Vec3d start = RayTraceUtils.getStart(player);
-        Vec3d end = RayTraceUtils.getEnd(player);
-        RayTraceUtils.AdvancedRayTraceResultPart result = ((TileMultipartContainer) world.getTileEntity(pos)).getPartContainer().collisionRayTrace(start, end);
-        if(result == null || result.hit == null) return null;
-        IMultipart multipart = result.hit.partHit;
-        if(!(multipart instanceof PartPartType)) return null;
-        PartPartType partPartType = (PartPartType) result.hit.partHit;
-        return partPartType != null ? partPartType.getFacing() : null;
     }
 
     @Override

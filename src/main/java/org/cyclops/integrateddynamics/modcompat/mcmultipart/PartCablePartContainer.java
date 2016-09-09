@@ -1,18 +1,22 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
+import mcmultipart.block.TileMultipartContainer;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IMultipartContainer;
 import mcmultipart.multipart.MultipartHelper;
 import mcmultipart.multipart.PartSlot;
+import mcmultipart.raytrace.RayTraceUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.capability.DefaultPartContainer;
+
+import javax.annotation.Nullable;
 
 /**
  * Part container for a {@link PartCable}.
@@ -84,9 +88,17 @@ public class PartCablePartContainer extends DefaultPartContainer {
         return partCable.getNetwork();
     }
 
+    @Nullable
     @Override
-    protected IPartContainerFacade getPartContainerFacade() {
-        return partCable;
+    public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
+        Vec3d start = RayTraceUtils.getStart(player);
+        Vec3d end = RayTraceUtils.getEnd(player);
+        RayTraceUtils.AdvancedRayTraceResultPart result = ((TileMultipartContainer) world.getTileEntity(pos)).getPartContainer().collisionRayTrace(start, end);
+        if(result == null || result.hit == null) return null;
+        IMultipart multipart = result.hit.partHit;
+        if(!(multipart instanceof PartPartType)) return null;
+        PartPartType partPartType = (PartPartType) result.hit.partHit;
+        return partPartType != null ? partPartType.getFacing() : null;
     }
 
 }

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 /**
@@ -72,15 +73,12 @@ public class PartPos {
      * @return A pair of part type and part state or null if not found.
      */
     public static Pair<IPartType, IPartState> getPartData(PartPos pos) {
-        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(pos.getPos(), IPartContainerFacade.class);
-        if (partContainerFacade != null) {
-            IPartContainer partContainer = partContainerFacade.getPartContainer(pos.getPos().getWorld(), pos.getPos().getBlockPos());
-            if (partContainer != null) {
-                IPartType partType = partContainer.getPart(pos.getSide());
-                IPartState partState = partContainer.getPartState(pos.getSide());
-                if (partType != null && partState != null) {
-                    return Pair.of(partType, partState);
-                }
+        IPartContainer partContainer = PartContainerConfig.get(pos.getPos());
+        if (partContainer != null) {
+            IPartType partType = partContainer.getPart(pos.getSide());
+            IPartState partState = partContainer.getPartState(pos.getSide());
+            if (partType != null && partState != null) {
+                return Pair.of(partType, partState);
             }
         }
         return null;

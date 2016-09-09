@@ -11,7 +11,6 @@ import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
@@ -56,7 +55,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
      * Create a new network from a given cluster of cables.
      * Each cable will be checked if it is an instance of {@link INetworkElementProvider} and will add all its
      * elements to the network in that case.
-     * Each cable that is an instance of {@link IPartContainerFacade}
+     * Each cable that has an {@link org.cyclops.integrateddynamics.api.part.IPartContainer} capability
      * will have the network stored in its part container.
      * @param cables The cables that make up the connections in the network which can potentially provide network
      *               elements.

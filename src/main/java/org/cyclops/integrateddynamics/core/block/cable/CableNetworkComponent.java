@@ -15,12 +15,13 @@ import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.PartNetwork;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
@@ -229,9 +230,9 @@ public class CableNetworkComponent<C extends ICableNetwork<IPartNetwork, ICableP
     public static boolean removePartFromNetwork(World world, BlockPos pos, boolean preDestroy, IPartNetwork network, EnumFacing side, IPartType<?, ?> removed) {
         if(preDestroy) {
             // Remove the cable from this network if it exists
-            IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
-            if(partContainerFacade != null && network != null) {
-                IPartNetworkElement<?, ?> networkElement = (IPartNetworkElement<?, ?>) removed.createNetworkElement(partContainerFacade, DimPos.of(world, pos), side);
+            IPartContainer partContainer = PartContainerConfig.get(world, pos);
+            if(partContainer != null && network != null) {
+                IPartNetworkElement<?, ?> networkElement = (IPartNetworkElement<?, ?>) removed.createNetworkElement(partContainer, DimPos.of(world, pos), side);
                 networkElement.onPreRemoved(network);
                 if(network.removeNetworkElementPre(networkElement)) {
                     network.removeNetworkElementPost(networkElement);

@@ -4,7 +4,7 @@ import mcmultipart.multipart.IMultipartContainer;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
@@ -24,7 +24,7 @@ public class Waila {
         registrar.addConfig(Reference.MOD_NAME, getPartConfigId(), L10NHelpers.localize("gui." + Reference.MOD_ID + ".waila.partConfig"));
         registrar.addConfig(Reference.MOD_NAME, getProxyConfigId(), L10NHelpers.localize("gui." + Reference.MOD_ID + ".waila.proxyConfig"));
         registrar.addConfig(Reference.MOD_NAME, getDryingBasinConfigId(), L10NHelpers.localize("gui." + Reference.MOD_ID + ".waila.dryingBasinConfig"));
-        registrar.registerBodyProvider(new PartDataProvider(), IPartContainerFacade.class);
+        registrar.registerBodyProvider(new PartDataProvider(), TileMultipartTicking.class);
         registrar.registerBodyProvider(new PartDataProvider(), IMultipartContainer.class);
         registrar.registerBodyProvider(new ProxyDataProvider(), TileProxy.class);
         registrar.registerBodyProvider(new DryingBasinDataProvider(), TileDryingBasin.class);

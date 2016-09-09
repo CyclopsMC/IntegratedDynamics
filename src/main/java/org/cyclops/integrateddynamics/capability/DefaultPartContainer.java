@@ -20,7 +20,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -112,8 +111,7 @@ public abstract class DefaultPartContainer implements IPartContainer {
         } else {
             IPartType removed = partStateHolder.getPart();
             if (getNetwork() != null) {
-                INetworkElement networkElement = removed
-                        .createNetworkElement(getPartContainerFacade(), getPosition(), side);
+                INetworkElement networkElement = removed.createNetworkElement(this, getPosition(), side);
                 networkElement.onPreRemoved(getNetwork());
                 if(!getNetwork().removeNetworkElementPre(networkElement)) {
                     return null;
@@ -232,7 +230,6 @@ public abstract class DefaultPartContainer implements IPartContainer {
     protected abstract World getWorld();
     protected abstract BlockPos getPos();
     protected abstract IPartNetwork getNetwork();
-    protected abstract IPartContainerFacade getPartContainerFacade();
 
     /**
      * @return The raw part data.

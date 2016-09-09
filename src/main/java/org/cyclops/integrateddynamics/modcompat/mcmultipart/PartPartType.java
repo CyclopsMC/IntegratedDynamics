@@ -223,11 +223,7 @@ public class PartPartType extends MultipartBase {
     }
 
     public IPartContainer getPartContainer() {
-        PartCable partCable = getPartCable();
-        if(partCable != null) {
-            return partCable.getPartContainer(getWorld(), getPos());
-        }
-        return null;
+        return PartContainerConfig.get(getWorld(), getPos());
     }
 
     public IPartType getPartType() {
@@ -235,9 +231,9 @@ public class PartPartType extends MultipartBase {
     }
 
     public IPartState getDelegatedPartState() {
-        PartCable partCable = getPartCable();
-        if(partCable != null) {
-            return partCable.getCapability(PartContainerConfig.CAPABILITY, null).getPartState(getFacing());
+        IPartContainer partContainer = getPartContainer();
+        if(partContainer != null) {
+            return partContainer.getPartState(getFacing());
         }
         return null;
     }

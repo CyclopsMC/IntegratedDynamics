@@ -213,12 +213,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     /**
      * Create a network element for this part type.
-     * @param partContainerFacade The facade for reaching the container this part is/will be part of.
+     * @param partContainer The container this part is/will be part of.
      * @param pos The position this network element is/will be placed at.
      * @param side The side this network element is/will be placed at.
      * @return A new network element instance.
      */
-    public INetworkElement<IPartNetwork> createNetworkElement(IPartContainerFacade partContainerFacade, DimPos pos, EnumFacing side);
+    public INetworkElement<IPartNetwork> createNetworkElement(IPartContainer partContainer, DimPos pos, EnumFacing side);
 
     /**
      * Called when a part is right-clicked.

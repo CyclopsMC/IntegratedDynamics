@@ -10,8 +10,11 @@ import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
-import org.cyclops.integrateddynamics.api.part.*;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 
 import java.util.List;
 
@@ -42,23 +45,17 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public IPartContainerFacade getPartContainerFacade() {
-        return CableHelpers.getInterface(getCenterPos(getTarget()), IPartContainerFacade.class);
+    public IPartContainer getPartContainer() {
+        return PartContainerConfig.get(getCenterPos(getTarget()));
     }
 
     @Override
     public S getPartState() {
-        IPartContainerFacade partContainerFacade = getPartContainerFacade();
-        DimPos dimPos = getCenterPos(getTarget());
-        if(partContainerFacade != null) {
-            IPartContainer partContainer = partContainerFacade.getPartContainer(getCenterPos(getTarget()).getWorld(), dimPos.getBlockPos());
-            if(partContainer != null) {
-                return (S) partContainer.getPartState(getCenterSide(getTarget()));
-            } else {
-                throw new IllegalStateException(String.format("The part container at %s could not be found.", dimPos));
-            }
+        IPartContainer partContainer = getPartContainer();
+        if(partContainer != null) {
+            return (S) partContainer.getPartState(getCenterSide(getTarget()));
         } else {
-            throw new IllegalStateException(String.format("The part container facade at %s could not be found, instead %s was found.", dimPos, dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock()));
+            throw new IllegalStateException(String.format("The part container at %s could not be found.", getCenterSide(getTarget())));
         }
     }
 

@@ -50,9 +50,9 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
@@ -79,7 +79,7 @@ import java.util.*;
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
         ICableFakeable<ICablePathElement>, ICableFacadeable<ICablePathElement>, INetworkElementProvider,
-        IPartContainerFacade, ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
+        ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
 
     public static final float BLOCK_HARDNESS = 3.0F;
     public static final Material BLOCK_MATERIAL = Material.GLASS;
@@ -470,9 +470,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     public static boolean onCableActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
                                            ItemStack heldItem, EnumFacing side, EnumFacing cableConnectionHit) {
         ICableNetwork<?, ?> cable = CableHelpers.getInterface(world, pos, ICableNetwork.class);
+        IPartContainer partContainer = PartContainerConfig.get(world, pos);
         if(WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
             if (player.isSneaking()) {
-                if (!(cable instanceof IPartContainerFacade) || !((IPartContainerFacade) cable).getPartContainer(world, pos).hasParts() || !(cable instanceof ICableFakeable)) {
+                if (partContainer == null || !partContainer.hasParts() || !(cable instanceof ICableFakeable)) {
                     // Remove full cable
                     cable.remove(world, pos, player);
                     ItemBlockCable.playBreakSound(world, pos, state);
@@ -559,25 +560,15 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @Override
     public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
         Set<INetworkElement> sidedElements = Sets.newHashSet();
-        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : getPartContainer(world, blockPos).getParts().entrySet()) {
-            sidedElements.add(entry.getValue().createNetworkElement(this, DimPos.of(world, blockPos), entry.getKey()));
+        IPartContainer partContainer = getPartContainer(world, blockPos);
+        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
+            sidedElements.add(entry.getValue().createNetworkElement(partContainer, DimPos.of(world, blockPos), entry.getKey()));
         }
         return sidedElements;
     }
 
-    @Override
-    public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
+    protected IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
         return TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class).getPartContainer();
-    }
-
-    @Nullable
-    @Override
-    public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
-        ICollidable.RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
-        if(rayTraceResult != null) {
-            return rayTraceResult.getPositionHit();
-        }
-        return null;
     }
 
     /* --------------- Start ICollidable and rendering --------------- */

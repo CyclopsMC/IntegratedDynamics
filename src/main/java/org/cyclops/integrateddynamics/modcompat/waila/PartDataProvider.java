@@ -7,14 +7,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 
 import java.util.List;
 
@@ -43,16 +42,13 @@ public class PartDataProvider implements IWailaDataProvider {
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         if(config.getConfig(Waila.getPartConfigId())) {
-            IPartContainerFacade partContainerFacade = CableHelpers.getInterface(accessor.getWorld(), accessor.getPosition(), IPartContainerFacade.class);
-            if (partContainerFacade != null) {
-                IPartContainer partContainer = partContainerFacade.getPartContainer(accessor.getWorld(), accessor.getPosition());
-                if (partContainer != null) {
-                    EnumFacing side = partContainerFacade.getWatchingSide(accessor.getWorld(), accessor.getPosition(), accessor.getPlayer());
-                    if (side != null && partContainer.hasPart(side)) {
-                        IPartType partType = partContainer.getPart(side);
-                        IPartState partState = partContainer.getPartState(side);
-                        partType.loadTooltip(partState, currenttip);
-                    }
+            IPartContainer partContainer = PartContainerConfig.get(accessor.getWorld(), accessor.getPosition());
+            if (partContainer != null) {
+                EnumFacing side = partContainer.getWatchingSide(accessor.getWorld(), accessor.getPosition(), accessor.getPlayer());
+                if (side != null && partContainer.hasPart(side)) {
+                    IPartType partType = partContainer.getPart(side);
+                    IPartState partState = partContainer.getPartState(side);
+                    partType.loadTooltip(partState, currenttip);
                 }
             }
         }

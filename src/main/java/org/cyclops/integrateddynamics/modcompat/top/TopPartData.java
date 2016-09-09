@@ -12,10 +12,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 
 import java.util.List;
 
@@ -34,20 +33,17 @@ public class TopPartData implements IProbeInfoProvider {
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         if (world != null && blockState != null && data != null && player != null) {
             BlockPos pos = data.getPos();
-            IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
-            if (partContainerFacade != null) {
-                IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
-                if (partContainer != null) {
-                    EnumFacing side = partContainerFacade.getWatchingSide(world, pos, player);
-                    if (side != null && partContainer.hasPart(side)) {
-                        IPartType partType = partContainer.getPart(side);
-                        IPartState partState = partContainer.getPartState(side);
+            IPartContainer partContainer = PartContainerConfig.get(world, pos);
+            if (partContainer != null) {
+                EnumFacing side = partContainer.getWatchingSide(world, pos, player);
+                if (side != null && partContainer.hasPart(side)) {
+                    IPartType partType = partContainer.getPart(side);
+                    IPartState partState = partContainer.getPartState(side);
 
-                        List<String> lines = Lists.newArrayList();
-                        partType.loadTooltip(partState, lines);
-                        for (String line : lines) {
-                            probeInfo.text(line);
-                        }
+                    List<String> lines = Lists.newArrayList();
+                    partType.loadTooltip(partState, lines);
+                    for (String line : lines) {
+                        probeInfo.text(line);
                     }
                 }
             }

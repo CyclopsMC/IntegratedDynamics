@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.capability;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import org.cyclops.commoncapabilities.CommonCapabilities;
@@ -50,6 +52,16 @@ public class PartContainerConfig extends CapabilityConfig {
      * @return The container or null.
      */
     public static IPartContainer get(DimPos pos) {
-        return TileHelpers.getCapability(pos, null, PartContainerConfig.CAPABILITY);
+        return get(pos.getWorld(), pos.getBlockPos());
+    }
+
+    /**
+     * Get the part container at the given position.
+     * @param world The world.
+     * @param pos The block position.
+     * @return The container or null.
+     */
+    public static IPartContainer get(World world, BlockPos pos) {
+        return TileHelpers.getCapability(world, pos, null, PartContainerConfig.CAPABILITY);
     }
 }

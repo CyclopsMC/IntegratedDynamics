@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.*;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 
@@ -197,9 +198,8 @@ public class PartHelpers {
      * @return If the block was set to air (removed).
      */
     public static boolean removePart(World world, BlockPos pos, EnumFacing side, @Nullable EntityPlayer player, boolean destroyIfEmpty) {
-        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
+        IPartContainer partContainer = PartContainerConfig.get(world, pos);
         ICable cable = CableHelpers.getInterface(world, pos, ICable.class);
-        IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
         partContainer.removePart(side, player);
         world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
         // Remove full cable block if this was the last part and if it was already an unreal cable.
@@ -224,8 +224,8 @@ public class PartHelpers {
     public static boolean setPart(@Nullable IPartNetwork network, World world, BlockPos pos, EnumFacing side, IPartType part, IPartState partState, IPartStateHolderCallback callback) {
         callback.onSet(PartStateHolder.of(part, partState));
         if(network != null) {
-            IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
-            INetworkElement networkElement = part.createNetworkElement(partContainerFacade, DimPos.of(world, pos), side);
+            IPartContainer partContainer = PartContainerConfig.get(world, pos);
+            INetworkElement networkElement = part.createNetworkElement(partContainer, DimPos.of(world, pos), side);
             if(!network.addNetworkElement(networkElement, false)) {
                 // In this case, the addition failed because that part id is already present in the network,
                 // therefore we have to make a new state for that part (with a new id) and retry.
@@ -250,9 +250,7 @@ public class PartHelpers {
     public static boolean canInteractWith(PartTarget target, EntityPlayer player, IPartContainer expectedPartContainer) {
         World world = target.getCenter().getPos().getWorld();
         BlockPos blockPos = target.getCenter().getPos().getBlockPos();
-        IPartContainerFacade facade = CableHelpers.getInterface(target.getCenter().getPos(), IPartContainerFacade.class);
-        if (facade == null) return false;
-        IPartContainer partContainer = facade.getPartContainer(world, target.getCenter().getPos().getBlockPos());
+        IPartContainer partContainer = PartContainerConfig.get(world, blockPos);
         return partContainer == expectedPartContainer
                 && player.getDistanceSq((double) blockPos.getX() + 0.5D,
                 (double) blockPos.getY() + 0.5D,
@@ -268,8 +266,7 @@ public class PartHelpers {
         World world = partPos.getPos().getWorld();
         BlockPos pos = partPos.getPos().getBlockPos();
         EnumFacing side = partPos.getSide();
-        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
-        IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
+        IPartContainer partContainer = PartContainerConfig.get(world, pos);
         if (partContainer.hasPart(side)) {
             return PartStateHolder.of(partContainer.getPart(side), partContainer.getPartState(side));
         }

@@ -20,11 +20,10 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
@@ -69,11 +68,10 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     @Override
     public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand,
                                       EnumFacing side, float hitX, float hitY, float hitZ) {
-        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
-        if(partContainerFacade != null) {
+        IPartContainer partContainerFirst = PartContainerConfig.get(world, pos);
+        if(partContainerFirst != null) {
             // Add part to existing cable
-            IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
-            if(addPart(world, pos, side, partContainer, itemStack)) {
+            if(addPart(world, pos, side, partContainerFirst, itemStack)) {
                 if(world.isRemote) {
                     ItemBlockCable.playPlaceSound(world, pos);
                 }
@@ -95,10 +93,9 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
                 if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                    partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
-                    if (partContainerFacade != null) {
+                    IPartContainer partContainer = PartContainerConfig.get(world, pos);
+                    if (partContainer != null) {
                         if(!world.isRemote) {
-                            IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
                             addPart(world, pos, side.getOpposite(), partContainer, itemStack);
                             if (world.getBlockState(target).getBlock() instanceof ICableFakeable) {
                                 BlockCable.getInstance().setRealCable(world, target, false);
@@ -110,13 +107,11 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     }
                 }
             } else {
-                partContainerFacade = CableHelpers.getInterface(world, target, IPartContainerFacade.class);
-                if(partContainerFacade != null) {
-                    if(!world.isRemote) {
-                        IPartContainer partContainer = partContainerFacade.getPartContainer(world, target);
-                        if (addPart(world, pos, side.getOpposite(), partContainer, itemStack) && !playerIn.capabilities.isCreativeMode) {
-                            itemStack.stackSize--;
-                        }
+                IPartContainer partContainer = PartContainerConfig.get(world, pos);
+                if(partContainer != null) {
+                    if(!world.isRemote && addPart(world, pos, side.getOpposite(), partContainer, itemStack)
+                            && !playerIn.capabilities.isCreativeMode) {
+                        itemStack.stackSize--;
                     }
                     return EnumActionResult.SUCCESS;
                 }

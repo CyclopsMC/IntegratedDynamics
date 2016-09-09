@@ -13,11 +13,10 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -138,12 +137,11 @@ public class ExtendedGuiHandler extends GuiHandler {
     }
 
     private static Pair<IPartContainer, IPartType> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
-        IPartContainerFacade partContainerFacade = CableHelpers.getInterface(world, pos, IPartContainerFacade.class);
-        if(partContainerFacade == null) {
+        IPartContainer partContainer = PartContainerConfig.get(world, pos);
+        if(partContainer == null) {
             IntegratedDynamics.clog(Level.WARN, String.format("The tile at %s is not a valid part container.", pos));
             return null;
         }
-        IPartContainer partContainer = partContainerFacade.getPartContainer(world, pos);
         IPartType partType = partContainer.getPart(side);
         if(partType == null) {
             IntegratedDynamics.clog(Level.WARN, String.format("The part container at %s side %s does not " +

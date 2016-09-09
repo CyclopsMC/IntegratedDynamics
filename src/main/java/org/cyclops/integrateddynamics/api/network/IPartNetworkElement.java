@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -24,7 +24,7 @@ public interface IPartNetworkElement<P extends IPartType<P, S>, S extends IPartS
     /**
      * @return The container in which this part resides.
      */
-    public IPartContainerFacade getPartContainerFacade();
+    public IPartContainer getPartContainer();
 
     /**
      * @return The target and position of this part.

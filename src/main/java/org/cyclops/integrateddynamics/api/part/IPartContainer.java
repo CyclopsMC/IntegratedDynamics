@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.api.part;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
@@ -90,5 +92,15 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * @return The part state.
      */
     public IPartState getPartState(EnumFacing side);
+
+    /**
+     * Get the part side the player is watching.
+     * This is used to determine the part the player is looking at.
+     * @param world The world.
+     * @param pos The block position to perform a ray trace for.
+     * @param player The player.
+     * @return The side the player is watching or null.
+     */
+    public @Nullable EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player);
 
 }
