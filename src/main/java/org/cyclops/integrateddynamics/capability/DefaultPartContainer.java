@@ -36,7 +36,7 @@ import java.util.Objects;
  */
 public abstract class DefaultPartContainer implements IPartContainer {
 
-    private final EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData = EnumFacingMap.newMap();
+    protected final EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData = EnumFacingMap.newMap();
 
     @Override
     public void update() {
@@ -80,12 +80,13 @@ public abstract class DefaultPartContainer implements IPartContainer {
     }
 
     @Override
-    public void setPart(final EnumFacing side, final IPartType part, final IPartState partState) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>>void setPart(final EnumFacing side, final IPartType<P, S> part, final IPartState<P> partState) {
         PartHelpers.setPart(getNetwork(), getWorld(), getPos(), side, Objects.requireNonNull(part),
                 Objects.requireNonNull(partState), new PartHelpers.IPartStateHolderCallback() {
                     @Override
                     public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
                         partData.put(side, PartHelpers.PartStateHolder.of(part, partState));
+                        sendUpdate();
                     }
                 });
         onPartsChanged();
@@ -147,23 +148,24 @@ public abstract class DefaultPartContainer implements IPartContainer {
 
     @Override
     public void setPartState(EnumFacing side, IPartState partState) {
-        PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
-        if(partStateHolder == null) {
+        if(!hasPart(side)) {
             throw new IllegalArgumentException(String.format("No part at position %s was found to update the state " +
                     "for.", getPosition()));
         }
-        partData.put(side, PartHelpers.PartStateHolder.of(partStateHolder.getPart(), partState));
+        partData.put(side, PartHelpers.PartStateHolder.of(getPart(side), partState));
         onPartsChanged();
     }
 
     @Override
     public IPartState getPartState(EnumFacing side) {
-        PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
-        if(partStateHolder == null) {
-            throw new IllegalArgumentException(String.format("No part at position %s was found to get the state from.",
-                    getPosition()));
+        synchronized (partData) {
+            PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
+            if (partStateHolder == null) {
+                throw new IllegalArgumentException(String.format("No part at position %s was found to get the state from.",
+                        getPosition()));
+            }
+            return partStateHolder.getState();
         }
-        return partStateHolder.getState();
     }
 
     @Override
@@ -215,7 +217,9 @@ public abstract class DefaultPartContainer implements IPartContainer {
 
     @Override
     public void deserializeNBT(NBTTagCompound tag) {
-        PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
+        synchronized (this.partData) {
+            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
+        }
     }
 
     protected void onPartsChanged() {

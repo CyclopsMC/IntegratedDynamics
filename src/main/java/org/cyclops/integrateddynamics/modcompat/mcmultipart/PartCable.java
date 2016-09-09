@@ -1,12 +1,14 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.block.TileMultipartContainer;
 import mcmultipart.client.multipart.AdvancedParticleManager;
-import mcmultipart.multipart.*;
+import mcmultipart.multipart.IMultipart;
+import mcmultipart.multipart.IMultipartContainer;
+import mcmultipart.multipart.OcclusionHelper;
+import mcmultipart.multipart.PartSlot;
 import mcmultipart.raytrace.PartMOP;
 import mcmultipart.raytrace.RayTraceUtils;
 import net.minecraft.block.Block;
@@ -32,7 +34,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -45,7 +46,6 @@ import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartContainerFacade;
-import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
@@ -70,7 +70,6 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     private final PartCableNetworkComponent cableNetworkComponent = new PartCableNetworkComponent(this);
     private final NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
 
-    private final EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData;
     @NBTPersist
     private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
     @NBTPersist
@@ -82,7 +81,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @NBTPersist
     private boolean allowsRedstone = false;
     private IPartNetwork network = null;
-    private IPartContainer partContainer = null;
+    private final PartCablePartContainer partContainer;
     private boolean addSilent = false;
     private boolean sendFurtherUpdates = true;
 
@@ -91,7 +90,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     public PartCable(EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData, EnumFacingMap<Boolean> forceDisconnected) {
-        this.partData = partData;
+        partContainer = new PartCablePartContainer(this);
+        partContainer.setPartData(partData);
         this.forceDisconnected = forceDisconnected;
     }
 
@@ -99,7 +99,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
      * @return The raw part data.
      */
     public EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> getPartData() {
-        return this.partData;
+        return partContainer.getPartData();
     }
 
     /**
@@ -233,7 +233,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
                 PartHelpers.setPart(getNetwork(), getWorld(), getPos(), partPart.getFacing(), partPart.getPartType(), partPart.getPartType().getDefaultState(), new PartHelpers.IPartStateHolderCallback() {
                     @Override
                     public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
-                        partData.put(partPart.getFacing(), partStateHolder);
+                        partContainer.getPartData().put(partPart.getFacing(), partStateHolder);
                         sendUpdate();
                     }
                 });
@@ -285,24 +285,29 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag = super.writeToNBT(tag);
-        PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
+        tag.setTag("partContainer", partContainer.serializeNBT());
         return tag;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        synchronized (this.partData) {
-            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
+        if (tag.hasKey("parts", MinecraftHelpers.NBTTag_Types.NBTTagList.ordinal())
+                && !tag.hasKey("partContainer", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal())) {
+            // Backwards compatibility with old part saving.
+            // TODO: remove in next major MC update.
+            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, partContainer.getPartData(), getWorld());
+        } else {
+            partContainer.deserializeNBT(tag.getCompoundTag("partContainer"));
         }
         super.readFromNBT(tag);
     }
 
     protected boolean hasPart(EnumFacing side) {
-        return getPartContainer().hasPart(side);
+        return partContainer.hasPart(side);
     }
 
     protected IPartType getPart(EnumFacing side) {
-        return getPartContainer().getPart(side);
+        return partContainer.getPart(side);
     }
 
     public boolean isForceDisconnected(EnumFacing side) {
@@ -328,8 +333,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
         Set<INetworkElement> sidedElements = Sets.newHashSet();
-        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : getPartContainer().getParts().entrySet()) {
-            if(getPartContainer().getPartState(entry.getKey()) != null) {
+        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
+            if(partContainer.getPartState(entry.getKey()) != null) {
                 sidedElements.add(entry.getValue().createNetworkElement(this, DimPos.of(world, blockPos), entry.getKey()));
             }
         }
@@ -510,16 +515,9 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         return this.network;
     }
 
-    protected IPartContainer getPartContainer() {
-        if(this.partContainer == null) {
-            this.partContainer = new VirtualPartContainer();
-        }
-        return this.partContainer;
-    }
-
     @Override
     public IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
-        return getPartContainer();
+        return partContainer;
     }
 
     @Nullable
@@ -537,7 +535,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
 
     @Override
     public void update() {
-        getPartContainer().update();
+        partContainer.update();
     }
 
     public void setAddSilent(boolean addSilent) {
@@ -553,159 +551,27 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
+    public void markDirty() {
+        super.markDirty();
+    }
+
+    @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return capability == PartContainerConfig.CAPABILITY || super.hasCapability(capability, facing);
+        return capability == PartContainerConfig.CAPABILITY
+                || partContainer.hasCapability(capability, facing)
+                || super.hasCapability(capability, facing);
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == PartContainerConfig.CAPABILITY) {
-            return (T) getPartContainer();
+            return (T) partContainer;
+        }
+        T t = partContainer.getCapability(capability, facing);
+        if (t != null) {
+            return t;
         }
         return super.getCapability(capability, facing);
-    }
-
-    public class VirtualPartContainer implements IPartContainer {
-
-        protected PartPartType getPartPart(EnumFacing side) {
-            IMultipartContainer container = getContainer();
-            if(container != null) {
-                IMultipart multipart = container.getPartInSlot(PartSlot.getFaceSlot(side));
-                if (multipart instanceof PartPartType) {
-                    return (PartPartType) multipart;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public void update() {
-            if(!MinecraftHelpers.isClientSide()) {
-                for(PartHelpers.PartStateHolder<?, ?> partStateHolder : PartCable.this.partData.values()) {
-                    IPartState partState = partStateHolder.getState();
-                    if (partState.isDirtyAndReset()) {
-                        markDirty();
-                    }
-                    if (partState.isUpdateAndReset()) {
-                        sendUpdate();
-                    }
-                }
-            }
-        }
-
-        @Override
-        public DimPos getPosition() {
-            return DimPos.of(getWorld(), getPos());
-        }
-
-        @Override
-        public Map<EnumFacing, IPartType<?, ?>> getParts() {
-            Map<EnumFacing, IPartType<?, ?>> parts = Maps.newHashMap();
-            for(EnumFacing side : EnumFacing.VALUES) {
-                IPartType partType = getPart(side);
-                if(partType != null) {
-                    parts.put(side, partType);
-                }
-            }
-            return parts;
-        }
-
-        @Override
-        public boolean hasParts() {
-            for(IMultipart multipart : getContainer().getParts()) {
-                if(multipart instanceof PartPartType) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public <P extends IPartType<P, S>, S extends IPartState<P>> void setPart(final EnumFacing side, IPartType<P, S> part, IPartState<P> partState) {
-            final PartPartType partPart = new PartPartType(side, part);
-            PartHelpers.setPart(getNetwork(), getWorld(), getPos(), side, part, partState, new PartHelpers.IPartStateHolderCallback() {
-                @Override
-                public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
-                    partData.put(side, partStateHolder);
-                    sendUpdate();
-                }
-            });
-            MultipartHelper.addPart(getWorld(), getPos(), partPart);
-        }
-
-        @Override
-        public <P extends IPartType<P, S>, S extends IPartState<P>> boolean canAddPart(EnumFacing side, IPartType<P, S> part) {
-            return !hasPart(side) && MultipartHelper.canAddPart(getWorld(), getPos(), new PartPartType(side, part));
-        }
-
-        @Override
-        public IPartType getPart(EnumFacing side) {
-            PartPartType partPartType = getPartPart(side);
-            if(partPartType != null) {
-                return partPartType.getPartType();
-            }
-            return null;
-        }
-
-        @Override
-        public boolean hasPart(EnumFacing side) {
-            return getPart(side) != null;
-        }
-
-        @Override
-        public IPartType removePart(EnumFacing side, EntityPlayer player) {
-            PartPartType partPartType = getPartPart(side);
-            if(partPartType != null) {
-                IPartType removed = partPartType.getPartType();
-                for(ItemStack itemStack : partPartType.getDrops()) {
-                    ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
-                }
-                getContainer().removePart(partPartType);
-                partData.remove(side);
-                sendUpdate();
-                return removed;
-            }
-            return null;
-        }
-
-        @Override
-        public void setPartState(EnumFacing side, IPartState partState) {
-            partData.put(side, PartHelpers.PartStateHolder.of(getPart(side), partState));
-            sendUpdate();
-        }
-
-        @Override
-        public IPartState getPartState(EnumFacing side) {
-            synchronized (partData) {
-                PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
-                if(partStateHolder != null) {
-                    NBTTagCompound tag = new NBTTagCompound();
-                    partStateHolder.getState().writeToNBT(tag);
-                    return partStateHolder.getState();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-            return false;
-        }
-
-        @Override
-        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-            return null;
-        }
-
-        @Override
-        public NBTTagCompound serializeNBT() {
-            return null;
-        }
-
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-
-        }
     }
 
 }

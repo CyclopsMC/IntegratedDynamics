@@ -19,7 +19,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,6 +30,7 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
@@ -168,7 +168,9 @@ public class PartPartType extends MultipartBase {
     @Override
     public void onRemoved() {
         super.onRemoved();
-        CableNetworkComponent.removePartFromNetwork(getWorld(), getPos(), getNetwork(), getFacing(), getPartType());
+        if (getPartCable().hasPart(getFacing())) { // Can be false when wrenching.
+            CableNetworkComponent.removePartFromNetwork(getWorld(), getPos(), getNetwork(), getFacing(), getPartType());
+        }
     }
 
     @Override
@@ -235,7 +237,7 @@ public class PartPartType extends MultipartBase {
     public IPartState getDelegatedPartState() {
         PartCable partCable = getPartCable();
         if(partCable != null) {
-            return partCable.getPartContainer().getPartState(getFacing());
+            return partCable.getCapability(PartContainerConfig.CAPABILITY, null).getPartState(getFacing());
         }
         return null;
     }
@@ -246,23 +248,5 @@ public class PartPartType extends MultipartBase {
             return partCable.getNetwork();
         }
         return null;
-    }
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        IPartState partState = getDelegatedPartState();
-        if (partState != null && getFacing() == facing && partState.hasCapability(capability)) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        IPartState partState = getDelegatedPartState();
-        if (partState != null && getFacing() == facing && partState.hasCapability(capability)) {
-            return (T) partState.getCapability(capability);
-        }
-        return super.getCapability(capability, facing);
     }
 }
