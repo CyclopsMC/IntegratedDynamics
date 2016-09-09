@@ -55,7 +55,7 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "deprecation"})
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB axisalignedbb,
                                         List list, Entity collidingEntity) {
@@ -76,11 +76,13 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World world, BlockPos pos) {
         return lastBounds.offset(pos);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
         return lastBounds;

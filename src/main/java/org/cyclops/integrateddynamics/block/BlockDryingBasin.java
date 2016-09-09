@@ -96,6 +96,7 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos blockPos, AxisAlignedBB area, List<AxisAlignedBB> collisionBoxes, Entity entity) {
         float f = 0.125F;
@@ -106,26 +107,30 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
         BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, 0.0F, 1.0F - f, 1.0F, 1.0F, 1.0F));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return new AxisAlignedBB(0.03125F, 0.03125F, 0.03125F, 0.96875F, 0.96875F, 0.96875F);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
     }
 
     @Override
-    public boolean isNormalCube(IBlockState blockState) {
+    public boolean isNormalCube(IBlockState blockState, IBlockAccess world, BlockPos blockPos) {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean hasComparatorInputOverride(IBlockState blockState) {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos blockPos) {
         TileDryingBasin tile = TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class);

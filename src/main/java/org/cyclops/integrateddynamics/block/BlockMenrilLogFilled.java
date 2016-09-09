@@ -53,6 +53,7 @@ public class BlockMenrilLogFilled extends ConfigurableBlockLog {
         return Item.getItemFromBlock(BlockMenrilLog.getInstance());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public SoundType getSoundType() {
         return SoundType.WOOD;

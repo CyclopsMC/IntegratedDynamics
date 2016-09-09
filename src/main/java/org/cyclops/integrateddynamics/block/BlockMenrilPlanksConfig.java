@@ -37,6 +37,7 @@ public class BlockMenrilPlanksConfig extends BlockConfig {
     @Override
     protected IConfigurable initSubInstance() {
         return (ConfigurableBlock) new ConfigurableBlock(this, Material.WOOD) {
+            @SuppressWarnings("deprecation")
             @Override
             public SoundType getSoundType() {
                 return SoundType.WOOD;

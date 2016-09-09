@@ -120,6 +120,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block neighborBlock) {
         super.neighborChanged(state, worldIn, pos, neighborBlock);
@@ -146,6 +147,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
         return (9 - blockState.getValue(HEIGHT)) * 0.125F;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void addCollisionBoxToList(IBlockState blockState, World world, BlockPos blockPos, AxisAlignedBB area, List<AxisAlignedBB> collisionBoxes, Entity entity) {
         // Bottom
@@ -163,26 +165,30 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
         BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, offset - 0.125F, 0.0F, 1.0F, offset, 1.0F));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
         return new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, this.getRelativeTopPositionTop(world, pos, state), 1.0F);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
     }
 
     @Override
-    public boolean isNormalCube(IBlockState blockState) {
+    public boolean isNormalCube(IBlockState blockState, IBlockAccess world, BlockPos pos) {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean hasComparatorInputOverride(IBlockState blockState) {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos blockPos) {
         return (int) (((double) blockState.getValue(HEIGHT) - 1) / 6D * 15D);

@@ -135,6 +135,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder BLOCK = OperatorBuilder.forType(ValueTypes.OBJECT_BLOCK).appendKind("block");
     public static final OperatorBuilder BLOCK_1_SUFFIX_LONG = BLOCK.inputTypes(1, ValueTypes.OBJECT_BLOCK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Optional<SoundType>> BLOCK_SOUND = new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Optional<SoundType>>() {
+        @SuppressWarnings("deprecation")
         @Override
         public Optional<SoundType> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
             ValueObjectTypeBlock.ValueBlock block = input.getValue(0);

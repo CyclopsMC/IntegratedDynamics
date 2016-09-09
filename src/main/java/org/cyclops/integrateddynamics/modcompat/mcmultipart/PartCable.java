@@ -111,7 +111,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     @Override
-    public IBlockState getExtendedState(IBlockState state) {
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         ExtendedBlockStateBuilder builder = ExtendedBlockStateBuilder.builder((IExtendedBlockState) state);
         for(EnumFacing side : EnumFacing.VALUES) {
             builder.withProperty(BlockCable.CONNECTED[side.ordinal()], isConnected(side));
@@ -450,12 +450,12 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     public boolean canConnect(ICable connector, EnumFacing side) {
         return !isForceDisconnected(side)
                 && getContainer().getPartInSlot(PartSlot.getFaceSlot(side)) == null
-                && OcclusionHelper.occlusionTest(getContainer().getParts(), new Predicate<IMultipart>() {
+                && OcclusionHelper.occlusionTest(OcclusionHelper.boxes(BlockCable.getInstance().getCableBoundingBox(side)), new Predicate<IMultipart>() {
             @Override
             public boolean apply(@Nullable IMultipart input) {
                 return input == PartCable.this;
             }
-        }, BlockCable.getInstance().getCableBoundingBox(side));
+        }, getContainer().getParts());
     }
 
     @Override

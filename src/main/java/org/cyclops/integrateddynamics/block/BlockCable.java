@@ -315,6 +315,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         COLLIDABLE_COMPONENTS.add(CABLECONNECTIONS_COMPONENT);
         COLLIDABLE_COMPONENTS.add(PARTS_COMPONENT);
     }
+    @SuppressWarnings("deprecation")
     @Delegate
     private ICollidable collidableComponent = new CollidableComponent<EnumFacing, BlockCable>(this, COLLIDABLE_COMPONENTS);
     //@Delegate// <- Lombok can't handle delegations with generics, so we'll have to do it manually...
@@ -548,6 +549,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                REALCABLE, true);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public ItemStack getPickBlock(IBlockState blockState, net.minecraft.util.math.RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
@@ -574,6 +576,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     /* --------------- Start ICollidable and rendering --------------- */
 
+    @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
         if(disableCollisionBox) return new AxisAlignedBB(0, 0, 0, 0, 0, 0);
@@ -601,6 +604,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return new CableModel();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
@@ -611,13 +615,14 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return super.doesSideBlockRendering(state, world, pos, face) || hasFacade(world, pos);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isFullCube(IBlockState blockState) {
         return false;
     }
 
     @Override
-    public boolean isNormalCube(IBlockState blockState) {
+    public boolean isNormalCube(IBlockState blockState, IBlockAccess world, BlockPos pos) {
         return false;
     }
 
@@ -685,6 +690,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return getPartRenderPosition(world, pos, side).getBoundingBox(side);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getSelectedBoundingBoxParent(IBlockState blockState, World worldIn, BlockPos pos) {
         return super.getSelectedBoundingBox(blockState, worldIn, pos);
@@ -739,6 +745,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean canProvidePower(IBlockState blockState) {
         return true;
@@ -757,11 +764,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return getRedstoneLevel(world, pos, side.getOpposite()) >= 0 || isAllowRedstoneInput(world, pos, side.getOpposite());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int getStrongPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return 0;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return getRedstoneLevel(world, pos, side.getOpposite());
@@ -882,6 +891,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return cableNetworkComponent.createPathElement(world, blockPos);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
         super.neighborChanged(state, world, pos, neighborBlock);

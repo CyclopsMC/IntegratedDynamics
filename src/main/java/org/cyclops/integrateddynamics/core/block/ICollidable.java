@@ -41,6 +41,7 @@ public interface ICollidable<P> {
      * @param list The list to add to
      * @param collidingEntity The entity that is colliding
      */
+    @SuppressWarnings("deprecation")
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB mask,
                                         List list, Entity collidingEntity);
 
@@ -51,6 +52,7 @@ public interface ICollidable<P> {
      * @param pos The position
      * @return The selected bounding box
      */
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos);
 
     /**
@@ -71,6 +73,7 @@ public interface ICollidable<P> {
      * @param direction The direction vector
      * @return The position object holder
      */
+    @SuppressWarnings("deprecation")
     public net.minecraft.util.math.RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d origin, Vec3d direction);
 
     /**
@@ -80,6 +83,7 @@ public interface ICollidable<P> {
      * @param pos The position
      * @return The bounding box
      */
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos);
 
     /**

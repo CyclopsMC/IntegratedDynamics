@@ -20,6 +20,7 @@ public class DryingBasinRecipeHandler implements IRecipeHandler<DryingBasinRecip
         return DryingBasinRecipeJEI.class;
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public String getRecipeCategoryUid() {

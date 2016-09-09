@@ -81,6 +81,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
         this.aspect = aspect;
 
         aspect.getProperties(getPartType(), getTarget(), ((ContainerAspectSettings) container).getPartState());
+        //noinspection deprecation
         this.propertyTypes = Lists.newArrayList(aspect.getDefaultProperties().getTypes());
 
         putButtonAction(BUTTON_SAVE, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {

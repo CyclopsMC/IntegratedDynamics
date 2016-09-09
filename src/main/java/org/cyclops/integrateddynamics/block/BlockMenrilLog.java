@@ -33,6 +33,7 @@ public class BlockMenrilLog extends ConfigurableBlockLog {
         this.setHardness(2.0F);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public SoundType getSoundType() {
         return SoundType.WOOD;

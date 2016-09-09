@@ -61,6 +61,7 @@ public class BlockInvisibleLight extends ConfigurableBlock {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
@@ -71,6 +72,7 @@ public class BlockInvisibleLight extends ConfigurableBlock {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public EnumBlockRenderType getRenderType(IBlockState blockState) {
         return EnumBlockRenderType.INVISIBLE;
@@ -81,6 +83,7 @@ public class BlockInvisibleLight extends ConfigurableBlock {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public EnumPushReaction getMobilityFlag(IBlockState blockState) {
         return EnumPushReaction.NORMAL;
@@ -91,6 +94,7 @@ public class BlockInvisibleLight extends ConfigurableBlock {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World world, BlockPos blockPos) {
         return null;
@@ -106,6 +110,7 @@ public class BlockInvisibleLight extends ConfigurableBlock {
         return world.getBlockState(pos).getValue(LIGHT);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int getLightValue(IBlockState blockState) {
         return 15; // Required for light update when this block is removed

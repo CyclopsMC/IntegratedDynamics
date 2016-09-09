@@ -35,6 +35,7 @@ public class BlockCrystalizedMenrilBlockConfig extends BlockConfig {
     @Override
     protected IConfigurable initSubInstance() {
         ConfigurableBlock block = (ConfigurableBlock) new ConfigurableBlock(this, Material.CLAY) {
+            @SuppressWarnings("deprecation")
             @Override
             public SoundType getSoundType() {
                 return SoundType.SNOW;

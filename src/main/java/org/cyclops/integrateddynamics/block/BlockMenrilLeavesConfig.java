@@ -70,6 +70,7 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
                 return drops;
             }
 
+            @SuppressWarnings("deprecation")
             @Override
             public SoundType getSoundType() {
                 return SoundType.GROUND;

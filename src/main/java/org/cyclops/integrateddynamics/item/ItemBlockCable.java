@@ -93,6 +93,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
         blockCable.setDisableCollisionBox(false);
     }
 
+    @SuppressWarnings("deprecation")
     public static void playPlaceSound(World world, BlockPos pos) {
         Block block = BlockCable.getInstance();
         world.playSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
