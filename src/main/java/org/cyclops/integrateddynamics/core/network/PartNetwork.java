@@ -11,11 +11,12 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
 import org.cyclops.integrateddynamics.api.block.IEnergyBatteryFacade;
-import org.cyclops.integrateddynamics.api.block.IVariableContainerFacade;
+import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -27,6 +28,7 @@ import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.capability.PartContainerConfig;
+import org.cyclops.integrateddynamics.capability.VariableContainerConfig;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
@@ -152,11 +154,9 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
             CompositeMap<Integer, IVariableFacade> compositeMap = new CompositeMap<>();
             for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
                 DimPos dimPos = it.next();
-                World world = dimPos.getWorld();
-                BlockPos pos = dimPos.getBlockPos();
-                Block block = world.getBlockState(pos).getBlock();
-                if(block instanceof IVariableContainerFacade) {
-                    compositeMap.addElement(((IVariableContainerFacade) block).getVariableContainer(world, pos).getVariableCache());
+                IVariableContainer variableContainer = TileHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY);
+                if(variableContainer != null) {
+                    compositeMap.addElement(variableContainer.getVariableCache());
                 } else {
                     IntegratedDynamics.clog(Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
                     it.remove();

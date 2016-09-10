@@ -4,13 +4,8 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.block.IVariableContainer;
-import org.cyclops.integrateddynamics.api.block.IVariableContainerFacade;
 import org.cyclops.integrateddynamics.client.gui.GuiVariablestore;
 import org.cyclops.integrateddynamics.core.block.BlockContainerGuiCabled;
 import org.cyclops.integrateddynamics.inventory.container.ContainerVariablestore;
@@ -21,7 +16,7 @@ import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
  *
  * @author rubensworks
  */
-public class BlockVariablestore extends BlockContainerGuiCabled implements IVariableContainerFacade {
+public class BlockVariablestore extends BlockContainerGuiCabled {
 
     @BlockProperty
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
@@ -49,11 +44,6 @@ public class BlockVariablestore extends BlockContainerGuiCabled implements IVari
     @Override
     public boolean saveNBTToDroppedItem() {
         return false;
-    }
-
-    @Override
-    public IVariableContainer getVariableContainer(World world, BlockPos pos) {
-        return TileHelpers.getSafeTile(world, pos, IVariableContainer.class);
     }
 
     @Override

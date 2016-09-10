@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.tileentity;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,24 +15,26 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.NetworkElementProviderSingleton;
+import org.cyclops.integrateddynamics.capability.VariableContainerConfig;
+import org.cyclops.integrateddynamics.capability.VariableContainerDefault;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * A tile entity used to store variables.
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-public class TileVariablestore extends TileCableConnectableInventory implements IVariableContainer, IDirtyMarkListener {
+public class TileVariablestore extends TileCableConnectableInventory implements IDirtyMarkListener {
 
     public static final int ROWS = 5;
     public static final int COLS = 9;
-    private Map<Integer, IVariableFacade> variableCache = Maps.newHashMap();
+
+    private final IVariableContainer variableContainer;
 
     public TileVariablestore() {
         super(ROWS * COLS, "variables", 1);
@@ -54,6 +55,8 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
                 return new VariablestoreNetworkElement(DimPos.of(world, blockPos));
             }
         });
+        variableContainer = new VariableContainerDefault();
+        addCapabilityInternal(VariableContainerConfig.CAPABILITY, variableContainer);
     }
 
     @Override
@@ -63,13 +66,13 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
     }
 
     protected void refreshVariables(IInventory inventory) {
-        variableCache.clear();
+        variableContainer.getVariableCache().clear();
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
             if (itemStack != null) {
                 IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
                 if (variableFacade.isValid()) {
-                    variableCache.put(variableFacade.getId(), variableFacade);
+                    variableContainer.getVariableCache().put(variableFacade.getId(), variableFacade);
                 }
             }
         }
@@ -78,16 +81,6 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
         if(network != null) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }
-    }
-
-    @Override
-    public DimPos getPosition() {
-        return DimPos.of(getWorld(), getPos());
-    }
-
-    @Override
-    public Map<Integer, IVariableFacade> getVariableCache() {
-        return variableCache;
     }
 
     @Override

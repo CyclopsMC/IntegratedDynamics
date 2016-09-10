@@ -12,11 +12,11 @@ import javax.annotation.Nullable;
  * Default implementation of {@link IFacadeable}.
  * @author rubensworks
  */
-public class FacadeableMultipartTicking implements IFacadeable {
+public class FacadeableTileMultipartTicking implements IFacadeable {
 
     private final TileMultipartTicking tile;
 
-    public FacadeableMultipartTicking(TileMultipartTicking tile) {
+    public FacadeableTileMultipartTicking(TileMultipartTicking tile) {
         this.tile = tile;
     }
 

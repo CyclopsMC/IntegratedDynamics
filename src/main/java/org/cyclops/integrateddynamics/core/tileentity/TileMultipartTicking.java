@@ -64,7 +64,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         partContainer = new PartContainerTileMultipartTicking(this);
         addCapabilityInternal(PartContainerConfig.CAPABILITY, partContainer);
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderPartContainer(partContainer));
-        addCapabilityInternal(FacadeableConfig.CAPABILITY, new FacadeableMultipartTicking(this));
+        addCapabilityInternal(FacadeableConfig.CAPABILITY, new FacadeableTileMultipartTicking(this));
         for (EnumFacing facing : EnumFacing.VALUES) {
             addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, new DynamicLightTileMultipartTicking(this, facing));
             addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, new DynamicRedstoneTileMultipartTicking(this, facing));
