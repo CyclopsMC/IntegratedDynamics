@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
+import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
+import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 /**
@@ -12,6 +13,6 @@ public interface IReadRedstoneComponent {
 
     public void setAllowRedstoneInput(PartTarget target, boolean allow);
 
-    public IDynamicRedstoneBlock getDynamicRedstoneBlock(DimPos dimPos);
+    public IDynamicRedstone getDynamicRedstoneBlock(DimPos dimPos, EnumFacing side);
 
 }

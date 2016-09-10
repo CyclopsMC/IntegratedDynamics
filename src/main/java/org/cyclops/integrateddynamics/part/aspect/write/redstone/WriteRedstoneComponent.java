@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.part.aspect.write.redstone;
 
-import net.minecraft.block.Block;
+import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
+import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.capability.DynamicRedstoneConfig;
 
 /**
  * Default component for writing redstone levels.
@@ -13,27 +15,23 @@ public class WriteRedstoneComponent implements IWriteRedstoneComponent {
     @Override
     public void setRedstoneLevel(PartTarget target, int level) {
         DimPos dimPos = target.getCenter().getPos();
-        IDynamicRedstoneBlock block = getDynamicRedstoneBlock(dimPos);
+        IDynamicRedstone block = getDynamicRedstoneBlock(dimPos, target.getCenter().getSide());
         if(block != null) {
-            block.setRedstoneLevel(dimPos.getWorld(), dimPos.getBlockPos(), target.getCenter().getSide(), level);
+            block.setRedstoneLevel(level);
         }
     }
 
     @Override
     public void deactivate(PartTarget target) {
         DimPos dimPos = target.getCenter().getPos();
-        IDynamicRedstoneBlock block = getDynamicRedstoneBlock(dimPos);
-        if(block != null) {
-            block.disableRedstoneAt(dimPos.getWorld(), dimPos.getBlockPos(), target.getCenter().getSide());
+        IDynamicRedstone block = getDynamicRedstoneBlock(dimPos, target.getCenter().getSide());
+        if(block != null && !dimPos.getWorld().isRemote) {
+            block.setRedstoneLevel(-1);
         }
     }
 
     @Override
-    public IDynamicRedstoneBlock getDynamicRedstoneBlock(DimPos dimPos) {
-        Block block = dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock();
-        if(block instanceof IDynamicRedstoneBlock) {
-            return (IDynamicRedstoneBlock) block;
-        }
-        return null;
+    public IDynamicRedstone getDynamicRedstoneBlock(DimPos dimPos, EnumFacing side) {
+        return TileHelpers.getCapability(dimPos, side, DynamicRedstoneConfig.CAPABILITY);
     }
 }

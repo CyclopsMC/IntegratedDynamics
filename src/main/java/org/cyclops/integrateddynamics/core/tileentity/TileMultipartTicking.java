@@ -23,10 +23,7 @@ import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
-import org.cyclops.integrateddynamics.capability.NetworkElementProviderPartContainer;
-import org.cyclops.integrateddynamics.capability.PartContainerConfig;
-import org.cyclops.integrateddynamics.capability.PartContainerTileMultipartTicking;
+import org.cyclops.integrateddynamics.capability.*;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -46,8 +43,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @NBTPersist private boolean realCable = true;
     @NBTPersist private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
     @NBTPersist private EnumFacingMap<Boolean> forceDisconnected = EnumFacingMap.newMap();
+    @Getter
     @NBTPersist private EnumFacingMap<Integer> redstoneLevels = EnumFacingMap.newMap();
+    @Getter
     @NBTPersist private EnumFacingMap<Boolean> redstoneInputs = EnumFacingMap.newMap();
+    @Getter
     @NBTPersist private EnumFacingMap<Integer> lightLevels = EnumFacingMap.newMap();
     private EnumFacingMap<Integer> previousLightLevels;
     @NBTPersist private String facadeBlockName = null;
@@ -64,6 +64,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         partContainer = new PartContainerTileMultipartTicking(this);
         addCapabilityInternal(PartContainerConfig.CAPABILITY, partContainer);
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderPartContainer(partContainer));
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, new DynamicLightTileMultipartTicking(this, facing));
+            addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, new DynamicRedstoneTileMultipartTicking(this, facing));
+        }
+
     }
 
     @Override
@@ -184,82 +189,14 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         partContainer.update();
     }
 
-    protected void updateRedstoneInfo(EnumFacing side) {
+    public void updateRedstoneInfo(EnumFacing side) {
         sendUpdate();
         getWorld().notifyNeighborsOfStateChange(getPos(), getBlock());
         getWorld().notifyNeighborsOfStateChange(pos.offset(side.getOpposite()), getBlock());
     }
 
-    public void setRedstoneLevel(EnumFacing side, int level) {
-        if(!getWorld().isRemote) {
-            boolean sendUpdate = false;
-            if(redstoneLevels.containsKey(side)) {
-                if(redstoneLevels.get(side) != level) {
-                    sendUpdate = true;
-                    redstoneLevels.put(side, level);
-                }
-            } else {
-                sendUpdate = true;
-                redstoneLevels.put(side, level);
-            }
-            if(sendUpdate) {
-                updateRedstoneInfo(side);
-            }
-        }
-    }
-
-    public int getRedstoneLevel(EnumFacing side) {
-        if(redstoneLevels.containsKey(side)) {
-            return redstoneLevels.get(side);
-        }
-        return -1;
-    }
-
-    public void setAllowRedstoneInput(EnumFacing side, boolean allow) {
-        redstoneInputs.put(side, allow);
-    }
-
-    public boolean isAllowRedstoneInput(EnumFacing side) {
-        if(redstoneInputs.containsKey(side)) {
-            return redstoneInputs.get(side);
-        }
-        return false;
-    }
-
-    public void disableRedstoneLevel(EnumFacing side) {
-        if(!getWorld().isRemote) {
-            redstoneLevels.remove(side);
-            updateRedstoneInfo(side);
-        }
-    }
-
-    protected void updateLightInfo(EnumFacing side) {
+    public void updateLightInfo() {
         sendUpdate();
-    }
-
-    public void setLightLevel(EnumFacing side, int level) {
-        if(!getWorld().isRemote) {
-            boolean sendUpdate = false;
-            if(lightLevels.containsKey(side)) {
-                if(lightLevels.get(side) != level) {
-                    sendUpdate = true;
-                    lightLevels.put(side, level);
-                }
-            } else {
-                sendUpdate = true;
-                lightLevels.put(side, level);
-            }
-            if(sendUpdate) {
-                updateLightInfo(side);
-            }
-        }
-    }
-
-    public int getLightLevel(EnumFacing side) {
-        if(lightLevels.containsKey(side)) {
-            return lightLevels.get(side);
-        }
-        return 0;
     }
 
     @Override

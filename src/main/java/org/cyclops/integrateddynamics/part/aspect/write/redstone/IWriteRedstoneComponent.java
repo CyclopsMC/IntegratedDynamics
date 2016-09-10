@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.part.aspect.write.redstone;
 
+import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
+import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 
 /**
@@ -14,6 +15,6 @@ public interface IWriteRedstoneComponent {
 
     public void deactivate(PartTarget target);
 
-    public IDynamicRedstoneBlock getDynamicRedstoneBlock(DimPos dimPos);
+    public IDynamicRedstone getDynamicRedstoneBlock(DimPos dimPos, EnumFacing side);
 
 }

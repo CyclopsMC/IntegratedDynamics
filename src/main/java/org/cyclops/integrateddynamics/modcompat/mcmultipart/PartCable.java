@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.base.Predicate;
+import lombok.Getter;
+import lombok.Setter;
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.client.multipart.AdvancedParticleManager;
 import mcmultipart.multipart.IMultipart;
@@ -33,8 +35,8 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
-import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
+import org.cyclops.integrateddynamics.api.block.IDynamicLight;
+import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
@@ -45,9 +47,7 @@ import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
-import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
-import org.cyclops.integrateddynamics.capability.NetworkElementProviderPartContainer;
-import org.cyclops.integrateddynamics.capability.PartContainerConfig;
+import org.cyclops.integrateddynamics.capability.*;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -62,7 +62,7 @@ import java.util.List;
  * @author rubensworks
  */
 public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        IDynamicRedstoneBlock, IDynamicLightBlock, ITileCableNetwork, ITickable {
+        ITileCableNetwork, ITickable {
 
     private final PartCableNetworkComponent cableNetworkComponent = new PartCableNetworkComponent(this);
     private final NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>();
@@ -72,14 +72,22 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @NBTPersist
     private EnumFacingMap<Boolean> forceDisconnected;
     @NBTPersist
+    @Getter
+    @Setter
     private int lightLevel = 0;
     @NBTPersist
+    @Getter
+    @Setter
     private int redstoneLevel = 0;
     @NBTPersist
+    @Getter
+    @Setter
     private boolean allowsRedstone = false;
     private IPartNetwork network = null;
     private final PartContainerPartCable partContainer;
     private final INetworkElementProvider<IPartNetwork> networkElementProvider;
+    private final IDynamicLight dynamicLight;
+    private final IDynamicRedstone dynamicRedstone;
     private boolean addSilent = false;
     private boolean sendFurtherUpdates = true;
 
@@ -91,6 +99,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         partContainer = new PartContainerPartCable(this);
         partContainer.setPartData(partData);
         networkElementProvider = new NetworkElementProviderPartContainer(partContainer);
+        dynamicLight = new DynamicLightPart(this);
+        dynamicRedstone = new DynamicRedstonePart(this);
         this.forceDisconnected = forceDisconnected;
     }
 
@@ -394,48 +404,6 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         return cableNetworkComponent.getNetwork(world, pos);
     }
 
-    /* --------------- Start IDynamicLightBlock --------------- */
-
-    @Override
-    public void setLightLevel(IBlockAccess world, BlockPos pos, EnumFacing side, int level) {
-        this.lightLevel = level;
-        sendUpdate();
-    }
-
-    @Override
-    public int getLightLevel(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return this.lightLevel;
-    }
-
-    /* --------------- Start IDynamicRedstoneBlock --------------- */
-
-    @Override
-    public void disableRedstoneAt(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        setRedstoneLevel(world, pos, side, 0);
-    }
-
-    @Override
-    public void setRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side, int level) {
-        this.redstoneLevel = level;
-        sendUpdate();
-    }
-
-    @Override
-    public int getRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return this.redstoneLevel;
-    }
-
-    @Override
-    public void setAllowRedstoneInput(IBlockAccess world, BlockPos pos, EnumFacing side, boolean allow) {
-        this.allowsRedstone = allow;
-        sendUpdate();
-    }
-
-    @Override
-    public boolean isAllowRedstoneInput(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return this.allowsRedstone;
-    }
-
     /* --------------- Start ITileCableNetwork --------------- */
 
     @Override
@@ -529,6 +497,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         return capability == PartContainerConfig.CAPABILITY
                 || capability == NetworkElementProviderConfig.CAPABILITY
+                || capability == DynamicLightConfig.CAPABILITY
+                || capability == DynamicRedstoneConfig.CAPABILITY
                 || partContainer.hasCapability(capability, facing)
                 || super.hasCapability(capability, facing);
     }
@@ -540,6 +510,12 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
         }
         if (capability == NetworkElementProviderConfig.CAPABILITY) {
             return (T) networkElementProvider;
+        }
+        if (capability == DynamicLightConfig.CAPABILITY) {
+            return (T) dynamicLight;
+        }
+        if (capability == DynamicRedstoneConfig.CAPABILITY) {
+            return (T) dynamicRedstone;
         }
         T t = partContainer.getCapability(capability, facing);
         if (t != null) {

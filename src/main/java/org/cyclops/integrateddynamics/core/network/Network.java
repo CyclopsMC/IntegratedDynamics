@@ -84,7 +84,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                 INetworkElementProvider<N> networkElementProvider = (INetworkElementProvider<N>)
                         TileHelpers.getCapability(cable.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
                 if (networkElementProvider != null) {
-                    for(INetworkElement<N> element : ((INetworkElementProvider<N>) networkElementProvider).createNetworkElements(world, pos)) {
+                    for(INetworkElement<N> element : networkElementProvider.createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
                     }
                 }

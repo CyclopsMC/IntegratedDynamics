@@ -9,7 +9,8 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
+import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -17,6 +18,7 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLight;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
+import org.cyclops.integrateddynamics.capability.DynamicLightConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -110,11 +112,10 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
                 }
             }
         } else {
-            IBlockAccess world = target.getCenter().getPos().getWorld();
-            BlockPos pos = target.getCenter().getPos().getBlockPos();
-            Block block = world.getBlockState(pos).getBlock();
-            if(block instanceof IDynamicLightBlock) {
-                ((IDynamicLightBlock) block).setLightLevel(world, pos, target.getCenter().getSide(), lightLevel);
+            IDynamicLight dynamicLight = TileHelpers.getCapability(target.getCenter().getPos(),
+                    target.getCenter().getSide(), DynamicLightConfig.CAPABILITY);
+            if(dynamicLight != null) {
+                dynamicLight.setLightLevel(lightLevel);
             }
         }
     }

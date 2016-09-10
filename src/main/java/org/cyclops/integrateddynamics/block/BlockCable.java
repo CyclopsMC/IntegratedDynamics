@@ -38,8 +38,8 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
-import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
+import org.cyclops.integrateddynamics.api.block.IDynamicLight;
+import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -49,6 +49,8 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.capability.DynamicLightConfig;
+import org.cyclops.integrateddynamics.capability.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
@@ -79,7 +81,7 @@ import java.util.List;
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
         ICableFakeable<ICablePathElement>, ICableFacadeable<ICablePathElement>,
-        ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
+        ICollidable<EnumFacing>, ICollidableParent {
 
     public static final float BLOCK_HARDNESS = 3.0F;
     public static final Material BLOCK_MATERIAL = Material.GLASS;
@@ -690,49 +692,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return super.rayTrace(pos, start, end, boundingBox);
     }
 
-    /* --------------- Start IDynamicRedstoneBlock --------------- */
-
-    @Override
-    public void disableRedstoneAt(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            tile.disableRedstoneLevel(side);
-        }
-    }
-
-    @Override
-    public void setRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side, int level) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            tile.setRedstoneLevel(side, level);
-        }
-    }
-
-    @Override
-    public int getRedstoneLevel(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            return tile.getRedstoneLevel(side);
-        }
-        return -1;
-    }
-
-    @Override
-    public void setAllowRedstoneInput(IBlockAccess world, BlockPos pos, EnumFacing side, boolean allow) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            tile.setAllowRedstoneInput(side, allow);
-        }
-    }
-
-    @Override
-    public boolean isAllowRedstoneInput(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            return tile.isAllowRedstoneInput(side);
-        }
-        return false;
-    }
+    /* --------------- Start IDynamicRedstone --------------- */
 
     @SuppressWarnings("deprecation")
     @Override
@@ -744,13 +704,15 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     public boolean canConnectRedstone(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
         if(side == null) {
             for(EnumFacing dummySide : EnumFacing.VALUES) {
-                if(getRedstoneLevel(world, pos, dummySide) >= 0 || isAllowRedstoneInput(world, pos, dummySide)) {
+                IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, dummySide, DynamicRedstoneConfig.CAPABILITY);
+                if(dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput())) {
                     return true;
                 }
             }
             return false;
         }
-        return getRedstoneLevel(world, pos, side.getOpposite()) >= 0 || isAllowRedstoneInput(world, pos, side.getOpposite());
+        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY);
+        return dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput());
     }
 
     @SuppressWarnings("deprecation")
@@ -762,33 +724,20 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @SuppressWarnings("deprecation")
     @Override
     public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return getRedstoneLevel(world, pos, side.getOpposite());
+        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY);
+        return dynamicRedstone != null ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
-    /* --------------- Start IDynamicLightBlock --------------- */
-
-    @Override
-    public void setLightLevel(IBlockAccess world, BlockPos pos, EnumFacing side, int level) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            tile.setLightLevel(side, level);
-        }
-    }
-
-    @Override
-    public int getLightLevel(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            return tile.getLightLevel(side);
-        }
-        return 0;
-    }
+    /* --------------- Start IDynamicLight --------------- */
 
     @Override
     public int getLightValue(IBlockState blockState, IBlockAccess world, BlockPos pos) {
         int light = 0;
         for(EnumFacing side : EnumFacing.values()) {
-            light = Math.max(light, getLightLevel(world, pos, side));
+            IDynamicLight dynamicLight = TileHelpers.getCapability(world, pos, side, DynamicLightConfig.CAPABILITY);
+            if (dynamicLight != null) {
+                light = Math.max(light, dynamicLight.getLightLevel());
+            }
         }
         return light;
     }
