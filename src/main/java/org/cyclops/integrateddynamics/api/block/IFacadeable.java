@@ -1,15 +1,14 @@
-package org.cyclops.integrateddynamics.api.tileentity;
+package org.cyclops.integrateddynamics.api.block;
 
 import net.minecraft.block.state.IBlockState;
-import org.cyclops.integrateddynamics.api.block.cable.ICableFacadeable;
 
 import javax.annotation.Nullable;
 
 /**
- * Interface for tile entities behind block that are a {@link ICableFacadeable}.
+ * Capability for targets that can hold facades.
  * @author rubensworks
  */
-public interface ITileCableFacadeable extends ITileCable {
+public interface IFacadeable {
 
     /**
      * @return If this container has a facade.

@@ -13,9 +13,11 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.capability.FacadeableConfig;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -78,8 +80,10 @@ public class BlockCableConverter implements IPartConverter {
         }
 
         // Optionally drop facade
-        if(!simulate && tile.hasFacade()) {
-            IBlockState blockState = tile.getFacade();
+        IFacadeable facadeable = tile.hasCapability(FacadeableConfig.CAPABILITY, null)
+                ? tile.getCapability(FacadeableConfig.CAPABILITY, null) : null;
+        if(facadeable != null && !simulate && facadeable.hasFacade()) {
+            IBlockState blockState = facadeable.getFacade();
             ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
             ItemFacade.getInstance().writeFacadeBlock(itemStack, blockState);
             ItemStackHelpers.spawnItemStack(tile.getWorld(), blockPos, itemStack);

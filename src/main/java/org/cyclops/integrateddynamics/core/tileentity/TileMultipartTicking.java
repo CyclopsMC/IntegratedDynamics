@@ -4,30 +4,26 @@ import com.google.common.base.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
+import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
-import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.*;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -35,7 +31,7 @@ import java.util.Objects;
  * @author Ruben Taelman
  */
 public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTileEntity.ITickingTile,
-        ITileCableNetwork, ITileCableFacadeable, PartHelpers.IPartStateHolderCallback {
+        ITileCableNetwork, PartHelpers.IPartStateHolderCallback {
 
     @Delegate
     protected final ITickingTile tickingTileComponent = new TickingTileComponent(this);
@@ -50,7 +46,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Getter
     @NBTPersist private EnumFacingMap<Integer> lightLevels = EnumFacingMap.newMap();
     private EnumFacingMap<Integer> previousLightLevels;
+    @Getter
+    @Setter
     @NBTPersist private String facadeBlockName = null;
+    @Getter
+    @Setter
     @NBTPersist private int facadeMeta = 0;
 
     @Getter
@@ -64,6 +64,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         partContainer = new PartContainerTileMultipartTicking(this);
         addCapabilityInternal(PartContainerConfig.CAPABILITY, partContainer);
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderPartContainer(partContainer));
+        addCapabilityInternal(FacadeableConfig.CAPABILITY, new FacadeableMultipartTicking(this));
         for (EnumFacing facing : EnumFacing.VALUES) {
             addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, new DynamicLightTileMultipartTicking(this, facing));
             addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, new DynamicRedstoneTileMultipartTicking(this, facing));
@@ -119,32 +120,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     @Override
-    public boolean hasFacade() {
-        return facadeBlockName != null && !facadeBlockName.isEmpty();
-    }
-
-    @Override
-    public IBlockState getFacade() {
-        if(!hasFacade()) {
-            return null;
-        }
-        return BlockHelpers.deserializeBlockState(Pair.of(this.facadeBlockName, this.facadeMeta));
-    }
-
-    @Override
-    public void setFacade(@Nullable IBlockState blockState) {
-        if(blockState == null) {
-            this.facadeMeta = 0;
-            this.facadeBlockName = null;
-        } else {
-            Pair<String, Integer> serializedBlockState = BlockHelpers.serializeBlockState(blockState);
-            this.facadeMeta = serializedBlockState.getRight();
-            this.facadeBlockName = serializedBlockState.getLeft();
-        }
-        sendUpdate();
-    }
-
-    @Override
     public void onUpdateReceived() {
         if(!lightLevels.equals(previousLightLevels)) {
             previousLightLevels = lightLevels;
@@ -166,7 +141,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
                         partContainer.hasPart(side) ? partContainer.getPart(side).getPartRenderPosition() : PartRenderPosition.NONE);
             }
-            builder.withProperty(BlockCable.FACADE, hasFacade() ? Optional.of(getFacade()) : Optional.absent());
+            IFacadeable facadeable = getCapability(FacadeableConfig.CAPABILITY, null);
+            builder.withProperty(BlockCable.FACADE, facadeable.hasFacade() ? Optional.of(facadeable.getFacade()) : Optional.absent());
             builder.withProperty(BlockCable.PARTCONTAINER, partContainer);
         }
         return builder.build();

@@ -2,10 +2,7 @@ package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.*;
-import org.cyclops.integrateddynamics.capability.DynamicLightConfig;
-import org.cyclops.integrateddynamics.capability.DynamicRedstoneConfig;
-import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
-import org.cyclops.integrateddynamics.capability.PartContainerConfig;
+import org.cyclops.integrateddynamics.capability.*;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
@@ -23,6 +20,7 @@ public class Configs {
         configHandler.add(new NetworkElementProviderConfig());
         configHandler.add(new DynamicLightConfig());
         configHandler.add(new DynamicRedstoneConfig());
+        configHandler.add(new FacadeableConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());
