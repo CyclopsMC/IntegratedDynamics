@@ -6,14 +6,20 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 import org.cyclops.integrateddynamics.item.ItemVariable;
+import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
 
 import java.util.Collection;
 import java.util.Map;
@@ -41,6 +47,13 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
         for(EnumFacing side : EnumFacing.VALUES) {
             addSlotsToSide(side, slots);
         }
+
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton<IPartNetwork>() {
+            @Override
+            public INetworkElement<IPartNetwork> createNetworkElement(World world, BlockPos blockPos) {
+                return new VariablestoreNetworkElement(DimPos.of(world, blockPos));
+            }
+        });
     }
 
     @Override

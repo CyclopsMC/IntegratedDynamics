@@ -16,11 +16,11 @@ import javax.annotation.Nullable;
  * Implementation of an {@link IPartContainer} for a tile entity.
  * @author rubensworks
  */
-public class TileMultipartTickingPartContainer extends DefaultPartContainer {
+public class PartContainerTileMultipartTicking extends PartContainerDefault {
 
     private final TileMultipartTicking tile;
 
-    public TileMultipartTickingPartContainer(TileMultipartTicking tile) {
+    public PartContainerTileMultipartTicking(TileMultipartTicking tile) {
         this.tile = tile;
     }
 

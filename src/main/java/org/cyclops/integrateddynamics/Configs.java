@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.*;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.item.*;
@@ -17,6 +18,7 @@ public class Configs {
 
         // Capabilities
         configHandler.add(new PartContainerConfig());
+        configHandler.add(new NetworkElementProviderConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());

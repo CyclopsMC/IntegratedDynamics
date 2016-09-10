@@ -3,6 +3,9 @@ package org.cyclops.integrateddynamics.tileentity;
 import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -11,6 +14,10 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
@@ -34,6 +41,13 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
         addSlotsToSide(EnumFacing.SOUTH, Sets.newHashSet(SLOT_READ));
         addSlotsToSide(EnumFacing.WEST, Sets.newHashSet(SLOT_WRITE_OUT));
         addSlotsToSide(EnumFacing.EAST, Sets.newHashSet(SLOT_WRITE_IN));
+
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton<IPartNetwork>() {
+            @Override
+            public INetworkElement<IPartNetwork> createNetworkElement(World world, BlockPos blockPos) {
+                return new MaterializerNetworkElement(DimPos.of(world, blockPos));
+            }
+        });
     }
 
     @Override

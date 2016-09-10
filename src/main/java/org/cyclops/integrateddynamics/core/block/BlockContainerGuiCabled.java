@@ -15,7 +15,6 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
@@ -27,12 +26,11 @@ import org.cyclops.integrateddynamics.core.path.CablePathElement;
  * A base block with a gui and tile entity that can connect to cables.
  * @author rubensworks
  */
-public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainerGui implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        INetworkElementProvider<IPartNetwork> {
+public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainerGui implements ICableNetwork<IPartNetwork, ICablePathElement> {
 
     //@Delegate <- Lombok can't handle delegations with generics, so we'll have to do it manually...
     private CableNetworkComponent<BlockContainerGuiCabled> cableNetworkComponent = new CableNetworkComponent<>(this);
-    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
+    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>();
 
     /**
      * Make a new block instance.

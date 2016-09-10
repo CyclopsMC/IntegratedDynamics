@@ -4,17 +4,24 @@ import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectable;
 import org.cyclops.integrateddynamics.modcompat.rf.RfHelpers;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
+import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
 
 /**
  * A tile entity used to store variables.
@@ -29,6 +36,15 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
 
     @NBTPersist
     private int energy;
+
+    public TileEnergyBattery() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton<IPartNetwork>() {
+            @Override
+            public INetworkElement<IPartNetwork> createNetworkElement(World world, BlockPos blockPos) {
+                return (INetworkElement) new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
+            }
+        });
+    }
 
     protected boolean isCreative() {
         return ((BlockEnergyBatteryBase) getBlock()).isCreative();

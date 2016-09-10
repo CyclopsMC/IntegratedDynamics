@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.client.multipart.AdvancedParticleManager;
 import mcmultipart.multipart.IMultipart;
@@ -38,7 +37,6 @@ import org.cyclops.integrateddynamics.api.block.IDynamicLightBlock;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstoneBlock;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -47,6 +45,8 @@ import org.cyclops.integrateddynamics.api.path.ICablePathElement;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderPartContainer;
 import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
@@ -54,17 +54,18 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.path.CablePathElement;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * A part for cables.
  * @author rubensworks
  */
 public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        INetworkElementProvider, IDynamicRedstoneBlock, IDynamicLightBlock, ITileCableNetwork, ITickable {
+        IDynamicRedstoneBlock, IDynamicLightBlock, ITileCableNetwork, ITickable {
 
     private final PartCableNetworkComponent cableNetworkComponent = new PartCableNetworkComponent(this);
-    private final NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
+    private final NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>();
 
     @NBTPersist
     private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
@@ -77,7 +78,8 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @NBTPersist
     private boolean allowsRedstone = false;
     private IPartNetwork network = null;
-    private final PartCablePartContainer partContainer;
+    private final PartContainerPartCable partContainer;
+    private final INetworkElementProvider<IPartNetwork> networkElementProvider;
     private boolean addSilent = false;
     private boolean sendFurtherUpdates = true;
 
@@ -86,8 +88,9 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     }
 
     public PartCable(EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData, EnumFacingMap<Boolean> forceDisconnected) {
-        partContainer = new PartCablePartContainer(this);
+        partContainer = new PartContainerPartCable(this);
         partContainer.setPartData(partData);
+        networkElementProvider = new NetworkElementProviderPartContainer(partContainer);
         this.forceDisconnected = forceDisconnected;
     }
 
@@ -327,17 +330,6 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     /* --------------- Start element Providers--------------- */
 
     @Override
-    public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
-        Set<INetworkElement> sidedElements = Sets.newHashSet();
-        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
-            if(partContainer.getPartState(entry.getKey()) != null) {
-                sidedElements.add(entry.getValue().createNetworkElement(partContainer, DimPos.of(world, blockPos), entry.getKey()));
-            }
-        }
-        return sidedElements;
-    }
-
-    @Override
     public ICablePathElement createPathElement(World world, BlockPos blockPos) {
         return new CablePathElement(this, DimPos.of(world, blockPos));
     }
@@ -536,6 +528,7 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         return capability == PartContainerConfig.CAPABILITY
+                || capability == NetworkElementProviderConfig.CAPABILITY
                 || partContainer.hasCapability(capability, facing)
                 || super.hasCapability(capability, facing);
     }
@@ -544,6 +537,9 @@ public class PartCable extends MultipartBase implements ICableNetwork<IPartNetwo
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == PartContainerConfig.CAPABILITY) {
             return (T) partContainer;
+        }
+        if (capability == NetworkElementProviderConfig.CAPABILITY) {
+            return (T) networkElementProvider;
         }
         T t = partContainer.getCapability(capability, facing);
         if (t != null) {

@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import java.util.Collection;
 
 /**
- * Classes that can create instances of an {@link INetworkElement}.
+ * Capability that can create instances of an {@link INetworkElement}.
  * @author rubensworks
  */
 public interface INetworkElementProvider<N extends INetwork> {

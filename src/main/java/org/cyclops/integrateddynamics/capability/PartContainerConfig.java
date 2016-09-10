@@ -37,7 +37,7 @@ public class PartContainerConfig extends CapabilityConfig {
                 "A container that can hold parts.",
                 IPartContainer.class,
                 new DefaultCapabilityStorage<IPartContainer>(),
-                DefaultPartContainer.class
+                PartContainerDefault.class
         );
     }
 

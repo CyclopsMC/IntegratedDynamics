@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.block;
 
-import com.google.common.collect.Sets;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
@@ -9,19 +8,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.block.IVariableContainerFacade;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.client.gui.GuiVariablestore;
 import org.cyclops.integrateddynamics.core.block.BlockContainerGuiCabled;
 import org.cyclops.integrateddynamics.inventory.container.ContainerVariablestore;
-import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
-
-import java.util.Collection;
 
 /**
  * A block that can hold defined variables so that they can be referred to elsewhere in the network.
@@ -56,11 +49,6 @@ public class BlockVariablestore extends BlockContainerGuiCabled implements IVari
     @Override
     public boolean saveNBTToDroppedItem() {
         return false;
-    }
-
-    @Override
-    public Collection<INetworkElement<IPartNetwork>> createNetworkElements(World world, BlockPos blockPos) {
-        return Sets.<INetworkElement<IPartNetwork>>newHashSet(new VariablestoreNetworkElement(DimPos.of(world, blockPos)));
     }
 
     @Override

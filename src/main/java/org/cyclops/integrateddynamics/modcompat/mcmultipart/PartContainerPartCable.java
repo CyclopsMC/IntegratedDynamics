@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.capability.DefaultPartContainer;
+import org.cyclops.integrateddynamics.capability.PartContainerDefault;
 
 import javax.annotation.Nullable;
 
@@ -22,11 +22,11 @@ import javax.annotation.Nullable;
  * Part container for a {@link PartCable}.
  * @author rubensworks
  */
-public class PartCablePartContainer extends DefaultPartContainer {
+public class PartContainerPartCable extends PartContainerDefault {
 
     private final PartCable partCable;
 
-    public PartCablePartContainer(PartCable partCable) {
+    public PartContainerPartCable(PartCable partCable) {
         this.partCable = partCable;
     }
 

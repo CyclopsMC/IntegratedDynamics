@@ -33,7 +33,7 @@ import java.util.Objects;
  * Default implementation of an {@link IPartContainer}.
  * @author rubensworks
  */
-public abstract class DefaultPartContainer implements IPartContainer {
+public abstract class PartContainerDefault implements IPartContainer {
 
     protected final EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData = EnumFacingMap.newMap();
 

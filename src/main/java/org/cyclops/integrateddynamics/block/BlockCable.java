@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.block;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 import net.minecraft.block.Block;
@@ -36,7 +35,6 @@ import org.cyclops.cyclopscore.block.property.UnlistedProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.*;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -46,8 +44,6 @@ import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -69,7 +65,10 @@ import org.cyclops.integrateddynamics.item.ItemBlockCable;
 import org.cyclops.integrateddynamics.item.ItemFacade;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -79,7 +78,7 @@ import java.util.*;
  * @author rubensworks
  */
 public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        ICableFakeable<ICablePathElement>, ICableFacadeable<ICablePathElement>, INetworkElementProvider,
+        ICableFakeable<ICablePathElement>, ICableFacadeable<ICablePathElement>,
         ICollidable<EnumFacing>, ICollidableParent, IDynamicRedstoneBlock, IDynamicLightBlock {
 
     public static final float BLOCK_HARDNESS = 3.0F;
@@ -320,7 +319,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     private ICollidable collidableComponent = new CollidableComponent<EnumFacing, BlockCable>(this, COLLIDABLE_COMPONENTS);
     //@Delegate// <- Lombok can't handle delegations with generics, so we'll have to do it manually...
     private CableNetworkFacadeableComponent<BlockCable> cableNetworkComponent = new CableNetworkFacadeableComponent<>(this);
-    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>(this);
+    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>();
 
     private static BlockCable _instance = null;
 
@@ -558,16 +557,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             return rayTraceResult.getCollisionType().getPickBlock(world, pos, positionHit);
         }
         return getItem(world, pos, blockState);
-    }
-
-    @Override
-    public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
-        Set<INetworkElement> sidedElements = Sets.newHashSet();
-        IPartContainer partContainer = getPartContainer(world, blockPos);
-        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
-            sidedElements.add(entry.getValue().createNetworkElement(partContainer, DimPos.of(world, blockPos), entry.getKey()));
-        }
-        return sidedElements;
     }
 
     protected IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {

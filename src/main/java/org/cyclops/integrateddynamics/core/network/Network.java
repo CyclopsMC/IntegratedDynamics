@@ -6,12 +6,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
@@ -79,7 +81,8 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
             for (ICablePathElement cable : cables) {
                 World world = cable.getPosition().getWorld();
                 BlockPos pos = cable.getPosition().getBlockPos();
-                INetworkElementProvider networkElementProvider = CableHelpers.getInterface(world, pos, INetworkElementProvider.class);
+                INetworkElementProvider<N> networkElementProvider = (INetworkElementProvider<N>)
+                        TileHelpers.getCapability(cable.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
                 if (networkElementProvider != null) {
                     for(INetworkElement<N> element : ((INetworkElementProvider<N>) networkElementProvider).createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
@@ -308,8 +311,10 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     @Override
     public boolean removeCable(ICable cable, ICablePathElement cablePathElement) {
         if(baseCluster.remove(cablePathElement)) {
-            if (cable instanceof INetworkElementProvider) {
-                Collection<INetworkElement<N>> networkElements = ((INetworkElementProvider<N>) cable).
+            INetworkElementProvider<N> networkElementProvider = (INetworkElementProvider<N>) TileHelpers.getCapability(
+                    cablePathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
+            if (networkElementProvider != null) {
+                Collection<INetworkElement<N>> networkElements = networkElementProvider.
                         createNetworkElements(cablePathElement.getPosition().getWorld(), cablePathElement.getPosition().getBlockPos());
                 for (INetworkElement<N> networkElement : networkElements) {
                     if(!removeNetworkElementPre(networkElement)) {

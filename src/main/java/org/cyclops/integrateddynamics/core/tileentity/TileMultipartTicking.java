@@ -23,8 +23,10 @@ import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableFacadeable;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderPartContainer;
 import org.cyclops.integrateddynamics.capability.PartContainerConfig;
-import org.cyclops.integrateddynamics.capability.TileMultipartTickingPartContainer;
+import org.cyclops.integrateddynamics.capability.PartContainerTileMultipartTicking;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -56,11 +58,12 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     private IPartNetwork network;
 
     @Getter
-    private final TileMultipartTickingPartContainer partContainer;
+    private final PartContainerTileMultipartTicking partContainer;
 
     public TileMultipartTicking() {
-        partContainer = new TileMultipartTickingPartContainer(this);
+        partContainer = new PartContainerTileMultipartTicking(this);
         addCapabilityInternal(PartContainerConfig.CAPABILITY, partContainer);
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderPartContainer(partContainer));
     }
 
     @Override

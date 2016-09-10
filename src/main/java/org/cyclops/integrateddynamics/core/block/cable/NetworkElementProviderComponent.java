@@ -6,9 +6,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -19,10 +21,9 @@ import java.util.List;
  */
 public class NetworkElementProviderComponent<N extends INetwork> {
 
-    private final INetworkElementProvider<N> networkElementProvider;
-
-    public NetworkElementProviderComponent(INetworkElementProvider<N> networkElementProvider) {
-        this.networkElementProvider = networkElementProvider;
+    @SuppressWarnings("unchecked")
+    protected INetworkElementProvider<N> getNetworkElementProvider(World world, BlockPos pos) {
+        return (INetworkElementProvider<N>) TileHelpers.getCapability(world, pos, null, NetworkElementProviderConfig.CAPABILITY);
     }
 
     /**
@@ -36,6 +37,7 @@ public class NetworkElementProviderComponent<N extends INetwork> {
         // Drop all parts types as item.
         if(!world.isRemote) {
             List<ItemStack> itemStacks = Lists.newLinkedList();
+            INetworkElementProvider<N> networkElementProvider = getNetworkElementProvider(world, pos);
             for (INetworkElement<N> networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                 networkElement.addDrops(itemStacks, dropMainElement);
                 if (network != null) {
@@ -61,6 +63,7 @@ public class NetworkElementProviderComponent<N extends INetwork> {
      */
     public void onBlockNeighborChange(@Nullable N network, World world, BlockPos pos, Block neighborBlock) {
         if (!world.isRemote) {
+            INetworkElementProvider<N> networkElementProvider = getNetworkElementProvider(world, pos);
             for (INetworkElement<N> networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                 networkElement.onNeighborBlockChange(network, world, neighborBlock);
             }
