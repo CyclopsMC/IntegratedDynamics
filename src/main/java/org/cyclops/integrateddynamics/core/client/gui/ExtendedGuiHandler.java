@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
+import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -41,7 +42,7 @@ public class ExtendedGuiHandler extends GuiHandler {
             public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z,
                                               Class<? extends Container> containerClass, EnumFacing side) {
                 try {
-                    Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
+                    Pair<IPartContainer, PartTypeBase> data = getPartConstructionData(world,
                             new BlockPos(x, y, z), side);
                     if(data == null) return null;
                     Constructor<? extends Container> containerConstructor;
@@ -69,7 +70,7 @@ public class ExtendedGuiHandler extends GuiHandler {
                 public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z,
                                                   Class<? extends GuiScreen> guiClass, EnumFacing side) {
                     try {
-                        Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
+                        Pair<IPartContainer, PartTypeBase> data = getPartConstructionData(world,
                                 new BlockPos(x, y, z), side);
                         if(data == null) return null;
                         Constructor<? extends GuiScreen> guiConstructor;
@@ -97,7 +98,7 @@ public class ExtendedGuiHandler extends GuiHandler {
             public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z,
                                               Class<? extends Container> containerClass, Pair<EnumFacing, IAspect> dataIn) {
                 try {
-                    Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
+                    Pair<IPartContainer, PartTypeBase> data = getPartConstructionData(world,
                             new BlockPos(x, y, z), dataIn.getLeft());
                     if(data == null) return null;
                     Constructor<? extends Container> containerConstructor = containerClass.getConstructor(
@@ -118,7 +119,7 @@ public class ExtendedGuiHandler extends GuiHandler {
                 public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z,
                                                   Class<? extends GuiScreen> guiClass, Pair<EnumFacing, IAspect> dataIn) {
                     try {
-                        Pair<IPartContainer, IPartType> data = getPartConstructionData(world,
+                        Pair<IPartContainer, PartTypeBase> data = getPartConstructionData(world,
                                 new BlockPos(x, y, z), dataIn.getLeft());
                         if(data == null) return null;
                         Constructor<? extends GuiScreen> guiConstructor = guiClass.getConstructor(
@@ -136,19 +137,19 @@ public class ExtendedGuiHandler extends GuiHandler {
         }
     }
 
-    private static Pair<IPartContainer, IPartType> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
+    private static Pair<IPartContainer, PartTypeBase> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
         IPartContainer partContainer = PartContainerConfig.get(world, pos);
         if(partContainer == null) {
             IntegratedDynamics.clog(Level.WARN, String.format("The tile at %s is not a valid part container.", pos));
             return null;
         }
         IPartType partType = partContainer.getPart(side);
-        if(partType == null) {
+        if(partType == null || !(partType instanceof PartTypeBase)) {
             IntegratedDynamics.clog(Level.WARN, String.format("The part container at %s side %s does not " +
                             "have a valid part.", pos, side));
             return null;
         }
-        return Pair.of(partContainer, partType);
+        return Pair.of(partContainer, (PartTypeBase) partType);
     }
 
     public ExtendedGuiHandler(ModBase mod) {

@@ -31,19 +31,12 @@ import java.util.List;
 public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> extends INetworkEventListener<IPartNetwork, IPartNetworkElement<P, S>> {
 
     /**
-     * Get the part type class.
-     * This is used for doing dynamic construction of guis.
-     * @return The actual class for this part type.
-     */
-    public Class<? super P> getPartTypeClass();
-
-    /**
      * @return The unique name for this part type.
      */
     public String getName();
 
     /**
-     * @return The unlocalized base name of this part.
+     * @return The unlocalized base name of this part. (Without the .name suffix)
      */
     public String getUnlocalizedNameBase();
 
@@ -56,11 +49,6 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @return JSON model path for the block representation of this part.
      */
     public ResourceLocation getBlockModelPath();
-
-    /**
-     * @return JSON model path for the item representation of this part.
-     */
-    public ResourceLocation getItemModelPath();
 
     /**
      * @return The item associated with this part type.

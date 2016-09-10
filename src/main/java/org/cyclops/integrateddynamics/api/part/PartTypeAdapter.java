@@ -1,0 +1,211 @@
+package org.cyclops.integrateddynamics.api.part;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import org.cyclops.cyclopscore.init.IInitListener;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Default implementation of {@link IPartType}.
+ * @author rubensworks
+ */
+public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartType<P, S> {
+
+    @Override
+    public String getUnlocalizedName() {
+        return getUnlocalizedNameBase() + ".name";
+    }
+
+    @Override
+    public boolean isSolid(S state) {
+        return false;
+    }
+
+    @Override
+    public void onInit(IInitListener.Step initStep) {
+
+    }
+
+    @Override
+    public void toNBT(NBTTagCompound tag, S partState) {
+        partState.writeToNBT(tag);
+    }
+
+    @Override
+    public S fromNBT(NBTTagCompound tag) {
+        S partState = constructDefaultState();
+        partState.readFromNBT(tag);
+        partState.gatherCapabilities((P) this);
+        return partState;
+    }
+
+    @Override
+    public void setUpdateInterval(S state, int updateInterval) {
+        state.setUpdateInterval(updateInterval);
+    }
+
+    @Override
+    public int getUpdateInterval(S state) {
+        return state.getUpdateInterval();
+    }
+
+    @Override
+    public boolean isUpdate(S state) {
+        return false;
+    }
+
+    @Override
+    public void update(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void afterNetworkReAlive(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public ItemStack getItemStack(S state) {
+        NBTTagCompound tag = new NBTTagCompound();
+        toNBT(tag, state);
+        ItemStack itemStack = new ItemStack(getItem());
+        itemStack.setTagCompound(tag);
+        return itemStack;
+    }
+
+    @Override
+    public ItemStack getPickBlock(World world, BlockPos pos, S state) {
+        return getItemStack(state);
+    }
+
+    @Override
+    public S getState(ItemStack itemStack) {
+        S partState = null;
+        if(itemStack != null && itemStack.getTagCompound() != null) {
+            partState = fromNBT(itemStack.getTagCompound());
+        }
+        if(partState == null) {
+            partState = getDefaultState();
+        }
+        return partState;
+    }
+
+    /**
+     * @return Constructor call for a new default state for this part type.
+     */
+    protected abstract S constructDefaultState();
+
+    @Override
+    public S getDefaultState() {
+        S defaultState = constructDefaultState();
+        defaultState.generateId();
+        defaultState.gatherCapabilities((P) this);
+        return defaultState;
+    }
+
+    @Override
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
+        if(dropMainElement) {
+            itemStacks.add(getItemStack(state));
+        }
+    }
+
+    @Override
+    public void onNetworkAddition(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void onNetworkRemoval(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        return false;
+    }
+
+    @Override
+    public void onPreRemoved(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void onPostRemoved(IPartNetwork network, PartTarget target, S state) {
+
+    }
+
+    @Override
+    public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
+
+    }
+
+    @Override
+    public int getConsumptionRate(S state) {
+        return 0;
+    }
+
+    @Override
+    public void postUpdate(IPartNetwork network, PartTarget target, S state, boolean updated) {
+        setEnabled(state, updated);
+    }
+
+    @Override
+    public boolean isEnabled(S state) {
+        return state.isEnabled();
+    }
+
+    @Override
+    public void setEnabled(S state, boolean enabled) {
+        state.setEnabled(enabled);
+    }
+
+    @Override
+    public void loadTooltip(S state, List<String> lines) {
+
+    }
+
+    @Override
+    public boolean shouldTriggerBlockRenderUpdate(@Nullable S oldPartState, @Nullable S newPartState) {
+        return oldPartState == null || newPartState == null;
+    }
+
+    @Override
+    public boolean hasEventSubscriptions() {
+        return false;
+    }
+
+    @Override
+    public Set<Class<? extends INetworkEvent<IPartNetwork>>> getSubscribedEvents() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public void onEvent(INetworkEvent<IPartNetwork> event, IPartNetworkElement<P, S> networkElement) {
+
+    }
+}
