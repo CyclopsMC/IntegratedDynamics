@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.capability;
+package org.cyclops.integrateddynamics.capability.dynamicredstone;
 
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;

@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.capability;
+package org.cyclops.integrateddynamics.capability.networkelementprovider;
 
 import com.google.common.collect.Sets;
 import net.minecraft.util.EnumFacing;

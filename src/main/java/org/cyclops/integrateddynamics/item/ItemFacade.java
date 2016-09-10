@@ -25,7 +25,7 @@ import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
-import org.cyclops.integrateddynamics.capability.FacadeableConfig;
+import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
 
 /**

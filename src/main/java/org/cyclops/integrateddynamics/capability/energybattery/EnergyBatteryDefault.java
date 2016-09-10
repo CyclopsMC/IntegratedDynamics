@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.capability;
+package org.cyclops.integrateddynamics.capability.energybattery;
 
 import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
 

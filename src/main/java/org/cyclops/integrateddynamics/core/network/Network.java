@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
-import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;

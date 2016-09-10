@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.capability.PartContainerConfig;
+import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 
 import java.util.List;
 

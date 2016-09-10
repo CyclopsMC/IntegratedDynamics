@@ -18,7 +18,7 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLight;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
-import org.cyclops.integrateddynamics.capability.DynamicLightConfig;
+import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;

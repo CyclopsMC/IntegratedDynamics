@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.capability;
+package org.cyclops.integrateddynamics.capability.partcontainer;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

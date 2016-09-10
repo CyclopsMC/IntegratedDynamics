@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.capability;
+package org.cyclops.integrateddynamics.capability.variablecontainer;
 
 import com.google.common.collect.Maps;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;

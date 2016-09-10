@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.capability.PartContainerDefault;
+import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerDefault;
 
 import javax.annotation.Nullable;
 

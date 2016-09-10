@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.capability;
+package org.cyclops.integrateddynamics.capability.facadeable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;

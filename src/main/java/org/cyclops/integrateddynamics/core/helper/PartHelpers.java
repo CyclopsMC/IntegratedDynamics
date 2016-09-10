@@ -19,7 +19,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.*;
-import org.cyclops.integrateddynamics.capability.PartContainerConfig;
+import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 

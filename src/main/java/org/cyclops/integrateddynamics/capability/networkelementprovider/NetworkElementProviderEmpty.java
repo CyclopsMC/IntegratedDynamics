@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.capability;
+package org.cyclops.integrateddynamics.capability.networkelementprovider;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -10,14 +10,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * A network element provider for a single element.
+ * An dummy network element provider implementation.
  * @author rubensworks
  */
-public abstract class NetworkElementProviderSingleton<N extends INetwork> implements INetworkElementProvider<N> {
+public class NetworkElementProviderEmpty<N extends INetwork> implements INetworkElementProvider<N> {
     @Override
     public Collection<INetworkElement<N>> createNetworkElements(World world, BlockPos blockPos) {
-        return Collections.singleton(createNetworkElement(world, blockPos));
+        return Collections.emptyList();
     }
-
-    public abstract INetworkElement<N> createNetworkElement(World world, BlockPos blockPos);
 }

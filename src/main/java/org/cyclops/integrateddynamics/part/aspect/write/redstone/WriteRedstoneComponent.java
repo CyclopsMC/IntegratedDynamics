@@ -5,7 +5,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.capability.DynamicRedstoneConfig;
+import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 
 /**
  * Default component for writing redstone levels.

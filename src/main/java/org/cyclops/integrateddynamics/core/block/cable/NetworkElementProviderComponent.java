@@ -10,7 +10,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 
 import javax.annotation.Nullable;
 import java.util.List;

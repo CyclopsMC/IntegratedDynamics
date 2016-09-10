@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.capability;
+package org.cyclops.integrateddynamics.capability.dynamicredstone;
 
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 

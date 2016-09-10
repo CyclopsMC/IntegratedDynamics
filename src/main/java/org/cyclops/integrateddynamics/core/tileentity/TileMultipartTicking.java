@@ -20,7 +20,16 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.capability.*;
+import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
+import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightTileMultipartTicking;
+import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
+import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneTileMultipartTicking;
+import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
+import org.cyclops.integrateddynamics.capability.facadeable.FacadeableTileMultipartTicking;
+import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderPartContainer;
+import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
+import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerTileMultipartTicking;
 import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
