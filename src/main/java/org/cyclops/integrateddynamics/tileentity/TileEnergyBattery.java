@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
+import org.cyclops.integrateddynamics.capability.EnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectable;
@@ -44,15 +45,11 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
                 return (INetworkElement) new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
             }
         });
+        addCapabilityInternal(EnergyBatteryConfig.CAPABILITY, this);
     }
 
     protected boolean isCreative() {
         return ((BlockEnergyBatteryBase) getBlock()).isCreative();
-    }
-
-    @Override
-    public DimPos getPosition() {
-        return DimPos.of(getWorld(), getPos());
     }
 
     @Override

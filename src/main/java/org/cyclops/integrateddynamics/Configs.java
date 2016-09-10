@@ -22,6 +22,7 @@ public class Configs {
         configHandler.add(new DynamicRedstoneConfig());
         configHandler.add(new FacadeableConfig());
         configHandler.add(new VariableContainerConfig());
+        configHandler.add(new EnergyBatteryConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());

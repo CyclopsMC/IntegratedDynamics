@@ -1,17 +1,10 @@
 package org.cyclops.integrateddynamics.api.block;
 
-import org.cyclops.cyclopscore.datastructure.DimPos;
-
 /**
- * An interface for containers that can hold energy.
+ * Capability containers that can hold energy.
  * @author rubensworks
  */
 public interface IEnergyBattery {
-
-    /**
-     * @return The position this container is at.
-     */
-    public DimPos getPosition();
 
     /**
      * @return The currently stored energy.

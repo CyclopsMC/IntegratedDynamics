@@ -1,11 +1,7 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
+import com.google.common.collect.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
@@ -15,7 +11,6 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
-import org.cyclops.integrateddynamics.api.block.IEnergyBatteryFacade;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -27,6 +22,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.capability.EnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.VariableContainerConfig;
 import org.cyclops.integrateddynamics.core.path.Cluster;
@@ -34,10 +30,7 @@ import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A network that can hold parts.
@@ -50,7 +43,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     private List<DimPos> variableContainerPositions;
     private Map<Integer, IVariableFacade> compositeVariableCache;
     private Map<Integer, IValue> lazyExpressionValueCache;
-    private Map<DimPos, IEnergyBatteryFacade> energyBatteryPositions;
+    private Set<DimPos> energyBatteryPositions;
     private Map<Integer, DimPos> proxyPositions;
 
     private volatile boolean partsChanged = false;
@@ -82,7 +75,7 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
         variableContainerPositions = Lists.newArrayList();
         compositeVariableCache = null;
         lazyExpressionValueCache = Maps.newHashMap();
-        energyBatteryPositions = Maps.newHashMap();
+        energyBatteryPositions = Sets.newHashSet();
         proxyPositions = Maps.newHashMap();
     }
 
@@ -304,11 +297,11 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     }
 
     protected synchronized List<IEnergyBattery> getMaterializedEnergyBatteries() {
-        return ImmutableList.copyOf(Iterables.transform(energyBatteryPositions.entrySet(), new Function<Map.Entry<DimPos, IEnergyBatteryFacade>, IEnergyBattery>() {
+        return ImmutableList.copyOf(Iterables.transform(energyBatteryPositions, new Function<DimPos, IEnergyBattery>() {
             @Nullable
             @Override
-            public IEnergyBattery apply(Map.Entry<DimPos, IEnergyBatteryFacade> input) {
-                return input.getValue().getEnergyBattery(input.getKey().getWorld(), input.getKey().getBlockPos());
+            public IEnergyBattery apply(DimPos dimPos) {
+                return TileHelpers.getCapability(dimPos, null, EnergyBatteryConfig.CAPABILITY);
             }
 
             @Override
@@ -369,11 +362,11 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
 
     @Override
     public boolean addEnergyBattery(DimPos dimPos) {
-        World world = dimPos.getWorld();
-        BlockPos pos = dimPos.getBlockPos();
-        Block block = world.getBlockState(pos).getBlock();
-        if(block instanceof IEnergyBatteryFacade) {
-            return energyBatteryPositions.put(dimPos, (IEnergyBatteryFacade) block) == null;
+        IEnergyBattery energyBattery = TileHelpers.getCapability(dimPos, null, EnergyBatteryConfig.CAPABILITY);
+        if(energyBattery != null) {
+            boolean contained = energyBatteryPositions.contains(dimPos);
+            energyBatteryPositions.add(dimPos);
+            return !contained;
         }
         return false;
     }
@@ -384,8 +377,8 @@ public class PartNetwork extends Network<IPartNetwork> implements IPartNetwork, 
     }
 
     @Override
-    public Map<DimPos, IEnergyBatteryFacade> getEnergyBatteries() {
-        return Collections.unmodifiableMap(energyBatteryPositions);
+    public Set<DimPos> getEnergyBatteries() {
+        return Collections.unmodifiableSet(energyBatteryPositions);
     }
 
     @Override

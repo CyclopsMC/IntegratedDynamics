@@ -8,8 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
-import org.cyclops.integrateddynamics.api.block.IEnergyBatteryFacade;
 import org.cyclops.integrateddynamics.api.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.core.block.BlockContainerCabled;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
@@ -19,7 +17,7 @@ import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
  *
  * @author rubensworks
  */
-public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implements IEnergyBatteryFacade, IEnergyContainerBlock {
+public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implements IEnergyContainerBlock {
 
     /**
      * Make a new block instance.
@@ -34,11 +32,6 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
         TileHelpers.getSafeTile(world, pos, TileEnergyBattery.class).updateBlockState();
-    }
-
-    @Override
-    public IEnergyBattery getEnergyBattery(World world, BlockPos pos) {
-        return TileHelpers.getSafeTile(world, pos, TileEnergyBattery.class);
     }
 
     @Override
