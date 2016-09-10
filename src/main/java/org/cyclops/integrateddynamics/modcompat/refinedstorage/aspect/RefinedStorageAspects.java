@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.modcompat.refinedstorage.aspect;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -23,13 +22,12 @@ import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTy
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 import refinedstorage.api.autocrafting.ICraftingPattern;
+import refinedstorage.api.autocrafting.task.CraftingTask;
 import refinedstorage.api.autocrafting.task.ICraftingTask;
 import refinedstorage.api.network.INetworkMaster;
 import refinedstorage.api.network.INetworkNode;
 import refinedstorage.api.network.NetworkUtils;
 import refinedstorage.api.storage.CompareUtils;
-import refinedstorage.apiimpl.autocrafting.task.CraftingTaskNormal;
-import refinedstorage.apiimpl.autocrafting.task.CraftingTaskProcessing;
 
 import java.util.Collections;
 import java.util.List;
@@ -137,30 +135,19 @@ public class RefinedStorageAspects {
 
                         protected List<ItemStack> getMissingItems(ICraftingTask craftingTask) {
                             List<ItemStack> itemStacks = Lists.newArrayList();
-                            boolean[] satisfied;
-                            boolean[] checked;
-                            boolean[] childrenCreated = null;
-                            try {
-                                satisfied = ReflectionHelper.getPrivateValue(CraftingTaskNormal.class, (CraftingTaskNormal) craftingTask, "satisfied");
-                                checked = ReflectionHelper.getPrivateValue(CraftingTaskNormal.class, (CraftingTaskNormal) craftingTask, "checked");
-                            } catch (ClassCastException | ReflectionHelper.UnableToAccessFieldException e) {
-                                try {
-                                    satisfied = ReflectionHelper.getPrivateValue(CraftingTaskProcessing.class, (CraftingTaskProcessing) craftingTask, "satisfied");
-                                    checked = ReflectionHelper.getPrivateValue(CraftingTaskProcessing.class, (CraftingTaskProcessing) craftingTask, "checked");
-                                    childrenCreated = ReflectionHelper.getPrivateValue(CraftingTaskProcessing.class, (CraftingTaskProcessing) craftingTask, "childrenCreated");
-                                } catch (ClassCastException | ReflectionHelper.UnableToAccessFieldException e2) {
-                                    e2.printStackTrace();
-                                    return itemStacks;
+                            if (craftingTask instanceof CraftingTask) {
+                                CraftingTask craftingTaskImpl = (CraftingTask) craftingTask;
+                                boolean[] satisfied = craftingTaskImpl.getSatisfied();
+                                boolean[] checked = craftingTaskImpl.getChecked();
+                                boolean[] childrenCreated = craftingTaskImpl.getChildrenCreated();
+                                ICraftingPattern craftingPattern = craftingTask.getPattern();
+                                int i = 0;
+                                for (ItemStack itemStack : craftingPattern.getOutputs()) {
+                                    if (!satisfied[i] && (childrenCreated == null || !childrenCreated[i]) && checked[i]) {
+                                        itemStacks.add(itemStack);
+                                    }
+                                    i++;
                                 }
-                            }
-
-                            ICraftingPattern craftingPattern = craftingTask.getPattern();
-                            int i = 0;
-                            for (ItemStack itemStack : craftingPattern.getOutputs()) {
-                                if (!satisfied[i] && (childrenCreated == null || !childrenCreated[i]) && checked[i]) {
-                                    itemStacks.add(itemStack);
-                                }
-                                i++;
                             }
                             return itemStacks;
                         }
