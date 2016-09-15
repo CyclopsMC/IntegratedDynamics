@@ -51,7 +51,7 @@ public class BlockCableReverseConverter implements IReversePartConverter {
             if(partData == null) {
                 // The cable is not real
                 // We now have to check manually for disabled parts
-                tile.setRealCable(false);
+                tile.getCableFakeable().setRealCable(false);
                 partData = EnumFacingMap.newMap();
                 if(hasParts) {
                     for (IMultipart part : parts) {
@@ -62,7 +62,7 @@ public class BlockCableReverseConverter implements IReversePartConverter {
                     }
                 }
             }
-            tile.setNetwork(network);
+            tile.getNetworkCarrier().setNetwork(network);
             tile.getPartContainer().setPartData(partData);
             tile.setForceDisconnected(forceDisconnected);
             tile.sendImmediateUpdate();

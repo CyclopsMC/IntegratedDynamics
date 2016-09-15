@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class PartDataProvider implements IWailaDataProvider {
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         if(config.getConfig(Waila.getPartConfigId())) {
-            IPartContainer partContainer = PartContainerConfig.get(accessor.getWorld(), accessor.getPosition());
+            IPartContainer partContainer = PartHelpers.getPartContainer(accessor.getWorld(), accessor.getPosition());
             if (partContainer != null) {
                 EnumFacing side = partContainer.getWatchingSide(accessor.getWorld(), accessor.getPosition(), accessor.getPlayer());
                 if (side != null && partContainer.hasPart(side)) {

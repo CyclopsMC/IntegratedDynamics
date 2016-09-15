@@ -6,12 +6,12 @@ import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
 import refinedstorage.api.network.INetworkMaster;
 import refinedstorage.api.storage.item.IItemStorage;
@@ -38,7 +38,7 @@ public class ValueTypeListProxyPositionedNetworkMasterItemInventory extends Valu
     }
 
     protected Optional<INetworkMaster> getNetworkMaster() {
-        return Optional.fromNullable(CableHelpers.getInterface(pos, INetworkMaster.class));
+        return Optional.fromNullable(TileHelpers.getSafeTile(pos, INetworkMaster.class));
     }
 
     protected Optional<List<ItemStack>> getInventory() {

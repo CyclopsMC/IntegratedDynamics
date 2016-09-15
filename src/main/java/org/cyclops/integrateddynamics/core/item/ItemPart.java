@@ -23,8 +23,9 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.List;
@@ -68,7 +69,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     @Override
     public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand,
                                       EnumFacing side, float hitX, float hitY, float hitZ) {
-        IPartContainer partContainerFirst = PartContainerConfig.get(world, pos);
+        IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos);
         if(partContainerFirst != null) {
             // Add part to existing cable
             if(addPart(world, pos, side, partContainerFirst, itemStack)) {
@@ -93,21 +94,24 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
                 if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                    IPartContainer partContainer = PartContainerConfig.get(world, pos);
+                    IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
                     if (partContainer != null) {
                         if(!world.isRemote) {
                             addPart(world, pos, side.getOpposite(), partContainer, itemStack);
-                            if (world.getBlockState(target).getBlock() instanceof ICableFakeable) {
-                                BlockCable.getInstance().setRealCable(world, target, false);
+                            ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target);
+                            if (cableFakeable != null) {
+                                CableHelpers.onCableRemoving(world, pos, false);
+                                cableFakeable.setRealCable(false);
+                                CableHelpers.onCableRemoved(world, pos);
                             } else {
-                                IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable, got %s", world.getBlockState(target).getBlock()));
+                                IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable at %s", target));
                             }
                         }
                         return EnumActionResult.SUCCESS;
                     }
                 }
             } else {
-                IPartContainer partContainer = PartContainerConfig.get(world, pos);
+                IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
                 if(partContainer != null) {
                     if(!world.isRemote && addPart(world, pos, side.getOpposite(), partContainer, itemStack)
                             && !playerIn.capabilities.isCreativeMode) {

@@ -88,7 +88,12 @@ public abstract class MultipartBase extends Multipart implements ISlottedPart, I
         }
     }
 
-    protected void sendUpdate() {
+    @Override
+    public void markDirty() {
+        super.markDirty();
+    }
+
+    public void sendUpdate() {
         sendUpdatePacket();
     }
 

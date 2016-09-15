@@ -46,11 +46,13 @@ public class FacadeableConfig extends CapabilityConfig {
         return false;
     }
 
+    // TODO: move to helpers
     public static boolean hasFacade(IBlockAccess world, BlockPos pos) {
         IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, CAPABILITY);
         return facadeable != null && facadeable.hasFacade();
     }
 
+    // TODO: move to helpers
     public static IBlockState getFacade(IBlockAccess world, BlockPos pos) {
         IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, CAPABILITY);
         return facadeable != null ? facadeable.getFacade() : null;

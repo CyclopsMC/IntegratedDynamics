@@ -1,28 +1,21 @@
 package org.cyclops.integrateddynamics.api.block.cable;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import org.cyclops.integrateddynamics.api.path.IPathElement;
-
 /**
- * Interface for cables that can become unreal.
+ * Capability for cables that can become unreal.
+ * A cable can only become fake for a full block, not just for one side.
  * This means that for example parts can exist in that block space without the cable being there.
  * @author rubensworks
  */
-public interface ICableFakeable<E extends IPathElement<E>> extends ICable<E> {
+public interface ICableFakeable {
 
     /**
-     * @param world The world.
-     * @param pos The position of this block.
      * @return If this cable is a real cable, otherwise it is just a holder block for parts without connections.
      */
-    public boolean isRealCable(World world, BlockPos pos);
+    public boolean isRealCable();
 
     /**
-     * @param world The world.
-     * @param pos The position of this block.
-     * @param realCable If this cable is a real cable, otherwise it is just a holder block for parts without connections.
+     * @param real If this cable is a real cable, otherwise it is just a holder block for parts without connections.
      */
-    public void setRealCable(World world, BlockPos pos, boolean realCable);
+    public void setRealCable(boolean real);
 
 }

@@ -30,8 +30,6 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
-import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
@@ -169,7 +167,8 @@ public class PartPartType extends MultipartBase {
     public void onRemoved() {
         super.onRemoved();
         if (getPartCable().hasPart(getFacing())) { // Can be false when wrenching.
-            CableNetworkComponent.removePartFromNetwork(getWorld(), getPos(), getNetwork(), getFacing(), getPartType());
+            //CableNetworkComponent.removePartFromNetwork(getWorld(), getPos(), getNetwork(), getFacing(), getPartType());
+            System.out.println("THIS SHOULD NOT OCCUR, REMOVE ME!"); // TODO
         }
     }
 
@@ -182,11 +181,13 @@ public class PartPartType extends MultipartBase {
             if(player.isSneaking()) {
                 PartCable cable = getPartCable();
                 if(cable == null) {
+                    // In this case, the part won't be associated with a network at all.
                     for(ItemStack itemStack : getDrops()) {
                         ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
                     }
                     getContainer().removePart(this);
                 } else {
+                    // In this case, this part is placed on a cable, so remove it like normal.
                     PartHelpers.removePart(world, pos, getFacing(), player, false);
                 }
                 ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
@@ -223,7 +224,7 @@ public class PartPartType extends MultipartBase {
     }
 
     public IPartContainer getPartContainer() {
-        return PartContainerConfig.get(getWorld(), getPos());
+        return PartHelpers.getPartContainer(getWorld(), getPos());
     }
 
     public IPartType getPartType() {

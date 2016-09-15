@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInvent
 import java.util.List;
 
 /**
- * Network element for tile entities.
+ * Network element for part entities.
  * @author rubensworks
  */
 @EqualsAndHashCode(callSuper = false)

@@ -137,7 +137,7 @@ public abstract class PartContainerDefault implements IPartContainer {
             } else {
                 ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), new ItemStack(removed.getItem()), player);
             }
-            // Finally remove the part data from this tile.
+            // Finally remove the part data from this part.
             IPartType ret = partData.remove(side).getPart();
             onPartsChanged();
             return ret;

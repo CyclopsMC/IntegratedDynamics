@@ -21,7 +21,7 @@ public class ContainerCoalGenerator extends TileInventoryContainerConfigurable<T
     /**
      * Make a new instance.
      * @param inventory The player inventory.
-     * @param tile The tile.
+     * @param tile The part.
      */
     public ContainerCoalGenerator(InventoryPlayer inventory, TileCoalGenerator tile) {
         super(inventory, tile);

@@ -16,7 +16,7 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 
 import java.lang.reflect.Constructor;
@@ -138,7 +138,7 @@ public class ExtendedGuiHandler extends GuiHandler {
     }
 
     private static Pair<IPartContainer, PartTypeBase> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
-        IPartContainer partContainer = PartContainerConfig.get(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
         if(partContainer == null) {
             IntegratedDynamics.clog(Level.WARN, String.format("The tile at %s is not a valid part container.", pos));
             return null;

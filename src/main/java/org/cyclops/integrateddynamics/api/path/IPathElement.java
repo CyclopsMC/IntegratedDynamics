@@ -12,7 +12,7 @@ import java.util.Set;
  * These instances are used as a simple way of referring to these elements.
  * @author rubensworks
  */
-public interface IPathElement<E extends IPathElement<E>> extends Comparable<E> {
+public interface IPathElement extends Comparable {
 
     /**
      * @return The position of this element.
@@ -22,6 +22,6 @@ public interface IPathElement<E extends IPathElement<E>> extends Comparable<E> {
     /**
      * @return The set of all path elements that can be reached from here.
      */
-    public Set<E> getReachableElements();
+    public Set<IPathElement> getReachableElements();
 
 }

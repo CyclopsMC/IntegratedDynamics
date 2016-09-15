@@ -2,12 +2,16 @@ package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.*;
+import org.cyclops.integrateddynamics.capability.cable.CableConfig;
+import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
+import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
+import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.item.*;
@@ -29,6 +33,10 @@ public class Configs {
         configHandler.add(new FacadeableConfig());
         configHandler.add(new VariableContainerConfig());
         configHandler.add(new EnergyBatteryConfig());
+        configHandler.add(new CableConfig());
+        configHandler.add(new CableFakeableConfig());
+        configHandler.add(new NetworkCarrierConfig());
+        configHandler.add(new PathElementConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());

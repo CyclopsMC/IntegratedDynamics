@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 /**
  * A block that is buildReader up from different parts.
- * This block refers to a ticking tile entity.
+ * This block refers to a ticking part entity.
  * @author rubensworks
  */
 public abstract class BlockMultipartTicking extends ConfigurableBlockContainer {

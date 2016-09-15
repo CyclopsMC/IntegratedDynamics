@@ -14,7 +14,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.item.ItemBlockMetadata;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
@@ -47,11 +46,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
     }
 
     protected boolean checkCableAt(World world, BlockPos pos) {
-        ICable cable = CableHelpers.getInterface(world, pos, ICable.class);
-        if(cable instanceof ICableFakeable) {
-            return !((ICableFakeable) cable).isRealCable(world, pos);
-        }
-        return cable != null;
+        return CableHelpers.isNoFakeCable(world, pos) && CableHelpers.getCable(world, pos) != null;
     }
 
     @SideOnly(Side.CLIENT)
@@ -71,9 +66,10 @@ public class ItemBlockCable extends ItemBlockMetadata {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         if(!block.isAir(blockState, world, pos)) {
-            ICableFakeable cable = CableHelpers.getInterface(world, pos, ICableFakeable.class);
-            if (cable != null && !cable.isRealCable(world, pos)) {
-                cable.setRealCable(world, pos, true);
+            ICableFakeable cable = CableHelpers.getCableFakeable(world, pos);
+            if (cable != null && !cable.isRealCable()) {
+                cable.setRealCable(true);
+                CableHelpers.onCableAdded(world, pos);
                 return true;
             }
             for (IUseAction useAction : USE_ACTIONS) {

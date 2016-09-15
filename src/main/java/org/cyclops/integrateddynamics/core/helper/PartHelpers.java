@@ -8,17 +8,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.*;
+import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
@@ -31,6 +34,25 @@ import java.util.Map;
  * @author rubensworks
  */
 public class PartHelpers {
+
+    /**
+     * Get the part container capability at the given position.
+     * @param world The world.
+     * @param pos The position.
+     * @return The part container capability, or null if not present.
+     */
+    public static @Nullable IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
+        return TileHelpers.getCapability(world, pos, PartContainerConfig.CAPABILITY);
+    }
+
+    /**
+     * Get the part container capability at the given position.
+     * @param dimPos The dimensional position.
+     * @return The part container capability, or null if not present.
+     */
+    public static @Nullable IPartContainer getPartContainer(DimPos dimPos) {
+        return TileHelpers.getCapability(dimPos, PartContainerConfig.CAPABILITY);
+    }
 
     /**
      * Check if the given part type is null and run it through the network even bus in an {@link UnknownPartEvent}
@@ -198,16 +220,29 @@ public class PartHelpers {
      * @return If the block was set to air (removed).
      */
     public static boolean removePart(World world, BlockPos pos, EnumFacing side, @Nullable EntityPlayer player, boolean destroyIfEmpty) {
-        IPartContainer partContainer = PartContainerConfig.get(world, pos);
-        ICable cable = CableHelpers.getInterface(world, pos, ICable.class);
+        IPartContainer partContainer = TileHelpers.getCapability(world, pos, PartContainerConfig.CAPABILITY);
+        ICableFakeable cableFakeable = TileHelpers.getCapability(world, pos, CableFakeableConfig.CAPABILITY);
         partContainer.removePart(side, player);
-        world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
+
         // Remove full cable block if this was the last part and if it was already an unreal cable.
-        if(destroyIfEmpty && (!(cable instanceof ICableFakeable) || !((ICableFakeable) cable).isRealCable(world, pos)) && !partContainer.hasParts()) {
+        boolean removeCompletely = destroyIfEmpty && (cableFakeable == null || !cableFakeable.isRealCable()) && !partContainer.hasParts();
+        if(removeCompletely) {
             world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-            return true;
+        } else {
+            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
         }
-        return false;
+
+        // TODO: I've added this snippet here, check if this works
+        BlockPos sidePos = pos.offset(side);
+        ICable sideCable = CableHelpers.getCable(world, sidePos);
+        if (sideCable != null) {
+            sideCable.updateConnections();
+            if(!world.isRemote) {
+                NetworkHelpers.initNetwork(world, sidePos);
+            }
+        }
+
+        return !removeCompletely;
     }
 
     /**
@@ -224,7 +259,7 @@ public class PartHelpers {
     public static boolean setPart(@Nullable IPartNetwork network, World world, BlockPos pos, EnumFacing side, IPartType part, IPartState partState, IPartStateHolderCallback callback) {
         callback.onSet(PartStateHolder.of(part, partState));
         if(network != null) {
-            IPartContainer partContainer = PartContainerConfig.get(world, pos);
+            IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
             INetworkElement networkElement = part.createNetworkElement(partContainer, DimPos.of(world, pos), side);
             if(!network.addNetworkElement(networkElement, false)) {
                 // In this case, the addition failed because that part id is already present in the network,
@@ -250,7 +285,7 @@ public class PartHelpers {
     public static boolean canInteractWith(PartTarget target, EntityPlayer player, IPartContainer expectedPartContainer) {
         World world = target.getCenter().getPos().getWorld();
         BlockPos blockPos = target.getCenter().getPos().getBlockPos();
-        IPartContainer partContainer = PartContainerConfig.get(world, blockPos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, blockPos);
         return partContainer == expectedPartContainer
                 && player.getDistanceSq((double) blockPos.getX() + 0.5D,
                 (double) blockPos.getY() + 0.5D,
@@ -266,7 +301,7 @@ public class PartHelpers {
         World world = partPos.getPos().getWorld();
         BlockPos pos = partPos.getPos().getBlockPos();
         EnumFacing side = partPos.getSide();
-        IPartContainer partContainer = PartContainerConfig.get(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
         if (partContainer.hasPart(side)) {
             return PartStateHolder.of(partContainer.getPart(side), partContainer.getPartState(side));
         }

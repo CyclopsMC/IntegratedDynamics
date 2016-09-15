@@ -4,11 +4,8 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.client.gui.GuiProxy;
 import org.cyclops.integrateddynamics.core.block.BlockContainerGuiCabled;
 import org.cyclops.integrateddynamics.inventory.container.ContainerProxy;
@@ -41,13 +38,6 @@ public class BlockProxy extends BlockContainerGuiCabled {
      */
     public BlockProxy(ExtendedConfig eConfig) {
         super(eConfig, TileProxy.class);
-    }
-
-    @Override
-    protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        TileProxy tile = TileHelpers.getSafeTile(world, pos, TileProxy.class);
-        tile.updateConnections();
-        super.onPreBlockDestroyed(world, pos);
     }
 
     @Override

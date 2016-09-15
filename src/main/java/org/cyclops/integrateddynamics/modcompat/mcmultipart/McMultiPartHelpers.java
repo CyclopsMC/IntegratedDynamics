@@ -24,7 +24,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
@@ -54,17 +54,17 @@ public class McMultiPartHelpers {
                 }
             }, PartPartType.getType(partType).toString());
         }
-        CableHelpers.addInterfaceRetriever(new CableHelpers.IInterfaceRetriever() {
+        Helpers.addInterfaceRetriever(new Helpers.IInterfaceRetriever() {
             @Override
             public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {
-                    IMultipartContainer multipartContainer = TileHelpers.getSafeTile(world, pos, IMultipartContainer.class);
-                    if(multipartContainer != null) {
-                        for(IMultipart part : multipartContainer.getParts()) {
-                            if(clazz.isInstance(part)) {
-                                return clazz.cast(part);
-                            }
+                IMultipartContainer multipartContainer = TileHelpers.getSafeTile(world, pos, IMultipartContainer.class);
+                if (multipartContainer != null) {
+                    for (IMultipart part : multipartContainer.getParts()) {
+                        if (clazz.isInstance(part)) {
+                            return clazz.cast(part);
                         }
                     }
+                }
                 return null;
             }
         });

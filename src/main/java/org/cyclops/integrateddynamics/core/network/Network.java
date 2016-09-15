@@ -8,13 +8,12 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
-import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
@@ -32,7 +31,7 @@ import java.util.*;
  */
 public class Network<N extends INetwork<N>> implements INetwork<N> {
 
-    private Cluster<ICablePathElement> baseCluster;
+    private Cluster baseCluster;
 
     private final INetworkEventBus<N> eventBus = new NetworkEventBus<>();
     private final TreeSet<INetworkElement<N>> elements = Sets.newTreeSet();
@@ -49,21 +48,21 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
      * This constructor should not be called, except for the process of constructing networks from NBT.
      */
     public Network() {
-        this.baseCluster = new Cluster<ICablePathElement>();
+        this.baseCluster = new Cluster();
         onConstruct();
     }
 
     /**
-     * Create a new network from a given cluster of cables.
-     * Each cable will be checked if it is an instance of {@link INetworkElementProvider} and will add all its
-     * elements to the network in that case.
-     * Each cable that has an {@link org.cyclops.integrateddynamics.api.part.IPartContainer} capability
+     * Create a new network from a given cluster of path elements.
+     * Each path element will be checked if it has a {@link INetworkElementProvider} capability at its position
+     * and will add all its elements to the network in that case.
+     * Each path element that has an {@link org.cyclops.integrateddynamics.api.part.IPartContainer} capability
      * will have the network stored in its part container.
-     * @param cables The cables that make up the connections in the network which can potentially provide network
+     * @param pathElements The path elements that make up the connections in the network which can potentially provide network
      *               elements.
      */
-    public Network(Cluster<ICablePathElement> cables) {
-        this.baseCluster = cables;
+    public Network(Cluster pathElements) {
+        this.baseCluster = pathElements;
         onConstruct();
         deriveNetworkElements(baseCluster);
     }
@@ -76,28 +75,28 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
         return (N) this;
     }
 
-    private void deriveNetworkElements(Cluster<ICablePathElement> cables) {
+    private void deriveNetworkElements(Cluster pathElements) {
         if(!killIfEmpty()) {
-            for (ICablePathElement cable : cables) {
-                World world = cable.getPosition().getWorld();
-                BlockPos pos = cable.getPosition().getBlockPos();
+            for (IPathElement pathElement : pathElements) {
+                World world = pathElement.getPosition().getWorld();
+                BlockPos pos = pathElement.getPosition().getBlockPos();
                 INetworkElementProvider<N> networkElementProvider = (INetworkElementProvider<N>)
-                        TileHelpers.getCapability(cable.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
+                        TileHelpers.getCapability(pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
                 if (networkElementProvider != null) {
                     for(INetworkElement<N> element : networkElementProvider.createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
                     }
                 }
-                INetworkCarrier<N> networkCarrier = CableHelpers.getInterface(world, pos, INetworkCarrier.class);
+                INetworkCarrier<N> networkCarrier = TileHelpers.getCapability(world, pos, null, NetworkCarrierConfig.CAPABILITY);
                 if (networkCarrier != null) {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
-                    INetwork<N> network = networkCarrier.getNetwork(world, pos);
+                    INetwork<N> network = networkCarrier.getNetwork();
                     if (network != null) {
-                        network.removeCable((ICable) networkCarrier, cable);
+                        network.removePathElement(pathElement);
                     }
-                    networkCarrier.resetCurrentNetwork(world, pos);
-                    networkCarrier.setNetwork(getMaterializedThis(), world, pos);
+                    networkCarrier.setNetwork(null);
+                    networkCarrier.setNetwork(getMaterializedThis());
                 }
             }
             onNetworkChanged();
@@ -309,29 +308,31 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     }
 
     @Override
-    public boolean removeCable(ICable cable, ICablePathElement cablePathElement) {
-        if(baseCluster.remove(cablePathElement)) {
+    public boolean removePathElement(IPathElement pathElement) {
+        if(baseCluster.remove(pathElement)) {
             INetworkElementProvider<N> networkElementProvider = (INetworkElementProvider<N>) TileHelpers.getCapability(
-                    cablePathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
+                    pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
             if (networkElementProvider != null) {
                 Collection<INetworkElement<N>> networkElements = networkElementProvider.
-                        createNetworkElements(cablePathElement.getPosition().getWorld(), cablePathElement.getPosition().getBlockPos());
+                        createNetworkElements(pathElement.getPosition().getWorld(), pathElement.getPosition().getBlockPos());
                 for (INetworkElement<N> networkElement : networkElements) {
+                    networkElement.onPreRemoved(getMaterializedThis()); // TODO: Added, check if this works
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;
                     }
                 }
                 for (INetworkElement<N> networkElement : networkElements) {
                     removeNetworkElementPost(networkElement);
+                    networkElement.onPostRemoved(getMaterializedThis()); // TODO: Added, check if this works
                 }
                 onNetworkChanged();
                 return true;
             }
         } else {
             Thread.dumpStack();
-            IntegratedDynamics.clog(Level.WARN, "Tried to remove a cable from a network it was not present in.");
+            IntegratedDynamics.clog(Level.WARN, "Tried to remove a path element from a network it was not present in.");
             System.out.println("Cluster: " + baseCluster);
-            System.out.println("Tried removing element: " + cablePathElement);
+            System.out.println("Tried removing element: " + pathElement);
         }
         return false;
     }

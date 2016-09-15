@@ -22,7 +22,7 @@ import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
 import org.cyclops.integrateddynamics.network.CoalGeneratorNetworkElement;
 
 /**
- * A tile entity for the coal energy generator.
+ * A part entity for the coal energy generator.
  * @author rubensworks
  */
 @Optional.Interface(iface = "cofh.api.energy.IEnergyConnection", modid = Reference.MOD_RF_API, striprefs = true)

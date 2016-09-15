@@ -1,41 +1,66 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
-import com.google.common.collect.Maps;
+import lombok.Getter;
 import lombok.experimental.Delegate;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.InventoryTileEntity;
-import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
-
-import java.util.Map;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.capability.cable.CableConfig;
+import org.cyclops.integrateddynamics.capability.cable.CableTile;
+import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
+import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
+import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
+import org.cyclops.integrateddynamics.capability.path.PathElementTile;
 
 /**
- * A tile entity with inventory whose block can connect with cables.
+ * A part entity with inventory whose block can connect with cables.
  * @author rubensworks
  */
-public class TileCableConnectableInventory extends InventoryTileEntity implements ITileCableNetwork, CyclopsTileEntity.ITickingTile, TileCableNetworkComponent.IConnectionsMapProvider {
+public class TileCableConnectableInventory extends InventoryTileEntity implements CyclopsTileEntity.ITickingTile {
 
     @Delegate
     protected final ITickingTile tickingTileComponent = new TickingTileComponent(this);
-    @Delegate(types = {ITileCableNetwork.class})
-    protected final TileCableNetworkComponent tileCableNetworkComponent = new TileCableNetworkComponent(this);
 
     @NBTPersist
-    private Map<Integer, Boolean> connected = Maps.newHashMap();
+    private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
+
+    @Getter
+    private final ICable cable;
+    private final INetworkCarrier networkCarrier;
 
     public TileCableConnectableInventory(int inventorySize, String inventoryName, int stackSize) {
         super(inventorySize, inventoryName, stackSize);
+        cable = new CableTile<TileCableConnectableInventory>(this) {
+
+            @Override
+            protected boolean isForceDisconnectable() {
+                return false;
+            }
+
+            @Override
+            protected EnumFacingMap<Boolean> getForceDisconnected() {
+                return null;
+            }
+
+            @Override
+            protected EnumFacingMap<Boolean> getConnected() {
+                return tile.connected;
+            }
+        };
+        addCapabilityInternal(CableConfig.CAPABILITY, cable);
+        networkCarrier = new NetworkCarrierDefault();
+        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
+        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile(this, cable));
     }
 
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        tileCableNetworkComponent.updateTileEntity();
-    }
-
-    @Override
-    public Map<Integer, Boolean> getConnections() {
-        return connected;
+        cable.updateConnections();
     }
 
     /**
@@ -43,6 +68,10 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
      */
     public void afterNetworkReAlive() {
 
+    }
+
+    public IPartNetwork getNetwork() {
+        return (IPartNetwork) this.networkCarrier.getNetwork();
     }
 
 }

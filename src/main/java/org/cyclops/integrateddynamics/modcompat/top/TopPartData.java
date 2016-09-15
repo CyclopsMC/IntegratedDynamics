@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class TopPartData implements IProbeInfoProvider {
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         if (world != null && blockState != null && data != null && player != null) {
             BlockPos pos = data.getPos();
-            IPartContainer partContainer = PartContainerConfig.get(world, pos);
+            IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
             if (partContainer != null) {
                 EnumFacing side = partContainer.getWatchingSide(world, pos, player);
                 if (side != null && partContainer.hasPart(side)) {

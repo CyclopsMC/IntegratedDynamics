@@ -26,7 +26,7 @@ import org.cyclops.cyclopscore.tileentity.TankInventoryTileEntity;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 
 /**
- * A tile entity for squeezing stuff.
+ * A part entity for squeezing stuff.
  * @author rubensworks
  */
 public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTileEntity.ITickingTile {

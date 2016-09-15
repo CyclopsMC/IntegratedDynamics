@@ -1,13 +1,9 @@
 package org.cyclops.integrateddynamics.capability.partcontainer;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import org.cyclops.commoncapabilities.CommonCapabilities;
 import org.cyclops.cyclopscore.config.extendedconfig.CapabilityConfig;
-import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityStorage;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 
@@ -46,22 +42,4 @@ public class PartContainerConfig extends CapabilityConfig {
         return false;
     }
 
-    /**
-     * Get the part container at the given position.
-     * @param pos The position.
-     * @return The container or null.
-     */
-    public static IPartContainer get(DimPos pos) {
-        return get(pos.getWorld(), pos.getBlockPos());
-    }
-
-    /**
-     * Get the part container at the given position.
-     * @param world The world.
-     * @param pos The block position.
-     * @return The container or null.
-     */
-    public static IPartContainer get(World world, BlockPos pos) {
-        return TileHelpers.getCapability(world, pos, null, PartContainerConfig.CAPABILITY);
-    }
 }

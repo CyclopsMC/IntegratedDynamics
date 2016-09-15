@@ -25,7 +25,7 @@ import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
 import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
 
 /**
- * A tile entity used to store variables.
+ * A part entity used to store variables.
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */

@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public IPartContainer getPartContainer() {
-        return PartContainerConfig.get(getCenterPos(getTarget()));
+        return PartHelpers.getPartContainer(getCenterPos(getTarget()));
     }
 
     @Override

@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.api.network;
 
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
-import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.api.path.IPathElement;
 
 import java.util.Set;
 
@@ -72,13 +71,12 @@ public interface INetwork<N extends INetwork<N>> extends INBTSerializable {
     public void update();
 
     /**
-     * Remove the given cable from the network.
-     * If the cable had any network elements registered in the network, these will be killed and removed as well.
-     * @param cable The actual cable instance.
-     * @param cablePathElement The actual cable instance.
-     * @return If the cable was removed.
+     * Remove the given path element from the network.
+     * If the path element had any network elements registered in the network, these will be killed and removed as well.
+     * @param pathElement The path element.
+     * @return If the path element was removed.
      */
-    public boolean removeCable(ICable cable, ICablePathElement cablePathElement);
+    public boolean removePathElement(IPathElement pathElement);
 
     /**
      * Called when the server loaded this network.

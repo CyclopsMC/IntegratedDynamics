@@ -25,7 +25,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 
 /**
- * A tile entity for drying stuff.
+ * A part entity for drying stuff.
  * @author rubensworks
  */
 public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsTileEntity.ITickingTile {

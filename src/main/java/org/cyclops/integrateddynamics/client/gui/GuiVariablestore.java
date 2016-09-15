@@ -16,7 +16,7 @@ public class GuiVariablestore extends GuiContainerConfigurable<ContainerVariable
     /**
      * Make a new instance.
      * @param inventory The player inventory.
-     * @param tile The tile.
+     * @param tile The part.
      */
     public GuiVariablestore(InventoryPlayer inventory, TileVariablestore tile) {
         super(new ContainerVariablestore(inventory, tile));

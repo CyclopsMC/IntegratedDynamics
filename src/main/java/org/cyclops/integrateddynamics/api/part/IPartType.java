@@ -223,7 +223,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * Get the base block state that will be rendered for this part.
      * An appropriate {@link org.cyclops.integrateddynamics.core.block.IgnoredBlock#FACING} property will be set.
-     * @param partContainer The tile entity.
+     * @param partContainer The part entity.
      * @param side The position of the part.
      * @return The block state to render with.
      */

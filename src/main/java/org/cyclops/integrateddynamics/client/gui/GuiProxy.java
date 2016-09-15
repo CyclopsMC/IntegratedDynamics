@@ -17,7 +17,7 @@ public class GuiProxy extends GuiActiveVariableBase<ContainerProxy, TileProxy> {
     /**
      * Make a new instance.
      * @param inventory The player inventory.
-     * @param tile The tile.
+     * @param tile The part.
      */
     public GuiProxy(InventoryPlayer inventory, TileProxy tile) {
         super(new ContainerProxy(inventory, tile));

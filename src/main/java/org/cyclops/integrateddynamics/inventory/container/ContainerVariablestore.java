@@ -17,7 +17,7 @@ public class ContainerVariablestore extends TileInventoryContainerConfigurable<T
     /**
      * Make a new instance.
      * @param inventory The player inventory.
-     * @param tile The tile.
+     * @param tile The part.
      */
     public ContainerVariablestore(InventoryPlayer inventory, TileVariablestore tile) {
         super(inventory, tile);

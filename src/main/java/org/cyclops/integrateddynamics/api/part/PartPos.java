@@ -5,10 +5,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 /**
  * Object holder to refer to a block side and position.
@@ -73,7 +70,7 @@ public class PartPos {
      * @return A pair of part type and part state or null if not found.
      */
     public static Pair<IPartType, IPartState> getPartData(PartPos pos) {
-        IPartContainer partContainer = PartContainerConfig.get(pos.getPos());
+        IPartContainer partContainer = PartHelpers.getPartContainer(pos.getPos());
         if (partContainer != null) {
             IPartType partType = partContainer.getPart(pos.getSide());
             IPartState partState = partContainer.getPartState(pos.getSide());
@@ -82,16 +79,6 @@ public class PartPos {
             }
         }
         return null;
-    }
-
-    /**
-     * Get the network at the given position.
-     * @param pos The part position.
-     * @return The network or null if not found.
-     */
-    public static IPartNetwork getNetwork(PartPos pos) {
-        ITileCableNetwork cableNetwork = CableHelpers.getInterface(pos.getPos(), ITileCableNetwork.class);
-        return cableNetwork.getNetwork();
     }
 
 }

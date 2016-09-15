@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -13,30 +14,21 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainerGui;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.path.ICablePathElement;
-import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
-import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
-import org.cyclops.integrateddynamics.core.path.CablePathElement;
 
 /**
- * A base block with a gui and tile entity that can connect to cables.
+ * A base block with a gui and part entity that can connect to cables.
  * @author rubensworks
  */
-public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainerGui implements ICableNetwork<IPartNetwork, ICablePathElement> {
-
-    //@Delegate <- Lombok can't handle delegations with generics, so we'll have to do it manually...
-    private CableNetworkComponent<BlockContainerGuiCabled> cableNetworkComponent = new CableNetworkComponent<>(this);
-    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>();
+public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainerGui {
 
     /**
      * Make a new block instance.
      *
      * @param eConfig Config for this block.
-     * @param tileEntity The tile class
+     * @param tileEntity The part class
      */
     public BlockContainerGuiCabled(ExtendedConfig eConfig, Class<? extends CyclopsTileEntity> tileEntity) {
         super(eConfig, Material.ANVIL, tileEntity);
@@ -58,82 +50,26 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        updateConnections(world, pos);
-        cableNetworkComponent.addToNetwork(world, pos);
+        CableHelpers.onCableAdded(world, pos);
     }
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
-        cableNetworkComponent.onPreBlockDestroyed(world, pos);
+        CableHelpers.onCableRemoving(world, pos, true);
         super.onPreBlockDestroyed(world, pos);
     }
 
     @Override
     protected void onPostBlockDestroyed(World world, BlockPos pos) {
         super.onPostBlockDestroyed(world, pos);
-        cableNetworkComponent.onPostBlockDestroyed(world, pos);
+        CableHelpers.onCableRemoved(world, pos);
     }
 
-    /* --------------- Delegate to ICableNetwork<CablePathElement> --------------- */
-
+    @SuppressWarnings("deprecation")
     @Override
-    public void initNetwork(World world, BlockPos pos) {
-        cableNetworkComponent.initNetwork(world, pos);
-    }
-
-    @Override
-    public boolean canConnect(World world, BlockPos selfPosition, ICable connector, EnumFacing side) {
-        return cableNetworkComponent.canConnect(world, selfPosition, connector, side);
-    }
-
-    @Override
-    public void updateConnections(World world, BlockPos pos) {
-        cableNetworkComponent.updateConnections(world, pos);
-    }
-
-    @Override
-    public void triggerUpdateNeighbourConnections(World world, BlockPos pos) {
-        cableNetworkComponent.triggerUpdateNeighbourConnections(world, pos);
-    }
-
-    @Override
-    public boolean isConnected(World world, BlockPos pos, EnumFacing side) {
-        return cableNetworkComponent.isConnected(world, pos, side);
-    }
-
-    @Override
-    public void disconnect(World world, BlockPos pos, EnumFacing side) {
-        cableNetworkComponent.disconnect(world, pos, side);
-    }
-
-    @Override
-    public void reconnect(World world, BlockPos pos, EnumFacing side) {
-        cableNetworkComponent.reconnect(world, pos, side);
-    }
-
-    @Override
-    public void remove(World world, BlockPos pos, EntityPlayer player) {
-        cableNetworkComponent.remove(world, pos, player);
-    }
-
-    @Override
-    public void resetCurrentNetwork(World world, BlockPos pos) {
-        cableNetworkComponent.resetCurrentNetwork(world, pos);
-    }
-
-    @Override
-    public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
-        cableNetworkComponent.setNetwork(network, world, pos);
-    }
-
-    @Override
-    public IPartNetwork getNetwork(World world, BlockPos pos) {
-        return cableNetworkComponent.getNetwork(world, pos);
-    }
-
-    @Override
-    public CablePathElement createPathElement(World world, BlockPos blockPos) {
-        return cableNetworkComponent.createPathElement(world, blockPos);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
+        super.neighborChanged(state, world, pos, neighborBlock);
+        CableHelpers.updateConnectionsNeighbours(world, pos); // TODO: do we need this here? I think we only have to update our own connections...
+        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock);
     }
 }

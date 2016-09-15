@@ -123,10 +123,10 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             // This was the cause of issue #46 which made it so that values that change after one tick are
             // NOT sent to the client.
             // This was because in each server tick, all tiles are first updated and then the networks.
-            // Since sendUpdate marks a flag for the tile to update, this caused a loss of one tick.
+            // Since sendUpdate marks a flag for the part to update, this caused a loss of one tick.
             // For example:
             // tick-0: Tile tick
-            // tick-0: Part tick: update a value, and mark tile to update
+            // tick-0: Part tick: update a value, and mark part to update
             // tick-0: -- send all block updates to client ---
             // tick-1: Tile tick: notices and update, marks a block update
             // tick-1: Part tick: update the value again, the old value has still not been sent here!

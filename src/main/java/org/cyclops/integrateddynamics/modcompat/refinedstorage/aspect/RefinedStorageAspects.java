@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -14,7 +15,6 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
@@ -44,7 +44,7 @@ public class RefinedStorageAspects {
             @Override
             public INetworkNode getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos pos = input.getLeft().getTarget().getPos();
-                return CableHelpers.getInterface(pos, INetworkNode.class);
+                return TileHelpers.getSafeTile(pos, INetworkNode.class);
             }
         };
         public static final IAspectValuePropagator<INetworkNode, INetworkMaster> PROP_GET_MASTER = new IAspectValuePropagator<INetworkNode, INetworkMaster>() {
@@ -250,7 +250,7 @@ public class RefinedStorageAspects {
                                     throws EvaluationException {
                                 if (input.getRight().getRawValue().isPresent()) {
                                     DimPos pos = input.getLeft().getTarget().getPos();
-                                    INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                    INetworkNode networkNode = TileHelpers.getSafeTile(pos, INetworkNode.class);
                                     if (networkNode != null) {
                                         INetworkMaster networkMaster = networkNode.getNetwork();
                                         if (networkMaster != null) {
@@ -271,7 +271,7 @@ public class RefinedStorageAspects {
                             public Void getOutput(Triple<PartTarget, IAspectProperties, ValueTypeList.ValueList> input)
                                     throws EvaluationException {
                                 DimPos pos = input.getLeft().getTarget().getPos();
-                                INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                INetworkNode networkNode = TileHelpers.getSafeTile(pos, INetworkNode.class);
                                 if (networkNode != null) {
                                     INetworkMaster networkMaster = networkNode.getNetwork();
                                     if (networkMaster != null) {
@@ -299,7 +299,7 @@ public class RefinedStorageAspects {
                                     throws EvaluationException {
                                 if (input.getRight().getRawValue()) {
                                     DimPos pos = input.getLeft().getTarget().getPos();
-                                    INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                    INetworkNode networkNode = TileHelpers.getSafeTile(pos, INetworkNode.class);
                                     if (networkNode != null) {
                                         INetworkMaster networkMaster = networkNode.getNetwork();
                                         if (networkMaster != null) {
@@ -323,7 +323,7 @@ public class RefinedStorageAspects {
                                     throws EvaluationException {
                                 if (input.getRight().getRawValue().isPresent()) {
                                     DimPos pos = input.getLeft().getTarget().getPos();
-                                    INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                    INetworkNode networkNode = TileHelpers.getSafeTile(pos, INetworkNode.class);
                                     if (networkNode != null) {
                                         INetworkMaster networkMaster = networkNode.getNetwork();
                                         if (networkMaster != null) {
@@ -353,7 +353,7 @@ public class RefinedStorageAspects {
                             public Void getOutput(Triple<PartTarget, IAspectProperties, ValueTypeList.ValueList> input)
                                     throws EvaluationException {
                                 DimPos pos = input.getLeft().getTarget().getPos();
-                                INetworkNode networkNode = CableHelpers.getInterface(pos, INetworkNode.class);
+                                INetworkNode networkNode = TileHelpers.getSafeTile(pos, INetworkNode.class);
                                 if (networkNode != null) {
                                     INetworkMaster networkMaster = networkNode.getNetwork();
                                     if (networkMaster != null) {

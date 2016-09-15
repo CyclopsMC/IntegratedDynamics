@@ -24,64 +24,51 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.block.property.UnlistedProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
-import org.cyclops.cyclopscore.helper.*;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
-import org.cyclops.integrateddynamics.api.block.IFacadeable;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
-import org.cyclops.integrateddynamics.api.block.cable.ICableNetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
-import org.cyclops.integrateddynamics.api.path.ICablePathElement;
+import org.cyclops.integrateddynamics.block.collidable.CollidableComponentCableCenter;
+import org.cyclops.integrateddynamics.block.collidable.CollidableComponentCableConnections;
+import org.cyclops.integrateddynamics.block.collidable.CollidableComponentFacade;
+import org.cyclops.integrateddynamics.block.collidable.CollidableComponentParts;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
 import org.cyclops.integrateddynamics.core.block.ICollidableParent;
-import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
-import org.cyclops.integrateddynamics.core.block.cable.NetworkElementProviderComponent;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
-import org.cyclops.integrateddynamics.core.path.CablePathElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
-import org.cyclops.integrateddynamics.item.ItemFacade;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 
 /**
  * A block that is buildReader up from different parts.
- * This block refers to a ticking tile entity.
- * Ray tracing code is partially based on BuildCraft's pipe code.
+ * This block refers to a ticking part entity.
  * @author rubensworks
  */
-public class BlockCable extends ConfigurableBlockContainer implements ICableNetwork<IPartNetwork, ICablePathElement>,
-        ICableFakeable<ICablePathElement>, ICollidable<EnumFacing>, ICollidableParent {
+public class BlockCable extends ConfigurableBlockContainer implements ICollidable<EnumFacing>, ICollidableParent {
 
     public static final float BLOCK_HARDNESS = 3.0F;
     public static final Material BLOCK_MATERIAL = Material.GLASS;
@@ -105,7 +92,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     public static final IUnlistedProperty<IPartContainer> PARTCONTAINER = new UnlistedProperty<>("partcontainer", IPartContainer.class);
 
     // Collision boxes
-    private final static AxisAlignedBB CABLE_CENTER_BOUNDINGBOX = new AxisAlignedBB(
+    public final static AxisAlignedBB CABLE_CENTER_BOUNDINGBOX = new AxisAlignedBB(
             CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX);
     private final static EnumFacingMap<AxisAlignedBB> CABLE_SIDE_BOUNDINGBOXES = EnumFacingMap.forAllValues(
             new AxisAlignedBB(CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX), // DOWN
@@ -116,213 +103,20 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             new AxisAlignedBB(CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX) // EAST
     );
 
-    // Collision components
     private static final List<IComponent<EnumFacing, BlockCable>> COLLIDABLE_COMPONENTS = Lists.newArrayList();
-    private static final IComponent<EnumFacing, BlockCable> CENTER_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
-        @Override
-        public Collection<EnumFacing> getPossiblePositions() {
-            return Arrays.asList(new EnumFacing[]{null});
-        }
-
-        @Override
-        public int getBoundsCount(EnumFacing position) {
-            return 1;
-        }
-
-        @Override
-        public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return block.isRealCable(world, pos);
-        }
-
-        @Override
-        public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return Collections.singletonList(block.getCableBoundingBox(null));
-        }
-
-        @Override
-        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
-            return new ItemStack(BlockCable.getInstance());
-        }
-
-        @Override
-        public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
-            if(!world.isRemote) {
-                BlockCable cable = BlockCable.getInstance();
-                if (cable.getPartContainer(world, pos).hasParts()) {
-                    cable.setRealCable(world, pos, false);
-                    if (!player.capabilities.isCreativeMode) {
-                        ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
-                    }
-                    return false;
-                } else {
-                    cable.remove(world, pos, player);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Nullable
-        @Override
-        @SideOnly(Side.CLIENT)
-        public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
-            return RenderHelpers.getDynamicBakedModel(world, pos);
-        }
-    };
-    private static final IComponent<EnumFacing, BlockCable> CABLECONNECTIONS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
-        @Override
-        public Collection<EnumFacing> getPossiblePositions() {
-            return Arrays.asList(EnumFacing.VALUES);
-        }
-
-        @Override
-        public int getBoundsCount(EnumFacing position) {
-            return 1;
-        }
-
-        @Override
-        public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return CENTER_COMPONENT.isActive(block, world, pos, position)
-                    && (block.isConnected(world, pos, position) || block.hasPart(world, pos, position));
-        }
-
-        @Override
-        public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return Collections.singletonList(block.isConnected(world, pos, position) ? block.getCableBoundingBox(position) : block.getCableBoundingBoxWithPart(world, pos, position));
-        }
-
-        @Override
-        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
-            return new ItemStack(BlockCable.getInstance());
-        }
-
-        @Override
-        public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
-            return CENTER_COMPONENT.destroy(world, pos, position, player);
-        }
-
-        @Nullable
-        @Override
-        @SideOnly(Side.CLIENT)
-        public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
-            return CENTER_COMPONENT.getBreakingBaseModel(world, pos, position);
-        }
-    };
-    private static final IComponent<EnumFacing, BlockCable> PARTS_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
-        @Override
-        public Collection<EnumFacing> getPossiblePositions() {
-            return Arrays.asList(EnumFacing.VALUES);
-        }
-
-        @Override
-        public int getBoundsCount(EnumFacing position) {
-            return 1;
-        }
-
-        @Override
-        public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return block.hasPart(world, pos, position);
-        }
-
-        @Override
-        public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return Collections.singletonList(block.getPartBoundingBox(world, pos, position));
-        }
-
-        @Override
-        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
-            IPartContainer partContainer = BlockCable.getInstance().getPartContainer(world, pos);
-            return partContainer.getPart(position).getPickBlock(world, pos, partContainer.getPartState(position));
-        }
-
-        @Override
-        public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
-            if(!world.isRemote) {
-                return PartHelpers.removePart(world, pos, position, player, true);
-            }
-            return false;
-        }
-
-        @Nullable
-        @Override
-        @SideOnly(Side.CLIENT)
-        public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
-            IBlockState blockState = world.getBlockState(pos);
-            IExtendedBlockState state = (IExtendedBlockState) blockState.getBlock().getExtendedState(blockState, world, pos);
-            IPartContainer partContainer = BlockHelpers.getSafeBlockStateProperty(state, BlockCable.PARTCONTAINER, null);
-            IBlockState cableState = partContainer != null ? partContainer.getPart(position).getBlockState(partContainer, position) : null;
-            return RenderHelpers.getBakedModel(cableState);
-        }
-    };
-    private static final IComponent<EnumFacing, BlockCable> FACADE_COMPONENT = new IComponent<EnumFacing, BlockCable>() {
-
-        private final AxisAlignedBB BOUNDS = new AxisAlignedBB(0.01, 0.01, 0.01, 0.99, 0.99, 0.99);
-
-        @Override
-        public Collection<EnumFacing> getPossiblePositions() {
-            return Arrays.asList(new EnumFacing[]{null});
-        }
-
-        @Override
-        public int getBoundsCount(EnumFacing position) {
-            return 1;
-        }
-
-        @Override
-        public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return FacadeableConfig.hasFacade(world, pos);
-        }
-
-        @Override
-        public List<AxisAlignedBB> getBounds(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-            return Collections.singletonList(BOUNDS);
-        }
-
-        @Override
-        public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
-            ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
-            ItemFacade.getInstance().writeFacadeBlock(itemStack, FacadeableConfig.getFacade(world, pos));
-            return itemStack;
-        }
-
-        @Override
-        public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
-            if(!world.isRemote) {
-                IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
-                IBlockState blockState = facadeable.getFacade();
-                ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
-                ItemFacade.getInstance().writeFacadeBlock(itemStack, blockState);
-                facadeable.setFacade(null);
-                if (!player.capabilities.isCreativeMode) {
-                    ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
-                }
-            }
-            return false;
-        }
-
-        @Nullable
-        @Override
-        @SideOnly(Side.CLIENT)
-        public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
-            IBlockState blockState = world.getBlockState(pos);
-            IExtendedBlockState state = (IExtendedBlockState) blockState.getBlock().getExtendedState(blockState, world, pos);
-            Optional<IBlockState> blockStateOptional = BlockHelpers.getSafeBlockStateProperty(state, BlockCable.FACADE, Optional.absent());
-            if(!blockStateOptional.isPresent()) return null;
-            return RenderHelpers.getBakedModel(blockStateOptional.get());
-        }
-    };
+    private static final IComponent<EnumFacing, BlockCable> FACADE_COMPONENT = new CollidableComponentFacade();
+    private static final IComponent<EnumFacing, BlockCable> CABLECENTER_COMPONENT = new CollidableComponentCableCenter();
+    private static final IComponent<EnumFacing, BlockCable> CABLECONNECTIONS_COMPONENT = new CollidableComponentCableConnections();
+    private static final IComponent<EnumFacing, BlockCable> PARTS_COMPONENT = new CollidableComponentParts();
     static {
         COLLIDABLE_COMPONENTS.add(FACADE_COMPONENT);
-        COLLIDABLE_COMPONENTS.add(CENTER_COMPONENT);
+        COLLIDABLE_COMPONENTS.add(CABLECENTER_COMPONENT);
         COLLIDABLE_COMPONENTS.add(CABLECONNECTIONS_COMPONENT);
         COLLIDABLE_COMPONENTS.add(PARTS_COMPONENT);
     }
     @SuppressWarnings("deprecation")
     @Delegate
-    private ICollidable collidableComponent = new CollidableComponent<EnumFacing, BlockCable>(this, COLLIDABLE_COMPONENTS);
-    //@Delegate// <- Lombok can't handle delegations with generics, so we'll have to do it manually...
-    private CableNetworkComponent<BlockCable> cableNetworkComponent = new CableNetworkComponent<>(this);
-    private NetworkElementProviderComponent<IPartNetwork> networkElementProviderComponent = new NetworkElementProviderComponent<>();
+    private ICollidable collidableComponent = new CollidableComponent<>(this, COLLIDABLE_COMPONENTS);
 
     private static BlockCable _instance = null;
 
@@ -365,45 +159,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return getDefaultState();
     }
 
-    protected boolean hasPart(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty(
-               (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
-               PART_RENDERPOSITIONS[side.ordinal()],
-                PartRenderPosition.NONE) != PartRenderPosition.NONE;
-    }
-
-    @Override
-    public boolean isRealCable(World world, BlockPos pos) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            return tile.isRealCable();
-        }
-        return true;
-    }
-
-    @Override
-    public void setRealCable(World world, BlockPos pos, boolean realCable) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null) {
-            tile.setRealCable(realCable);
-            if (realCable) {
-                cableNetworkComponent.addToNetwork(world, pos);
-            } else {
-                networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, false);
-                if (!cableNetworkComponent.removeCableFromNetwork(world, pos)) {
-                    tile.setRealCable(!realCable);
-                    IntegratedDynamics.clog(Level.WARN, "Tried to set a fake cable, but the original network element was not present");
-                }
-            }
-        }
-    }
-
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos, EntityPlayer player) {
-        if(isRealCable(world, pos)) {
-            networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
-            cableNetworkComponent.onPreBlockDestroyed(world, pos);
-        }
+        CableHelpers.onCableRemoving(world, pos, true);
         super.onPreBlockDestroyed(world, pos);
     }
 
@@ -411,7 +169,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     protected void onPostBlockDestroyed(World world, BlockPos pos) {
         super.onPostBlockDestroyed(world, pos);
         if(!IS_MCMP_CONVERTING) { // Yes, this is a hack, we don't want this to be called after a MCMP block conversion
-            cableNetworkComponent.onPostBlockDestroyed(world, pos);
+            CableHelpers.onCableRemoved(world, pos);
         }
         IS_MCMP_CONVERTING = false;
     }
@@ -453,16 +211,17 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
                         PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
                         ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
                         return true;
-                    } else if(isRealCable(world, pos)) {
+                    } else if(CableHelpers.isNoFakeCable(world, pos)) {
                         // Delegate activated call to part
-                        return getPartContainer(world, pos).getPart(positionHit).onPartActivated(world, pos,
-                                getPartContainer(world, pos).getPartState(positionHit), player, hand, heldItem, positionHit, hitX, hitY, hitZ);
+                        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+                        return partContainer.getPart(positionHit).onPartActivated(world, pos,
+                                partContainer.getPartState(positionHit), player, hand, heldItem, positionHit, hitX, hitY, hitZ);
                     }
                 } else if (!world.isRemote
                         && (rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT
-                            || rayTraceResult.getCollisionType() == CENTER_COMPONENT)) {
-                    if(onCableActivated(world, pos, state, player, hand, heldItem, side,
-                            rayTraceResult.getCollisionType() == CENTER_COMPONENT ? null : rayTraceResult.getPositionHit())) {
+                            || rayTraceResult.getCollisionType() == CABLECENTER_COMPONENT)) {
+                    if(CableHelpers.onCableActivated(world, pos, state, player, heldItem, side,
+                            rayTraceResult.getCollisionType() == CABLECENTER_COMPONENT ? null : rayTraceResult.getPositionHit())) {
                         return true;
                     }
                 }
@@ -471,73 +230,10 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
-    public static boolean onCableActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                                           ItemStack heldItem, EnumFacing side, EnumFacing cableConnectionHit) {
-        ICableNetwork<?, ?> cable = CableHelpers.getInterface(world, pos, ICableNetwork.class);
-        IPartContainer partContainer = PartContainerConfig.get(world, pos);
-        if(WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
-            if (player.isSneaking()) {
-                if (partContainer == null || !partContainer.hasParts() || !(cable instanceof ICableFakeable)) {
-                    // Remove full cable
-                    cable.remove(world, pos, player);
-                    ItemBlockCable.playBreakSound(world, pos, state);
-                } else {
-                    // Mark cable as unavailable.
-                    ((ICableFakeable) cable).setRealCable(world, pos, false);
-                    ItemBlockCable.playBreakSound(world, pos, state);
-                    ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
-                }
-            } else if (cableConnectionHit != null) {
-                // Disconnect cable side
-
-                // Store the disconnection in the tile entity
-                cable.disconnect(world, pos, cableConnectionHit);
-
-                // Signal changes
-                cable.updateConnections(world, pos);
-                cable.triggerUpdateNeighbourConnections(world, pos);
-
-                // Reinit the networks for this block and the disconnected neighbour.
-                cable.initNetwork(world, pos);
-                BlockPos neighbourPos = pos.offset(cableConnectionHit);
-                ICableNetwork neighbourCable = CableHelpers.getInterface(world, neighbourPos, ICableNetwork.class);
-                if (neighbourCable != null) {
-                    neighbourCable.initNetwork(world, neighbourPos);
-                }
-                return true;
-            } else if (cableConnectionHit == null) {
-                // Reconnect cable side
-                BlockPos neighbourPos = pos.offset(side);
-                ICable neighbourCable = CableHelpers.getInterface(world, neighbourPos, ICable.class);
-                if(neighbourCable != null && !cable.isConnected(world, pos, side) &&
-                        (cable.canConnect(world, pos, neighbourCable, side) || neighbourCable.canConnect(world, neighbourPos, cable, side.getOpposite()))
-                        ) {
-                    // Notify the reconnection in the tile entity of this and the neighbour block,
-                    // since we don't know in which one the disconnection was made.
-                    cable.reconnect(world, pos, side);
-                    neighbourCable.reconnect(world, neighbourPos, side.getOpposite());
-
-                    // Signal changes
-                    cable.updateConnections(world, pos);
-                    cable.triggerUpdateNeighbourConnections(world, pos);
-
-                    // Reinit the networks for this block and the connected neighbour.
-                    cable.initNetwork(world, pos);
-                    if (neighbourCable instanceof ICableNetwork) {
-                        ((ICableNetwork<IPartNetwork, ICablePathElement>) neighbourCable).initNetwork(world, neighbourPos);
-                    }
-                }
-                return true;
-            }
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        cableNetworkComponent.addToNetwork(world, pos);
+        CableHelpers.onCableAdded(world, pos);
     }
 
     @Override
@@ -547,8 +243,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
 
     @Override
     public boolean isDropBlockItem(IBlockAccess world, BlockPos pos, IBlockState blockState, int fortune) {
-        return BlockHelpers.getSafeBlockStateProperty((IExtendedBlockState) getExtendedState(blockState, world, pos),
-               REALCABLE, true);
+        return CableHelpers.isNoFakeCable(world, pos);
     }
 
     @SuppressWarnings("deprecation")
@@ -562,11 +257,23 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         return getItem(world, pos, blockState);
     }
 
-    protected IPartContainer getPartContainer(IBlockAccess world, BlockPos pos) {
-        return TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class).getPartContainer();
+    @SuppressWarnings("deprecation")
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
+        super.neighborChanged(state, world, pos, neighborBlock);
+        CableHelpers.updateConnectionsNeighbours(world, pos); // TODO: do we need this here? I think we only have to update our own connections...
+        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock);
     }
 
     /* --------------- Start ICollidable and rendering --------------- */
+
+    public AxisAlignedBB getCableBoundingBox(EnumFacing side) {
+        if (side == null) {
+            return CABLE_CENTER_BOUNDINGBOX;
+        } else {
+            return CABLE_SIDE_BOUNDINGBOXES.get(side);
+        }
+    }
 
     @SuppressWarnings("deprecation")
     @Override
@@ -637,8 +344,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
         if(FacadeableConfig.hasFacade(world, pos)) {
             return true;
         }
-        if(hasPart(world, pos, side)) {
-            IPartContainer partContainer = getPartContainer(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+        if(partContainer != null && partContainer.hasPart(side)) {
             IPartType partType = partContainer.getPart(side);
             return partType.isSolid(partContainer.getPartState(side));
         }
@@ -654,32 +361,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.TRANSLUCENT;
-    }
-
-    public AxisAlignedBB getCableBoundingBox(EnumFacing side) {
-        if (side == null) {
-            return CABLE_CENTER_BOUNDINGBOX;
-        } else {
-            return CABLE_SIDE_BOUNDINGBOXES.get(side);
-        }
-    }
-
-    protected PartRenderPosition getPartRenderPosition(World world, BlockPos pos, EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty((IExtendedBlockState)
-                getExtendedState(world.getBlockState(pos), world, pos), PART_RENDERPOSITIONS[side.ordinal()],
-                PartRenderPosition.NONE);
-    }
-
-    private AxisAlignedBB getCableBoundingBoxWithPart(World world, BlockPos pos, EnumFacing side) {
-        if (side == null) {
-            return CABLE_CENTER_BOUNDINGBOX;
-        } else {
-            return getPartRenderPosition(world, pos, side).getSidedCableBoundingBox(side);
-        }
-    }
-
-    private AxisAlignedBB getPartBoundingBox(World world, BlockPos pos, EnumFacing side) {
-        return getPartRenderPosition(world, pos, side).getBoundingBox(side);
     }
 
     @SuppressWarnings("deprecation")
@@ -741,85 +422,5 @@ public class BlockCable extends ConfigurableBlockContainer implements ICableNetw
             }
         }
         return light;
-    }
-
-    /* --------------- Delegate to ICableNetwork<CablePathElement> --------------- */
-
-    @Override
-    public void initNetwork(World world, BlockPos pos) {
-        if(isRealCable(world, pos)) {
-            cableNetworkComponent.initNetwork(world, pos);
-        }
-    }
-
-    @Override
-    public boolean canConnect(World world, BlockPos selfPosition, ICable connector, EnumFacing side) {
-        return cableNetworkComponent.canConnect(world, selfPosition, connector, side);
-    }
-
-    @Override
-    public void updateConnections(World world, BlockPos pos) {
-        cableNetworkComponent.updateConnections(world, pos);
-    }
-
-    @Override
-    public void triggerUpdateNeighbourConnections(World world, BlockPos pos) {
-        cableNetworkComponent.triggerUpdateNeighbourConnections(world, pos);
-    }
-
-    @Override
-    public boolean isConnected(World world, BlockPos pos, EnumFacing side) {
-        // Note delegated to component, but instead use the cached information in the extended blockstate
-        return BlockHelpers.getSafeBlockStateProperty(
-                (IExtendedBlockState) getExtendedState(world.getBlockState(pos), world, pos),
-                CONNECTED[side.ordinal()],
-                false);
-    }
-
-    @Override
-    public void disconnect(World world, BlockPos pos, EnumFacing side) {
-        cableNetworkComponent.disconnect(world, pos, side);
-    }
-
-    @Override
-    public void reconnect(World world, BlockPos pos, EnumFacing side) {
-        cableNetworkComponent.reconnect(world, pos, side);
-    }
-
-    @Override
-    public void remove(World world, BlockPos pos, EntityPlayer player) {
-        // PRE
-        networkElementProviderComponent.onPreBlockDestroyed(getNetwork(world, pos), world, pos, true);
-        cableNetworkComponent.onPreBlockDestroyed(world, pos);
-        // POST
-        cableNetworkComponent.remove(world, pos, player);
-    }
-
-    @Override
-    public void resetCurrentNetwork(World world, BlockPos pos) {
-        cableNetworkComponent.resetCurrentNetwork(world, pos);
-    }
-
-    @Override
-    public void setNetwork(IPartNetwork network, World world, BlockPos pos) {
-        cableNetworkComponent.setNetwork(network, world, pos);
-    }
-
-    @Override
-    public IPartNetwork getNetwork(World world, BlockPos pos) {
-        return cableNetworkComponent.getNetwork(world, pos);
-    }
-
-    @Override
-    public CablePathElement createPathElement(World world, BlockPos blockPos) {
-        return cableNetworkComponent.createPathElement(world, blockPos);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
-        super.neighborChanged(state, world, pos, neighborBlock);
-        cableNetworkComponent.updateConnections(world, pos);
-        networkElementProviderComponent.onBlockNeighborChange(getNetwork(world, pos), world, pos, neighborBlock);
     }
 }

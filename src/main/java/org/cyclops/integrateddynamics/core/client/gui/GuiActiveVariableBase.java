@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerActiveVa
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 
 /**
- * Base gui for tile entities that can hold variables.
+ * Base gui for part entities that can hold variables.
  * @author rubensworks
  */
 public abstract class GuiActiveVariableBase<C extends ContainerActiveVariableBase<T>, T extends TileActiveVariableBase<?>> extends GuiContainerConfigurable<C> {

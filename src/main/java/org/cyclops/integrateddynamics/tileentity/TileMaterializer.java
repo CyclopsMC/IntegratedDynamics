@@ -24,7 +24,7 @@ import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 import org.cyclops.integrateddynamics.network.MaterializerNetworkElement;
 
 /**
- * A tile entity for the variable materializer.
+ * A part entity for the variable materializer.
  * @author rubensworks
  */
 public class TileMaterializer extends TileActiveVariableBase<MaterializerNetworkElement> {

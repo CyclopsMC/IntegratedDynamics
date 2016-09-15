@@ -17,7 +17,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
-import org.cyclops.integrateddynamics.api.tileentity.ITileCableNetwork;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 
@@ -92,8 +92,8 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
         if(!MinecraftHelpers.isClientSide()) {
             String writeValue = "";
             int writeValueColor = 0;
-            if(getPartContainer() instanceof ITileCableNetwork && getPartState().hasVariable()) {
-                IPartNetwork network = ((ITileCableNetwork) getPartContainer()).getNetwork();
+            if(getPartState().hasVariable()) {
+                IPartNetwork network = (IPartNetwork) NetworkHelpers.getNetwork(getWorld(), getPos());
                 if (network != null) {
                     IVariable variable = getPartState().getVariable(network);
                     if (variable != null) {

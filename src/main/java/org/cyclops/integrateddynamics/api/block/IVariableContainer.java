@@ -11,7 +11,7 @@ import java.util.Map;
 public interface IVariableContainer {
 
     /**
-     * @return The stored variable facades for this tile.
+     * @return The stored variable facades for this part.
      */
     public Map<Integer, IVariableFacade> getVariableCache();
 

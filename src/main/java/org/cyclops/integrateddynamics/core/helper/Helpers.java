@@ -2,13 +2,19 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -81,6 +87,75 @@ public final class Helpers {
             pattern.append("%s");
         }
         return pattern.toString();
+    }
+
+    // TODO: only use this stuff for that charset thing
+    private static final List<IInterfaceRetriever> INTERFACE_RETRIEVERS = Lists.newArrayList();
+    static {
+        addInterfaceRetriever(new IInterfaceRetriever() {
+            @Override
+            public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {
+                Block block = world.getBlockState(pos).getBlock();
+                if(clazz.isInstance(block)) {
+                    return clazz.cast(block);
+                }
+                return null;
+            }
+        });
+        addInterfaceRetriever(new IInterfaceRetriever() {
+            @Override
+            public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {
+                return TileHelpers.getSafeTile(world, pos, clazz);
+            }
+        });
+    }
+
+    /**
+     * Check for the given interface at the given position.
+     * @param world The world.
+     * @param pos The position.
+     * @param clazz The class to find.
+     * @param <C> The class type.
+     * @return The instance or null.
+     */
+    private static <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {
+        C instance;
+        for(IInterfaceRetriever interfaceRetriever : INTERFACE_RETRIEVERS) {
+            instance = interfaceRetriever.getInterface(world, pos, clazz);
+            if(instance != null) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check for the given interface at the given position.
+     * @param dimPos The dimensional position.
+     * @param clazz The class to find.
+     * @param <C> The class type.
+     * @return The instance or null.
+     */
+    public static <C> C getInterface(DimPos dimPos, Class<C> clazz) {
+        return getInterface(dimPos.getWorld(), dimPos.getBlockPos(), clazz);
+    }
+
+    public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {
+        INTERFACE_RETRIEVERS.add(interfaceRetriever);
+    }
+
+    public static interface IInterfaceRetriever {
+
+        /**
+         * Attempt to get a given interface instance.
+         * @param world The world.
+         * @param pos The position.
+         * @param clazz The class to find.
+         * @param <C> The class type.
+         * @return The instance or null.
+         */
+        public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz);
+
     }
 
 }

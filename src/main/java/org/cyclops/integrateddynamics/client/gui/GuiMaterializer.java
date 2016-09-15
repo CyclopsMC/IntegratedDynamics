@@ -17,7 +17,7 @@ public class GuiMaterializer extends GuiActiveVariableBase<ContainerMaterializer
     /**
      * Make a new instance.
      * @param inventory The player inventory.
-     * @param tile The tile.
+     * @param tile The part.
      */
     public GuiMaterializer(InventoryPlayer inventory, TileMaterializer tile) {
         super(new ContainerMaterializer(inventory, tile));

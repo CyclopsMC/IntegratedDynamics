@@ -14,7 +14,7 @@ public class GuiCoalGenerator extends GuiContainerConfigurable<ContainerCoalGene
     /**
      * Make a new instance.
      * @param inventory The player inventory.
-     * @param tile The tile.
+     * @param tile The part.
      */
     public GuiCoalGenerator(InventoryPlayer inventory, TileCoalGenerator tile) {
         super(new ContainerCoalGenerator(inventory, tile));

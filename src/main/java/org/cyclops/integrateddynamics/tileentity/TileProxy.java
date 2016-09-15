@@ -25,7 +25,7 @@ import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 import org.cyclops.integrateddynamics.network.ProxyNetworkElement;
 
 /**
- * A tile entity for the variable proxy.
+ * A part entity for the variable proxy.
  * @author rubensworks
  */
 public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {

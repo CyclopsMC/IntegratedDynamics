@@ -25,7 +25,7 @@ import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
 import java.util.Collection;
 
 /**
- * A tile entity used to store variables.
+ * A part entity used to store variables.
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */

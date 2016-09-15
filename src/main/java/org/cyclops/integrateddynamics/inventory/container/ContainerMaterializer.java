@@ -16,7 +16,7 @@ public class ContainerMaterializer extends ContainerActiveVariableBase<TileMater
     /**
      * Make a new instance.
      * @param inventory The player inventory.
-     * @param tile The tile.
+     * @param tile The part.
      */
     public ContainerMaterializer(InventoryPlayer inventory, TileMaterializer tile) {
         super(inventory, tile);

@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import javax.annotation.Nullable;
 
 /**
- * Implementation of an {@link IPartContainer} for a tile entity.
+ * Implementation of an {@link IPartContainer} for a part entity.
  * @author rubensworks
  */
 public class PartContainerTileMultipartTicking extends PartContainerDefault {

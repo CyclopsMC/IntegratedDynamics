@@ -18,7 +18,6 @@ import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
-import org.cyclops.integrateddynamics.core.block.cable.CableNetworkComponent;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -49,13 +48,13 @@ public class BlockCableConverter implements IPartConverter {
         for(Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
             parts.add(new PartPartType(entry.getKey(), entry.getValue().getPart()));
         }
-        boolean wasRealCable = tile.isRealCable();
+        boolean wasRealCable = tile.getCableFakeable().isRealCable();
         IPartNetwork network = null;
         if(!simulate) {
             tile.getPartContainer().silentResetPartData();
             network = tile.getNetwork();
-            tile.resetCurrentNetwork();
-            tile.setRealCable(false);
+            tile.getNetworkCarrier().setNetwork(null);
+            tile.getCableFakeable().setRealCable(false);
             BlockCable.IS_MCMP_CONVERTING = true;
         }
 
@@ -65,15 +64,15 @@ public class BlockCableConverter implements IPartConverter {
             // is slightly easier to handle along the way.
             for(EnumFacing side : EnumFacing.VALUES) {
                 boolean cableConnected = (!forceDisconnected.containsKey(side) || !forceDisconnected.get(side))
-                        && CableNetworkComponent.canSideConnect((World) world, blockPos, side, (ICable) tile.getBlock());
-                ICable neighbourCable = CableHelpers.getInterface(world, blockPos.offset(side), ICable.class);
+                        && CableHelpers.canCableConnectTo((World) world, blockPos, side, tile.getCable());
+                ICable neighbourCable = CableHelpers.getCable(world, blockPos.offset(side));
                 if(neighbourCable != null) {
                     forceDisconnected.put(side, !cableConnected);
                 }
             }
             PartCable partCable = new PartCable(partData, forceDisconnected);
             if(!simulate) {
-                partCable.setNetwork(network);
+                partCable.getNetworkCarrier().setNetwork(network);
             }
             partCable.setAddSilent(true);
             parts.add(partCable);

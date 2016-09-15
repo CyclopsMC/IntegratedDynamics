@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 
 /**
- * Base container for tile entities that can hold variables.
+ * Base container for part entities that can hold variables.
  * @author rubensworks
  */
 public class ContainerActiveVariableBase<T extends TileActiveVariableBase<?>> extends TileInventoryContainerConfigurable<T> {
@@ -22,7 +22,7 @@ public class ContainerActiveVariableBase<T extends TileActiveVariableBase<?>> ex
     /**
      * Make a new instance.
      * @param inventory The player inventory.
-     * @param tile The tile.
+     * @param tile The part.
      */
     public ContainerActiveVariableBase(InventoryPlayer inventory, T tile) {
         super(inventory, tile);

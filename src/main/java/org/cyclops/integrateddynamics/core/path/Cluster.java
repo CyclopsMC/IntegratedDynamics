@@ -10,11 +10,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
-import org.cyclops.integrateddynamics.api.path.IPathElementProvider;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 
 import java.util.Collection;
 import java.util.Set;
@@ -25,10 +25,10 @@ import java.util.TreeSet;
  * @author rubensworks
  */
 @Data
-public class Cluster<E extends IPathElement> implements Collection<E>, INBTSerializable {
+public class Cluster implements Collection<IPathElement>, INBTSerializable {
 
     @Delegate
-    private final Set<E> elements;
+    private final Set<IPathElement> elements;
 
     /**
      * This constructor should not be called, except for the process of constructing networks from NBT.
@@ -37,7 +37,7 @@ public class Cluster<E extends IPathElement> implements Collection<E>, INBTSeria
         this.elements = Sets.newTreeSet();
     }
 
-    public Cluster(TreeSet<E> elements) {
+    public Cluster(TreeSet<IPathElement> elements) {
         this.elements = elements;
     }
 
@@ -71,12 +71,12 @@ public class Cluster<E extends IPathElement> implements Collection<E>, INBTSeria
                         "invalid dimension id %s.", dimensionId));
             } else {
                 World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers[dimensionId];
-                IPathElementProvider pathElementProvider = CableHelpers.getInterface(world, pos, IPathElementProvider.class);
-                if(pathElementProvider == null) {
+                IPathElement pathElement = TileHelpers.getCapability(world, pos, null, PathElementConfig.CAPABILITY);
+                if(pathElement == null) {
                     IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +
-                            "position %s in world %s because it is no valid network element provider block.", pos, dimensionId));
+                            "position %s in world %s because it has no valid path element.", pos, dimensionId));
                 } else {
-                    elements.add((E) pathElementProvider.createPathElement(world, pos));
+                    elements.add(pathElement);
                 }
             }
         }
