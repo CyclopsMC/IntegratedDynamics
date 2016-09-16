@@ -6,7 +6,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
  * Default implementation of {@link ICableFakeable}.
  * @author rubensworks
  */
-public class CableFakeableDefault implements ICableFakeable {
+public abstract class CableFakeableDefault implements ICableFakeable {
 
     private boolean real = true;
 
@@ -18,5 +18,8 @@ public class CableFakeableDefault implements ICableFakeable {
     @Override
     public void setRealCable(boolean real) {
         this.real = real;
+        sendUpdate();
     }
+
+    protected abstract void sendUpdate();
 }

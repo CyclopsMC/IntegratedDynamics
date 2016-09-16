@@ -80,6 +80,15 @@ public class McMultiPartHelpers {
                 }
                 return false;
             }
+
+            @Override
+            public boolean canPlaceAt(World world, BlockPos pos) {
+                IMultipartContainer partContainer = MultipartHelper.getPartContainer(world, pos);
+                if (partContainer != null) {
+                    return partContainer.getPartInSlot(PartSlot.CENTER) == null;
+                }
+                return false;
+            }
         });
         ItemPart.addUseAction(new ItemPart.IUseAction() {
             @Override

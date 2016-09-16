@@ -75,9 +75,10 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * Remove the part from a side, can return null if there was no part on that side.
      * @param side The side.
      * @param player The player removing the part.
+     * @param dropMainElement If the main part element should be dropped.
      * @return The removed part or null.
      */
-    public IPartType removePart(EnumFacing side, @Nullable EntityPlayer player);
+    public IPartType removePart(EnumFacing side, @Nullable EntityPlayer player, boolean dropMainElement);
 
     /**dz
      * Set the state of a part.

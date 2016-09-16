@@ -9,16 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemFacade;
@@ -60,16 +57,6 @@ public class BlockCableConverter implements IPartConverter {
 
         // Add cable
         if(wasRealCable) {
-            // Move all force disconnection info to the current block, because this
-            // is slightly easier to handle along the way.
-            for(EnumFacing side : EnumFacing.VALUES) {
-                boolean cableConnected = (!forceDisconnected.containsKey(side) || !forceDisconnected.get(side))
-                        && CableHelpers.canCableConnectTo((World) world, blockPos, side, tile.getCable());
-                ICable neighbourCable = CableHelpers.getCable(world, blockPos.offset(side));
-                if(neighbourCable != null) {
-                    forceDisconnected.put(side, !cableConnected);
-                }
-            }
             PartCable partCable = new PartCable(partData, forceDisconnected);
             if(!simulate) {
                 partCable.getNetworkCarrier().setNetwork(network);

@@ -166,9 +166,8 @@ public class PartPartType extends MultipartBase {
     @Override
     public void onRemoved() {
         super.onRemoved();
-        if (getPartCable().hasPart(getFacing())) { // Can be false when wrenching.
-            //CableNetworkComponent.removePartFromNetwork(getWorld(), getPos(), getNetwork(), getFacing(), getPartType());
-            System.out.println("THIS SHOULD NOT OCCUR, REMOVE ME!"); // TODO
+        if (getPartCable() != null && getPartCable().hasPart(getFacing())) { // Can be false when breaking with hand.
+            PartHelpers.removePart(getWorld(), getPos(), getFacing(), null, false, false);
         }
     }
 
@@ -188,7 +187,7 @@ public class PartPartType extends MultipartBase {
                     getContainer().removePart(this);
                 } else {
                     // In this case, this part is placed on a cable, so remove it like normal.
-                    PartHelpers.removePart(world, pos, getFacing(), player, false);
+                    PartHelpers.removePart(world, pos, getFacing(), player, false, true);
                 }
                 ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
             }

@@ -335,7 +335,9 @@ public class PartCable extends MultipartBase implements ITickable {
 
     @Override
     public void update() {
-        cable.updateConnections();
+        if (connected.isEmpty()) {
+            cable.updateConnections();
+        }
         partContainer.update();
     }
 

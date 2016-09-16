@@ -48,7 +48,6 @@ import org.cyclops.integrateddynamics.block.collidable.CollidableComponentFacade
 import org.cyclops.integrateddynamics.block.collidable.CollidableComponentParts;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
-import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
@@ -177,8 +176,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @Override
     public boolean removedByPlayer(IBlockState blockState, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
         RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
-        if(rayTraceResult != null && rayTraceResult.getCollisionType() != null) {
-            return rayTraceResult.getCollisionType().destroy(world, pos, rayTraceResult.getPositionHit(), player);
+        if(rayTraceResult != null && rayTraceResult.getCollisionType() != null
+                && rayTraceResult.getCollisionType().destroy(world, pos, rayTraceResult.getPositionHit(), player)) {
+            return true;
         }
         return super.removedByPlayer(blockState, world, pos, player, willHarvest);
     }
@@ -261,7 +261,6 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
         super.neighborChanged(state, world, pos, neighborBlock);
-        CableHelpers.updateConnectionsNeighbours(world, pos); // TODO: do we need this here? I think we only have to update our own connections...
         NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock);
     }
 
@@ -284,7 +283,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public int getLightOpacity(IBlockState blockState, IBlockAccess world, BlockPos pos) {
-        return FacadeableConfig.hasFacade(world, pos) ? 255 : 0;
+        return CableHelpers.hasFacade(world, pos) ? 255 : 0;
     }
 
     @Override
@@ -311,7 +310,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return super.doesSideBlockRendering(state, world, pos, face) || FacadeableConfig.hasFacade(world, pos);
+        return super.doesSideBlockRendering(state, world, pos, face) || CableHelpers.hasFacade(world, pos);
     }
 
     @SuppressWarnings("deprecation")
@@ -329,8 +328,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @SideOnly(Side.CLIENT)
     public boolean addHitEffects(IBlockState blockState, World world, net.minecraft.util.math.RayTraceResult target, ParticleManager particleManager) {
         BlockPos blockPos = target.getBlockPos();
-        if(FacadeableConfig.hasFacade(world, blockPos)) {
-            IBlockState facadeState = FacadeableConfig.getFacade(world, blockPos);
+        if(CableHelpers.hasFacade(world, blockPos)) {
+            IBlockState facadeState = CableHelpers.getFacade(world, blockPos);
             RenderHelpers.addBlockHitEffects(particleManager, world, facadeState, blockPos, target.sideHit);
             return true;
         } else {
@@ -341,7 +340,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @SuppressWarnings("unchecked")
     @Override
     public boolean isSideSolid(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        if(FacadeableConfig.hasFacade(world, pos)) {
+        if(CableHelpers.hasFacade(world, pos)) {
             return true;
         }
         IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);

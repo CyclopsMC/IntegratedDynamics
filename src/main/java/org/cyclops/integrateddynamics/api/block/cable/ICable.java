@@ -1,12 +1,15 @@
 package org.cyclops.integrateddynamics.api.block.cable;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
 /**
  * Capability for cables that can form networks.
+ * Note that this is an UNSIDED capability, so only one should exist per side.
+ * This is because cable sides are too dependent of each other.
  * @author rubensworks
  */
-public interface ICable { // TODO: see if we can modify this to be sided
+public interface ICable {
 
     /**
      * Check if this part should connect with the given cable for the given side.
@@ -45,4 +48,13 @@ public interface ICable { // TODO: see if we can modify this to be sided
      */
     public void reconnect(EnumFacing side);
 
+    /**
+     * @return The item stack that is dropped when breaking this cable, when using a wrench for example.
+     */
+    public ItemStack getItemStack();
+
+    /**
+     * Called when this cable is removed by a wrench.
+     */
+    public void destroy();
 }

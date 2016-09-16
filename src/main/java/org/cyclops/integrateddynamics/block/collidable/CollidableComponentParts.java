@@ -63,7 +63,7 @@ public class CollidableComponentParts implements ICollidable.IComponent<EnumFaci
     @Override
     public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
         if(!world.isRemote) {
-            return PartHelpers.removePart(world, pos, position, player, true);
+            return PartHelpers.removePart(world, pos, position, player, true, true);
         }
         return false;
     }

@@ -35,4 +35,9 @@ public class CablePartCable extends CablePart<PartCable> {
         if(part.getPartContainer().hasPart(side)) return true;
         return super.isForceDisconnected(side);
     }
+
+    @Override
+    public void destroy() {
+        part.getContainer().removePart(part);
+    }
 }

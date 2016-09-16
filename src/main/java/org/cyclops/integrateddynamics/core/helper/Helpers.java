@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.helper;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -89,19 +88,8 @@ public final class Helpers {
         return pattern.toString();
     }
 
-    // TODO: only use this stuff for that charset thing
     private static final List<IInterfaceRetriever> INTERFACE_RETRIEVERS = Lists.newArrayList();
     static {
-        addInterfaceRetriever(new IInterfaceRetriever() {
-            @Override
-            public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {
-                Block block = world.getBlockState(pos).getBlock();
-                if(clazz.isInstance(block)) {
-                    return clazz.cast(block);
-                }
-                return null;
-            }
-        });
         addInterfaceRetriever(new IInterfaceRetriever() {
             @Override
             public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {

@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.item.ItemFacade;
 
 import javax.annotation.Nullable;
@@ -48,7 +49,7 @@ public class CollidableComponentFacade implements ICollidable.IComponent<EnumFac
 
     @Override
     public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-        return FacadeableConfig.hasFacade(world, pos);
+        return CableHelpers.hasFacade(world, pos);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class CollidableComponentFacade implements ICollidable.IComponent<EnumFac
     @Override
     public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
         ItemStack itemStack = new ItemStack(ItemFacade.getInstance());
-        ItemFacade.getInstance().writeFacadeBlock(itemStack, FacadeableConfig.getFacade(world, pos));
+        ItemFacade.getInstance().writeFacadeBlock(itemStack, CableHelpers.getFacade(world, pos));
         return itemStack;
     }
 

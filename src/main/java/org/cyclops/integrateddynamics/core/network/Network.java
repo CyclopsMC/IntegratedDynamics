@@ -316,14 +316,14 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                 Collection<INetworkElement<N>> networkElements = networkElementProvider.
                         createNetworkElements(pathElement.getPosition().getWorld(), pathElement.getPosition().getBlockPos());
                 for (INetworkElement<N> networkElement : networkElements) {
-                    networkElement.onPreRemoved(getMaterializedThis()); // TODO: Added, check if this works
+                    networkElement.onPreRemoved(getMaterializedThis());
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;
                     }
                 }
                 for (INetworkElement<N> networkElement : networkElements) {
                     removeNetworkElementPost(networkElement);
-                    networkElement.onPostRemoved(getMaterializedThis()); // TODO: Added, check if this works
+                    networkElement.onPostRemoved(getMaterializedThis());
                 }
                 onNetworkChanged();
                 return true;

@@ -1,13 +1,9 @@
 package org.cyclops.integrateddynamics.capability.facadeable;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import org.cyclops.commoncapabilities.CommonCapabilities;
 import org.cyclops.cyclopscore.config.extendedconfig.CapabilityConfig;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityStorage;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 
@@ -44,18 +40,6 @@ public class FacadeableConfig extends CapabilityConfig {
     @Override
     public boolean isDisableable() {
         return false;
-    }
-
-    // TODO: move to helpers
-    public static boolean hasFacade(IBlockAccess world, BlockPos pos) {
-        IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, CAPABILITY);
-        return facadeable != null && facadeable.hasFacade();
-    }
-
-    // TODO: move to helpers
-    public static IBlockState getFacade(IBlockAccess world, BlockPos pos) {
-        IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, CAPABILITY);
-        return facadeable != null ? facadeable.getFacade() : null;
     }
 
 }

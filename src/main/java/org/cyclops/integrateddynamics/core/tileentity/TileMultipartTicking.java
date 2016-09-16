@@ -21,7 +21,7 @@ import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
-import org.cyclops.integrateddynamics.capability.cable.CableFakeableDefault;
+import org.cyclops.integrateddynamics.capability.cable.CableFakeableMultipartTicking;
 import org.cyclops.integrateddynamics.capability.cable.CableTileMultipartTicking;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightTileMultipartTicking;
@@ -86,7 +86,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         addCapabilityInternal(CableConfig.CAPABILITY, cable);
         networkCarrier = new NetworkCarrierDefault<>();
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
-        cableFakeable = new CableFakeableDefault();
+        cableFakeable = new CableFakeableMultipartTicking(this);
         addCapabilityInternal(CableFakeableConfig.CAPABILITY, cableFakeable);
         addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile(this, cable));
         for (EnumFacing facing : EnumFacing.VALUES) {
@@ -160,7 +160,9 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        cable.updateConnections();
+        if (connected.isEmpty()) {
+            cable.updateConnections();
+        }
         partContainer.update();
     }
 

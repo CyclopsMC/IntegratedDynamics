@@ -16,7 +16,6 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -217,12 +216,14 @@ public class PartHelpers {
      * @param side The side.
      * @param player The player that is removing the part or null.
      * @param destroyIfEmpty If the cable block must be removed if no other parts are present after this removal.
+     * @param dropMainElement If the main part element should be dropped.
      * @return If the block was set to air (removed).
      */
-    public static boolean removePart(World world, BlockPos pos, EnumFacing side, @Nullable EntityPlayer player, boolean destroyIfEmpty) {
+    public static boolean removePart(World world, BlockPos pos, EnumFacing side, @Nullable EntityPlayer player,
+                                     boolean destroyIfEmpty, boolean dropMainElement) {
         IPartContainer partContainer = TileHelpers.getCapability(world, pos, PartContainerConfig.CAPABILITY);
         ICableFakeable cableFakeable = TileHelpers.getCapability(world, pos, CableFakeableConfig.CAPABILITY);
-        partContainer.removePart(side, player);
+        partContainer.removePart(side, player, dropMainElement);
 
         // Remove full cable block if this was the last part and if it was already an unreal cable.
         boolean removeCompletely = destroyIfEmpty && (cableFakeable == null || !cableFakeable.isRealCable()) && !partContainer.hasParts();
@@ -230,16 +231,6 @@ public class PartHelpers {
             world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         } else {
             world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
-        }
-
-        // TODO: I've added this snippet here, check if this works
-        BlockPos sidePos = pos.offset(side);
-        ICable sideCable = CableHelpers.getCable(world, sidePos);
-        if (sideCable != null) {
-            sideCable.updateConnections();
-            if(!world.isRemote) {
-                NetworkHelpers.initNetwork(world, sidePos);
-            }
         }
 
         return !removeCompletely;

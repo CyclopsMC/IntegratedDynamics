@@ -20,7 +20,6 @@ import javax.annotation.Nullable;
 
 /**
  * Network helper methods.
- * TODO: move to API package? (together with the other helpers)
  * @author rubensworks
  */
 public class NetworkHelpers {

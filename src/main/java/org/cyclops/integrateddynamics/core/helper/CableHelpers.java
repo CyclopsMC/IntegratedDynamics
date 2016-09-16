@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -12,16 +11,18 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
-import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
+import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
@@ -200,7 +201,7 @@ public class CableHelpers {
     public static void onCableAdded(World world, BlockPos pos) {
         CableHelpers.updateConnectionsNeighbours(world, pos);
         if(!world.isRemote) {
-            NetworkHelpers.initNetwork(world, pos); // TODO: move me to networkhelpers! because a cable does not REQUIRE a network, but a network REQUIRES a cable!
+            NetworkHelpers.initNetwork(world, pos);
         }
     }
 
@@ -214,27 +215,23 @@ public class CableHelpers {
      */
     public static boolean onCableRemoving(World world, BlockPos pos, boolean dropMainElement) {
         if (!world.isRemote && CableHelpers.isNoFakeCable(world, pos)) {
-            INetwork network = NetworkHelpers.getNetwork(world, pos);
+            INetworkCarrier networkCarrier = NetworkHelpers.getNetworkCarrier(world, pos);
 
             // Get all drops from the network elements this cable provides.
             List<ItemStack> itemStacks = Lists.newLinkedList();
             INetworkElementProvider<?> networkElementProvider = NetworkHelpers.getNetworkElementProvider(world, pos);
             for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                 networkElement.addDrops(itemStacks, dropMainElement);
-                /*if (network != null) {
-                    networkElement.onPreRemoved(network);
-                    network.removeNetworkElementPre(networkElement);
-                    network.removeNetworkElementPost(networkElement);
-                    networkElement.onPostRemoved(network);
-                }*/ // TODO: this *should* not be needed anymore, this is handled in network.removePathElement
             }
             for (ItemStack itemStack : itemStacks) {
                 Block.spawnAsEntity(world, pos, itemStack);
             }
 
             // If the cable has a network, remove it from the network.
-            if(network != null) {
+            if(networkCarrier != null && networkCarrier.getNetwork() != null) {
                 IPathElement pathElement = getPathElement(world, pos);
+                INetwork network = networkCarrier.getNetwork();
+                networkCarrier.setNetwork(null);
                 return network.removePathElement(pathElement);
             }
         }
@@ -269,31 +266,49 @@ public class CableHelpers {
      * @param player The player removing the cable or null.
      */
     public static void removeCable(World world, BlockPos pos, @Nullable EntityPlayer player) {
+        ICable cable = getCable(world, pos);
         ICableFakeable cableFakeable = getCableFakeable(world, pos);
         IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
-
         IBlockState blockState = world.getBlockState(pos);
+        if (cable == null) return;
+
         CableHelpers.onCableRemoving(world, pos, false);
         // If the cable has no parts or is not fakeable, remove the block,
         // otherwise mark the cable as being fake.
-        // TODO: check if this does not destroy multiparts incorrectly
-        if (partContainer == null || !partContainer.hasParts() || cableFakeable == null) {
-            if (partContainer != null && partContainer.hasParts() && cableFakeable == null) {
-                // TODO: drop all parts?
-            }
-            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+        if (cableFakeable == null || partContainer == null || !partContainer.hasParts()) {
+            cable.destroy();
         } else {
             cableFakeable.setRealCable(false);
         }
-        // TODO: abstract dropped itemstack
         if (player == null) {
-            ItemStackHelpers.spawnItemStack(world, pos, new ItemStack(BlockCable.getInstance()));
+            ItemStackHelpers.spawnItemStack(world, pos, cable.getItemStack());
         } else if (!player.capabilities.isCreativeMode) {
-            ItemStackHelpers.spawnItemStackToPlayer(world, pos, new ItemStack(BlockCable.getInstance()), player);
+            ItemStackHelpers.spawnItemStackToPlayer(world, pos, cable.getItemStack(), player);
         }
         CableHelpers.onCableRemoved(world, pos);
 
         ItemBlockCable.playBreakSound(world, pos, blockState);
     }
 
+    /**
+     * Check if the target has a facade.
+     * @param world The world.
+     * @param pos The position.
+     * @return If it has a facade.
+     */
+    public static boolean hasFacade(IBlockAccess world, BlockPos pos) {
+        IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
+        return facadeable != null && facadeable.hasFacade();
+    }
+
+    /**
+     * Get the target's facade
+     * @param world The world.
+     * @param pos The position.
+     * @return The facade or null.
+     */
+    public static @Nullable IBlockState getFacade(IBlockAccess world, BlockPos pos) {
+        IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
+        return facadeable != null ? facadeable.getFacade() : null;
+    }
 }

@@ -82,27 +82,20 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             }
             return EnumActionResult.SUCCESS;
         } else {
-            // Check all third party actions
-            for (IUseAction useAction : USE_ACTIONS) {
-                if (useAction.attempItemUseTarget(this, itemStack, world, pos, side)) {
-                    return EnumActionResult.SUCCESS;
-                }
-            }
-
             // Place part at a new position with an unreal cable
             BlockPos target = pos.offset(side);
             if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
                 if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                    IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+                    IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
                     if (partContainer != null) {
                         if(!world.isRemote) {
-                            addPart(world, pos, side.getOpposite(), partContainer, itemStack);
+                            addPart(world, target, side.getOpposite(), partContainer, itemStack);
                             ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target);
                             if (cableFakeable != null) {
-                                CableHelpers.onCableRemoving(world, pos, false);
+                                CableHelpers.onCableRemoving(world, target, false);
                                 cableFakeable.setRealCable(false);
-                                CableHelpers.onCableRemoved(world, pos);
+                                CableHelpers.onCableRemoved(world, target);
                             } else {
                                 IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable at %s", target));
                             }
@@ -111,12 +104,24 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     }
                 }
             } else {
-                IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+                IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
                 if(partContainer != null) {
-                    if(!world.isRemote && addPart(world, pos, side.getOpposite(), partContainer, itemStack)
-                            && !playerIn.capabilities.isCreativeMode) {
-                        itemStack.stackSize--;
+                    // Add part to existing cable
+                    if(addPart(world, target, side.getOpposite(), partContainer, itemStack)) {
+                        if(world.isRemote) {
+                            ItemBlockCable.playPlaceSound(world, target);
+                        }
+                        if(!playerIn.capabilities.isCreativeMode) {
+                            itemStack.stackSize--;
+                        }
                     }
+                    return EnumActionResult.SUCCESS;
+                }
+            }
+
+            // Check third party actions if all else fails
+            for (IUseAction useAction : USE_ACTIONS) {
+                if (useAction.attempItemUseTarget(this, itemStack, world, pos, side)) {
                     return EnumActionResult.SUCCESS;
                 }
             }
