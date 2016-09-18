@@ -45,11 +45,17 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public void writeToNBT(NBTTagCompound tag) {
         writeGeneratedFieldsToNBT(tag);
+        if (this.capabilities != null) {
+            tag.setTag("ForgeCaps", this.capabilities.serializeNBT());
+        }
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         readGeneratedFieldsFromNBT(tag);
+        if (this.capabilities != null && tag.hasKey("ForgeCaps")) {
+            this.capabilities.deserializeNBT(tag.getCompoundTag("ForgeCaps"));
+        }
     }
 
     @Override
