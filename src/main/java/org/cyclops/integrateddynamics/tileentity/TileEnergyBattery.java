@@ -107,11 +107,15 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     }
 
     protected int addEnergyRf(int energy, boolean simulate) {
-        return RfHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+        int filled = RfHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+        consume(filled, simulate);
+        return filled;
     }
 
     protected int addEnergyTesla(int energy, boolean simulate) {
-        return TeslaHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+        int filled = TeslaHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+        consume(filled, simulate);
+        return filled;
     }
 
     protected boolean isRf() {
@@ -137,7 +141,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     protected void updateTileEntity() {
         super.updateTileEntity();
         if (getStoredEnergy() > 0 && getWorld().isBlockPowered(getPos())) {
-            addEnergy(BlockEnergyBatteryConfig.energyPerTick);
+            addEnergy(Math.min(BlockEnergyBatteryConfig.energyPerTick, getStoredEnergy()));
             markDirty();
         }
     }
