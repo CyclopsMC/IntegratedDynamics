@@ -359,8 +359,9 @@ public class PartCable extends MultipartBase implements ITickable {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (super.hasCapability(capability, facing)) {
-            return super.getCapability(capability, facing);
+        T value = super.getCapability(capability, facing);
+        if (value != null) {
+            return value;
         }
         return partContainer.getCapability(capability, facing);
     }

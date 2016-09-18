@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import com.google.common.collect.Maps;
+import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -31,9 +32,22 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     @NBTPersist
     private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
     private boolean firstTick = true;
+    private final SingleCache<String, IAspect> aspectCache;
 
     public PartStateWriterBase(int inventorySize) {
         super(inventorySize);
+        aspectCache = new SingleCache<>(new SingleCache.ICacheUpdater<String, IAspect>() {
+            @Override
+            public IAspect getNewValue(String key) {
+                return Aspects.REGISTRY.getAspect(key);
+            }
+
+            @Override
+            public boolean isKeyEqual(String cacheKey, String newKey) {
+                //noinspection StringEquality
+                return cacheKey == newKey; // Yes, we want pure equality
+            }
+        });
     }
 
     @Override
@@ -84,7 +98,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         if(this.activeAspectName == null) {
             return null;
         }
-        IAspect aspect = Aspects.REGISTRY.getAspect(this.activeAspectName);
+        IAspect aspect = aspectCache.get(this.activeAspectName);
         if(!(aspect instanceof IAspectWrite)) {
             return null;
         }
