@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -25,9 +26,9 @@ public interface IVariableFacade {
     public int getId();
 
     /**
-     * @return The optional onLabelPacket for this facade.
+     * @return The optional label for this facade.
      */
-    public String getLabel();
+    public @Nullable String getLabel();
 
     /**
      * Get the variable.

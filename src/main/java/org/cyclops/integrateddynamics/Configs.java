@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
+import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
@@ -37,6 +38,7 @@ public class Configs {
         configHandler.add(new CableFakeableConfig());
         configHandler.add(new NetworkCarrierConfig());
         configHandler.add(new PathElementConfig());
+        configHandler.add(new VariableFacadeHolderConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());

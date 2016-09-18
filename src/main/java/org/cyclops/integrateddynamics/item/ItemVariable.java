@@ -2,14 +2,17 @@ package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
+import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderDefault;
 
 import java.util.List;
 
@@ -56,9 +59,14 @@ public class ItemVariable extends ConfigurableItem {
         return super.getItemStackDisplayName(itemStack);
     }
 
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+        return new DefaultCapabilityProvider<>(VariableFacadeHolderConfig.CAPABILITY, new VariableFacadeHolderDefault(stack));
+    }
+
     public IVariableFacade getVariableFacade(ItemStack itemStack) {
-        return IntegratedDynamics._instance.getRegistryManager().
-                getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack);
+        return itemStack.hasCapability(VariableFacadeHolderConfig.CAPABILITY, null)
+                ? itemStack.getCapability(VariableFacadeHolderConfig.CAPABILITY, null).getVariableFacade() : null;
     }
 
 }
