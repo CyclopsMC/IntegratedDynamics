@@ -72,7 +72,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos);
         if(partContainerFirst != null) {
             // Add part to existing cable
-            if(addPart(world, pos, side, partContainerFirst, itemStack)) {
+            if(PartHelpers.addPart(world, pos, side, getPart(), itemStack)) {
                 if(world.isRemote) {
                     ItemBlockCable.playPlaceSound(world, pos);
                 }
@@ -90,7 +90,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
                     if (partContainer != null) {
                         if(!world.isRemote) {
-                            addPart(world, target, side.getOpposite(), partContainer, itemStack);
+                            PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack);
                             ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target);
                             if (cableFakeable != null) {
                                 CableHelpers.onCableRemoving(world, target, false);
@@ -107,7 +107,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
                 if(partContainer != null) {
                     // Add part to existing cable
-                    if(addPart(world, target, side.getOpposite(), partContainer, itemStack)) {
+                    if(PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack)) {
                         if(world.isRemote) {
                             ItemBlockCable.playPlaceSound(world, target);
                         }
@@ -127,17 +127,6 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             }
         }
         return super.onItemUse(itemStack, playerIn, world, pos, hand, side, hitX, hitY, hitZ);
-    }
-
-    protected boolean addPart(World world, BlockPos pos, EnumFacing side, IPartContainer partContainer, ItemStack itemStack) {
-        IPartType partType = getPart();
-        if(partContainer.canAddPart(side, partType)) {
-            if(!world.isRemote) {
-                partContainer.setPart(side, getPart(), partType.getState(itemStack));
-            }
-            return true;
-        }
-        return false;
     }
 
     @SuppressWarnings("rawtypes")

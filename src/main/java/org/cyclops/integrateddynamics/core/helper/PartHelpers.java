@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.Data;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -20,7 +21,6 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.*;
-import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
@@ -221,8 +221,8 @@ public class PartHelpers {
      */
     public static boolean removePart(World world, BlockPos pos, EnumFacing side, @Nullable EntityPlayer player,
                                      boolean destroyIfEmpty, boolean dropMainElement) {
-        IPartContainer partContainer = TileHelpers.getCapability(world, pos, PartContainerConfig.CAPABILITY);
-        ICableFakeable cableFakeable = TileHelpers.getCapability(world, pos, CableFakeableConfig.CAPABILITY);
+        IPartContainer partContainer = getPartContainer(world, pos);
+        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, pos);
         partContainer.removePart(side, player, dropMainElement);
 
         // Remove full cable block if this was the last part and if it was already an unreal cable.
@@ -237,7 +237,47 @@ public class PartHelpers {
     }
 
     /**
-     * Set a part at the given side.
+     * Add a part to the given side with the part state in the given item.
+     * @param world The world.
+     * @param pos The position of the container.
+     * @param side The side.
+     * @param partType The part type.
+     * @param itemStack The item holding the part state.
+     * @return If the part was added.
+     */
+    public static boolean addPart(World world, BlockPos pos, EnumFacing side, IPartType partType, ItemStack itemStack) {
+        IPartContainer partContainer = getPartContainer(world, pos);
+        if(partContainer.canAddPart(side, partType)) {
+            if(!world.isRemote) {
+                partContainer.setPart(side, partType, partType.getState(itemStack));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Add a part to the given side with the part state.
+     * @param world The world.
+     * @param pos The position of the container.
+     * @param side The side.
+     * @param partType The part type.
+     * @param partState The part state.
+     * @return If the part was added.
+     */
+    public static boolean addPart(World world, BlockPos pos, EnumFacing side, IPartType partType, IPartState partState) {
+        IPartContainer partContainer = getPartContainer(world, pos);
+        if(partContainer.canAddPart(side, partType)) {
+            if(!world.isRemote) {
+                partContainer.setPart(side, partType, partState);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Forcefully set a part at the given side.
      * @param network The network.
      * @param world The world.
      * @param pos The position of the container.
