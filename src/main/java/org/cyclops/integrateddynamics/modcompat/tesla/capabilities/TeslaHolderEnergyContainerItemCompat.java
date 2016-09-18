@@ -7,6 +7,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.cyclopscore.modcompat.capabilities.ICapabilityConstructor;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 
 import javax.annotation.Nullable;
@@ -38,12 +39,12 @@ public class TeslaHolderEnergyContainerItemCompat implements ICapabilityConstruc
 
         @Override
         public long getStoredPower() {
-            return ((ItemBlockEnergyContainer) provider.getItem()).getStoredEnergy(provider);
+            return provider.getCapability(EnergyBatteryConfig.CAPABILITY, null).getStoredEnergy();
         }
 
         @Override
         public long getCapacity() {
-            return ((ItemBlockEnergyContainer) provider.getItem()).getMaxStoredEnergy(provider);
+            return provider.getCapability(EnergyBatteryConfig.CAPABILITY, null).getMaxStoredEnergy();
         }
     }
 }

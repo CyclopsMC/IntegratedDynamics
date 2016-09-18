@@ -5,7 +5,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
+import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
+import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
 
 import java.util.List;
 
@@ -42,8 +43,8 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
     @Override
     public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         ItemStack full = new ItemStack(this);
-        ItemBlockEnergyContainer container = ((ItemBlockEnergyContainer) full.getItem());
-        container.addEnergy(full, container.getMaxStoredEnergy(full), false);
+        IEnergyBattery energyBattery = full.getCapability(EnergyBatteryConfig.CAPABILITY, null);
+        energyBattery.addEnergy(energyBattery.getMaxStoredEnergy(), false);
         list.add(full);
     }
 
