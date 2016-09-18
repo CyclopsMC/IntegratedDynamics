@@ -54,6 +54,8 @@ public class TileCableConnectable extends CyclopsTileEntity implements CyclopsTi
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        cable.updateConnections();
+        if (connected.isEmpty()) {
+            cable.updateConnections();
+        }
     }
 }

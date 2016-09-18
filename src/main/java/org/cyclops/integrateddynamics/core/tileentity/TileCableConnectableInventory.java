@@ -60,7 +60,9 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        cable.updateConnections();
+        if (connected.isEmpty()) {
+            cable.updateConnections();
+        }
     }
 
     /**
