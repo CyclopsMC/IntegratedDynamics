@@ -180,9 +180,10 @@ public class PartPartType extends MultipartBase {
             if(player.isSneaking()) {
                 PartCable cable = getPartCable();
                 if(cable == null) {
-                    // In this case, the part won't be associated with a network at all.
-                    for(ItemStack itemStack : getDrops()) {
-                        ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
+                    // In this case, the part won't be associated with a network at all,
+                    // so it definitely won't have any additional drop, so just drop the main element.
+                    if (!player.capabilities.isCreativeMode) {
+                        ItemStackHelpers.spawnItemStackToPlayer(world, pos, getItemStack(), player);
                     }
                     getContainer().removePart(this);
                 } else {
