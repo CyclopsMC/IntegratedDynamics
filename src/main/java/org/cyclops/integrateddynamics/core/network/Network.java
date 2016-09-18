@@ -1,10 +1,14 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -19,6 +23,7 @@ import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
 import org.cyclops.integrateddynamics.core.path.Cluster;
+import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 import java.util.*;
@@ -26,18 +31,20 @@ import java.util.*;
 /**
  * A network instance that can hold a set of {@link INetworkElement}s.
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
- * @param <N> The materialized type of the network.
  * @author rubensworks
  */
-public class Network<N extends INetwork<N>> implements INetwork<N> {
+public class Network implements INetwork {
 
     private Cluster baseCluster;
 
-    private final INetworkEventBus<N> eventBus = new NetworkEventBus<>();
-    private final TreeSet<INetworkElement<N>> elements = Sets.newTreeSet();
-    private TreeSet<INetworkElement<N>> updateableElements = null;
-    private TreeMap<INetworkElement<N>, Integer> updateableElementsTicks = null;
-    private Map<INetworkElement<N>, Long> lastSecondDurations = Maps.newHashMap();
+    private final INetworkEventBus eventBus = new NetworkEventBus();
+    private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
+    private TreeSet<INetworkElement> updateableElements = null;
+    private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
+    private Map<INetworkElement, Long> lastSecondDurations = Maps.newHashMap();
+
+    private final CapabilityDispatcher capabilityDispatcher;
+    private IFullNetworkListener[] fullNetworkListeners;
 
     private volatile boolean changed = false;
     private volatile boolean killed = false;
@@ -45,10 +52,32 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     private boolean crashed = false;
 
     /**
+     * Initiate a full network from the given start position.
+     * @param pathElement The path element to start from.
+     * @return The newly formed network.
+     */
+    public static Network initiateNetworkSetup(IPathElement pathElement) {
+        Network network = new Network(PathFinder.getConnectedCluster(pathElement));
+        NetworkWorldStorage.getInstance(IntegratedDynamics._instance).addNewNetwork(network);
+        return network;
+    }
+
+    /**
+     * Check if two networks are equal.
+     * @param networkA A network.
+     * @param networkB Another network.
+     * @return If they are equal.
+     */
+    public static boolean areNetworksEqual(Network networkA, Network networkB) {
+        return networkA.elements.containsAll(networkB.elements) && networkA.elements.size() == networkB.elements.size();
+    }
+
+    /**
      * This constructor should not be called, except for the process of constructing networks from NBT.
      */
     public Network() {
         this.baseCluster = new Cluster();
+        this.capabilityDispatcher = gatherCapabilities();
         onConstruct();
     }
 
@@ -63,16 +92,27 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
      */
     public Network(Cluster pathElements) {
         this.baseCluster = pathElements;
+        this.capabilityDispatcher = gatherCapabilities();
         onConstruct();
         deriveNetworkElements(baseCluster);
     }
 
-    protected void onConstruct() {
-
+    protected CapabilityDispatcher gatherCapabilities() {
+        AttachCapabilitiesEventNetwork event = new AttachCapabilitiesEventNetwork(this);
+        MinecraftForge.EVENT_BUS.post(event);
+        List<IFullNetworkListener> listeners = event.getFullNetworkListeners();
+        this.fullNetworkListeners = listeners.toArray(new IFullNetworkListener[listeners.size()]);
+        return event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities()) : null;
     }
 
-    protected N getMaterializedThis() {
-        return (N) this;
+    protected IFullNetworkListener[] gatherFullNetworkListeners() {
+        List<IFullNetworkListener> listeners = Lists.newArrayList();
+
+        return listeners.toArray(new IFullNetworkListener[listeners.size()]);
+    }
+
+    protected void onConstruct() {
+
     }
 
     private void deriveNetworkElements(Cluster pathElements) {
@@ -80,23 +120,23 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
             for (IPathElement pathElement : pathElements) {
                 World world = pathElement.getPosition().getWorld();
                 BlockPos pos = pathElement.getPosition().getBlockPos();
-                INetworkElementProvider<N> networkElementProvider = (INetworkElementProvider<N>)
+                INetworkElementProvider networkElementProvider = (INetworkElementProvider)
                         TileHelpers.getCapability(pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
                 if (networkElementProvider != null) {
-                    for(INetworkElement<N> element : networkElementProvider.createNetworkElements(world, pos)) {
+                    for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
                     }
                 }
-                INetworkCarrier<N> networkCarrier = TileHelpers.getCapability(world, pos, null, NetworkCarrierConfig.CAPABILITY);
+                INetworkCarrier networkCarrier = TileHelpers.getCapability(world, pos, null, NetworkCarrierConfig.CAPABILITY);
                 if (networkCarrier != null) {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
-                    INetwork<N> network = networkCarrier.getNetwork();
+                    INetwork network = networkCarrier.getNetwork();
                     if (network != null) {
                         network.removePathElement(pathElement);
                     }
                     networkCarrier.setNetwork(null);
-                    networkCarrier.setNetwork(getMaterializedThis());
+                    networkCarrier.setNetwork(this);
                 }
             }
             onNetworkChanged();
@@ -104,7 +144,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     }
 
     @Override
-    public INetworkEventBus<N> getEventBus() {
+    public INetworkEventBus getEventBus() {
         return this.eventBus;
     }
 
@@ -113,17 +153,6 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
      */
     public void initialize() {
         initialize(false);
-    }
-
-    /**
-     * Check if two networks are equal.
-     * @param networkA A network.
-     * @param networkB Another network.
-     * @param <N> The networkl ty
-     * @return If they are equal.
-     */
-    public static <N extends INetwork<N>> boolean areNetworksEqual(Network<N> networkA, Network<N> networkB) {
-        return networkA.elements.containsAll(networkB.elements) && networkA.elements.size() == networkB.elements.size();
     }
 
     @Override
@@ -136,6 +165,9 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setTag("baseCluster", this.baseCluster.toNBT());
         tag.setBoolean("crashed", this.crashed);
+        if (this.capabilityDispatcher != null) {
+            tag.setTag("ForgeCaps", this.capabilityDispatcher.serializeNBT());
+        }
         return tag;
     }
 
@@ -143,15 +175,24 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     public void fromNBT(NBTTagCompound tag) {
         this.baseCluster.fromNBT(tag.getCompoundTag("baseCluster"));
         this.crashed = tag.getBoolean("crashed");
+        if (this.capabilityDispatcher != null && tag.hasKey("ForgeCaps")) {
+            this.capabilityDispatcher.deserializeNBT(tag.getCompoundTag("ForgeCaps"));
+        }
         deriveNetworkElements(baseCluster);
         initialize(true);
     }
 
     @Override
-    public boolean addNetworkElement(INetworkElement<N> element, boolean networkPreinit) {
-        if(getEventBus().postCancelable(new NetworkElementAddEvent.Pre<N>(getMaterializedThis(), element))) {
+    public boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            if (!fullNetworkListener.addNetworkElement(element, networkPreinit)) {
+                return false;
+            }
+        }
+
+        if(getEventBus().postCancelable(new NetworkElementAddEvent.Pre(this, element))) {
             elements.add(element);
-            if (!element.onNetworkAddition(getMaterializedThis())) {
+            if (!element.onNetworkAddition(this)) {
                 elements.remove(element);
                 return false;
             }
@@ -159,15 +200,15 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                 addNetworkElementUpdateable(element);
             }
             if (element instanceof IEventListenableNetworkElement) {
-                IEventListenableNetworkElement<N, ?> listenableElement = (IEventListenableNetworkElement<N, ?>) element;
-                INetworkEventListener<N, ?> listener = listenableElement.getNetworkEventListener();
+                IEventListenableNetworkElement<?> listenableElement = (IEventListenableNetworkElement<?>) element;
+                INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
                 if (listener != null && listener.hasEventSubscriptions()) {
-                    for (Class<? extends INetworkEvent<N>> eventType : listener.getSubscribedEvents()) {
+                    for (Class<? extends INetworkEvent> eventType : listener.getSubscribedEvents()) {
                         getEventBus().register(listenableElement, eventType);
                     }
                 }
             }
-            getEventBus().post(new NetworkElementAddEvent.Post<N>(getMaterializedThis(), element));
+            getEventBus().post(new NetworkElementAddEvent.Post(this, element));
             onNetworkChanged();
             return true;
         }
@@ -175,7 +216,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     }
 
     @Override
-    public void addNetworkElementUpdateable(INetworkElement<N> element) {
+    public void addNetworkElementUpdateable(INetworkElement element) {
         if(element.isUpdate()) {
             updateableElements.add(element);
             updateableElementsTicks.put(element, 0);
@@ -183,24 +224,32 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     }
 
     @Override
-    public boolean removeNetworkElementPre(INetworkElement<N> element) {
-        return getEventBus().postCancelable(new NetworkElementRemoveEvent.Pre<N>(getMaterializedThis(), element));
+    public boolean removeNetworkElementPre(INetworkElement element) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            if (!fullNetworkListener.removeNetworkElementPre(element)) {
+                return false;
+            }
+        }
+        return getEventBus().postCancelable(new NetworkElementRemoveEvent.Pre(this, element));
     }
 
     @Override
-    public void removeNetworkElementPost(INetworkElement<N> element) {
+    public void removeNetworkElementPost(INetworkElement element) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.removeNetworkElementPost(element);
+        }
         if (element instanceof IEventListenableNetworkElement) {
-            IEventListenableNetworkElement<N, ?> listenableElement = (IEventListenableNetworkElement<N, ?>) element;
-            INetworkEventListener<N, ?> listener = listenableElement.getNetworkEventListener();
+            IEventListenableNetworkElement<?> listenableElement = (IEventListenableNetworkElement<?>) element;
+            INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
             if (listener != null && listener.hasEventSubscriptions()) {
                 getEventBus().unregister(listenableElement);
             }
         }
-        element.beforeNetworkKill(getMaterializedThis());
-        element.onNetworkRemoval(getMaterializedThis());
+        element.beforeNetworkKill(this);
+        element.onNetworkRemoval(this);
         elements.remove(element);
         removeNetworkElementUpdateable(element);
-        getEventBus().post(new NetworkElementRemoveEvent.Post<N>(getMaterializedThis(), element));
+        getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
         onNetworkChanged();
     }
 
@@ -217,19 +266,22 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     protected void initialize(boolean silent) {
         updateableElements = Sets.newTreeSet();
         updateableElementsTicks = Maps.newTreeMap();
-        for(INetworkElement<N> element : elements) {
+        for(INetworkElement element : elements) {
             addNetworkElementUpdateable(element);
             if(!silent) {
-                element.afterNetworkAlive(getMaterializedThis());
+                element.afterNetworkAlive(this);
             }
-            element.afterNetworkReAlive(getMaterializedThis());
+            element.afterNetworkReAlive(this);
         }
     }
 
     @Override
     public void kill() {
-        for(INetworkElement<N> element : elements) {
-            element.beforeNetworkKill(getMaterializedThis());
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.kill();
+        }
+        for(INetworkElement element : elements) {
+            element.beforeNetworkKill(this);
         }
         killed = true;
     }
@@ -244,21 +296,28 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
         return false;
     }
 
-    protected boolean canUpdate(INetworkElement<N> element) {
+    @Override
+    public boolean canUpdate(INetworkElement element) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            if (!fullNetworkListener.canUpdate(element)) {
+                return false;
+            }
+        }
         return true;
     }
 
-    protected void postUpdate(INetworkElement<N> element) {
-
+    @Override
+    public void postUpdate(INetworkElement element) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.postUpdate(element);
+        }
     }
 
-    /**
-     * When the given element is not being updated because {@link Network#canUpdate(INetworkElement)}
-     * returned false.
-     * @param element The element that is not being updated.
-     */
-    protected void onSkipUpdate(INetworkElement<N> element) {
-
+    @Override
+    public void onSkipUpdate(INetworkElement element) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.onSkipUpdate(element);
+        }
     }
 
     @Override
@@ -275,7 +334,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                 // Make sure we aren't using any unnecessary memory.
                 lastSecondDurations.clear();
             }
-            for (INetworkElement<N> element : updateableElements) {
+            for (INetworkElement element : updateableElements) {
                 long startTime = 0;
                 if (isBeingDiagnozed) {
                     startTime = System.nanoTime();
@@ -283,7 +342,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
                 if (canUpdate(element)) {
                     if(updateableElementsTicks.get(element) <= 0) {
                         updateableElementsTicks.put(element, element.getUpdateInterval());
-                        element.update(getMaterializedThis());
+                        element.update(this);
                         postUpdate(element);
                     }
                 } else {
@@ -304,26 +363,33 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     }
 
     protected void onUpdate() {
-
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.update();
+        }
     }
 
     @Override
     public boolean removePathElement(IPathElement pathElement) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            if (!fullNetworkListener.removePathElement(pathElement)) {
+                return false;
+            }
+        }
         if(baseCluster.remove(pathElement)) {
-            INetworkElementProvider<N> networkElementProvider = (INetworkElementProvider<N>) TileHelpers.getCapability(
+            INetworkElementProvider networkElementProvider = (INetworkElementProvider) TileHelpers.getCapability(
                     pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
             if (networkElementProvider != null) {
-                Collection<INetworkElement<N>> networkElements = networkElementProvider.
+                Collection<INetworkElement> networkElements = networkElementProvider.
                         createNetworkElements(pathElement.getPosition().getWorld(), pathElement.getPosition().getBlockPos());
-                for (INetworkElement<N> networkElement : networkElements) {
-                    networkElement.onPreRemoved(getMaterializedThis());
+                for (INetworkElement networkElement : networkElements) {
+                    networkElement.onPreRemoved(this);
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;
                     }
                 }
-                for (INetworkElement<N> networkElement : networkElements) {
+                for (INetworkElement networkElement : networkElements) {
                     removeNetworkElementPost(networkElement);
-                    networkElement.onPostRemoved(getMaterializedThis());
+                    networkElement.onPostRemoved(this);
                 }
                 onNetworkChanged();
                 return true;
@@ -339,16 +405,20 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
 
     @Override
     public void afterServerLoad() {
-
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.afterServerLoad();
+        }
     }
 
     @Override
     public void beforeServerStop() {
-
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.beforeServerStop();
+        }
     }
 
     @Override
-    public Set<INetworkElement<N>> getElements() {
+    public Set<INetworkElement> getElements() {
         return this.elements;
     }
 
@@ -372,7 +442,7 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     }
 
     @Override
-    public long getLastSecondDuration(INetworkElement<N> networkElement) {
+    public long getLastSecondDuration(INetworkElement networkElement) {
         Long duration = lastSecondDurations.get(networkElement);
         return duration == null ? 0 : duration;
     }
@@ -390,5 +460,15 @@ public class Network<N extends INetwork<N>> implements INetwork<N> {
     @Override
     public void setCrashed(boolean crashed) {
         this.crashed = crashed;
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability) {
+        return capabilityDispatcher != null && capabilityDispatcher.hasCapability(capability, null);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability) {
+        return capabilityDispatcher == null ? null : capabilityDispatcher.getCapability(capability, null);
     }
 }

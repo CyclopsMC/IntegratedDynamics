@@ -9,7 +9,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
  * A part network element.
  * @author rubensworks
  */
-public interface IPartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> extends IEventListenableNetworkElement<IPartNetwork, P> {
+public interface IPartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> extends IEventListenableNetworkElement<P> {
 
     /**
      * @return The part.

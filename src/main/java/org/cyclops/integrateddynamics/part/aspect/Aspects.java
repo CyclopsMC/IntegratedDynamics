@@ -28,7 +28,6 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -36,6 +35,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
@@ -556,21 +556,21 @@ public class Aspects {
                     AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
                         @Override
                         public Integer getOutput(INetwork network) {
-                            return network != null ? (network instanceof IEnergyNetwork ? ((IEnergyNetwork) network).getEnergyBatteries().size() : 0) : 0;
+                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getEnergyBatteries().size() : 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("batterycount").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_STORED =
                     AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
                         @Override
                         public Integer getOutput(INetwork network) {
-                            return network != null ? (network instanceof IEnergyNetwork ? ((IEnergyNetwork) network).getStoredEnergy() : 0) : 0;
+                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getStoredEnergy() : 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("stored").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_MAX =
                     AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
                         @Override
                         public Integer getOutput(INetwork network) {
-                            return network != null ? (network instanceof IEnergyNetwork ? ((IEnergyNetwork) network).getMaxStoredEnergy() : 0) : 0;
+                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getMaxStoredEnergy() : 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("max").buildRead();
 

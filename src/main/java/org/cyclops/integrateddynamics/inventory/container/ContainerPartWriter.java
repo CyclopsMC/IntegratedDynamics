@@ -93,9 +93,11 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
             String writeValue = "";
             int writeValueColor = 0;
             if(getPartState().hasVariable()) {
-                IPartNetwork network = (IPartNetwork) NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(), getPartContainer().getPosition().getBlockPos());
-                if (network != null) {
-                    IVariable variable = getPartState().getVariable(network);
+                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(
+                        NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
+                                getPartContainer().getPosition().getBlockPos()));
+                if (partNetwork != null) {
+                    IVariable variable = getPartState().getVariable(partNetwork);
                     if (variable != null) {
                         try {
                             IValue value = variable.getValue();

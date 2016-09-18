@@ -20,7 +20,7 @@ public class NetworkElementProviderConfig extends CapabilityConfig {
     public static NetworkElementProviderConfig _instance;
 
     @CapabilityInject(INetworkElementProvider.class)
-    public static Capability<INetworkElementProvider<?>> CAPABILITY = null;
+    public static Capability<INetworkElementProvider> CAPABILITY = null;
 
     /**
      * Make a new instance.

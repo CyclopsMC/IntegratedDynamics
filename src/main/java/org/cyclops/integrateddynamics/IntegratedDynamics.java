@@ -38,6 +38,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
+import org.cyclops.integrateddynamics.capability.network.NetworkCapabilityConstructors;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRendererRegistry;
@@ -237,6 +238,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
         MinecraftForge.EVENT_BUS.register(TickHandler.getInstance());
         MinecraftForge.EVENT_BUS.register(NoteBlockEventReceiver.getInstance());
+        MinecraftForge.EVENT_BUS.register(new NetworkCapabilityConstructors());
     }
 
     @Mod.EventHandler

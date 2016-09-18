@@ -12,10 +12,10 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 import org.cyclops.integrateddynamics.modcompat.rf.RfHelpers;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
@@ -39,17 +39,16 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
 
     public TileCoalGenerator() {
         super(1, "fuel", 64);
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton<IPartNetwork>() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
             @Override
-            public INetworkElement<IPartNetwork> createNetworkElement(World world, BlockPos blockPos) {
+            public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new CoalGeneratorNetworkElement(DimPos.of(world, blockPos));
             }
         });
     }
 
-    @Override
-    public IEnergyNetwork getNetwork() {
-        return (IEnergyNetwork) super.getNetwork();
+    public IEnergyNetwork getEnergyNetwork() {
+        return NetworkHelpers.getEnergyNetwork(getNetwork());
     }
 
     public void updateBlockState() {
@@ -78,7 +77,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     }
 
     public boolean canAddEnergy(int energy) {
-        IEnergyNetwork network = getNetwork();
+        IEnergyNetwork network = getEnergyNetwork();
         if(network != null && network.addEnergy(energy, true) == energy) {
             return true;
         }
@@ -86,7 +85,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     }
 
     protected int addEnergy(int energy) {
-        IEnergyNetwork network = getNetwork();
+        IEnergyNetwork network = getEnergyNetwork();
         int toFill = energy;
         if(network != null) {
             toFill -= network.addEnergy(toFill, false);

@@ -15,7 +15,6 @@ import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
@@ -49,9 +48,9 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
         addSlotsToSide(EnumFacing.WEST, Sets.newHashSet(SLOT_WRITE_OUT));
         addSlotsToSide(EnumFacing.EAST, Sets.newHashSet(SLOT_WRITE_IN));
 
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton<IPartNetwork>() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
             @Override
-            public INetworkElement<IPartNetwork> createNetworkElement(World world, BlockPos blockPos) {
+            public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new ProxyNetworkElement(DimPos.of(world, blockPos));
             }
         });

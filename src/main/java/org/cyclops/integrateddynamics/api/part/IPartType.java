@@ -28,7 +28,7 @@ import java.util.List;
  * @param <S> The part state type.
  * @author rubensworks
  */
-public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> extends INetworkEventListener<IPartNetwork, IPartNetworkElement<P, S>> {
+public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> extends INetworkEventListener<IPartNetworkElement<P, S>> {
 
     /**
      * @return The unique name for this part type.
@@ -201,7 +201,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param side The side this network element is/will be placed at.
      * @return A new network element instance.
      */
-    public INetworkElement<IPartNetwork> createNetworkElement(IPartContainer partContainer, DimPos pos, EnumFacing side);
+    public INetworkElement createNetworkElement(IPartContainer partContainer, DimPos pos, EnumFacing side);
 
     /**
      * Called when a part is right-clicked.

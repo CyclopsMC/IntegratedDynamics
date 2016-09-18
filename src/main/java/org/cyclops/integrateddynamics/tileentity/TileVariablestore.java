@@ -11,8 +11,8 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
@@ -49,9 +49,9 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
             addSlotsToSide(side, slots);
         }
 
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton<IPartNetwork>() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
             @Override
-            public INetworkElement<IPartNetwork> createNetworkElement(World world, BlockPos blockPos) {
+            public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new VariablestoreNetworkElement(DimPos.of(world, blockPos));
             }
         });
@@ -77,7 +77,7 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
             }
         }
 
-        IPartNetwork network = getNetwork();
+        INetwork network = getNetwork();
         if(network != null) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }

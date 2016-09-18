@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.network.event;
 
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 
 import javax.annotation.Nullable;
@@ -14,7 +14,7 @@ public class UnknownPartEvent extends NetworkEvent {
     private final String partTypeName;
     private IPartType partType;
 
-    public UnknownPartEvent(IPartNetwork network, String partTypeName) {
+    public UnknownPartEvent(INetwork network, String partTypeName) {
         super(network);
         this.partTypeName = partTypeName;
         this.partType = null;

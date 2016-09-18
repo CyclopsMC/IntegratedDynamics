@@ -12,7 +12,7 @@ import java.util.Collection;
  * {@link org.cyclops.integrateddynamics.core.helper.NetworkHelpers#onElementProviderBlockNeighborChange(World, BlockPos, Block)}.
  * @author rubensworks
  */
-public interface INetworkElementProvider<N extends INetwork> {
+public interface INetworkElementProvider {
 
     /**
      * Create network element instances for the given position.
@@ -20,6 +20,6 @@ public interface INetworkElementProvider<N extends INetwork> {
      * @param blockPos The position.
      * @return A collection of all network elements at this position.
      */
-    public Collection<INetworkElement<N>> createNetworkElements(World world, BlockPos blockPos);
+    public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos);
 
 }

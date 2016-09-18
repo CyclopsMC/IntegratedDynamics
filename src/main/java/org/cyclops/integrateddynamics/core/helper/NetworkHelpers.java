@@ -6,15 +6,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
+import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
-import org.cyclops.integrateddynamics.core.network.PartNetwork;
+import org.cyclops.integrateddynamics.core.network.Network;
 
 import javax.annotation.Nullable;
 
@@ -62,6 +61,26 @@ public class NetworkHelpers {
     }
 
     /**
+     * Get the part network capability of a network.
+     * @param network The network.
+     * @return The part network.
+     */
+    public static IPartNetwork getPartNetwork(@Nullable INetwork network) {
+        return network != null && network.hasCapability(PartNetworkConfig.CAPABILITY)
+                ? network.getCapability(PartNetworkConfig.CAPABILITY) : null;
+    }
+
+    /**
+     * Get the part network capability of a network.
+     * @param network The network.
+     * @return The part network.
+     */
+    public static IEnergyNetwork getEnergyNetwork(@Nullable INetwork network) {
+        return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY)
+                ? network.getCapability(EnergyNetworkConfig.CAPABILITY) : null;
+    }
+
+    /**
      * Form a new network starting from the given position.
      * This position should have a {@link IPathElement} capability,
      * otherwise this method will fail silently.
@@ -71,12 +90,12 @@ public class NetworkHelpers {
      * @return The newly created part network.
      * Can be null if the starting position did not have a {@link IPathElement} capability.
      */
-    public static @Nullable PartNetwork initNetwork(World world, BlockPos pos) {
+    public static @Nullable INetwork initNetwork(World world, BlockPos pos) {
         IPathElement pathElement = TileHelpers.getCapability(world, pos, null, PathElementConfig.CAPABILITY);
         if (pathElement != null) {
-            PartNetwork partNetwork = PartNetwork.initiateNetworkSetup(pathElement);
-            partNetwork.initialize();
-            return partNetwork;
+            Network network = Network.initiateNetworkSetup(pathElement);
+            network.initialize();
+            return network;
         }
         return null;
     }
@@ -92,7 +111,7 @@ public class NetworkHelpers {
     public static void onElementProviderBlockNeighborChange(World world, BlockPos pos, Block neighborBlock) {
         if (!world.isRemote) {
             INetwork network = getNetwork(world, pos);
-            INetworkElementProvider<?> networkElementProvider = getNetworkElementProvider(world, pos);
+            INetworkElementProvider networkElementProvider = getNetworkElementProvider(world, pos);
             for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                 networkElement.onNeighborBlockChange(network, world, neighborBlock);
             }

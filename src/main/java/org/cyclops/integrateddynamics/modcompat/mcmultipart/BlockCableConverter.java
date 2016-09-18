@@ -13,7 +13,7 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -46,7 +46,7 @@ public class BlockCableConverter implements IPartConverter {
             parts.add(new PartPartType(entry.getKey(), entry.getValue().getPart()));
         }
         boolean wasRealCable = tile.getCableFakeable().isRealCable();
-        IPartNetwork network = null;
+        INetwork network = null;
         if(!simulate) {
             tile.getPartContainer().silentResetPartData();
             network = tile.getNetwork();

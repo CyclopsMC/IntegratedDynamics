@@ -8,16 +8,16 @@ import org.cyclops.integrateddynamics.api.network.event.ICancelableNetworkEvent;
  * An event thrown when an {@link INetworkElement} is being removed from the network.
  * @author rubensworks
  */
-public abstract class NetworkElementRemoveEvent<N extends INetwork<N>> extends NetworkEvent<N> {
+public abstract class NetworkElementRemoveEvent extends NetworkEvent {
 
-    private final INetworkElement<N> networkElement;
+    private final INetworkElement networkElement;
 
-    protected NetworkElementRemoveEvent(N network, INetworkElement<N> networkElement) {
+    protected NetworkElementRemoveEvent(INetwork network, INetworkElement networkElement) {
         super(network);
         this.networkElement = networkElement;
     }
 
-    public INetworkElement<N> getNetworkElement() {
+    public INetworkElement getNetworkElement() {
         return this.networkElement;
     }
 
@@ -25,11 +25,11 @@ public abstract class NetworkElementRemoveEvent<N extends INetwork<N>> extends N
      * A cancelable event before the element is removed from the network.
      * Canceling this event will prevent the network element from being removed.
      */
-    public static class Pre<N extends INetwork<N>> extends NetworkElementRemoveEvent<N> implements ICancelableNetworkEvent<N> {
+    public static class Pre extends NetworkElementRemoveEvent implements ICancelableNetworkEvent {
 
         private boolean canceled = false;
 
-        public Pre(N network, INetworkElement<N> networkElement) {
+        public Pre(INetwork network, INetworkElement networkElement) {
             super(network, networkElement);
         }
 
@@ -48,9 +48,9 @@ public abstract class NetworkElementRemoveEvent<N extends INetwork<N>> extends N
     /**
      * After the element has been removed from the network.
      */
-    public static class Post<N extends INetwork<N>> extends NetworkElementRemoveEvent<N> {
+    public static class Post extends NetworkElementRemoveEvent {
 
-        public Post(N network, INetworkElement<N> networkElement) {
+        public Post(INetwork network, INetworkElement networkElement) {
             super(network, networkElement);
         }
 

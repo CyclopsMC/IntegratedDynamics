@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
  * Base implementation for an energy consuming network element.
  * @author rubensworks
  */
-public abstract class ConsumingNetworkElementBase<N extends INetwork> extends NetworkElementBase<N> implements IEnergyConsumingNetworkElement<N> {
+public abstract class ConsumingNetworkElementBase extends NetworkElementBase implements IEnergyConsumingNetworkElement {
 
     @Override
     public int getConsumptionRate() {
@@ -15,7 +15,7 @@ public abstract class ConsumingNetworkElementBase<N extends INetwork> extends Ne
     }
 
     @Override
-    public void postUpdate(N network, boolean updated) {
+    public void postUpdate(INetwork network, boolean updated) {
 
     }
 }

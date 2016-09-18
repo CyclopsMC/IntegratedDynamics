@@ -11,11 +11,11 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 
 /**
- * A network that can hold parts.
+ * A network capability that can hold parts.
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
  * @author rubensworks
  */
-public interface IPartNetwork extends INetwork<IPartNetwork>, ILazyExpressionValueCache {
+public interface IPartNetwork extends ILazyExpressionValueCache {
 
     /**
      * Add the given part state to the network.

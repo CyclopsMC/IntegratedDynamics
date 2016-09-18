@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.inventory.container.TileInventoryContainerConfigu
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 
 /**
@@ -37,7 +38,7 @@ public class ContainerActiveVariableBase<T extends TileActiveVariableBase<?>> ex
         if(!MinecraftHelpers.isClientSide()) {
             String readValue = "";
             int readValueColor = 0;
-            IVariable variable = getTile().getVariable(getTile().getNetwork());
+            IVariable variable = getTile().getVariable(NetworkHelpers.getPartNetwork(getTile().getNetwork()));
             if(variable != null) {
                 try {
                     IValue value = variable.getValue();

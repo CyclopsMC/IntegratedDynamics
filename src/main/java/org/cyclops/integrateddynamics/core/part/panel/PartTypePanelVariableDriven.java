@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -34,6 +35,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
@@ -59,12 +61,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    protected Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> constructNetworkEventActions() {
-        Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> actions = super.constructNetworkEventActions();
+    protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
+        Map<Class<? extends INetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
         actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
             @Override
-            public void onAction(IPartNetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
-                onVariableContentsUpdated(event.getNetwork(), target, state);
+            public void onAction(INetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
+                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+                onVariableContentsUpdated(partNetwork, target, state);
             }
         });
         return actions;

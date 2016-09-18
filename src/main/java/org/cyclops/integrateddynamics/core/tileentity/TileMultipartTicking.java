@@ -15,8 +15,8 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
@@ -73,7 +73,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Getter
     private final CableTileMultipartTicking cable;
     @Getter
-    private final INetworkCarrier<IPartNetwork> networkCarrier;
+    private final INetworkCarrier networkCarrier;
     @Getter
     private final ICableFakeable cableFakeable;
 
@@ -84,7 +84,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         addCapabilityInternal(FacadeableConfig.CAPABILITY, new FacadeableTileMultipartTicking(this));
         cable = new CableTileMultipartTicking(this);
         addCapabilityInternal(CableConfig.CAPABILITY, cable);
-        networkCarrier = new NetworkCarrierDefault<>();
+        networkCarrier = new NetworkCarrierDefault();
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
         cableFakeable = new CableFakeableMultipartTicking(this);
         addCapabilityInternal(CableFakeableConfig.CAPABILITY, cableFakeable);
@@ -176,7 +176,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         sendUpdate();
     }
 
-    public IPartNetwork getNetwork() {
+    public INetwork getNetwork() {
         return networkCarrier.getNetwork();
     }
 

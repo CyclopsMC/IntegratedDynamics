@@ -4,7 +4,7 @@ package org.cyclops.integrateddynamics.api.network;
  * An energy consuming network element.
  * @author rubensworks
  */
-public interface IEnergyConsumingNetworkElement<N extends INetwork> extends INetworkElement<N> {
+public interface IEnergyConsumingNetworkElement extends INetworkElement {
 
     /**
      * @return The energy consumption rate of this part for the given state.
@@ -18,6 +18,6 @@ public interface IEnergyConsumingNetworkElement<N extends INetwork> extends INet
      * @param network The network.
      * @param updated If the {@link INetworkElement#update(INetwork)} was called.
      */
-    public void postUpdate(N network, boolean updated);
+    public void postUpdate(INetwork network, boolean updated);
 
 }

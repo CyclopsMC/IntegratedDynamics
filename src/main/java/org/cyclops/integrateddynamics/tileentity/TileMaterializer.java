@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 import org.cyclops.integrateddynamics.network.MaterializerNetworkElement;
@@ -42,9 +43,9 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
         addSlotsToSide(EnumFacing.WEST, Sets.newHashSet(SLOT_WRITE_OUT));
         addSlotsToSide(EnumFacing.EAST, Sets.newHashSet(SLOT_WRITE_IN));
 
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton<IPartNetwork>() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
             @Override
-            public INetworkElement<IPartNetwork> createNetworkElement(World world, BlockPos blockPos) {
+            public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new MaterializerNetworkElement(DimPos.of(world, blockPos));
             }
         });
@@ -61,7 +62,8 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     }
 
     protected boolean canWrite() {
-        return getNetwork() != null && getVariable(getNetwork()) != null && getErrors().isEmpty();
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(getNetwork());
+        return partNetwork != null && getVariable(partNetwork) != null && getErrors().isEmpty();
     }
 
     @Override
@@ -81,7 +83,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
 
     public ItemStack writeMaterialized(boolean generateId, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        IVariable variable = getVariable(getNetwork());
+        IVariable variable = getVariable(NetworkHelpers.getPartNetwork(getNetwork()));
         try {
             final IValueType valueType = variable.getType();
             final IValue value = variable.getType().materialize(variable.getValue());

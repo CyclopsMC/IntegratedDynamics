@@ -1,17 +1,16 @@
 package org.cyclops.integrateddynamics.api.network.event;
 
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 
 /**
- * An event posted in the {@link IPartNetwork} event bus.
+ * An event posted in the {@link INetwork} event bus.
  * @author rubensworks
  */
-public interface INetworkEvent<N extends INetwork<N>> {
+public interface INetworkEvent {
 
     /**
      * @return The network this event is thrown in.
      */
-    public N getNetwork();
+    public INetwork getNetwork();
 
 }

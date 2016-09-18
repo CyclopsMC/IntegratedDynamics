@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.network;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
@@ -16,13 +17,13 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
     }
 
     @Override
-    public boolean onNetworkAddition(IPartNetwork network) {
-        return network.addVariableContainer(getPos());
+    public boolean onNetworkAddition(INetwork network) {
+        return NetworkHelpers.getPartNetwork(network).addVariableContainer(getPos());
     }
 
     @Override
-    public void onNetworkRemoval(IPartNetwork network) {
-        network.removeVariableContainer(getPos());
+    public void onNetworkRemoval(INetwork network) {
+        NetworkHelpers.getPartNetwork(network).removeVariableContainer(getPos());
     }
 
     @Override

@@ -6,8 +6,10 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 
@@ -19,7 +21,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class CoalGeneratorNetworkElement extends NetworkElementBase<IPartNetwork> {
+public class CoalGeneratorNetworkElement extends NetworkElementBase {
 
     private final DimPos pos;
 
@@ -36,13 +38,17 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase<IPartNetwork
     }
 
     @Override
-    public boolean onNetworkAddition(IPartNetwork network) {
-        return network.addVariableContainer(getPos());
+    public boolean onNetworkAddition(INetwork network) {
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+        return partNetwork != null && partNetwork.addVariableContainer(getPos());
     }
 
     @Override
-    public void onNetworkRemoval(IPartNetwork network) {
-        network.removeVariableContainer(getPos());
+    public void onNetworkRemoval(INetwork network) {
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+        if (partNetwork != null) {
+            partNetwork.removeVariableContainer(getPos());
+        }
     }
 
     @Override

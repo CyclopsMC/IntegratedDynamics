@@ -44,7 +44,7 @@ public final class TickHandler {
                 tick = (tick + 1) % MinecraftHelpers.SECOND_IN_TICKS;
             }
             boolean shouldSendTickDurationInfo = isBeingDiagnozed && tick == 0;
-            for(INetwork<?> network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+            for(INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                 if (isBeingDiagnozed && (shouldSendTickDurationInfo || network.hasChanged())) {
                     NetworkDiagnostics.getInstance().sendNetworkUpdate(network);
                     network.resetLastSecondDurations();

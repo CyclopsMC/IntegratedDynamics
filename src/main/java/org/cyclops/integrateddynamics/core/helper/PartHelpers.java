@@ -18,8 +18,8 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
@@ -61,7 +61,7 @@ public class PartHelpers {
      * @param partType The part type.
      * @return A possibly non-null part type.
      */
-    public static IPartType validatePartType(IPartNetwork network, String partTypeName, @Nullable IPartType partType) {
+    public static IPartType validatePartType(INetwork network, String partTypeName, @Nullable IPartType partType) {
         if(network != null && partType == null) {
             UnknownPartEvent event = new UnknownPartEvent(network, partTypeName);
             network.getEventBus().post(event);
@@ -127,7 +127,7 @@ public class PartHelpers {
      * @param partTag The tag to read from.
      * @return The part data.
      */
-    public static Pair<EnumFacing, IPartType> readPartTypeFromNBT(@Nullable IPartNetwork network, BlockPos pos, NBTTagCompound partTag) {
+    public static Pair<EnumFacing, IPartType> readPartTypeFromNBT(@Nullable INetwork network, BlockPos pos, NBTTagCompound partTag) {
         String partTypeName = partTag.getString("__partType");
         IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(partTypeName));
         if(partType != null) {
@@ -153,7 +153,7 @@ public class PartHelpers {
      * @param partTag The tag to read from.
      * @return The part data.
      */
-    public static Pair<EnumFacing, ? extends PartStateHolder<?, ?>> readPartFromNBT(@Nullable IPartNetwork network, BlockPos pos, NBTTagCompound partTag) {
+    public static Pair<EnumFacing, ? extends PartStateHolder<?, ?>> readPartFromNBT(@Nullable INetwork network, BlockPos pos, NBTTagCompound partTag) {
         Pair<EnumFacing, IPartType> partData = readPartTypeFromNBT(network, pos, partTag);
         if(partData != null) {
             IPartState partState = partData.getValue().fromNBT(partTag);
@@ -172,7 +172,7 @@ public class PartHelpers {
      * @param partData The map of part data to write to.
      * @param world The world.
      */
-    public static void readPartsFromNBT(@Nullable IPartNetwork network, BlockPos pos, NBTTagCompound tag,
+    public static void readPartsFromNBT(@Nullable INetwork network, BlockPos pos, NBTTagCompound tag,
                                         Map<EnumFacing, PartStateHolder<?, ?>> partData, @Nullable World world) {
         Map<EnumFacing, PartStateHolder<?, ?>> oldPartData = ImmutableMap.copyOf(partData);
         partData.clear();
@@ -293,7 +293,7 @@ public class PartHelpers {
      * @param callback The callback for the part state holder.
      * @return If the part could be placed.
      */
-    public static boolean setPart(@Nullable IPartNetwork network, World world, BlockPos pos, EnumFacing side, IPartType part, IPartState partState, IPartStateHolderCallback callback) {
+    public static boolean setPart(@Nullable INetwork network, World world, BlockPos pos, EnumFacing side, IPartType part, IPartState partState, IPartStateHolderCallback callback) {
         callback.onSet(PartStateHolder.of(part, partState));
         if(network != null) {
             IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);

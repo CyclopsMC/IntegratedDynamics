@@ -25,8 +25,8 @@ import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.*;
@@ -59,7 +59,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     private final String name;
     @Getter
     private final PartRenderPosition partRenderPosition;
-    private final Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> networkEventActions;
+    private final Map<Class<? extends INetworkEvent>, IEventAction> networkEventActions;
 
     public PartTypeBase(String name, PartRenderPosition partRenderPosition) {
         if(hasGui()) {
@@ -152,8 +152,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public INetworkElement<IPartNetwork> createNetworkElement(IPartContainer partContainer, DimPos pos, EnumFacing side) {
+    public INetworkElement createNetworkElement(IPartContainer partContainer, DimPos pos, EnumFacing side) {
         return new PartNetworkElement(this, PartTarget.fromCenter(pos, side));
     }
 
@@ -205,7 +206,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * Override this to register your network event actions.
      * @return The event actions.
      */
-    protected Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> constructNetworkEventActions() {
+    protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
         return Maps.newHashMap();
     }
 
@@ -215,19 +216,19 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public final Set<Class<? extends INetworkEvent<IPartNetwork>>> getSubscribedEvents() {
+    public final Set<Class<? extends INetworkEvent>> getSubscribedEvents() {
         return networkEventActions.keySet();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final void onEvent(INetworkEvent<IPartNetwork> event, IPartNetworkElement<P, S> networkElement) {
+    public final void onEvent(INetworkEvent event, IPartNetworkElement<P, S> networkElement) {
         networkEventActions.get(event.getClass()).onAction(event.getNetwork(), networkElement.getTarget(), networkElement.getPartState(), event);
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {
 
-        public void onAction(IPartNetwork network, PartTarget target, S state, E event);
+        public void onAction(INetwork network, PartTarget target, S state, E event);
 
     }
 

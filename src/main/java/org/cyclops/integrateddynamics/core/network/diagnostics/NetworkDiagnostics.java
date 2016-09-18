@@ -40,7 +40,7 @@ public class NetworkDiagnostics {
     public synchronized void registerPlayer(EntityPlayerMP player) {
         if (!players.contains(player.getPersistentID())) {
             players.add(player.getPersistentID());
-            for (INetwork<?> network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+            for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                 sendNetworkUpdateToPlayer(player, network);
             }
 
@@ -51,7 +51,7 @@ public class NetworkDiagnostics {
         players.remove(player.getPersistentID());
     }
 
-    public void sendNetworkUpdateToPlayer(EntityPlayerMP player, INetwork<?> network) {
+    public void sendNetworkUpdateToPlayer(EntityPlayerMP player, INetwork network) {
         List<RawPartData> rawParts = Lists.newArrayList();
         for (INetworkElement networkElement : network.getElements()) {
             if (networkElement instanceof IPartNetworkElement) {

@@ -6,8 +6,8 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public abstract class TileNetworkElement<T extends TileCableConnectableInventory> extends ConsumingNetworkElementBase<IPartNetwork>  {
+public abstract class TileNetworkElement<T extends TileCableConnectableInventory> extends ConsumingNetworkElementBase  {
 
     private final DimPos pos;
 
@@ -45,7 +45,7 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
     }
 
     @Override
-    public void afterNetworkReAlive(IPartNetwork network) {
+    public void afterNetworkReAlive(INetwork network) {
         super.afterNetworkReAlive(network);
         getTile().afterNetworkReAlive();
     }

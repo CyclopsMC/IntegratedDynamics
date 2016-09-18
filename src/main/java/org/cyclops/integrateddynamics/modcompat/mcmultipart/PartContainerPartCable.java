@@ -11,7 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerDefault;
@@ -84,7 +84,7 @@ public class PartContainerPartCable extends PartContainerDefault {
     }
 
     @Override
-    protected IPartNetwork getNetwork() {
+    protected INetwork getNetwork() {
         return partCable.getNetwork();
     }
 

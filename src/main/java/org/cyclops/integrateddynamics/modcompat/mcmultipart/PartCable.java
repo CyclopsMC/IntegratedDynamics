@@ -34,8 +34,8 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -103,7 +103,7 @@ public class PartCable extends MultipartBase implements ITickable {
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderPartContainer(partContainer));
         cable = new CablePartCable(this);
         addCapabilityInternal(CableConfig.CAPABILITY, cable);
-        networkCarrier = new NetworkCarrierDefault<>();
+        networkCarrier = new NetworkCarrierDefault();
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
         addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementPart(this, cable));
         this.forceDisconnected = forceDisconnected;
@@ -315,8 +315,8 @@ public class PartCable extends MultipartBase implements ITickable {
         super.readFromNBT(tag);
     }
 
-    protected IPartNetwork getNetwork() {
-        return (IPartNetwork) networkCarrier.getNetwork();
+    protected INetwork getNetwork() {
+        return networkCarrier.getNetwork();
     }
 
     protected boolean hasPart(EnumFacing side) {

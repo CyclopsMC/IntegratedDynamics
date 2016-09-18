@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
@@ -49,7 +49,7 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
     }
 
     @Override
-    protected IPartNetwork getNetwork() {
+    protected INetwork getNetwork() {
         return getTile().getNetwork();
     }
 

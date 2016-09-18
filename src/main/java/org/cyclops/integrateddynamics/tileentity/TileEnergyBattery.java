@@ -12,7 +12,6 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
@@ -39,10 +38,10 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     private int energy;
 
     public TileEnergyBattery() {
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton<IPartNetwork>() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
             @Override
-            public INetworkElement<IPartNetwork> createNetworkElement(World world, BlockPos blockPos) {
-                return (INetworkElement) new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
+            public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
+                return new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
             }
         });
         addCapabilityInternal(EnergyBatteryConfig.CAPABILITY, this);

@@ -7,8 +7,8 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.InventoryTileEntity;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableTile;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
@@ -72,8 +72,8 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
 
     }
 
-    public IPartNetwork getNetwork() {
-        return (IPartNetwork) this.networkCarrier.getNetwork();
+    public INetwork getNetwork() {
+        return this.networkCarrier.getNetwork();
     }
 
 }

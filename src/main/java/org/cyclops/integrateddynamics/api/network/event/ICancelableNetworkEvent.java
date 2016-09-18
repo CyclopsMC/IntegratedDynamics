@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.api.network.event;
 
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 
 /**
- * An event posted in the {@link IPartNetwork} event bus.
+ * An event posted in the {@link INetwork} event bus.
  * @author rubensworks
  */
-public interface ICancelableNetworkEvent<N extends INetwork<N>> extends INetworkEvent<N> {
+public interface ICancelableNetworkEvent extends INetworkEvent {
 
     /**
      * Cancel this event from further processing.

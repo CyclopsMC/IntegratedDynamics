@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -239,7 +239,7 @@ public class PartPartType extends MultipartBase {
         return null;
     }
 
-    public IPartNetwork getNetwork() {
+    public INetwork getNetwork() {
         PartCable partCable = getPartCable();
         if(partCable != null) {
             return partCable.getNetwork();

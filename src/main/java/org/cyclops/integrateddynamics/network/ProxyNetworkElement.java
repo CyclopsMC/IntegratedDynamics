@@ -4,7 +4,9 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
 
@@ -14,7 +16,7 @@ import javax.annotation.Nullable;
  * Network element for coal generators.
  * @author rubensworks
  */
-public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implements IEventListenableNetworkElement<IPartNetwork, TileProxy> {
+public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implements IEventListenableNetworkElement<TileProxy> {
 
     public ProxyNetworkElement(DimPos pos) {
         super(pos);
@@ -25,13 +27,17 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
     }
 
     @Override
-    public boolean onNetworkAddition(IPartNetwork network) {
+    public boolean onNetworkAddition(INetwork network) {
         if(super.onNetworkAddition(network)) {
-            if(!network.addProxy(getId(), getPos())) {
+            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+            if (partNetwork == null) {
+                return false;
+            }
+            if(!partNetwork.addProxy(getId(), getPos())) {
                 IntegratedDynamics.clog(Level.WARN, "A proxy already existed in the network, this is possibly a " +
                         "result from item duplication.");
                 getTile().generateNewProxyId();
-                return network.addProxy(getId(), getPos());
+                return partNetwork.addProxy(getId(), getPos());
             }
             return true;
         }
@@ -39,9 +45,12 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
     }
 
     @Override
-    public void onNetworkRemoval(IPartNetwork network) {
+    public void onNetworkRemoval(INetwork network) {
         super.onNetworkRemoval(network);
-        network.removeProxy(getId());
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+        if (partNetwork != null) {
+            partNetwork.removeProxy(getId());
+        }
     }
 
     @Override

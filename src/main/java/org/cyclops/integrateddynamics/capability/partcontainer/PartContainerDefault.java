@@ -16,11 +16,13 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import javax.annotation.Nullable;
@@ -228,7 +230,11 @@ public abstract class PartContainerDefault implements IPartContainer {
     protected abstract void sendUpdate();
     protected abstract World getWorld();
     protected abstract BlockPos getPos();
-    protected abstract IPartNetwork getNetwork();
+    protected abstract INetwork getNetwork();
+
+    protected IPartNetwork getPartNetwork() {
+        return NetworkHelpers.getPartNetwork(getNetwork());
+    }
 
     /**
      * @return The raw part data.

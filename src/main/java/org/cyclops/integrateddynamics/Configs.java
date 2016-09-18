@@ -8,7 +8,9 @@ import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
+import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
+import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
@@ -39,6 +41,8 @@ public class Configs {
         configHandler.add(new NetworkCarrierConfig());
         configHandler.add(new PathElementConfig());
         configHandler.add(new VariableFacadeHolderConfig());
+        configHandler.add(new PartNetworkConfig());
+        configHandler.add(new EnergyNetworkConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());

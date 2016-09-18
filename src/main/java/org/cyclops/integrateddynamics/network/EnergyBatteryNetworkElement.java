@@ -7,8 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
@@ -20,7 +21,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class EnergyBatteryNetworkElement extends NetworkElementBase<IEnergyNetwork> {
+public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     private final DimPos pos;
 
@@ -39,17 +40,17 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase<IEnergyNetwo
     }
 
     @Override
-    public void update(IEnergyNetwork network) {
+    public void update(INetwork network) {
 
     }
 
     @Override
-    public void beforeNetworkKill(IEnergyNetwork network) {
+    public void beforeNetworkKill(INetwork network) {
 
     }
 
     @Override
-    public void afterNetworkAlive(IEnergyNetwork network) {
+    public void afterNetworkAlive(INetwork network) {
 
     }
 
@@ -59,22 +60,22 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase<IEnergyNetwo
     }
 
     @Override
-    public boolean onNetworkAddition(IEnergyNetwork network) {
-        return network.addEnergyBattery(getPos());
+    public boolean onNetworkAddition(INetwork network) {
+        return NetworkHelpers.getEnergyNetwork(network).addEnergyBattery(getPos());
     }
 
     @Override
-    public void onNetworkRemoval(IEnergyNetwork network) {
-        network.removeEnergyBattery(getPos());
+    public void onNetworkRemoval(INetwork network) {
+        NetworkHelpers.getEnergyNetwork(network).removeEnergyBattery(getPos());
     }
 
     @Override
-    public void onPreRemoved(IEnergyNetwork network) {
+    public void onPreRemoved(INetwork network) {
 
     }
 
     @Override
-    public void onNeighborBlockChange(IEnergyNetwork network, IBlockAccess world, Block neighborBlock) {
+    public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighborBlock) {
 
     }
 

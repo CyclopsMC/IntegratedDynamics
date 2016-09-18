@@ -219,7 +219,7 @@ public class CableHelpers {
 
             // Get all drops from the network elements this cable provides.
             List<ItemStack> itemStacks = Lists.newLinkedList();
-            INetworkElementProvider<?> networkElementProvider = NetworkHelpers.getNetworkElementProvider(world, pos);
+            INetworkElementProvider networkElementProvider = NetworkHelpers.getNetworkElementProvider(world, pos);
             if (networkElementProvider != null) {
                 for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                     networkElement.addDrops(itemStacks, dropMainElement);

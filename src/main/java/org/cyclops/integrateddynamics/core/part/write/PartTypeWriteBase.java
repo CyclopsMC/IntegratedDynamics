@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -25,6 +26,7 @@ import org.cyclops.integrateddynamics.client.gui.GuiPartWriter;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
@@ -46,12 +48,13 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    protected Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> constructNetworkEventActions() {
-        Map<Class<? extends INetworkEvent<IPartNetwork>>, IEventAction> actions = super.constructNetworkEventActions();
+    protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
+        Map<Class<? extends INetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
         actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
             @Override
-            public void onAction(IPartNetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
-                onVariableContentsUpdated(event.getNetwork(), target, state);
+            public void onAction(INetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
+                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+                onVariableContentsUpdated(partNetwork, target, state);
             }
         });
         return actions;

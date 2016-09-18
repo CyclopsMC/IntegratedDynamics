@@ -17,7 +17,7 @@ import java.util.List;
  * These instances are used as a simple way of referring to these elements.
  * @author rubensworks
  */
-public interface INetworkElement<N extends INetwork> extends Comparable<INetworkElement<N>> {
+public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * @return The tick interval to update this element.
@@ -33,26 +33,26 @@ public interface INetworkElement<N extends INetwork> extends Comparable<INetwork
      * Update at the tick interval specified.
      * @param network The network to update in.
      */
-    public void update(N network);
+    public void update(INetwork network);
 
     /**
      * Called right before the network is terminated or will be reset.
      * @param network The network to update in.
      */
-    public void beforeNetworkKill(N network);
+    public void beforeNetworkKill(INetwork network);
 
     /**
      * Called right after this network is initialized.
      * @param network The network to update in.
      */
-    public void afterNetworkAlive(N network);
+    public void afterNetworkAlive(INetwork network);
 
     /**
      * Called right after this network has come alive again,
      * for example after a network restart.
      * @param network The network to update in.
      */
-    public void afterNetworkReAlive(N network);
+    public void afterNetworkReAlive(INetwork network);
 
     /**
      * Add the itemstacks to drop when this element is removed.
@@ -66,27 +66,27 @@ public interface INetworkElement<N extends INetwork> extends Comparable<INetwork
      * @param network The network.
      * @return If the addition succeeded.
      */
-    public boolean onNetworkAddition(N network);
+    public boolean onNetworkAddition(INetwork network);
 
     /**
      * Called when this element is removed from the network.
      * @param network The network.
      */
-    public void onNetworkRemoval(N network);
+    public void onNetworkRemoval(INetwork network);
 
     /**
      * Called when this element is about to be removed.
      * This is called before {@link INetwork#removeNetworkElementPre(INetworkElement)}.
      * @param network The network.
      */
-    public void onPreRemoved(N network);
+    public void onPreRemoved(INetwork network);
 
     /**
      * Called when this element has been removed.
      * This is called after {@link INetwork#removeNetworkElementPost(INetworkElement)}.
      * @param network The network.
      */
-    public void onPostRemoved(N network);
+    public void onPostRemoved(INetwork network);
 
     /**
      * Called when a neighbouring block is updated, more specifically when
@@ -95,6 +95,6 @@ public interface INetworkElement<N extends INetwork> extends Comparable<INetwork
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock block type of the neighbour that was updated.
      */
-    public void onNeighborBlockChange(@Nullable N network, IBlockAccess world, Block neighborBlock);
+    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighborBlock);
 
 }
