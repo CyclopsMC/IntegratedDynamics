@@ -30,8 +30,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -363,4 +365,21 @@ public class PartCable extends MultipartBase implements ITickable {
         return super.getCapability(capability, facing);
     }
 
+    /* --------------- Start IDynamicRedstone --------------- */
+
+    // Not supported by MCMP...
+
+    /* --------------- Start IDynamicLight --------------- */
+
+    @Override
+    public int getLightValue() {
+        int light = 0;
+        for(EnumFacing side : EnumFacing.values()) {
+            IDynamicLight dynamicLight = TileHelpers.getCapability(getWorld(), getPos(), side, DynamicLightConfig.CAPABILITY);
+            if (dynamicLight != null) {
+                light = Math.max(light, dynamicLight.getLightLevel());
+            }
+        }
+        return light;
+    }
 }
