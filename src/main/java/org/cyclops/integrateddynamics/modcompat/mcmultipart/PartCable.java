@@ -32,15 +32,11 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.block.IDynamicLight;
-import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
-import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
@@ -87,13 +83,9 @@ public class PartCable extends MultipartBase implements ITickable {
     private boolean allowsRedstone = false;
     @Getter
     private final PartContainerPartCable partContainer;
-    private final INetworkElementProvider<IPartNetwork> networkElementProvider;
-    private final IDynamicLight dynamicLight;
-    private final IDynamicRedstone dynamicRedstone;
     private final ICable cable;
     @Getter
     private final INetworkCarrier networkCarrier;
-    private final IPathElement pathElement;
 
     private boolean addSilent = false;
     private boolean sendFurtherUpdates = true;
@@ -105,13 +97,18 @@ public class PartCable extends MultipartBase implements ITickable {
     public PartCable(EnumFacingMap<PartHelpers.PartStateHolder<?, ?>> partData, EnumFacingMap<Boolean> forceDisconnected) {
         partContainer = new PartContainerPartCable(this);
         partContainer.setPartData(partData);
-        networkElementProvider = new NetworkElementProviderPartContainer(partContainer);
-        dynamicLight = new DynamicLightPart(this);
-        dynamicRedstone = new DynamicRedstonePart(this);
+        addCapabilityInternal(PartContainerConfig.CAPABILITY, partContainer);
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderPartContainer(partContainer));
         cable = new CablePartCable(this);
+        addCapabilityInternal(CableConfig.CAPABILITY, cable);
         networkCarrier = new NetworkCarrierDefault<>();
-        pathElement = new PathElementPart(this, cable);
+        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
+        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementPart(this, cable));
         this.forceDisconnected = forceDisconnected;
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, new DynamicLightPart(this));
+            addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, new DynamicRedstonePart(this));
+        }
     }
 
     /**
@@ -355,40 +352,11 @@ public class PartCable extends MultipartBase implements ITickable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return capability == PartContainerConfig.CAPABILITY
-                || capability == NetworkElementProviderConfig.CAPABILITY
-                || capability == DynamicLightConfig.CAPABILITY
-                || capability == DynamicRedstoneConfig.CAPABILITY
-                || capability == CableConfig.CAPABILITY
-                || capability == NetworkCarrierConfig.CAPABILITY
-                || capability == PathElementConfig.CAPABILITY
-                || partContainer.hasCapability(capability, facing)
-                || super.hasCapability(capability, facing);
+        return partContainer.hasCapability(capability, facing) || super.hasCapability(capability, facing);
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == PartContainerConfig.CAPABILITY) {
-            return (T) partContainer;
-        }
-        if (capability == NetworkElementProviderConfig.CAPABILITY) {
-            return (T) networkElementProvider;
-        }
-        if (capability == DynamicLightConfig.CAPABILITY) {
-            return (T) dynamicLight;
-        }
-        if (capability == DynamicRedstoneConfig.CAPABILITY) {
-            return (T) dynamicRedstone;
-        }
-        if (capability == CableConfig.CAPABILITY) {
-            return (T) cable;
-        }
-        if (capability == NetworkCarrierConfig.CAPABILITY) {
-            return (T) networkCarrier;
-        }
-        if (capability == PathElementConfig.CAPABILITY) {
-            return (T) pathElement;
-        }
         if (partContainer.hasCapability(capability, facing)) {
             return partContainer.getCapability(capability, facing);
         }
