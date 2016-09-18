@@ -53,6 +53,10 @@ public class CollidableComponentCableCenter implements ICollidable.IComponent<En
 
     @Override
     public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
+        if (!world.isRemote) {
+            CableHelpers.removeCable(world, pos, player);
+            return true;
+        }
         return false;
     }
 
