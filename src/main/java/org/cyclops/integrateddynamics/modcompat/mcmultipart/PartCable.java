@@ -354,15 +354,15 @@ public class PartCable extends MultipartBase implements ITickable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return partContainer.hasCapability(capability, facing) || super.hasCapability(capability, facing);
+        return super.hasCapability(capability, facing) || partContainer.hasCapability(capability, facing);
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (partContainer.hasCapability(capability, facing)) {
-            return partContainer.getCapability(capability, facing);
+        if (super.hasCapability(capability, facing)) {
+            return super.getCapability(capability, facing);
         }
-        return super.getCapability(capability, facing);
+        return partContainer.getCapability(capability, facing);
     }
 
     /* --------------- Start IDynamicRedstone --------------- */

@@ -209,16 +209,14 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return partContainer.hasCapability(capability, facing)
-                || super.hasCapability(capability, facing);
+        return super.hasCapability(capability, facing) || partContainer.hasCapability(capability, facing);
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        T t = partContainer.getCapability(capability, facing);
-        if (t != null) {
-            return t;
+        if (super.hasCapability(capability, facing)) {
+            return super.getCapability(capability, facing);
         }
-        return super.getCapability(capability, facing);
+        return partContainer.getCapability(capability, facing);
     }
 }
