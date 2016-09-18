@@ -30,7 +30,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
@@ -88,6 +87,7 @@ public class PartCable extends MultipartBase implements ITickable {
     private final ICable cable;
     @Getter
     private final INetworkCarrier networkCarrier;
+    private final EnumFacingMap<IDynamicLight> dynamicLights;
 
     private boolean addSilent = false;
     private boolean sendFurtherUpdates = true;
@@ -107,8 +107,11 @@ public class PartCable extends MultipartBase implements ITickable {
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
         addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementPart(this, cable));
         this.forceDisconnected = forceDisconnected;
+        dynamicLights = EnumFacingMap.newMap();
         for (EnumFacing facing : EnumFacing.VALUES) {
-            addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, new DynamicLightPart(this));
+            IDynamicLight dynamicLight = new DynamicLightPart(this);
+            dynamicLights.put(facing, dynamicLight);
+            addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, dynamicLight);
             addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, new DynamicRedstonePart(this));
         }
     }
@@ -376,7 +379,7 @@ public class PartCable extends MultipartBase implements ITickable {
     public int getLightValue() {
         int light = 0;
         for(EnumFacing side : EnumFacing.values()) {
-            IDynamicLight dynamicLight = TileHelpers.getCapability(getWorld(), getPos(), side, DynamicLightConfig.CAPABILITY);
+            IDynamicLight dynamicLight = dynamicLights.get(side);
             if (dynamicLight != null) {
                 light = Math.max(light, dynamicLight.getLightLevel());
             }
