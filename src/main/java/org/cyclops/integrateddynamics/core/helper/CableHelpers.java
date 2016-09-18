@@ -220,11 +220,13 @@ public class CableHelpers {
             // Get all drops from the network elements this cable provides.
             List<ItemStack> itemStacks = Lists.newLinkedList();
             INetworkElementProvider<?> networkElementProvider = NetworkHelpers.getNetworkElementProvider(world, pos);
-            for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-                networkElement.addDrops(itemStacks, dropMainElement);
-            }
-            for (ItemStack itemStack : itemStacks) {
-                Block.spawnAsEntity(world, pos, itemStack);
+            if (networkElementProvider != null) {
+                for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
+                    networkElement.addDrops(itemStacks, dropMainElement);
+                }
+                for (ItemStack itemStack : itemStacks) {
+                    Block.spawnAsEntity(world, pos, itemStack);
+                }
             }
 
             // If the cable has a network, remove it from the network.
