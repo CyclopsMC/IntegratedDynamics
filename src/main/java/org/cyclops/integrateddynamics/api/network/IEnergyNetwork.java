@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.network;
 
+import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
 
 import java.util.Set;
 
@@ -9,7 +9,7 @@ import java.util.Set;
  * A network capability that holds energy.
  * @author rubensworks
  */
-public interface IEnergyNetwork extends IEnergyBattery {
+public interface IEnergyNetwork extends IEnergyStorage {
 
     /**
      * Add the position of a energy storage battery that must be accessible to the network.

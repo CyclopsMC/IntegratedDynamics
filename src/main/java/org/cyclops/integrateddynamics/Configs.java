@@ -6,7 +6,6 @@ import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
-import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
@@ -35,7 +34,6 @@ public class Configs {
         configHandler.add(new DynamicRedstoneConfig());
         configHandler.add(new FacadeableConfig());
         configHandler.add(new VariableContainerConfig());
-        configHandler.add(new EnergyBatteryConfig());
         configHandler.add(new CableConfig());
         configHandler.add(new CableFakeableConfig());
         configHandler.add(new NetworkCarrierConfig());

@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.core.block.BlockContainerCabled;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 

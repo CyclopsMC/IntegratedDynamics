@@ -563,14 +563,14 @@ public class Aspects {
                     AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
                         @Override
                         public Integer getOutput(INetwork network) {
-                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getStoredEnergy() : 0;
+                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getEnergyStored() : 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("stored").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_MAX =
                     AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
                         @Override
                         public Integer getOutput(INetwork network) {
-                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getMaxStoredEnergy() : 0;
+                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getMaxEnergyStored() : 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("max").buildRead();
 

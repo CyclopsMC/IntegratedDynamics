@@ -4,10 +4,10 @@ import net.darkhax.tesla.api.ITeslaProducer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.cyclopscore.modcompat.capabilities.ICapabilityConstructor;
 import org.cyclops.integrateddynamics.Capabilities;
-import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 
 import javax.annotation.Nullable;
@@ -39,7 +39,7 @@ public class TeslaProducerEnergyContainerItemCompat implements ICapabilityConstr
 
         @Override
         public long takePower(long power, boolean simulated) {
-            return provider.getCapability(EnergyBatteryConfig.CAPABILITY, null).consume((int) Math.min(power, Integer.MAX_VALUE), simulated);
+            return provider.getCapability(CapabilityEnergy.ENERGY, null).extractEnergy((int) Math.min(power, Integer.MAX_VALUE), simulated);
         }
     }
 }

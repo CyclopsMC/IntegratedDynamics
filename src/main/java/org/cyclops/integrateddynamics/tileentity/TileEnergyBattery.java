@@ -6,16 +6,16 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
-import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectable;
@@ -32,7 +32,7 @@ import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
         @Optional.Interface(iface = "cofh.api.energy.IEnergyProvider", modid = Reference.MOD_RF_API, striprefs = true),
         @Optional.Interface(iface = "cofh.api.energy.IEnergyReceiver", modid = Reference.MOD_RF_API, striprefs = true)
 })
-public class TileEnergyBattery extends TileCableConnectable implements IEnergyBattery, IEnergyProvider, IEnergyReceiver {
+public class TileEnergyBattery extends TileCableConnectable implements IEnergyStorage, IEnergyProvider, IEnergyReceiver {
 
     @NBTPersist
     private int energy;
@@ -44,7 +44,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
                 return new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
             }
         });
-        addCapabilityInternal(EnergyBatteryConfig.CAPABILITY, this);
+        addCapabilityInternal(CapabilityEnergy.ENERGY, this);
     }
 
     protected boolean isCreative() {
@@ -52,22 +52,32 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     }
 
     @Override
-    public int getStoredEnergy() {
+    public int getEnergyStored() {
         if(isCreative()) return Integer.MAX_VALUE;
         return this.energy;
     }
 
     @Override
-    public int getMaxStoredEnergy() {
+    public int getMaxEnergyStored() {
         if(isCreative()) return Integer.MAX_VALUE;
         return BlockEnergyBatteryConfig.capacity;
+    }
+
+    @Override
+    public boolean canExtract() {
+        return true;
+    }
+
+    @Override
+    public boolean canReceive() {
+        return true;
     }
 
     public void updateBlockState() {
         if(!isCreative()) {
             IBlockState blockState = getWorld().getBlockState(getPos());
             if (blockState.getBlock() == BlockEnergyBattery.getInstance()) {
-                int fill = (int) Math.floor(((float) energy * (BlockEnergyBattery.FILL.getAllowedValues().size() - 1)) / (float) getMaxStoredEnergy());
+                int fill = (int) Math.floor(((float) energy * (BlockEnergyBattery.FILL.getAllowedValues().size() - 1)) / (float) getMaxEnergyStored());
                 getWorld().setBlockState(getPos(), blockState.withProperty(BlockEnergyBattery.FILL, fill));
             }
         }
@@ -82,10 +92,10 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     }
 
     @Override
-    public int addEnergy(int energy, boolean simulate) {
+    public int receiveEnergy(int energy, boolean simulate) {
         if(!isCreative()) {
-            int stored = getStoredEnergy();
-            int newEnergy = Math.min(stored + energy, getMaxStoredEnergy());
+            int stored = getEnergyStored();
+            int newEnergy = Math.min(stored + energy, getMaxEnergyStored());
             if(!simulate) {
                 setEnergy(newEnergy);
             }
@@ -95,9 +105,9 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     }
 
     @Override
-    public int consume(int energy, boolean simulate) {
+    public int extractEnergy(int energy, boolean simulate) {
         if(isCreative()) return energy;
-        int stored = getStoredEnergy();
+        int stored = getEnergyStored();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {
             setEnergy(newEnergy);
@@ -107,13 +117,13 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
 
     protected int addEnergyRf(int energy, boolean simulate) {
         int filled = RfHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
-        consume(filled, simulate);
+        extractEnergy(filled, simulate);
         return filled;
     }
 
     protected int addEnergyTesla(int energy, boolean simulate) {
         int filled = TeslaHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
-        consume(filled, simulate);
+        extractEnergy(filled, simulate);
         return filled;
     }
 
@@ -139,8 +149,8 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (getStoredEnergy() > 0 && getWorld().isBlockPowered(getPos())) {
-            addEnergy(Math.min(BlockEnergyBatteryConfig.energyPerTick, getStoredEnergy()));
+        if (getEnergyStored() > 0 && getWorld().isBlockPowered(getPos())) {
+            addEnergy(Math.min(BlockEnergyBatteryConfig.energyPerTick, getEnergyStored()));
             markDirty();
         }
     }
@@ -152,19 +162,19 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return consume(maxExtract, simulate);
+        return extractEnergy(maxExtract, simulate);
     }
 
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int getEnergyStored(EnumFacing from) {
-        return getStoredEnergy();
+        return getMaxEnergyStored();
     }
 
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int getMaxEnergyStored(EnumFacing from) {
-        return getMaxStoredEnergy();
+        return getMaxEnergyStored();
     }
 
     @Optional.Method(modid = Reference.MOD_RF_API)
@@ -176,6 +186,6 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergyBa
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        return addEnergy(maxReceive, simulate);
+        return receiveEnergy(maxReceive, simulate);
     }
 }

@@ -7,6 +7,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,16 +17,14 @@ import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
-import org.cyclops.integrateddynamics.api.block.IEnergyContainerBlock;
-import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
-import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryItemBlockEnergyContainer;
+import org.cyclops.integrateddynamics.block.IEnergyContainerBlock;
+import org.cyclops.integrateddynamics.capability.energystorage.EnergyStorageItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 
 /**
- * {@link ItemBlock} that can be used for blocks that implement the {@link IEnergyBattery} capability.
+ * {@link ItemBlock} that can be used for blocks that implement the {@link IEnergyStorage} capability.
  * Instances of this will also keep it's energy level.
  * @author rubensworks
  *
@@ -52,8 +52,8 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
     	return block;
     }
 
-    protected IEnergyBattery getEnergyBattery(ItemStack itemStack) {
-        return itemStack.getCapability(EnergyBatteryConfig.CAPABILITY, null);
+    protected IEnergyStorage getEnergyBattery(ItemStack itemStack) {
+        return itemStack.getCapability(CapabilityEnergy.ENERGY, null);
     }
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -61,9 +61,9 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean par4) {
         super.addInformation(itemStack, entityPlayer, list, par4);
-        IEnergyBattery energyBattery = getEnergyBattery(itemStack);
-        int amount = energyBattery.getStoredEnergy();
-        int capacity = energyBattery.getMaxStoredEnergy();
+        IEnergyStorage energyStorage = getEnergyBattery(itemStack);
+        int amount = energyStorage.getEnergyStored();
+        int capacity = energyStorage.getMaxEnergyStored();
         String line = String.format("%,d", amount) + " / " + String.format("%,d", capacity) + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
         list.add(IInformationProvider.ITEM_PREFIX + line);
     }
@@ -75,15 +75,15 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
 
     @Override
     public double getDurabilityForDisplay(ItemStack itemStack) {
-        IEnergyBattery energyBattery = getEnergyBattery(itemStack);
-        double amount = energyBattery.getStoredEnergy();
-        double capacity = energyBattery.getMaxStoredEnergy();
+        IEnergyStorage energyStorage = getEnergyBattery(itemStack);
+        double amount = energyStorage.getEnergyStored();
+        double capacity = energyStorage.getMaxEnergyStored();
         return (capacity - amount) / capacity;
     }
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new DefaultCapabilityProvider<>(EnergyBatteryConfig.CAPABILITY, new EnergyBatteryItemBlockEnergyContainer(this, stack));
+        return new DefaultCapabilityProvider<>(CapabilityEnergy.ENERGY, new EnergyStorageItemBlockEnergyContainer(this, stack));
     }
 
     /*
@@ -93,24 +93,24 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
-        return getEnergyBattery(container).addEnergy(maxReceive, simulate);
+        return getEnergyBattery(container).receiveEnergy(maxReceive, simulate);
     }
 
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
-        return getEnergyBattery(container).consume(maxExtract, simulate);
+        return getEnergyBattery(container).extractEnergy(maxExtract, simulate);
     }
 
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int getEnergyStored(ItemStack container) {
-        return getEnergyBattery(container).getStoredEnergy();
+        return getEnergyBattery(container).getEnergyStored();
     }
 
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int getMaxEnergyStored(ItemStack container) {
-        return getEnergyBattery(container).getMaxStoredEnergy();
+        return getEnergyBattery(container).getMaxEnergyStored();
     }
 }

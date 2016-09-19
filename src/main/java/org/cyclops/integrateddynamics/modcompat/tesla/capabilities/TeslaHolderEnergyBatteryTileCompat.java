@@ -37,12 +37,12 @@ public class TeslaHolderEnergyBatteryTileCompat extends SimpleCapabilityConstruc
 
         @Override
         public long getStoredPower() {
-            return provider.getStoredEnergy();
+            return provider.getEnergyStored();
         }
 
         @Override
         public long getCapacity() {
-            return provider.getMaxStoredEnergy();
+            return provider.getMaxEnergyStored();
         }
     }
 }

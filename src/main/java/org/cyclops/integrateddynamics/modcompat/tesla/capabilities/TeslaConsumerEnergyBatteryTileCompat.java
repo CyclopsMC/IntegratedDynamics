@@ -37,7 +37,7 @@ public class TeslaConsumerEnergyBatteryTileCompat extends SimpleCapabilityConstr
 
         @Override
         public long givePower(long power, boolean simulated) {
-            return provider.addEnergy((int) Math.min(power, Integer.MAX_VALUE), simulated);
+            return provider.receiveEnergy((int) Math.min(power, Integer.MAX_VALUE), simulated);
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.api.block;
+package org.cyclops.integrateddynamics.block;
 
 /**
  * An interface for blocks that can hold energy.

@@ -4,9 +4,9 @@ import net.minecraft.block.SoundType;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.api.block.IEnergyBattery;
-import org.cyclops.integrateddynamics.capability.energybattery.EnergyBatteryConfig;
 
 import java.util.List;
 
@@ -43,8 +43,8 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
     @Override
     public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         ItemStack full = new ItemStack(this);
-        IEnergyBattery energyBattery = full.getCapability(EnergyBatteryConfig.CAPABILITY, null);
-        energyBattery.addEnergy(energyBattery.getMaxStoredEnergy(), false);
+        IEnergyStorage energyStorage = full.getCapability(CapabilityEnergy.ENERGY, null);
+        energyStorage.receiveEnergy(energyStorage.getMaxEnergyStored(), false);
         list.add(full);
     }
 

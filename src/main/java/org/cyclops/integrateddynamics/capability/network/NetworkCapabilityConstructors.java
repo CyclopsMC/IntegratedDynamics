@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.capability.network;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.Reference;
@@ -24,6 +25,8 @@ public class NetworkCapabilityConstructors {
                 new DefaultCapabilityProvider<>(PartNetworkConfig.CAPABILITY, partNetwork));
         event.addCapability(new ResourceLocation(Reference.MOD_ID, "energyNetwork"),
                 new DefaultCapabilityProvider<>(EnergyNetworkConfig.CAPABILITY, energyNetwork));
+        event.addCapability(new ResourceLocation(Reference.MOD_ID, "energyStorageNetwork"),
+                new DefaultCapabilityProvider<>(CapabilityEnergy.ENERGY, energyNetwork));
         event.addFullNetworkListener(partNetwork);
         event.addFullNetworkListener(energyNetwork);
     }
