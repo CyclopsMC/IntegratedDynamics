@@ -38,7 +38,7 @@ public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
      */
     public GuiLabeller(EntityPlayer player, int itemIndex) {
         super(new ContainerLabeller(player, itemIndex));
-        ContainerLabeller container = ((ContainerLabeller) getContainer());
+        ContainerLabeller container = getContainer();
         container.setGui(this);
     }
 

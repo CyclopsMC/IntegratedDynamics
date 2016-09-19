@@ -74,6 +74,7 @@ item.items.integrateddynamics.variableTransformer.output.name=Output Variable Tr
 item.items.integrateddynamics.variableTransformer.input.name=Input Variable Transformer
 item.items.integrateddynamics.menrilBerries.name=Menril Berries
 item.items.integrateddynamics.menrilBerries.info=Tasty and illuminating
+item.items.integrateddynamics.portableLogicProgrammer.name=Portable Logic Programmer
 
 # Fluids
 fluid.fluids.integrateddynamics.menrilresin=Menril Resin

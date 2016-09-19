@@ -19,14 +19,14 @@ import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeOperatorValueChangedPacket;
 
 import java.util.List;
@@ -97,7 +97,7 @@ public class ValueTypeOperatorElement extends ValueTypeElement implements IDropd
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
         return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
@@ -105,7 +105,7 @@ public class ValueTypeOperatorElement extends ValueTypeElement implements IDropd
 
         private final ValueTypeOperatorElement element;
 
-        public SubGuiRenderPattern(ValueTypeOperatorElement element, int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+        public SubGuiRenderPattern(ValueTypeOperatorElement element, int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             this.element = element;
         }

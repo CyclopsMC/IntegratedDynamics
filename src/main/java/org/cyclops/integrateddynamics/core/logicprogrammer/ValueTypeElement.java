@@ -15,13 +15,13 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
@@ -30,10 +30,10 @@ import java.util.List;
  * Element for value type.
  * @author rubensworks
  */
-public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> {
+public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> {
 
     @Getter
-    private ValueTypeGuiElement<GuiLogicProgrammer, ContainerLogicProgrammer> innerGuiElement;
+    private ValueTypeGuiElement<GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> innerGuiElement;
 
     public ValueTypeElement(IValueType valueType) {
         innerGuiElement = new ValueTypeGuiElement<>(valueType, getRenderPattern());
@@ -156,7 +156,7 @@ public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRen
     @Override
     @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+                                                  GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
         return new ValueTypeElementSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

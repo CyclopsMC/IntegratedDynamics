@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeOperatorElement;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * Packet for sending a button packet for the exalted crafting.
@@ -49,8 +49,8 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 
 	@Override
 	public void actionServer(World world, EntityPlayerMP player) {
-		if(player.openContainer instanceof ContainerLogicProgrammer) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammer) player.openContainer).getActiveElement();
+		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
 			if(element instanceof ValueTypeOperatorElement) {
 				IOperator operator;
 				try {
@@ -59,7 +59,7 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 					operator = null;
 				}
 				((ValueTypeOperatorElement) element).setSelectedOperator(operator);
-                ((ContainerLogicProgrammer) player.openContainer).onDirty();
+                ((ContainerLogicProgrammerBase) player.openContainer).onDirty();
 			}
 		}
 	}

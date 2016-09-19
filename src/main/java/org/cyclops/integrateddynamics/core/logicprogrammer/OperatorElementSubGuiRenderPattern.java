@@ -9,17 +9,17 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-class OperatorElementSubGuiRenderPattern extends SubGuiConfigRenderPattern<OperatorElement, GuiLogicProgrammer, ContainerLogicProgrammer> {
+class OperatorElementSubGuiRenderPattern extends SubGuiConfigRenderPattern<OperatorElement, GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> {
 
     public OperatorElementSubGuiRenderPattern(OperatorElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                              GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+                                              GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
@@ -37,7 +37,7 @@ class OperatorElementSubGuiRenderPattern extends SubGuiConfigRenderPattern<Opera
             if (temporaryInputSlots.getStackInSlot(i) == null) {
                 Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
                 if (gui.isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
-                        GuiLogicProgrammer.BOX_HEIGHT, GuiLogicProgrammer.BOX_HEIGHT, mouseX, mouseY)) {
+                        GuiLogicProgrammerPortable.BOX_HEIGHT, GuiLogicProgrammerPortable.BOX_HEIGHT, mouseX, mouseY)) {
                     gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
                 }
             }
@@ -46,8 +46,8 @@ class OperatorElementSubGuiRenderPattern extends SubGuiConfigRenderPattern<Opera
         // Output type tooltip
         IValueType outputType = operator.getOutputType();
         if (!container.hasWriteItemInSlot()) {
-            if (gui.isPointInRegion(ContainerLogicProgrammer.OUTPUT_X, ContainerLogicProgrammer.OUTPUT_Y,
-                    GuiLogicProgrammer.BOX_HEIGHT, GuiLogicProgrammer.BOX_HEIGHT, mouseX, mouseY)) {
+            if (gui.isPointInRegion(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
+                    GuiLogicProgrammerPortable.BOX_HEIGHT, GuiLogicProgrammerPortable.BOX_HEIGHT, mouseX, mouseY)) {
                 gui.drawTooltip(getValueTypeTooltip(outputType), mouseX - guiLeft, mouseY - guiTop);
             }
         }

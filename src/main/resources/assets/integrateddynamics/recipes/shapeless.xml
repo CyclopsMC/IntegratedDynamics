@@ -36,6 +36,28 @@
 	</recipe>
 
 	<recipe type="shapeless">
+		<condition type="config">logicProgrammer</condition>
+		<condition type="config">portableLogicProgrammer</condition>
+		<input>
+			<item>integrateddynamics:logicProgrammer</item>
+		</input>
+		<output>
+			<item>integrateddynamics:portableLogicProgrammer</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
+		<condition type="config">portableLogicProgrammer</condition>
+		<condition type="config">logicProgrammer</condition>
+		<input>
+			<item>integrateddynamics:portableLogicProgrammer</item>
+		</input>
+		<output>
+			<item>integrateddynamics:logicProgrammer</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
 		<condition type="config">coalGenerator</condition>
 		<condition type="config">energyBattery</condition>
 		<input>

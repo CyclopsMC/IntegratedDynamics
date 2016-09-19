@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeListElement;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * Packet for sending a button packet for the exalted crafting.
@@ -48,11 +48,11 @@ public class LogicProgrammerValueTypeListValueChangedPacket extends PacketCodec 
 
 	@Override
 	public void actionServer(World world, EntityPlayerMP player) {
-		if(player.openContainer instanceof ContainerLogicProgrammer) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammer) player.openContainer).getActiveElement();
+		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
 			if(element instanceof ValueTypeListElement) {
 				((ValueTypeListElement) element).setServerValue(getListValue());
-				((ContainerLogicProgrammer) player.openContainer).onDirty();
+				((ContainerLogicProgrammerBase) player.openContainer).onDirty();
 			}
 		}
 	}

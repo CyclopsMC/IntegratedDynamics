@@ -9,7 +9,7 @@ import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeElement;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * Packet for sending a button packet for the exalted crafting.
@@ -42,11 +42,11 @@ public class LogicProgrammerValueTypeValueChangedPacket extends PacketCodec {
 
 	@Override
 	public void actionServer(World world, EntityPlayerMP player) {
-		if(player.openContainer instanceof ContainerLogicProgrammer) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammer) player.openContainer).getActiveElement();
+		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
 			if(element instanceof ValueTypeElement) {
 				((ValueTypeElement) element).getInnerGuiElement().setInputString(value);
-                ((ContainerLogicProgrammer) player.openContainer).onDirty();
+                ((ContainerLogicProgrammerBase) player.openContainer).onDirty();
 			}
 		}
 	}

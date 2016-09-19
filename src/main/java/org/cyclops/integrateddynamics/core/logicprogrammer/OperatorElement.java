@@ -15,11 +15,11 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class OperatorElement implements ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammer, ContainerLogicProgrammer> {
+public class OperatorElement implements ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> {
 
     private final IOperator operator;
     private IVariableFacade[] inputVariables;
@@ -166,7 +166,7 @@ public class OperatorElement implements ILogicProgrammerElement<SubGuiConfigRend
     @Override
     @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+                                                  GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
         return new OperatorElementSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

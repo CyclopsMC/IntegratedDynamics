@@ -7,7 +7,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * Packet for sending a button packet for the exalted crafting.
@@ -43,8 +43,8 @@ public class LogicProgrammerActivateElementPacket extends PacketCodec {
 
 	@Override
 	public void actionServer(World world, EntityPlayerMP player) {
-		if(player.openContainer instanceof ContainerLogicProgrammer) {
-			((ContainerLogicProgrammer) player.openContainer).setActiveElementById(typeId, elementId);
+		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
+			((ContainerLogicProgrammerBase) player.openContainer).setActiveElementById(typeId, elementId);
 		}
 	}
 	

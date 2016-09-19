@@ -24,13 +24,13 @@ import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeListValueChangedPacket;
 
 import java.io.IOException;
@@ -171,7 +171,7 @@ public class ValueTypeListElement extends ValueTypeElement {
     @Override
     @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+                                                  GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
         return masterGui = new MasterSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
@@ -179,21 +179,21 @@ public class ValueTypeListElement extends ValueTypeElement {
      * Sub gui that holds the list element value type panel and the panel for browsing through the elements.
      */
     @SideOnly(Side.CLIENT)
-    protected static class MasterSubGuiRenderPattern extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammer, ContainerLogicProgrammer> {
+    protected static class MasterSubGuiRenderPattern extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> {
 
         private final int baseX;
         private final int baseY;
         private final int maxWidth;
         private final int maxHeight;
-        private final GuiLogicProgrammer gui;
-        private final ContainerLogicProgrammer container;
+        private final GuiLogicProgrammerPortable gui;
+        private final ContainerLogicProgrammerBase container;
 
         protected ListElementSubGui elementSubGui = null;
         protected int lastGuiLeft;
         protected int lastGuiTop;
 
         public MasterSubGuiRenderPattern(ValueTypeListElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                         GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+                                         GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             subGuiHolder.addSubGui(new SelectionSubGui(element, baseX, baseY, maxWidth, maxHeight, gui, container));
             this.baseX = baseX;
@@ -228,8 +228,8 @@ public class ValueTypeListElement extends ValueTypeElement {
 
             // Output type tooltip
             if(!container.hasWriteItemInSlot()) {
-                if(gui.isPointInRegion(ContainerLogicProgrammer.OUTPUT_X, ContainerLogicProgrammer.OUTPUT_Y,
-                        GuiLogicProgrammer.BOX_HEIGHT, GuiLogicProgrammer.BOX_HEIGHT, mouseX, mouseY)) {
+                if(gui.isPointInRegion(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
+                        GuiLogicProgrammerPortable.BOX_HEIGHT, GuiLogicProgrammerPortable.BOX_HEIGHT, mouseX, mouseY)) {
                     gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
                 }
             }
@@ -240,13 +240,13 @@ public class ValueTypeListElement extends ValueTypeElement {
      * Selection panel for the list element value type.
      */
     @SideOnly(Side.CLIENT)
-    protected static class SelectionSubGui extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammer, ContainerLogicProgrammer> implements IInputListener {
+    protected static class SelectionSubGui extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> implements IInputListener {
 
         private GuiArrowedListField<IValueType> valueTypeSelector = null;
         private GuiButton arrowAdd;
 
         public SelectionSubGui(ValueTypeListElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                               GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+                               GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
         }
 
@@ -300,14 +300,14 @@ public class ValueTypeListElement extends ValueTypeElement {
      * Panel for browsing through the list elements and updating them.
      */
     @SideOnly(Side.CLIENT)
-    protected static class ListElementSubGui extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammer, ContainerLogicProgrammer> {
+    protected static class ListElementSubGui extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> {
 
         private GuiButtonArrow arrowLeft;
         private GuiButtonArrow arrowRight;
         private GuiButton arrowRemove;
 
         public ListElementSubGui(ValueTypeListElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                               GuiLogicProgrammer gui, ContainerLogicProgrammer container) {
+                               GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             ValueTypeSubGuiRenderPattern subGui = element.subElementGuis.get(element.activeElement);
             if(subGui == null) {
