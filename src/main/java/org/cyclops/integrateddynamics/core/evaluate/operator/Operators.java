@@ -23,6 +23,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -1084,6 +1085,42 @@ public final class Operators {
                     return a;
                 }
             }).build());
+
+    /**
+     * Check if the item is an RF container item
+     */
+    public static final IOperator OBJECT_ITEMSTACK_ISFECONTAINER = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isfecontainer")
+            .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_BOOLEAN.build(new IOperatorValuePropagator<IEnergyStorage, Boolean>() {
+                @Override
+                public Boolean getOutput(IEnergyStorage input) throws EvaluationException {
+                    return input != null;
+                }
+            })).build());
+
+    /**
+     * Get the storage energy
+     */
+    public static final IOperator OBJECT_ITEMSTACK_STOREDFE = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("storedfe")
+            .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_INT.build(new IOperatorValuePropagator<IEnergyStorage, Integer>() {
+                @Override
+                public Integer getOutput(IEnergyStorage input) throws EvaluationException {
+                    return input != null ? input.getEnergyStored() : 0;
+                }
+            })).build());
+
+    /**
+     * Get the energy capacity
+     */
+    public static final IOperator OBJECT_ITEMSTACK_FECAPACITY = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("fecapacity")
+            .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_INT.build(new IOperatorValuePropagator<IEnergyStorage, Integer>() {
+                @Override
+                public Integer getOutput(IEnergyStorage input) throws EvaluationException {
+                    return input != null ? input.getMaxEnergyStored() : 0;
+                }
+            })).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------

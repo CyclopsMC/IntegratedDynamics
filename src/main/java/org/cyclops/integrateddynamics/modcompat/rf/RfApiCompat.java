@@ -17,7 +17,8 @@ import org.cyclops.integrateddynamics.modcompat.rf.evaluate.operator.OperatorBui
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
- * Mod compat for the Charset mod.
+ * Mod compat for the RF API.
+ * TODO: remove in next major MC update.
  * @author rubensworks
  *
  */
@@ -80,7 +81,7 @@ public class RfApiCompat implements IApiCompat {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return false;
 	}
 
 	@Override
