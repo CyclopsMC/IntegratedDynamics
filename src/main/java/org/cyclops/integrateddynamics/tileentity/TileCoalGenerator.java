@@ -6,6 +6,8 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -25,7 +27,7 @@ import org.cyclops.integrateddynamics.network.CoalGeneratorNetworkElement;
  * @author rubensworks
  */
 @Optional.Interface(iface = "cofh.api.energy.IEnergyConnection", modid = Reference.MOD_RF_API, striprefs = true)
-public class TileCoalGenerator extends TileCableConnectableInventory implements IEnergyConnection {
+public class TileCoalGenerator extends TileCableConnectableInventory implements IEnergyConnection, IEnergyStorage {
 
     public static final int MAX_PROGRESS = 13;
     public static final int ENERGY_PER_TICK = 20;
@@ -44,6 +46,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
                 return new CoalGeneratorNetworkElement(DimPos.of(world, blockPos));
             }
         });
+        addCapabilityInternal(CapabilityEnergy.ENERGY, this);
     }
 
     public IEnergyNetwork getEnergyNetwork() {
@@ -120,6 +123,36 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
         }
     }
 
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public int getEnergyStored() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored() {
+        return 0;
+    }
+
+    @Override
+    public boolean canExtract() {
+        return false;
+    }
+
+    @Override
+    public boolean canReceive() {
+        return false;
+    }
+
     /*
      * ------------------ RF API ------------------
      */
@@ -129,5 +162,4 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     public boolean canConnectEnergy(EnumFacing from) {
         return true;
     }
-
 }
