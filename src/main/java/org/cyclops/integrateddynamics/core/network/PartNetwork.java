@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.Level;
@@ -38,11 +39,11 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     @Getter
     @Setter
     private INetwork network;
-    private Map<Integer, PartPos> partPositions = Maps.newHashMap();
+    private TIntObjectMap<PartPos> partPositions = new TIntObjectHashMap<>();
     private List<DimPos> variableContainerPositions = Lists.newArrayList();
     private Map<Integer, IVariableFacade> compositeVariableCache = null;
-    private Map<Integer, IValue> lazyExpressionValueCache = Maps.newHashMap();
-    private Map<Integer, DimPos> proxyPositions = Maps.newHashMap();
+    private TIntObjectMap<IValue> lazyExpressionValueCache = new TIntObjectHashMap<>();
+    private TIntObjectMap<DimPos> proxyPositions = new TIntObjectHashMap<>();
 
     private volatile boolean partsChanged = false;
 
