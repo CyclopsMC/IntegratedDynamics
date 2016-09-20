@@ -15,10 +15,9 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
+import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
-import org.cyclops.integrateddynamics.modcompat.rf.RfHelpers;
-import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
 import org.cyclops.integrateddynamics.network.CoalGeneratorNetworkElement;
 
 /**
@@ -68,20 +67,12 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
         return currentlyBurning < currentlyBurningMax;
     }
 
-    protected boolean isRf() {
-        return RfHelpers.isRf();
-    }
-
-    protected boolean isTesla() {
-        return TeslaHelpers.isTesla();
-    }
-
     public boolean canAddEnergy(int energy) {
         IEnergyNetwork network = getEnergyNetwork();
         if(network != null && network.receiveEnergy(energy, true) == energy) {
             return true;
         }
-        return (isRf() && addEnergyRf(energy, true) == energy) || (isTesla() && addEnergyTesla(energy, true) == energy);
+        return addEnergyFe(energy, true) == energy;
     }
 
     protected int addEnergy(int energy) {
@@ -90,13 +81,14 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
         if(network != null) {
             toFill -= network.receiveEnergy(toFill, false);
         }
-        if(toFill > 0 && isRf()) {
-            toFill -= addEnergyRf(toFill, false);
-        }
-        if(toFill > 0 && isTesla()) {
-            toFill -= addEnergyTesla(toFill, false);
+        if(toFill > 0) {
+            toFill -= addEnergyFe(toFill, false);
         }
         return energy - toFill;
+    }
+
+    protected int addEnergyFe(int energy, boolean simulate) {
+        return EnergyHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
     }
 
     @Override
@@ -126,14 +118,6 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
                 }
             }
         }
-    }
-
-    protected int addEnergyRf(int energy, boolean simulate) {
-        return RfHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
-    }
-
-    protected int addEnergyTesla(int energy, boolean simulate) {
-        return TeslaHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
     }
 
     /*

@@ -3,6 +3,10 @@ package org.cyclops.integrateddynamics.modcompat.rf;
 import cofh.api.energy.IEnergyContainerItem;
 import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.modcompat.IApiCompat;
 import org.cyclops.integrateddynamics.Reference;
@@ -11,10 +15,13 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.modcompat.rf.aspect.RfAspects;
 import org.cyclops.integrateddynamics.modcompat.rf.evaluate.operator.OperatorBuilders;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
+
+import javax.annotation.Nullable;
 
 /**
  * Mod compat for the RF API.
@@ -71,6 +78,14 @@ public class RfApiCompat implements IApiCompat {
 							return input != null ? input.getLeft().getMaxEnergyStored(input.getRight()) : 0;
 						}
 					})).build());
+
+			EnergyHelpers.addEnergyStorageProxy(new EnergyHelpers.IEnergyStorageProxy() {
+				@Nullable
+				@Override
+				public IEnergyStorage getEnergyStorageProxy(IBlockAccess world, BlockPos pos, EnumFacing facing) {
+					return new EnergyStorageRf(world, pos, facing);
+				}
+			});
 		}
 	}
 

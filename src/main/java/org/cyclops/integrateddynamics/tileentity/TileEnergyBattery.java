@@ -18,9 +18,8 @@ import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
+import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectable;
-import org.cyclops.integrateddynamics.modcompat.rf.RfHelpers;
-import org.cyclops.integrateddynamics.modcompat.tesla.TeslaHelpers;
 import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
 
 /**
@@ -115,35 +114,14 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         return stored - newEnergy;
     }
 
-    protected int addEnergyRf(int energy, boolean simulate) {
-        int filled = RfHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
-        extractEnergy(filled, simulate);
-        return filled;
-    }
-
-    protected int addEnergyTesla(int energy, boolean simulate) {
-        int filled = TeslaHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
-        extractEnergy(filled, simulate);
-        return filled;
-    }
-
-    protected boolean isRf() {
-        return RfHelpers.isRf();
-    }
-
-    protected boolean isTesla() {
-        return TeslaHelpers.isTesla();
-    }
-
     protected int addEnergy(int energy) {
-        int toFill = energy;
-        if(toFill > 0 && isRf()) {
-            toFill -= addEnergyRf(toFill, false);
-        }
-        if(toFill > 0 && isTesla()) {
-            toFill -= addEnergyTesla(toFill, false);
-        }
-        return energy - toFill;
+        int filled = addEnergyFe(energy, false);
+        extractEnergy(filled, false);
+        return filled;
+    }
+
+    protected int addEnergyFe(int energy, boolean simulate) {
+        return EnergyHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
     }
 
     @Override

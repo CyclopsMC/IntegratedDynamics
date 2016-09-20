@@ -4,6 +4,10 @@ import com.google.common.collect.Sets;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.api.ITeslaHolder;
 import net.darkhax.tesla.api.ITeslaProducer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.modcompat.IModCompat;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -11,10 +15,13 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.modcompat.tesla.aspect.TeslaAspects;
 import org.cyclops.integrateddynamics.modcompat.tesla.operator.OperatorBuilders;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
+
+import javax.annotation.Nullable;
 
 /**
  * Mod compat for the Tesla API.
@@ -126,6 +133,14 @@ public class TeslaApiCompat implements IModCompat {
 							return input != null ? (((double) input.getStoredPower()) / input.getCapacity()) : 0.0D;
 						}
 					})).build());
+
+			EnergyHelpers.addEnergyStorageProxy(new EnergyHelpers.IEnergyStorageProxy() {
+				@Nullable
+				@Override
+				public IEnergyStorage getEnergyStorageProxy(IBlockAccess world, BlockPos pos, EnumFacing facing) {
+					return new EnergyStorageTesla(world, pos, facing);
+				}
+			});
 		}
 	}
 
