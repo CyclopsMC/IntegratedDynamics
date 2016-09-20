@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -61,7 +62,7 @@ public class NetworkDiagnostics {
                 rawParts.add(new RawPartData(pos.getPos().getWorld().provider.getDimension(),
                         pos.getPos().getBlockPos(), pos.getSide(),
                         L10NHelpers.localize(partNetworkElement.getPart().getUnlocalizedName()),
-                        lastSecondDuration));
+                        lastSecondDuration / MinecraftHelpers.SECOND_IN_TICKS));
             } else {
                 // If needed, we can send the other part types later on as well
             }
