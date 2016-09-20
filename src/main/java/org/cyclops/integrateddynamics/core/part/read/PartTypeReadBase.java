@@ -26,6 +26,8 @@ import java.util.List;
 public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extends IPartStateReader<P>>
         extends PartTypeAspects<P, S> implements IPartTypeReader<P, S> {
 
+    private List<IAspectRead> aspectsRead = null;
+
     public PartTypeReadBase(String name) {
         super(name, new PartRenderPosition(0.1875F, 0.3125F, 0.625F, 0.625F));
     }
@@ -42,7 +44,10 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
 
     @Override
     public List<IAspectRead> getReadAspects() {
-        return Aspects.REGISTRY.getReadAspects(this);
+        if (aspectsRead == null) {
+            aspectsRead = Aspects.REGISTRY.getReadAspects(this);
+        }
+        return aspectsRead;
     }
 
     @Override

@@ -89,10 +89,11 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @Override
     public Set<IAspect> getAspects(IPartType partType) {
-        if(!partAspects.containsKey(partType)) {
+        Set<IAspect> aspects = partAspects.get(partType);
+        if(aspects == null) {
             return Collections.unmodifiableSet(Collections.<IAspect>emptySet());
         }
-        return Collections.unmodifiableSet(partAspects.get(partType));
+        return Collections.unmodifiableSet(aspects);
     }
 
     @Override

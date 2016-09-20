@@ -16,6 +16,8 @@ import java.util.Set;
  */
 public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPartState<P>> extends PartTypeConfigurable<P, S> {
 
+    private Set<IAspect> aspects = null;
+
     public PartTypeAspects(String name, PartRenderPosition partRenderPosition) {
         super(name, partRenderPosition);
     }
@@ -24,7 +26,10 @@ public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPart
      * @return All possible aspects that can be used in this part type.
      */
     public Set<IAspect> getAspects() {
-        return Aspects.REGISTRY.getAspects(this);
+        if (aspects == null) {
+            aspects = Aspects.REGISTRY.getAspects(this);
+        }
+        return aspects;
     }
 
     @Override

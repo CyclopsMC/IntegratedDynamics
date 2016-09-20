@@ -43,6 +43,8 @@ import java.util.Map;
 public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>>
         extends PartTypeAspects<P, S> implements IPartTypeWriter<P, S> {
 
+    private List<IAspectWrite> aspectsWrite = null;
+
     public PartTypeWriteBase(String name) {
         super(name, new PartRenderPosition(0.3125F, 0.3125F, 0.25F, 0.25F));
     }
@@ -97,7 +99,10 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     @Override
     public List<IAspectWrite> getWriteAspects() {
-        return Aspects.REGISTRY.getWriteAspects(this);
+        if (aspectsWrite == null) {
+            aspectsWrite = Aspects.REGISTRY.getWriteAspects(this);
+        }
+        return aspectsWrite;
     }
 
     @SuppressWarnings("unchecked")
