@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -40,7 +41,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @NBTPersist
     private boolean enabled = true;
     private CapabilityDispatcher capabilities = null;
-    private Map<Capability<?>, Object> volatileCapabilities = Maps.newHashMap();
+    private IdentityHashMap<Capability<?>, Object> volatileCapabilities = new IdentityHashMap<>();
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
