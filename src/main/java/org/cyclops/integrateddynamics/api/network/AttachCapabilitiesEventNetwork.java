@@ -10,19 +10,17 @@ import java.util.List;
  * Next to capabilities, also {@link IFullNetworkListener}'s can be added to the network.
  * @author rubensworks
  */
-public class AttachCapabilitiesEventNetwork extends AttachCapabilitiesEvent {
+public class AttachCapabilitiesEventNetwork extends AttachCapabilitiesEvent<INetwork> {
 
-    private final INetwork network;
     private final List<IFullNetworkListener> fullNetworkListeners;
 
     public AttachCapabilitiesEventNetwork(INetwork network) {
-        super(network);
-        this.network = network;
+        super(INetwork.class, network);
         this.fullNetworkListeners = Lists.newArrayList();
     }
 
     public INetwork getNetwork() {
-        return network;
+        return getObject();
     }
 
     public void addFullNetworkListener(IFullNetworkListener fullNetworkListener) {

@@ -6,15 +6,13 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
  * Event for when an {@link IPartState} is being constructed.
  * @author rubensworks
  */
-public class AttachCapabilitiesEventPart extends AttachCapabilitiesEvent {
+public class AttachCapabilitiesEventPart extends AttachCapabilitiesEvent<IPartState> {
 
     private final IPartType partType;
-    private final IPartState partState;
 
     public AttachCapabilitiesEventPart(IPartType partType, IPartState partState) {
-        super(partState);
+        super(IPartState.class, partState);
         this.partType = partType;
-        this.partState = partState;
     }
 
     public IPartType getPartType() {
@@ -22,6 +20,6 @@ public class AttachCapabilitiesEventPart extends AttachCapabilitiesEvent {
     }
 
     public IPartState getPartState() {
-        return partState;
+        return getObject();
     }
 }
