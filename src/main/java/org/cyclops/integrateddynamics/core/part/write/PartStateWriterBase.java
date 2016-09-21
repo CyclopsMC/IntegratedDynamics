@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import com.google.common.collect.Maps;
-import org.cyclops.cyclopscore.datastructure.SingleCache;
+import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -27,27 +27,30 @@ import java.util.Map;
  */
 public class PartStateWriterBase<P extends IPartTypeWriter>
         extends PartStateActiveVariableBase<P> implements IPartStateWriter<P> {
-    @NBTPersist
-    private String activeAspectName = null;
-    @NBTPersist
+
+    private IAspectWrite activeAspect = null;
     private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
     private boolean firstTick = true;
-    private final SingleCache<String, IAspect> aspectCache;
 
     public PartStateWriterBase(int inventorySize) {
         super(inventorySize);
-        aspectCache = new SingleCache<>(new SingleCache.ICacheUpdater<String, IAspect>() {
-            @Override
-            public IAspect getNewValue(String key) {
-                return Aspects.REGISTRY.getAspect(key);
-            }
+    }
 
-            @Override
-            public boolean isKeyEqual(String cacheKey, String newKey) {
-                //noinspection StringEquality
-                return cacheKey == newKey; // Yes, we want pure equality
-            }
-        });
+    @Override
+    public void writeToNBT(NBTTagCompound tag) {
+        if (this.activeAspect != null) tag.setString("activeAspectName", this.activeAspect.getUnlocalizedName());
+        NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, tag);
+        super.writeToNBT(tag);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tag) {
+        IAspect aspect = Aspects.REGISTRY.getAspect(tag.getString("activeAspectName"));
+        if (aspect instanceof IAspectWrite) {
+            this.activeAspect = (IAspectWrite) aspect;
+        }
+        this.errorMessages = (Map<String, List<L10NHelpers.UnlocalizedString>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag);
+        super.readFromNBT(tag);
     }
 
     @Override
@@ -62,7 +65,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     @Override
     protected void onCorruptedState() {
         super.onCorruptedState();
-        this.activeAspectName = null;
+        this.activeAspect = null;
     }
 
     @Override
@@ -80,7 +83,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         if(newAspect != null && activeAspect != newAspect) {
             newAspect.onActivate(partType, target, this);
         }
-        this.activeAspectName = newAspect == null ? null : newAspect.getUnlocalizedName();
+        this.activeAspect = newAspect;
     }
 
     @Override
@@ -95,14 +98,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
 
     @Override
     public IAspectWrite getActiveAspect() {
-        if(this.activeAspectName == null) {
-            return null;
-        }
-        IAspect aspect = aspectCache.get(this.activeAspectName);
-        if(!(aspect instanceof IAspectWrite)) {
-            return null;
-        }
-        return (IAspectWrite) aspect;
+        return activeAspect;
     }
 
     @Override

@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -34,7 +34,6 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
     @Setter
     private boolean deactivated = false;
     private SimpleInventory inventory;
-    @NBTPersist
     private List<L10NHelpers.UnlocalizedString> globalErrorMessages = Lists.newLinkedList();
 
     public PartStateActiveVariableBase(int inventorySize) {
@@ -134,12 +133,14 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
     @Override
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
+        NBTClassType.getType(List.class, this.globalErrorMessages).writePersistedField("globalErrorMessages", this.globalErrorMessages, tag);
         inventory.writeToNBT(tag);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
+        this.globalErrorMessages = (List<L10NHelpers.UnlocalizedString>) NBTClassType.getType(List.class, this.globalErrorMessages).readPersistedField("globalErrorMessages", tag);
         inventory.readFromNBT(tag);
     }
 

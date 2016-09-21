@@ -1,15 +1,12 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Maps;
-import lombok.experimental.Delegate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
-import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.cyclopscore.persist.nbt.NBTProviderComponent;
+import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.AttachCapabilitiesEventPart;
@@ -26,26 +23,25 @@ import java.util.Map;
  * of fields annotated with {@link org.cyclops.cyclopscore.persist.nbt.NBTPersist}.
  * @author rubensworks
  */
-public abstract class PartStateBase<P extends IPartType> implements IPartState<P>, INBTProvider, IDirtyMarkListener {
+public abstract class PartStateBase<P extends IPartType> implements IPartState<P>, IDirtyMarkListener {
 
     private boolean dirty = false;
     private boolean update = false;
-    @Delegate
-    private INBTProvider nbtProviderComponent = new NBTProviderComponent(this);
-    @NBTPersist
+
     private int updateInterval = GeneralConfig.defaultPartUpdateFreq;
-    @NBTPersist
     private int id = -1;
-    @NBTPersist
     private Map<String, IAspectProperties> aspectProperties = Maps.newHashMap();
-    @NBTPersist
     private boolean enabled = true;
+
     private CapabilityDispatcher capabilities = null;
     private IdentityHashMap<Capability<?>, Object> volatileCapabilities = new IdentityHashMap<>();
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
-        writeGeneratedFieldsToNBT(tag);
+        tag.setInteger("updateInterval", this.updateInterval);
+        tag.setInteger("id", this.id);
+        NBTClassType.getType(Map.class, this.aspectProperties).writePersistedField("aspectProperties", this.aspectProperties, tag);
+        tag.setBoolean("enabled", this.enabled);
         if (this.capabilities != null) {
             tag.setTag("ForgeCaps", this.capabilities.serializeNBT());
         }
@@ -53,7 +49,10 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        readGeneratedFieldsFromNBT(tag);
+        this.updateInterval = tag.getInteger("updateInterval");
+        this.id = tag.getInteger("id");
+        this.aspectProperties = (Map<String, IAspectProperties>) NBTClassType.getType(Map.class, this.aspectProperties).readPersistedField("aspectProperties", tag);
+        this.enabled = tag.getBoolean("enabled");
         if (this.capabilities != null && tag.hasKey("ForgeCaps")) {
             this.capabilities.deserializeNBT(tag.getCompoundTag("ForgeCaps"));
         }
