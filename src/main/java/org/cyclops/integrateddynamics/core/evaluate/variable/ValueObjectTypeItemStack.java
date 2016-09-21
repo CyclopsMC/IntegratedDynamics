@@ -48,7 +48,9 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         try {
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
             ItemStack itemStack = ItemStack.loadItemStackFromNBT(tag);
-            itemStack.stackSize = tag.getInteger("Count");
+            if (itemStack != null) {
+                itemStack.stackSize = tag.getInteger("Count");
+            }
             return ValueItemStack.of(itemStack);
         } catch (NBTException e) {
             return null;
