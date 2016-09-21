@@ -121,7 +121,7 @@ public interface IValueType<V extends IValue> {
 
         @Override
         public int compare(IValueType o1, IValueType o2) {
-            return o1.getUnlocalizedName().compareTo(o2.getUnlocalizedName());
+            return Integer.compare(o1.hashCode(), o2.hashCode());
         }
     }
 
