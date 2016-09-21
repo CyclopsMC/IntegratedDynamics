@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.part.read;
 
-import com.google.common.collect.Maps;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -11,6 +10,7 @@ import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.core.part.PartStateBase;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -21,7 +21,7 @@ import java.util.Map;
 public class PartStateReaderBase<P extends IPartTypeReader>
         extends PartStateBase<P> implements IPartStateReader<P> {
 
-    private final Map<IAspect, IAspectVariable> aspectVariables = Maps.newHashMap();
+    private final Map<IAspect, IAspectVariable> aspectVariables = new IdentityHashMap<>();
 
     @SuppressWarnings("unchecked")
     @Override

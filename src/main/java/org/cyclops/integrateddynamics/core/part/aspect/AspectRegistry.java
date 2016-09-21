@@ -30,21 +30,21 @@ public final class AspectRegistry implements IAspectRegistry {
     private static AspectRegistry INSTANCE = new AspectRegistry();
     private static final IAspectVariableFacade INVALID_FACADE = new AspectVariableFacade(false, -1, null);
 
-    private Map<IPartType, Set<IAspect>> partAspects = Maps.newHashMap();
-    private Map<IPartType, Set<IAspectRead>> partReadAspects = Maps.newHashMap();
-    private Map<IPartType, Set<IAspectWrite>> partWriteAspects = Maps.newHashMap();
-    private Map<IPartType, List<IAspectRead>> partReadAspectsListTransform = Maps.newHashMap();
-    private Map<IPartType, List<IAspectWrite>> partWriteAspectsListTransform = Maps.newHashMap();
-    private Map<String, IAspect> unlocalizedAspects = Maps.newHashMap();
-    private Map<String, IAspectRead> unlocalizedReadAspects = Maps.newHashMap();
-    private Map<String, IAspectWrite> unlocalizedWriteAspects = Maps.newHashMap();
+    private final Map<IPartType, Set<IAspect>> partAspects = new IdentityHashMap<>();
+    private final Map<IPartType, Set<IAspectRead>> partReadAspects = new IdentityHashMap<>();
+    private final Map<IPartType, Set<IAspectWrite>> partWriteAspects = new IdentityHashMap<>();
+    private final Map<IPartType, List<IAspectRead>> partReadAspectsListTransform = new IdentityHashMap<>();
+    private final Map<IPartType, List<IAspectWrite>> partWriteAspectsListTransform = new IdentityHashMap<>();
+    private final Map<String, IAspect> unlocalizedAspects = Maps.newHashMap();
+    private final Map<String, IAspectRead> unlocalizedReadAspects = Maps.newHashMap();
+    private final Map<String, IAspectWrite> unlocalizedWriteAspects = Maps.newHashMap();
     @SideOnly(Side.CLIENT)
     private Map<IAspect, ResourceLocation> aspectModels;
 
     private AspectRegistry() {
         IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
         if(MinecraftHelpers.isClientSide()) {
-            aspectModels = Maps.newHashMap();
+            aspectModels = new IdentityHashMap<>();
         }
     }
 

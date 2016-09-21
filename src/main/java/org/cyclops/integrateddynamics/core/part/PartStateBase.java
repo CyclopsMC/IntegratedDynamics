@@ -1,10 +1,11 @@
 package org.cyclops.integrateddynamics.core.part;
 
-import com.google.common.collect.Maps;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -14,6 +15,8 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -30,7 +33,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
 
     private int updateInterval = GeneralConfig.defaultPartUpdateFreq;
     private int id = -1;
-    private Map<String, IAspectProperties> aspectProperties = Maps.newHashMap();
+    private Map<IAspect, IAspectProperties> aspectProperties = new IdentityHashMap<>();
     private boolean enabled = true;
 
     private CapabilityDispatcher capabilities = null;
@@ -40,7 +43,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     public void writeToNBT(NBTTagCompound tag) {
         tag.setInteger("updateInterval", this.updateInterval);
         tag.setInteger("id", this.id);
-        NBTClassType.getType(Map.class, this.aspectProperties).writePersistedField("aspectProperties", this.aspectProperties, tag);
+        writeAspectProperties("aspectProperties", tag);
         tag.setBoolean("enabled", this.enabled);
         if (this.capabilities != null) {
             tag.setTag("ForgeCaps", this.capabilities.serializeNBT());
@@ -51,10 +54,45 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     public void readFromNBT(NBTTagCompound tag) {
         this.updateInterval = tag.getInteger("updateInterval");
         this.id = tag.getInteger("id");
-        this.aspectProperties = (Map<String, IAspectProperties>) NBTClassType.getType(Map.class, this.aspectProperties).readPersistedField("aspectProperties", tag);
+        this.aspectProperties.clear();
+        readAspectProperties("aspectProperties", tag);
         this.enabled = tag.getBoolean("enabled");
         if (this.capabilities != null && tag.hasKey("ForgeCaps")) {
             this.capabilities.deserializeNBT(tag.getCompoundTag("ForgeCaps"));
+        }
+    }
+
+    protected void writeAspectProperties(String name, NBTTagCompound tag) {
+        NBTTagCompound mapTag = new NBTTagCompound();
+        NBTTagList list = new NBTTagList();
+        for(Map.Entry<IAspect, IAspectProperties> entry : aspectProperties.entrySet()) {
+            NBTTagCompound entryTag = new NBTTagCompound();
+            tag.setString("key", entry.getKey().getUnlocalizedName());
+            if(entry.getValue() != null) {
+                NBTClassType.getType(AspectProperties.class, aspectProperties).writePersistedField("value", entry.getValue(), entryTag);
+            }
+            list.appendTag(entryTag);
+        }
+        mapTag.setTag("map", list);
+        tag.setTag(name, mapTag);
+    }
+
+    public void readAspectProperties(String name, NBTTagCompound tag) {
+        NBTTagCompound mapTag = tag.getCompoundTag(name);
+        NBTTagList list = mapTag.getTagList("map", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
+        if(list.tagCount() > 0) {
+            NBTClassType valueNBTClassType = NBTClassType.getType(AspectProperties.class, aspectProperties);
+            for (int i = 0; i < list.tagCount(); i++) {
+                NBTTagCompound entryTag = list.getCompoundTagAt(i);
+                IAspect key = Aspects.REGISTRY.getAspect(entryTag.getString("key"));
+                IAspectProperties value = null;
+                if(valueNBTClassType != null && entryTag.hasKey("value")) {
+                    value = (IAspectProperties) valueNBTClassType.readPersistedField("value", entryTag);
+                }
+                if (key != null && value != null) {
+                    this.aspectProperties.put(key, value);
+                }
+            }
         }
     }
 
@@ -106,12 +144,12 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
 
     @Override
     public IAspectProperties getAspectProperties(IAspect aspect) {
-        return aspectProperties.get(aspect.getUnlocalizedName());
+        return aspectProperties.get(aspect);
     }
 
     @Override
     public void setAspectProperties(IAspect aspect, IAspectProperties properties) {
-        aspectProperties.put(aspect.getUnlocalizedName(), properties);
+        aspectProperties.put(aspect, properties);
         sendUpdate();
     }
 

@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -34,7 +35,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     private ValueTypeRegistry() {
         if(MinecraftHelpers.isClientSide()) {
-            valueTypeModels = Maps.newHashMap();
+            valueTypeModels = new IdentityHashMap<>();
         }
         if(MinecraftHelpers.isModdedEnvironment()) {
             IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);

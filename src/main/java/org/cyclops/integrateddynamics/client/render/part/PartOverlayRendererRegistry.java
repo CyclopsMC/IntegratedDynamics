@@ -1,7 +1,10 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
@@ -9,6 +12,7 @@ import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendere
 import org.cyclops.integrateddynamics.api.part.IPartType;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Registry for {@link IPartOverlayRenderer}.
@@ -19,7 +23,12 @@ public final class PartOverlayRendererRegistry implements IPartOverlayRendererRe
 
     private static PartOverlayRendererRegistry INSTANCE = new PartOverlayRendererRegistry();
 
-    private final Multimap<IPartType<?, ?>, IPartOverlayRenderer> renderers = HashMultimap.create();
+    private final Multimap<IPartType<?, ?>, IPartOverlayRenderer> renderers = Multimaps.newSetMultimap(Maps.<IPartType<?, ?>, Collection<IPartOverlayRenderer>>newIdentityHashMap(), new Supplier<Set<IPartOverlayRenderer>>() {
+        @Override
+        public Set<IPartOverlayRenderer> get() {
+            return Sets.newIdentityHashSet();
+        }
+    });
 
     private PartOverlayRendererRegistry() {
 

@@ -15,7 +15,7 @@ public class VariableModelProviderRegistry implements IVariableModelProviderRegi
 
     private static final VariableModelProviderRegistry INSTANCE = new VariableModelProviderRegistry();
 
-    private final List<IVariableModelProvider<?>> providers = Lists.newLinkedList();
+    private final List<IVariableModelProvider<?>> providers = Lists.newArrayList();
 
     /**
      * @return The unique instance.
