@@ -47,11 +47,9 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
     @SuppressWarnings("unchecked")
     @Override
     public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
-        if(partType instanceof IPartTypeReader && state instanceof IPartStateReader) {
-            IAspectVariable variable = ((IPartTypeReader) partType).getVariable(target, (IPartStateReader) state, this);
-            if (variable.requiresUpdate()) {
-                variable.update();
-            }
+        IAspectVariable variable = ((IPartTypeReader) partType).getVariable(target, (IPartStateReader) state, this);
+        if (variable.requiresUpdate()) {
+            variable.update();
         }
     }
 

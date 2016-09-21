@@ -6,8 +6,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
@@ -43,6 +45,14 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
+    public void update(IPartNetwork network, PartTarget target, S state) {
+        super.update(network, target, state);
+        for(IAspect aspect : getAspects()) {
+            aspect.update(network, this, target, state);
+        }
+    }
+
+    @Override
     public List<IAspectRead> getReadAspects() {
         if (aspectsRead == null) {
             aspectsRead = Aspects.REGISTRY.getReadAspects(this);
@@ -53,12 +63,12 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     @Override
     public <V extends IValue, T extends IValueType<V>> IAspectVariable<V> getVariable(PartTarget target, S partState,
                                                                                       IAspectRead<V, T> aspect) {
-        if(!getAspects().contains(aspect)) {
-            throw new IllegalArgumentException(String.format("Tried to get the variable for the aspect %s that did not exist within the " +
-                    "part type %s.", aspect.getUnlocalizedName(), this));
-        }
         IAspectVariable<V> variable = partState.getVariable(aspect);
         if(variable == null) {
+            if(!getAspects().contains(aspect)) {
+                throw new IllegalArgumentException(String.format("Tried to get the variable for the aspect %s that did not exist within the " +
+                        "part type %s.", aspect.getUnlocalizedName(), this));
+            }
             variable = aspect.createNewVariable(target);
             partState.setVariable(aspect, variable);
         }

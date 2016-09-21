@@ -339,16 +339,19 @@ public class Network implements INetwork {
                 if (isBeingDiagnozed) {
                     startTime = System.nanoTime();
                 }
+                int lastElementTick = updateableElementsTicks.get(element);
                 if (canUpdate(element)) {
-                    if(updateableElementsTicks.get(element) <= 0) {
-                        updateableElementsTicks.put(element, element.getUpdateInterval());
+                    if(lastElementTick <= 0) {
+                        updateableElementsTicks.put(element, element.getUpdateInterval() - 1);
                         element.update(this);
                         postUpdate(element);
+                    } else {
+                        updateableElementsTicks.put(element, lastElementTick - 1);
                     }
                 } else {
                     onSkipUpdate(element);
+                    updateableElementsTicks.put(element, lastElementTick - 1);
                 }
-                updateableElementsTicks.put(element, updateableElementsTicks.get(element) - 1);
                 if (isBeingDiagnozed) {
                     long duration = System.nanoTime() - startTime;
                     duration /= 1000;

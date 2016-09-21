@@ -48,25 +48,23 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
     @SuppressWarnings("unchecked")
     @Override
     public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
-        if(partType instanceof IPartTypeWriter && state instanceof IPartStateWriter
-                && ((IPartStateWriter) state).getActiveAspect() == this) {
-            IPartStateWriter writerState = (IPartStateWriter) state;
-            IVariable variable = ((IPartTypeWriter) partType).getActiveVariable(network, target, writerState);
-            if(variable != null
-                    && writerState.getErrors(this).isEmpty()
-                    && writerState.getActiveAspect().getValueType().correspondsTo(variable.getType())) {
-                if(writerState.isDeactivated() || writerState.checkAndResetFirstTick()) {
-                    writerState.getActiveAspect().onActivate((IPartTypeWriter) partType, target, writerState);
-                }
-                try {
-                    write((IPartTypeWriter) partType, target, writerState, variable);
-                } catch (EvaluationException e) {
-                    writerState.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
-                    writerState.setDeactivated(true);
-                }
-            } else if(!((IPartStateWriter) state).isDeactivated()) {
-                ((IPartStateWriter) state).getActiveAspect().onDeactivate((IPartTypeWriter) partType, target, (IPartStateWriter) state);
+        IPartTypeWriter partTypeWriter = (IPartTypeWriter) partType;
+        IPartStateWriter writerState = (IPartStateWriter) state;
+        IVariable variable = partTypeWriter.getActiveVariable(network, target, writerState);
+        if(variable != null
+                && writerState.getErrors(this).isEmpty()
+                && getValueType().correspondsTo(variable.getType())) {
+            if(writerState.isDeactivated() || writerState.checkAndResetFirstTick()) {
+                onActivate(partTypeWriter, target, writerState);
             }
+            try {
+                write(partTypeWriter, target, writerState, variable);
+            } catch (EvaluationException e) {
+                writerState.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
+                writerState.setDeactivated(true);
+            }
+        } else if(!writerState.isDeactivated()) {
+            onDeactivate(partTypeWriter, target, writerState);
         }
     }
 

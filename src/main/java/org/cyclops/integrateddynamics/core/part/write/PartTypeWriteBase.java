@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
@@ -70,6 +71,15 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @Override
     public Class<? super P> getPartTypeClass() {
         return IPartTypeWriter.class;
+    }
+
+    @Override
+    public void update(IPartNetwork network, PartTarget target, S state) {
+        super.update(network, target, state);
+        IAspect aspect = getActiveAspect(target, state);
+        if (aspect != null) {
+            aspect.update(network, this, target, state);
+        }
     }
 
     @Override
