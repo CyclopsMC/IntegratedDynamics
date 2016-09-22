@@ -133,14 +133,15 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
     @Override
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
-        NBTClassType.getType(List.class, this.globalErrorMessages).writePersistedField("globalErrorMessages", this.globalErrorMessages, tag);
+        NBTClassType.writeNbt(List.class, "globalErrorMessages", globalErrorMessages, tag);
         inventory.writeToNBT(tag);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        this.globalErrorMessages = (List<L10NHelpers.UnlocalizedString>) NBTClassType.getType(List.class, this.globalErrorMessages).readPersistedField("globalErrorMessages", tag);
+        //noinspection unchecked
+        this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag);
         inventory.readFromNBT(tag);
     }
 

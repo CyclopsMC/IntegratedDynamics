@@ -24,14 +24,14 @@ public abstract class ValueTypeListProxyPositioned<T extends IValueType<V>, V ex
 
     @Override
     public void writeGeneratedFieldsToNBT(NBTTagCompound tag) {
-        NBTClassType.getType(DimPos.class, pos).writePersistedField("pos", pos, tag);
-        NBTClassType.getType(EnumFacing.class, side).writePersistedField("side", side, tag);
+        NBTClassType.writeNbt(DimPos.class, "pos", pos, tag);
+        NBTClassType.writeNbt(EnumFacing.class, "side", side, tag);
     }
 
     @Override
     public void readGeneratedFieldsFromNBT(NBTTagCompound tag) {
-        this.pos = (DimPos) NBTClassType.getType(DimPos.class, pos).readPersistedField("pos", tag);
-        this.side = (EnumFacing) NBTClassType.getType(EnumFacing.class, side).readPersistedField("side", tag);
+        this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag);
+        this.side = NBTClassType.readNbt(EnumFacing.class, "side", tag);
     }
 
     protected DimPos getPos() {

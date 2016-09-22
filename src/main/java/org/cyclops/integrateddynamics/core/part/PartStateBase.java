@@ -7,7 +7,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
-import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.AttachCapabilitiesEventPart;
@@ -68,7 +67,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
             NBTTagCompound entryTag = new NBTTagCompound();
             tag.setString("key", entry.getKey().getUnlocalizedName());
             if(entry.getValue() != null) {
-                NBTClassType.getType(AspectProperties.class, aspectProperties).writePersistedField("value", entry.getValue(), entryTag);
+                tag.setTag("value", entry.getValue().toNBT());
             }
             list.appendTag(entryTag);
         }
@@ -80,13 +79,13 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         NBTTagCompound mapTag = tag.getCompoundTag(name);
         NBTTagList list = mapTag.getTagList("map", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
         if(list.tagCount() > 0) {
-            NBTClassType valueNBTClassType = NBTClassType.getType(AspectProperties.class, aspectProperties);
             for (int i = 0; i < list.tagCount(); i++) {
                 NBTTagCompound entryTag = list.getCompoundTagAt(i);
                 IAspect key = Aspects.REGISTRY.getAspect(entryTag.getString("key"));
                 IAspectProperties value = null;
-                if(valueNBTClassType != null && entryTag.hasKey("value")) {
-                    value = (IAspectProperties) valueNBTClassType.readPersistedField("value", entryTag);
+                if (entryTag.hasKey("value")) {
+                    value = new AspectProperties();
+                    value.fromNBT(tag.getCompoundTag("value"));
                 }
                 if (key != null && value != null) {
                     this.aspectProperties.put(key, value);
