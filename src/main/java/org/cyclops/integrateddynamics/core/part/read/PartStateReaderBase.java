@@ -14,8 +14,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
- * A default implementation of the {@link IPartStateReader} with auto-persistence
- * of fields annotated with {@link org.cyclops.cyclopscore.persist.nbt.NBTPersist}.
+ * A default implementation of the {@link IPartStateReader}.
  * @author rubensworks
  */
 public class PartStateReaderBase<P extends IPartTypeReader>

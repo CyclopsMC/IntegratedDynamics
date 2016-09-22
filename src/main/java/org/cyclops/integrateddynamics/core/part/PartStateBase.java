@@ -22,8 +22,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
- * A default implementation of the {@link IPartState} with auto-persistence
- * of fields annotated with {@link org.cyclops.cyclopscore.persist.nbt.NBTPersist}.
+ * A default implementation of the {@link IPartState}.
  * @author rubensworks
  */
 public abstract class PartStateBase<P extends IPartType> implements IPartState<P>, IDirtyMarkListener {

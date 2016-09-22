@@ -4,7 +4,6 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
-import org.cyclops.cyclopscore.persist.nbt.NBTProviderComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
@@ -38,9 +37,8 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
 
     @Override
     public String serialize(P values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        INBTProvider provider = new NBTProviderComponent(values);
         NBTTagCompound tag = new NBTTagCompound();
-        provider.writeGeneratedFieldsToNBT(tag);
+        values.writeGeneratedFieldsToNBT(tag);
         return tag.toString();
     }
 
@@ -49,9 +47,8 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
         try {
             Constructor<P> constructor = getProxyClass().getConstructor();
             P proxy = constructor.newInstance();
-            INBTProvider provider = new NBTProviderComponent(proxy);
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
-            provider.readGeneratedFieldsFromNBT(tag);
+            proxy.readGeneratedFieldsFromNBT(tag);
             return proxy;
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | NBTException | IllegalAccessException e) {
             e.printStackTrace();

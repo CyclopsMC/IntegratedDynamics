@@ -12,10 +12,6 @@ import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
  */
 public class ValueTypeListProxyEntityInventory extends ValueTypeListProxyEntityBase<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
 
-    public ValueTypeListProxyEntityInventory() {
-        this(null, null);
-    }
-
     public ValueTypeListProxyEntityInventory(World world, Entity entity) {
         super(ValueTypeListProxyFactories.ENTITY_INVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK, world, entity);
     }

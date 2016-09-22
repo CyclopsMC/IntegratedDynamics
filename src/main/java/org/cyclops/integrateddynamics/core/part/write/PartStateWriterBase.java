@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A default implementation of the {@link IPartTypeWriter} with auto-persistence
- * of fields annotated with {@link org.cyclops.cyclopscore.persist.nbt.NBTPersist}.
+ * A default implementation of the {@link IPartTypeWriter}.
  * @author rubensworks
  */
 public class PartStateWriterBase<P extends IPartTypeWriter>
