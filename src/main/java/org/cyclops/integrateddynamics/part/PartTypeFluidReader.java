@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
@@ -15,7 +15,7 @@ public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, P
 
     public PartTypeFluidReader(String name) {
         super(name);
-        AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
+        AspectRegistry.getInstance().register(this, Lists.<IAspect>newArrayList(
                 Aspects.Read.Fluid.BOOLEAN_FULL,
                 Aspects.Read.Fluid.BOOLEAN_EMPTY,
                 Aspects.Read.Fluid.BOOLEAN_NONEMPTY,

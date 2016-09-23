@@ -73,7 +73,7 @@ public final class AspectRegistry implements IAspectRegistry {
                                                              Set<T>> partAspects, Map<String, T> unlocalizedAspects) {
         Set<T> aspects = partAspects.get(partType);
         if(aspects == null) {
-            aspects = Sets.newTreeSet(IAspect.AspectComparator.getInstance());
+            aspects = Sets.newLinkedHashSet();
             partAspects.put(partType, aspects);
         }
         aspects.add(aspect);
@@ -81,7 +81,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public void register(IPartType partType, Set<IAspect> aspects) {
+    public void register(IPartType partType, Collection<IAspect> aspects) {
         for(IAspect aspect : aspects) {
             register(partType, aspect);
         }

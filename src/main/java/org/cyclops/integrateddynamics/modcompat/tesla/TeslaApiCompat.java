@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.modcompat.tesla;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.api.ITeslaHolder;
 import net.darkhax.tesla.api.ITeslaProducer;
@@ -34,7 +34,7 @@ public class TeslaApiCompat implements IModCompat {
 	public void onInit(final Step initStep) {
 		if(initStep == Step.PREINIT) {
 			// Aspects
-			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Lists.<IAspect>newArrayList(
 					TeslaAspects.Read.Energy.BOOLEAN_ISAPPLICABLE,
 					TeslaAspects.Read.Energy.BOOLEAN_ISRECEIVER,
 					TeslaAspects.Read.Energy.BOOLEAN_ISPROVIDER,

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.modcompat.ic2;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import net.minecraft.item.ItemStack;
@@ -33,7 +33,7 @@ public class Ic2ModCompat implements IModCompat {
     public void onInit(Step step) {
     	if(step == Step.PREINIT) {
 			// Aspects
-			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Lists.<IAspect>newArrayList(
 					Ic2Aspects.Read.Energy.BOOLEAN_ISAPPLICABLE,
 					Ic2Aspects.Read.Energy.BOOLEAN_CANEXTRACT,
 					Ic2Aspects.Read.Energy.BOOLEAN_CANINSERT,

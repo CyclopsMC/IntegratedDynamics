@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -21,7 +21,7 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
 
     public PartTypeRedstoneReader(String name) {
         super(name);
-        AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
+        AspectRegistry.getInstance().register(this, Lists.<IAspect>newArrayList(
                 Aspects.Read.Redstone.BOOLEAN_LOW,
                 Aspects.Read.Redstone.BOOLEAN_NONLOW,
                 Aspects.Read.Redstone.BOOLEAN_HIGH,

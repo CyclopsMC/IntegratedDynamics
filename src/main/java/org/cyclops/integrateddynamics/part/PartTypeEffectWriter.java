@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import net.minecraft.util.EnumParticleTypes;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.write.PartStateWriterBase;
@@ -15,7 +15,7 @@ public class PartTypeEffectWriter extends PartTypeWriteBase<PartTypeEffectWriter
 
     public PartTypeEffectWriter(String name) {
         super(name);
-        Aspects.REGISTRY.register(this, Sets.<IAspect>newHashSet(
+        Aspects.REGISTRY.register(this, Lists.<IAspect>newArrayList(
                 Aspects.Write.Effect.createForParticle(EnumParticleTypes.FIREWORKS_SPARK),
                 Aspects.Write.Effect.createForParticle(EnumParticleTypes.WATER_BUBBLE),
                 Aspects.Write.Effect.createForParticle(EnumParticleTypes.WATER_SPLASH),

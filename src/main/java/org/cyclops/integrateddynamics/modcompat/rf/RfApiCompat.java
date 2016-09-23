@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.modcompat.rf;
 
 import cofh.api.energy.IEnergyContainerItem;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +35,7 @@ public class RfApiCompat implements IApiCompat {
 	public void onInit(final Step initStep) {
 		if(initStep == Step.PREINIT) {
 			// Aspects
-			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Lists.<IAspect>newArrayList(
 					RfAspects.Read.Energy.BOOLEAN_ISAPPLICABLE,
 					RfAspects.Read.Energy.BOOLEAN_ISRECEIVER,
 					RfAspects.Read.Energy.BOOLEAN_ISPROVIDER,

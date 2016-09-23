@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.write.PartStateWriterBase;
@@ -15,7 +15,7 @@ public class PartTypeAudioWriter extends PartTypeWriteBase<PartTypeAudioWriter, 
 
     public PartTypeAudioWriter(String name) {
         super(name);
-        AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
+        AspectRegistry.getInstance().register(this, Lists.<IAspect>newArrayList(
                 Aspects.Write.Audio.INTEGER_PIANO_NOTE,
                 Aspects.Write.Audio.INTEGER_BASSDRUM_NOTE,
                 Aspects.Write.Audio.INTEGER_SNARE_NOTE,

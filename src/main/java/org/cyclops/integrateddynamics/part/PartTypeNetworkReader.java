@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
@@ -15,7 +15,7 @@ public class PartTypeNetworkReader extends PartTypeReadBase<PartTypeNetworkReade
 
     public PartTypeNetworkReader(String name) {
         super(name);
-        AspectRegistry.getInstance().register(this, Sets.<IAspect>newHashSet(
+        AspectRegistry.getInstance().register(this, Lists.<IAspect>newArrayList(
                 Aspects.Read.Network.BOOLEAN_APPLICABLE,
                 Aspects.Read.Network.INTEGER_ELEMENT_COUNT,
                 Aspects.Read.Network.INTEGER_ENERGY_BATTERY_COUNT,

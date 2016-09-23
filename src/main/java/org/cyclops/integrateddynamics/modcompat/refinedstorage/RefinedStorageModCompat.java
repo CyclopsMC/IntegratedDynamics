@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.modcompat.refinedstorage;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import org.cyclops.cyclopscore.modcompat.IModCompat;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -29,20 +29,20 @@ public class RefinedStorageModCompat implements IModCompat {
 	@Override
 	public void onInit(Step initStep) {
 		if(initStep == Step.PREINIT) {
-			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.MACHINE_READER, Lists.<IAspect>newArrayList(
 					RefinedStorageAspects.Read.Network.BOOLEAN_APPLICABLE
 			));
-			Aspects.REGISTRY.register(PartTypes.INVENTORY_READER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.INVENTORY_READER, Lists.<IAspect>newArrayList(
 					RefinedStorageAspects.Read.Inventory.LIST_ITEMSTACKS,
 					RefinedStorageAspects.Read.Inventory.LIST_CRAFTABLEITEMS,
 					RefinedStorageAspects.Read.Inventory.LIST_CRAFTINGITEMS,
 					RefinedStorageAspects.Read.Inventory.LIST_MISSINGCRAFTINGITEMS
 			));
-			Aspects.REGISTRY.register(PartTypes.FLUID_READER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.FLUID_READER, Lists.<IAspect>newArrayList(
 					RefinedStorageAspects.Read.Fluid.LIST_FLUIDSTACKS
 			));
 
-			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Lists.<IAspect>newArrayList(
 					RefinedStorageAspects.Write.ITEMSTACK_CRAFT,
 					RefinedStorageAspects.Write.LIST_CRAFT,
 					RefinedStorageAspects.Write.BOOLEAN_CANCELCRAFT,

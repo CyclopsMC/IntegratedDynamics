@@ -31,7 +31,7 @@ public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<IAspe
      * @param partType The part type.
      * @param aspects The aspects.
      */
-    public void register(IPartType partType, Set<IAspect> aspects);
+    public void register(IPartType partType, Collection<IAspect> aspects);
 
     /**
      * Get the registered aspects for a given part type.

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.modcompat.charset;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import org.cyclops.cyclopscore.modcompat.IModCompat;
@@ -24,12 +24,12 @@ public class CharsetPipesModCompat implements IModCompat {
 	@Override
 	public void onInit(Step initStep) {
 		if(initStep == Step.PREINIT) {
-			Aspects.REGISTRY.register(PartTypes.INVENTORY_READER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.INVENTORY_READER, Lists.<IAspect>newArrayList(
 					CharsetAspects.Read.Pipe.BOOLEAN_ISAPPLICABLE,
 					CharsetAspects.Read.Pipe.BOOLEAN_HASCONTENTS,
 					CharsetAspects.Read.Pipe.ITEMSTACK_CONTENTS
 			));
-			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Sets.<IAspect>newHashSet(
+			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Lists.<IAspect>newArrayList(
 					CharsetAspects.Write.Pipe.SHIFTER_BOOLEAN,
 					CharsetAspects.Write.Pipe.SHIFTER_ITEMSTACK,
 					CharsetAspects.Write.Pipe.SHIFTER_FLUIDSTACK,
