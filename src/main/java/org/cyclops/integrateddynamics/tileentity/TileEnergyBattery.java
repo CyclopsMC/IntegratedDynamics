@@ -86,9 +86,12 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
 
     protected void setEnergy(int energy) {
         if(!isCreative()) {
-            this.energy = energy;
-            updateBlockState();
-            sendUpdate();
+            int lastEnergy = this.energy;
+            if (lastEnergy != energy) {
+                this.energy = energy;
+                updateBlockState();
+                sendUpdate();
+            }
         }
     }
 
