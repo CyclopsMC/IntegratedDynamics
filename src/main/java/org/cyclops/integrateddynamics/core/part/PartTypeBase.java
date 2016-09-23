@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.part;
 
-import com.google.common.collect.Maps;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
@@ -36,6 +35,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -207,7 +207,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The event actions.
      */
     protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
-        return Maps.newHashMap();
+        return new IdentityHashMap<>();
     }
 
     @Override

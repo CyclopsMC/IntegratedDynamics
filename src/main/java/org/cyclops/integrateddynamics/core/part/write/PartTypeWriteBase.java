@@ -28,6 +28,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
@@ -56,6 +57,13 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
             @Override
             public void onAction(INetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
+                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+                onVariableContentsUpdated(partNetwork, target, state);
+            }
+        });
+        actions.put(NetworkElementAddEvent.Post.class, new IEventAction<P, S, NetworkElementAddEvent.Post>() {
+            @Override
+            public void onAction(INetwork network, PartTarget target, S state, NetworkElementAddEvent.Post event) {
                 IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
                 onVariableContentsUpdated(partNetwork, target, state);
             }
