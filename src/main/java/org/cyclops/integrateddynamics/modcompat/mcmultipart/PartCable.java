@@ -51,6 +51,7 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementPart;
+import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -88,6 +89,8 @@ public class PartCable extends MultipartBase implements ITickable {
     @Getter
     private final INetworkCarrier networkCarrier;
     private final EnumFacingMap<IDynamicLight> dynamicLights;
+
+    private IBlockState cachedState = null;
 
     private boolean addSilent = false;
     private boolean sendFurtherUpdates = true;
@@ -130,6 +133,9 @@ public class PartCable extends MultipartBase implements ITickable {
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        if (cachedState != null) {
+            return cachedState;
+        }
         ExtendedBlockStateBuilder builder = ExtendedBlockStateBuilder.builder((IExtendedBlockState) state);
         for(EnumFacing side : EnumFacing.VALUES) {
             builder.withProperty(BlockCable.CONNECTED[side.ordinal()], cable.isConnected(side));
@@ -139,14 +145,19 @@ public class PartCable extends MultipartBase implements ITickable {
             } else {
                 builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()], PartRenderPosition.NONE);
             }
+            builder.withProperty(BlockCable.RENDERSTATE, new CableRenderState(
+                    true,
+                    this.connected,
+                    this.partContainer.getPartData()
+            ));
         }
-        return builder.build();
+        return cachedState = builder.build();
     }
 
     @Override
     public BlockStateContainer createBlockState() {
         return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[0],
-                ArrayUtils.addAll(BlockCable.PART_RENDERPOSITIONS, BlockCable.CONNECTED));
+                ArrayUtils.addAll(BlockCable.PART_RENDERPOSITIONS, ArrayUtils.addAll(BlockCable.CONNECTED, BlockCable.RENDERSTATE)));
     }
 
     @Override
@@ -313,6 +324,7 @@ public class PartCable extends MultipartBase implements ITickable {
             partContainer.deserializeNBT(tag.getCompoundTag("partContainer"));
         }
         super.readFromNBT(tag);
+        cachedState = null;
     }
 
     protected INetwork getNetwork() {

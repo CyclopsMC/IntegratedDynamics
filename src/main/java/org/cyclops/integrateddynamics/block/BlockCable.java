@@ -49,6 +49,7 @@ import org.cyclops.integrateddynamics.block.collidable.CollidableComponentParts;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.client.model.CableModel;
+import org.cyclops.integrateddynamics.client.model.IRenderState;
 import org.cyclops.integrateddynamics.core.block.CollidableComponent;
 import org.cyclops.integrateddynamics.core.block.ICollidable;
 import org.cyclops.integrateddynamics.core.block.ICollidableParent;
@@ -89,6 +90,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     }
     @BlockProperty
     public static final IUnlistedProperty<IPartContainer> PARTCONTAINER = new UnlistedProperty<>("partcontainer", IPartContainer.class);
+    @BlockProperty
+    public static final IUnlistedProperty<IRenderState> RENDERSTATE = new UnlistedProperty<>("renderState", IRenderState.class);
 
     // Collision boxes
     public final static AxisAlignedBB CABLE_CENTER_BOUNDINGBOX = new AxisAlignedBB(

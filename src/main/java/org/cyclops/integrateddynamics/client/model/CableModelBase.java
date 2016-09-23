@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.client.model;
 
 import com.google.common.base.Optional;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
@@ -22,21 +24,26 @@ import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A base dynamic model for cables.
  * @author rubensworks
  */
 public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel {
+
+    private static final Cache<Triple<IRenderState, EnumFacing, BlockRenderLayer>, List<BakedQuad>> CACHE_QUADS = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
 
     private static final int RADIUS = 4;
     private static final int TEXTURE_SIZE = 16;
@@ -172,79 +179,94 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     protected abstract PartRenderPosition getPartRenderPosition(EnumFacing side);
     protected abstract boolean shouldRenderParts();
     protected abstract IBakedModel getPartModel(EnumFacing side);
+    protected abstract IRenderState getRenderState();
 
     @SuppressWarnings("unchecked")
     @Override
     public List<BakedQuad> getGeneralQuads() {
-        List<BakedQuad> ret = Lists.newLinkedList();
-        TextureAtlasSprite texture = getParticleTexture();
-        boolean renderCable = isItemStack() || (isRealCable() && MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT);
-        Optional<IBlockState> blockStateHolder = getFacade();
-        for (EnumFacing side : EnumFacing.values()) {
-            boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
-            boolean hasPart = !isItemStack() && hasPart(side);
-            if(hasPart && shouldRenderParts()) {
-                try {
-                    ret.addAll(getPartModel(side).getQuads(this.blockState, this.facing, this.rand));
-                } catch (Exception e) {
-                    // Skip rendering this part, could occur when the player is still logging in.
-                }
-            }
-            if(renderCable) {
-                PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
-                if (isConnected) {
-                    partRenderPosition = CABLE_RENDERPOSITION;
-                }
-                if (isConnected || hasPart) {
-                    int i = 0;
-                    float[][][] quadVertexes = this.quadVertexes;
-                    if (hasPart) {
-                        partRenderPosition = getPartRenderPosition(side);
-                        float depthFactor = partRenderPosition == PartRenderPosition.NONE ? 0F : partRenderPosition.getDepthFactor();
-                        quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
-                    }
-                    for (float[][] v : quadVertexes) {
-                        Vec3d v1 = rotate(new Vec3d(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3d v2 = rotate(new Vec3d(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3d v3 = rotate(new Vec3d(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);
-                        Vec3d v4 = rotate(new Vec3d(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).addVector(.5, .5, .5);
-                        EnumFacing realSide = getSideFromVecs(v1, v2, v3);
-
-                        boolean invert = i == 2 || i == 1;
-                        int length = hasPart ? LENGTH_CONNECTION_LIMITED : LENGTH_CONNECTION;
-
-                        int[] data = Ints.concat(
-                                vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture,
-                                        LENGTH_CONNECTION, invert ? length : 0),
-                                vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture,
-                                        INV_LENGTH_CONNECTION, invert ? length : 0),
-                                vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture,
-                                        INV_LENGTH_CONNECTION, invert ? 0 : length),
-                                vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture,
-                                        LENGTH_CONNECTION, invert ? 0 : length)
-                        );
-                        i++;
-                        ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
-                        ret.add(new BakedQuad(data, -1, realSide, texture, false, Attributes.DEFAULT_BAKED_FORMAT));
-                    }
-                } else {
-                    addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
-                }
-
-                // Render facade if present
-                if (blockStateHolder.isPresent()) {
-                    ret.addAll(getFacadeQuads(blockStateHolder.get(), side, partRenderPosition));
-                }
+        Triple<IRenderState, EnumFacing, BlockRenderLayer> cacheKey = null;
+        List<BakedQuad> cachedQuads = null;
+        if (GeneralConfig.cacheCableModels) {
+            IRenderState renderState = getRenderState();
+            if (renderState != null) {
+                cacheKey = Triple.of(renderState, this.facing, MinecraftForgeClient.getRenderLayer());
+                cachedQuads = CACHE_QUADS.getIfPresent(cacheKey);
             }
         }
+        if (cachedQuads == null) {
+            List<BakedQuad> ret = Lists.newLinkedList();
+            TextureAtlasSprite texture = getParticleTexture();
+            boolean renderCable = isItemStack() || (isRealCable() && MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT);
+            Optional<IBlockState> blockStateHolder = getFacade();
+            for (EnumFacing side : EnumFacing.values()) {
+                boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
+                boolean hasPart = !isItemStack() && hasPart(side);
+                if (hasPart && shouldRenderParts()) {
+                    try {
+                        ret.addAll(getPartModel(side).getQuads(this.blockState, this.facing, this.rand));
+                    } catch (Exception e) {
+                        // Skip rendering this part, could occur when the player is still logging in.
+                    }
+                }
+                if (renderCable) {
+                    PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
+                    if (isConnected) {
+                        partRenderPosition = CABLE_RENDERPOSITION;
+                    }
+                    if (isConnected || hasPart) {
+                        int i = 0;
+                        float[][][] quadVertexes = this.quadVertexes;
+                        if (hasPart) {
+                            partRenderPosition = getPartRenderPosition(side);
+                            float depthFactor = partRenderPosition == PartRenderPosition.NONE ? 0F : partRenderPosition.getDepthFactor();
+                            quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
+                        }
+                        for (float[][] v : quadVertexes) {
+                            Vec3d v1 = rotate(new Vec3d(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
+                            Vec3d v2 = rotate(new Vec3d(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).addVector(.5, .5, .5);
+                            Vec3d v3 = rotate(new Vec3d(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);
+                            Vec3d v4 = rotate(new Vec3d(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).addVector(.5, .5, .5);
+                            EnumFacing realSide = getSideFromVecs(v1, v2, v3);
 
-        // Close the cable connections for items
-        if(isItemStack()) {
-            addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, EnumFacing.EAST);
-            addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, EnumFacing.WEST);
+                            boolean invert = i == 2 || i == 1;
+                            int length = hasPart ? LENGTH_CONNECTION_LIMITED : LENGTH_CONNECTION;
+
+                            int[] data = Ints.concat(
+                                    vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture,
+                                            LENGTH_CONNECTION, invert ? length : 0),
+                                    vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture,
+                                            INV_LENGTH_CONNECTION, invert ? length : 0),
+                                    vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture,
+                                            INV_LENGTH_CONNECTION, invert ? 0 : length),
+                                    vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture,
+                                            LENGTH_CONNECTION, invert ? 0 : length)
+                            );
+                            i++;
+                            ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
+                            ret.add(new BakedQuad(data, -1, realSide, texture, false, Attributes.DEFAULT_BAKED_FORMAT));
+                        }
+                    } else {
+                        addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
+                    }
+
+                    // Render facade if present
+                    if (blockStateHolder.isPresent()) {
+                        ret.addAll(getFacadeQuads(blockStateHolder.get(), side, partRenderPosition));
+                    }
+                }
+            }
+
+            // Close the cable connections for items
+            if (isItemStack()) {
+                addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, EnumFacing.EAST);
+                addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, EnumFacing.WEST);
+            }
+            cachedQuads = ret;
+            if (cacheKey != null) {
+                CACHE_QUADS.put(cacheKey, cachedQuads);
+            }
         }
-
-        return ret;
+        return cachedQuads;
     }
 
     @Override

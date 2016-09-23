@@ -11,6 +11,7 @@ import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.client.model.CableModelBase;
+import org.cyclops.integrateddynamics.client.model.IRenderState;
 
 /**
  * A dynamic model for cables.
@@ -63,6 +64,11 @@ public class PartCableModel extends CableModelBase {
     @Override
     protected IBakedModel getPartModel(EnumFacing side) {
         return null;
+    }
+
+    @Override
+    protected IRenderState getRenderState() {
+        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.RENDERSTATE, null);
     }
 
     @Override

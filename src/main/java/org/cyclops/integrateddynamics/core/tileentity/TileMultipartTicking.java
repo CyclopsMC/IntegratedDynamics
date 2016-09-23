@@ -37,6 +37,7 @@ import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConf
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerTileMultipartTicking;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
+import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.Objects;
@@ -76,6 +77,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     private final INetworkCarrier networkCarrier;
     @Getter
     private final ICableFakeable cableFakeable;
+
+    private IExtendedBlockState cachedState = null;
 
     public TileMultipartTicking() {
         partContainer = new PartContainerTileMultipartTicking(this);
@@ -134,10 +137,13 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             previousLightLevels = lightLevels;
             getWorld().checkLight(getPos());
         }
-
+        cachedState = null;
     }
 
     public IExtendedBlockState getConnectionState() {
+        if (cachedState != null) {
+            return cachedState;
+        }
         ExtendedBlockStateBuilder builder = ExtendedBlockStateBuilder.builder((IExtendedBlockState) getBlock().getDefaultState());
         if (partContainer.getPartData() != null) { // Can be null in rare cases where rendering happens before data sync
             builder.withProperty(BlockCable.REALCABLE, cableFakeable.isRealCable());
@@ -153,8 +159,13 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             IFacadeable facadeable = getCapability(FacadeableConfig.CAPABILITY, null);
             builder.withProperty(BlockCable.FACADE, facadeable.hasFacade() ? Optional.of(facadeable.getFacade()) : Optional.absent());
             builder.withProperty(BlockCable.PARTCONTAINER, partContainer);
+            builder.withProperty(BlockCable.RENDERSTATE, new CableRenderState(
+                    this.cableFakeable.isRealCable(),
+                    this.connected,
+                    this.partContainer.getPartData()
+                    ));
         }
-        return builder.build();
+        return cachedState = builder.build();
     }
 
     @Override

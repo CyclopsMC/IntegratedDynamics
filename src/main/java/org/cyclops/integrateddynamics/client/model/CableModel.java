@@ -79,6 +79,11 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
+    protected IRenderState getRenderState() {
+        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.RENDERSTATE, null);
+    }
+
+    @Override
     public IBakedModel handleBlockState(IBlockState state, EnumFacing side, long rand) {
         return new CableModel((IExtendedBlockState) state, side, rand);
     }

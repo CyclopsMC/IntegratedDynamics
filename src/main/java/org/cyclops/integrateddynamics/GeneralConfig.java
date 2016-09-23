@@ -55,6 +55,12 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.")
     public static int wildMenrilTreeChance = 1000;
+
+    /**
+     * If cable models should be cached for rendering optimization.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If cable models should be cached for rendering optimization.", isCommandable = true)
+    public static boolean cacheCableModels = true;
     
     /**
      * Create a new instance.
