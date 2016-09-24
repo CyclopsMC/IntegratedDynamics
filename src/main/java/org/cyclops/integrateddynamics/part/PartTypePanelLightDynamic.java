@@ -91,9 +91,9 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
-    public void postUpdate(IPartNetwork partNetwork, INetwork network, PartTarget target, State state, boolean updated) {
+    public void postUpdate(INetwork network, IPartNetwork partNetwork, PartTarget target, State state, boolean updated) {
         boolean wasEnabled = isEnabled(state);
-        super.postUpdate(partNetwork, network, target, state, updated);
+        super.postUpdate(network, partNetwork, target, state, updated);
         boolean isEnabled = isEnabled(state);
         if(wasEnabled != isEnabled) {
             setLightLevel(target, isEnabled ? getLightLevel(state, state.getDisplayValue()) : 0);

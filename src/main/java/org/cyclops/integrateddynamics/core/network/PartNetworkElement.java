@@ -64,7 +64,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void postUpdate(INetwork network, boolean updated) {
-        part.postUpdate(NetworkHelpers.getPartNetwork(network), network, getTarget(), getPartState(), updated);
+        part.postUpdate(network, NetworkHelpers.getPartNetwork(network), getTarget(), getPartState(), updated);
     }
 
     @Override

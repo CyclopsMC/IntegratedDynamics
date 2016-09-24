@@ -79,9 +79,9 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     }
 
     @Override
-    public void postUpdate(IPartNetwork partNetwork, INetwork network, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state, boolean updated) {
+    public void postUpdate(INetwork network, IPartNetwork partNetwork, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state, boolean updated) {
         boolean wasEnabled = isEnabled(state);
-        super.postUpdate(partNetwork, network, target, state, updated);
+        super.postUpdate(network, partNetwork, target, state, updated);
         boolean isEnabled = isEnabled(state);
         if(wasEnabled != isEnabled) {
             PartTypePanelLightDynamic.setLightLevel(target, isEnabled ? LIGHT_LEVEL : 0);

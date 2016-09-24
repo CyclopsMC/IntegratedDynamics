@@ -171,7 +171,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void postUpdate(IPartNetwork partNetwork, INetwork network, PartTarget target, S state, boolean updated) {
+    public void postUpdate(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, boolean updated) {
         setEnabled(state, updated);
     }
 
