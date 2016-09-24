@@ -8,10 +8,10 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Getter
     @Setter
     private INetwork network;
-    private Set<DimPos> energyStoragePositions = Sets.newHashSet();
+    private Set<PartPos> energyStoragePositions = Sets.newHashSet();
 
     @Override
     public boolean canUpdate(INetworkElement element) {
@@ -58,11 +58,11 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     }
 
     protected synchronized List<IEnergyStorage> getMaterializedEnergyBatteries() {
-        return ImmutableList.copyOf(Iterables.transform(energyStoragePositions, new Function<DimPos, IEnergyStorage>() {
+        return ImmutableList.copyOf(Iterables.transform(energyStoragePositions, new Function<PartPos, IEnergyStorage>() {
             @Nullable
             @Override
-            public IEnergyStorage apply(DimPos dimPos) {
-                return TileHelpers.getCapability(dimPos, null, CapabilityEnergy.ENERGY);
+            public IEnergyStorage apply(PartPos pos) {
+                return TileHelpers.getCapability(pos.getPos(), pos.getSide(), CapabilityEnergy.ENERGY);
             }
 
             @Override
@@ -132,23 +132,23 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     }
 
     @Override
-    public boolean addEnergyBattery(DimPos dimPos) {
-        IEnergyStorage energyStorage = TileHelpers.getCapability(dimPos, null, CapabilityEnergy.ENERGY);
+    public boolean addEnergyBattery(PartPos pos) {
+        IEnergyStorage energyStorage = TileHelpers.getCapability(pos.getPos(), pos.getSide(), CapabilityEnergy.ENERGY);
         if(energyStorage != null) {
-            boolean contained = energyStoragePositions.contains(dimPos);
-            energyStoragePositions.add(dimPos);
+            boolean contained = energyStoragePositions.contains(pos);
+            energyStoragePositions.add(pos);
             return !contained;
         }
         return false;
     }
 
     @Override
-    public void removeEnergyBattery(DimPos pos) {
+    public void removeEnergyBattery(PartPos pos) {
         energyStoragePositions.remove(pos);
     }
 
     @Override
-    public Set<DimPos> getEnergyBatteries() {
+    public Set<PartPos> getEnergyBatteries() {
         return Collections.unmodifiableSet(energyStoragePositions);
     }
 

@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
@@ -61,12 +62,12 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     @Override
     public boolean onNetworkAddition(INetwork network) {
-        return NetworkHelpers.getEnergyNetwork(network).addEnergyBattery(getPos());
+        return NetworkHelpers.getEnergyNetwork(network).addEnergyBattery(PartPos.of(getPos(), null));
     }
 
     @Override
     public void onNetworkRemoval(INetwork network) {
-        NetworkHelpers.getEnergyNetwork(network).removeEnergyBattery(getPos());
+        NetworkHelpers.getEnergyNetwork(network).removeEnergyBattery(PartPos.of(getPos(), null));
     }
 
     @Override
