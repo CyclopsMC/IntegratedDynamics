@@ -109,7 +109,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        EnumFacingMap<Boolean> lastConnected = connected;
+        EnumFacingMap<Boolean> lastConnected = EnumFacingMap.newMap(connected);
         String lastFacadeBlockName = facadeBlockName;
         int lastFacadeMeta = facadeMeta;
         boolean lastRealCable = cableFakeable.isRealCable();
@@ -161,8 +161,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             builder.withProperty(BlockCable.PARTCONTAINER, partContainer);
             builder.withProperty(BlockCable.RENDERSTATE, new CableRenderState(
                     this.cableFakeable.isRealCable(),
-                    this.connected,
-                    this.partContainer.getPartData()
+                    EnumFacingMap.newMap(this.connected),
+                    EnumFacingMap.newMap(this.partContainer.getPartData())
                     ));
         }
         return cachedState = builder.build();
