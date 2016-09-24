@@ -41,8 +41,10 @@ public class PartRenderPosition {
             sidedCableCollisionBoxes.put(side, new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]));
         }
 
+        float min = (1 - widthFactor) / 2 + 0.0025F;
+        float max = (1 - widthFactor) / 2 + widthFactor - 0.0025F;
         float[][] collisionBoxesRaw = new float[][]{
-                {0.19F, 0.81F}, {0.005F, selectionDepthFactor}, {0.19F, 0.81F}
+                {min, max}, {0.005F, selectionDepthFactor}, {min, max}
         };
         collisionBoxes = EnumFacingMap.newMap();
         for (EnumFacing side : EnumFacing.VALUES) {
