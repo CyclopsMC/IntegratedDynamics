@@ -64,7 +64,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void postUpdate(INetwork network, boolean updated) {
-        part.postUpdate(NetworkHelpers.getPartNetwork(network), getTarget(), getPartState(), updated);
+        part.postUpdate(NetworkHelpers.getPartNetwork(network), network, getTarget(), getPartState(), updated);
     }
 
     @Override
@@ -79,22 +79,22 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void update(INetwork network) {
-        part.update(NetworkHelpers.getPartNetwork(network), getTarget(), getPartState());
+        part.update(network, NetworkHelpers.getPartNetwork(network), getTarget(), getPartState());
     }
 
     @Override
     public void beforeNetworkKill(INetwork network) {
-        part.beforeNetworkKill(NetworkHelpers.getPartNetwork(network), target, getPartState());
+        part.beforeNetworkKill(network, NetworkHelpers.getPartNetwork(network), target, getPartState());
     }
 
     @Override
     public void afterNetworkAlive(INetwork network) {
-        part.afterNetworkAlive(NetworkHelpers.getPartNetwork(network), target, getPartState());
+        part.afterNetworkAlive(network, NetworkHelpers.getPartNetwork(network), target, getPartState());
     }
 
     @Override
     public void afterNetworkReAlive(INetwork network) {
-        part.afterNetworkReAlive(NetworkHelpers.getPartNetwork(network), target, getPartState());
+        part.afterNetworkReAlive(network, NetworkHelpers.getPartNetwork(network), target, getPartState());
     }
 
     @Override
@@ -107,7 +107,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
         boolean res = partNetwork.addPart(getPartState().getId(), getTarget().getCenter());
         if(res) {
-            part.onNetworkAddition(partNetwork, target, getPartState());
+            part.onNetworkAddition(network, partNetwork, target, getPartState());
         }
         return res;
     }
@@ -116,22 +116,22 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public void onNetworkRemoval(INetwork network) {
         IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
         partNetwork.removePart(getPartState().getId());
-        part.onNetworkRemoval(partNetwork, target, getPartState());
+        part.onNetworkRemoval(network, partNetwork, target, getPartState());
     }
 
     @Override
     public void onPreRemoved(INetwork network) {
-        part.onPreRemoved(NetworkHelpers.getPartNetwork(network), target, getPartState());
+        part.onPreRemoved(network, NetworkHelpers.getPartNetwork(network), target, getPartState());
     }
 
     @Override
     public void onPostRemoved(INetwork network) {
-        part.onPostRemoved(NetworkHelpers.getPartNetwork(network), target, getPartState());
+        part.onPostRemoved(network, NetworkHelpers.getPartNetwork(network), target, getPartState());
     }
 
     @Override
     public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighborBlock) {
-        part.onBlockNeighborChange(NetworkHelpers.getPartNetwork(network), target, getPartState(), world, neighborBlock);
+        part.onBlockNeighborChange(network, NetworkHelpers.getPartNetwork(network), target, getPartState(), world, neighborBlock);
     }
 
     @Override

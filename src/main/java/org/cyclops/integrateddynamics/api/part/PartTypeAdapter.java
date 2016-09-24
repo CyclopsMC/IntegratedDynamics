@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.init.IInitListener;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
@@ -69,22 +70,22 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void update(IPartNetwork network, PartTarget target, S state) {
+    public void update(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
 
     @Override
-    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state) {
+    public void beforeNetworkKill(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
 
     @Override
-    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state) {
+    public void afterNetworkAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
 
     @Override
-    public void afterNetworkReAlive(IPartNetwork network, PartTarget target, S state) {
+    public void afterNetworkReAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
 
@@ -135,12 +136,12 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void onNetworkAddition(IPartNetwork network, PartTarget target, S state) {
+    public void onNetworkAddition(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
 
     @Override
-    public void onNetworkRemoval(IPartNetwork network, PartTarget target, S state) {
+    public void onNetworkRemoval(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
 
@@ -150,17 +151,17 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void onPreRemoved(IPartNetwork network, PartTarget target, S state) {
+    public void onPreRemoved(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
 
     @Override
-    public void onPostRemoved(IPartNetwork network, PartTarget target, S state) {
+    public void onPostRemoved(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
 
     @Override
-    public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
 
     }
 
@@ -170,7 +171,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void postUpdate(IPartNetwork network, PartTarget target, S state, boolean updated) {
+    public void postUpdate(IPartNetwork partNetwork, INetwork network, PartTarget target, S state, boolean updated) {
         setEnabled(state, updated);
     }
 

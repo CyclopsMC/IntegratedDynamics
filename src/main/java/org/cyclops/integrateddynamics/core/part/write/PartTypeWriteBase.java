@@ -82,11 +82,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void update(IPartNetwork network, PartTarget target, S state) {
-        super.update(network, target, state);
+    public void update(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
+        super.update(network, partNetwork, target, state);
         IAspect aspect = getActiveAspect(target, state);
         if (aspect != null) {
-            aspect.update(network, this, target, state);
+            aspect.update(partNetwork, this, target, state);
         }
     }
 
@@ -104,14 +104,14 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state) {
-        super.beforeNetworkKill(network, target, state);
+    public void beforeNetworkKill(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
+        super.beforeNetworkKill(network, partNetwork, target, state);
         state.triggerAspectInfoUpdate((P) this, target, null);
     }
 
     @Override
-    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state) {
-        super.afterNetworkAlive(network, target, state);
+    public void afterNetworkAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
+        super.afterNetworkAlive(network, partNetwork, target, state);
         updateActivation(target, state);
     }
 

@@ -114,37 +114,37 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public boolean isUpdate(S state);
 
     /**
-     * @param network The network to update in.
-     * @param state The state
-     * @param target The target block.
      * Update at the tick interval specified.
+     * @param network The network to update in.
+     * @param target The target block.
+     * @param state The state
      */
-    public void update(IPartNetwork network, PartTarget target, S state);
+    public void update(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
 
     /**
-     * @param network The network to update in.
-     * @param state The state
-     * @param target The target block.
      * Called right before the network is terminated or will be reset.
+     * @param network The network to update in.
+     * @param target The target block.
+     * @param state The state
      */
-    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state);
+    public void beforeNetworkKill(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
 
     /**
-     * @param network The network to update in.
-     * @param state The state
-     * @param target The target block.
      * Called right after this network is initialized.
+     * @param network The network to update in.
+     * @param target The target block.
+     * @param state The state
      */
-    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state);
+    public void afterNetworkAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
 
     /**
-     * @param network The network to update in.
-     * @param state The state
-     * @param target The target block.
      * Called right after this network has come alive again,
      * for example after a network restart.
+     * @param network The network to update in.
+     * @param target The target block.
+     * @param state The state
      */
-    public void afterNetworkReAlive(IPartNetwork network, PartTarget target, S state);
+    public void afterNetworkReAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
 
     /**
      * Get the itemstack from the given state.
@@ -181,18 +181,18 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * Called when this element is added to the network.
      * @param network The network to update in.
-     * @param state The state
      * @param target The target block.
+     * @param state The state
      */
-    public void onNetworkAddition(IPartNetwork network, PartTarget target, S state);
+    public void onNetworkAddition(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
 
     /**
      * Called when this element is removed from the network.
      * @param network The network to update in.
-     * @param state The state
      * @param target The target block.
+     * @param state The state
      */
-    public void onNetworkRemoval(IPartNetwork network, PartTarget target, S state);
+    public void onNetworkRemoval(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
 
     /**
      * Create a network element for this part type.
@@ -237,29 +237,29 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * Called when this element is about to be removed.
      * @param network The network.
-     * @param state The state
      * @param target The target block.
+     * @param state The state
      */
-    public void onPreRemoved(IPartNetwork network, PartTarget target, S state);
+    public void onPreRemoved(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
 
     /**
      * Called after this element has been removed.
      * @param network The network.
-     * @param state The state
      * @param target The target block.
+     * @param state The state
      */
-    public void onPostRemoved(IPartNetwork network, PartTarget target, S state);
+    public void onPostRemoved(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
 
     /**
      * Called when a neighbouring block is updated, more specifically when
      * {@link net.minecraft.block.Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} is called.
      * @param network The network to update in.
-     * @param state The state
      * @param target The target block.
+     * @param state The state
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock The block type of the neighbour that was updated.
      */
-    public void onBlockNeighborChange(IPartNetwork network, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
 
     /**
      * @param state The state
@@ -271,12 +271,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * Called after the element was updated or not.
      * If the update was not called, this can be because the network did not contain
      * enough energy to let this element work.
+     * @param partNetwork The network to update in.
      * @param network The network to update in.
-     * @param state The state
      * @param target The target block.
+     * @param state The state
      * @param updated If the {@link INetworkElement#update(INetwork)} was called.
      */
-    public void postUpdate(IPartNetwork network, PartTarget target, S state, boolean updated);
+    public void postUpdate(IPartNetwork partNetwork, INetwork network, PartTarget target, S state, boolean updated);
 
     /**
      * @param state The state

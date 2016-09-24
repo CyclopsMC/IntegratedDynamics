@@ -95,14 +95,14 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void beforeNetworkKill(IPartNetwork network, PartTarget target, S state) {
-        super.beforeNetworkKill(network, target, state);
+    public void beforeNetworkKill(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
+        super.beforeNetworkKill(network, partNetwork, target, state);
         state.onVariableContentsUpdated((P) this, target);
     }
 
     @Override
-    public void afterNetworkAlive(IPartNetwork network, PartTarget target, S state) {
-        super.afterNetworkAlive(network, target, state);
+    public void afterNetworkAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
+        super.afterNetworkAlive(network, partNetwork, target, state);
         state.onVariableContentsUpdated((P) this, target);
     }
 
@@ -112,13 +112,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void update(IPartNetwork network, PartTarget target, S state) {
-        super.update(network, target, state);
+    public void update(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
+        super.update(network, partNetwork, target, state);
         IValue lastValue = state.getDisplayValue();
         IValue newValue = null;
         if(state.hasVariable()) {
             try {
-                IVariable variable = state.getVariable(network);
+                IVariable variable = state.getVariable(partNetwork);
                 if(variable != null) {
                     newValue = variable.getValue();
 
@@ -128,7 +128,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             }
         }
         if(!ValueHelpers.areValuesEqual(lastValue, newValue)) {
-            onValueChanged(network, target, state, lastValue, newValue);
+            onValueChanged(partNetwork, target, state, lastValue, newValue);
 
             // We can't call state.sendUpdate() here, so we must trigger a block update manually.
             // This was the cause of issue #46 which made it so that values that change after one tick are

@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -72,27 +73,27 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
-    public void onNetworkRemoval(IPartNetwork network, PartTarget target, State state) {
-        super.onNetworkRemoval(network, target, state);
+    public void onNetworkRemoval(INetwork network, IPartNetwork partNetwork, PartTarget target, State state) {
+        super.onNetworkRemoval(network, partNetwork, target, state);
         PartTypePanelLightDynamic.setLightLevel(target, 0);
     }
 
     @Override
-    public void onPostRemoved(IPartNetwork network, PartTarget target, State state) {
-        super.onPostRemoved(network, target, state);
+    public void onPostRemoved(INetwork network, IPartNetwork partNetwork, PartTarget target, State state) {
+        super.onPostRemoved(network, partNetwork, target, state);
         setLightLevel(target, 0);
     }
 
     @Override
-    public void onBlockNeighborChange(IPartNetwork network, PartTarget target, State state, IBlockAccess world, Block neighborBlock) {
-        super.onBlockNeighborChange(network, target, state, world, neighborBlock);
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, State state, IBlockAccess world, Block neighborBlock) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighborBlock);
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }
 
     @Override
-    public void postUpdate(IPartNetwork network, PartTarget target, State state, boolean updated) {
+    public void postUpdate(IPartNetwork partNetwork, INetwork network, PartTarget target, State state, boolean updated) {
         boolean wasEnabled = isEnabled(state);
-        super.postUpdate(network, target, state, updated);
+        super.postUpdate(partNetwork, network, target, state, updated);
         boolean isEnabled = isEnabled(state);
         if(wasEnabled != isEnabled) {
             setLightLevel(target, isEnabled ? getLightLevel(state, state.getDisplayValue()) : 0);
