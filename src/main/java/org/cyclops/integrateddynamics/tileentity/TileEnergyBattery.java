@@ -98,6 +98,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         if(!isCreative()) {
+            energy = Math.min(energy, BlockEnergyBatteryConfig.energyPerTick);
             int stored = getEnergyStored();
             int newEnergy = Math.min(stored + energy, getMaxEnergyStored());
             if(!simulate) {
@@ -111,6 +112,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int extractEnergy(int energy, boolean simulate) {
         if(isCreative()) return energy;
+        energy = Math.min(energy, BlockEnergyBatteryConfig.energyPerTick);
         int stored = getEnergyStored();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {
