@@ -14,7 +14,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.item.ItemVariable;
@@ -123,11 +122,6 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
         }
         onDirty();
         sendUpdate(); // We want this error messages to be sent to the client(s).
-    }
-
-    @Override
-    public Class<? extends IPartState> getPartStateClass() {
-        return IPartState.class;
     }
 
     @Override

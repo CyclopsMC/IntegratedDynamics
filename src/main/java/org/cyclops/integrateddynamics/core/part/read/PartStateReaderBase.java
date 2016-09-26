@@ -33,9 +33,4 @@ public class PartStateReaderBase<P extends IPartTypeReader>
         aspectVariables.put(aspect, variable);
     }
 
-    @Override
-    public Class<? extends IPartState> getPartStateClass() {
-        return IPartStateReader.class;
-    }
-
 }

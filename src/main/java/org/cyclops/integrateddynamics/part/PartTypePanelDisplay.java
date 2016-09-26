@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.block.Block;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
@@ -37,11 +36,6 @@ public class PartTypePanelDisplay extends PartTypePanelVariableDriven<PartTypePa
     }
 
     public static class State extends PartTypePanelVariableDriven.State<PartTypePanelDisplay, PartTypePanelDisplay.State> {
-
-        @Override
-        public Class<? extends IPartState> getPartStateClass() {
-            return PartTypePanelDisplay.State.class;
-        }
 
     }
 

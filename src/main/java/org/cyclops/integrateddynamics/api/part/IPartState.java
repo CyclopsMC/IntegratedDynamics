@@ -18,13 +18,6 @@ public interface IPartState<P extends IPartType> {
     public static final String GLOBALCOUNTER_KEY = "part";
 
     /**
-     * Get the part state class.
-     * This is used for doing dynamic construction of guis.
-     * @return The actual class for this part state.
-     */
-    public Class<? extends IPartState> getPartStateClass();
-
-    /**
      * Write a state to NBT.
      * @param tag The tag to write to.
      */

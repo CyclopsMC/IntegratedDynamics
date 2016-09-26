@@ -7,8 +7,5 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
  * @author rubensworks
  */
 public class PartStateEmpty<P extends IPartType> extends PartStateBase<P> {
-    @Override
-    public Class<? extends PartStateEmpty> getPartStateClass() {
-        return PartStateEmpty.class;
-    }
+
 }

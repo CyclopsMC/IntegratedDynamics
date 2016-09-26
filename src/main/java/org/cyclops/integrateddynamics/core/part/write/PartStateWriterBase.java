@@ -7,7 +7,6 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
@@ -118,11 +117,6 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         }
         onDirty();
         sendUpdate(); // We want this error messages to be sent to the client(s).
-    }
-
-    @Override
-    public Class<? extends IPartState> getPartStateClass() {
-        return IPartStateWriter.class;
     }
 
     @Override

@@ -15,7 +15,6 @@ import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLight;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
@@ -122,11 +121,6 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     public static class State extends PartTypePanelVariableDriven.State<PartTypePanelLightDynamic, PartTypePanelLightDynamic.State> {
-
-        @Override
-        public Class<? extends IPartState> getPartStateClass() {
-            return PartTypePanelLightDynamic.State.class;
-        }
 
     }
 
