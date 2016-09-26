@@ -35,6 +35,10 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
         super(name, new PartRenderPosition(0.1875F, 0.3125F, 0.625F, 0.625F));
     }
 
+    public PartTypeReadBase(String name, PartRenderPosition partRenderPosition) {
+        super(name, partRenderPosition);
+    }
+
     @Override
     public boolean isSolid(S state) {
         return true;

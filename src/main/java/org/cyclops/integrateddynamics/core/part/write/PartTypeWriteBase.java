@@ -48,7 +48,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     private List<IAspectWrite> aspectsWrite = null;
 
     public PartTypeWriteBase(String name) {
-        super(name, new PartRenderPosition(0.3125F, 0.3125F, 0.25F, 0.25F));
+        this(name, new PartRenderPosition(0.3125F, 0.3125F, 0.25F, 0.25F));
+    }
+
+    public PartTypeWriteBase(String name, PartRenderPosition partRenderPosition) {
+        super(name, partRenderPosition);
     }
 
     @Override
