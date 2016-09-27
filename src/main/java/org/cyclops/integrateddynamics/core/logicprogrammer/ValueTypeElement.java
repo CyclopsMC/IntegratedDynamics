@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeGuiElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
@@ -30,10 +30,10 @@ import java.util.List;
  * Element for value type.
  * @author rubensworks
  */
-public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> {
+public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     @Getter
-    private ValueTypeGuiElement<GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> innerGuiElement;
+    private ValueTypeGuiElement<GuiLogicProgrammerBase, ContainerLogicProgrammerBase> innerGuiElement;
 
     public ValueTypeElement(IValueType valueType) {
         innerGuiElement = new ValueTypeGuiElement<>(valueType, getRenderPattern());
@@ -156,7 +156,7 @@ public class ValueTypeElement implements ILogicProgrammerElement<SubGuiConfigRen
     @Override
     @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
+                                                  GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new ValueTypeElementSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

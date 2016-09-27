@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
@@ -88,15 +88,15 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
     @Override
     @SideOnly(Side.CLIENT)
     public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
+                                                  GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     @SideOnly(Side.CLIENT)
-    protected static class SubGuiRenderPattern extends SubGuiConfigRenderPattern<ValueTypeItemStackElement, GuiLogicProgrammerPortable, ContainerLogicProgrammerBase> {
+    protected static class SubGuiRenderPattern extends SubGuiConfigRenderPattern<ValueTypeItemStackElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
         public SubGuiRenderPattern(ValueTypeItemStackElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                   GuiLogicProgrammerPortable gui, ContainerLogicProgrammerBase container) {
+                                   GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
         }
 
@@ -108,7 +108,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
             // Output type tooltip
             if(!container.hasWriteItemInSlot()) {
                 if(gui.isPointInRegion(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
-                        GuiLogicProgrammerPortable.BOX_HEIGHT, GuiLogicProgrammerPortable.BOX_HEIGHT, mouseX, mouseY)) {
+                        GuiLogicProgrammerBase.BOX_HEIGHT, GuiLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
                     gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
                 }
             }

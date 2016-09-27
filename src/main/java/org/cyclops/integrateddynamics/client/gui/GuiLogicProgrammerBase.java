@@ -27,7 +27,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerPortable;
 import org.cyclops.integrateddynamics.item.ItemLabeller;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerLabelPacket;
@@ -124,7 +123,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
                 this.guiLeft + offsetX + 5, this.guiTop + offsetY + 208, Helpers.RGBToInt(80, 80, 80));
 
         // Draw operators
-        ContainerLogicProgrammerPortable container = (ContainerLogicProgrammerPortable) getScrollingInventoryContainer();
+        ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getScrollingInventoryContainer();
         int boxHeight = BOX_HEIGHT;
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
@@ -161,7 +160,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
         }
     }
 
-    protected Rectangle getElementPosition(ContainerLogicProgrammerPortable container, int i, boolean absolute) {
+    protected Rectangle getElementPosition(ContainerLogicProgrammerBase container, int i, boolean absolute) {
         return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.guiLeft : 0),
                 ITEM_POSITION.y + BOX_HEIGHT * i + offsetY + (absolute ? this.guiTop : 0),
                 ITEM_POSITION.width, ITEM_POSITION.height
@@ -174,7 +173,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRendererObj, mouseX, mouseY);
         // Draw operator tooltips
-        ContainerLogicProgrammerPortable container = (ContainerLogicProgrammerPortable) getScrollingInventoryContainer();
+        ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
@@ -187,8 +186,8 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
         }
     }
 
-    protected void onActivateElement(ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerPortable> element) {
-        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammerPortable) getContainer()));
+    protected void onActivateElement(ILogicProgrammerElement<SubGuiConfigRenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> element) {
+        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammerBase) getContainer()));
         operatorConfigPattern.initGui(guiLeft, guiTop);
         subGuiHolder.addSubGui(operatorInfoPattern = new SubGuiOperatorInfo(element));
         operatorInfoPattern.initGui(guiLeft, guiTop);
@@ -200,7 +199,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
 
     public boolean handleElementActivation(ILogicProgrammerElement element) {
         boolean activate = false;
-        ContainerLogicProgrammerPortable container = (ContainerLogicProgrammerPortable) getScrollingInventoryContainer();
+        ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getScrollingInventoryContainer();
         ILogicProgrammerElement newActive = null;
         onDeactivateElement(element);
         if(container.getActiveElement() != element) {
@@ -233,7 +232,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
     }
 
     protected boolean selectPageElement(int elementId) {
-        ContainerLogicProgrammerPortable container = (ContainerLogicProgrammerPortable) getScrollingInventoryContainer();
+        ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getScrollingInventoryContainer();
 
         // Deactivate current element
         if (elementId < 0) {
@@ -259,7 +258,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if(keyCode != Keyboard.KEY_LSHIFT && keyCode != Keyboard.KEY_RSHIFT) {
-            ContainerLogicProgrammerPortable container = (ContainerLogicProgrammerPortable) getScrollingInventoryContainer();
+            ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getScrollingInventoryContainer();
             int pageSize = container.getPageSize();
             int stepModifier = isShiftKeyDown() ? pageSize - 1 : 1;
             boolean isElementFocused = container.getActiveElement() != null && container.getActiveElement().isFocused(operatorConfigPattern);
@@ -310,7 +309,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton);
-        ContainerLogicProgrammerPortable container = (ContainerLogicProgrammerPortable) getScrollingInventoryContainer();
+        ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
             if (container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
@@ -340,15 +339,15 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
         return this.hasLabeller;
     }
 
-    public class SubGuiOperatorInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<SubGuiConfigRenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerPortable> {
+    public class SubGuiOperatorInfo extends ValueTypeGuiElement.SubGuiValueTypeInfo<SubGuiConfigRenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
         public static final int BUTTON_EDIT = 1;
 
         private GuiTextField searchField;
         private GuiButtonText button = null;
 
-        public SubGuiOperatorInfo(IGuiInputElement<SubGuiConfigRenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerPortable> element) {
-            super(GuiLogicProgrammerBase.this, (ContainerLogicProgrammerPortable) GuiLogicProgrammerBase.this.container, element, 88, 106, 139, 20);
+        public SubGuiOperatorInfo(IGuiInputElement<SubGuiConfigRenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> element) {
+            super(GuiLogicProgrammerBase.this, (ContainerLogicProgrammerBase) GuiLogicProgrammerBase.this.container, element, 88, 106, 139, 20);
 
             if(hasLabeller()) {
                 buttonList.add(button = new GuiButtonText(BUTTON_EDIT, 0, 0, 6, 10, "E", true));
