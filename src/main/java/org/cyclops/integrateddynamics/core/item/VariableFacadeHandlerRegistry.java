@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -16,6 +17,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
@@ -123,6 +125,18 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
      */
     public static class DummyVariableFacade extends VariableFacadeBase {
 
+        private static final IVariable VARIABLE_TRUE = new IVariable<ValueTypeBoolean.ValueBoolean>() {
+            @Override
+            public IValueType<ValueTypeBoolean.ValueBoolean> getType() {
+                return ValueTypes.BOOLEAN;
+            }
+
+            @Override
+            public ValueTypeBoolean.ValueBoolean getValue() throws EvaluationException {
+                return ValueTypeBoolean.ValueBoolean.of(true);
+            }
+        };
+
         private final String unlocalizedError;
 
         public DummyVariableFacade(String unlocalizedError) {
@@ -132,7 +146,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
         @Override
         public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
-            return null;
+            return VARIABLE_TRUE;
         }
 
         @Override
@@ -142,7 +156,9 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
         @Override
         public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
-            validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
+            if (containingValueType != ValueTypes.BOOLEAN) {
+                validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
+            }
         }
 
         @Override
