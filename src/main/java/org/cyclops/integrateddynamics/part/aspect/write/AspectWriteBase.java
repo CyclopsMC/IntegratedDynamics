@@ -5,6 +5,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -29,13 +30,8 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
 
     protected final String unlocalizedTypeSuffix;
 
-    @Deprecated
-    public AspectWriteBase() {
-        this(null, null);
-    }
-
-    public AspectWriteBase(String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
-        super(defaultProperties);
+    public AspectWriteBase(ModBase mod, ModBase modGui, String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
+        super(mod, modGui, defaultProperties);
         if(unlocalizedTypeSuffix == null) {
             unlocalizedTypeSuffix = "";
         }

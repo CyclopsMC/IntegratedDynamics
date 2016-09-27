@@ -4,6 +4,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -28,13 +29,8 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
 
     private final String unlocalizedTypeSuffix;
 
-    @Deprecated
-    public AspectReadBase() {
-        this(null, null);
-    }
-
-    public AspectReadBase(String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
-        super(defaultProperties);
+    public AspectReadBase(ModBase mod, ModBase modGui, String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
+        super(mod, modGui, defaultProperties);
         if(unlocalizedTypeSuffix == null) {
             unlocalizedTypeSuffix = "";
         }

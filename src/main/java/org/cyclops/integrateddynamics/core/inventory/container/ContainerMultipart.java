@@ -69,7 +69,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
                 IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
                 if(!MinecraftHelpers.isClientSide()) {
                     BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
-                    ContainerMultipart.this.player.openGui(gui.getMod(), gui.getGuiID(),
+                    ContainerMultipart.this.player.openGui(gui.getModGui(), gui.getGuiID(),
                             world, cPos.getX(), cPos.getY(), cPos.getZ());
                 }
             }

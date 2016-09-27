@@ -63,8 +63,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     public PartTypeBase(String name, PartRenderPosition partRenderPosition) {
         if(hasGui()) {
-            this.guiID = Helpers.getNewId(getMod(), Helpers.IDType.GUI);
-            getMod().getGuiHandler().registerGUI(this, ExtendedGuiHandler.PART);
+            this.guiID = Helpers.getNewId(getModGui(), Helpers.IDType.GUI);
+            getModGui().getGuiHandler().registerGUI(this, ExtendedGuiHandler.PART);
         } else {
             this.guiID = -1;
         }
@@ -74,6 +74,10 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         this.partRenderPosition = partRenderPosition;
 
         networkEventActions = constructNetworkEventActions();
+    }
+
+    protected ModBase getMod() {
+        return IntegratedDynamics._instance;
     }
 
     /**
@@ -163,8 +167,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public ModBase getMod() {
-        return IntegratedDynamics._instance;
+    public ModBase getModGui() {
+        return getMod();
     }
 
     @Override
@@ -176,9 +180,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         }
 
         if(hasGui()) {
-            getMod().getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, side); // Pass the side as extra data to the gui
+            getModGui().getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, side); // Pass the side as extra data to the gui
             if (!world.isRemote && hasGui()) {
-                player.openGui(getMod().getModId(), getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
+                player.openGui(getModGui().getModId(), getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
             }
             return true;
         }

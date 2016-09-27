@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.core.part.aspect.build;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -19,6 +21,7 @@ import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBase;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Immutable builder for aspects.
@@ -36,10 +39,12 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     private final List<IAspectValuePropagator> valuePropagators;
     private final List<IAspectWriteActivator> writeActivators;
     private final List<IAspectWriteDeactivator> writeDeactivators;
+    private final ModBase mod;
+    private final ModBase modGui;
 
     private AspectBuilder(boolean read, T valueType, List<String> kinds, IAspectProperties defaultAspectProperties,
                           List<IAspectValuePropagator> valuePropagators, List<IAspectWriteActivator> writeActivators,
-                          List<IAspectWriteDeactivator> writeDeactivators) {
+                          List<IAspectWriteDeactivator> writeDeactivators, ModBase mod, ModBase modGui) {
         this.read = read;
         this.valueType = valueType;
         this.kinds = kinds;
@@ -47,6 +52,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         this.valuePropagators = valuePropagators;
         this.writeActivators = writeActivators;
         this.writeDeactivators = writeDeactivators;
+        this.mod = Objects.requireNonNull(mod);
+        this.modGui = Objects.requireNonNull(modGui);
     }
 
     /**
@@ -73,7 +80,9 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 this.defaultAspectProperties,
                 Helpers.joinList(this.valuePropagators, valuePropagator),
                 Helpers.joinList(writeActivators, null),
-                Helpers.joinList(writeDeactivators, null));
+                Helpers.joinList(writeDeactivators, null),
+                mod,
+                modGui);
     }
 
     /**
@@ -88,7 +97,9 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 this.defaultAspectProperties,
                 Helpers.joinList(this.valuePropagators, null),
                 Helpers.joinList(writeActivators, null),
-                Helpers.joinList(writeDeactivators, null));
+                Helpers.joinList(writeDeactivators, null),
+                mod,
+                modGui);
     }
 
     /**
@@ -103,7 +114,9 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 aspectProperties,
                 Helpers.joinList(this.valuePropagators, null),
                 Helpers.joinList(writeActivators, null),
-                Helpers.joinList(writeDeactivators, null));
+                Helpers.joinList(writeDeactivators, null),
+                mod,
+                modGui);
     }
 
     /**
@@ -122,7 +135,9 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 this.defaultAspectProperties,
                 Helpers.joinList(this.valuePropagators, null),
                 Helpers.joinList(writeActivators, activator),
-                Helpers.joinList(writeDeactivators, null));
+                Helpers.joinList(writeDeactivators, null),
+                mod,
+                modGui);
     }
 
     /**
@@ -141,7 +156,43 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 this.defaultAspectProperties,
                 Helpers.joinList(this.valuePropagators, null),
                 Helpers.joinList(writeActivators, null),
-                Helpers.joinList(writeDeactivators, deactivator));
+                Helpers.joinList(writeDeactivators, deactivator),
+                mod,
+                modGui);
+    }
+
+    /**
+     * Set the mod that provides the aspect.
+     * @param mod The mod.
+     * @return The new builder instance.
+     */
+    public AspectBuilder<V, T, O> byMod(ModBase mod) {
+        return new AspectBuilder<>(
+                this.read, this.valueType,
+                Helpers.joinList(this.kinds, null),
+                this.defaultAspectProperties,
+                Helpers.joinList(this.valuePropagators, null),
+                Helpers.joinList(writeActivators, null),
+                Helpers.joinList(writeDeactivators, null),
+                mod,
+                modGui);
+    }
+
+    /**
+     * Set the gui mod that provides the aspect.
+     * @param modGui The gui mod.
+     * @return The new builder instance.
+     */
+    public AspectBuilder<V, T, O> byModGui(ModBase modGui) {
+        return new AspectBuilder<>(
+                this.read, this.valueType,
+                Helpers.joinList(this.kinds, null),
+                this.defaultAspectProperties,
+                Helpers.joinList(this.valuePropagators, null),
+                Helpers.joinList(writeActivators, null),
+                Helpers.joinList(writeDeactivators, null),
+                mod,
+                modGui);
     }
 
     /**
@@ -174,7 +225,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Pair<PartTarget, IAspectProperties>> forReadType(T valueType) {
         return new AspectBuilder<>(true, valueType, ImmutableList.of(valueType.getTypeName()), null,
                 Collections.<IAspectValuePropagator>emptyList(), Collections.<IAspectWriteActivator>emptyList(),
-                Collections.<IAspectWriteDeactivator>emptyList());
+                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, IntegratedDynamics._instance);
     }
 
     /**
@@ -187,7 +238,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Triple<PartTarget, IAspectProperties, IVariable<V>>> forWriteType(T valueType) {
         return new AspectBuilder<>(false, valueType, ImmutableList.of(valueType.getTypeName()), null,
                 Collections.<IAspectValuePropagator>emptyList(), Collections.<IAspectWriteActivator>emptyList(),
-                Collections.<IAspectWriteDeactivator>emptyList());
+                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, IntegratedDynamics._instance);
     }
 
     private static class BuiltReader<V extends IValue, T extends IValueType<V>> extends AspectReadBase<V, T> {
@@ -196,7 +247,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         private final List<IAspectValuePropagator> valuePropagators;
 
         public BuiltReader(AspectBuilder<V, T, V> aspectBuilder) {
-            super(deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties);
+            super(aspectBuilder.mod, aspectBuilder.modGui,
+                    deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties);
             this.valueType = aspectBuilder.valueType;
             this.valuePropagators = aspectBuilder.valuePropagators;
         }
@@ -238,7 +290,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         private final List<IAspectWriteDeactivator> writeDeactivators;
 
         public BuiltWriter(AspectBuilder<V, T, V> aspectBuilder) {
-            super(deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties);
+            super(aspectBuilder.mod, aspectBuilder.modGui,
+                    deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties);
             this.valueType = aspectBuilder.valueType;
             this.valuePropagators = aspectBuilder.valuePropagators;
             this.writeActivators = aspectBuilder.writeActivators;

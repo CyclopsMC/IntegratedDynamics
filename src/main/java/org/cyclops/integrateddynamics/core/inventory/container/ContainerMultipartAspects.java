@@ -92,7 +92,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
                 IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
                 if(!MinecraftHelpers.isClientSide()) {
                     BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
-                    ContainerMultipartAspects.this.player.openGui(gui.getMod(), gui.getGuiID(),
+                    ContainerMultipartAspects.this.player.openGui(gui.getModGui(), gui.getGuiID(),
                             world, cPos.getX(), cPos.getY(), cPos.getZ());
                 }
             }
@@ -109,7 +109,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
                         IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.ASPECT, Pair.of(getTarget().getCenter().getSide(), aspect));
                         if (!MinecraftHelpers.isClientSide()) {
                             BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
-                            ContainerMultipartAspects.this.player.openGui(gui.getMod(), gui.getGuiID(),
+                            ContainerMultipartAspects.this.player.openGui(gui.getModGui(), gui.getGuiID(),
                                     world, cPos.getX(), cPos.getY(), cPos.getZ());
                         }
                     }
