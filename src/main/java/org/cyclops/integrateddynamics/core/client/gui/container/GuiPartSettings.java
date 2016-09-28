@@ -92,7 +92,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         numberFieldPriority.setCanLoseFocus(true);
 
         String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
-        buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 140,  this.guiTop + 8, fontRendererObj.getStringWidth(save) + 6, 16 , save, true));
+        buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 140, this.guiTop + 8, fontRendererObj.getStringWidth(save) + 6, 16, save, true));
     }
 
     @Override

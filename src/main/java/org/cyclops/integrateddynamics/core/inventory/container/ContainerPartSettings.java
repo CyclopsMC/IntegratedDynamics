@@ -68,10 +68,14 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         putButtonAction(GuiPartSettings.BUTTON_SAVE, new IButtonActionServer<InventoryContainer>() {
             @Override
             public void onAction(int buttonId, InventoryContainer container) {
-                IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
-                BlockPos pos = getTarget().getCenter().getPos().getBlockPos();
-                if (!MinecraftHelpers.isClientSide()) {
-                    player.openGui(IntegratedDynamics._instance.getModId(), ((IGuiContainerProvider) getPartType()).getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
+                if (!(getPartType() instanceof IGuiContainerProvider) || ((IGuiContainerProvider) getPartType()).getContainer() != ContainerPartSettings.this.getClass()) {
+                    IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
+                    BlockPos pos = getTarget().getCenter().getPos().getBlockPos();
+                    if (!MinecraftHelpers.isClientSide()) {
+                        player.openGui(IntegratedDynamics._instance.getModId(), ((IGuiContainerProvider) getPartType()).getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
+                    }
+                } else {
+                    player.closeScreen();
                 }
             }
         });
