@@ -1,11 +1,12 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -15,8 +16,9 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A network that can hold energy.
@@ -28,6 +30,7 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Setter
     private INetwork network;
     private Set<PartPos> energyStoragePositions = Sets.newHashSet();
+    private TreeSet<PrioritizedPartPos> energyStoragePositionsSorted = Sets.newTreeSet();
 
     @Override
     public boolean canUpdate(INetworkElement element) {
@@ -57,19 +60,19 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
         }
     }
 
-    protected synchronized List<IEnergyStorage> getMaterializedEnergyBatteries() {
-        return ImmutableList.copyOf(Iterables.transform(energyStoragePositions, new Function<PartPos, IEnergyStorage>() {
+    protected synchronized Iterable<IEnergyStorage> getMaterializedEnergyBatteries() {
+        return Iterables.transform(energyStoragePositionsSorted, new Function<PrioritizedPartPos, IEnergyStorage>() {
             @Nullable
             @Override
-            public IEnergyStorage apply(PartPos pos) {
-                return TileHelpers.getCapability(pos.getPos(), pos.getSide(), CapabilityEnergy.ENERGY);
+            public IEnergyStorage apply(PrioritizedPartPos pos) {
+                return TileHelpers.getCapability(pos.getPartPos().getPos(), pos.getPartPos().getSide(), CapabilityEnergy.ENERGY);
             }
 
             @Override
             public boolean equals(@Nullable Object object) {
                 return false;
             }
-        }));
+        });
     }
 
     protected int addSafe(int a, int b) {
@@ -132,11 +135,13 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     }
 
     @Override
-    public boolean addEnergyBattery(PartPos pos) {
+    public boolean addEnergyBattery(PartPos pos, int priority) {
         IEnergyStorage energyStorage = TileHelpers.getCapability(pos.getPos(), pos.getSide(), CapabilityEnergy.ENERGY);
         if(energyStorage != null) {
             boolean contained = energyStoragePositions.contains(pos);
-            energyStoragePositions.add(pos);
+            if (energyStoragePositions.add(pos)) {
+                energyStoragePositionsSorted.add(PrioritizedPartPos.of(pos, priority));
+            }
             return !contained;
         }
         return false;
@@ -145,6 +150,12 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Override
     public void removeEnergyBattery(PartPos pos) {
         energyStoragePositions.remove(pos);
+        Iterator<PrioritizedPartPos> it = energyStoragePositionsSorted.iterator();
+        while (it.hasNext()) {
+            if (it.next().getPartPos().equals(pos)) {
+                it.remove();
+            }
+        }
     }
 
     @Override
@@ -161,5 +172,25 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
             consumption += ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
         }
         return consumption;
+    }
+
+    @Data(staticConstructor = "of")
+    public static class PrioritizedPartPos implements Comparable<PrioritizedPartPos> {
+        private final PartPos partPos;
+        private final int priority;
+
+        @Override
+        public int compareTo(PrioritizedPartPos o) {
+            int compPriority = -Integer.compare(this.getPriority(), o.getPriority());
+            if (compPriority == 0) {
+                int compPos = this.getPartPos().getPos().compareTo(o.getPartPos().getPos());
+                if (compPos == 0) {
+                    EnumFacing thisSide = this.getPartPos().getSide();
+                    EnumFacing otherSide = o.getPartPos().getSide();
+                    return thisSide == otherSide ? 0 : (thisSide == null ? -1 : (otherSide == null ? 1 : thisSide.compareTo(otherSide)));
+                }
+            }
+            return compPriority;
+        }
     }
 }

@@ -14,9 +14,10 @@ public interface IEnergyNetwork extends IEnergyStorage {
     /**
      * Add the position of a energy storage battery that must be accessible to the network.
      * @param pos The energy battery position.
+     * @param priority The priority of the battery.
      * @return If the battery was added to the network.
      */
-    public boolean addEnergyBattery(PartPos pos);
+    public boolean addEnergyBattery(PartPos pos, int priority);
 
     /**
      * Remove the position of a energy storage battery that was accessible to the network.
