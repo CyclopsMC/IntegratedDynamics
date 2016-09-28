@@ -1,34 +1,66 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.path.IPathElement;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * A network that can hold energy.
  * @author rubensworks
  */
-public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergyNetwork {
+public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNetwork, IFullNetworkListener {
 
     @Getter
     @Setter
     private INetwork network;
-    private Set<PartPos> energyStoragePositions = Sets.newHashSet();
-    private TreeSet<PrioritizedPartPos> energyStoragePositionsSorted = Sets.newTreeSet();
+
+    @Override
+    public boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
+        return true;
+    }
+
+    @Override
+    public boolean removeNetworkElementPre(INetworkElement element) {
+        return true;
+    }
+
+    @Override
+    public void removeNetworkElementPost(INetworkElement element) {
+
+    }
+
+    @Override
+    public void kill() {
+
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public boolean removePathElement(IPathElement pathElement) {
+        return true;
+    }
+
+    @Override
+    public void afterServerLoad() {
+
+    }
+
+    @Override
+    public void beforeServerStop() {
+
+    }
 
     @Override
     public boolean canUpdate(INetworkElement element) {
@@ -67,8 +99,8 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Override
     public int getEnergyStored() {
         int energy = 0;
-        for(PrioritizedPartPos partPos : ImmutableSet.copyOf(energyStoragePositionsSorted)) {
-            IEnergyStorage energyStorage = partPos.getEnergyStorage();
+        for(PrioritizedPartPos partPos : getPositionsSorted()) {
+            IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
                 energy = addSafe(energy, energyStorage.getEnergyStored());
             }
@@ -79,8 +111,8 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Override
     public int getMaxEnergyStored() {
         int maxEnergy = 0;
-        for(PrioritizedPartPos partPos : ImmutableSet.copyOf(energyStoragePositionsSorted)) {
-            IEnergyStorage energyStorage = partPos.getEnergyStorage();
+        for(PrioritizedPartPos partPos : getPositionsSorted()) {
+            IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
                 maxEnergy = addSafe(maxEnergy, energyStorage.getMaxEnergyStored());
             }
@@ -101,8 +133,8 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         int toAdd = energy;
-        for(PrioritizedPartPos partPos : ImmutableSet.copyOf(energyStoragePositionsSorted)) {
-            IEnergyStorage energyStorage = partPos.getEnergyStorage();
+        for(PrioritizedPartPos partPos : getPositionsSorted()) {
+            IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
                 toAdd -= energyStorage.receiveEnergy(toAdd, simulate);
             }
@@ -113,8 +145,8 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Override
     public int extractEnergy(int energy, boolean simulate) {
         int toConsume = energy;
-        for(PrioritizedPartPos partPos : ImmutableSet.copyOf(energyStoragePositionsSorted)) {
-            IEnergyStorage energyStorage = partPos.getEnergyStorage();
+        for(PrioritizedPartPos partPos : getPositionsSorted()) {
+            IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
                 toConsume -= energyStorage.extractEnergy(toConsume, simulate);
             }
@@ -125,30 +157,17 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Override
     public boolean addEnergyBattery(PartPos pos, int priority) {
         IEnergyStorage energyStorage = TileHelpers.getCapability(pos.getPos(), pos.getSide(), CapabilityEnergy.ENERGY);
-        if(energyStorage != null) {
-            boolean notContained = energyStoragePositions.add(pos);
-            if (notContained) {
-                energyStoragePositionsSorted.add(PrioritizedPartPos.of(pos, priority));
-            }
-            return notContained;
-        }
-        return false;
+        return energyStorage != null && addPosition(pos, priority);
     }
 
     @Override
     public void removeEnergyBattery(PartPos pos) {
-        energyStoragePositions.remove(pos);
-        Iterator<PrioritizedPartPos> it = energyStoragePositionsSorted.iterator();
-        while (it.hasNext()) {
-            if (it.next().getPartPos().equals(pos)) {
-                it.remove();
-            }
-        }
+        removePosition(pos);
     }
 
     @Override
     public Set<PartPos> getEnergyBatteries() {
-        return Collections.unmodifiableSet(energyStoragePositions);
+        return getPositions();
     }
 
     @Override
@@ -162,28 +181,7 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
         return consumption;
     }
 
-    @Data(staticConstructor = "of")
-    public static class PrioritizedPartPos implements Comparable<PrioritizedPartPos> {
-        private final PartPos partPos;
-        private final int priority;
-
-        @Override
-        public int compareTo(PrioritizedPartPos o) {
-            int compPriority = -Integer.compare(this.getPriority(), o.getPriority());
-            if (compPriority == 0) {
-                int compPos = this.getPartPos().getPos().compareTo(o.getPartPos().getPos());
-                if (compPos == 0) {
-                    EnumFacing thisSide = this.getPartPos().getSide();
-                    EnumFacing otherSide = o.getPartPos().getSide();
-                    return thisSide == otherSide ? 0 : (thisSide == null ? -1 : (otherSide == null ? 1 : thisSide.compareTo(otherSide)));
-                }
-                return compPos;
-            }
-            return compPriority;
-        }
-
-        public IEnergyStorage getEnergyStorage() {
-            return TileHelpers.getCapability(getPartPos().getPos(), getPartPos().getSide(), CapabilityEnergy.ENERGY);
-        }
+    protected static IEnergyStorage getEnergyStorage(PrioritizedPartPos pos) {
+        return TileHelpers.getCapability(pos.getPartPos().getPos(), pos.getPartPos().getSide(), CapabilityEnergy.ENERGY);
     }
 }
