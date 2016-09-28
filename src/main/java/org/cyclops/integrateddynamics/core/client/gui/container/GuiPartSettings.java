@@ -76,14 +76,14 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.initGui();
         Keyboard.enableRepeatEvents(true);
 
-        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRendererObj, guiLeft + 38, guiTop + 9, 100, 14, true, true);
+        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRendererObj, guiLeft + 68, guiTop + 9, 70, 14, true, true);
         numberFieldUpdateInterval.setMaxStringLength(64);
         numberFieldUpdateInterval.setMaxStringLength(15);
         numberFieldUpdateInterval.setVisible(true);
         numberFieldUpdateInterval.setTextColor(16777215);
         numberFieldUpdateInterval.setCanLoseFocus(true);
 
-        numberFieldPriority = new GuiNumberField(0, Minecraft.getMinecraft().fontRendererObj, guiLeft + 38, guiTop + 29, 100, 14, true, true);
+        numberFieldPriority = new GuiNumberField(0, Minecraft.getMinecraft().fontRendererObj, guiLeft + 68, guiTop + 34, 70, 14, true, true);
         numberFieldPriority.setPositiveOnly(false);
         numberFieldPriority.setMaxStringLength(64);
         numberFieldPriority.setMaxStringLength(15);
@@ -119,7 +119,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         numberFieldUpdateInterval.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
         numberFieldPriority.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
         fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.updateInterval"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
-        fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 32, Helpers.RGBToInt(0, 0, 0));
+        fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
     }
 
     @Override
