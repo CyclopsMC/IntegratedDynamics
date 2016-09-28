@@ -27,4 +27,14 @@ public class MaterializerNetworkElement extends TileNetworkElement<TileMateriali
     protected Class<TileMaterializer> getTileClass() {
         return TileMaterializer.class;
     }
+
+    @Override
+    public void setPriority(int priority) {
+
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 }

@@ -30,6 +30,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private boolean update = false;
 
     private int updateInterval = GeneralConfig.defaultPartUpdateFreq;
+    private int priority = 0;
     private int id = -1;
     private Map<IAspect, IAspectProperties> aspectProperties = new IdentityHashMap<>();
     private boolean enabled = true;
@@ -40,6 +41,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public void writeToNBT(NBTTagCompound tag) {
         tag.setInteger("updateInterval", this.updateInterval);
+        tag.setInteger("priority", this.priority);
         tag.setInteger("id", this.id);
         writeAspectProperties("aspectProperties", tag);
         tag.setBoolean("enabled", this.enabled);
@@ -51,6 +53,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         this.updateInterval = tag.getInteger("updateInterval");
+        this.priority = tag.getInteger("priority");
         this.id = tag.getInteger("id");
         this.aspectProperties.clear();
         readAspectProperties("aspectProperties", tag);
@@ -112,6 +115,16 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public int getUpdateInterval() {
         return updateInterval;
+    }
+
+    @Override
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    @Override
+    public int getPriority() {
+        return priority;
     }
 
     @Override

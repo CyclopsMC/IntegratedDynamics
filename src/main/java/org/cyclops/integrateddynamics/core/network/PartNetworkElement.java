@@ -48,6 +48,17 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
+    public void setPriority(int priority) {
+        //noinspection deprecation
+        part.setPriority(getPartState(), priority);
+    }
+
+    @Override
+    public int getPriority() {
+        return part.getPriority(getPartState());
+    }
+
+    @Override
     public S getPartState() {
         IPartContainer partContainer = getPartContainer();
         if(partContainer != null) {
@@ -147,6 +158,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public int hashCode() {
         int result = part.hashCode();
         result = 31 * result + target.hashCode();
+        result = 31 * result + getPriority();
         return result;
     }
 
@@ -154,15 +166,20 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public int compareTo(INetworkElement o) {
         if(o instanceof IPartNetworkElement) {
             IPartNetworkElement p = (IPartNetworkElement) o;
-            int compPart = Integer.compare(part.hashCode(), p.getPart().hashCode());
-            if(compPart == 0) {
-                int compPos = getCenterPos(getTarget()).compareTo(getCenterPos(p.getTarget()));
-                if(compPos == 0) {
-                    return getCenterSide(getTarget()).compareTo(getCenterSide(p.getTarget()));
+            int compPriority = -Integer.compare(this.getPriority(), p.getPriority());
+            if (compPriority == 0) {
+                int compPart = Integer.compare(part.hashCode(), p.getPart().hashCode());
+                if (compPart == 0) {
+                    int compPos = getCenterPos(getTarget()).compareTo(getCenterPos(p.getTarget()));
+                    if (compPos == 0) {
+                        return getCenterSide(getTarget()).compareTo(getCenterSide(p.getTarget()));
+                    }
+                    return compPos;
                 }
-                return compPos;
+                return compPart;
+            } else {
+                return compPriority;
             }
-            return compPart;
         }
         return Integer.compare(hashCode(), o.hashCode());
     }

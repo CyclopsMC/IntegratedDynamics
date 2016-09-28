@@ -27,6 +27,16 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
     }
 
     @Override
+    public void setPriority(int priority) {
+
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
     public int getConsumptionRate() {
         return 4;
     }

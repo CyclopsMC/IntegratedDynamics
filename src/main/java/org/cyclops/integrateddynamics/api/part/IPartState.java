@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.Capability;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
@@ -50,6 +51,19 @@ public interface IPartState<P extends IPartType> {
      * @return The tick interval to update this element.
      */
     public int getUpdateInterval();
+
+    /**
+     * Set the priority of this part in the network.
+     * @deprecated Should only be called from {@link org.cyclops.integrateddynamics.api.network.INetwork#setPriority(INetworkElement, int)}}!
+     * @param priority The new priority
+     */
+    @Deprecated
+    public void setPriority(int priority);
+
+    /**
+     * @return The priority of this part in the network.
+     */
+    public int getPriority();
 
     /**
      * Check if dirty and reset the dirty state.

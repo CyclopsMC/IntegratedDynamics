@@ -31,6 +31,13 @@ public interface INetwork extends IFullNetworkListener, INBTSerializable {
     public void removeNetworkElementUpdateable(INetworkElement element);
 
     /**
+     * Set the priority of the given network element.
+     * @param element The network element.
+     * @param priority The new priority
+     */
+    public void setPriority(INetworkElement element, int priority);
+
+    /**
      * Kills the network is it had no more network elements.
      * @return If the network was killed.
      */

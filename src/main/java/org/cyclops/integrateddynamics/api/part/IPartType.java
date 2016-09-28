@@ -108,6 +108,21 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public int getUpdateInterval(S state);
 
     /**
+     * Set the priority of this part in the network.
+     * @deprecated Should only be called from {@link INetwork#setPriority(INetworkElement, int)}!
+     * @param state The state
+     * @param priority The new priority
+     */
+    @Deprecated
+    public void setPriority(S state, int priority);
+
+    /**
+     * @param state The state
+     * @return The priority of this part in the network.
+     */
+    public int getPriority(S state);
+
+    /**
      * @param state The state
      * @return If this element should be updated. This method is only called once during network initialization.
      */

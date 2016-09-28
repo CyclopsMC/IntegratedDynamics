@@ -54,6 +54,16 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
     }
 
     @Override
+    public void setPriority(int priority) {
+
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
     public int getConsumptionRate() {
         return 2;
     }

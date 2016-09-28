@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
@@ -13,13 +14,16 @@ import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.button.IButtonActionServer;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiPartSettings;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 
 /**
  * Container for part settings.
@@ -39,6 +43,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     private final BlockPos pos;
 
     private final int lastUpdateValueId;
+    private final int lastPriorityValueId;
 
     /**
      * Make a new instance.
@@ -58,6 +63,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         addPlayerInventory(player.inventory, 8, 31);
 
         lastUpdateValueId = getNextValueId();
+        lastPriorityValueId = getNextValueId();
 
         putButtonAction(GuiPartSettings.BUTTON_SAVE, new IButtonActionServer<InventoryContainer>() {
             @Override
@@ -78,10 +84,15 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     @Override
     protected void initializeValues() {
         ValueNotifierHelpers.setValue(this, lastUpdateValueId, getPartType().getUpdateInterval(getPartState()));
+        ValueNotifierHelpers.setValue(this, lastPriorityValueId, getPartType().getPriority(getPartState()));
     }
 
     public int getLastUpdateValue() {
         return ValueNotifierHelpers.getValueInt(this, lastUpdateValueId);
+    }
+
+    public int getLastPriorityValue() {
+        return ValueNotifierHelpers.getValueInt(this, lastPriorityValueId);
     }
 
     @SuppressWarnings("unchecked")
@@ -104,6 +115,10 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         super.onUpdate(valueId, value);
         if(!MinecraftHelpers.isClientSide()) {
             getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
+            DimPos dimPos = getTarget().getCenter().getPos();
+            INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
+            PartNetworkElement networkElement = new PartNetworkElement(getPartType(), getTarget());
+            network.setPriority(networkElement, getLastPriorityValue());
         }
     }
 }

@@ -81,6 +81,16 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
+    public void setPriority(int priority) {
+
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
     public int compareTo(INetworkElement o) {
         if(o instanceof EnergyBatteryNetworkElement) {
             return getPos().compareTo(((EnergyBatteryNetworkElement) o).getPos());

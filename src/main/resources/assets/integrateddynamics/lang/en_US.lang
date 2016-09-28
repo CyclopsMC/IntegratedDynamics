@@ -8,6 +8,7 @@ general.integrateddynamics.error.noNetwork=No valid network found
 gui.integrateddynamics.button.save=Save
 gui.integrateddynamics.button.rename=Rename
 gui.integrateddynamics.partsettings.updateInterval=Freq.
+gui.integrateddynamics.partsettings.priority=Prior.
 gui.integrateddynamics.part.properties=Properties:
 gui.integrateddynamics.logicprogrammer.filter=Filter
 gui.integrateddynamics.waila.partConfig=Part Information

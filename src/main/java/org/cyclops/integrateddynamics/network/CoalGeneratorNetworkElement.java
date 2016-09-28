@@ -52,6 +52,16 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase {
     }
 
     @Override
+    public void setPriority(int priority) {
+
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
     public int compareTo(INetworkElement o) {
         if(o instanceof CoalGeneratorNetworkElement) {
             return getPos().compareTo(((CoalGeneratorNetworkElement) o).getPos());
