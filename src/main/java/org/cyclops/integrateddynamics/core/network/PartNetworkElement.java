@@ -166,19 +166,24 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public int compareTo(INetworkElement o) {
         if(o instanceof IPartNetworkElement) {
             IPartNetworkElement p = (IPartNetworkElement) o;
-            int compPriority = -Integer.compare(this.getPriority(), p.getPriority());
-            if (compPriority == 0) {
-                int compPart = Integer.compare(part.hashCode(), p.getPart().hashCode());
-                if (compPart == 0) {
-                    int compPos = getCenterPos(getTarget()).compareTo(getCenterPos(p.getTarget()));
-                    if (compPos == 0) {
-                        return getCenterSide(getTarget()).compareTo(getCenterSide(p.getTarget()));
+            int compClass = Integer.compare(this.getPart().getClass().hashCode(), p.getPart().getClass().hashCode());
+            if (compClass == 0) {
+                int compPriority = -Integer.compare(this.getPriority(), p.getPriority());
+                if (compPriority == 0) {
+                    int compPart = Integer.compare(part.hashCode(), p.getPart().hashCode());
+                    if (compPart == 0) {
+                        int compPos = getCenterPos(getTarget()).compareTo(getCenterPos(p.getTarget()));
+                        if (compPos == 0) {
+                            return getCenterSide(getTarget()).compareTo(getCenterSide(p.getTarget()));
+                        }
+                        return compPos;
                     }
-                    return compPos;
+                    return compPart;
+                } else {
+                    return compPriority;
                 }
-                return compPart;
             } else {
-                return compPriority;
+                return compClass;
             }
         }
         return Integer.compare(hashCode(), o.hashCode());
