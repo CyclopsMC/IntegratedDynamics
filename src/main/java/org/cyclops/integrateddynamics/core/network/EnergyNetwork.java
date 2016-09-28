@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.Getter;
@@ -14,7 +13,6 @@ import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
@@ -60,21 +58,6 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
         }
     }
 
-    protected synchronized Iterable<IEnergyStorage> getMaterializedEnergyBatteries() {
-        return Iterables.transform(energyStoragePositionsSorted, new Function<PrioritizedPartPos, IEnergyStorage>() {
-            @Nullable
-            @Override
-            public IEnergyStorage apply(PrioritizedPartPos pos) {
-                return TileHelpers.getCapability(pos.getPartPos().getPos(), pos.getPartPos().getSide(), CapabilityEnergy.ENERGY);
-            }
-
-            @Override
-            public boolean equals(@Nullable Object object) {
-                return false;
-            }
-        });
-    }
-
     protected int addSafe(int a, int b) {
         int add = a + b;
         if(add < a || add < b) return Integer.MAX_VALUE;
@@ -82,19 +65,25 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     }
 
     @Override
-    public synchronized int getEnergyStored() {
+    public int getEnergyStored() {
         int energy = 0;
-        for(IEnergyStorage energyStorage : getMaterializedEnergyBatteries()) {
-            energy = addSafe(energy, energyStorage.getEnergyStored());
+        for(PrioritizedPartPos partPos : ImmutableSet.copyOf(energyStoragePositionsSorted)) {
+            IEnergyStorage energyStorage = partPos.getEnergyStorage();
+            if (energyStorage != null) {
+                energy = addSafe(energy, energyStorage.getEnergyStored());
+            }
         }
         return energy;
     }
 
     @Override
-    public synchronized int getMaxEnergyStored() {
+    public int getMaxEnergyStored() {
         int maxEnergy = 0;
-        for(IEnergyStorage energyStorage : getMaterializedEnergyBatteries()) {
-            maxEnergy = addSafe(maxEnergy, energyStorage.getMaxEnergyStored());
+        for(PrioritizedPartPos partPos : ImmutableSet.copyOf(energyStoragePositionsSorted)) {
+            IEnergyStorage energyStorage = partPos.getEnergyStorage();
+            if (energyStorage != null) {
+                maxEnergy = addSafe(maxEnergy, energyStorage.getMaxEnergyStored());
+            }
         }
         return maxEnergy;
     }
@@ -112,23 +101,22 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         int toAdd = energy;
-        for(IEnergyStorage energyStorage : getMaterializedEnergyBatteries()) {
-            int maxAdd = Math.min(energyStorage.getMaxEnergyStored() - energyStorage.getEnergyStored(), toAdd);
-            if(maxAdd > 0) {
-                energyStorage.receiveEnergy(maxAdd, simulate);
+        for(PrioritizedPartPos partPos : ImmutableSet.copyOf(energyStoragePositionsSorted)) {
+            IEnergyStorage energyStorage = partPos.getEnergyStorage();
+            if (energyStorage != null) {
+                toAdd -= energyStorage.receiveEnergy(toAdd, simulate);
             }
-            toAdd -= maxAdd;
         }
         return energy - toAdd;
     }
 
     @Override
-    public synchronized int extractEnergy(int energy, boolean simulate) {
+    public int extractEnergy(int energy, boolean simulate) {
         int toConsume = energy;
-        for(IEnergyStorage energyStorage : getMaterializedEnergyBatteries()) {
-            int consume = Math.min(energyStorage.getEnergyStored(), toConsume);
-            if(consume > 0) {
-                toConsume -= energyStorage.extractEnergy(consume, simulate);
+        for(PrioritizedPartPos partPos : ImmutableSet.copyOf(energyStoragePositionsSorted)) {
+            IEnergyStorage energyStorage = partPos.getEnergyStorage();
+            if (energyStorage != null) {
+                toConsume -= energyStorage.extractEnergy(toConsume, simulate);
             }
         }
         return energy - toConsume;
@@ -138,11 +126,11 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
     public boolean addEnergyBattery(PartPos pos, int priority) {
         IEnergyStorage energyStorage = TileHelpers.getCapability(pos.getPos(), pos.getSide(), CapabilityEnergy.ENERGY);
         if(energyStorage != null) {
-            boolean contained = energyStoragePositions.contains(pos);
-            if (energyStoragePositions.add(pos)) {
+            boolean notContained = energyStoragePositions.add(pos);
+            if (notContained) {
                 energyStoragePositionsSorted.add(PrioritizedPartPos.of(pos, priority));
             }
-            return !contained;
+            return notContained;
         }
         return false;
     }
@@ -189,8 +177,13 @@ public class EnergyNetwork extends FullNetworkListenerAdapter implements IEnergy
                     EnumFacing otherSide = o.getPartPos().getSide();
                     return thisSide == otherSide ? 0 : (thisSide == null ? -1 : (otherSide == null ? 1 : thisSide.compareTo(otherSide)));
                 }
+                return compPos;
             }
             return compPriority;
+        }
+
+        public IEnergyStorage getEnergyStorage() {
+            return TileHelpers.getCapability(getPartPos().getPos(), getPartPos().getSide(), CapabilityEnergy.ENERGY);
         }
     }
 }
