@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.network;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileMaterializer;
 
@@ -29,7 +30,7 @@ public class MaterializerNetworkElement extends TileNetworkElement<TileMateriali
     }
 
     @Override
-    public void setPriority(int priority) {
+    public void setPriority(INetwork network, int priority) {
 
     }
 

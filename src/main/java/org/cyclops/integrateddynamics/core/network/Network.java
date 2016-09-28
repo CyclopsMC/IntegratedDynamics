@@ -243,7 +243,7 @@ public class Network implements INetwork {
         }
 
         //noinspection deprecation
-        element.setPriority(priority);
+        element.setPriority(this, priority);
         elements.add(element);
         if (element.isUpdate()) {
             updateableElements.add(element);

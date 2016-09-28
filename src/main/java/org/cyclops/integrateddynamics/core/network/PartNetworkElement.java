@@ -48,9 +48,9 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void setPriority(int priority) {
+    public void setPriority(INetwork network, int priority) {
         //noinspection deprecation
-        part.setPriority(getPartState(), priority);
+        part.setPriority(network, NetworkHelpers.getPartNetwork(network), getTarget(), getPartState(), priority);
     }
 
     @Override

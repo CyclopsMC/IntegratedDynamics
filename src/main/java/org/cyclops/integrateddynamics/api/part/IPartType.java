@@ -110,11 +110,14 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * Set the priority of this part in the network.
      * @deprecated Should only be called from {@link INetwork#setPriority(INetworkElement, int)}!
+     * @param network The network to update in.
+     * @param partNetwork The part network to update in.
+     * @param target The target block.
      * @param state The state
      * @param priority The new priority
      */
     @Deprecated
-    public void setPriority(S state, int priority);
+    public void setPriority(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, int priority);
 
     /**
      * @param state The state

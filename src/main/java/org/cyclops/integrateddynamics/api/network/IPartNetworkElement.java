@@ -31,17 +31,4 @@ public interface IPartNetworkElement<P extends IPartType<P, S>, S extends IPartS
      */
     public PartTarget getTarget();
 
-    /**
-     * Set the priority of this part in the network.
-     * @deprecated Should only be called from {@link INetwork#setPriority(INetworkElement, int)}!
-     * @param priority The new priority
-     */
-    @Deprecated
-    public void setPriority(int priority);
-
-    /**
-     * @return The priority of this part in the network.
-     */
-    public int getPriority();
-
 }

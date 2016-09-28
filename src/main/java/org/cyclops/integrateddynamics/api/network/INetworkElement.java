@@ -100,10 +100,11 @@ public interface INetworkElement extends Comparable<INetworkElement> {
     /**
      * Set the priority of this element in the network.
      * @deprecated Should only be called from {@link INetwork#setPriority(INetworkElement, int)}!
+     * @param network The network this element is present in.
      * @param priority The new priority
      */
     @Deprecated
-    public void setPriority(int priority);
+    public void setPriority(INetwork network, int priority);
 
     /**
      * @return The priority of this element in the network.

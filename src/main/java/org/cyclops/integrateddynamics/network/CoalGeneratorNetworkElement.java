@@ -52,7 +52,7 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void setPriority(int priority) {
+    public void setPriority(INetwork network, int priority) {
 
     }
 
