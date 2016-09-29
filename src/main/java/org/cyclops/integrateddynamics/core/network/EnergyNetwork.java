@@ -10,8 +10,6 @@ import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
-import java.util.Set;
-
 /**
  * A network that can hold energy.
  * @author rubensworks
@@ -99,7 +97,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     @Override
     public int getEnergyStored() {
         int energy = 0;
-        for(PrioritizedPartPos partPos : getPositionsSorted()) {
+        for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
                 energy = addSafe(energy, energyStorage.getEnergyStored());
@@ -111,7 +109,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     @Override
     public int getMaxEnergyStored() {
         int maxEnergy = 0;
-        for(PrioritizedPartPos partPos : getPositionsSorted()) {
+        for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
                 maxEnergy = addSafe(maxEnergy, energyStorage.getMaxEnergyStored());
@@ -133,7 +131,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         int toAdd = energy;
-        for(PrioritizedPartPos partPos : getPositionsSorted()) {
+        for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
                 toAdd -= energyStorage.receiveEnergy(toAdd, simulate);
@@ -145,7 +143,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     @Override
     public int extractEnergy(int energy, boolean simulate) {
         int toConsume = energy;
-        for(PrioritizedPartPos partPos : getPositionsSorted()) {
+        for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
                 toConsume -= energyStorage.extractEnergy(toConsume, simulate);
@@ -155,19 +153,9 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     }
 
     @Override
-    public boolean addEnergyBattery(PartPos pos, int priority) {
+    public boolean addPosition(PartPos pos, int priority) {
         IEnergyStorage energyStorage = TileHelpers.getCapability(pos.getPos(), pos.getSide(), CapabilityEnergy.ENERGY);
-        return energyStorage != null && addPosition(pos, priority);
-    }
-
-    @Override
-    public void removeEnergyBattery(PartPos pos) {
-        removePosition(pos);
-    }
-
-    @Override
-    public Set<PartPos> getEnergyBatteries() {
-        return getPositions();
+        return energyStorage != null && super.addPosition(pos, priority);
     }
 
     @Override

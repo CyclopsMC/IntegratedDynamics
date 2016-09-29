@@ -662,7 +662,7 @@ public class Aspects {
                     AspectReadBuilders.Network.BUILDER_INTEGER.handle(new IAspectValuePropagator<INetwork, Integer>() {
                         @Override
                         public Integer getOutput(INetwork network) {
-                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getEnergyBatteries().size() : 0;
+                            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getPositions().size() : 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("batterycount").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_STORED =
