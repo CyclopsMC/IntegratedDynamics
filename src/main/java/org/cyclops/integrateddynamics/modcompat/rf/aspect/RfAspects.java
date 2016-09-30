@@ -124,7 +124,7 @@ public class RfAspects {
                             IEnergyConnection energyConnection = data.getLeft();
                             EnumFacing side = data.getRight();
                             if (energyConnection != null && energyConnection instanceof IEnergyHandler) {
-                                return ((IEnergyReceiver) energyConnection).getEnergyStored(side);
+                                return ((IEnergyHandler) energyConnection).getEnergyStored(side);
                             }
                             return 0;
                         }
