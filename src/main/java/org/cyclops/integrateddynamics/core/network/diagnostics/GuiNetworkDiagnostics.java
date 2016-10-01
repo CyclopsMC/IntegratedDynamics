@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsSubscribePacket;
@@ -64,7 +65,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                             rawNetworkData.getId(), rawNetworkData.getCables(),
                             rawPartData.getDimension(), rawPartData.getPos(),
                             rawPartData.getSide(), rawPartData.getName(),
-                            rawPartData.getLastTickDuration());
+                            rawPartData.getLast20TicksDurationNs());
                     parts.add(partData);
 
                     // Remove this position from the previously rendered list
@@ -135,7 +136,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                             row.add(observablePartData.getNetworkId());
                             row.add(observablePartData.getNetworkCables());
                             row.add(observablePartData.getName());
-                            row.add(observablePartData.getLastTickDuration());
+                            row.add(String.format("%.6f", ((double) observablePartData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
                             row.add(observablePartData.getDimension());
                             BlockPos pos = observablePartData.getPos();
                             row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
@@ -251,7 +252,7 @@ public class GuiNetworkDiagnostics extends JFrame {
         private final BlockPos pos;
         private final EnumFacing side;
         private final String name;
-        private final long lastTickDuration;
+        private final long last20TicksDurationNs;
 
         public PartPos toPartPos() {
             World world = Minecraft.getMinecraft().theWorld;

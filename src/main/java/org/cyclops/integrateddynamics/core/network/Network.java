@@ -374,7 +374,6 @@ public class Network implements INetwork {
                 }
                 if (isBeingDiagnozed) {
                     long duration = System.nanoTime() - startTime;
-                    duration /= 1000;
                     Long lastDuration = lastSecondDurations.get(element);
                     if (lastDuration != null) {
                         duration = duration + lastDuration;
