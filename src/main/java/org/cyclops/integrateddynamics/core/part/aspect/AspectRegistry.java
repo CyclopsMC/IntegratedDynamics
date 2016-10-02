@@ -98,12 +98,20 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @Override
     public List<IAspectRead> getReadAspects(IPartType partType) {
-        return Collections.unmodifiableList(partReadAspectsListTransform.get(partType));
+        List<IAspectRead> aspects = partReadAspectsListTransform.get(partType);
+        if (aspects == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(aspects);
     }
 
     @Override
     public List<IAspectWrite> getWriteAspects(IPartType partType) {
-        return Collections.unmodifiableList(partWriteAspectsListTransform.get(partType));
+        List<IAspectWrite> aspects = partWriteAspectsListTransform.get(partType);
+        if (aspects == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(aspects);
     }
 
     @Override
