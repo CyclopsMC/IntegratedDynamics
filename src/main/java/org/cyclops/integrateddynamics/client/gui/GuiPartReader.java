@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -55,9 +56,9 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
 
         Pair<String, Integer> readValues = reader.getReadValue(aspect);
         if(readValues != null) {
-            fontRenderer.drawString(readValues.getLeft(), this.guiLeft + offsetX + 16,
-                    this.guiTop + offsetY + 35 + container.getAspectBoxHeight() * index,
-                    readValues.getRight());
+            RenderHelpers.drawScaledCenteredString(fontRendererObj, readValues.getLeft(), this.guiLeft + offsetX + 16,
+                    this.guiTop + offsetY + 39 + container.getAspectBoxHeight() * index,
+                    70, readValues.getRight());
         }
 
         // Render target item

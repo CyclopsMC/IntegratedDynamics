@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.client.gui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -49,7 +50,8 @@ public class GuiPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S exten
         if(readValue != null) {
             ok = true;
             FontRenderer fontRenderer = fontRendererObj;
-            fontRenderer.drawString(readValue, getGuiLeft() + 53, getGuiTop() + 34, readValueColor);
+            RenderHelpers.drawScaledCenteredString(fontRenderer, readValue,
+                    getGuiLeft() + 53, getGuiTop() + 38, 70, readValueColor);
         }
 
         GlStateManager.color(1, 1, 1);

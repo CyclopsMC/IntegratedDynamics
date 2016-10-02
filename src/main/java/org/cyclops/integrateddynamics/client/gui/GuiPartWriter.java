@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.client.gui;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -72,8 +73,8 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         ContainerPartWriter container = (ContainerPartWriter) getContainer();
-        fontRendererObj.drawString(container.getWriteValue(), this.guiLeft + offsetX + 53,
-                this.guiTop + offsetY + 128, container.getWriteValueColor());
+        RenderHelpers.drawScaledCenteredString(fontRendererObj, container.getWriteValue(), this.guiLeft + offsetX + 53,
+                this.guiTop + offsetY + 132, 70, container.getWriteValueColor());
     }
 
     @Override
