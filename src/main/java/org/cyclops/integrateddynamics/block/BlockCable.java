@@ -313,7 +313,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return super.doesSideBlockRendering(state, world, pos, face) || CableHelpers.hasFacade(world, pos);
+        return super.doesSideBlockRendering(state, world, pos, face) || (CableHelpers.hasFacade(world, pos) && CableHelpers.getFacade(world, pos).isOpaqueCube());
     }
 
     @SuppressWarnings("deprecation")
