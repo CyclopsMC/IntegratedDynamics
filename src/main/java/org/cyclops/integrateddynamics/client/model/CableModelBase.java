@@ -196,7 +196,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         if (cachedQuads == null) {
             List<BakedQuad> ret = Lists.newLinkedList();
             TextureAtlasSprite texture = getParticleTexture();
-            boolean renderCable = isItemStack() || (isRealCable() && MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT);
+            boolean renderCable = isItemStack() || (isRealCable() && MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID);
             Optional<IBlockState> blockStateHolder = getFacade();
             for (EnumFacing side : EnumFacing.values()) {
                 boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
@@ -209,15 +209,11 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                     }
                 }
                 if (renderCable) {
-                    PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
-                    if (isConnected) {
-                        partRenderPosition = CABLE_RENDERPOSITION;
-                    }
                     if (isConnected || hasPart) {
                         int i = 0;
                         float[][][] quadVertexes = this.quadVertexes;
                         if (hasPart) {
-                            partRenderPosition = getPartRenderPosition(side);
+                            PartRenderPosition partRenderPosition = getPartRenderPosition(side);
                             float depthFactor = partRenderPosition == PartRenderPosition.NONE ? 0F : partRenderPosition.getDepthFactor();
                             quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
                         }
@@ -248,11 +244,17 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                     } else {
                         addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
                     }
+                }
+            }
 
-                    // Render facade if present
-                    if (blockStateHolder.isPresent()) {
-                        ret.addAll(getFacadeQuads(blockStateHolder.get(), side, partRenderPosition));
-                    }
+            if (blockStateHolder.isPresent() && shouldRenderParts()) {
+                for (EnumFacing side : EnumFacing.values()) {
+                    boolean isConnected = isItemStack() ? side == EnumFacing.EAST || side == EnumFacing.WEST : isConnected(side);
+                    PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
+                    boolean hasPart = !isItemStack() && hasPart(side);
+                    if (hasPart)          partRenderPosition = getPartRenderPosition(side);
+                    else if (isConnected) partRenderPosition = CABLE_RENDERPOSITION;
+                    ret.addAll(getFacadeQuads(blockStateHolder.get(), side, partRenderPosition));
                 }
             }
 
