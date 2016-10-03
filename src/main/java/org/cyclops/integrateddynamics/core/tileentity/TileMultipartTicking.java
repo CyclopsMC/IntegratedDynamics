@@ -162,7 +162,9 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             builder.withProperty(BlockCable.RENDERSTATE, new CableRenderState(
                     this.cableFakeable.isRealCable(),
                     EnumFacingMap.newMap(this.connected),
-                    EnumFacingMap.newMap(this.partContainer.getPartData())
+                    EnumFacingMap.newMap(this.partContainer.getPartData()),
+                    facadeBlockName,
+                    facadeMeta
                     ));
         }
         return cachedState = builder.build();

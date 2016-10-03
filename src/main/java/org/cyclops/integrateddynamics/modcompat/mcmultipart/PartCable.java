@@ -148,7 +148,9 @@ public class PartCable extends MultipartBase implements ITickable {
             builder.withProperty(BlockCable.RENDERSTATE, new CableRenderState(
                     true,
                     this.connected,
-                    this.partContainer.getPartData()
+                    this.partContainer.getPartData(),
+                    null,
+                    0
             ));
         }
         return cachedState = builder.build();
