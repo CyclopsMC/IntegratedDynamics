@@ -239,7 +239,7 @@ public class PartCable extends MultipartBase implements ITickable {
 
     @Override
     public boolean canRenderInLayer(BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.TRANSLUCENT;
+        return layer == BlockRenderLayer.SOLID;
     }
 
     @Override
