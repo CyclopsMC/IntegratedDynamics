@@ -147,8 +147,8 @@ public class PartCable extends MultipartBase implements ITickable {
             }
             builder.withProperty(BlockCable.RENDERSTATE, new CableRenderState(
                     true,
-                    this.connected,
-                    this.partContainer.getPartData(),
+                    EnumFacingMap.newMap(this.connected),
+                    EnumFacingMap.newMap(this.partContainer.getPartData()),
                     null,
                     0
             ));
