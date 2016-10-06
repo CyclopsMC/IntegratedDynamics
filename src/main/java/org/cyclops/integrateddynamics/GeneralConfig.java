@@ -54,7 +54,7 @@ public class GeneralConfig extends DummyConfig {
      * The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.")
-    public static int wildMenrilTreeChance = 1000;
+    public static int wildMenrilTreeChance = 350;
 
     /**
      * If cable models should be cached for rendering optimization.
