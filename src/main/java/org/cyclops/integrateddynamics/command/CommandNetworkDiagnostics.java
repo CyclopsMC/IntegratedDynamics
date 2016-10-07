@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.command;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import org.cyclops.cyclopscore.command.CommandMod;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.network.diagnostics.GuiNetworkDiagnostics;
-import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsSubscribePacket;
+import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsOpenClient;
 
 import java.util.List;
 
@@ -30,15 +30,10 @@ public class CommandNetworkDiagnostics extends CommandMod {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] parts) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                GuiNetworkDiagnostics.clearNetworkData();
-                IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.subscribe());
-                GuiNetworkDiagnostics.start();
-            }
-        }).start();
+    public void execute(MinecraftServer server, final ICommandSender sender, String[] parts) {
+        if (sender instanceof EntityPlayerMP) {
+            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new NetworkDiagnosticsOpenClient(), (EntityPlayerMP) sender);
+        }
     }
 
 }
