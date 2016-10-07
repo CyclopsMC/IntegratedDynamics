@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -33,6 +34,14 @@ public class DryingBasinRecipeJEI extends BlankRecipeWrapper {
         this.inputFluid = recipe.getInput().getFluidStack();
         this.outputItem = recipe.getOutput().getItemStacks();
         this.outputFluid = recipe.getOutput().getFluidStack();
+    }
+
+    @Override
+    public void getIngredients(IIngredients ingredients) {
+        ingredients.setInputs(ItemStack.class, getInputItem());
+        ingredients.setOutputs(ItemStack.class, getOutputItem());
+        ingredients.setInput(FluidStack.class, getInputFluid());
+        ingredients.setOutput(FluidStack.class, getOutputFluid());
     }
 
     @Override

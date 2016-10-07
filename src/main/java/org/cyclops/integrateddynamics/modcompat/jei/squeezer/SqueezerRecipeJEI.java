@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -35,16 +36,26 @@ public class SqueezerRecipeJEI extends BlankRecipeWrapper {
     }
 
     @Override
+    public void getIngredients(IIngredients ingredients) {
+        ingredients.setInputs(ItemStack.class, getInputItem());
+        ingredients.setOutputs(ItemStack.class, getOutputItem());
+        ingredients.setOutput(FluidStack.class, getOutputFluid());
+    }
+
+    @Override
+    @Deprecated
     public List getInputs() {
         return getInputItem();
     }
 
     @Override
+    @Deprecated
     public List getOutputs() {
         return getOutputItem();
     }
 
     @Override
+    @Deprecated
     public List<FluidStack> getFluidOutputs() {
         return Lists.newArrayList(getOutputFluid());
     }

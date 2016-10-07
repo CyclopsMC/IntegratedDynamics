@@ -5,6 +5,7 @@ import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IDrawableAnimated;
 import mezz.jei.api.gui.IDrawableStatic;
 import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
@@ -70,6 +71,7 @@ public class DryingBasinRecipeCategory implements IRecipeCategory {
     }
 
     @Override
+    @Deprecated
     public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
         recipeLayout.getItemStacks().init(INPUT_SLOT, true, 1, 7);
         recipeLayout.getItemStacks().init(OUTPUT_SLOT, false, 75, 7);
@@ -94,5 +96,10 @@ public class DryingBasinRecipeCategory implements IRecipeCategory {
                 recipeLayout.getFluidStacks().set(FLUIDOUTPUT_SLOT, recipe.getOutputFluid());
             }
         }
+    }
+
+    @Override
+    public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
+        setRecipe(recipeLayout, recipeWrapper);
     }
 }

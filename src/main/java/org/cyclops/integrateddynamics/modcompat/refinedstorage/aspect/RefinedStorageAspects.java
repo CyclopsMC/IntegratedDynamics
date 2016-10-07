@@ -214,7 +214,7 @@ public class RefinedStorageAspects {
             int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
             ICraftingPattern craftingPattern = NetworkUtils.getPattern(networkMaster, itemStack);
             if (craftingPattern != null) {
-                ICraftingTask craftingTask = NetworkUtils.createCraftingTask(networkMaster, craftingPattern);
+                ICraftingTask craftingTask = NetworkUtils.createCraftingTask(networkMaster, 1, craftingPattern);
 
                 if (aspectProperties.getValue(PROPERTY_SKIPCRAFTING).getRawValue()) {
                     for (ICraftingTask task : networkMaster.getCraftingTasks()) {
