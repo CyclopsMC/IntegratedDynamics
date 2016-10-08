@@ -1,0 +1,38 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.8.0 or higher.
+
+Additions:
+* Add priorities to parts
+* Add read and write aspects for Refined Storage. Read any kind of information from RS networks, or even trigger new crafting jobs.
+* Optimizations in network ticking
+* Optimizations in cable/part rendering
+* Add Portable Logic Programmer
+* Add Forge Energy read aspects and operators
+The RF api compat has been disabled by default, only players who already had a config file from a previous version will still have the RF compat. (Obviously, it can still be enabled from the config file)
+
+Changes:
+* Simplification of network/part API using capabilities for addons
+* Improve part textures, by Yulife
+* Let batteries emit energy to all sides when a redstone signal is applied
+* Cache cable models to improve render efficiency
+* Increase default meneglin biome and wild menril tree spawn rates
+* Improve understandability of diagnostics ticktimes
+* Allow empty variable cards to be used as True boolean
+* Limit battery I/O energy rates
+* Improve part settings gui
+* Make energy battery energy tick rate configurable
+
+Fixes:
+* Fix diagnostics not opening in SMP
+* Fix opaque facades not rendering connected sides
+* Fix facade quad rendering sometimes appearing behind cables, Closes #70
+* Fix Logic Programmer not always correctly labeling, Closes #71
+* Fix aspect values being too big for gui boxes
+* Fix parts dropping when breaking in creative mode
+* Fix incorrect RF interface cast causing an exception when reading
+* Fix parts sometimes not being found
+* Correctly emit FE from batteries and generators
+* Re-init network when removing a part inbetween cables
+* Fix MCMP parts dropping in creative mode
+* Return default aspect property values on corrupted part states
+* Avoid crash when checking for non-existing aspect in a part
