@@ -5,12 +5,12 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyBase;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyPositioned;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
 import refinedstorage.api.network.INetworkMaster;
@@ -23,22 +23,18 @@ import java.util.List;
 /**
  * A list proxy for a network's grouped item inventory at a certain position.
  */
-public class ValueTypeListProxyPositionedNetworkMasterItemInventory extends ValueTypeListProxyBase<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
-
-    @NBTPersist
-    private DimPos pos;
+public class ValueTypeListProxyPositionedNetworkMasterItemInventory extends ValueTypeListProxyPositioned<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
 
     public ValueTypeListProxyPositionedNetworkMasterItemInventory() {
         this(null);
     }
 
     public ValueTypeListProxyPositionedNetworkMasterItemInventory(DimPos pos) {
-        super(RefinedStorageModCompat.POSITIONED_MASTERITEMINVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK);
-        this.pos = pos;
+        super(RefinedStorageModCompat.POSITIONED_MASTERITEMINVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK, pos, EnumFacing.NORTH);
     }
 
     protected Optional<INetworkMaster> getNetworkMaster() {
-        return Optional.fromNullable(TileHelpers.getSafeTile(pos, INetworkMaster.class));
+        return Optional.fromNullable(TileHelpers.getSafeTile(getPos(), INetworkMaster.class));
     }
 
     protected Optional<List<ItemStack>> getInventory() {

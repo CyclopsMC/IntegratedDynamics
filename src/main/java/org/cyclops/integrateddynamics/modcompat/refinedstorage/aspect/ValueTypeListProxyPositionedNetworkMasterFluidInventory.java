@@ -4,13 +4,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyBase;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyPositioned;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
 import refinedstorage.api.network.INetworkMaster;
@@ -23,22 +23,18 @@ import java.util.List;
 /**
  * A list proxy for a network's grouped fluid inventory at a certain position.
  */
-public class ValueTypeListProxyPositionedNetworkMasterFluidInventory extends ValueTypeListProxyBase<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
-
-    @NBTPersist
-    private DimPos pos;
+public class ValueTypeListProxyPositionedNetworkMasterFluidInventory extends ValueTypeListProxyPositioned<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
 
     public ValueTypeListProxyPositionedNetworkMasterFluidInventory() {
         this(null);
     }
 
     public ValueTypeListProxyPositionedNetworkMasterFluidInventory(DimPos pos) {
-        super(RefinedStorageModCompat.POSITIONED_MASTERFLUIDINVENTORY.getName(), ValueTypes.OBJECT_FLUIDSTACK);
-        this.pos = pos;
+        super(RefinedStorageModCompat.POSITIONED_MASTERFLUIDINVENTORY.getName(), ValueTypes.OBJECT_FLUIDSTACK, pos, EnumFacing.NORTH);
     }
 
     protected Optional<INetworkMaster> getNetworkMaster() {
-        return Optional.fromNullable(TileHelpers.getSafeTile(pos, INetworkMaster.class));
+        return Optional.fromNullable(TileHelpers.getSafeTile(getPos(), INetworkMaster.class));
     }
 
     protected Optional<List<FluidStack>> getInventory() {
