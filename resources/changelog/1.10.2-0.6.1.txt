@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.8.0 or higher.
+
+Fixes:
+* Fix RS list proxies not correctly persisting network master positions
+* Fix rare crash when updating redstone info on remapped blocks
+* Fix versionstats url
+
