@@ -77,6 +77,16 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
+    public boolean greaterThan(ValueInteger a, ValueInteger b) {
+        return a.getRawValue() > b.getRawValue();
+    }
+
+    @Override
+    public boolean lessThan(ValueInteger a, ValueInteger b) {
+        return a.getRawValue() < b.getRawValue();
+    }
+
+    @Override
     public String getName(ValueInteger a) {
         return toCompactString(a);
     }

@@ -76,6 +76,16 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
+    public boolean greaterThan(ValueDouble a, ValueDouble b) {
+        return a.getRawValue() > b.getRawValue();
+    }
+
+    @Override
+    public boolean lessThan(ValueDouble a, ValueDouble b) {
+        return a.getRawValue() < b.getRawValue();
+    }
+
+    @Override
     public String getName(ValueDouble a) {
         return toCompactString(a);
     }

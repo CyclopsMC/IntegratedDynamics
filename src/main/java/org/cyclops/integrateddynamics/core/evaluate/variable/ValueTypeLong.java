@@ -76,6 +76,16 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     }
 
     @Override
+    public boolean greaterThan(ValueLong a, ValueLong b) {
+        return a.getRawValue() > b.getRawValue();
+    }
+
+    @Override
+    public boolean lessThan(ValueLong a, ValueLong b) {
+        return a.getRawValue() < b.getRawValue();
+    }
+
+    @Override
     public String getName(ValueLong a) {
         return toCompactString(a);
     }

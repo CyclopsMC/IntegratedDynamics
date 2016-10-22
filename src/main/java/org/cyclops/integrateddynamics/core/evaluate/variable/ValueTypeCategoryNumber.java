@@ -133,4 +133,20 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> {
         );
     }
 
+    public boolean greaterThan(IVariable a, IVariable b) throws EvaluationException {
+        IValueTypeNumber type = getLowestType(getType(a), getType(b));
+        return type.greaterThan(
+                castValue(type, a.getValue()),
+                castValue(type, b.getValue())
+        );
+    }
+
+    public boolean lessThan(IVariable a, IVariable b) throws EvaluationException {
+        IValueTypeNumber type = getLowestType(getType(a), getType(b));
+        return type.lessThan(
+                castValue(type, a.getValue()),
+                castValue(type, b.getValue())
+        );
+    }
+
 }

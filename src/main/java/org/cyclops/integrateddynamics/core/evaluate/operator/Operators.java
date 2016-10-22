@@ -37,10 +37,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
@@ -270,6 +267,9 @@ public final class Operators {
                     IValueType temporarySecondInputType = null;
                     for(int i = 0; i < requiredInputLength; i++) {
                         IValueType inputType = input[i];
+                        if (inputType instanceof IValueTypeNumber) {
+                            inputType = ValueTypes.CATEGORY_NUMBER;
+                        }
                         if(inputType == null) {
                             return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, operator.getOperatorName(), Integer.toString(i));
                         }
@@ -291,26 +291,24 @@ public final class Operators {
     /**
      * Relational &gt; operator with two input integers and one output boolean.
      */
-    public static final IOperator RELATIONAL_GT = REGISTRY.register(OperatorBuilders.RELATIONAL_2.symbol(">").operatorName("gt")
+    public static final IOperator RELATIONAL_GT = REGISTRY.register(OperatorBuilders.RELATIONAL_2
+            .inputTypes(2, ValueTypes.CATEGORY_NUMBER).symbol(">").operatorName("gt")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
-                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
-                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue() > b.getRawValue());
+                    return ValueTypeBoolean.ValueBoolean.of(ValueTypes.CATEGORY_NUMBER.greaterThan(variables.getVariables()[0], variables.getVariables()[1]));
                 }
             }).build());
 
     /**
      * Relational &gt; operator with two input integers and one output boolean.
      */
-    public static final IOperator RELATIONAL_LT = REGISTRY.register(OperatorBuilders.RELATIONAL_2.symbol("<").operatorName("lt")
+    public static final IOperator RELATIONAL_LT = REGISTRY.register(OperatorBuilders.RELATIONAL_2
+            .inputTypes(2, ValueTypes.CATEGORY_NUMBER).symbol("<").operatorName("lt")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeInteger.ValueInteger a = variables.getValue(0);
-                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
-                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue() < b.getRawValue());
+                    return ValueTypeBoolean.ValueBoolean.of(ValueTypes.CATEGORY_NUMBER.lessThan(variables.getVariables()[0], variables.getVariables()[1]));
                 }
             }).build());
 
