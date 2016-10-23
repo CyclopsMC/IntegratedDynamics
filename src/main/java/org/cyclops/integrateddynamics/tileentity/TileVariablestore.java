@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
+import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 import org.cyclops.integrateddynamics.item.ItemVariable;
@@ -60,6 +61,12 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
     }
 
     @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return super.isItemValidForSlot(index, stack)
+                && (stack == null || stack.hasCapability(VariableFacadeHolderConfig.CAPABILITY, null));
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         refreshVariables(inventory);
@@ -71,7 +78,7 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
             ItemStack itemStack = inventory.getStackInSlot(i);
             if (itemStack != null) {
                 IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-                if (variableFacade.isValid()) {
+                if (variableFacade != null && variableFacade.isValid()) {
                     variableContainer.getVariableCache().put(variableFacade.getId(), variableFacade);
                 }
             }
