@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -39,6 +40,8 @@ import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
+import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
@@ -60,7 +63,10 @@ import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -174,6 +180,17 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
             CableHelpers.onCableRemoved(world, pos);
         }
         IS_MCMP_CONVERTING = false;
+    }
+
+    @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState blockState, int fortune) {
+        ICable cable = CableHelpers.getCable(world, pos);
+        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+        if (cable == null || cableFakeable == null || partContainer == null || !partContainer.hasParts()) {
+            return Lists.newArrayList();
+        }
+        return super.getDrops(world, pos, blockState, fortune);
     }
 
     @Override
