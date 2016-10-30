@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.item.ItemMenrilBerriesConfig;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
@@ -74,6 +75,12 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
             @Override
             public SoundType getSoundType() {
                 return SoundType.GROUND;
+            }
+
+            @Nullable
+            @Override
+            protected ItemStack createStackedBlock(IBlockState state) {
+                return new ItemStack(this);
             }
         }.setHardness(0.2F).setLightLevel(0.65F).setLightOpacity(1);
     }
