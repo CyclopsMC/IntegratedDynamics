@@ -2,6 +2,14 @@ package org.cyclops.integrateddynamics.modcompat.refinedstorage.aspect;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.raoulvdberge.refinedstorage.api.IRSAPI;
+import com.raoulvdberge.refinedstorage.api.RSAPIInject;
+import com.raoulvdberge.refinedstorage.api.autocrafting.ICraftingPattern;
+import com.raoulvdberge.refinedstorage.api.autocrafting.task.ICraftingStep;
+import com.raoulvdberge.refinedstorage.api.autocrafting.task.ICraftingTask;
+import com.raoulvdberge.refinedstorage.api.network.INetworkMaster;
+import com.raoulvdberge.refinedstorage.api.network.INetworkNode;
+import com.raoulvdberge.refinedstorage.api.util.IComparer;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -21,13 +29,6 @@ import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
-import refinedstorage.api.autocrafting.ICraftingPattern;
-import refinedstorage.api.autocrafting.task.CraftingTask;
-import refinedstorage.api.autocrafting.task.ICraftingTask;
-import refinedstorage.api.network.INetworkMaster;
-import refinedstorage.api.network.INetworkNode;
-import refinedstorage.api.network.NetworkUtils;
-import refinedstorage.api.storage.CompareUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +38,9 @@ import java.util.List;
  * @author rubensworks
  */
 public class RefinedStorageAspects {
+
+    @RSAPIInject
+    public static IRSAPI RS;
 
     public static final class Read {
 
@@ -112,8 +116,11 @@ public class RefinedStorageAspects {
                             for (ItemStack itemStack : craftingPattern.getOutputs()) {
                                 itemStacks.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
                             }
-                            if (craftingTask.getChild() != null) {
-                                addPatternItemStacks(itemStacks, craftingTask.getChild());
+                            for (ICraftingStep step : craftingTask.getSteps()) {
+                                craftingPattern = step.getPattern();
+                                for (ItemStack itemStack : craftingPattern.getOutputs()) {
+                                    itemStacks.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                                }
                             }
                         }
 
@@ -133,31 +140,9 @@ public class RefinedStorageAspects {
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_MISSINGCRAFTINGITEMS =
                     BUILDER_LIST.appendKind("inventory").handle(new IAspectValuePropagator<INetworkMaster, ValueTypeList.ValueList>() {
 
-                        protected List<ItemStack> getMissingItems(ICraftingTask craftingTask) {
-                            List<ItemStack> itemStacks = Lists.newArrayList();
-                            if (craftingTask instanceof CraftingTask) {
-                                CraftingTask craftingTaskImpl = (CraftingTask) craftingTask;
-                                boolean[] satisfied = craftingTaskImpl.getSatisfied();
-                                boolean[] checked = craftingTaskImpl.getChecked();
-                                boolean[] childrenCreated = craftingTaskImpl.getChildrenCreated();
-                                ICraftingPattern craftingPattern = craftingTask.getPattern();
-                                int i = 0;
-                                for (ItemStack itemStack : craftingPattern.getOutputs()) {
-                                    if (!satisfied[i] && (childrenCreated == null || !childrenCreated[i]) && checked[i]) {
-                                        itemStacks.add(itemStack);
-                                    }
-                                    i++;
-                                }
-                            }
-                            return itemStacks;
-                        }
-
                         protected void addPatternItemStacksMissing(List<ValueObjectTypeItemStack.ValueItemStack> itemStacks, ICraftingTask craftingTask) {
-                            for (ItemStack itemStack : getMissingItems(craftingTask)) {
+                            for (ItemStack itemStack : craftingTask.getMissing().getStacks()) {
                                 itemStacks.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
-                            }
-                            if (craftingTask.getChild() != null) {
-                                addPatternItemStacksMissing(itemStacks, craftingTask.getChild());
                             }
                         }
 
@@ -211,15 +196,15 @@ public class RefinedStorageAspects {
         }
 
         protected static Void triggerItemStackCrafting(IAspectProperties aspectProperties, INetworkMaster networkMaster, ItemStack itemStack) {
-            int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
-            ICraftingPattern craftingPattern = NetworkUtils.getPattern(networkMaster, itemStack);
+            int compareFlags = IComparer.COMPARE_DAMAGE | IComparer.COMPARE_NBT;
+            ICraftingPattern craftingPattern = networkMaster.getPattern(itemStack);
             if (craftingPattern != null) {
-                ICraftingTask craftingTask = NetworkUtils.createCraftingTask(networkMaster, 1, craftingPattern);
+                ICraftingTask craftingTask = networkMaster.createCraftingTask(itemStack, craftingPattern, 1);
 
                 if (aspectProperties.getValue(PROPERTY_SKIPCRAFTING).getRawValue()) {
                     for (ICraftingTask task : networkMaster.getCraftingTasks()) {
                         for (ItemStack output : task.getPattern().getOutputs()) {
-                            if (CompareUtils.compareStack(output, itemStack, compareFlags)) {
+                            if (RS.getComparer().isEqual(output, itemStack, compareFlags)) {
                                 // If there's already one crafting, stop.
                                 return null;
                             }
@@ -228,7 +213,7 @@ public class RefinedStorageAspects {
                 }
 
                 if (aspectProperties.getValue(PROPERTY_SKIPSTORAGE).getRawValue()) {
-                    ItemStack present = networkMaster.getItemStorage().get(itemStack, compareFlags);
+                    ItemStack present = networkMaster.getItemStorageCache().getList().get(itemStack, compareFlags);
                     if (present != null && present.stackSize >= itemStack.stackSize) {
                         // If there's already one in the inventory, stop.
                         return null;
@@ -236,6 +221,7 @@ public class RefinedStorageAspects {
                 }
 
                 // Once we get here, we are certain that we want to shedule the task.
+                craftingTask.calculate();
                 networkMaster.addCraftingTask(craftingTask);
             }
             return null;
@@ -329,10 +315,10 @@ public class RefinedStorageAspects {
                                         if (networkMaster != null) {
                                             ItemStack itemStack = input.getRight().getRawValue().get();
                                             List<ICraftingTask> craftingTasks = Lists.newArrayList(networkMaster.getCraftingTasks());
-                                            int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
+                                            int compareFlags = IComparer.COMPARE_DAMAGE | IComparer.COMPARE_NBT;
                                             for (ICraftingTask craftingTask : craftingTasks) {
                                                 for (ItemStack output : craftingTask.getPattern().getOutputs()) {
-                                                    if (CompareUtils.compareStack(output, itemStack, compareFlags)) {
+                                                    if (RS.getComparer().isEqual(output, itemStack, compareFlags)) {
                                                         networkMaster.cancelCraftingTask(craftingTask);
                                                         break;
                                                     }
@@ -359,13 +345,13 @@ public class RefinedStorageAspects {
                                     if (networkMaster != null) {
                                         if (input.getRight().getRawValue().getValueType() == ValueTypes.OBJECT_ITEMSTACK) {
                                             List<ICraftingTask> craftingTasks = Lists.newArrayList(networkMaster.getCraftingTasks());
-                                            int compareFlags = CompareUtils.COMPARE_DAMAGE | CompareUtils.COMPARE_NBT;
+                                            int compareFlags = IComparer.COMPARE_DAMAGE | IComparer.COMPARE_NBT;
                                             for (ICraftingTask craftingTask : craftingTasks) {
                                                 for (ItemStack output : craftingTask.getPattern().getOutputs()) {
                                                     for (IValue value : (Iterable<IValue>) input.getRight().getRawValue()) {
                                                         ValueObjectTypeItemStack.ValueItemStack valueItemStack = (ValueObjectTypeItemStack.ValueItemStack) value;
                                                         if (valueItemStack.getRawValue().isPresent() &&
-                                                                CompareUtils.compareStack(output, valueItemStack.getRawValue().get(), compareFlags)) {
+                                                                RS.getComparer().isEqual(output, valueItemStack.getRawValue().get(), compareFlags)) {
                                                             networkMaster.cancelCraftingTask(craftingTask);
                                                             break;
                                                         }

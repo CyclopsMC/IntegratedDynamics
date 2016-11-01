@@ -25,6 +25,11 @@ public class JEIIntegratedDynamicsConfig implements IModPlugin {
     public static IJeiHelpers JEI_HELPER;
 
     @Override
+    public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
+
+    }
+
+    @Override
     public void registerIngredients(IModIngredientRegistration registry) {
 
     }

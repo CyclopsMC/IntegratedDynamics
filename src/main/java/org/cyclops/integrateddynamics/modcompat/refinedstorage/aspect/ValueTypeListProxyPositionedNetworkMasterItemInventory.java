@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.modcompat.refinedstorage.aspect;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.raoulvdberge.refinedstorage.api.network.INetworkMaster;
+import com.raoulvdberge.refinedstorage.api.storage.item.IItemStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -13,8 +15,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItem
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyPositioned;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
-import refinedstorage.api.network.INetworkMaster;
-import refinedstorage.api.storage.item.IItemStorage;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -45,11 +45,11 @@ public class ValueTypeListProxyPositionedNetworkMasterItemInventory extends Valu
                 if (networkMaster == null) {
                     return null;
                 }
-                List<List<ItemStack>> itemStacksLists = Lists.transform(networkMaster.getItemStorage().getStorages(), new Function<IItemStorage, List<ItemStack>>() {
+                List<List<ItemStack>> itemStacksLists = Lists.transform(networkMaster.getItemStorageCache().getStorages(), new Function<IItemStorage, List<ItemStack>>() {
                     @Nullable
                     @Override
                     public List<ItemStack> apply(@Nullable IItemStorage itemStorage) {
-                        return itemStorage.getItems();
+                        return itemStorage.getStacks();
                     }
                 });
                 return new LazyCompositeList<>(itemStacksLists);

@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.modcompat.refinedstorage.aspect;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.raoulvdberge.refinedstorage.api.network.INetworkMaster;
+import com.raoulvdberge.refinedstorage.api.storage.fluid.IFluidStorage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -13,8 +15,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFlui
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyPositioned;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
-import refinedstorage.api.network.INetworkMaster;
-import refinedstorage.api.storage.fluid.IFluidStorage;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -45,7 +45,7 @@ public class ValueTypeListProxyPositionedNetworkMasterFluidInventory extends Val
                 if (networkMaster == null) {
                     return null;
                 }
-                List<List<FluidStack>> fluidStacksLists = Lists.transform(networkMaster.getFluidStorage().getStorages(), new Function<IFluidStorage, List<FluidStack>>() {
+                List<List<FluidStack>> fluidStacksLists = Lists.transform(networkMaster.getFluidStorageCache().getStorages(), new Function<IFluidStorage, List<FluidStack>>() {
                     @Nullable
                     @Override
                     public List<FluidStack> apply(@Nullable IFluidStorage fluidStorage) {
