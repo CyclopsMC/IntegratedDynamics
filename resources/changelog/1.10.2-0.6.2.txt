@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.8.0 or higher.
+
+Changes:
+* Update RS compat for version 1.2
+* Improve type flexibility of greater and less than, Closes #77
+
+Fixes:
+* Fix Menril Leaves keeping meta value when silked, Closes #76
+* Fix cable duplication, Closes #78
+* Block invalid items from going into variable store, Closes #79
