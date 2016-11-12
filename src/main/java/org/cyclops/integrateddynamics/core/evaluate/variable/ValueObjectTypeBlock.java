@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.base.Strings;
 import lombok.ToString;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -82,7 +83,9 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
         @Override
         protected boolean isEqual(IBlockState a, IBlockState b) {
-            return a.getBlock().getMetaFromState(a) == b.getBlock().getMetaFromState(b);
+            Block blockA = a.getBlock();
+            Block blockB = b.getBlock();
+            return blockA == blockB && blockA.getMetaFromState(a) == blockB.getMetaFromState(b);
         }
     }
 
