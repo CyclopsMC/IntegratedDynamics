@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.8.0 or higher.
+
+Fixes:
+* Allow wild menril tree spawns to be disabled, Closes #82. It does not crash anymore when setting wildMenrilTreeChance to 0.
+* Fix equality of blocks only checking metadata, Closes #83. This did not check equality of the actual block before.
+
