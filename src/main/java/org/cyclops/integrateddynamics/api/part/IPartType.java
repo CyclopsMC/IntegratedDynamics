@@ -286,7 +286,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock The block type of the neighbour that was updated.
      */
-    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
+    public void onBlockNeighborChange(@Nullable INetwork network, @Nullable IPartNetwork partNetwork, PartTarget target, S state, IBlockAccess world, Block neighborBlock);
 
     /**
      * @param state The state

@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -141,7 +142,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighborBlock) {
+    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighborBlock) {
         part.onBlockNeighborChange(network, NetworkHelpers.getPartNetwork(network), target, getPartState(), world, neighborBlock);
     }
 
