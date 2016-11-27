@@ -10,6 +10,7 @@ import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonImage;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
+import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -17,12 +18,16 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
+import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
+import org.cyclops.cyclopscore.inventory.container.button.IButtonActionClient;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
+import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
 
@@ -40,6 +45,7 @@ import java.util.Set;
 public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>, A extends IAspect>
         extends ScrollingGuiContainer {
 
+    public static final int BUTTON_SETTINGS = 1;
     private static final Rectangle ITEM_POSITION = new Rectangle(8, 17, 18, 18);
 
     protected final DisplayErrorsComponent displayErrors = new DisplayErrorsComponent();
@@ -58,6 +64,13 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
         this.target = container.getTarget();
         this.partContainer = container.getPartContainer();
         this.partType = container.getPartType();
+
+        putButtonAction(BUTTON_SETTINGS, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
+            @Override
+            public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
+                IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
+            }
+        });
     }
 
     @Override
@@ -65,7 +78,7 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
         buttonList.clear();
         super.initGui();
         if(getPartType() instanceof PartTypeConfigurable && ((PartTypeConfigurable) getPartType()).hasSettings()) {
-            buttonList.add(new GuiButtonImage(ContainerMultipartAspects.BUTTON_SETTINGS, this.guiLeft + 174, this.guiTop + 4, 15, 15, Images.CONFIG_BOARD, -2, -3, true));
+            buttonList.add(new GuiButtonImage(BUTTON_SETTINGS, this.guiLeft + 174, this.guiTop + 4, 15, 15, Images.CONFIG_BOARD, -2, -3, true));
         }
         for(Map.Entry<IAspect, Integer> entry : (Set<Map.Entry<IAspect, Integer>>) ((ContainerMultipartAspects) getContainer()).getAspectPropertyButtons().entrySet()) {
             GuiButtonText button = new GuiButtonText(entry.getValue(), -20, -20, 10, 10, "+", true);

@@ -10,12 +10,15 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
+import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
+import org.cyclops.cyclopscore.inventory.container.button.IButtonActionClient;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
-import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
 
 import java.awt.*;
@@ -29,6 +32,7 @@ import java.awt.*;
 public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
         extends GuiContainerExtended {
 
+    public static final int BUTTON_SETTINGS = 1;
     private static final Rectangle ITEM_POSITION = new Rectangle(8, 17, 18, 18);
 
     protected final DisplayErrorsComponent displayErrors = new DisplayErrorsComponent();
@@ -45,6 +49,13 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         this.target = container.getTarget();
         this.partContainer = container.getPartContainer();
         this.partType = container.getPartType();
+
+        putButtonAction(BUTTON_SETTINGS, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
+            @Override
+            public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
+                IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
+            }
+        });
     }
 
     @Override
@@ -52,7 +63,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         buttonList.clear();
         super.initGui();
         if(getPartType() instanceof PartTypeConfigurable && ((PartTypeConfigurable) getPartType()).hasSettings()) {
-            buttonList.add(new GuiButtonImage(ContainerMultipartAspects.BUTTON_SETTINGS, this.guiLeft + 174, this.guiTop + 4, 15, 15, Images.CONFIG_BOARD, -2, -3, true));
+            buttonList.add(new GuiButtonImage(GuiMultipartAspects.BUTTON_SETTINGS, this.guiLeft + 174, this.guiTop + 4, 15, 15, Images.CONFIG_BOARD, -2, -3, true));
         }
     }
 

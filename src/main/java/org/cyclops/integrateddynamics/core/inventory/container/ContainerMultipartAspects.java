@@ -27,6 +27,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
+import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipartAspects;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
@@ -46,7 +47,6 @@ import java.util.regex.Pattern;
 public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>, A extends IAspect>
         extends ScrollingInventoryContainer<A> implements IDirtyMarkListener {
 
-    public static final int BUTTON_SETTINGS = 1;
     private static final int PAGE_SIZE = 3;
 
     private final PartTarget target;
@@ -85,12 +85,12 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
         this.inputSlots = constructInputSlotsInventory();
         this.player = player;
 
-        putButtonAction(BUTTON_SETTINGS, new IButtonActionServer<InventoryContainer>() {
+        putButtonAction(GuiMultipartAspects.BUTTON_SETTINGS, new IButtonActionServer<InventoryContainer>() {
             @Override
             public void onAction(int buttonId, InventoryContainer container) {
-                IGuiContainerProvider gui = ((PartTypeConfigurable) getPartType()).getSettingsGuiProvider();
-                IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
                 if(!MinecraftHelpers.isClientSide()) {
+                    IGuiContainerProvider gui = ((PartTypeConfigurable) getPartType()).getSettingsGuiProvider();
+                    IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
                     BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
                     ContainerMultipartAspects.this.player.openGui(gui.getModGui(), gui.getGuiID(),
                             world, cPos.getX(), cPos.getY(), cPos.getZ());

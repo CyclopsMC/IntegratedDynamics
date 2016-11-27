@@ -69,9 +69,9 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
             @Override
             public void onAction(int buttonId, InventoryContainer container) {
                 if (!(getPartType() instanceof IGuiContainerProvider) || ((IGuiContainerProvider) getPartType()).getContainer() != ContainerPartSettings.this.getClass()) {
-                    IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
-                    BlockPos pos = getTarget().getCenter().getPos().getBlockPos();
                     if (!MinecraftHelpers.isClientSide()) {
+                        IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
+                        BlockPos pos = getTarget().getCenter().getPos().getBlockPos();
                         player.openGui(IntegratedDynamics._instance.getModId(), ((IGuiContainerProvider) getPartType()).getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
                     }
                 } else {
