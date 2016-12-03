@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.8.2 or higher.
+
+Fixes:
+* Improve facade item rendering, Closes #89
+* Fix network crash for when checking priorities for invalid parts, Closes #88
+* Improve temporary gui data storage to account for latencies, #64
