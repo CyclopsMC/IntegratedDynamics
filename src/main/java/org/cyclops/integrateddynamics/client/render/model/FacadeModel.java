@@ -42,7 +42,11 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
     @SuppressWarnings("unchecked")
     @Override
     public List<BakedQuad> getGeneralQuads() {
-        return baseModel.getQuads(this.blockState, getRenderingSide(), this.rand);
+        try {
+            return baseModel.getQuads(this.blockState, getRenderingSide(), this.rand);
+        } catch (Exception e) {
+            return emptyModel.getQuads(this.blockState, getRenderingSide(), this.rand);
+        }
     }
 
     @Override
@@ -56,7 +60,10 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
         if(blockState == null) {
             return new FacadeModel(emptyModel, itemStack, world, entity);
         }
-        return new FacadeModel(RenderHelpers.getBakedModel(blockState), itemStack, world, entity);
+        IBakedModel bakedModel = RenderHelpers.getBakedModel(blockState);
+        bakedModel = bakedModel.getOverrides().handleItemState(bakedModel,
+                ItemFacade.getInstance().getFacadeBlockItem(itemStack), world, entity);
+        return new FacadeModel(bakedModel, itemStack, world, entity);
     }
 
     @Override
