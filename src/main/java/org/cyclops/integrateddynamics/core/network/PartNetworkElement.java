@@ -56,7 +56,12 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public int getPriority() {
-        return part.getPriority(getPartState());
+        return hasPartState() ? part.getPriority(getPartState()) : 0;
+    }
+
+    public boolean hasPartState() {
+        IPartContainer partContainer = getPartContainer();
+        return partContainer != null && partContainer.hasPart(getCenterSide(getTarget()));
     }
 
     @Override
