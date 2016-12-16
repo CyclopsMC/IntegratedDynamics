@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -63,10 +62,7 @@ import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 
 /**
@@ -196,11 +192,11 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @Override
     public boolean removedByPlayer(IBlockState blockState, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
         RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
-        if(rayTraceResult != null && rayTraceResult.getCollisionType() != null
+        if (rayTraceResult != null && rayTraceResult.getCollisionType() != null
                 && rayTraceResult.getCollisionType().destroy(world, pos, rayTraceResult.getPositionHit(), player)) {
             return true;
         }
-        return super.removedByPlayer(blockState, world, pos, player, willHarvest);
+        return rayTraceResult != null && super.removedByPlayer(blockState, world, pos, player, willHarvest);
     }
 
     @Override
