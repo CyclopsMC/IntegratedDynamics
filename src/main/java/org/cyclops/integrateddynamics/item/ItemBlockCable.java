@@ -70,7 +70,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
         return world.getBlockState(target).getBlock().isReplaceable(world, pos);
     }
 
-    protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable) {
+    protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable, boolean offsetAdded) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         if(!block.isAir(blockState, world, pos)) {
@@ -80,10 +80,12 @@ public class ItemBlockCable extends ItemBlockMetadata {
                 CableHelpers.onCableAdded(world, pos);
                 return true;
             }
-            for (IUseAction useAction : USE_ACTIONS) {
-                if (useAction.attempItemUseTarget(stack, world, pos, blockCable)) {
-                    return true;
-                }
+            if(!offsetAdded){
+                for (IUseAction useAction : USE_ACTIONS) {
+	                if (useAction.attempItemUseTarget(stack, world, pos, blockCable)) {
+	                    return true;
+	                }
+            	}
             }
         }
         return false;
@@ -117,14 +119,14 @@ public class ItemBlockCable extends ItemBlockMetadata {
         blockCable.setDisableCollisionBox(true);
 
         // Avoid regular block placement when the target is an unreal cable.
-        if(attempItemUseTarget(stack, worldIn, pos, blockCable)) {
+        if(attempItemUseTarget(stack, worldIn, pos, blockCable, false)) {
             afterItemUse(stack, worldIn, pos, blockCable, false);
             return EnumActionResult.SUCCESS;
         }
 
         // Change pos and side when we are targeting a block that is blocked by an unreal cable, so we want to target
         // the unreal cable.
-        if(attempItemUseTarget(stack, worldIn, pos.offset(side), blockCable)) {
+        if(attempItemUseTarget(stack, worldIn, pos.offset(side), blockCable, true)) {
             afterItemUse(stack, worldIn, pos.offset(side), blockCable, false);
             return EnumActionResult.SUCCESS;
         }
