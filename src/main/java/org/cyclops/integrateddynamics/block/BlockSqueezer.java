@@ -181,6 +181,11 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
     public boolean isNormalCube(IBlockState blockState, IBlockAccess world, BlockPos pos) {
         return false;
     }
+    
+    @Override
+    public boolean isFullCube(IBlockState blockState) {
+        return false;
+    }
 
     @SuppressWarnings("deprecation")
     @Override
