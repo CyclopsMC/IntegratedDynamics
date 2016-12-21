@@ -123,6 +123,11 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
     public boolean isNormalCube(IBlockState blockState, IBlockAccess world, BlockPos blockPos) {
         return false;
     }
+    
+    @Override
+    public boolean isFullCube(IBlockState blockState) {
+        return false;
+    }
 
     @SuppressWarnings("deprecation")
     @Override
