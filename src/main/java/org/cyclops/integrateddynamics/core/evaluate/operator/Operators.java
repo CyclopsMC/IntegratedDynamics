@@ -1049,7 +1049,8 @@ public final class Operators {
     /**
      * Get a list of items that correspond to the given oredict key.
      */
-    public static final IOperator OBJECT_ITEMSTACK_OREDICT_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX.symbolOperator("oredict")
+    public static final IOperator OBJECT_ITEMSTACK_OREDICT_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
+            .output(ValueTypes.LIST).symbolOperator("oredict")
             .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
             .function(new OperatorBase.IFunction() {
                 @Override
