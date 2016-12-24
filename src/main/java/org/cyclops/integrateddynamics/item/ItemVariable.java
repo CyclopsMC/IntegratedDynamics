@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderDefault;
+import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 
 import java.util.List;
 
@@ -66,7 +67,8 @@ public class ItemVariable extends ConfigurableItem {
 
     public IVariableFacade getVariableFacade(ItemStack itemStack) {
         return itemStack.hasCapability(VariableFacadeHolderConfig.CAPABILITY, null)
-                ? itemStack.getCapability(VariableFacadeHolderConfig.CAPABILITY, null).getVariableFacade() : null;
+                ? itemStack.getCapability(VariableFacadeHolderConfig.CAPABILITY, null).getVariableFacade()
+                : VariableFacadeHandlerRegistry.DUMMY_FACADE;
     }
 
 }

@@ -31,7 +31,7 @@ import java.util.Map;
 public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegistry {
 
     private static VariableFacadeHandlerRegistry INSTANCE = new VariableFacadeHandlerRegistry();
-    private static DummyVariableFacade DUMMY_FACADE = new DummyVariableFacade(L10NValues.VARIABLE_ERROR_INVALIDITEM);
+    public static DummyVariableFacade DUMMY_FACADE = new DummyVariableFacade(L10NValues.VARIABLE_ERROR_INVALIDITEM);
 
     private final Map<String, IVariableFacadeHandler> handlers = Maps.newHashMap();
 
