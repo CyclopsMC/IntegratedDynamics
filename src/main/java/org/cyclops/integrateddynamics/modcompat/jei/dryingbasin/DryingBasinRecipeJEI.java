@@ -38,30 +38,10 @@ public class DryingBasinRecipeJEI extends BlankRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputs(ItemStack.class, getInputItem());
-        ingredients.setOutputs(ItemStack.class, getOutputItem());
-        ingredients.setInput(FluidStack.class, getInputFluid());
-        ingredients.setOutput(FluidStack.class, getOutputFluid());
-    }
-
-    @Override
-    public List getInputs() {
-        return getInputItem();
-    }
-
-    @Override
-    public List getOutputs() {
-        return getOutputItem();
-    }
-
-    @Override
-    public List<FluidStack> getFluidInputs() {
-        return Lists.newArrayList(getInputFluid());
-    }
-
-    @Override
-    public List<FluidStack> getFluidOutputs() {
-        return Lists.newArrayList(getOutputFluid());
+        ingredients.setInputs(ItemStack.class, inputItem);
+        ingredients.setOutputs(ItemStack.class, outputItem);
+        ingredients.setInput(FluidStack.class, inputFluid);
+        ingredients.setOutput(FluidStack.class, outputFluid);
     }
 
     public static List<DryingBasinRecipeJEI> getAllRecipes() {

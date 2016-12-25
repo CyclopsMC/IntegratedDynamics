@@ -48,6 +48,7 @@ import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -221,7 +222,7 @@ public class Aspects {
                     AspectReadBuilders.ExtraDimensional.BUILDER_LIST.handle(new IAspectValuePropagator<MinecraftServer, ValueTypeList.ValueList>() {
                         @Override
                         public ValueTypeList.ValueList getOutput(MinecraftServer minecraft) {
-                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(minecraft.getPlayerList().getPlayerList(), new Function<EntityPlayerMP, ValueObjectTypeEntity.ValueEntity>() {
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(minecraft.getPlayerList().getPlayers(), new Function<EntityPlayerMP, ValueObjectTypeEntity.ValueEntity>() {
                                 @Nullable
                                 @Override
                                 public ValueObjectTypeEntity.ValueEntity apply(EntityPlayerMP input) {
@@ -359,7 +360,7 @@ public class Aspects {
                             if(inventory != null) {
                                 for (int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if (itemStack == null) {
+                                    if (itemStack.isEmpty()) {
                                         return false;
                                     }
                                 }
@@ -374,7 +375,7 @@ public class Aspects {
                             if(inventory != null) {
                                 for(int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if(itemStack != null) {
+                                    if(!itemStack.isEmpty()) {
                                         return false;
                                     }
                                 }
@@ -389,7 +390,7 @@ public class Aspects {
                             if(inventory != null) {
                                 for(int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if(itemStack != null) {
+                                    if(!itemStack.isEmpty()) {
                                         return true;
                                     }
                                 }
@@ -413,8 +414,8 @@ public class Aspects {
                             if(inventory != null) {
                                 for (int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if (itemStack != null) {
-                                        count += itemStack.stackSize;
+                                    if (!itemStack.isEmpty()) {
+                                        count += itemStack.getCount();
                                     }
                                 }
                             }
@@ -436,7 +437,7 @@ public class Aspects {
                             if(inventory != null) {
                                 for (int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if (itemStack != null) {
+                                    if (!itemStack.isEmpty()) {
                                         count++;
                                     }
                                 }
@@ -453,7 +454,7 @@ public class Aspects {
                             if(inventory != null) {
                                 for (int i = 0; i < inventory.getSlots(); i++) {
                                     ItemStack itemStack = inventory.getStackInSlot(i);
-                                    if (itemStack != null) {
+                                    if (!itemStack.isEmpty()) {
                                         count++;
                                     }
                                 }
@@ -876,8 +877,8 @@ public class Aspects {
         public static final class Effect {
 
             public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticle(final EnumParticleTypes particle) {
-                return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(particle.getParticleName())
-                        .handle(new IAspectValuePropagator<Triple<PartTarget,IAspectProperties,Double>, Void>() {
+                return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(particle.getParticleName().toLowerCase(Locale.ROOT))
+                        .handle(new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Double>, Void>() {
                             @Override
                             public Void getOutput(Triple<PartTarget, IAspectProperties, Double> input) throws EvaluationException {
                                 double velocity = input.getRight();

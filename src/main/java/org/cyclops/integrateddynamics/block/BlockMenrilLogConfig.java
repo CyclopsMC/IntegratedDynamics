@@ -24,7 +24,7 @@ public class BlockMenrilLogConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "menrilLog",
+                "menril_log",
                 null,
                 BlockMenrilLog.class
         );

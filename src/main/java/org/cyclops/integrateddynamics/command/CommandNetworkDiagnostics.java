@@ -25,7 +25,7 @@ public class CommandNetworkDiagnostics extends CommandMod {
     }
 
     @Override
-    public List getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
+    public List getTabCompletions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
         return null;
     }
 

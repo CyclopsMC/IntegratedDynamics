@@ -76,7 +76,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
         if(!checkedForWriteVariable) {
             for(int slot = 0; slot < getInventory().getSizeInventory(); slot++) {
                 ItemStack itemStack = getInventory().getStackInSlot(slot);
-                if(itemStack != null) {
+                if(!itemStack.isEmpty()) {
                     this.currentVariableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
                     validate(network);
                 }

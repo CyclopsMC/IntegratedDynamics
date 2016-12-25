@@ -30,7 +30,7 @@ public class PartNetworkConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "partNetwork",
+                "part_network",
                 "A capability for adding parts to a network.",
                 IPartNetwork.class,
                 new DefaultCapabilityStorage<IPartNetwork>(),

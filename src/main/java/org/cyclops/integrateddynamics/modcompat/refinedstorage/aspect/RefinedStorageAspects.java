@@ -214,7 +214,7 @@ public class RefinedStorageAspects {
 
                 if (aspectProperties.getValue(PROPERTY_SKIPSTORAGE).getRawValue()) {
                     ItemStack present = networkMaster.getItemStorageCache().getList().get(itemStack, compareFlags);
-                    if (present != null && present.stackSize >= itemStack.stackSize) {
+                    if (present != null && present.getCount() >= itemStack.getCount()) {
                         // If there's already one in the inventory, stop.
                         return null;
                     }
@@ -234,13 +234,13 @@ public class RefinedStorageAspects {
                             @Override
                             public Void getOutput(Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack> input)
                                     throws EvaluationException {
-                                if (input.getRight().getRawValue().isPresent()) {
+                                if (!input.getRight().getRawValue().isEmpty()) {
                                     DimPos pos = input.getLeft().getTarget().getPos();
                                     INetworkNode networkNode = TileHelpers.getSafeTile(pos, INetworkNode.class);
                                     if (networkNode != null) {
                                         INetworkMaster networkMaster = networkNode.getNetwork();
                                         if (networkMaster != null) {
-                                            ItemStack itemStack = input.getRight().getRawValue().get();
+                                            ItemStack itemStack = input.getRight().getRawValue();
                                             return triggerItemStackCrafting(input.getMiddle(), networkMaster, itemStack);
                                         }
                                     }
@@ -264,8 +264,8 @@ public class RefinedStorageAspects {
                                         if (input.getRight().getRawValue().getValueType() == ValueTypes.OBJECT_ITEMSTACK) {
                                             for (IValue value : (Iterable<IValue>) input.getRight().getRawValue()) {
                                                 ValueObjectTypeItemStack.ValueItemStack valueItemStack = (ValueObjectTypeItemStack.ValueItemStack) value;
-                                                if (valueItemStack.getRawValue().isPresent()) {
-                                                    ItemStack itemStack = valueItemStack.getRawValue().get();
+                                                if (!valueItemStack.getRawValue().isEmpty()) {
+                                                    ItemStack itemStack = valueItemStack.getRawValue();
                                                     triggerItemStackCrafting(input.getMiddle(), networkMaster, itemStack);
                                                 }
                                             }
@@ -307,13 +307,13 @@ public class RefinedStorageAspects {
                             @Override
                             public Void getOutput(Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack> input)
                                     throws EvaluationException {
-                                if (input.getRight().getRawValue().isPresent()) {
+                                if (!input.getRight().getRawValue().isEmpty()) {
                                     DimPos pos = input.getLeft().getTarget().getPos();
                                     INetworkNode networkNode = TileHelpers.getSafeTile(pos, INetworkNode.class);
                                     if (networkNode != null) {
                                         INetworkMaster networkMaster = networkNode.getNetwork();
                                         if (networkMaster != null) {
-                                            ItemStack itemStack = input.getRight().getRawValue().get();
+                                            ItemStack itemStack = input.getRight().getRawValue();
                                             List<ICraftingTask> craftingTasks = Lists.newArrayList(networkMaster.getCraftingTasks());
                                             int compareFlags = IComparer.COMPARE_DAMAGE | IComparer.COMPARE_NBT;
                                             for (ICraftingTask craftingTask : craftingTasks) {
@@ -350,8 +350,8 @@ public class RefinedStorageAspects {
                                                 for (ItemStack output : craftingTask.getPattern().getOutputs()) {
                                                     for (IValue value : (Iterable<IValue>) input.getRight().getRawValue()) {
                                                         ValueObjectTypeItemStack.ValueItemStack valueItemStack = (ValueObjectTypeItemStack.ValueItemStack) value;
-                                                        if (valueItemStack.getRawValue().isPresent() &&
-                                                                RS.getComparer().isEqual(output, valueItemStack.getRawValue().get(), compareFlags)) {
+                                                        if (!valueItemStack.getRawValue().isEmpty() &&
+                                                                RS.getComparer().isEqual(output, valueItemStack.getRawValue(), compareFlags)) {
                                                             networkMaster.cancelCraftingTask(craftingTask);
                                                             break;
                                                         }

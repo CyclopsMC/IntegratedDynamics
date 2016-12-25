@@ -2,75 +2,75 @@
 <recipes>
 
 	<recipe type="shaped">
-		<condition type="config">crystalizedMenrilBlock</condition>
-		<condition type="config">crystalizedMenrilBrick</condition>
+		<condition type="config">crystalized_menril_block</condition>
+		<condition type="config">crystalized_menril_brick</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item amount="4">integrateddynamics:crystalizedMenrilBrick</item>
+			<item amount="4">integrateddynamics:crystalized_menril_brick</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">crystalizedMenrilChunk</condition>
-		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
+		<condition type="config">crystalized_menril_block</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:crystalizedMenrilBlock</item>
+			<item>integrateddynamics:crystalized_menril_block</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">dryingBasin</condition>
+		<condition type="config">drying_basin</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item type="oredict">logWood</item>
-					<item type="oredict">dyeBlack</item>
-					<item type="oredict">logWood</item>
+					<item type="oredict">log_wood</item>
+					<item type="oredict">dye_black</item>
+					<item type="oredict">log_wood</item>
 				</gridrow>
 				<gridrow>
-					<item type="oredict">ingotIron</item>
+					<item type="oredict">ingot_iron</item>
 					<item />
-					<item type="oredict">ingotIron</item>
+					<item type="oredict">ingot_iron</item>
 				</gridrow>
 				<gridrow>
-					<item type="oredict">logWood</item>
-					<item type="oredict">logWood</item>
-					<item type="oredict">logWood</item>
+					<item type="oredict">log_wood</item>
+					<item type="oredict">log_wood</item>
+					<item type="oredict">log_wood</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:dryingBasin</item>
+			<item>integrateddynamics:drying_basin</item>
 		</output>
 	</recipe>
 
@@ -79,19 +79,19 @@
 		<input>
 			<grid>
 				<gridrow>
-					<item type="oredict">stickWood</item>
-					<item type="oredict">blockIron</item>
-					<item type="oredict">stickWood</item>
+					<item type="oredict">stick_wood</item>
+					<item type="oredict">block_iron</item>
+					<item type="oredict">stick_wood</item>
 				</gridrow>
 				<gridrow>
-					<item type="oredict">stickWood</item>
+					<item type="oredict">stick_wood</item>
 					<item />
-					<item type="oredict">stickWood</item>
+					<item type="oredict">stick_wood</item>
 				</gridrow>
 				<gridrow>
-					<item type="oredict">plankWood</item>
-					<item type="oredict">ingotIron</item>
-					<item type="oredict">plankWood</item>
+					<item type="oredict">plank_wood</item>
+					<item type="oredict">ingot_iron</item>
+					<item type="oredict">plank_wood</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -102,23 +102,23 @@
 
 	<recipe type="shaped">
 		<condition type="config">cable</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item type="oredict">stickWood</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item type="oredict">stick_wood</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>minecraft:redstone</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item type="oredict">stickWood</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item type="oredict">stick_wood</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -129,23 +129,23 @@
 
 	<recipe type="shaped">
 		<condition type="config">cable</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item type="oredict">stickWood</item>
+					<item type="oredict">stick_wood</item>
 					<item>minecraft:redstone</item>
-					<item type="oredict">stickWood</item>
+					<item type="oredict">stick_wood</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -156,21 +156,21 @@
 
 	<recipe type="shaped">
 		<condition type="config">wrench</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
 					<item />
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>minecraft:redstone</item>
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item />
 					<item />
 				</gridrow>
@@ -183,23 +183,23 @@
 
 	<recipe type="shaped">
 		<condition type="config">variable</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>minecraft:paper</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -210,21 +210,21 @@
 
 	<recipe type="shaped">
 		<condition type="config">labeller</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
 					<item />
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>minecraft:writable_book</item>
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item />
 					<item />
 				</gridrow>
@@ -237,7 +237,7 @@
 
 	<recipe type="shaped">
 		<condition type="config">labeller</condition>
-		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">crystalized_menril_block</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -247,7 +247,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:slime_ball</item>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
 					<item>minecraft:slime_ball</item>
 				</gridrow>
 				<gridrow>
@@ -264,24 +264,24 @@
 
 	<recipe type="shaped">
 		<condition type="config">variablestore</condition>
-		<condition type="config">crystalizedMenrilBlock</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_block</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item type="oredict">chestWood</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item type="oredict">chest_wood</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -291,30 +291,30 @@
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">energyBattery</condition>
-		<condition type="config">crystalizedMenrilBlock</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">energy_battery</condition>
+		<condition type="config">crystalized_menril_block</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>minecraft:redstone_block</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
-					<item>integrateddynamics:crystalizedMenrilBlock</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:energyBattery</item>
+			<item>integrateddynamics:energy_battery</item>
 		</output>
 	</recipe>
 
@@ -322,22 +322,22 @@
 		<condition type="config">proxy</condition>
 		<condition type="config">variablestore</condition>
 		<condition type="config">variable</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
 					<item>integrateddynamics:variable</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>integrateddynamics:variable</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>integrateddynamics:variablestore</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:variable</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>integrateddynamics:variable</item>
 				</gridrow>
 			</grid>
@@ -351,23 +351,23 @@
 		<condition type="config">materializer</condition>
 		<condition type="config">variablestore</condition>
 		<condition type="config">variable</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>integrateddynamics:variable</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>integrateddynamics:variablestore</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>minecraft:redstone</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -377,9 +377,9 @@
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<condition type="config">variable</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -388,9 +388,9 @@
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>minecraft:piston</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
 					<item />
@@ -400,14 +400,14 @@
 			</grid>
 		</input>
 		<output>
-			<item meta="0" amount="4">integrateddynamics:variableTransformer</item>
+			<item meta="0" amount="4">integrateddynamics:variable_transformer</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<condition type="config">variable</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -416,9 +416,9 @@
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 					<item>minecraft:sticky_piston</item>
-					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
 					<item />
@@ -428,12 +428,12 @@
 			</grid>
 		</input>
 		<output>
-			<item meta="1" amount="4">integrateddynamics:variableTransformer</item>
+			<item meta="1" amount="4">integrateddynamics:variable_transformer</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -443,7 +443,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:noteblock</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:noteblock</item>
 				</gridrow>
 				<gridrow>
@@ -454,12 +454,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_audioReaderItem</item>
+			<item>integrateddynamics:part_audio_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -469,7 +469,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:dirt</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:dirt</item>
 				</gridrow>
 				<gridrow>
@@ -480,12 +480,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_blockReaderItem</item>
+			<item>integrateddynamics:part_block_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -495,7 +495,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:porkchop</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:porkchop</item>
 				</gridrow>
 				<gridrow>
@@ -506,12 +506,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_entityReaderItem</item>
+			<item>integrateddynamics:part_entity_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -521,7 +521,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:ender_pearl</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:ender_pearl</item>
 				</gridrow>
 				<gridrow>
@@ -532,12 +532,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_extradimensionalReaderItem</item>
+			<item>integrateddynamics:part_extradimensional_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -547,18 +547,18 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:bucket</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:bucket</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_fluidReaderItem</item>
+			<item>integrateddynamics:part_fluid_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -568,18 +568,18 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:chest</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:chest</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_inventoryReaderItem</item>
+			<item>integrateddynamics:part_inventory_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -589,7 +589,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:iron_ingot</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:iron_ingot</item>
 				</gridrow>
 				<gridrow>
@@ -600,12 +600,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_machineReaderItem</item>
+			<item>integrateddynamics:part_machine_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<condition type="config">cable</condition>
 		<input>
 			<grid>
@@ -616,7 +616,7 @@
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:cable</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>integrateddynamics:cable</item>
 				</gridrow>
 				<gridrow>
@@ -627,12 +627,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_networkReaderItem</item>
+			<item>integrateddynamics:part_network_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -642,18 +642,18 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:redstone</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:redstone</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_redstoneReaderItem</item>
+			<item>integrateddynamics:part_redstone_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -663,7 +663,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:obsidian</item>
-					<item meta="1">integrateddynamics:variableTransformer</item>
+					<item meta="1">integrateddynamics:variable_transformer</item>
 					<item>minecraft:obsidian</item>
 				</gridrow>
 				<gridrow>
@@ -674,12 +674,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_worldReaderItem</item>
+			<item>integrateddynamics:part_world_reader_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -689,7 +689,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:noteblock</item>
-					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
 					<item>minecraft:noteblock</item>
 				</gridrow>
 				<gridrow>
@@ -700,12 +700,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_audioWriterItem</item>
+			<item>integrateddynamics:part_audio_writer_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -715,7 +715,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:firework_charge</item>
-					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
 					<item>minecraft:firework_charge</item>
 				</gridrow>
 				<gridrow>
@@ -726,12 +726,12 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_effectWriterItem</item>
+			<item>integrateddynamics:part_effect_writer_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -741,18 +741,18 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:chest</item>
-					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
 					<item>minecraft:chest</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_inventoryWriterItem</item>
+			<item>integrateddynamics:part_inventory_writer_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
+		<condition type="config">variable_transformer</condition>
 		<input>
 			<grid>
 				<gridrow>
@@ -762,40 +762,40 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:redstone_block</item>
-					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
 					<item>minecraft:redstone_block</item>
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_redstoneWriterItem</item>
+			<item>integrateddynamics:part_redstone_writer_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
-		<condition type="config">menrilBerries</condition>
+		<condition type="config">variable_transformer</condition>
+		<condition type="config">menril_berries</condition>
 		<input>
 			<grid>
 				<gridrow>
-					<item>integrateddynamics:menrilBerries</item>
+					<item>integrateddynamics:menril_berries</item>
 					<item />
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:menrilBerries</item>
-					<item meta="0">integrateddynamics:variableTransformer</item>
+					<item>integrateddynamics:menril_berries</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
 					<item>minecraft:redstone</item>
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:menrilBerries</item>
+					<item>integrateddynamics:menril_berries</item>
 					<item />
 					<item />
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_staticLightPanelItem</item>
+			<item>integrateddynamics:part_static_light_panel_item</item>
 		</output>
 	</recipe>
 
@@ -809,7 +809,7 @@
 				</gridrow>
 				<gridrow>
 					<item>minecraft:redstone</item>
-					<item>integrateddynamics:part_staticLightPanelItem</item>
+					<item>integrateddynamics:part_static_light_panel_item</item>
 					<item>minecraft:redstone</item>
 				</gridrow>
 				<gridrow>
@@ -820,34 +820,34 @@
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_dynamicLightPanelItem</item>
+			<item>integrateddynamics:part_dynamic_light_panel_item</item>
 		</output>
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">variableTransformer</condition>
-		<condition type="config">menrilBerries</condition>
+		<condition type="config">variable_transformer</condition>
+		<condition type="config">menril_berries</condition>
 		<input>
 			<grid>
 				<gridrow>
 					<item />
-					<item>integrateddynamics:menrilBerries</item>
+					<item>integrateddynamics:menril_berries</item>
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:part_staticLightPanelItem</item>
-					<item meta="0">integrateddynamics:variableTransformer</item>
-					<item>integrateddynamics:part_staticLightPanelItem</item>
+					<item>integrateddynamics:part_static_light_panel_item</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
+					<item>integrateddynamics:part_static_light_panel_item</item>
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>integrateddynamics:menrilBerries</item>
+					<item>integrateddynamics:menril_berries</item>
 					<item />
 				</gridrow>
 			</grid>
 		</input>
 		<output>
-			<item>integrateddynamics:part_displayPanelItem</item>
+			<item>integrateddynamics:part_display_panel_item</item>
 		</output>
 	</recipe>
 

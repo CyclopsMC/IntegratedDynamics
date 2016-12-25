@@ -3,12 +3,11 @@ package org.cyclops.integrateddynamics.item;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-
-import java.util.List;
 
 /**
  * Config for the Input and Output Variable Transformer.
@@ -29,7 +28,7 @@ public class ItemVariableTransformerConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "variableTransformer",
+                "variable_transformer",
                 null,
                 null
         );
@@ -44,7 +43,7 @@ public class ItemVariableTransformerConfig extends ItemConfig {
             }
 
             @Override
-            public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+            public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
                 super.getSubItems(itemIn, tab, subItems);
                 subItems.add(new ItemStack(itemIn, 1, 1));
             }

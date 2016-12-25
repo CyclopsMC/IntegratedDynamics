@@ -2,10 +2,12 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
@@ -17,7 +19,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.item.ItemMenrilBerriesConfig;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
@@ -46,7 +47,7 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "menrilLeaves",
+                "menril_leaves",
                 null,
                 null
         );
@@ -77,9 +78,8 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
                 return SoundType.GROUND;
             }
 
-            @Nullable
             @Override
-            protected ItemStack createStackedBlock(IBlockState state) {
+            public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
                 return new ItemStack(this);
             }
         }.setHardness(0.2F).setLightLevel(0.65F).setLightOpacity(1);

@@ -76,7 +76,7 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
         variableContainer.getVariableCache().clear();
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
-            if (itemStack != null) {
+            if (!itemStack.isEmpty()) {
                 IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
                 if (variableFacade != null && variableFacade.isValid()) {
                     variableContainer.getVariableCache().put(variableFacade.getId(), variableFacade);
@@ -92,7 +92,7 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
 
     @Override
     public void onDirty() {
-        if(!worldObj.isRemote) {
+        if(!world.isRemote) {
             refreshVariables(inventory);
         }
     }

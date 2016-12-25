@@ -87,7 +87,7 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
     @Override
     public void onDirty() {
-        if(!worldObj.isRemote) {
+        if(!world.isRemote) {
             updateReadVariable();
         }
     }

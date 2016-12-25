@@ -37,27 +37,9 @@ public class SqueezerRecipeJEI extends BlankRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputs(ItemStack.class, getInputItem());
-        ingredients.setOutputs(ItemStack.class, getOutputItem());
-        ingredients.setOutput(FluidStack.class, getOutputFluid());
-    }
-
-    @Override
-    @Deprecated
-    public List getInputs() {
-        return getInputItem();
-    }
-
-    @Override
-    @Deprecated
-    public List getOutputs() {
-        return getOutputItem();
-    }
-
-    @Override
-    @Deprecated
-    public List<FluidStack> getFluidOutputs() {
-        return Lists.newArrayList(getOutputFluid());
+        ingredients.setInputs(ItemStack.class, inputItem);
+        ingredients.setOutputs(ItemStack.class, outputItem);
+        ingredients.setOutput(FluidStack.class, outputFluid);
     }
 
     public static List<SqueezerRecipeJEI> getAllRecipes() {

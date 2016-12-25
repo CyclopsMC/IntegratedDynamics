@@ -27,7 +27,7 @@ public class BlockMenrilSaplingConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "menrilSapling",
+                "menril_sapling",
                 null,
                 null
         );

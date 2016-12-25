@@ -181,8 +181,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
 
     public void updateRedstoneInfo(EnumFacing side) {
         sendUpdate();
-        getWorld().notifyNeighborsOfStateChange(getPos(), getBlockType());
-        getWorld().notifyNeighborsOfStateChange(pos.offset(side.getOpposite()), getBlockType());
+        getWorld().notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+        getWorld().notifyNeighborsOfStateChange(pos.offset(side.getOpposite()), getBlockType(), true);
     }
 
     public void updateLightInfo() {

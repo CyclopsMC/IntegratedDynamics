@@ -85,7 +85,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
         for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
             ItemStack itemStack = state.getInventory().getStackInSlot(i);
-            if(itemStack != null) {
+            if(!itemStack.isEmpty()) {
                 itemStacks.add(itemStack);
             }
         }

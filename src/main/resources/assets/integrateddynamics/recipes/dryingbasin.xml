@@ -2,14 +2,14 @@
 <recipes>
 
 	<recipe type="integrateddynamics:dryingbasin">
-		<condition type="config">dryingBasin</condition>
-		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">drying_basin</condition>
+		<condition type="config">crystalized_menril_block</condition>
 		<condition type="config">menrilresin</condition>
 		<input>
 			<fluid amount="1000">menrilresin</fluid>
 		</input>
 		<output>
-			<item>integrateddynamics:crystalizedMenrilBlock</item>
+			<item>integrateddynamics:crystalized_menril_block</item>
 		</output>
 		<properties>
 			<duration>100</duration>

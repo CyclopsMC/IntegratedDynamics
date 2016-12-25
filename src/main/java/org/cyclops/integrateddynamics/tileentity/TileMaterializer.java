@@ -69,7 +69,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     @Override
     public void onDirty() {
         super.onDirty();
-        if(!worldObj.isRemote) {
+        if(!world.isRemote) {
             if (getStackInSlot(SLOT_WRITE_IN) != null && canWrite() && getStackInSlot(SLOT_WRITE_OUT) == null) {
                 // Write proxy reference
                 ItemStack outputStack = writeMaterialized(!getWorld().isRemote, getStackInSlot(SLOT_WRITE_IN));

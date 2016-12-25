@@ -1,6 +1,6 @@
 {
     "textures": {
-        "particle": "integrateddynamics:blocks/menrilLog",
+        "particle": "integrateddynamics:blocks/menril_log",
         "texture": "#0"
     },
     "elements": [

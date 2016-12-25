@@ -1,0 +1,11 @@
+{
+    "parent": "cyclopscore:block/cube_double_layer_all",
+    "textures": {
+        "all0": "integrateddynamics:blocks/energy_battery_side",
+        "all1": "#overlay_side",
+        "up0": "integrateddynamics:blocks/energy_battery_up",
+        "up1": "cyclopscore:blocks/empty",
+        "down0": "integrateddynamics:blocks/energy_battery_up",
+        "down1": "cyclopscore:blocks/empty"
+    }
+}

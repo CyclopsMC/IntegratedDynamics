@@ -94,7 +94,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
     protected void afterItemUse(ItemStack stack, World world, BlockPos pos, BlockCable blockCable, boolean calledSuper) {
         if(!calledSuper) {
             playPlaceSound(world, pos);
-            --stack.stackSize;
+            stack.shrink(1);
         }
         blockCable.setDisableCollisionBox(false);
     }
@@ -111,28 +111,29 @@ public class ItemBlockCable extends ItemBlockMetadata {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side,
+    public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side,
                              float hitX, float hitY, float hitZ) {
+        ItemStack itemStack = playerIn.getHeldItem(hand);
         // Skips server-side entity collision detection for placing cables.
         // We temporary disable the collision box of the cable so that it can be placed even if an entity is in the way.
         BlockCable blockCable = (BlockCable) block;
         blockCable.setDisableCollisionBox(true);
 
         // Avoid regular block placement when the target is an unreal cable.
-        if(attempItemUseTarget(stack, worldIn, pos, blockCable, false)) {
-            afterItemUse(stack, worldIn, pos, blockCable, false);
+        if(attempItemUseTarget(itemStack, worldIn, pos, blockCable, false)) {
+            afterItemUse(itemStack, worldIn, pos, blockCable, false);
             return EnumActionResult.SUCCESS;
         }
 
         // Change pos and side when we are targeting a block that is blocked by an unreal cable, so we want to target
         // the unreal cable.
-        if(attempItemUseTarget(stack, worldIn, pos.offset(side), blockCable, true)) {
-            afterItemUse(stack, worldIn, pos.offset(side), blockCable, false);
+        if(attempItemUseTarget(itemStack, worldIn, pos.offset(side), blockCable, true)) {
+            afterItemUse(itemStack, worldIn, pos.offset(side), blockCable, false);
             return EnumActionResult.SUCCESS;
         }
 
-        EnumActionResult ret = super.onItemUse(stack, playerIn, worldIn, pos, hand, side, hitX, hitY, hitZ);
-        afterItemUse(stack, worldIn, pos, blockCable, true);
+        EnumActionResult ret = super.onItemUse(playerIn, worldIn, pos, hand, side, hitX, hitY, hitZ);
+        afterItemUse(itemStack, worldIn, pos, blockCable, true);
         return ret;
     }
 

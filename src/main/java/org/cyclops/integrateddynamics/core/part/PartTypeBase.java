@@ -102,7 +102,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The corresponding block.
      */
     protected Block registerBlock() {
-        BlockConfig blockConfig = new BlockConfig(getMod(), true, "part_" + getName() + "Block", null, null) {
+        BlockConfig blockConfig = new BlockConfig(getMod(), true, "part_" + getName() + "_block", null, null) {
             @Override
             public boolean isDisableable() {
                 return false;
@@ -128,7 +128,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The corresponding item.
      */
     protected Item registerItem() {
-        itemConfig = new ItemConfig(getMod(), true, "part_" + getName() + "Item", null, null) {
+        itemConfig = new ItemConfig(getMod(), true, "part_" + getName() + "_item", null, null) {
             @Override
             public boolean isDisableable() {
                 return false;
@@ -141,7 +141,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getBlockModelPath() {
-        return new ResourceLocation(getMod().getModId(), "part_" + getName() + "Block");
+        return new ResourceLocation(getMod().getModId(), "part_" + getName() + "_block");
     }
 
     @Override

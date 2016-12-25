@@ -39,12 +39,13 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-                                    EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+                                    EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
             destroyBlock(world, pos, true);
             return true;
         }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
     @Override
@@ -67,8 +68,8 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
-        super.neighborChanged(state, world, pos, neighborBlock);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
+        super.neighborChanged(state, world, pos, neighborBlock, fromPos);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock);
     }
 }

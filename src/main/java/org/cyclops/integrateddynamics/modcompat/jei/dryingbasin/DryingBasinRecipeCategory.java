@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockDryingBasinConfig;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Category for the Drying Basin recipes.
@@ -60,19 +61,19 @@ public class DryingBasinRecipeCategory implements IRecipeCategory {
         return background;
     }
 
+    @Nullable
+    @Override
+    public IDrawable getIcon() {
+        return null;
+    }
+
     @Override
     public void drawExtras(Minecraft minecraft) {
         arrow.draw(minecraft, 43, 11);
     }
 
     @Override
-    public void drawAnimations(Minecraft minecraft) {
-
-    }
-
-    @Override
-    @Deprecated
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
+    public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
         recipeLayout.getItemStacks().init(INPUT_SLOT, true, 1, 7);
         recipeLayout.getItemStacks().init(OUTPUT_SLOT, false, 75, 7);
         recipeLayout.getItemStacks().init(FLUIDINPUT_SLOT, true, 6, 28);
@@ -96,10 +97,5 @@ public class DryingBasinRecipeCategory implements IRecipeCategory {
                 recipeLayout.getFluidStacks().set(FLUIDOUTPUT_SLOT, recipe.getOutputFluid());
             }
         }
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
-        setRecipe(recipeLayout, recipeWrapper);
     }
 }

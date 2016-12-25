@@ -21,7 +21,7 @@ public class BlockLogicProgrammerConfig extends BlockConfig {
         super(
             IntegratedDynamics._instance,
             true,
-            "logicProgrammer",
+            "logic_programmer",
             null,
             BlockLogicProgrammer.class
         );

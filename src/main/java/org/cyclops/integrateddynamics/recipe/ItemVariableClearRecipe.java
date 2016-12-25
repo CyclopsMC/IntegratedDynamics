@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.recipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
@@ -42,7 +43,7 @@ public class ItemVariableClearRecipe implements IRecipe {
     }
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-        return new ItemStack[inv.getSizeInventory()];
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inventory) {
+        return NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
     }
 }

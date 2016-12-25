@@ -4,8 +4,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.http.util.Asserts;
@@ -229,10 +227,10 @@ public class TestEntityOperators {
     public void testBlockItemStack() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an itemstack");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().isPresent(), false, "itemstack(zombie) = null");
+        TestHelpers.assertEqual(!((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().isEmpty(), false, "itemstack(zombie) = null");
 
         IValue res2 = Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{eItem});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().isItemEqual(new ItemStack(Blocks.AIR)), true, "itemstack(item:air) = air");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().isEmpty(), true, "itemstack(null) = null");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

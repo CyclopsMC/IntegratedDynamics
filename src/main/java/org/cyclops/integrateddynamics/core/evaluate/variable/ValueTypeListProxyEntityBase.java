@@ -24,7 +24,7 @@ public abstract class ValueTypeListProxyEntityBase<T extends IValueType<V>, V ex
     }
 
     protected Entity getEntity() {
-        WorldServer[] servers = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers;
+        WorldServer[] servers = FMLCommonHandler.instance().getMinecraftServerInstance().worlds;
         if(world < servers.length) {
             Entity e = servers[world].getEntityByID(entity);
             return e;

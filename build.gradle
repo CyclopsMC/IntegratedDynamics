@@ -68,6 +68,11 @@ sourceSets {
     main {
         java {
             exclude '**/modcompat/thaumcraft/**'
+            exclude '**/modcompat/forestry/**'
+            exclude '**/modcompat/ic2/**'
+            exclude '**/modcompat/mcmultipart/**'
+            exclude '**/modcompat/tconstruct/**'
+            exclude '**/modcompat/charset/**'
         }
     }
 }

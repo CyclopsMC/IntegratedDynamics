@@ -29,7 +29,7 @@ public class NetworkElementProviderConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "networkElementProvider",
+                "network_element_provider",
                 "Providers network elements.",
                 INetworkElementProvider.class,
                 new DefaultCapabilityStorage<INetworkElementProvider>(),

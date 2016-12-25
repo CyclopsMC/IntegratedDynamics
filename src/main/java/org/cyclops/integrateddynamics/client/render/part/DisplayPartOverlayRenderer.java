@@ -57,7 +57,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         if(!shouldRender(pos)) return;
 
         // Calculate the alpha to be used when the player is almost out of rendering bounds.
-        Entity renderEntity = FMLClientHandler.instance().getClient().thePlayer;
+        Entity renderEntity = FMLClientHandler.instance().getClient().player;
         float distanceFactor = (float) ((getMaxRenderDistance() - renderEntity.getDistance(pos.getX(), pos.getY(), pos.getZ())) / 5);
         float distanceAlpha = Math.min(1.0F, distanceFactor);
         if(distanceAlpha < 0.05F) distanceAlpha = 0.05F; // Can't be 0 because the MC font renderer doesn't handle 0 alpha's properly.

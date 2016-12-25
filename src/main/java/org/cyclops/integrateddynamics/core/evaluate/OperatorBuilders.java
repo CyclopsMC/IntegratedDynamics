@@ -158,7 +158,7 @@ public class OperatorBuilders {
                 @Override
                 public ItemStack getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0);
-                    return a.getRawValue().isPresent() ? a.getRawValue().get() : null;
+                    return !a.getRawValue().isEmpty() ? a.getRawValue() : null;
                 }
             });
     public static final IterativeFunction.PrePostBuilder<ItemStack, Integer> FUNCTION_ITEMSTACK_TO_INT =
@@ -171,8 +171,8 @@ public class OperatorBuilders {
                 @Override
                 public IEnergyStorage getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0);
-                    if(a.getRawValue().isPresent() && a.getRawValue().get().hasCapability(CapabilityEnergy.ENERGY, null)) {
-                        return a.getRawValue().get().getCapability(CapabilityEnergy.ENERGY, null);
+                    if(!a.getRawValue().isEmpty() && a.getRawValue().hasCapability(CapabilityEnergy.ENERGY, null)) {
+                        return a.getRawValue().getCapability(CapabilityEnergy.ENERGY, null);
                     }
                     return null;
                 }
@@ -402,8 +402,8 @@ public class OperatorBuilders {
                     @Override
                     public T getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                         ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0);
-                        if(a.getRawValue().isPresent() && a.getRawValue().get().hasCapability(capabilityReference.getReference(), null)) {
-                            return a.getRawValue().get().getCapability(capabilityReference.getReference(), null);
+                        if(!a.getRawValue().isEmpty() && a.getRawValue().hasCapability(capabilityReference.getReference(), null)) {
+                            return a.getRawValue().getCapability(capabilityReference.getReference(), null);
                         }
                         return null;
                     }

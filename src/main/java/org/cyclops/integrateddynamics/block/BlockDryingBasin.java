@@ -56,7 +56,7 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float motionX, float motionY, float motionZ) {
+    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, EnumFacing side, float motionX, float motionY, float motionZ) {
         if(world.isRemote) {
             return true;
         } else {
@@ -66,28 +66,28 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                 IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
                 SingleUseTank tank = tile.getTank();
                 ItemStack tileStack = tile.getStackInSlot(0);
-                if ((itemStack == null || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && itemStack.stackSize < itemStack.getMaxStackSize())) && tileStack != null) {
-                    if(itemStack != null) {
-                        tileStack.stackSize += itemStack.stackSize;
+                if ((itemStack.isEmpty() || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && itemStack.getCount() < itemStack.getMaxStackSize())) && tileStack != null) {
+                    if(!itemStack.isEmpty()) {
+                        tileStack.grow(itemStack.getCount());
                     }
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
                     tile.setInventorySlotContents(0, null);
                     tile.sendUpdate();
                     return true;
                 } else if (itemFluidHandler != null && !tank.isFull()
-                        && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false) != null) {
-                    ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
+                        && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
+                    ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
                     InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
                     tile.sendUpdate();
                     return true;
                 } else if (itemFluidHandler != null && !tank.isEmpty() &&
-                        FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false) != null) {
-                    ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
+                        FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
+                    ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
                     InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
                     return true;
-                } else if (itemStack != null && tileStack == null) {
+                } else if (!itemStack.isEmpty() && tileStack == null) {
                     tile.setInventorySlotContents(0, itemStack.splitStack(1));
-                    if(itemStack.stackSize <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+                    if(itemStack.getCount() <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                     tile.sendUpdate();
                     return true;
                 }

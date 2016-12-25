@@ -23,7 +23,7 @@ public class BlockFluidMenrilResinConfig extends BlockFluidConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "blockMenrilResin",
+                "block_menril_resin",
                 null,
                 BlockFluidMenrilResin.class
         );

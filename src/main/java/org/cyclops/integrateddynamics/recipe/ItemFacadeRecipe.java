@@ -4,6 +4,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.item.ItemFacade;
@@ -31,12 +32,12 @@ public class ItemFacadeRecipe implements IRecipe {
 	}
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inventory) {
-        ItemStack[] aitemstack = new ItemStack[inventory.getSizeInventory()];
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inventory) {
+		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
 
-        for (int i = 0; i < aitemstack.length; ++i) {
+        for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getStackInSlot(i);
-            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+            aitemstack.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
         }
 
         return aitemstack;

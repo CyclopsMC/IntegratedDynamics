@@ -66,11 +66,11 @@ public class Cluster implements Collection<IPathElement>, INBTSerializable {
             int dimensionId = elementTag.getInteger("dimension");
             BlockPos pos = BlockPos.fromLong(elementTag.getLong("pos"));
 
-            if(dimensionId < 0 || dimensionId >= FMLCommonHandler.instance().getMinecraftServerInstance().worldServers.length) {
+            if(dimensionId < 0 || dimensionId >= FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length) {
                 IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at the " +
                         "invalid dimension id %s.", dimensionId));
             } else {
-                World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers[dimensionId];
+                World world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[dimensionId];
                 IPathElement pathElement = TileHelpers.getCapability(world, pos, null, PathElementConfig.CAPABILITY);
                 if(pathElement == null) {
                     IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +

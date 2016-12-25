@@ -71,7 +71,7 @@ public class GuiPartSettings extends GuiContainerExtended {
     @Override
     public String getGuiTexture() {
         return getContainer().getGuiProvider().getModGui().getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI)
-                + "partSettings.png";
+                + "part_settings.png";
     }
 
     @Override

@@ -25,7 +25,7 @@ public class BlockDryingBasinConfig extends BlockContainerConfig {
         super(
             IntegratedDynamics._instance,
             true,
-            "dryingBasin",
+            "drying_basin",
             null,
             BlockDryingBasin.class
         );

@@ -20,17 +20,10 @@ public class SqueezerRecipeHandler implements IRecipeHandler<SqueezerRecipeJEI> 
         return SqueezerRecipeJEI.class;
     }
 
-    @SuppressWarnings("deprecation")
-    @Nonnull
-    @Override
-    public String getRecipeCategoryUid() {
-        return CATEGORY;
-    }
-
     @Nonnull
     @Override
     public String getRecipeCategoryUid(@Nonnull SqueezerRecipeJEI recipe) {
-        return getRecipeCategoryUid();
+        return CATEGORY;
     }
 
     @Nonnull

@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
@@ -16,22 +17,22 @@ public class ValueTypeListProxyEntityInventory extends ValueTypeListProxyEntityB
         super(ValueTypeListProxyFactories.ENTITY_INVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK, world, entity);
     }
 
-    protected ItemStack[] getInventory() {
+    protected NonNullList<ItemStack> getInventory() {
         Entity e = getEntity();
         if(e != null && e instanceof EntityPlayer) {
             return ((EntityPlayer) e).inventory.mainInventory;
         }
-        return new ItemStack[0];
+        return NonNullList.create();
     }
 
     @Override
     public int getLength() {
-        return getInventory().length;
+        return getInventory().size();
     }
 
     @Override
     public ValueObjectTypeItemStack.ValueItemStack get(int index) {
-        return ValueObjectTypeItemStack.ValueItemStack.of(getInventory()[index]);
+        return ValueObjectTypeItemStack.ValueItemStack.of(getInventory().get(index));
     }
 
     @Override

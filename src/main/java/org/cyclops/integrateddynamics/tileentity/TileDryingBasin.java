@@ -98,11 +98,11 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if(!worldObj.isRemote) {
+        if(!world.isRemote) {
             if (!getTank().isEmpty() && getTank().getFluid().getFluid().getTemperature(getTank().getFluid()) >= WOOD_IGNITION_TEMPERATURE) {
                 if (++fire >= 100) {
                     getWorld().setBlockState(getPos(), Blocks.FIRE.getDefaultState());
-                } else if (getWorld().isAirBlock(getPos().offset(EnumFacing.UP)) && worldObj.rand.nextInt(10) == 0) {
+                } else if (getWorld().isAirBlock(getPos().offset(EnumFacing.UP)) && world.rand.nextInt(10) == 0) {
                     getWorld().setBlockState(getPos().offset(EnumFacing.UP), Blocks.FIRE.getDefaultState());
                 }
 
@@ -132,7 +132,7 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                 fire = 0;
                 sendUpdate();
             }
-        } else if(progress > 0 && worldObj.rand.nextInt(5) == 0) {
+        } else if(progress > 0 && world.rand.nextInt(5) == 0) {
             if(!getTank().isEmpty()) {
                 Block block = getTank().getFluid().getFluid().getBlock();
                 if(block != null) {
@@ -154,7 +154,7 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     @Override
     public void setInventorySlotContents(int slotId, ItemStack itemstack) {
         super.setInventorySlotContents(slotId, itemstack);
-        this.randomRotation = worldObj.rand.nextFloat() * 360;
+        this.randomRotation = world.rand.nextFloat() * 360;
         sendUpdate();
     }
 

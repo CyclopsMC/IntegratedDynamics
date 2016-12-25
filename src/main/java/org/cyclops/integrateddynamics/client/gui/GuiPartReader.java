@@ -39,7 +39,7 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
 
     @Override
     protected String getNameId() {
-        return "partReader";
+        return "part_reader";
     }
 
     @Override

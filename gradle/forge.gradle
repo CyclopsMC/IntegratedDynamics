@@ -46,31 +46,31 @@ repositories {
 dependencies {
     // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local CyclopsCore version.
     if(project.hasProperty("cyclopscore_version_local")) {
-        compile "org.cyclops.cyclopscore:CyclopsCore:1.9.4-${project.cyclopscore_version_local}:deobf"
+        compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${project.cyclopscore_version_local}:deobf"
     } else {
-        compile "org.cyclops.cyclopscore:CyclopsCore:1.9.4-${config.cyclopscore_version}:deobf"
+        compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
     }
 
-    deobfCompile("org.cyclops.commoncapabilities:CommonCapabilities:1.9.4-${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
+    deobfCompile("org.cyclops.commoncapabilities:CommonCapabilities:${config.minecraft_version}-${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
         exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
     }
-    deobfCompile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:universal" // http://maven.amadornes.com/
+    //deobfCompile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:universal" // http://maven.amadornes.com/
     deobfCompile "mcp.mobius.waila:Waila:${config.waila_version}" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
     deobfCompile "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
     compile "net.bdew.thirdparty:rfapi:${config.rfapi_version}-mc1.8.9:api" // http://jenkins.bdew.net/maven/net/bdew/thirdparty/rfapi/
-    deobfCompile "pl.asie.charset:charset-api:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-api/maven-metadata.xml
+    //deobfCompile "pl.asie.charset:charset-api:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-api/maven-metadata.xml
     deobfCompile "net.darkhax.tesla:Tesla:${config.minecraft_version}-${config.teslaapi_version}" // http://maven.epoxide.xyz/net/darkhax/tesla/Tesla/
-    deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}" // https://dvs1.progwml6.com/jenkins/
-    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tconstruct_version}" // http://dvs1.progwml6.com/files/maven/slimeknights/TConstruct/maven-metadata.xml
-    deobfCompile "net.sengir.forestry:forestry_${config.minecraft_version}:${config.forestry_version}" // http://maven.ic2.player.to/
-    deobfCompile "net.industrial-craft:industrialcraft-2:${config.IC2_version}:dev" // http://maven.ic2.player.to/
-    deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.top_version}" // http://maven.tterrag.com/mcjty/theoneprobe/TheOneProbe/
+    //deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}" // https://dvs1.progwml6.com/jenkins/
+    //deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tconstruct_version}" // http://dvs1.progwml6.com/files/maven/slimeknights/TConstruct/maven-metadata.xml
+    //deobfCompile "net.sengir.forestry:forestry_${config.minecraft_version}:${config.forestry_version}" // http://maven.ic2.player.to/
+    //deobfCompile "net.industrial-craft:industrialcraft-2:${config.IC2_version}:dev" // http://maven.ic2.player.to/
+    deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.minecraft_version}-${config.top_version}" // http://maven.tterrag.com/mcjty/theoneprobe/TheOneProbe/
     deobfCompile "refinedstorage:refinedstorage:${config.refinedstorage_version}" // https://dl.bintray.com/raoulvdberge/dev/refinedstorage/refinedstorage/
 
     // Only needed for testing
-    deobfCompile "pl.asie.charset:charset-lib:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml
-    deobfCompile "pl.asie.charset:charset-pipes:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-pipes/maven-metadata.xml
-    deobfCompile "pl.asie.charset:charset-wires:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-wires/maven-metadata.xml
+    //deobfCompile "pl.asie.charset:charset-lib:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml
+    //deobfCompile "pl.asie.charset:charset-pipes:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-pipes/maven-metadata.xml
+    //deobfCompile "pl.asie.charset:charset-wires:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-wires/maven-metadata.xml
 
     // Project lombok
     provided "org.projectlombok:lombok:1.16.8"

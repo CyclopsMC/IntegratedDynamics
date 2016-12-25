@@ -48,7 +48,7 @@ public class RenderCable extends TileEntitySpecialRenderer<TileMultipartTicking>
         if (destroyStage >= 0 && MinecraftForgeClient.getRenderPass() == 1) {
             startBreaking(rendererDispatcher);
 
-            ICollidable.RayTraceResult result = BlockCable.getInstance().doRayTrace(tile.getWorld(), tile.getPos(), Minecraft.getMinecraft().thePlayer);
+            ICollidable.RayTraceResult result = BlockCable.getInstance().doRayTrace(tile.getWorld(), tile.getPos(), Minecraft.getMinecraft().player);
             IBakedModel model = null;
             if(result != null && result.getCollisionType() != null) {
                 model = result.getCollisionType().getBreakingBaseModel(tile.getWorld(), tile.getPos(), result.getPositionHit());

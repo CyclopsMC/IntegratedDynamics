@@ -230,7 +230,7 @@ public class PartHelpers {
         if(removeCompletely) {
             world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         } else {
-            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
+            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
             // If there is a cable in the direction of the removed part, try connecting with it.
             if (CableHelpers.getCable(world, pos.offset(side)) != null) {
                 CableHelpers.updateConnections(world, pos);

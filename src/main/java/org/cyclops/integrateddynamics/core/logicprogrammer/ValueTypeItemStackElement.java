@@ -28,7 +28,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
 
     private final IItemStackToValue<V> itemStackToValue;
     private final ILogicProgrammerElementType type;
-    private ItemStack itemStack;
+    private ItemStack itemStack = ItemStack.EMPTY;
 
     public ValueTypeItemStackElement(IValueType valueType, IItemStackToValue<V> itemStackToValue, ILogicProgrammerElementType type) {
         super(valueType);
@@ -53,7 +53,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
 
     @Override
     public boolean canWriteElementPre() {
-        return itemStack != null;
+        return !itemStack.isEmpty();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
 
     @Override
     public void activate() {
-        this.itemStack = null;
+        this.itemStack = ItemStack.EMPTY;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
 
     @Override
     public L10NHelpers.UnlocalizedString validate() {
-        if(this.itemStack == null) {
+        if(this.itemStack.isEmpty()) {
             return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
         return itemStackToValue.validate(itemStack);

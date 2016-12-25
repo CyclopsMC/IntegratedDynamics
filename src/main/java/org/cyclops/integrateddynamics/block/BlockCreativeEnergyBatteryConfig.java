@@ -23,7 +23,7 @@ public class BlockCreativeEnergyBatteryConfig extends BlockContainerConfig {
         super(
             IntegratedDynamics._instance,
             true,
-            "creativeEnergyBattery",
+            "creative_energy_battery",
             null,
             BlockCreativeEnergyBattery.class
         );

@@ -779,10 +779,10 @@ public class TestItemStackOperators {
     public void testItemStackWithSize() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_WITHSIZE.evaluate(new IVariable[]{iApple, int100});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an itemstack");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().stackSize, 100, "withsize(apple, 100).stacksize == 100");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getCount(), 100, "withsize(apple, 100).stacksize == 100");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_WITHSIZE.evaluate(new IVariable[]{iBeef, int200});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().stackSize, 200, "withsize(beef, 200).stacksize == 200");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().getCount(), 200, "withsize(beef, 200).stacksize == 200");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

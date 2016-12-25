@@ -24,7 +24,7 @@ public class ItemCrystalizedMenrilChunkConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "crystalizedMenrilChunk",
+                "crystalized_menril_chunk",
                 null,
                 null
         );

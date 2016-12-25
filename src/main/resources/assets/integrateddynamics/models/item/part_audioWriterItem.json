@@ -1,8 +1,0 @@
-{
-  "forge_marker": 1,
-  "parent": "integrateddynamics:block/writer",
-  "textures": {
-    "back" : "integrateddynamics:parts/audioReader_back",
-    "front": "integrateddynamics:parts/audioWriter_front_inactive"
-  }
-}

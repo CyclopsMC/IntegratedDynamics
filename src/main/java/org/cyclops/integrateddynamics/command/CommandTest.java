@@ -39,18 +39,18 @@ public class CommandTest extends CommandMod {
     }
 
     @Override
-    public List getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
+    public List getTabCompletions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
         return null;
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] parts) {
-        sender.addChatMessage(new TextComponentString("Running tests..."));
+        sender.sendMessage(new TextComponentString("Running tests..."));
         try {
             if(!test()) {
-                sender.addChatMessage(new TextComponentString("There were failing tests, see results in console."));
+                sender.sendMessage(new TextComponentString("There were failing tests, see results in console."));
             } else {
-                sender.addChatMessage(new TextComponentString("All tests succeeded!"));
+                sender.sendMessage(new TextComponentString("All tests succeeded!"));
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();

@@ -37,7 +37,7 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
         super(
             IntegratedDynamics._instance,
             true,
-            "energyBattery",
+            "energy_battery",
             null,
             BlockEnergyBattery.class
         );

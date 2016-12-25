@@ -29,7 +29,7 @@ public class PathElementConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "pathElementProvider",
+                "path_element_provider",
                 "Capability for elements used for path construction",
                 IPathElement.class,
                 new DefaultCapabilityStorage<IPathElement>(),

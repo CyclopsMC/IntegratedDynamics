@@ -29,7 +29,7 @@ public class NetworkCarrierConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "networkCarrier",
+                "network_carrier",
                 "Capability that can hold networks",
                 INetworkCarrier.class,
                 new DefaultCapabilityStorage<INetworkCarrier>(),

@@ -53,7 +53,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public IVariableFacade handle(ItemStack itemStack) {
-        if(itemStack == null || !itemStack.hasTagCompound()) {
+        if(itemStack.isEmpty() || !itemStack.hasTagCompound()) {
             return DUMMY_FACADE;
         }
         return handle(itemStack.getTagCompound());
@@ -86,7 +86,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
-        if(itemStack == null) {
+        if(itemStack.isEmpty()) {
             return null;
         }
         itemStack = itemStack.copy();
@@ -98,7 +98,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
-        if(itemStack == null) {
+        if(itemStack.isEmpty()) {
             return null;
         }
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);

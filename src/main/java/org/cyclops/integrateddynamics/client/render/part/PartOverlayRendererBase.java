@@ -19,7 +19,7 @@ public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
     }
 
     protected boolean shouldRender(BlockPos pos) {
-        Entity renderEntity = FMLClientHandler.instance().getClient().thePlayer;
+        Entity renderEntity = FMLClientHandler.instance().getClient().player;
         return renderEntity.getDistance(pos.getX(), pos.getY(), pos.getZ()) < getMaxRenderDistance();
     }
 

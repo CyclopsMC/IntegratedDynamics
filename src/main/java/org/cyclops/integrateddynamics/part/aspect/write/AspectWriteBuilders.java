@@ -87,8 +87,8 @@ public class AspectWriteBuilders {
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>, Triple<PartTarget, IAspectProperties, ItemStack>> PROP_GET_ITEMSTACK = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>, Triple<PartTarget, IAspectProperties, ItemStack>>() {
         @Override
         public Triple<PartTarget, IAspectProperties, ItemStack> getOutput(Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack> input) throws EvaluationException {
-            Optional<ItemStack> optional = input.getRight().getRawValue();
-            return Triple.of(input.getLeft(), input.getMiddle(), optional.isPresent() ? optional.get() : null);
+            ItemStack optional = input.getRight().getRawValue();
+            return Triple.of(input.getLeft(), input.getMiddle(), !optional.isEmpty() ? optional : null);
         }
     };
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString>, Triple<PartTarget, IAspectProperties, String>> PROP_GET_STRING = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString>, Triple<PartTarget, IAspectProperties, String>>() {

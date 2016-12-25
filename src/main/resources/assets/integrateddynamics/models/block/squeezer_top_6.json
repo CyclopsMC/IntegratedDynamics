@@ -1,5 +1,5 @@
 {
-    "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
+    "__comment": "Model generated using Mr_crayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
     "textures": {
         "texture": "#0"
     },
@@ -18,7 +18,7 @@
             }
         },
         {
-            "__comment": "BaseLeft",
+            "__comment": "Base_left",
             "from": [ 2, 4, 0 ],
             "to": [ 14, 6, 2 ],
             "faces": {
@@ -30,7 +30,7 @@
             }
         },
         {
-            "__comment": "BaseRight",
+            "__comment": "Base_right",
             "from": [ 2, 4, 14 ],
             "to": [ 14, 6, 16 ],
             "faces": {

@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal"   : { "model": "integrateddynamics:crystalized_menril_block" },
+    "inventory": { "model": "integrateddynamics:crystalized_menril_block" }
+  }
+}

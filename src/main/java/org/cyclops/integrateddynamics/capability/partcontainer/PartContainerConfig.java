@@ -29,7 +29,7 @@ public class PartContainerConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "partContainer",
+                "part_container",
                 "A container that can hold parts.",
                 IPartContainer.class,
                 new DefaultCapabilityStorage<IPartContainer>(),
