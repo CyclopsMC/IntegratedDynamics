@@ -90,7 +90,7 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Called when a neighbouring block is updated, more specifically when
-     * {@link net.minecraft.block.Block#neighborChanged(IBlockState, World, BlockPos, Block)} is called.
+     * {@link net.minecraft.block.Block#neighborChanged(IBlockState, World, BlockPos, Block, BlockPos)} is called.
      * @param network The network to update in.
      * @param world The world in which the neighbour was updated.
      * @param neighborBlock block type of the neighbour that was updated.
