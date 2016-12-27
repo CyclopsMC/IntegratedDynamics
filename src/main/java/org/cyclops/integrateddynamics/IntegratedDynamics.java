@@ -72,7 +72,6 @@ import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTi
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
-import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.*;
 import org.cyclops.integrateddynamics.modcompat.top.TopModCompat;
@@ -175,8 +174,6 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new TopModCompat());
         modCompatLoader.addModCompat(new TeslaApiCompat());
         modCompatLoader.addModCompat(new RefinedStorageModCompat());
-
-        modCompatLoader.addApiCompat(new RfApiCompat());
     }
 
     @Mod.EventHandler

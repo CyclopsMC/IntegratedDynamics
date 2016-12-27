@@ -1,17 +1,12 @@
 package org.cyclops.integrateddynamics.tileentity;
 
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.common.Optional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
@@ -27,11 +22,7 @@ import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-@Optional.InterfaceList(value = {
-        @Optional.Interface(iface = "cofh.api.energy.IEnergyProvider", modid = Reference.MOD_RF_API, striprefs = true),
-        @Optional.Interface(iface = "cofh.api.energy.IEnergyReceiver", modid = Reference.MOD_RF_API, striprefs = true)
-})
-public class TileEnergyBattery extends TileCableConnectable implements IEnergyStorage, IEnergyProvider, IEnergyReceiver {
+public class TileEnergyBattery extends TileCableConnectable implements IEnergyStorage {
 
     @NBTPersist
     private int energy;
@@ -138,39 +129,5 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
             addEnergy(Math.min(BlockEnergyBatteryConfig.energyPerTick, getEnergyStored()));
             sendUpdate();
         }
-    }
-
-    /*
-     * ------------------ RF API ------------------
-     */
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return extractEnergy(maxExtract, simulate);
-    }
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public int getEnergyStored(EnumFacing from) {
-        return getMaxEnergyStored();
-    }
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public int getMaxEnergyStored(EnumFacing from) {
-        return getMaxEnergyStored();
-    }
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public boolean canConnectEnergy(EnumFacing from) {
-        return true;
-    }
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        return receiveEnergy(maxReceive, simulate);
     }
 }

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import cofh.api.energy.IEnergyContainerItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -9,14 +8,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.capability.energystorage.EnergyStorageItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -29,8 +26,7 @@ import java.util.List;
  * @author rubensworks
  *
  */
-@Optional.Interface(iface = "cofh.api.energy.IEnergyContainerItem", modid = Reference.MOD_RF_API, striprefs = true)
-public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyContainerItem {
+public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
 	private IEnergyContainerBlock block;
 
@@ -84,33 +80,5 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT implements IEnergyCon
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new DefaultCapabilityProvider<>(CapabilityEnergy.ENERGY, new EnergyStorageItemBlockEnergyContainer(this, stack));
-    }
-
-    /*
-     * ------------------ RF API ------------------
-     */
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
-        return getEnergyBattery(container).receiveEnergy(maxReceive, simulate);
-    }
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
-        return getEnergyBattery(container).extractEnergy(maxExtract, simulate);
-    }
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public int getEnergyStored(ItemStack container) {
-        return getEnergyBattery(container).getEnergyStored();
-    }
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public int getMaxEnergyStored(ItemStack container) {
-        return getEnergyBattery(container).getMaxEnergyStored();
     }
 }
