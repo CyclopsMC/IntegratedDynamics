@@ -9,9 +9,9 @@
         "inventory": [{}],
         "axis": {
             "none": { "model": "integrateddynamics:menril_log_bark" },
-            "x"   : { "model": "integrateddynamics:menril_log_side", "y": 90 },
+            "x"   : { "x": 90, "y": 90 },
             "y"   : { },
-            "z"   : { "model": "integrateddynamics:menril_log_side" }
+            "z"   : { "x": 90 }
         }
     }
 }
