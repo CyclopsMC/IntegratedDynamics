@@ -57,6 +57,7 @@ tile.blocks.integrateddynamics.dryingBasin.info=For drying items and fluids
 tile.blocks.integrateddynamics.squeezer.name=Squeezer
 tile.blocks.integrateddynamics.squeezer.info=Squeezes, flattens and crushes by jumping on it
 tile.blocks.integrateddynamics.menrilTorch.name=Menril Torch
+tile.blocks.integrateddynamics.invisibleLight.name=Invisible Light
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
@@ -71,6 +72,7 @@ item.items.integrateddynamics.facade.name=Facade
 item.items.integrateddynamics.facade.info=Combine with a block in crafting table
 item.items.integrateddynamics.bucketMenrilResin.name=Menril Resin Bucket
 item.items.integrateddynamics.crystalizedMenrilChunk.name=Crystalized Menril Chunk
+item.items.integrateddynamics.variableTransformer.name=Input/Output Variable Transformers
 item.items.integrateddynamics.variableTransformer.output.name=Output Variable Transformer
 item.items.integrateddynamics.variableTransformer.input.name=Input Variable Transformer
 item.items.integrateddynamics.menrilBerries.name=Menril Berries
@@ -806,6 +808,81 @@ operator.operators.integrateddynamics.virtual.piped.info=A chain of operators
 operator.operators.integrateddynamics.cast.name=Cast
 operator.operators.integrateddynamics.cast.basename=Cast
 operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s
+
+## Config categories
+config.integrateddynamics.item=Item settings
+config.integrateddynamics.block=Block settings
+config.integrateddynamics.fluid=Fluid settings
+config.integrateddynamics.entity=Entity settings
+config.integrateddynamics.general=General settings
+config.integrateddynamics.worldgeneration=World generation settings
+config.integrateddynamics.enchantment=Enchantment settings
+config.integrateddynamics.mob=Mob settings
+config.integrateddynamics.biome=Biome generation settings
+config.integrateddynamics.machine=Machine settings
+config.integrateddynamics.potion=Potion settings
+config.integrateddynamics.core=Core settings
+config.integrateddynamics.modcompat=Mod compatibility settings
+config.integrateddynamics.capability=Capability settings
+
+# Configuration
+config.integrateddynamics=%s configuration
+
+## Biome settings
+config.integrateddynamics.biomeMeneglin=Meneglin biome
+config.integrateddynamics.biomeMeneglin.spawnWeight=Meneglin biome Spawn Weight
+
+## Block settings
+config.integrateddynamics.menrilLeaves.berriesDropChance=Berries drop chance
+
+## Capability settings
+capability.integrateddynamics.cableFakeable=Fake cables
+capability.integrateddynamics.dynamicLight=Dynamic lighting
+capability.integrateddynamics.dynamicRedstone=Dynamic redstone
+capability.integrateddynamics.energyNetwork=Energy network
+capability.integrateddynamics.facadeable=Facades
+capability.integrateddynamics.networkCarrier=Network carrier
+capability.integrateddynamics.networkElementProvider=Network element provider
+capability.integrateddynamics.partContainer=Part containers
+capability.integrateddynamics.partNetwork=Part network
+capability.integrateddynamics.pathElementProvider=Path element provider
+capability.integrateddynamics.variableContainer=Variable container
+capability.integrateddynamics.variableFacadeHolder=Variable facade holder
+
+## Core settings
+config.integrateddynamics.general.analytics=Send anonymous analytics
+config.integrateddynamics.general.cacheCableModels=Cache cable models
+config.integrateddynamics.general.versionChecker=Version check
+
+## General settings
+config.integrateddynamics.general.energyConsumptionMultiplier=Energy consumption multiplier
+config.integrateddynamics.general.partOverlayRenderdistance=Part overlay render distance
+
+## Item settings
+config.integrateddynamics.variable=Variable Card
+config.integrateddynamics.variableTransformer=Variable Transformer
+config.integrateddynamics.menrilBerries.nightVision=Menril Berry night vision
+
+## Machine settings
+config.integrateddynamics.energyBattery.capacity=Battery Capacity
+config.integrateddynamics.energyBattery.energyPerTick=Energy per Tick
+config.integrateddynamics.general.defaultPartUpdateFreq=Part update frequency
+
+## Mod compatibility settings
+config.integrateddynamics.CharsetPipes=Charset Pipes
+config.integrateddynamics.CoFHAPI=RF API
+config.integrateddynamics.JEI=JEI
+config.integrateddynamics.forestry=Forestry recipes
+config.integrateddynamics.mcmultipart=MCMultiPart support
+config.integrateddynamics.refinedstorage=Refined Storage
+config.integrateddynamics.tconstruct=Tinkers' Construct
+config.integrateddynamics.tesla=Tesla
+config.integrateddynamics.theoneprobe=The One Probe
+config.integrateddynamics.Waila=Waila
+
+## World generation settings
+config.integrateddynamics.general.wildMenrilTreeChance=Wild Menril tree spawn chance
+config.integrateddynamics.menrilLogFilled.filledMenrilLogChance=Enriched Menril Log spawn chance
 
 ### ----- Mod Compats ----- ###
 
