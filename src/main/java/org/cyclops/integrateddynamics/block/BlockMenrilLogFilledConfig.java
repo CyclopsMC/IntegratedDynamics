@@ -22,7 +22,7 @@ public class BlockMenrilLogFilledConfig extends BlockConfig {
     /**
      * The 1/x chance at which a Menril Log will be filled with Menril Resin when generated.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The 1/x chance at which a Menril Log will be filled with Menril Resin when generated.", isCommandable = true)
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The 1/x chance at which a Menril Log will be filled with Menril Resin when generated.", isCommandable = true, minimalValue = 0)
     public static int filledMenrilLogChance = 10;
 
     /**
