@@ -143,7 +143,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         // Check inside the inventory for a variable item and determine everything with that.
         int activeIndex = -1;
         for(int i = 0 ; i < partState.getInventory().getSizeInventory(); i++) {
-            if(partState.getInventory().getStackInSlot(i) != null) {
+            if(!partState.getInventory().getStackInSlot(i).isEmpty()) {
                 activeIndex = i;
                 break;
             }

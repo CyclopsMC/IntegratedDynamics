@@ -155,7 +155,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
 
         protected boolean canInsert() {
             for (int i = 0; i < getSizeInventory(); i++) {
-                if (getStackInSlot(i) != null) {
+                if (!getStackInSlot(i).isEmpty()) {
                     return false;
                 }
             }
