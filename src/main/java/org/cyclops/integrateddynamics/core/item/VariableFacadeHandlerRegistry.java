@@ -87,7 +87,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     @Override
     public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
         if(itemStack.isEmpty()) {
-            return null;
+            return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
