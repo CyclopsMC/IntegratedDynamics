@@ -15,7 +15,7 @@ gui.integrateddynamics.waila.part_config=Part Information
 gui.integrateddynamics.waila.proxy_config=Proxy Information
 gui.integrateddynamics.waila.drying_basin_config=Drying Basin Information
 gui.integrateddynamics.waila.item=Item: %s
-gui.integrateddynamics.waila.fluid=Fluid: %s (%s m_b)
+gui.integrateddynamics.waila.fluid=Fluid: %s (%s mB)
 
 # Diagnostics
 gui.integrateddynamics.diagnostics.title=Network Diagnostics
@@ -168,7 +168,7 @@ variable.integrateddynamics.error.part_not_in_network=Part with id %s could not 
 variable.integrateddynamics.error.recursion=The variable with id %s is referring to itself.
 
 # Proxy
-proxy.integrateddynamics.tooltip.proxy_id=§e§o_proxy ID: §r§o%s
+proxy.integrateddynamics.tooltip.proxy_id=§e§oProxy ID: §r§o%s
 proxy.integrateddynamics.error.proxy_not_in_network=Proxy with id %s could not be found within the current network.
 proxy.integrateddynamics.error.proxy_invalid=Proxy with id %s is not exposing a variable.
 proxy.integrateddynamics.error.proxy_invalid_type=Proxy with id %s is expected to expose a variable with type %s while %s is found.
@@ -327,9 +327,9 @@ aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.name=Is Tank
 aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.info=If the target has a fluid tank
 
 aspect.aspects.integrateddynamics.read.integer.fluid.amount.name=Fluid Amount
-aspect.aspects.integrateddynamics.read.integer.fluid.amount.info=The amount of fluid in m_b in the active tank
+aspect.aspects.integrateddynamics.read.integer.fluid.amount.info=The amount of fluid in mB in the active tank
 aspect.aspects.integrateddynamics.read.integer.fluid.totalamount.name=Total Fluid Amount
-aspect.aspects.integrateddynamics.read.integer.fluid.totalamount.info=The total amount of fluid in m_b
+aspect.aspects.integrateddynamics.read.integer.fluid.totalamount.info=The total amount of fluid in mB
 aspect.aspects.integrateddynamics.read.integer.fluid.capacity.name=Fluid Capacity
 aspect.aspects.integrateddynamics.read.integer.fluid.capacity.info=Total capacity of the active tank
 aspect.aspects.integrateddynamics.read.integer.fluid.totalcapacity.name=Total Fluid Capacity
@@ -663,7 +663,7 @@ operator.operators.integrateddynamics.itemstack.isfluidstack.info=If the given i
 operator.operators.integrateddynamics.itemstack.fluidstack.name=Fluid
 operator.operators.integrateddynamics.itemstack.fluidstack.info=The fluid from the given item
 operator.operators.integrateddynamics.itemstack.fluidstackcapacity.name=Fluid Capacity
-operator.operators.integrateddynamics.itemstack.fluidstackcapacity.info=The fluid capacity of the given item in m_b
+operator.operators.integrateddynamics.itemstack.fluidstackcapacity.info=The fluid capacity of the given item in mB
 operator.operators.integrateddynamics.itemstack.isnbtequal.name=NBT equals
 operator.operators.integrateddynamics.itemstack.isnbtequal.info=If the NBT tags of the given items are equal
 operator.operators.integrateddynamics.itemstack.isitemequalnonbt.name=Raw item equals no NBT
@@ -742,7 +742,7 @@ operator.operators.integrateddynamics.itemstack.fecapacity.info=The maximum amou
 operator.operators.integrateddynamics.fluidstack.name=Fluid
 operator.operators.integrateddynamics.fluidstack.basename=Fluid %s
 operator.operators.integrateddynamics.fluidstack.amount.name=Amount
-operator.operators.integrateddynamics.fluidstack.amount.info=The amount of m_b
+operator.operators.integrateddynamics.fluidstack.amount.info=The amount of mB
 operator.operators.integrateddynamics.fluidstack.block.name=Block
 operator.operators.integrateddynamics.fluidstack.block.info=The block of the fluid
 operator.operators.integrateddynamics.fluidstack.luminosity.name=Luminosity
@@ -784,7 +784,7 @@ operator.operators.integrateddynamics.operator.reduce.info=Apply the given opera
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
 operator.operators.integrateddynamics.general.choice.name=Choice
-operator.operators.integrateddynamics.general.choice.info=If the first value is true, the second value is taken, otherwise the third value.\n_type two and three must be equal.
+operator.operators.integrateddynamics.general.choice.info=If the first value is true, the second value is taken, otherwise the third value.\nType two and three must be equal.
 operator.operators.integrateddynamics.general.identity.name=Identity
 operator.operators.integrateddynamics.general.identity.info=A copy of the input value.
 operator.operators.integrateddynamics.general.isnull.name=Is Null

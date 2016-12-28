@@ -63,7 +63,7 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return super.isItemValidForSlot(index, stack)
-                && (stack == null || stack.hasCapability(VariableFacadeHolderConfig.CAPABILITY, null));
+                && (stack.isEmpty() || stack.hasCapability(VariableFacadeHolderConfig.CAPABILITY, null));
     }
 
     @Override

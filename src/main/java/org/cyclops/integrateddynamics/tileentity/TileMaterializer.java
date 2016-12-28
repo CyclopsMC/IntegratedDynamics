@@ -70,10 +70,10 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     public void onDirty() {
         super.onDirty();
         if(!world.isRemote) {
-            if (getStackInSlot(SLOT_WRITE_IN) != null && canWrite() && getStackInSlot(SLOT_WRITE_OUT) == null) {
+            if (!getStackInSlot(SLOT_WRITE_IN).isEmpty() && canWrite() && getStackInSlot(SLOT_WRITE_OUT).isEmpty()) {
                 // Write proxy reference
                 ItemStack outputStack = writeMaterialized(!getWorld().isRemote, getStackInSlot(SLOT_WRITE_IN));
-                if(outputStack != null) {
+                if(!outputStack.isEmpty()) {
                     setInventorySlotContents(SLOT_WRITE_OUT, outputStack);
                     removeStackFromSlot(SLOT_WRITE_IN);
                 }
@@ -101,6 +101,6 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
         } catch (EvaluationException e) {
             addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 }

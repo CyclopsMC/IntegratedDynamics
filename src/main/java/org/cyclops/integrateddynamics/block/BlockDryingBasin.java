@@ -66,12 +66,12 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                 IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
                 SingleUseTank tank = tile.getTank();
                 ItemStack tileStack = tile.getStackInSlot(0);
-                if ((itemStack.isEmpty() || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && itemStack.getCount() < itemStack.getMaxStackSize())) && tileStack != null) {
+                if ((itemStack.isEmpty() || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && itemStack.getCount() < itemStack.getMaxStackSize())) && !tileStack.isEmpty()) {
                     if(!itemStack.isEmpty()) {
                         tileStack.grow(itemStack.getCount());
                     }
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
-                    tile.setInventorySlotContents(0, null);
+                    tile.setInventorySlotContents(0, ItemStack.EMPTY);
                     tile.sendUpdate();
                     return true;
                 } else if (itemFluidHandler != null && !tank.isFull()
@@ -85,9 +85,9 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                     ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
                     InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
                     return true;
-                } else if (!itemStack.isEmpty() && tileStack == null) {
+                } else if (!itemStack.isEmpty() && tileStack.isEmpty()) {
                     tile.setInventorySlotContents(0, itemStack.splitStack(1));
-                    if(itemStack.getCount() <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+                    if(itemStack.getCount() <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
                     tile.sendUpdate();
                     return true;
                 }

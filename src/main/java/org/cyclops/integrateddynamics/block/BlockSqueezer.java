@@ -74,18 +74,18 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
             TileSqueezer tile = TileHelpers.getSafeTile(world, blockPos, TileSqueezer.class);
             if (tile != null) {
                 ItemStack tileStack = tile.getStackInSlot(0);
-                if ((itemStack.isEmpty() || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && tileStack.getCount() < tileStack.getMaxStackSize())) && tileStack != null) {
+                if ((itemStack.isEmpty() || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && tileStack.getCount() < tileStack.getMaxStackSize())) && !tileStack.isEmpty()) {
                     if(!itemStack.isEmpty()) {
                         tileStack.grow(itemStack.getCount());
                     }
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
-                    tile.setInventorySlotContents(0, null);
+                    tile.setInventorySlotContents(0, ItemStack.EMPTY);
                     tile.sendUpdate();
                     return true;
-                } else if (!itemStack.isEmpty() && tile.getStackInSlot(0) == null) {
+                } else if (!itemStack.isEmpty() && tile.getStackInSlot(0).isEmpty()) {
                     tile.setInventorySlotContents(0, itemStack.splitStack(1));
                     if (itemStack.getCount() <= 0)
-                        player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+                        player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
                     tile.sendUpdate();
                     return true;
                 }

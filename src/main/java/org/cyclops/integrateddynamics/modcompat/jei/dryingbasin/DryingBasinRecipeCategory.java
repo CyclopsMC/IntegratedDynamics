@@ -81,10 +81,10 @@ public class DryingBasinRecipeCategory implements IRecipeCategory {
 
         if(recipeWrapper instanceof DryingBasinRecipeJEI) {
             DryingBasinRecipeJEI recipe = (DryingBasinRecipeJEI) recipeWrapper;
-            if(recipe.getInputItem() != null) {
+            if(!recipe.getInputItem().isEmpty()) {
                 recipeLayout.getItemStacks().set(INPUT_SLOT, recipe.getInputItem());
             }
-            if(recipe.getOutputItem() != null) {
+            if(!recipe.getOutputItem().isEmpty()) {
                 recipeLayout.getItemStacks().set(OUTPUT_SLOT, recipe.getOutputItem());
             }
 

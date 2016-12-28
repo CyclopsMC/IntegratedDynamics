@@ -38,7 +38,7 @@ public final class Reference {
     public static final String MOD_MCMULTIPART = "mcmultipart";
     public static final String MOD_WAILA = "Waila";
     public static final String MOD_THAUMCRAFT = "Thaumcraft";
-    public static final String MOD_JEI = "JEI";
+    public static final String MOD_JEI = "jei";
     public static final String MOD_TESLA = "tesla";
     public static final String MOD_TCONSTRUCT = "tconstruct";
     public static final String MOD_FORESTRY = "forestry";

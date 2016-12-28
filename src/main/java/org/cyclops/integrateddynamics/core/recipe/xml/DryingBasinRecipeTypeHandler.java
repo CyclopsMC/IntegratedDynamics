@@ -21,7 +21,7 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler {
 	protected ItemStack handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
         Object inputItem = null;
-        ItemStack outputItem = null;
+        ItemStack outputItem = ItemStack.EMPTY;
         FluidStack inputFluid = null;
         FluidStack outputFluid = null;
 
@@ -47,6 +47,9 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler {
 
         ItemAndFluidStackRecipeComponent inputRecipeComponent;
         if(inputItem == null || inputItem instanceof ItemStack) {
+            if (inputItem == null) {
+                inputItem = ItemStack.EMPTY;
+            }
             inputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) inputItem, inputFluid);
         } else {
             inputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) inputItem, inputFluid);
