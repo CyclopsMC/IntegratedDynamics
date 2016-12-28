@@ -17,7 +17,7 @@ public class GeneralConfig extends DummyConfig {
      * The current mod version, will be used to check if the player's config isn't out of date and
      * warn the player accordingly.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "Config version for " + Reference.MOD_NAME +".\nDO NOT EDIT MANUALLY!")
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "Config version for " + Reference.MOD_NAME +".\nDO NOT EDIT MANUALLY!", showInGui = false)
     public static String version = Reference.MOD_VERSION;
 
     /**
@@ -35,25 +35,25 @@ public class GeneralConfig extends DummyConfig {
     /**
      * The default update frequency in ticks to use for new parts.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default update frequency in ticks to use for new parts.")
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default update frequency in ticks to use for new parts.", minimalValue = 1)
     public static int defaultPartUpdateFreq = 1;
 
     /**
      * The energy usage multiplier for networks.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The energy usage multiplier for networks.")
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The energy usage multiplier for networks.", minimalValue = 0)
     public static int energyConsumptionMultiplier = 0;
 
     /**
      * The maximum render distance for part overlays to render. The higher, the more resource intensive.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The maximum render distance for part overlays to render. The higher, the more resource intensive.", isCommandable = true)
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The maximum render distance for part overlays to render. The higher, the more resource intensive.", isCommandable = true, minimalValue = 1)
     public static int partOverlayRenderdistance = 15;
 
     /**
      * The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.")
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.", minimalValue = 0)
     public static int wildMenrilTreeChance = 350;
 
     /**
