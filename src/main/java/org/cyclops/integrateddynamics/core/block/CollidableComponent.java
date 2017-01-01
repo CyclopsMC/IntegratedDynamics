@@ -58,7 +58,7 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
     @SuppressWarnings({"unchecked", "deprecation"})
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB axisalignedbb,
-                                        List list, Entity collidingEntity) {
+                                      List list, Entity collidingEntity, boolean useProvidedState) {
         // Add bounding boxes for all active components.
         for(IComponent component : components) {
             addComponentCollisionBoxesToList(component, state, world, pos, axisalignedbb, list, collidingEntity);

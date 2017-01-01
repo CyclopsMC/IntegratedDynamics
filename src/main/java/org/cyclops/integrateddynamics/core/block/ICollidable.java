@@ -40,10 +40,11 @@ public interface ICollidable<P> {
      * @param mask The bounding boxes mask
      * @param list The list to add to
      * @param collidingEntity The entity that is colliding
+     * @param useProvidedState If the given state should be used instead of the actual world state.
      */
     @SuppressWarnings("deprecation")
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB mask,
-                                        List list, Entity collidingEntity);
+                                      List list, Entity collidingEntity, boolean useProvidedState);
 
     /**
      * The selected bounding box.
