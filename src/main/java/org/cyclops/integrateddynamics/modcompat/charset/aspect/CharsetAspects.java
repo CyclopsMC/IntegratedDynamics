@@ -1,5 +1,8 @@
 package org.cyclops.integrateddynamics.modcompat.charset.aspect;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -19,7 +22,6 @@ import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
@@ -28,8 +30,9 @@ import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectWriteDeactiv
 import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
-import pl.asie.charset.api.pipes.IPipe;
+import pl.asie.charset.api.pipes.IPipeView;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 
 /**
@@ -42,47 +45,62 @@ public class CharsetAspects {
 
         public static final class Pipe {
 
-            public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IPipe> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IPipe>() {
+            public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IPipeView> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IPipeView>() {
                 @Override
-                public IPipe getOutput(Pair<PartTarget, IAspectProperties> input) {
+                public IPipeView getOutput(Pair<PartTarget, IAspectProperties> input) {
                     DimPos pos = input.getLeft().getTarget().getPos();
-                    return Helpers.getInterface(pos, IPipe.class);
+                    return TileHelpers.getCapability(pos, CharsetPipesModCompat.PIPE);
                 }
             };
 
-            public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IPipe>
+            public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IPipeView>
                     BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "charsetpipe");
-            public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, IPipe>
+            public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, IPipeView>
                     BUILDER_OBJECT_ITEMSTACK = AspectReadBuilders.BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET, "charsetpipe");
+            public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, IPipeView>
+                    BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "charsetpipe");
 
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISAPPLICABLE =
-                    BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IPipe, Boolean>() {
+                    BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IPipeView, Boolean>() {
                         @Override
-                        public Boolean getOutput(IPipe pipe) {
+                        public Boolean getOutput(IPipeView pipe) {
                             return pipe != null;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_HASCONTENTS =
-                    BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IPipe, Boolean>() {
+                    BUILDER_BOOLEAN.handle(new IAspectValuePropagator<IPipeView, Boolean>() {
                         @Override
-                        public Boolean getOutput(IPipe pipe) {
-                            if(pipe != null) {
-                                return pipe.getTravellingStack(null) != null;
-                            }
-                            return false;
+                        public Boolean getOutput(IPipeView pipe) {
+                            return pipe != null && !pipe.getTravellingStacks().isEmpty();
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "hascontents").buildRead();
 
-            public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> ITEMSTACK_CONTENTS =
-                    BUILDER_OBJECT_ITEMSTACK.handle(new IAspectValuePropagator<IPipe, ItemStack>() {
+            public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> ITEMSTACK_CONTENT =
+                    BUILDER_OBJECT_ITEMSTACK.handle(new IAspectValuePropagator<IPipeView, ItemStack>() {
                         @Override
-                        public ItemStack getOutput(IPipe pipe) {
+                        public ItemStack getOutput(IPipeView pipe) {
                             if(pipe != null) {
-                                return pipe.getTravellingStack(null);
+                                return Iterables.getFirst(pipe.getTravellingStacks(), ItemStack.EMPTY);
                             }
-                            return null;
+                            return ItemStack.EMPTY;
                         }
-                    }).handle(AspectReadBuilders.PROP_GET_ITEMSTACK, "contents").buildRead();
+                    }).handle(AspectReadBuilders.PROP_GET_ITEMSTACK, "content").buildRead();
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_CONTENTS =
+                    BUILDER_LIST.handle(new IAspectValuePropagator<IPipeView, ValueTypeList.ValueList>() {
+                        @Override
+                        public ValueTypeList.ValueList getOutput(IPipeView pipe) {
+                            if(pipe != null) {
+                                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Lists.newArrayList(Iterables.transform(pipe.getTravellingStacks(), new Function<ItemStack, ValueObjectTypeItemStack.ValueItemStack>() {
+                                    @Nullable
+                                    @Override
+                                    public ValueObjectTypeItemStack.ValueItemStack apply(ItemStack input) {
+                                        return ValueObjectTypeItemStack.ValueItemStack.of(input);
+                                    }
+                                })));
+                            }
+                            return ValueTypeList.ValueList.ofAll();
+                        }
+                    }).appendKind("contents").buildRead();
 
         }
 
@@ -105,7 +123,7 @@ public class CharsetAspects {
 
             protected static void notifyNeighbours(PartTarget target) {
                 DimPos dimPos = target.getCenter().getPos();
-                dimPos.getWorld().notifyNeighborsOfStateChange(dimPos.getBlockPos(), dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock());
+                dimPos.getWorld().notifyNeighborsOfStateChange(dimPos.getBlockPos(), dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock(), true);
             }
 
             public static final IAspectWriteActivator ACTIVATOR = new IAspectWriteActivator() {

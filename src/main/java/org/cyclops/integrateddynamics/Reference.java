@@ -34,7 +34,7 @@ public final class Reference {
     public static final String MOD_CYCLOPSCORE_VERSION_MIN = "0.8.2";
     public static final String MOD_COMMONCAPABILITIES = "commoncapabilities";
     public static final String MOD_COMMONCAPABILITIES_VERSION_MIN = "1.2.0";
-    public static final String MOD_CHARSETPIPES = "CharsetPipes";
+    public static final String MOD_CHARSETPIPES = "charsetpipes";
     public static final String MOD_MCMULTIPART = "mcmultipart";
     public static final String MOD_WAILA = "Waila";
     public static final String MOD_THAUMCRAFT = "Thaumcraft";

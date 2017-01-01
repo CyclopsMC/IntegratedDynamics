@@ -812,8 +812,10 @@ operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s
 ## ----- Charset ----- ##
 
 ## Aspects
-aspect.aspects.integrateddynamics.read.itemstack.charsetpipe.contents.name=Pipe Contents
-aspect.aspects.integrateddynamics.read.itemstack.charsetpipe.contents.info=The item currently going through this pipe.
+aspect.aspects.integrateddynamics.read.itemstack.charsetpipe.content.name=Pipe Content
+aspect.aspects.integrateddynamics.read.itemstack.charsetpipe.content.info=The item currently going through this pipe.
+aspect.aspects.integrateddynamics.read.list.charsetpipe.contents.name=Pipe Contents
+aspect.aspects.integrateddynamics.read.list.charsetpipe.contents.info=The items currently going through this pipe.
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.hascontents.name=Pipe Has Contents
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.hascontents.info=If an item is going through this pipe.
 aspect.aspects.integrateddynamics.read.boolean.charsetpipe.applicable.name=Is Pipe

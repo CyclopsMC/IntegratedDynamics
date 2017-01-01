@@ -57,7 +57,7 @@ dependencies {
     //deobfCompile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:universal" // http://maven.amadornes.com/
     deobfCompile "mcp.mobius.waila:Waila:${config.waila_version}" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
     deobfCompile "mezz.jei:jei_${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
-    //deobfCompile "pl.asie.charset:charset-api:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-api/maven-metadata.xml
+    deobfCompile "pl.asie.charset:charset-api:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-api/maven-metadata.xml
     deobfCompile "net.darkhax.tesla:Tesla:${config.teslaapi_version}" // http://maven.epoxide.xyz/net/darkhax/tesla/Tesla/
     //deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}" // https://dvs1.progwml6.com/jenkins/
     //deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tconstruct_version}" // http://dvs1.progwml6.com/files/maven/slimeknights/TConstruct/maven-metadata.xml
@@ -67,9 +67,8 @@ dependencies {
     deobfCompile "refinedstorage:refinedstorage:${config.refinedstorage_version}" // https://dl.bintray.com/raoulvdberge/dev/refinedstorage/refinedstorage/
 
     // Only needed for testing
-    //deobfCompile "pl.asie.charset:charset-lib:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml
-    //deobfCompile "pl.asie.charset:charset-pipes:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-pipes/maven-metadata.xml
-    //deobfCompile "pl.asie.charset:charset-wires:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-wires/maven-metadata.xml
+    deobfCompile "pl.asie.charset:charset-lib:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml
+    deobfCompile "pl.asie.charset:charset-pipes:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-pipes/maven-metadata.xml
 
     // Project lombok
     provided "org.projectlombok:lombok:1.16.8"

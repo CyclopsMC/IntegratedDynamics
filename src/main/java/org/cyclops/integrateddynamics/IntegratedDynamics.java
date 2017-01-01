@@ -70,6 +70,7 @@ import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGeneratorTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
+import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
@@ -163,7 +164,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         super.loadModCompats(modCompatLoader);
         // TODO: temporarily disable some mod compats
         // Mod compats
-        //modCompatLoader.addModCompat(new CharsetPipesModCompat());
+        modCompatLoader.addModCompat(new CharsetPipesModCompat());
         //modCompatLoader.addModCompat(new McMultiPartModCompat());
         modCompatLoader.addModCompat(new WailaModCompat());
         //modCompatLoader.addModCompat(new ThaumcraftModCompat());
