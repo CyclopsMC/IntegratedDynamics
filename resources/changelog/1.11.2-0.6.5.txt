@@ -1,0 +1,3 @@
+Requires CyclopsCore version 0.9.0 or higher.
+
+Initial 1.11 port
