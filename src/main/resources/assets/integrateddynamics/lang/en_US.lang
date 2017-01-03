@@ -811,19 +811,33 @@ operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s
 
 ## Config categories
 config.integrateddynamics.item=Item settings
+config.integrateddynamics.item.tooltip=Item settings
 config.integrateddynamics.block=Block settings
+config.integrateddynamics.block.tooltip=Block settings
 config.integrateddynamics.fluid=Fluid settings
+config.integrateddynamics.fluid.tooltip=Fluid settings
 config.integrateddynamics.entity=Entity settings
+config.integrateddynamics.entity.tooltip=Entity settings
 config.integrateddynamics.general=General settings
+config.integrateddynamics.general.tooltip=General settings
 config.integrateddynamics.worldgeneration=World generation settings
+config.integrateddynamics.worldgeneration.tooltip=World generation settings
 config.integrateddynamics.enchantment=Enchantment settings
+config.integrateddynamics.enchantment.tooltip=Enchantment settings
 config.integrateddynamics.mob=Mob settings
+config.integrateddynamics.mob.tooltip=Mob settings
 config.integrateddynamics.biome=Biome generation settings
+config.integrateddynamics.biome.tooltip=Biome generation settings
 config.integrateddynamics.machine=Machine settings
+config.integrateddynamics.machine.tooltip=Machine settings
 config.integrateddynamics.potion=Potion settings
+config.integrateddynamics.potion.tooltip=Potion settings
 config.integrateddynamics.core=Core settings
+config.integrateddynamics.core.tooltip=Core settings
 config.integrateddynamics.modcompat=Mod compatibility settings
+config.integrateddynamics.modcompat.tooltip=Mod compatibility settings
 config.integrateddynamics.capability=Capability settings
+config.integrateddynamics.capability.tooltip=Capability settings
 
 # Configuration
 config.integrateddynamics=%s configuration
