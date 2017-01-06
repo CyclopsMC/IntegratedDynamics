@@ -60,17 +60,22 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
         if(world.isRemote) {
             return true;
         } else {
-            ItemStack itemStack = player.inventory.getCurrentItem();
             TileDryingBasin tile = TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class);
             if (tile != null) {
+                ItemStack itemStack = player.inventory.getCurrentItem();
                 IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
                 SingleUseTank tank = tile.getTank();
                 ItemStack tileStack = tile.getStackInSlot(0);
-                if ((itemStack == null || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && itemStack.stackSize < itemStack.getMaxStackSize())) && tileStack != null) {
+
+                if ((itemStack == null || (ItemStack.areItemStacksEqual(itemStack, tileStack) && tileStack.stackSize < tileStack.getMaxStackSize())) && tileStack != null) {
                     if(itemStack != null) {
                         tileStack.stackSize += itemStack.stackSize;
                     }
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
+                    tile.setInventorySlotContents(0, null);
+                    tile.sendUpdate();
+                    return true;
+                } else if(player.inventory.addItemStackToInventory(tileStack)){
                     tile.setInventorySlotContents(0, null);
                     tile.sendUpdate();
                     return true;
