@@ -44,7 +44,7 @@
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
         <input>
-            <item type="oredict">block_glass</item>
+            <item type="oredict">blockGlass</item>
         </input>
         <output>
             <item>minecraft:sand</item>
@@ -123,155 +123,155 @@
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_gold</condition>
-        <condition type="oredict">dust_gold</condition>
+        <condition type="oredict">oreGold</condition>
+        <condition type="oredict">dustGold</condition>
         <input>
-            <item type="oredict">ore_gold</item>
+            <item type="oredict">oreGold</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_gold</item>
+            <item type="oredict" amount="2">dustGold</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_iron</condition>
-        <condition type="oredict">dust_iron</condition>
+        <condition type="oredict">oreIron</condition>
+        <condition type="oredict">dustIron</condition>
         <input>
-            <item type="oredict">ore_iron</item>
+            <item type="oredict">oreIron</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_iron</item>
+            <item type="oredict" amount="2">dustIron</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_copper</condition>
-        <condition type="oredict">dust_copper</condition>
+        <condition type="oredict">oreCopper</condition>
+        <condition type="oredict">dustCopper</condition>
         <input>
-            <item type="oredict">ore_copper</item>
+            <item type="oredict">oreCopper</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_copper</item>
+            <item type="oredict" amount="2">dustCopper</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_tin</condition>
-        <condition type="oredict">dust_tin</condition>
+        <condition type="oredict">oreTin</condition>
+        <condition type="oredict">dustTin</condition>
         <input>
-            <item type="oredict">ore_tin</item>
+            <item type="oredict">oreTin</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_tin</item>
+            <item type="oredict" amount="2">dustTin</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_silver</condition>
-        <condition type="oredict">dust_silver</condition>
+        <condition type="oredict">oreSilver</condition>
+        <condition type="oredict">dustSilver</condition>
         <input>
-            <item type="oredict">ore_silver</item>
+            <item type="oredict">oreSilver</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_silver</item>
+            <item type="oredict" amount="2">dustSilver</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_lead</condition>
-        <condition type="oredict">dust_lead</condition>
+        <condition type="oredict">oreLead</condition>
+        <condition type="oredict">dustLead</condition>
         <input>
-            <item type="oredict">ore_lead</item>
+            <item type="oredict">oreLead</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_lead</item>
+            <item type="oredict" amount="2">dustLead</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_nickel</condition>
-        <condition type="oredict">dust_nickel</condition>
+        <condition type="oredict">oreNickel</condition>
+        <condition type="oredict">dustNickel</condition>
         <input>
-            <item type="oredict">ore_nickel</item>
+            <item type="oredict">oreNickel</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_nickel</item>
+            <item type="oredict" amount="2">dustNickel</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_platinum</condition>
-        <condition type="oredict">dust_platinum</condition>
+        <condition type="oredict">orePlatinum</condition>
+        <condition type="oredict">dustPlatinum</condition>
         <input>
-            <item type="oredict">ore_platinum</item>
+            <item type="oredict">orePlatinum</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_platinum</item>
+            <item type="oredict" amount="2">dustPlatinum</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_mithril</condition>
-        <condition type="oredict">dust_mithril</condition>
+        <condition type="oredict">oreMithril</condition>
+        <condition type="oredict">dustMithril</condition>
         <input>
-            <item type="oredict">ore_mithril</item>
+            <item type="oredict">oreMithril</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_mithril</item>
+            <item type="oredict" amount="2">dustMithril</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_cobalt</condition>
-        <condition type="oredict">dust_cobalt</condition>
+        <condition type="oredict">oreCobalt</condition>
+        <condition type="oredict">dustCobalt</condition>
         <input>
-            <item type="oredict">ore_cobalt</item>
+            <item type="oredict">oreCobalt</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_cobalt</item>
+            <item type="oredict" amount="2">dustCobalt</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">ore_ardite</condition>
-        <condition type="oredict">dust_ardite</condition>
+        <condition type="oredict">oreArdite</condition>
+        <condition type="oredict">dustArdite</condition>
         <input>
-            <item type="oredict">ore_ardite</item>
+            <item type="oredict">oreArdite</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dust_ardite</item>
+            <item type="oredict" amount="2">dustArdite</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">dust_nether_quartz</condition>
+        <condition type="oredict">dustNetherQuartz</condition>
         <input>
             <item>minecraft:quartz</item>
         </input>
         <output>
-            <item type="oredict">dust_nether_quartz</item>
+            <item type="oredict">dustNetherQuartz</item>
         </output>
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
         <condition type="config">squeezer</condition>
-        <condition type="oredict">dust_obsidian</condition>
+        <condition type="oredict">dustObsidian</condition>
         <input>
             <item>minecraft:obsidian</item>
         </input>
         <output>
-            <item type="oredict">dust_obsidian</item>
+            <item type="oredict">dustObsidian</item>
         </output>
     </recipe>
 
