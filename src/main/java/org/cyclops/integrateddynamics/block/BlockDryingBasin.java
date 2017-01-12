@@ -57,9 +57,6 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
 
     @Override
     public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float motionX, float motionY, float motionZ) {
-        if(world.isRemote) {
-            return true;
-        } else {
             TileDryingBasin tile = TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class);
             if (tile != null) {
                 ItemStack itemStack = player.inventory.getCurrentItem();
@@ -94,7 +91,6 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                     return true;
                 }
             }
-        }
         return false;
     }
 
