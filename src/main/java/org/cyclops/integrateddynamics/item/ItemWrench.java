@@ -51,11 +51,11 @@ public class ItemWrench extends ConfigurableItem {
     public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
                                   float hitX, float hitY, float hitZ, EnumHand hand) {
         Block block = world.getBlockState(pos).getBlock();
-        if(block == null || player.isSneaking()) {
+        if(!world.isRemote || player.isSneaking()) {
             return EnumActionResult.PASS;
         } else if(block.rotateBlock(world, pos, side)) {
             player.swingArm(hand);
-            return !world.isRemote ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
+            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }
