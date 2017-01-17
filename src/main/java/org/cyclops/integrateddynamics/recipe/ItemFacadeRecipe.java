@@ -48,23 +48,23 @@ public class ItemFacadeRecipe implements IRecipe {
 		ItemStack output = getRecipeOutput().copy();
 
 		int facades = 0;
-		ItemStack block = null;
+		ItemStack block = ItemStack.EMPTY;
 
 		for(int j = 0; j < grid.getSizeInventory(); j++) {
 			ItemStack element = grid.getStackInSlot(j);
-			if(element != null) {
+			if(!element.isEmpty()) {
 				if(element.getItem() == output.getItem()) {
 					facades++;
-				} else if(block == null && element.getItem() instanceof ItemBlock) {
+				} else if(block.isEmpty() && element.getItem() instanceof ItemBlock) {
 					block = element;
 				} else {
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}
 		}
 		
-		if(facades != 1 || block == null) {
-			return null;
+		if(facades != 1 || block.isEmpty()) {
+			return ItemStack.EMPTY;
 		}
 		
 		ItemFacade.getInstance().writeFacadeBlock(output, BlockHelpers.getBlockStateFromItemStack(block));

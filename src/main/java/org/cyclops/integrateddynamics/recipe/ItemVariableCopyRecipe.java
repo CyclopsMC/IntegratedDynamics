@@ -24,8 +24,8 @@ public class ItemVariableCopyRecipe implements IRecipe {
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ItemStack withData = null;
-        ItemStack withoutData = null;
+        ItemStack withData = ItemStack.EMPTY;
+        ItemStack withoutData = ItemStack.EMPTY;
         IVariableFacade facade;
         int count = 0;
         for(int j = 0; j < inv.getSizeInventory(); j++) {
@@ -33,18 +33,18 @@ public class ItemVariableCopyRecipe implements IRecipe {
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 count++;
                 facade = ItemVariable.getInstance().getVariableFacade(element);
-                if(!facade.isValid() && withoutData == null && element.getCount() == 1) {
+                if(!facade.isValid() && withoutData.isEmpty() && element.getCount() == 1) {
                     withoutData = element;
                 }
-                if(facade.isValid() && withData == null && element.getCount() == 1) {
+                if(facade.isValid() && withData.isEmpty() && element.getCount() == 1) {
                     withData = element.copy();
                 }
             }
         }
-        if(count == 2 && withoutData != null && withData != null) {
+        if(count == 2 && !withoutData.isEmpty() && !withData.isEmpty()) {
             return withData;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override

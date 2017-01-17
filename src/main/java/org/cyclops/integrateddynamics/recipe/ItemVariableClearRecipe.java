@@ -22,14 +22,14 @@ public class ItemVariableClearRecipe implements IRecipe {
         int count = 0;
         for(int j = 0; j < inv.getSizeInventory(); j++) {
             ItemStack element = inv.getStackInSlot(j);
-            if(element != null && element.getItem() instanceof ItemVariable) {
+            if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 count++;
             }
         }
         if(count == 1) {
             return getRecipeOutput();
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
