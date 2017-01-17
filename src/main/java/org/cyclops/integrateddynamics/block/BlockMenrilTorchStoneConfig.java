@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockTorch;
 import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 
 import java.util.Random;
 
@@ -52,4 +53,8 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
         };
     }
 
+    @Override
+    public String getOreDictionaryId() {
+        return Reference.DICT_TORCH;
+    }
 }
