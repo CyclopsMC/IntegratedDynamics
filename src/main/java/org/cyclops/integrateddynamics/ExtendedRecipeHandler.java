@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.integrateddynamics.item.ItemFacadeConfig;
 import org.cyclops.integrateddynamics.item.ItemVariableConfig;
 import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipe;
+import org.cyclops.integrateddynamics.recipe.ItemPartClearRecipe;
 import org.cyclops.integrateddynamics.recipe.ItemVariableClearRecipe;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipe;
 
@@ -30,6 +31,8 @@ public class ExtendedRecipeHandler extends RecipeHandler {
                 RecipeSorter.Category.SHAPELESS, "after:forge:shapedore");
         RecipeSorter.register(Reference.MOD_ID + "variableclear", ItemVariableClearRecipe.class,
                 RecipeSorter.Category.SHAPELESS, "after:forge:shapedore");
+        RecipeSorter.register(Reference.MOD_ID + "partclear", ItemPartClearRecipe.class,
+                RecipeSorter.Category.SHAPELESS, "after:forge:shapedore");
     }
 
     @Override
@@ -46,6 +49,9 @@ public class ExtendedRecipeHandler extends RecipeHandler {
             GameRegistry.addRecipe(new ItemVariableCopyRecipe());
             GameRegistry.addRecipe(new ItemVariableClearRecipe());
         }
+
+        // Part item clear recipe
+        GameRegistry.addRecipe(new ItemPartClearRecipe());
     }
 
 }
