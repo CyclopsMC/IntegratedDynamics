@@ -57,6 +57,7 @@ tile.blocks.integrateddynamics.dryingBasin.info=For drying items and fluids
 tile.blocks.integrateddynamics.squeezer.name=Squeezer
 tile.blocks.integrateddynamics.squeezer.info=Squeezes, flattens and crushes by jumping on it
 tile.blocks.integrateddynamics.menrilTorch.name=Menril Torch
+tile.blocks.integrateddynamics.menrilTorchStone.name=Menril Stone Torch
 tile.blocks.integrateddynamics.invisibleLight.name=Invisible Light
 
 # Items

@@ -81,4 +81,43 @@
 		</output>
 	</recipe>
 
+	<recipe type="shapeless">
+		<condition type="config">menrilTorchStone</condition>
+		<condition type="config">menrilBerries</condition>
+		<condition type="oredict">rodStone</condition>
+		<input>
+			<item type="oredict">rodStone</item>
+			<item>integrateddynamics:menrilBerries</item>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:menrilTorchStone</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
+		<condition type="config">menrilTorchStone</condition>
+		<condition type="config">menrilBerries</condition>
+		<input>
+			<item type="oredict">stone</item>
+			<item type="oredict">stone</item>
+			<item>integrateddynamics:menrilBerries</item>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:menrilTorchStone</item>
+		</output>
+	</recipe>
+
+	<recipe type="shapeless">
+		<condition type="config">menrilTorchStone</condition>
+		<condition type="config">menrilBerries</condition>
+		<input>
+			<item type="oredict">cobblestone</item>
+			<item type="oredict">cobblestone</item>
+			<item>integrateddynamics:menrilBerries</item>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:menrilTorchStone</item>
+		</output>
+	</recipe>
+
 </recipes>
