@@ -21,13 +21,13 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
     /**
      * The default capacity of an energy battery.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default capacity of an energy battery.")
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default capacity of an energy battery.", minimalValue = 0)
     public static int capacity = 100000;
 
     /**
      * How much energy per tick it emits when activated.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "How much energy per tick it emits when activated.", isCommandable = true)
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "How much energy per tick it emits when activated.", isCommandable = true, minimalValue = 0)
     public static int energyPerTick = 2000;
 
     /**

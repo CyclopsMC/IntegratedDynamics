@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.9.0 or higher.
+
+Additions:
+* Added category tooltips
+* Added localization for configuration gui
+* Added config GUI restriction
+
+Fixes:
+* Fix crash on invalid variables in variable-driven parts
+* Fix oredict operator returning string instead of list
+* Prevent player being pushed off squeezer and basin, Closes #95
+* Don't try to place cable when using an offset, Closes #93

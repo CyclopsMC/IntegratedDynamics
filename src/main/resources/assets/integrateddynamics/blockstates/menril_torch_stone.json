@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model"    : "integrateddynamics:menril_torch_stone_wall"
+  },
+  "variants": {
+    "facing": {
+      "up"   : { "model" : "integrateddynamics:menril_torch_stone" },
+      "east" : {},
+      "south": { "y": 90  },
+      "west" : { "y": 180 },
+      "north": { "y": 270 }
+    },
+    "inventory": { "model" : "integrateddynamics:menril_torch_stone_inventory" }
+  }
+}

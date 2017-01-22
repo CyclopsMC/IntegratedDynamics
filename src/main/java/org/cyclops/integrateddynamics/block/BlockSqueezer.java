@@ -70,15 +70,17 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
         if (world.isRemote) {
             return true;
         } else if(world.getBlockState(blockPos).getValue(BlockSqueezer.HEIGHT) == 1) {
-            ItemStack itemStack = player.inventory.getCurrentItem();
             TileSqueezer tile = TileHelpers.getSafeTile(world, blockPos, TileSqueezer.class);
             if (tile != null) {
+                ItemStack itemStack = player.inventory.getCurrentItem();
                 ItemStack tileStack = tile.getStackInSlot(0);
-                if ((itemStack.isEmpty() || (ItemStack.areItemsEqual(itemStack, tileStack) && ItemStack.areItemStackTagsEqual(itemStack, tileStack) && tileStack.getCount() < tileStack.getMaxStackSize())) && !tileStack.isEmpty()) {
-                    if(!itemStack.isEmpty()) {
-                        tileStack.grow(itemStack.getCount());
-                    }
+
+                if (itemStack.isEmpty() && !tileStack.isEmpty()) {
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
+                    tile.setInventorySlotContents(0, ItemStack.EMPTY);
+                    tile.sendUpdate();
+                    return true;
+                } else if(player.inventory.addItemStackToInventory(tileStack)){
                     tile.setInventorySlotContents(0, ItemStack.EMPTY);
                     tile.sendUpdate();
                     return true;

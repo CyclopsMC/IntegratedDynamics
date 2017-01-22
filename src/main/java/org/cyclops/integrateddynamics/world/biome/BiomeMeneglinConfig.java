@@ -23,7 +23,7 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     /**
      * The weight of spawning.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.BIOME, comment = "The weight of spawning.")
+    @ConfigurableProperty(category = ConfigurableTypeCategory.BIOME, comment = "The weight of spawning.", minimalValue = 0)
     public static int spawnWeight = 5;
 
     /**

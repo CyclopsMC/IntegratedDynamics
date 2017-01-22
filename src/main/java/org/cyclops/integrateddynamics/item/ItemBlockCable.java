@@ -77,6 +77,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
             ICableFakeable cable = CableHelpers.getCableFakeable(world, pos);
             if (cable != null && !cable.isRealCable()) {
                 cable.setRealCable(true);
+                CableHelpers.updateConnections(world, pos);
                 CableHelpers.onCableAdded(world, pos);
                 return true;
             }
