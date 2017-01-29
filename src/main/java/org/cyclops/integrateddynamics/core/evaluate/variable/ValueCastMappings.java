@@ -2,9 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 /**
  * Collection of variable types.
@@ -60,14 +58,6 @@ public class ValueCastMappings {
                 return ValueTypeDouble.ValueDouble.of((double) value.getRawValue());
             }
         });
-        for (IValueType<?> valueType : ValueTypes.CATEGORY_NUMBER.getElements()) {
-            REGISTRY.register(valueType, ValueTypes.CATEGORY_NUMBER, new IValueCastRegistry.IMapping() {
-                @Override
-                public IValue cast(IValue value) {
-                    return value;
-                }
-            });
-        }
 
     }
 
