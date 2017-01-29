@@ -103,8 +103,8 @@ valuetype.valuetypes.integrateddynamics.any.name=Any
 valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
 valuetype.valuetypes.integrateddynamics.number.name=Number
 valuetype.valuetypes.integrateddynamics.number.info=Accepts all number types.
-valuetype.valuetypes.integrateddynamics.named.name=Named
-valuetype.valuetypes.integrateddynamics.named.info=Accepts all value types that have a name or can be converted to a String.
+valuetype.valuetypes.integrateddynamics.named.name=To String
+valuetype.valuetypes.integrateddynamics.named.info=Converts a value to a String representation
 
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
