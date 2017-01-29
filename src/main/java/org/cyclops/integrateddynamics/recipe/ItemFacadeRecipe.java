@@ -18,7 +18,7 @@ public class ItemFacadeRecipe implements IRecipe {
 
 	@Override
 	public boolean matches(InventoryCrafting grid, World world) {
-		return getCraftingResult(grid) != null;
+		return !getCraftingResult(grid).isEmpty();
 	}
 	
 	@Override

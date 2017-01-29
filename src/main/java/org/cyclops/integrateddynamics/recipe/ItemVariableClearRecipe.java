@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.item.ItemVariable;
 public class ItemVariableClearRecipe implements IRecipe {
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        return getCraftingResult(inv) != null;
+        return !getCraftingResult(inv).isEmpty();
     }
 
     @Override

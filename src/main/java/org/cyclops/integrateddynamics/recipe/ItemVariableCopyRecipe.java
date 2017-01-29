@@ -19,7 +19,7 @@ public class ItemVariableCopyRecipe implements IRecipe {
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        return getCraftingResult(inv) != null;
+        return !getCraftingResult(inv).isEmpty();
     }
 
     @Override
