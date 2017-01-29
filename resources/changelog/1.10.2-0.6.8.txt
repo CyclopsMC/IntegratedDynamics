@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.9.1 or higher.
+
+Changes:
+* Remove invalid number casting, Closes #123. This was introduced because of #15, but this was not required after all.
