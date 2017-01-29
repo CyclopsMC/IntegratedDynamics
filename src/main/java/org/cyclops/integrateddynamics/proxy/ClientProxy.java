@@ -24,11 +24,11 @@ public class ClientProxy extends ClientProxyComponent {
     private static final String KEYBINDING_CATEGORY_NAME = "key.categories." + Reference.MOD_ID;
 
     public static final KeyBinding FOCUS_LP_SEARCH = new KeyBinding(
-            "key." + Reference.MOD_ID + ".logicProgrammerFocusSearch",
+            "key." + Reference.MOD_ID + ".logic_programmer_focus_search",
             KeyConflictContext.GUI, KeyModifier.ALT, Keyboard.KEY_F,
             KEYBINDING_CATEGORY_NAME);
     public static final KeyBinding FOCUS_LP_RENAME = new KeyBinding(
-            "key." + Reference.MOD_ID + ".logicProgrammerOpenRename",
+            "key." + Reference.MOD_ID + ".logic_programmer_open_rename",
             KeyConflictContext.GUI, KeyModifier.ALT, Keyboard.KEY_R,
             KEYBINDING_CATEGORY_NAME);
 
