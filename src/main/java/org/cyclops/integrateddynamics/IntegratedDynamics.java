@@ -71,6 +71,7 @@ import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGenerator
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
 import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
+import org.cyclops.integrateddynamics.modcompat.forestry.ForestryModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
@@ -170,7 +171,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         //modCompatLoader.addModCompat(new ThaumcraftModCompat());
         modCompatLoader.addModCompat(new JEIModCompat());
         //modCompatLoader.addModCompat(new TConstructModCompat());
-        //modCompatLoader.addModCompat(new ForestryModCompat());
+        modCompatLoader.addModCompat(new ForestryModCompat());
         //modCompatLoader.addModCompat(new Ic2ModCompat());
         modCompatLoader.addModCompat(new TopModCompat());
         modCompatLoader.addModCompat(new TeslaApiCompat());
