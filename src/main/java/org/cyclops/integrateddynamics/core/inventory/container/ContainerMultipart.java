@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
@@ -65,7 +64,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContain
         putButtonAction(GuiMultipart.BUTTON_SETTINGS, new IButtonActionServer<InventoryContainer>() {
             @Override
             public void onAction(int buttonId, InventoryContainer container) {
-                if(!MinecraftHelpers.isClientSide()) {
+                if(!world.isRemote) {
                     IGuiContainerProvider gui = ((PartTypeConfigurable) getPartType()).getSettingsGuiProvider();
                     IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
                     BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
