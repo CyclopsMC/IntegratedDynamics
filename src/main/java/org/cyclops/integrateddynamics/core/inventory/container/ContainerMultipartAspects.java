@@ -11,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
@@ -88,7 +87,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
         putButtonAction(GuiMultipartAspects.BUTTON_SETTINGS, new IButtonActionServer<InventoryContainer>() {
             @Override
             public void onAction(int buttonId, InventoryContainer container) {
-                if(!MinecraftHelpers.isClientSide()) {
+                if(!world.isRemote) {
                     IGuiContainerProvider gui = ((PartTypeConfigurable) getPartType()).getSettingsGuiProvider();
                     IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
                     BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
@@ -107,7 +106,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
                     public void onAction(int buttonId, InventoryContainer container) {
                         IGuiContainerProvider gui = aspect.getPropertiesGuiProvider();
                         IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.ASPECT, Pair.of(getTarget().getCenter().getSide(), aspect));
-                        if (!MinecraftHelpers.isClientSide()) {
+                        if(!world.isRemote) {
                             BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
                             ContainerMultipartAspects.this.player.openGui(gui.getModGui(), gui.getGuiID(),
                                     world, cPos.getX(), cPos.getY(), cPos.getZ());
