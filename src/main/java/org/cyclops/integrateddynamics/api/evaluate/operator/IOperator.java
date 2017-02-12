@@ -89,4 +89,11 @@ public interface IOperator {
      */
     public IConfigRenderPattern getRenderPattern();
 
+    /**
+     * Materialize this operator so that it can exist without any external references.
+     * @return The materialized operator.
+     * @throws EvaluationException if materialization fails because of a variable evaluation.
+     */
+    public IOperator materialize() throws EvaluationException;
+
 }

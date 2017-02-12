@@ -1694,6 +1694,9 @@ public final class Operators {
                             }
                         }
                     })).build());
+    static {
+        REGISTRY.registerSerializer(new CurriedOperator.Serializer());
+    }
 
     /**
      * Apply the given operator on all elements of a list, resulting in a new list of mapped values.
@@ -1753,11 +1756,12 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_TWO_PREDICATES.build(new IOperatorValuePropagator<Pair<IOperator, IOperator>, IValue>() {
                 @Override
                 public IValue getOutput(Pair<IOperator, IOperator> input) throws EvaluationException {
-                    CombinedOperator.Conjunction conjunction = new CombinedOperator.Conjunction(input.getLeft(), input.getRight());
-                    return ValueTypeOperator.ValueOperator.of(
-                            new CombinedOperator(":&&:", "p_conjunction", conjunction, ValueTypes.BOOLEAN));
+                    return ValueTypeOperator.ValueOperator.of(CombinedOperator.Conjunction.asOperator(input.getLeft(), input.getRight()));
                 }
             })).build());
+    static {
+        REGISTRY.registerSerializer(new CombinedOperator.Conjunction.Serializer());
+    }
 
     /**
      * Takes the disjunction of two predicates.
@@ -1768,11 +1772,12 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_TWO_PREDICATES.build(new IOperatorValuePropagator<Pair<IOperator, IOperator>, IValue>() {
                 @Override
                 public IValue getOutput(Pair<IOperator, IOperator> input) throws EvaluationException {
-                    CombinedOperator.Disjunction disjunction = new CombinedOperator.Disjunction(input.getLeft(), input.getRight());
-                    return ValueTypeOperator.ValueOperator.of(
-                            new CombinedOperator(":||:", "p_disjunction", disjunction, ValueTypes.BOOLEAN));
+                    return ValueTypeOperator.ValueOperator.of(CombinedOperator.Disjunction.asOperator(input.getLeft(), input.getRight()));
                 }
             })).build());
+    static {
+        REGISTRY.registerSerializer(new CombinedOperator.Disjunction.Serializer());
+    }
 
     /**
      * Takes the negation of a predicate.
@@ -1783,11 +1788,12 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ONE_PREDICATE.build(new IOperatorValuePropagator<IOperator, IValue>() {
                 @Override
                 public IValue getOutput(IOperator input) throws EvaluationException {
-                    CombinedOperator.Negation negation = new CombinedOperator.Negation(input);
-                    return ValueTypeOperator.ValueOperator.of(
-                            new CombinedOperator("!:", "p_negation", negation, ValueTypes.BOOLEAN));
+                    return ValueTypeOperator.ValueOperator.of(CombinedOperator.Negation.asOperator(input));
                 }
             })).build());
+    static {
+        REGISTRY.registerSerializer(new CombinedOperator.Negation.Serializer());
+    }
 
     /**
      * Create a new operator that pipes the output from the first operator to the second operator.
@@ -1798,11 +1804,12 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_TWO_OPERATORS.build(new IOperatorValuePropagator<Pair<IOperator, IOperator>, IValue>() {
                 @Override
                 public IValue getOutput(Pair<IOperator, IOperator> input) throws EvaluationException {
-                    CombinedOperator.Pipe pipe = new CombinedOperator.Pipe(input.getLeft(), input.getRight());
-                    return ValueTypeOperator.ValueOperator.of(
-                            new CombinedOperator(":.:", "piped", pipe, input.getRight().getOutputType()));
+                    return ValueTypeOperator.ValueOperator.of(CombinedOperator.Pipe.asOperator(input.getLeft(), input.getRight()));
                 }
             })).build());
+    static {
+        REGISTRY.registerSerializer(new CombinedOperator.Pipe.Serializer());
+    }
 
     /**
      * Flip the input parameters of an operator with two inputs.
@@ -1813,17 +1820,12 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ONE_OPERATOR.build(new IOperatorValuePropagator<IOperator, IValue>() {
                 @Override
                 public IValue getOutput(IOperator input) throws EvaluationException {
-                    CombinedOperator.Flip flip = new CombinedOperator.Flip(input);
-                    IValueType[] originalInputTypes = input.getInputTypes();
-                    IValueType[] flippedInputTypes = new IValueType[originalInputTypes.length];
-                    for (int i = 0; i < flippedInputTypes.length; i++) {
-                        flippedInputTypes[flippedInputTypes.length - i - 1] = originalInputTypes[i];
-                    }
-                    return ValueTypeOperator.ValueOperator.of(
-                            new CombinedOperator(":flip:", "flipped", flip, flippedInputTypes, input.getOutputType(),
-                                    IConfigRenderPattern.INFIX));
+                    return ValueTypeOperator.ValueOperator.of(CombinedOperator.Flip.asOperator(input));
                 }
             })).build());
+    static {
+        REGISTRY.registerSerializer(new CombinedOperator.Flip.Serializer());
+    }
 
     /**
      * Apply the given operator on all elements of a list to reduce the list to one value.

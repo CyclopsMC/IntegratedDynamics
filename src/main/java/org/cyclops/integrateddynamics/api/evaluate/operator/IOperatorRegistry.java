@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
 import org.cyclops.cyclopscore.init.IRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -46,5 +47,26 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
      * @return The corresponding operators.
      */
     public Collection<IOperator> getOperatorsWithOutputType(IValueType valueType);
+
+    /**
+     * Register an operator serializer.
+     * @param serializer The operator serializer.
+     */
+    public void registerSerializer(IOperatorSerializer serializer);
+
+    /**
+     * Serialize the given operator.
+     * @param value The operator to serialize.
+     * @return The serialized operator value.
+     */
+    public String serialize(IOperator value);
+
+    /**
+     * Deserialize the given operator value.
+     * @param value The operator value to deserialize.
+     * @return The deserialized operator.
+     * @throws EvaluationException If an error occurs while deserializing.
+     */
+    public IOperator deserialize(String value) throws EvaluationException;
 
 }

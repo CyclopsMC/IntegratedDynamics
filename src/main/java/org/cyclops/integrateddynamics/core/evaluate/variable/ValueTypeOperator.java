@@ -6,6 +6,7 @@ import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -38,12 +39,17 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
 
     @Override
     public String serialize(ValueOperator value) {
-        return value.getRawValue().getUniqueName();
+        return Operators.REGISTRY.serialize(value.getRawValue());
     }
 
     @Override
     public ValueOperator deserialize(String value) {
-        IOperator operator = Operators.REGISTRY.getOperator(value);
+        IOperator operator;
+        try {
+            operator = Operators.REGISTRY.deserialize(value);
+        } catch (EvaluationException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
         if (operator != null) {
             return ValueOperator.of(operator);
         }
@@ -61,6 +67,11 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     @Override
     public boolean hasDefaultLogicProgrammerElement() {
         return false;
+    }
+
+    @Override
+    public ValueOperator materialize(ValueOperator value) throws EvaluationException {
+        return ValueOperator.of(value.getRawValue().materialize());
     }
 
     /**
