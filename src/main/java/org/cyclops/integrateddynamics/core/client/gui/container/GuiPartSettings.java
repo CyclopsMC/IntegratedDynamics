@@ -121,7 +121,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         numberFieldUpdateInterval.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
         numberFieldPriority.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
-        fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.updateInterval"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
+        fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
         fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
     }
 
