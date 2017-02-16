@@ -120,14 +120,8 @@ public class Network implements INetwork {
             for (IPathElement pathElement : pathElements) {
                 World world = pathElement.getPosition().getWorld();
                 BlockPos pos = pathElement.getPosition().getBlockPos();
-                INetworkElementProvider networkElementProvider = (INetworkElementProvider)
-                        TileHelpers.getCapability(pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
-                if (networkElementProvider != null) {
-                    for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
-                        addNetworkElement(element, true);
-                    }
-                }
-                INetworkCarrier networkCarrier = TileHelpers.getCapability(world, pos, null, NetworkCarrierConfig.CAPABILITY);
+                INetworkCarrier networkCarrier = TileHelpers.getCapability(
+                        world, pos, null, NetworkCarrierConfig.CAPABILITY);
                 if (networkCarrier != null) {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
@@ -137,6 +131,13 @@ public class Network implements INetwork {
                     }
                     networkCarrier.setNetwork(null);
                     networkCarrier.setNetwork(this);
+                }
+                INetworkElementProvider networkElementProvider = TileHelpers.getCapability(
+                        pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
+                if (networkElementProvider != null) {
+                    for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
+                        addNetworkElement(element, true);
+                    }
                 }
             }
             onNetworkChanged();
