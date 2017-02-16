@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
@@ -1038,6 +1039,30 @@ public final class Operators {
                 @Override
                 public Integer getOutput(ItemStack itemStack) throws EvaluationException {
                     return itemStack != null ? TileEntityFurnace.getItemBurnTime(itemStack) : 0;
+                }
+            })).build());
+
+    /**
+     * If the given item can be used as fuel
+     */
+    public static final IOperator OBJECT_ITEMSTACK_CANBURN = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("canburn")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && TileEntityFurnace.getItemBurnTime(itemStack) > 0;
+                }
+            })).build());
+
+    /**
+     * If the given item can be smelted
+     */
+    public static final IOperator OBJECT_ITEMSTACK_CANSMELT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("cansmelt")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
+                @Override
+                public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
+                    return itemStack != null && FurnaceRecipes.instance().getSmeltingResult(itemStack) != null;
                 }
             })).build());
 
