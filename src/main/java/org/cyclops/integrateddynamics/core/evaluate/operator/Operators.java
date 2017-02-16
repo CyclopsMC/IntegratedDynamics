@@ -118,6 +118,20 @@ public final class Operators {
             }).build());
 
     /**
+     * Short-circuit logical NAND operator with two input booleans and one output boolean.
+     */
+    public static final IOperator LOGICAL_NAND = REGISTRY.register(
+            new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT).apply(LOGICAL_AND).build(
+                    "!&&", "nand", IConfigRenderPattern.INFIX, "logical"));
+
+    /**
+     * Short-circuit logical NAND operator with two input booleans and one output boolean.
+     */
+    public static final IOperator LOGICAL_NOR = REGISTRY.register(
+            new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT).apply(LOGICAL_OR).build(
+                    "!||", "nor", IConfigRenderPattern.INFIX, "logical"));
+
+    /**
      * ----------------------------------- ARITHMETIC OPERATORS -----------------------------------
      */
 

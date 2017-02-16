@@ -544,6 +544,8 @@ operator.operators.integrateddynamics.logical.basename=Logical %s
 operator.operators.integrateddynamics.logical.and.name=And
 operator.operators.integrateddynamics.logical.or.name=Or
 operator.operators.integrateddynamics.logical.not.name=Not
+operator.operators.integrateddynamics.logical.nand.name=Nand
+operator.operators.integrateddynamics.logical.nor.name=Nor
 
 operator.operators.integrateddynamics.arithmetic.name=Arithmetic
 operator.operators.integrateddynamics.arithmetic.basename=Arithmetic %s
