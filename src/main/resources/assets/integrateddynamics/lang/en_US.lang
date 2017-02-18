@@ -616,9 +616,13 @@ operator.operators.integrateddynamics.list.notempty.info=If the list is not empt
 operator.operators.integrateddynamics.list.get.name=Get
 operator.operators.integrateddynamics.list.get.info=Get the list element at the given position
 operator.operators.integrateddynamics.list.contains.name=Contains
-operator.operators.integrateddynamics.list.contains.info=List contains operator that takes a list, a list element to look for and returns a boolean.
+operator.operators.integrateddynamics.list.contains.info=If the list contains the given element.
 operator.operators.integrateddynamics.list.contains_p.name=Contains Predicate
-operator.operators.integrateddynamics.list.contains_p.info=List contains operator that takes a list, a predicate that maps two list elements to a boolean, a list element and returns a boolean.
+operator.operators.integrateddynamics.list.contains_p.info=If at least one of the elements of the list returns true for the given predicate.
+operator.operators.integrateddynamics.list.count.name=Count
+operator.operators.integrateddynamics.list.count.info=The number of times the given element is found in the list.
+operator.operators.integrateddynamics.list.count_p.name=Count
+operator.operators.integrateddynamics.list.count_p.info=The number of times the given predicate returns true for the elements in the list.
 
 operator.operators.integrateddynamics.block.name=Block
 operator.operators.integrateddynamics.block.basename=Block %s

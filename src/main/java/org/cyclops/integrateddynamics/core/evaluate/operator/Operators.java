@@ -656,6 +656,51 @@ public final class Operators {
             }).build());
 
     /**
+     * List operator with one input list, and element and one output integer
+     */
+    public static final IOperator LIST_COUNT = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.INTEGER)
+            .symbolOperator("count")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    IValue value = variables.getValue(1);
+                    int count = 0;
+                    for (IValue listValue : list) {
+                        if (listValue.equals(value)) {
+                            count++;
+                        }
+                    }
+                    return ValueTypeInteger.ValueInteger.of(count);
+                }
+            }).build());
+
+    /**
+     * List operator with one input list, a predicate and one output integer
+     */
+    public static final IOperator LIST_COUNT_PREDICATE = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.INTEGER)
+            .symbolOperator("count_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    IOperator operator = OperatorBuilders.getSafePredictate((ValueTypeOperator.ValueOperator) variables.getValue(1));
+                    int count = 0;
+                    for (IValue listValue : list) {
+                        IValue result = operator.evaluate(new IVariable[]{new Variable<>(listValue.getType(), listValue)});
+                        if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
+                            count++;
+                        }
+                    }
+                    return ValueTypeInteger.ValueInteger.of(count);
+                }
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 
