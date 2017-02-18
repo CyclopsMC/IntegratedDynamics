@@ -73,6 +73,7 @@ import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileC
 import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.forestry.ForestryModCompat;
 import org.cyclops.integrateddynamics.modcompat.ic2.Ic2ModCompat;
+import org.cyclops.integrateddynamics.modcompat.immersiveengineering.ImmersiveEngineeringModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
@@ -179,6 +180,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new TopModCompat());
         modCompatLoader.addModCompat(new TeslaApiCompat());
         modCompatLoader.addModCompat(new RefinedStorageModCompat());
+        modCompatLoader.addModCompat(new ImmersiveEngineeringModCompat());
 
         modCompatLoader.addApiCompat(new RfApiCompat());
     }
