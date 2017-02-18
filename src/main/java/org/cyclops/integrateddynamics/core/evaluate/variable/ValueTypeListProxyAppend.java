@@ -63,7 +63,7 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
                 NBTTagCompound tag = JsonToNBT.getTagFromJson(data);
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
                 IValue value = valueType.deserialize(tag.getString("value"));
-                IValueTypeListProxy list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
+                IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
                 return new ValueTypeListProxyAppend<>(list, value);
             } catch (NBTException e) {
                 e.printStackTrace();

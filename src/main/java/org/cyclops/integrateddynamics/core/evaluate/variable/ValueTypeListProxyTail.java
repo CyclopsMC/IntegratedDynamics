@@ -55,7 +55,7 @@ public class ValueTypeListProxyTail<T extends IValueType<V>, V extends IValue> e
         public ValueTypeListProxyTail<IValueType<IValue>, IValue> deserialize(String data) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             try {
                 NBTTagCompound tag = JsonToNBT.getTagFromJson(data);
-                IValueTypeListProxy list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
+                IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
                 return new ValueTypeListProxyTail<>(list);
             } catch (NBTException e) {
                 e.printStackTrace();
