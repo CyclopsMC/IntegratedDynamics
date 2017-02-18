@@ -628,6 +628,10 @@ operator.operators.integrateddynamics.list.append.name=Append
 operator.operators.integrateddynamics.list.append.info=Append to the given list the given item.
 operator.operators.integrateddynamics.list.lazybuilt.name=Append
 operator.operators.integrateddynamics.list.lazybuilt.info=Build a list lazily using a start value and an operator that is applied to the previous element to get a next element.
+operator.operators.integrateddynamics.list.head.name=Head
+operator.operators.integrateddynamics.list.head.info=Get the first element of the given list.
+operator.operators.integrateddynamics.list.tail.name=Tail
+operator.operators.integrateddynamics.list.tail.info=Remove the first element from the list.
 
 operator.operators.integrateddynamics.block.name=Block
 operator.operators.integrateddynamics.block.basename=Block %s

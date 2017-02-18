@@ -372,9 +372,7 @@ public class TestListOperators {
         assertThat("append([0, 1, 2], 3)[1] = 1", list.get(1).getRawValue(), is(1));
         assertThat("append([0, 1, 2], 3)[2] = 2", list.get(2).getRawValue(), is(2));
         assertThat("append([0, 1, 2], 3)[3] = 3", list.get(3).getRawValue(), is(3));
-        assertThat("append([0, 1, 2], 3)[3] = 3", list.getLength(), is(4));
-
-        assertThat("append([0, 1, 2], 3) = [0, 1, 2, 3]", ((ValueTypeList.ValueList) res1).getRawValue().equals(lintegers.getValue().getRawValue()), is(true));
+        assertThat("append([0, 1, 2], 3).size = 3", list.getLength(), is(4));
     }
 
     @Test(expected = EvaluationException.class)
@@ -413,7 +411,7 @@ public class TestListOperators {
         assertThat("lazybuilt(3, ++)[10] = 13", list.get(10).getRawValue(), is(13));
         assertThat("lazybuilt(3, ++)[100] = 103", list.get(100).getRawValue(), is(103));
 
-        assertThat("append([0, 1, 2], 3)[3] = 3", list.getLength(), is(Integer.MAX_VALUE));
+        assertThat("lazybuilt([0, 1, 2], 3).size = 3", list.getLength(), is(Integer.MAX_VALUE));
     }
 
     @Test(expected = EvaluationException.class)
@@ -434,6 +432,63 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeLazyBuilt() throws EvaluationException {
         Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- HEAD -----------------------------------
+     */
+
+    @Test
+    public void testListHead() throws EvaluationException {
+        IValue res1 = Operators.LIST_HEAD.evaluate(new IVariable[]{labc});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("head(abc) = 'a'", ((ValueTypeString.ValueString) res1).getRawValue(), is("a"));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeHeadLarge() throws EvaluationException {
+        Operators.LIST_HEAD.evaluate(new IVariable[]{labc, labc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeHeadSmall() throws EvaluationException {
+        Operators.LIST_HEAD.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeHead() throws EvaluationException {
+        Operators.LIST_HEAD.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- TAIL -----------------------------------
+     */
+
+    @Test
+    public void testListTail() throws EvaluationException {
+        IValue res1 = Operators.LIST_TAIL.evaluate(new IVariable[]{lintegers});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("tail([0, 1, 2, 3])[0] = 0", list.get(0).getRawValue(), is(1));
+        assertThat("tail([0, 1, 2, 3])[1] = 1", list.get(1).getRawValue(), is(2));
+        assertThat("tail([0, 1, 2, 3])[2] = 2", list.get(2).getRawValue(), is(3));
+        assertThat("tail([0, 1, 2, 3]).size = 3", list.getLength(), is(3));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeTailLarge() throws EvaluationException {
+        Operators.LIST_TAIL.evaluate(new IVariable[]{lintegers, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeTailSmall() throws EvaluationException {
+        Operators.LIST_TAIL.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeTail() throws EvaluationException {
+        Operators.LIST_TAIL.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

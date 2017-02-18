@@ -738,6 +738,49 @@ public final class Operators {
             }).build());
 
     /**
+     * Get the first element of the given list.
+     */
+    public static final IOperator LIST_HEAD = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
+            .inputTypes(new IValueType[]{ValueTypes.LIST}).output(ValueTypes.CATEGORY_ANY)
+            .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).symbolOperator("head")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    if (a.getLength() > 0) {
+                        return a.get(0);
+                    } else {
+                        return a.getValueType().getDefault();
+                    }
+                }
+            }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
+                @Override
+                public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
+                    try {
+                        IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
+                        return a.getValueType();
+                    } catch (EvaluationException e) {
+                        return operator.getConditionalOutputType(input);
+                    }
+                }
+            }).build());
+
+    /**
+     * Append an element to the given list.
+     */
+    public static final IOperator LIST_TAIL = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST})
+            .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).output(ValueTypes.LIST)
+            .symbolOperator("tail")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyTail(a));
+                }
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 
