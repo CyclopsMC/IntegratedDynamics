@@ -722,6 +722,22 @@ public final class Operators {
             }).build());
 
     /**
+     * Build a list lazily using a start value and an operator that is applied to the previous element to get a next element.
+     */
+    public static final IOperator LIST_LAZYBUILT = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.CATEGORY_ANY, ValueTypes.OPERATOR})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
+            .symbolOperator("lazybuilt")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValue a = variables.getValue(0);
+                    IOperator operator = OperatorBuilders.getSafeOperator((ValueTypeOperator.ValueOperator) variables.getValue(1), a.getType());
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyLazyBuilt<>(a, operator));
+                }
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 

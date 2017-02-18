@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import lombok.ToString;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -67,8 +68,11 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public ValueList materialize(ValueList value) {
+    public ValueList materialize(ValueList value) throws EvaluationException {
         IValueTypeListProxy<IValueType<IValue>, IValue> list = value.getRawValue();
+        if (list.isInfinite()) {
+            return ValueList.ofList(list.getValueType(), Lists.newArrayList(list.get(0)));
+        }
         List<IValue> values = ImmutableList.copyOf(list);
         return ValueList.ofList(list.getValueType(), values);
     }

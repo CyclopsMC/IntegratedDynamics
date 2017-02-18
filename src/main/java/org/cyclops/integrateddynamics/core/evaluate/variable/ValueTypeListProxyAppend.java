@@ -6,7 +6,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 
 /**
- * A list proxy base implementation.
+ * An appended list.
  * @param <T> The value type type.
  * @param <V> The value type.
  */

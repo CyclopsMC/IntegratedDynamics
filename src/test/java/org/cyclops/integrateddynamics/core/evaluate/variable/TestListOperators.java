@@ -36,6 +36,7 @@ public class TestListOperators {
     private DummyVariableInteger i4;
 
     private DummyVariableOperator oRelationalEquals;
+    private DummyVariableOperator oIntegerIncrement;
 
     @BeforeClass
     public static void beforeClass() {
@@ -51,6 +52,7 @@ public class TestListOperators {
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
 
         oRelationalEquals = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
+        oIntegerIncrement = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
 
         labc = new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeString.ValueString.of("a"),
@@ -393,6 +395,45 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeAppend() throws EvaluationException {
         Operators.LIST_APPEND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- LAZYBUILT -----------------------------------
+     */
+
+    @Test
+    public void testListLazyBuilt() throws EvaluationException {
+        IValue res1 = Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{i3, oIntegerIncrement});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("lazybuilt(3, ++)[0] = 3", list.get(0).getRawValue(), is(3));
+        assertThat("lazybuilt(3, ++)[1] = 4", list.get(1).getRawValue(), is(4));
+        assertThat("lazybuilt(3, ++)[5] = 8", list.get(5).getRawValue(), is(8));
+        assertThat("lazybuilt(3, ++)[10] = 13", list.get(10).getRawValue(), is(13));
+        assertThat("lazybuilt(3, ++)[100] = 103", list.get(100).getRawValue(), is(103));
+
+        assertThat("append([0, 1, 2], 3)[3] = 3", list.getLength(), is(Integer.MAX_VALUE));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeLazyBuiltInvalidType() throws EvaluationException {
+        Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{i3, oRelationalEquals});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeLazyBuiltLarge() throws EvaluationException {
+        Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{lintegers, i2, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeLazyBuiltSmall() throws EvaluationException {
+        Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeLazyBuilt() throws EvaluationException {
+        Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }

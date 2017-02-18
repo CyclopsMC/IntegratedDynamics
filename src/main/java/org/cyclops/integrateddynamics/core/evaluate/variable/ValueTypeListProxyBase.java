@@ -67,9 +67,18 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
         if(!getName().equals(other.getName()) || !(getValueType() == other.getValueType())) {
             return false;
         }
+        // Avoid infinite iteration
+        if (this.isInfinite() || other.isInfinite()) {
+            return false;
+        }
 
         Object[] o = Iterables.toArray(this, Object.class);
         Object[] o2 = Iterables.toArray(other, Object.class);
         return Arrays.equals(o, o2);
+    }
+
+    @Override
+    public boolean isInfinite() {
+        return false;
     }
 }
