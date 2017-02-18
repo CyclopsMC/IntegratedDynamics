@@ -700,6 +700,28 @@ public final class Operators {
             }).build());
 
     /**
+     * Append an element to the given list
+     */
+    public static final IOperator LIST_APPEND = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
+            .symbolOperator("append")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    IValue value = variables.getValue(1);
+                    if (!ValueHelpers.correspondsTo(a.getValueType(), value.getType())) {
+                        L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                                a.getValueType(), value.getType());
+                        throw new EvaluationException(error.localize());
+                    }
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyAppend(a, value));
+                }
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 

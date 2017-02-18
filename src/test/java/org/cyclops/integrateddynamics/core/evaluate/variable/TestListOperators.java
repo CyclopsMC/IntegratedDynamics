@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.junit.Before;
@@ -24,6 +25,7 @@ public class TestListOperators {
 
     private DummyVariableList labc;
     private DummyVariableList lintegers;
+    private DummyVariableList lintegers_012;
     private DummyVariableList lempty;
     private DummyVariableList lintegers_dup;
 
@@ -56,6 +58,7 @@ public class TestListOperators {
                 ValueTypeString.ValueString.of("c")
         ));
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
+        lintegers_012 = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue()));
         lempty = new DummyVariableList(ValueTypeList.ValueList.ofAll());
         lintegers_dup = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(),
                 i3.getValue(), i1.getValue(), i2.getValue(), i3.getValue(), i2.getValue(), i3.getValue(), i3.getValue()));
@@ -351,6 +354,45 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeCountPredicate() throws EvaluationException {
         Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- APPEND -----------------------------------
+     */
+
+    @Test
+    public void testListAppend() throws EvaluationException {
+        IValue res1 = Operators.LIST_APPEND.evaluate(new IVariable[]{lintegers_012, i3});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("append([0, 1, 2], 3)[0] = 0", list.get(0).getRawValue(), is(0));
+        assertThat("append([0, 1, 2], 3)[1] = 1", list.get(1).getRawValue(), is(1));
+        assertThat("append([0, 1, 2], 3)[2] = 2", list.get(2).getRawValue(), is(2));
+        assertThat("append([0, 1, 2], 3)[3] = 3", list.get(3).getRawValue(), is(3));
+        assertThat("append([0, 1, 2], 3)[3] = 3", list.getLength(), is(4));
+
+        assertThat("append([0, 1, 2], 3) = [0, 1, 2, 3]", ((ValueTypeList.ValueList) res1).getRawValue().equals(lintegers.getValue().getRawValue()), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAppendInvalidType() throws EvaluationException {
+        Operators.LIST_APPEND.evaluate(new IVariable[]{lintegers_012, oRelationalEquals});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAppendLarge() throws EvaluationException {
+        Operators.LIST_APPEND.evaluate(new IVariable[]{lintegers, i2, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAppendSmall() throws EvaluationException {
+        Operators.LIST_APPEND.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeAppend() throws EvaluationException {
+        Operators.LIST_APPEND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }
