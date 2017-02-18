@@ -41,6 +41,10 @@ repositories {
         name "Raoulvdberge Repo"
         url "https://dl.bintray.com/raoulvdberge/dev/"
     }
+    maven {
+        name "Blamejared Maven Repo"
+        url "http://maven.blamejared.com/"
+    }
 }
 
 dependencies {
@@ -66,6 +70,7 @@ dependencies {
     deobfCompile "net.industrial-craft:industrialcraft-2:${config.IC2_version}:dev" // http://maven.ic2.player.to/
     deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.top_version}" // http://maven.tterrag.com/mcjty/theoneprobe/TheOneProbe/
     deobfCompile "refinedstorage:refinedstorage:${config.refinedstorage_version}" // https://dl.bintray.com/raoulvdberge/dev/refinedstorage/refinedstorage/
+    deobfCompile "blusunrize:ImmersiveEngineering:${config.ie_version}"// http://maven.blamejared.com/blusunrize/ImmersiveEngineering/
 
     // Only needed for testing
     deobfCompile "pl.asie.charset:charset-lib:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml
