@@ -633,20 +633,19 @@ public final class Operators {
             }).build());
 
     /**
-     * List contains operator that takes a list, a predicate that maps two list elements to a boolean, a list element and returns a boolean.
+     * List contains operator that takes a list, a predicate that maps a list element to a boolean, a list element and returns a boolean.
      */
     public static final IOperator LIST_CONTAINS_PREDICATE = REGISTRY.register(OperatorBuilders.LIST
-            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY})
-            .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
+            .renderPattern(IConfigRenderPattern.INFIX)
             .output(ValueTypes.BOOLEAN).symbolOperator("contains_p")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
                     IOperator operator = OperatorBuilders.getSafePredictate((ValueTypeOperator.ValueOperator) variables.getValue(1));
-                    IVariable container = variables.getVariables()[2];
                     for (IValue value : list) {
-                        IValue result = operator.evaluate(new IVariable[]{container, new Variable<>(value.getType(), value)});
+                        IValue result = operator.evaluate(new IVariable[]{new Variable<>(value.getType(), value)});
                         if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                             return ValueTypeBoolean.ValueBoolean.of(true);
                         }
