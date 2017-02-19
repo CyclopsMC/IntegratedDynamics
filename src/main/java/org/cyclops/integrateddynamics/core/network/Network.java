@@ -41,6 +41,7 @@ public class Network implements INetwork {
     private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
     private TreeSet<INetworkElement> updateableElements = null;
     private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
+    private TreeSet<INetworkElement> invalidatedElements = Sets.newTreeSet();
     private Map<INetworkElement, Long> lastSecondDurations = Maps.newHashMap();
 
     private final CapabilityDispatcher capabilityDispatcher;
@@ -319,6 +320,13 @@ public class Network implements INetwork {
 
     @Override
     public boolean canUpdate(INetworkElement element) {
+        if (invalidatedElements.contains(element)) {
+            if (element.canRevalidate(this)) {
+                element.revalidate(this);
+                return true;
+            }
+            return false;
+        }
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             if (!fullNetworkListener.canUpdate(element)) {
                 return false;
@@ -493,5 +501,15 @@ public class Network implements INetwork {
     @Override
     public <T> T getCapability(Capability<T> capability) {
         return capabilityDispatcher == null ? null : capabilityDispatcher.getCapability(capability, null);
+    }
+
+    @Override
+    public void invalidateElement(INetworkElement element) {
+        invalidatedElements.add(element);
+    }
+
+    @Override
+    public void revalidateElement(INetworkElement element) {
+        invalidatedElements.remove(element);
     }
 }

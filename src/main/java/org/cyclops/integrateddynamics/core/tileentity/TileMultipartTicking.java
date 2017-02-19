@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -17,6 +18,7 @@ import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
@@ -40,6 +42,7 @@ import org.cyclops.integrateddynamics.capability.path.PathElementTile;
 import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -232,5 +235,17 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             return value;
         }
         return partContainer.getCapability(capability, facing);
+    }
+
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        INetwork network = getNetwork();
+        if (network != null) {
+            for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partContainer.getPartData().entrySet()) {
+                INetworkElement element = entry.getValue().getPart().createNetworkElement(getPartContainer(), DimPos.of(getWorld(), getPos()), entry.getKey());
+                element.invalidate(network);
+            }
+        }
     }
 }

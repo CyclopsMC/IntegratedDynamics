@@ -91,6 +91,17 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
+    public boolean canRevalidate(INetwork network) {
+        return canRevalidatePositioned(network, pos);
+    }
+
+    @Override
+    public void revalidate(INetwork network) {
+        super.revalidate(network);
+        revalidatePositioned(network, pos);
+    }
+
+    @Override
     public int compareTo(INetworkElement o) {
         if(o instanceof EnergyBatteryNetworkElement) {
             return getPos().compareTo(((EnergyBatteryNetworkElement) o).getPos());

@@ -49,4 +49,15 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
         super.afterNetworkReAlive(network);
         getTile().afterNetworkReAlive();
     }
+
+    @Override
+    public boolean canRevalidate(INetwork network) {
+        return canRevalidatePositioned(network, pos);
+    }
+
+    @Override
+    public void revalidate(INetwork network) {
+        super.revalidate(network);
+        revalidatePositioned(network, pos);
+    }
 }
