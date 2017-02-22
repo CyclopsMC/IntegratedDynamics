@@ -439,6 +439,11 @@ public class Network implements INetwork {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             fullNetworkListener.afterServerLoad();
         }
+        // All networks start from an invalidated state at server start
+        for (INetworkElement element : getElements()) {
+            invalidateElement(element);
+        }
+
     }
 
     @Override
