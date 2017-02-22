@@ -27,10 +27,15 @@ public class DynamicRedstoneTileMultipartTicking implements IDynamicRedstone {
         return tile.getRedstoneInputs();
     }
 
+    protected EnumFacingMap<Boolean> getRedstoneStrong() {
+        return tile.getRedstoneStrong();
+    }
+
     @Override
-    public void setRedstoneLevel(int level) {
+    public void setRedstoneLevel(int level, boolean strongPower) {
         if(!tile.getWorld().isRemote) {
             EnumFacingMap<Integer> redstoneLevels = getRedstoneLevels();
+            EnumFacingMap<Boolean> redstoneStrongs = getRedstoneStrong();
             boolean sendUpdate = false;
             if(redstoneLevels.containsKey(side)) {
                 if(redstoneLevels.get(side) != level) {
@@ -40,6 +45,15 @@ public class DynamicRedstoneTileMultipartTicking implements IDynamicRedstone {
             } else {
                 sendUpdate = true;
                 redstoneLevels.put(side, level);
+            }
+            if(redstoneStrongs.containsKey(side)) {
+                if(redstoneStrongs.get(side) != strongPower) {
+                    sendUpdate = true;
+                    redstoneStrongs.put(side, strongPower);
+                }
+            } else {
+                sendUpdate = true;
+                redstoneStrongs.put(side, strongPower);
             }
             if(sendUpdate) {
                 tile.updateRedstoneInfo(side);
@@ -54,6 +68,15 @@ public class DynamicRedstoneTileMultipartTicking implements IDynamicRedstone {
             return redstoneLevels.get(side);
         }
         return -1;
+    }
+
+    @Override
+    public boolean isStrong() {
+        EnumFacingMap<Boolean> redstoneStrongs = getRedstoneStrong();
+        if(redstoneStrongs.containsKey(side)) {
+            return redstoneStrongs.get(side);
+        }
+        return false;
     }
 
     @Override

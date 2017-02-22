@@ -523,6 +523,8 @@ aspect.aspecttypes.integrateddynamics.double.spreadY.name=Y Spread
 aspect.aspecttypes.integrateddynamics.double.spreadZ.name=Z Spread
 aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name=Force Spawning
 
+aspect.aspecttypes.integrateddynamics.boolean.strong_power.name=Strong Power
+
 # Operators
 operator.integrateddynamics.applied.operatorName=%s [%s]
 operator.integrateddynamics.applied.type=§Applied to: §r%s

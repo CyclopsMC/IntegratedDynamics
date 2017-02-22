@@ -15,14 +15,20 @@ public class DynamicRedstonePart implements IDynamicRedstone {
     }
 
     @Override
-    public void setRedstoneLevel(int level) {
+    public void setRedstoneLevel(int level, boolean strongPower) {
         partCable.setRedstoneLevel(level);
+        partCable.setRedstoneStrong(strongPower);
         partCable.sendUpdate();
     }
 
     @Override
     public int getRedstoneLevel() {
         return partCable.getRedstoneLevel();
+    }
+
+    @Override
+    public boolean isStrong() {
+        return partCable.isRedstoneStrong();
     }
 
     @Override

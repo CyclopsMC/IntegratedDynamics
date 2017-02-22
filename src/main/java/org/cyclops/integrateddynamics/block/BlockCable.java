@@ -407,7 +407,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @SuppressWarnings("deprecation")
     @Override
     public int getStrongPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return 0;
+        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY);
+        return dynamicRedstone != null && dynamicRedstone.isStrong() ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
     @SuppressWarnings("deprecation")

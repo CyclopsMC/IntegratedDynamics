@@ -9,13 +9,18 @@ import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 public class DynamicRedstoneDefault implements IDynamicRedstone {
 
     @Override
-    public void setRedstoneLevel(int level) {
+    public void setRedstoneLevel(int level, boolean strongPower) {
 
     }
 
     @Override
     public int getRedstoneLevel() {
         return 0;
+    }
+
+    @Override
+    public boolean isStrong() {
+        return false;
     }
 
     @Override
