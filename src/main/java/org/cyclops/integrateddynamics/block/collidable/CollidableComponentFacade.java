@@ -75,6 +75,7 @@ public class CollidableComponentFacade implements ICollidable.IComponent<EnumFac
             if (!player.capabilities.isCreativeMode) {
                 ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
             }
+            return true;
         }
         return false;
     }
