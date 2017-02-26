@@ -185,7 +185,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
+    public synchronized boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             if (!fullNetworkListener.addNetworkElement(element, networkPreinit)) {
                 return false;
@@ -350,7 +350,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public final void update() {
+    public final synchronized void update() {
         this.changed = false;
         if(killIfEmpty() || killed) {
             NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
@@ -400,7 +400,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement) {
+    public synchronized boolean removePathElement(IPathElement pathElement) {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             if (!fullNetworkListener.removePathElement(pathElement)) {
                 return false;
