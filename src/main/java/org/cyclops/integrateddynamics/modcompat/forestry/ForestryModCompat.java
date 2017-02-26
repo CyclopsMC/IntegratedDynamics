@@ -32,7 +32,7 @@ public class ForestryModCompat implements IModCompat {
 	        // Add undead clog to forester backpack.
 	        if(ConfigHandler.isEnabled(BlockMenrilLogConfig.class)) {
 	            FMLInterModComms.sendMessage(getModID(), "add-backpack-items",
-						"forester@" + Block.REGISTRY.getNameForObject(BlockMenrilLogConfig._instance.getBlockInstance()).toString() + ":*");
+						"forestry.forester@" + Block.REGISTRY.getNameForObject(BlockMenrilLogConfig._instance.getBlockInstance()).toString() + ":*");
 	        }
     	} else if(step == Step.POSTINIT) {
 			ForestryRecipeManager.register();
