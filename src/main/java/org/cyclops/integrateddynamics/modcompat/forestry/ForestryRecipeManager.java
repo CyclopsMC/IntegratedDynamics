@@ -26,7 +26,7 @@ public class ForestryRecipeManager {
     public static void register() {
         IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = BlockSqueezer.getInstance().getRecipeRegistry().findRecipeByOutput(
                 new ItemAndFluidStackRecipeComponent(
-                        (ItemStack) null, new FluidStack(FluidMenrilResin.getInstance(), Fluid.BUCKET_VOLUME)));
+                        ItemStack.EMPTY, new FluidStack(FluidMenrilResin.getInstance(), Fluid.BUCKET_VOLUME)));
 
         // Register Menril Resin squeezer recipe.
         if(recipe != null) {
