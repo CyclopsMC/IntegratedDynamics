@@ -230,6 +230,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         networkEventActions.get(event.getClass()).onAction(event.getNetwork(), networkElement.getTarget(), networkElement.getPartState(), event);
     }
 
+    @Override
+    public boolean forceLightTransparency(S state) {
+        return false;
+    }
+
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {
 
         public void onAction(INetwork network, PartTarget target, S state, E event);

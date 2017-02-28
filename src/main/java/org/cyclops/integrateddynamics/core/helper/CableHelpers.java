@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
@@ -28,6 +29,7 @@ import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Helpers related to cables.
@@ -312,5 +314,18 @@ public class CableHelpers {
     public static @Nullable IBlockState getFacade(IBlockAccess world, BlockPos pos) {
         IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
         return facadeable != null ? facadeable.getFacade() : null;
+    }
+
+    public static boolean isLightTransparent(IBlockAccess world, BlockPos pos) {
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+        if (partContainer != null) {
+            for (Map.Entry<EnumFacing, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
+                IPartType part = entry.getValue();
+                if (part.forceLightTransparency(partContainer.getPartState(entry.getKey()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

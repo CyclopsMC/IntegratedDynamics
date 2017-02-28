@@ -291,7 +291,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public int getLightOpacity(IBlockState blockState, IBlockAccess world, BlockPos pos) {
-        return CableHelpers.hasFacade(world, pos) ? 255 : 0;
+        return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos) ? 255 : 0;
     }
 
     @Override
