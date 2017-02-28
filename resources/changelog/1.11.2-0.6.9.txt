@@ -1,0 +1,37 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.9.3 or higher.
+
+Additions:
+* Add aspect setting to enable strong power in redstone writer, Closes #152
+* Add operator to check if a player has an external gui open, Closes #139
+* Add list head and tail operators, #116
+* Add Immersive Engineering squeezer recipe for Menril Resin
+* Add lazy list builder operator, #116
+* Add list append operator, #116
+* Add list count operators, Closes #137
+* Add cansmelt and canburn operators, #131
+* Add NAND and NOR operators, #131
+* Add usage information to Squeezer tooltip, Closes #130
+
+Changes:
+* Simplify list contains predicate operator
+* Rename Named operator to To String, #124
+
+Fixes:
+* Fix Drying Basin recipes sometimes breaking, Closes #156
+* Fix Drying Basin rendering missing texture'd particles
+* Fix lighting not updating when adding/removing facades, #149
+* Fix dark display contents rendering when a facade is present, Closes #149
+* Fix facade rendering on writer parts
+* Make network element adding, removing and ticking thread-safe, Closes #148
+* Fix breaking facade also breaks cable, #148
+* Fix Forestry mod compat crash, Closes #154
+* Fix invalid Forestry backpack registration, #154
+* Fix chunk unloading causing part containers with null networks
+* Fix list append operator serialization
+* Fix redstone reader not reading redstone wires in all cases, Closes #135
+* Fix network resets calling add/remove listeners in the wrong order
+* Fix settings missing texture and localization, Closes #127
+* Update Refined Storage API, Closes #132
+* Fix cable dupe when breaking a part with other parts present, Closes #128
+* Fix settings gui doesn't open on server, Closes #64
