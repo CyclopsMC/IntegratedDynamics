@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.junit.Before;
@@ -24,7 +25,9 @@ public class TestListOperators {
 
     private DummyVariableList labc;
     private DummyVariableList lintegers;
+    private DummyVariableList lintegers_012;
     private DummyVariableList lempty;
+    private DummyVariableList lintegers_dup;
 
     private DummyVariableInteger i0;
     private DummyVariableInteger i1;
@@ -33,6 +36,7 @@ public class TestListOperators {
     private DummyVariableInteger i4;
 
     private DummyVariableOperator oRelationalEquals;
+    private DummyVariableOperator oIntegerIncrement;
 
     @BeforeClass
     public static void beforeClass() {
@@ -48,6 +52,7 @@ public class TestListOperators {
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
 
         oRelationalEquals = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
+        oIntegerIncrement = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
 
         labc = new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeString.ValueString.of("a"),
@@ -55,7 +60,10 @@ public class TestListOperators {
                 ValueTypeString.ValueString.of("c")
         ));
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
+        lintegers_012 = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue()));
         lempty = new DummyVariableList(ValueTypeList.ValueList.ofAll());
+        lintegers_dup = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(),
+                i3.getValue(), i1.getValue(), i2.getValue(), i3.getValue(), i2.getValue(), i3.getValue(), i3.getValue()));
     }
 
     /**
@@ -177,47 +185,6 @@ public class TestListOperators {
     }
 
     /**
-     * ----------------------------------- CONTAINS_PREDICATE -----------------------------------
-     */
-
-    @Test
-    public void testListContainsPredicate() throws EvaluationException {
-        DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
-                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
-
-        IValue res1 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equalsTwo, i0});
-        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
-        assertThat("contains([0, 1, 2, 3], 2==, 0) = false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
-
-        IValue res2 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equalsTwo, i1});
-        assertThat("contains([0, 1, 2, 3], 2==, 1) = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
-
-        IValue res3 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equalsTwo, i2});
-        assertThat("contains([0, 1, 2, 3], 2==, 2) = true", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
-
-        IValue res4 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equalsTwo, i3});
-        assertThat("contains([0, 1, 2, 3], 2==, 3) = false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
-
-        IValue res5 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equalsTwo, i4});
-        assertThat("contains([0, 1, 2, 3],2 ==, 4) = false", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(false));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeContainsPredicateLarge() throws EvaluationException {
-        Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, oRelationalEquals, i2, i0});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeContainsPredicateSmall() throws EvaluationException {
-        Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, oRelationalEquals});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeContainsPredicate() throws EvaluationException {
-        Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
      * ----------------------------------- CONTAINS -----------------------------------
      */
 
@@ -253,6 +220,275 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeContains() throws EvaluationException {
         Operators.LIST_CONTAINS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- CONTAINS_PREDICATE -----------------------------------
+     */
+
+    @Test
+    public void testListContainsPredicate() throws EvaluationException {
+        DummyVariableOperator equals0 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i0}));
+        DummyVariableOperator equals1 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i1}));
+        DummyVariableOperator equals2 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+        DummyVariableOperator equals3 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i3}));
+        DummyVariableOperator equals4 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i4}));
+
+        IValue res1 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equals0});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("containspredicate([0, 1, 2, 3], 0==) = true", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+
+        IValue res2 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equals1});
+        assertThat("containspredicate([0, 1, 2, 3], 1==) = true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+
+        IValue res3 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equals2});
+        assertThat("containspredicate([0, 1, 2, 3], 2==) = true", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
+
+        IValue res4 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equals3});
+        assertThat("containspredicate([0, 1, 2, 3], 3==) = true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
+
+        IValue res5 = Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, equals4});
+        assertThat("containspredicate([0, 1, 2, 3], 4==) = false", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeContainsPredicateLarge() throws EvaluationException {
+        Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers, oRelationalEquals, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeContainsPredicateSmall() throws EvaluationException {
+        Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeContainsPredicate() throws EvaluationException {
+        Operators.LIST_CONTAINS_PREDICATE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- COUNT -----------------------------------
+     */
+
+    @Test
+    public void testListCount() throws EvaluationException {
+        IValue res1 = Operators.LIST_COUNT.evaluate(new IVariable[]{lintegers_dup, i0});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("count([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 0) = 1", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
+
+        IValue res2 = Operators.LIST_COUNT.evaluate(new IVariable[]{lintegers_dup, i1});
+        assertThat("count([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 1) = 2", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(2));
+
+        IValue res3 = Operators.LIST_COUNT.evaluate(new IVariable[]{lintegers_dup, i2});
+        assertThat("count([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 2) = 3", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(3));
+
+        IValue res4 = Operators.LIST_COUNT.evaluate(new IVariable[]{lintegers_dup, i3});
+        assertThat("count([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 3) = 4", ((ValueTypeInteger.ValueInteger) res4).getRawValue(), is(4));
+
+        IValue res5 = Operators.LIST_COUNT.evaluate(new IVariable[]{lintegers_dup, i4});
+        assertThat("count([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 4) = 0", ((ValueTypeInteger.ValueInteger) res5).getRawValue(), is(0));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeCountLarge() throws EvaluationException {
+        Operators.LIST_COUNT.evaluate(new IVariable[]{lintegers, i2, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeCountSmall() throws EvaluationException {
+        Operators.LIST_COUNT.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeCount() throws EvaluationException {
+        Operators.LIST_COUNT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- COUNT_PREDICATE -----------------------------------
+     */
+
+    @Test
+    public void testListCountPredicate() throws EvaluationException {
+        DummyVariableOperator equals0 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i0}));
+        DummyVariableOperator equals1 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i1}));
+        DummyVariableOperator equals2 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
+        DummyVariableOperator equals3 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i3}));
+        DummyVariableOperator equals4 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i4}));
+
+        IValue res1 = Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{lintegers_dup, equals0});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("countpredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 0) = 1", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
+
+        IValue res2 = Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{lintegers_dup, equals1});
+        assertThat("countpredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 1) = 2", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(2));
+
+        IValue res3 = Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{lintegers_dup, equals2});
+        assertThat("countpredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 2) = 3", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(3));
+
+        IValue res4 = Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{lintegers_dup, equals3});
+        assertThat("countpredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 3) = 4", ((ValueTypeInteger.ValueInteger) res4).getRawValue(), is(4));
+
+        IValue res5 = Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{lintegers_dup, equals4});
+        assertThat("countpredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], 4) = 0", ((ValueTypeInteger.ValueInteger) res5).getRawValue(), is(0));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeCountPredicateLarge() throws EvaluationException {
+        Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{lintegers, i2, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeCountPredicateSmall() throws EvaluationException {
+        Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeCountPredicate() throws EvaluationException {
+        Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- APPEND -----------------------------------
+     */
+
+    @Test
+    public void testListAppend() throws EvaluationException {
+        IValue res1 = Operators.LIST_APPEND.evaluate(new IVariable[]{lintegers_012, i3});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("append([0, 1, 2], 3)[0] = 0", list.get(0).getRawValue(), is(0));
+        assertThat("append([0, 1, 2], 3)[1] = 1", list.get(1).getRawValue(), is(1));
+        assertThat("append([0, 1, 2], 3)[2] = 2", list.get(2).getRawValue(), is(2));
+        assertThat("append([0, 1, 2], 3)[3] = 3", list.get(3).getRawValue(), is(3));
+        assertThat("append([0, 1, 2], 3).size = 3", list.getLength(), is(4));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAppendInvalidType() throws EvaluationException {
+        Operators.LIST_APPEND.evaluate(new IVariable[]{lintegers_012, oRelationalEquals});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAppendLarge() throws EvaluationException {
+        Operators.LIST_APPEND.evaluate(new IVariable[]{lintegers, i2, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeAppendSmall() throws EvaluationException {
+        Operators.LIST_APPEND.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeAppend() throws EvaluationException {
+        Operators.LIST_APPEND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- LAZYBUILT -----------------------------------
+     */
+
+    @Test
+    public void testListLazyBuilt() throws EvaluationException {
+        IValue res1 = Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{i3, oIntegerIncrement});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("lazybuilt(3, ++)[0] = 3", list.get(0).getRawValue(), is(3));
+        assertThat("lazybuilt(3, ++)[1] = 4", list.get(1).getRawValue(), is(4));
+        assertThat("lazybuilt(3, ++)[5] = 8", list.get(5).getRawValue(), is(8));
+        assertThat("lazybuilt(3, ++)[10] = 13", list.get(10).getRawValue(), is(13));
+        assertThat("lazybuilt(3, ++)[100] = 103", list.get(100).getRawValue(), is(103));
+
+        assertThat("lazybuilt([0, 1, 2], 3).size = 3", list.getLength(), is(Integer.MAX_VALUE));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeLazyBuiltInvalidType() throws EvaluationException {
+        Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{i3, oRelationalEquals});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeLazyBuiltLarge() throws EvaluationException {
+        Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{lintegers, i2, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeLazyBuiltSmall() throws EvaluationException {
+        Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeLazyBuilt() throws EvaluationException {
+        Operators.LIST_LAZYBUILT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- HEAD -----------------------------------
+     */
+
+    @Test
+    public void testListHead() throws EvaluationException {
+        IValue res1 = Operators.LIST_HEAD.evaluate(new IVariable[]{labc});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("head(abc) = 'a'", ((ValueTypeString.ValueString) res1).getRawValue(), is("a"));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeHeadLarge() throws EvaluationException {
+        Operators.LIST_HEAD.evaluate(new IVariable[]{labc, labc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeHeadSmall() throws EvaluationException {
+        Operators.LIST_HEAD.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeHead() throws EvaluationException {
+        Operators.LIST_HEAD.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- TAIL -----------------------------------
+     */
+
+    @Test
+    public void testListTail() throws EvaluationException {
+        IValue res1 = Operators.LIST_TAIL.evaluate(new IVariable[]{lintegers});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("tail([0, 1, 2, 3])[0] = 0", list.get(0).getRawValue(), is(1));
+        assertThat("tail([0, 1, 2, 3])[1] = 1", list.get(1).getRawValue(), is(2));
+        assertThat("tail([0, 1, 2, 3])[2] = 2", list.get(2).getRawValue(), is(3));
+        assertThat("tail([0, 1, 2, 3]).size = 3", list.getLength(), is(3));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeTailLarge() throws EvaluationException {
+        Operators.LIST_TAIL.evaluate(new IVariable[]{lintegers, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeTailSmall() throws EvaluationException {
+        Operators.LIST_TAIL.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeTail() throws EvaluationException {
+        Operators.LIST_TAIL.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

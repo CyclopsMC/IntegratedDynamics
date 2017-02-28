@@ -235,7 +235,8 @@ public class AspectWriteBuilders {
         public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void> PROP_SET = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void>() {
             @Override
             public Void getOutput(Triple<PartTarget, IAspectProperties, Integer> input) {
-                WRITE_REDSTONE_COMPONENT.setRedstoneLevel(input.getLeft(), input.getRight());
+                boolean strongPower = input.getMiddle().getValue(PROP_STRONG_POWER).getRawValue();
+                WRITE_REDSTONE_COMPONENT.setRedstoneLevel(input.getLeft(), input.getRight(), strongPower);
                 return null;
             }
         };
@@ -247,10 +248,20 @@ public class AspectWriteBuilders {
             }
         };
 
+        public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROP_STRONG_POWER =
+                new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.strong_power.name");
+        public static final IAspectProperties PROPERTIES_REDSTONE = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
+                PROP_STRONG_POWER
+        ));
+
+        static {
+            PROPERTIES_REDSTONE.setValue(PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(false));
+        }
+
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Triple<PartTarget, IAspectProperties, Boolean>>
-                BUILDER_BOOLEAN = AspectWriteBuilders.BUILDER_BOOLEAN.appendKind("redstone").handle(PROP_GET_BOOLEAN).appendDeactivator(DEACTIVATOR);
+                BUILDER_BOOLEAN = AspectWriteBuilders.BUILDER_BOOLEAN.appendKind("redstone").handle(PROP_GET_BOOLEAN).appendDeactivator(DEACTIVATOR).withProperties(PROPERTIES_REDSTONE);
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Triple<PartTarget, IAspectProperties, Integer>>
-                BUILDER_INTEGER = AspectWriteBuilders.BUILDER_INTEGER.appendKind("redstone").handle(PROP_GET_INTEGER).appendDeactivator(DEACTIVATOR);
+                BUILDER_INTEGER = AspectWriteBuilders.BUILDER_INTEGER.appendKind("redstone").handle(PROP_GET_INTEGER).appendDeactivator(DEACTIVATOR).withProperties(PROPERTIES_REDSTONE);
 
     }
 

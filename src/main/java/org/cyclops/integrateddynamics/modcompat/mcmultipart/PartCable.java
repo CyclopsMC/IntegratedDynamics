@@ -80,6 +80,10 @@ public class PartCable extends MultipartBase implements ITickable {
     @NBTPersist
     @Getter
     @Setter
+    private boolean redstoneStrong = false;
+    @NBTPersist
+    @Getter
+    @Setter
     private boolean allowsRedstone = false;
     @Getter
     private final PartContainerPartCable partContainer;

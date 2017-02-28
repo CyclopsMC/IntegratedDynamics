@@ -2,8 +2,10 @@ package org.cyclops.integrateddynamics.part.aspect.read;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
@@ -401,7 +403,12 @@ public class AspectReadBuilders {
             @Override
             public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos dimPos = input.getLeft().getTarget().getPos();
-                return dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
+                int power = dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
+                if (power == 0) {
+                    IBlockState targetBlockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+                    power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.getValue(BlockRedstoneWire.POWER) : 0;
+                }
+                return power;
             }
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {

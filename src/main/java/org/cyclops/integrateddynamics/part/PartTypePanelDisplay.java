@@ -35,6 +35,11 @@ public class PartTypePanelDisplay extends PartTypePanelVariableDriven<PartTypePa
         return state.hasVariable() ? 2 : 1;
     }
 
+    @Override
+    public boolean forceLightTransparency(State state) {
+        return true;
+    }
+
     public static class State extends PartTypePanelVariableDriven.State<PartTypePanelDisplay, PartTypePanelDisplay.State> {
 
     }

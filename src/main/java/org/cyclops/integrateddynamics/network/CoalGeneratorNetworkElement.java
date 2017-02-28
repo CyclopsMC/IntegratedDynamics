@@ -62,6 +62,17 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase {
     }
 
     @Override
+    public boolean canRevalidate(INetwork network) {
+        return canRevalidatePositioned(network, pos);
+    }
+
+    @Override
+    public void revalidate(INetwork network) {
+        super.revalidate(network);
+        revalidatePositioned(network, pos);
+    }
+
+    @Override
     public int compareTo(INetworkElement o) {
         if(o instanceof CoalGeneratorNetworkElement) {
             return getPos().compareTo(((CoalGeneratorNetworkElement) o).getPos());

@@ -39,8 +39,6 @@ import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
-import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
@@ -180,13 +178,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState blockState, int fortune) {
-        ICable cable = CableHelpers.getCable(world, pos);
-        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, pos);
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
-        if (cable == null || cableFakeable == null || partContainer == null || !partContainer.hasParts()) {
-            return Lists.newArrayList();
-        }
-        return super.getDrops(world, pos, blockState, fortune);
+        return Lists.newArrayList();
     }
 
     @Override
@@ -300,7 +292,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public int getLightOpacity(IBlockState blockState, IBlockAccess world, BlockPos pos) {
-        return CableHelpers.hasFacade(world, pos) ? 255 : 0;
+        return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos) ? 255 : 0;
     }
 
     @Override
@@ -416,7 +408,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @SuppressWarnings("deprecation")
     @Override
     public int getStrongPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return 0;
+        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY);
+        return dynamicRedstone != null && dynamicRedstone.isStrong() ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
     @SuppressWarnings("deprecation")

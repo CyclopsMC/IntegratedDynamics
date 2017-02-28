@@ -7,7 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
@@ -69,7 +68,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
             @Override
             public void onAction(int buttonId, InventoryContainer container) {
                 if (!(getPartType() instanceof IGuiContainerProvider) || ((IGuiContainerProvider) getPartType()).getContainer() != ContainerPartSettings.this.getClass()) {
-                    if (!MinecraftHelpers.isClientSide()) {
+                    if(!world.isRemote) {
                         IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
                         BlockPos pos = getTarget().getCenter().getPos().getBlockPos();
                         player.openGui(IntegratedDynamics._instance.getModId(), ((IGuiContainerProvider) getPartType()).getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
@@ -117,7 +116,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     @Override
     public void onUpdate(int valueId, NBTTagCompound value) {
         super.onUpdate(valueId, value);
-        if(!MinecraftHelpers.isClientSide()) {
+        if(!world.isRemote) {
             getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
             DimPos dimPos = getTarget().getCenter().getPos();
             INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());

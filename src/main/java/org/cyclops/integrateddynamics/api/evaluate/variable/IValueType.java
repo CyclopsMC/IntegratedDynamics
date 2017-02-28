@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -95,8 +96,9 @@ public interface IValueType<V extends IValue> {
      * Materialize the given value so that it can exist without any external references.
      * @param value The value to materialize.
      * @return The materialized value.
+     * @throws EvaluationException if materialization fails because of a variable evaluation.
      */
-    public V materialize(V value);
+    public V materialize(V value) throws EvaluationException;
 
     /**
      * @return If a default logic programmer element has to be generated.

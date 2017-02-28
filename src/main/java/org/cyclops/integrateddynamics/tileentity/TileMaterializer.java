@@ -85,8 +85,8 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         IVariable variable = getVariable(NetworkHelpers.getPartNetwork(getNetwork()));
         try {
-            final IValueType valueType = variable.getType();
             final IValue value = variable.getType().materialize(variable.getValue());
+            final IValueType valueType = value.getType();
             return registry.writeVariableFacadeItem(generateId, itemStack, ValueTypes.REGISTRY, new IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IValueTypeVariableFacade>() {
                 @Override
                 public IValueTypeVariableFacade create(boolean generateId) {

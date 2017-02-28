@@ -4,8 +4,10 @@ import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -75,5 +77,23 @@ public abstract class NetworkElementBase implements INetworkElement {
     @Override
     public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighborBlock) {
 
+    }
+
+    @Override
+    public void invalidate(INetwork network) {
+        network.invalidateElement(this);
+    }
+
+    @Override
+    public void revalidate(INetwork network) {
+        network.revalidateElement(this);
+    }
+
+    protected boolean canRevalidatePositioned(INetwork network, DimPos dimPos) {
+        return dimPos.getWorld().isBlockLoaded(dimPos.getBlockPos());
+    }
+
+    protected void revalidatePositioned(INetwork network, DimPos dimPos) {
+        NetworkHelpers.getNetworkCarrier(dimPos.getWorld(), dimPos.getBlockPos()).setNetwork(network);
     }
 }

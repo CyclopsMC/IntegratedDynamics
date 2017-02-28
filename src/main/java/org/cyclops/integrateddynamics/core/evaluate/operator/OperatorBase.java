@@ -178,6 +178,11 @@ public abstract class OperatorBase implements IOperator {
         return renderPattern;
     }
 
+    @Override
+    public IOperator materialize() throws EvaluationException {
+        return this;
+    }
+
     public static class SafeVariablesGetter {
 
         private final IVariable[] variables;

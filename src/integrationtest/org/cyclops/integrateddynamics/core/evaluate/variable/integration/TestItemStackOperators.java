@@ -47,6 +47,7 @@ public class TestItemStackOperators {
     private DummyVariableItemStack iWrench;
     private DummyVariableItemStack iEnergyBatteryEmpty;
     private DummyVariableItemStack iEnergyBatteryFull;
+    private DummyVariableItemStack iIronOre;
 
     private DummyVariableBlock bStone;
     private DummyVariableBlock bObsidian;
@@ -78,6 +79,7 @@ public class TestItemStackOperators {
         IEnergyStorage energyStorage = energyBatteryFull.getCapability(CapabilityEnergy.ENERGY, null);
         energyStorage.receiveEnergy(energyStorage.getMaxEnergyStored(), false);
         iEnergyBatteryFull = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(energyBatteryFull));
+        iIronOre = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.IRON_ORE)));
 
         bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState()));
         bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.getDefaultState()));
@@ -711,6 +713,64 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeFuelBurnTime() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_FUELBURNTIME.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- CANBURN -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackCanBurn() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_CANBURN.evaluate(new IVariable[]{iBucketLava});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), true, "canburn(bucketlava) = true");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_CANBURN.evaluate(new IVariable[]{iApple});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), false, "canburn(apple) = false");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputCanBurnCanBurnLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_CANBURN.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputCanBurnCanBurnSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_CANBURN.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeCanBurn() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_CANBURN.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- CANSMELT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackCanSmelt() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{iIronOre});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), true, "cansmelt(ironore) = true");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{iApple});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), false, "cansmelt(apple) = false");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputCanSmeltCanSmeltLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputCanSmeltCanSmeltSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeCanSmelt() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**

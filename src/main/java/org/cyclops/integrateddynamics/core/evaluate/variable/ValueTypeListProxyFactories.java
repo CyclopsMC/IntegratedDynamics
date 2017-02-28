@@ -27,6 +27,9 @@ public class ValueTypeListProxyFactories {
     public static ValueTypeListProxyNBTFactory<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack, ValueTypeListProxyEntityInventory> ENTITY_INVENTORY;
     public static ValueTypeListProxyNBTFactory<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack, ValueTypeListProxyPositionedTankFluidStacks> POSITIONED_TANK_FLUIDSTACKS;
     public static ValueTypeListProxyNBTFactory<ValueTypeInteger, ValueTypeInteger.ValueInteger, ValueTypeListProxyPositionedTankCapacities> POSITIONED_TANK_CAPACITIES;
+    public static ValueTypeListProxyAppend.Factory APPEND;
+    public static ValueTypeListProxyLazyBuilt.Factory LAZY_BUILT;
+    public static ValueTypeListProxyTail.Factory TAIL;
 
     public static void load() {
         if(MATERIALIZED == null) {
@@ -36,6 +39,9 @@ public class ValueTypeListProxyFactories {
             ENTITY_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>("entityInventory", ValueTypeListProxyEntityInventory.class));
             POSITIONED_TANK_FLUIDSTACKS = REGISTRY.register(new ValueTypeListProxyNBTFactory<>("positionedTankFluidstacks", ValueTypeListProxyPositionedTankFluidStacks.class));
             POSITIONED_TANK_CAPACITIES = REGISTRY.register(new ValueTypeListProxyNBTFactory<>("positionedTankCapacities", ValueTypeListProxyPositionedTankCapacities.class));
+            APPEND = REGISTRY.register(new ValueTypeListProxyAppend.Factory());
+            LAZY_BUILT = REGISTRY.register(new ValueTypeListProxyLazyBuilt.Factory());
+            TAIL = REGISTRY.register(new ValueTypeListProxyTail.Factory());
         }
     }
 

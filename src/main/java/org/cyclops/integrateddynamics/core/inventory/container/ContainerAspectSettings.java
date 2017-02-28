@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
@@ -73,7 +72,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
         putButtonAction(GuiAspectSettings.BUTTON_EXIT, new IButtonActionServer<InventoryContainer>() {
             @Override
             public void onAction(int buttonId, InventoryContainer container) {
-                if (!MinecraftHelpers.isClientSide()) {
+                if (!world.isRemote) {
                     IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
                     BlockPos pos = getTarget().getCenter().getPos().getBlockPos();
                     player.openGui(IntegratedDynamics._instance.getModId(), ((IGuiContainerProvider) getPartType()).getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
@@ -123,7 +122,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
     @Override
     public void onUpdate(int valueId, NBTTagCompound value) {
         super.onUpdate(valueId, value);
-        if(!MinecraftHelpers.isClientSide()) {
+        if(!world.isRemote) {
             IAspectPropertyTypeInstance property = propertyIds.get(valueId);
             if (property != null) {
                 IAspectProperties aspectProperties = getAspect().getProperties(getPartType(), getTarget(), getPartState());

@@ -39,4 +39,9 @@ public interface IValueTypeListProxy<T extends IValueType<V>, V extends IValue> 
      */
     public String toCompactString();
 
+    /**
+     * @return If this is an infinite list.
+     */
+    public boolean isInfinite();
+
 }

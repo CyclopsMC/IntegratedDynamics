@@ -41,6 +41,7 @@ public class Network implements INetwork {
     private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
     private TreeSet<INetworkElement> updateableElements = null;
     private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
+    private TreeSet<INetworkElement> invalidatedElements = Sets.newTreeSet();
     private Map<INetworkElement, Long> lastSecondDurations = Maps.newHashMap();
 
     private final CapabilityDispatcher capabilityDispatcher;
@@ -120,14 +121,8 @@ public class Network implements INetwork {
             for (IPathElement pathElement : pathElements) {
                 World world = pathElement.getPosition().getWorld();
                 BlockPos pos = pathElement.getPosition().getBlockPos();
-                INetworkElementProvider networkElementProvider = (INetworkElementProvider)
-                        TileHelpers.getCapability(pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
-                if (networkElementProvider != null) {
-                    for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
-                        addNetworkElement(element, true);
-                    }
-                }
-                INetworkCarrier networkCarrier = TileHelpers.getCapability(world, pos, null, NetworkCarrierConfig.CAPABILITY);
+                INetworkCarrier networkCarrier = TileHelpers.getCapability(
+                        world, pos, null, NetworkCarrierConfig.CAPABILITY);
                 if (networkCarrier != null) {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
@@ -137,6 +132,13 @@ public class Network implements INetwork {
                     }
                     networkCarrier.setNetwork(null);
                     networkCarrier.setNetwork(this);
+                }
+                INetworkElementProvider networkElementProvider = TileHelpers.getCapability(
+                        pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
+                if (networkElementProvider != null) {
+                    for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
+                        addNetworkElement(element, true);
+                    }
                 }
             }
             onNetworkChanged();
@@ -183,7 +185,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
+    public synchronized boolean addNetworkElement(INetworkElement element, boolean networkPreinit) {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             if (!fullNetworkListener.addNetworkElement(element, networkPreinit)) {
                 return false;
@@ -318,6 +320,13 @@ public class Network implements INetwork {
 
     @Override
     public boolean canUpdate(INetworkElement element) {
+        if (invalidatedElements.contains(element)) {
+            if (element.canRevalidate(this)) {
+                element.revalidate(this);
+                return true;
+            }
+            return false;
+        }
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             if (!fullNetworkListener.canUpdate(element)) {
                 return false;
@@ -341,7 +350,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public final void update() {
+    public final synchronized void update() {
         this.changed = false;
         if(killIfEmpty() || killed) {
             NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
@@ -391,7 +400,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement) {
+    public synchronized boolean removePathElement(IPathElement pathElement) {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             if (!fullNetworkListener.removePathElement(pathElement)) {
                 return false;
@@ -430,6 +439,11 @@ public class Network implements INetwork {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             fullNetworkListener.afterServerLoad();
         }
+        // All networks start from an invalidated state at server start
+        for (INetworkElement element : getElements()) {
+            invalidateElement(element);
+        }
+
     }
 
     @Override
@@ -492,5 +506,15 @@ public class Network implements INetwork {
     @Override
     public <T> T getCapability(Capability<T> capability) {
         return capabilityDispatcher == null ? null : capabilityDispatcher.getCapability(capability, null);
+    }
+
+    @Override
+    public void invalidateElement(INetworkElement element) {
+        invalidatedElements.add(element);
+    }
+
+    @Override
+    public void revalidateElement(INetworkElement element) {
+        invalidatedElements.remove(element);
     }
 }

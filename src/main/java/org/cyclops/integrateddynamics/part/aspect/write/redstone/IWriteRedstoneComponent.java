@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
  */
 public interface IWriteRedstoneComponent {
 
-    public void setRedstoneLevel(PartTarget target, int level);
+    public void setRedstoneLevel(PartTarget target, int level, boolean strongPower);
 
     public void deactivate(PartTarget target);
 

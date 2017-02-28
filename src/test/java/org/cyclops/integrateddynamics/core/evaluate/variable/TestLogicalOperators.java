@@ -143,4 +143,88 @@ public class TestLogicalOperators {
         Operators.LOGICAL_NOT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- NAND -----------------------------------
+     */
+
+    @Test
+    public void testLogicalNand() throws EvaluationException {
+        IValue res1 = Operators.LOGICAL_NAND.evaluate(new IVariable[]{bTrue, bTrue});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class)); // We can't use hamcrest's isA because of: https://github.com/hamcrest/JavaHamcrest/issues/27
+        assertThat("true !&& true = false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+
+        IValue res2 = Operators.LOGICAL_NAND.evaluate(new IVariable[]{bTrue, bFalse});
+        assertThat("true !&& false = true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+
+        IValue res3 = Operators.LOGICAL_NAND.evaluate(new IVariable[]{bFalse, bTrue});
+        assertThat("false !&& true = true", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
+
+        IValue res4 = Operators.LOGICAL_NAND.evaluate(new IVariable[]{bFalse, bFalse});
+        assertThat("false !&& false = true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNandLarge() throws EvaluationException {
+        Operators.LOGICAL_NAND.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNandSmall() throws EvaluationException {
+        Operators.LOGICAL_NAND.evaluate(new IVariable[]{bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNand() throws EvaluationException {
+        Operators.LOGICAL_NAND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    @Test
+    public void testShortCircuitingNand() throws EvaluationException {
+        Operators.LOGICAL_NAND.evaluate(new IVariable[]{bFalse, bTrue});
+        assertThat("first variable was called", bFalse.isFetched(), is(true));
+        assertThat("second variable was not called", bTrue.isFetched(), is(false));
+    }
+
+    /**
+     * ----------------------------------- NOR -----------------------------------
+     */
+
+    @Test
+    public void testLogicalNor() throws EvaluationException {
+        IValue res1 = Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue, bTrue});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class)); // We can't use hamcrest's isA because of: https://github.com/hamcrest/JavaHamcrest/issues/27
+        assertThat("true !|| true = false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+
+        IValue res2 = Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue, bFalse});
+        assertThat("true !|| false = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
+
+        IValue res3 = Operators.LOGICAL_NOR.evaluate(new IVariable[]{bFalse, bTrue});
+        assertThat("false !|| true = false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(false));
+
+        IValue res4 = Operators.LOGICAL_NOR.evaluate(new IVariable[]{bFalse, bFalse});
+        assertThat("false !|| false = true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNorLarge() throws EvaluationException {
+        Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeNorSmall() throws EvaluationException {
+        Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNor() throws EvaluationException {
+        Operators.LOGICAL_NOR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    @Test
+    public void testShortCircuitingNor() throws EvaluationException {
+        Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue, bFalse});
+        assertThat("first variable was called", bTrue.isFetched(), is(true));
+        assertThat("second variable was not called", bFalse.isFetched(), is(false));
+    }
+
 }

@@ -336,4 +336,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      */
     public boolean shouldTriggerBlockRenderUpdate(@Nullable S oldPartState, @Nullable S newPartState);
 
+    /**
+     * @param state The state.
+     * @return If this part should force the block to be transparent to light.
+     */
+    public boolean forceLightTransparency(S state);
+
 }
