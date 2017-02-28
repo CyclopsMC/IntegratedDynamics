@@ -74,7 +74,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     }
 
     public IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
-        return recipeCache.get(getStackInSlot(0));
+        return recipeCache.get(getStackInSlot(0).copy());
     }
 
     @Override
@@ -125,7 +125,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
 
     @Override
     public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing side) {
-        return getWorld().getBlockState(getPos()).getValue(BlockSqueezer.HEIGHT) == 1 && super.canInsertItem(slot, itemStack, side);
+        return getWorld().getBlockState(getPos()).getValue(BlockSqueezer.HEIGHT) == 1 && getStackInSlot(0).isEmpty() && super.canInsertItem(slot, itemStack, side);
     }
 
     @Override

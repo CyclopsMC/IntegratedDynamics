@@ -92,7 +92,7 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     }
 
     public IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getCurrentRecipe() {
-        return recipeCache.get(Pair.of(getStackInSlot(0), FluidHelpers.copy(getTank().getFluid())));
+        return recipeCache.get(Pair.of(getStackInSlot(0).copy(), FluidHelpers.copy(getTank().getFluid())));
     }
 
     @Override
@@ -149,6 +149,11 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                         getPos().getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0, itemId);
             }
         }
+    }
+
+    @Override
+    public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing side) {
+        return getStackInSlot(0).isEmpty();
     }
 
     @Override
