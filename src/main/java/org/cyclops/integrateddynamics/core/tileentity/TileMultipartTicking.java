@@ -40,6 +40,7 @@ import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerTile
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
 import org.cyclops.integrateddynamics.client.model.CableRenderState;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.Map;
@@ -126,13 +127,16 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         } else {
             partContainer.deserializeNBT(tag.getCompoundTag("partContainer"));
         }
+        boolean wasLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos());
 
         super.readFromNBT(tag);
         cableFakeable.setRealCable(tag.getBoolean("realCable"));
+        boolean isLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos());
         if (getWorld() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
                 || !Objects.equals(lastFacadeBlockName, facadeBlockName) || lastFacadeMeta != facadeMeta
-                || lastRealCable != cableFakeable.isRealCable())) {
+                || lastRealCable != cableFakeable.isRealCable() || wasLightTransparent != isLightTransparent)) {
             getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
+            getWorld().checkLight(getPos());
         }
     }
 
