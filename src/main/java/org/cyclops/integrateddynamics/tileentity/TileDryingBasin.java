@@ -142,7 +142,7 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                             getPos().getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0, blockStateId);
                 }
             }
-            if(getStackInSlot(0) != null) {
+            if(!getStackInSlot(0).isEmpty()) {
                 int itemId = Item.getIdFromItem(getStackInSlot(0).getItem());
                 getWorld().spawnParticle(EnumParticleTypes.ITEM_CRACK,
                         getPos().getX() + Math.random() * 0.8D + 0.1D, getPos().getY() + Math.random() * 0.1D + 0.9D,
