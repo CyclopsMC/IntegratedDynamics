@@ -133,8 +133,8 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         if(partRenderPosition == PartRenderPosition.NONE) {
             addBakedQuad(ret, 0, 1, 0, 1, 1, texture, side);
         } else {
-            float w = partRenderPosition.getWidthFactor();
-            float h = partRenderPosition.getHeightFactor();
+            float w = partRenderPosition.getWidthFactorSide();
+            float h = partRenderPosition.getHeightFactorSide();
 
             float x0 = 0F;
             float x1 = (1F - w) / 2;

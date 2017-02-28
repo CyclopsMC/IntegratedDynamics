@@ -19,13 +19,22 @@ public class PartRenderPosition {
     private final float depthFactor;
     private final float widthFactor;
     private final float heightFactor;
+    private final float widthFactorSide;
+    private final float heightFactorSide;
     private final EnumFacingMap<AxisAlignedBB> sidedCableCollisionBoxes;
     private final EnumFacingMap<AxisAlignedBB> collisionBoxes;
 
     public PartRenderPosition(float selectionDepthFactor, float depthFactor, float widthFactor, float heightFactor) {
+        this(selectionDepthFactor, depthFactor, widthFactor, heightFactor, widthFactor, heightFactor);
+    }
+
+    public PartRenderPosition(float selectionDepthFactor, float depthFactor, float widthFactor, float heightFactor,
+                              float widthFactorSide, float heightFactorSide) {
         this.depthFactor = depthFactor;
         this.widthFactor = widthFactor;
         this.heightFactor = heightFactor;
+        this.widthFactorSide = widthFactorSide;
+        this.heightFactorSide = heightFactorSide;
         float[][] sidedCableCollisionBoxesRaw = new float[][]{
                 {CableModel.MIN, selectionDepthFactor, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX}, // DOWN
                 {CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1 - selectionDepthFactor, CableModel.MAX}, // UP
@@ -79,4 +88,11 @@ public class PartRenderPosition {
         return collisionBoxes.get(side);
     }
 
+    public float getWidthFactorSide() {
+        return widthFactorSide;
+    }
+
+    public float getHeightFactorSide() {
+        return heightFactorSide;
+    }
 }
