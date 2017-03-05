@@ -120,4 +120,17 @@
 		</output>
 	</recipe>
 
+	<recipe type="shapeless">
+		<condition type="config">on_the_dynamics_of_integration</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<item>minecraft:book</item>
+			<item>integrateddynamics:crystalizedMenrilChunk</item>
+			<item>integrateddynamics:crystalizedMenrilChunk</item>
+		</input>
+		<output>
+			<item>integrateddynamics:on_the_dynamics_of_integration</item>
+		</output>
+	</recipe>
+
 </recipes>

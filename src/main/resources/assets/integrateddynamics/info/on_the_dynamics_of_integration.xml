@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<section name="info_book.integrateddynamics.section.main">
+    <section name="info_book.integrateddynamics.introduction">
+        <paragraph>info_book.integrateddynamics.introduction.text1</paragraph>
+        <paragraph>info_book.integrateddynamics.introduction.text2</paragraph>
+        <paragraph>info_book.integrateddynamics.introduction.text3</paragraph>
+        <paragraph>info_book.integrateddynamics.introduction.text4</paragraph>
+    </section>
+</section>

@@ -77,6 +77,7 @@ public class Configs {
         configHandler.add(new ItemVariableTransformerConfig());
         configHandler.add(new ItemMenrilBerriesConfig());
         configHandler.add(new ItemPortableLogicProgrammerConfig());
+        configHandler.add(new ItemOnTheDynamicsOfIntegrationConfig());
 
         // Biomes
         configHandler.add(new BiomeMeneglinConfig());
