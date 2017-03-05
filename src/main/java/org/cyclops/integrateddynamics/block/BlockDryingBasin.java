@@ -4,6 +4,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -11,8 +12,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
@@ -24,6 +28,7 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.integrateddynamics.Achievements;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
 
@@ -53,6 +58,7 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
      */
     public BlockDryingBasin(ExtendedConfig eConfig) {
         super(eConfig, Material.WOOD, TileDryingBasin.class);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -63,6 +69,11 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                 IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
                 SingleUseTank tank = tile.getTank();
                 ItemStack tileStack = tile.getStackInSlot(0);
+
+                // Menril production achievement
+                if (tileStack != null && tileStack.getItem() == Item.getItemFromBlock(BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance())) {
+                    player.addStat(Achievements.MENRIL_PRODUCTION);
+                }
 
                 if (itemStack == null && tileStack != null) {
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
@@ -149,5 +160,12 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
     @Override
     public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return side != EnumFacing.UP && side != EnumFacing.DOWN && super.isSideSolid(base_state, world, pos, side);
+    }
+
+    @SubscribeEvent
+    public void onCrafted(PlayerEvent.ItemCraftedEvent event) {
+        if (event.crafting.getItem() == Item.getItemFromBlock(this)) {
+            event.player.addStat(Achievements.DRYING);
+        }
     }
 }

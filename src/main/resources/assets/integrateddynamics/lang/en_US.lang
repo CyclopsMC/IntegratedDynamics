@@ -16,6 +16,10 @@ gui.integrateddynamics.waila.proxyConfig=Proxy Information
 gui.integrateddynamics.waila.dryingBasinConfig=Drying Basin Information
 gui.integrateddynamics.waila.item=Item: %s
 gui.integrateddynamics.waila.fluid=Fluid: %s (%s mB)
+gui.integrateddynamics.rewards=Rewards
+gui.integrateddynamics.rewards.collect=Collect
+gui.integrateddynamics.rewards.collected=Collected
+gui.integrateddynamics.rewards.collectFailure=Can't collect rewards, is your inventory full?
 
 # Diagnostics
 gui.integrateddynamics.diagnostics.title=Network Diagnostics
@@ -87,6 +91,16 @@ fluid.fluids.integrateddynamics.menrilresin=Menril Resin
 
 # Biomes
 biomes.integrateddynamics.biomeMeneglin=Meneglin
+
+# Achievements
+achievement.integrateddynamics.meneglinDiscovery=Meneglin Discovery
+achievement.integrateddynamics.meneglinDiscovery.desc=Chop down a Menril tree, which can most easily be found in Meneglin biomes.
+achievement.integrateddynamics.squeezing=Squeezing like a boss
+achievement.integrateddynamics.squeezing.desc=Craft a Squeezer.
+achievement.integrateddynamics.drying=Drying like a boss
+achievement.integrateddynamics.drying.desc=Craft a Drying Basin.
+achievement.integrateddynamics.menrilProduction=Menril Production
+achievement.integrateddynamics.menrilProduction.desc=Process a Menril Log into Menril Resin and dry it to obtain Crystalized Menril Resin.
 
 # Value types
 valuetype.integrateddynamics.valueType=Value Type
@@ -1140,3 +1154,12 @@ info_book.integrateddynamics.introduction.text1=For too long, automation possibi
 info_book.integrateddynamics.introduction.text2=Redstone circuits have always been a very basic, but workable and easily understandable method for automation. The basicness of redstone is however also an inconvenience. For automation networks with higher complexities, redstone circuits can become very large and consequently also difficult to manage. Furthermore, one small water-leak can cause major headaches to every redstoner.
 info_book.integrateddynamics.introduction.text3=The goal of this book is twofold. First, a &ltutorial&r is provided for learning the most important concepts behind this mod. Secondly, a detailed &lmanual&r of all elements and mechanisms are explained for players that are not not interested in the tutorial.
 info_book.integrateddynamics.introduction.text4=You can navigate through this book by clicking on the arrows at the bottom, shift clicking will flip through whole sections instead of single pages. At the start of large sections you will see a content table which will contain hyperlinks to its subsections for faster browsing. When you come across recipes, the items that are explained in this book are clickable as a fast reference to the section they are explained in. You will also notice a button at the top left of this book, which will take you to the section above your current one. The button at the top right corner will go back to the previously visited page each time when clicked.
+
+info_book.integrateddynamics.tutorials=Tutorials
+info_book.integrateddynamics.tutorials.text1=This part of the book contains several tutorials that will help you understand the basics of the mod. Furthermore, it will allow you to earn some &lrewards&l while accomplishing the achievements of each tutorial.
+
+info_book.integrateddynamics.tutorials.menrilBasics=Menril Basics
+info_book.integrateddynamics.tutorials.menrilBasics.text1=To get started with this mod, you will need to find some &lMenril Trees&r which can most easily be found in &lMeneglin Biomes&r.
+info_book.integrateddynamics.tutorials.menrilBasics.text2=After that, you’ll need to craft a &lSqueezer&r and &lDrying Basin&r for processing &lMenril Logs&r. This can be done by placing a log in the &lSqueezer&r and jumping on it until the log is flat. Once that has been done, the &lMenril Resin&r will try to go to the two sides of the &lSqueezer&r. Next, place a &lDrying Basin&r next to the &lSqueezer&r to make it fill with the &lMenril Resin&r you just squeezed.
+info_book.integrateddynamics.tutorials.menrilBasics.text3=If you want to repeat the process, you can reset the &lSqueezer&r by applying a redstone pulse.
+

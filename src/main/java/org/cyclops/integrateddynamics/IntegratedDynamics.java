@@ -252,6 +252,9 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     public final void init(FMLInitializationEvent event) {
         super.init(event);
+
+        // Register achievements
+        Achievements.registerAchievements();
     }
 
     @Mod.EventHandler

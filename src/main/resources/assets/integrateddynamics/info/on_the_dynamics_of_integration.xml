@@ -6,4 +6,28 @@
         <paragraph>info_book.integrateddynamics.introduction.text3</paragraph>
         <paragraph>info_book.integrateddynamics.introduction.text4</paragraph>
     </section>
+    <section name="info_book.integrateddynamics.tutorials">
+        <paragraph>info_book.integrateddynamics.tutorials.text1</paragraph>
+        <section name="info_book.integrateddynamics.tutorials.menrilBasics">
+            <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text3</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:squeezer</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:dryingBasin</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:meneglinBasics">
+                <achievements>
+                    <achievement id="integrateddynamics.meneglinDiscovery" />
+                    <achievement id="integrateddynamics.squeezing" />
+                    <achievement id="integrateddynamics.drying" />
+                    <achievement id="integrateddynamics.menrilProduction" />
+                </achievements>
+                <rewards>
+                    <reward type="item" amount="64">integrateddynamics:menrilLog</reward>
+                    <reward type="item" amount="10">integrateddynamics:crystalizedMenrilBlock</reward>
+                    <reward type="item" amount="10">integrateddynamics:crystalizedMenrilBrick</reward>
+                    <reward type="item" amount="20">integrateddynamics:menrilBerries</reward>
+                </rewards>
+            </appendix>
+        </section>
+    </section>
 </section>
