@@ -37,5 +37,29 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.networkFoundations">
+            <paragraph>info_book.integrateddynamics.tutorials.networkFoundations.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.networkFoundations.text2</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:cable</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:wrench</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:variable</appendix>
+            <appendix type="craftingRecipe" index="0">integrateddynamics:variableTransformer</appendix>
+            <appendix type="craftingRecipe" index="1">integrateddynamics:variableTransformer</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:networkFoundations">
+                <achievements>
+                    <achievement id="integrateddynamics.cablesLogic" />
+                    <achievement id="integrateddynamics.networksLogic" />
+                    <achievement id="integrateddynamics.menrilWrenching" />
+                    <achievement id="integrateddynamics.variables" />
+                    <achievement id="integrateddynamics.variableInput" />
+                    <achievement id="integrateddynamics.variableOutput" />
+                </achievements>
+                <rewards>
+                    <reward type="item" amount="64">integrateddynamics:cable</reward>
+                    <reward type="item" amount="16" meta="1">integrateddynamics:variableTransformer</reward>
+                    <reward type="item" amount="16" meta="0">integrateddynamics:variableTransformer</reward>
+                </rewards>
+            </appendix>
+        </section>
     </section>
 </section>

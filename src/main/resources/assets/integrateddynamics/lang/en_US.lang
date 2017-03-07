@@ -101,6 +101,18 @@ achievement.integrateddynamics.drying=Drying like a boss
 achievement.integrateddynamics.drying.desc=Craft a Drying Basin.
 achievement.integrateddynamics.menrilProduction=Menril Production
 achievement.integrateddynamics.menrilProduction.desc=Process a Menril Log into Menril Resin and dry it to obtain Crystalized Menril Resin.
+achievement.integrateddynamics.cablesLogic=Cables, for logic
+achievement.integrateddynamics.cablesLogic.desc=Craft a Logic Cable
+achievement.integrateddynamics.networksLogic=Networks, for logic
+achievement.integrateddynamics.networksLogic.desc=Build a logic network with at least 10 connected Logic Cables.
+achievement.integrateddynamics.menrilWrenching=Menril Wrenching
+achievement.integrateddynamics.menrilWrenching.desc=Craft a Wrench
+achievement.integrateddynamics.variables=Variables, For Values
+achievement.integrateddynamics.variables.desc=Craft a Variable Card
+achievement.integrateddynamics.variableInput=Variable Input Transformation
+achievement.integrateddynamics.variableInput.desc=Craft an Variable Input Transformer
+achievement.integrateddynamics.variableOutput=Variable Output Transformation
+achievement.integrateddynamics.variableOutput.desc=Craft Variable Output Transformer
 
 # Value types
 valuetype.integrateddynamics.valueType=Value Type
@@ -1162,4 +1174,8 @@ info_book.integrateddynamics.tutorials.menrilBasics=Menril Basics
 info_book.integrateddynamics.tutorials.menrilBasics.text1=To get started with this mod, you will need to find some &lMenril Trees&r which can most easily be found in &lMeneglin Biomes&r.
 info_book.integrateddynamics.tutorials.menrilBasics.text2=After that, you’ll need to craft a &lSqueezer&r and &lDrying Basin&r for processing &lMenril Logs&r. This can be done by placing a log in the &lSqueezer&r and jumping on it until the log is flat. Once that has been done, the &lMenril Resin&r will try to go to the two sides of the &lSqueezer&r. Next, place a &lDrying Basin&r next to the &lSqueezer&r to make it fill with the &lMenril Resin&r you just squeezed.
 info_book.integrateddynamics.tutorials.menrilBasics.text3=If you want to repeat the process, you can reset the &lSqueezer&r by applying a redstone pulse.
+
+info_book.integrateddynamics.tutorials.networkFoundations=Network Foundations
+info_book.integrateddynamics.tutorials.networkFoundations.text1=The main goal of this mod is for building control networks for automation. This is done using &lLogic Cables&r. Try making a network with ten of those cables.
+info_book.integrateddynamics.tutorials.networkFoundations.text2=The next step will be to craft some &lVariable Cards&r and &lVariable Transformers&r. &lVariable Cards&r are used to store references to values in the network. &lVariable Transformers&r are crafting elements for components that can be placed on &lLogic Cables&r for reading and writing these values.
 

@@ -241,7 +241,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        CableHelpers.onCableAdded(world, pos);
+        CableHelpers.onCableAdded(world, pos, placer);
     }
 
     @Override

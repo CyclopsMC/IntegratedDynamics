@@ -276,7 +276,7 @@ public class PartCable extends MultipartBase implements ITickable {
     public void onAdded() {
         super.onAdded();
         if(!isAddSilent()) {
-            CableHelpers.onCableAdded(getWorld(), getPos());
+            CableHelpers.onCableAdded(getWorld(), getPos(), null);
             detectPresentParts();
         }
     }
