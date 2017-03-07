@@ -9,7 +9,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -19,9 +18,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
@@ -33,7 +29,6 @@ import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
-import org.cyclops.integrateddynamics.Achievements;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
@@ -68,7 +63,6 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
      */
     public BlockSqueezer(ExtendedConfig eConfig) {
         super(eConfig, Material.IRON, TileSqueezer.class);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -215,13 +209,6 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
     @Override
     public IRecipeRegistry<BlockSqueezer, ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getRecipeRegistry() {
         return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
-    }
-
-    @SubscribeEvent
-    public void onCrafted(PlayerEvent.ItemCraftedEvent event) {
-        if (event.crafting.getItem() == Item.getItemFromBlock(this)) {
-            event.player.addStat(Achievements.SQUEEZING);
-        }
     }
 
     public static enum EnumAxis implements IStringSerializable {

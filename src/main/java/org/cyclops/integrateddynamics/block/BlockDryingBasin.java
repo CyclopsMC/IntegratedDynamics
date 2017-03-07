@@ -12,11 +12,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
@@ -58,7 +55,6 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
      */
     public BlockDryingBasin(ExtendedConfig eConfig) {
         super(eConfig, Material.WOOD, TileDryingBasin.class);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -160,12 +156,5 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
     @Override
     public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return side != EnumFacing.UP && side != EnumFacing.DOWN && super.isSideSolid(base_state, world, pos, side);
-    }
-
-    @SubscribeEvent
-    public void onCrafted(PlayerEvent.ItemCraftedEvent event) {
-        if (event.crafting.getItem() == Item.getItemFromBlock(this)) {
-            event.player.addStat(Achievements.DRYING);
-        }
     }
 }

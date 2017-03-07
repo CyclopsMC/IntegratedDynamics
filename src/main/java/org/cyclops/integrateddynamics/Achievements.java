@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 import org.cyclops.cyclopscore.config.ConfigHandler;
+import org.cyclops.cyclopscore.player.ItemCraftedAchievements;
 import org.cyclops.integrateddynamics.block.*;
 
 /**
@@ -31,6 +33,13 @@ public class Achievements {
 	 */
 	public static void registerAchievements() {
 		AchievementPage.registerAchievementPage(new AchievementPage(Reference.MOD_NAME, ACHIEVEMENTS));
+
+		if (ConfigHandler.isEnabled(BlockSqueezerConfig.class)) {
+			ItemCraftedAchievements.register(Item.getItemFromBlock(BlockSqueezer.getInstance()), SQUEEZING);
+		}
+		if (ConfigHandler.isEnabled(BlockDryingBasinConfig.class)) {
+			ItemCraftedAchievements.register(Item.getItemFromBlock(BlockDryingBasin.getInstance()), DRYING);
+		}
 	}
 	
 	static class ExtendedAchievement extends Achievement {
