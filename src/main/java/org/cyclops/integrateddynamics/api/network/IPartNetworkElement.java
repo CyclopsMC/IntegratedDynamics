@@ -31,4 +31,9 @@ public interface IPartNetworkElement<P extends IPartType<P, S>, S extends IPartS
      */
     public PartTarget getTarget();
 
+    /**
+     * @return If this part's position is currently loaded in the world.
+     */
+    public boolean isLoaded();
+
 }
