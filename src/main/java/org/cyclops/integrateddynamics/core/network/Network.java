@@ -320,13 +320,6 @@ public class Network implements INetwork {
 
     @Override
     public boolean canUpdate(INetworkElement element) {
-        if (invalidatedElements.contains(element)) {
-            if (element.canRevalidate(this)) {
-                element.revalidate(this);
-                return true;
-            }
-            return false;
-        }
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             if (!fullNetworkListener.canUpdate(element)) {
                 return false;
@@ -364,30 +357,32 @@ public class Network implements INetwork {
                 lastSecondDurations.clear();
             }
             for (INetworkElement element : updateableElements) {
-                long startTime = 0;
-                if (isBeingDiagnozed) {
-                    startTime = System.nanoTime();
-                }
-                int lastElementTick = updateableElementsTicks.get(element);
-                if (canUpdate(element)) {
-                    if(lastElementTick <= 0) {
-                        updateableElementsTicks.put(element, element.getUpdateInterval() - 1);
-                        element.update(this);
-                        postUpdate(element);
+                if (isValid(element)) {
+                    long startTime = 0;
+                    if (isBeingDiagnozed) {
+                        startTime = System.nanoTime();
+                    }
+                    int lastElementTick = updateableElementsTicks.get(element);
+                    if (canUpdate(element)) {
+                        if (lastElementTick <= 0) {
+                            updateableElementsTicks.put(element, element.getUpdateInterval() - 1);
+                            element.update(this);
+                            postUpdate(element);
+                        } else {
+                            updateableElementsTicks.put(element, lastElementTick - 1);
+                        }
                     } else {
+                        onSkipUpdate(element);
                         updateableElementsTicks.put(element, lastElementTick - 1);
                     }
-                } else {
-                    onSkipUpdate(element);
-                    updateableElementsTicks.put(element, lastElementTick - 1);
-                }
-                if (isBeingDiagnozed) {
-                    long duration = System.nanoTime() - startTime;
-                    Long lastDuration = lastSecondDurations.get(element);
-                    if (lastDuration != null) {
-                        duration = duration + lastDuration;
+                    if (isBeingDiagnozed) {
+                        long duration = System.nanoTime() - startTime;
+                        Long lastDuration = lastSecondDurations.get(element);
+                        if (lastDuration != null) {
+                            duration = duration + lastDuration;
+                        }
+                        lastSecondDurations.put(element, duration);
                     }
-                    lastSecondDurations.put(element, duration);
                 }
             }
         }
@@ -516,5 +511,16 @@ public class Network implements INetwork {
     @Override
     public void revalidateElement(INetworkElement element) {
         invalidatedElements.remove(element);
+    }
+
+    protected boolean isValid(INetworkElement element) {
+        if (invalidatedElements.contains(element)) {
+            if (element.canRevalidate(this)) {
+                element.revalidate(this);
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
 }
