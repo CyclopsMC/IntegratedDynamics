@@ -102,7 +102,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, new DynamicLightTileMultipartTicking(this, facing));
             addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, new DynamicRedstoneTileMultipartTicking(this, facing));
         }
-
     }
 
     @Override
@@ -246,11 +245,17 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        INetwork network = getNetwork();
-        if (network != null) {
-            for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partContainer.getPartData().entrySet()) {
-                INetworkElement element = entry.getValue().getPart().createNetworkElement(getPartContainer(), DimPos.of(getWorld(), getPos()), entry.getKey());
-                element.invalidate(network);
+        invalidateParts();
+    }
+
+    protected void invalidateParts() {
+        if (getWorld() != null && !getWorld().isRemote) {
+            INetwork network = getNetwork();
+            if (network != null) {
+                for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partContainer.getPartData().entrySet()) {
+                    INetworkElement element = entry.getValue().getPart().createNetworkElement(getPartContainer(), DimPos.of(getWorld(), getPos()), entry.getKey());
+                    element.invalidate(network);
+                }
             }
         }
     }
