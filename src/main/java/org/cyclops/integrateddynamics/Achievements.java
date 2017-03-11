@@ -14,11 +14,17 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.player.ItemCraftedAchievements;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
+import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.event.PartReaderAspectEvent;
@@ -57,6 +63,10 @@ public class Achievements {
 	public static final Achievement REDSTONE_OBSERVEMENT= new ExtendedAchievement("redstoneObservement", -1, -2, new ItemStack(PartTypes.REDSTONE_READER.getItem()), REDSTONE_READING);
 	public static final Achievement REDSTONE_TRANSMISSION = new ExtendedAchievement("redstoneTransmission", -2, -2, new ItemStack(PartTypes.REDSTONE_READER.getItem()), REDSTONE_READING);
 
+	public static final Achievement LOGIC_PROGRAMMING = new ExtendedAchievement("logicProgramming", 4, 2, new ItemStack(ConfigHandler.isEnabled(BlockLogicProgrammerConfig.class) ? BlockLogicProgrammer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
+	public static final Achievement CONSTANT_DEFINITION = new ExtendedAchievement("constantDefinition", 4, 3, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), VARIABLES);
+	public static final Achievement ARITHMETIC_ADDITION = new ExtendedAchievement("arithmeticAddition", 4, 4, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), VARIABLES);
+
     private static final Achievement[] ACHIEVEMENTS = {
 			MENEGLIN_DISCOVERY,
 			SQUEEZING,
@@ -77,7 +87,11 @@ public class Achievements {
 
 			REDSTONE_CAPTURING,
 			REDSTONE_OBSERVEMENT,
-			REDSTONE_TRANSMISSION
+			REDSTONE_TRANSMISSION,
+
+			LOGIC_PROGRAMMING,
+			CONSTANT_DEFINITION,
+			ARITHMETIC_ADDITION
 	};
 
 	private Achievements() {
@@ -147,10 +161,14 @@ public class Achievements {
 
 	@SubscribeEvent
 	public void onPartVariableDrivenUpdateEvent(PartVariableDrivenVariableContentsUpdatedEvent event) {
-		if (event.getPartType() == PartTypes.DISPLAY_PANEL
-				&& event.getValue() instanceof ValueTypeInteger.ValueInteger
-				&& event.getEntityPlayer() != null) {
-			event.getEntityPlayer().addStat(REDSTONE_OBSERVEMENT);
+		if (event.getPartType() == PartTypes.DISPLAY_PANEL && event.getEntityPlayer() != null && event.getValue() != null) {
+			if (event.getVariable() instanceof IAspectVariable
+					&& ((IAspectVariable) event.getVariable()).getAspect() == Aspects.Read.Redstone.INTEGER_VALUE) {
+				event.getEntityPlayer().addStat(REDSTONE_OBSERVEMENT);
+			} else if (event.getVariable() instanceof LazyExpression
+					&& ((LazyExpression) event.getVariable()).getOperator() == Operators.ARITHMETIC_ADDITION) {
+				event.getEntityPlayer().addStat(ARITHMETIC_ADDITION);
+			}
 		}
 	}
 
@@ -170,6 +188,14 @@ public class Achievements {
 			}
 		} catch (EvaluationException e) {
 
+		}
+	}
+
+	@SubscribeEvent
+	public void onVariableFacadeCreated(LogicProgrammerVariableFacadeCreatedEvent event) {
+		if (event.getVariableFacade() instanceof IValueTypeVariableFacade
+				&& ((IValueTypeVariableFacade) event.getVariableFacade()).getValueType() == ValueTypes.INTEGER) {
+			event.getPlayer().addStat(CONSTANT_DEFINITION);
 		}
 	}
 	

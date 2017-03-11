@@ -1,8 +1,11 @@
 package org.cyclops.integrateddynamics.api.item;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.init.IRegistry;
+
+import javax.annotation.Nullable;
 
 /**
  * Registry for retrieving variable facade handlers.
@@ -45,10 +48,11 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @param itemStack The itemstack to write to.
      * @param variableFacadeHandler The variable facade handler.
      * @param variableFacadeFactory A factory for creating a variable facade.
+     * @param player The player crafting the item.
      * @return A copy of the given itemstack with the written variable facade.
      * @param <F> The variable facade type.
      */
-    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory);
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable EntityPlayer player);
 
     /**
      * Create a new variable facade..

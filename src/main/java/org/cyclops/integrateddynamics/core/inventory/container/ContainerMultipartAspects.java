@@ -194,7 +194,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
             public IAspectVariableFacade create(int id) {
                 return new AspectVariableFacade(id, getPartState().getId(), aspect);
             }
-        });
+        }, null);
     }
 
 }

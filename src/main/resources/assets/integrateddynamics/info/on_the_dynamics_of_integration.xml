@@ -101,5 +101,28 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.logicOperations">
+            <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text5</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text6</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text7</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:logicProgrammer</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:portableLogicProgrammer</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:variablestore</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:logicOperations">
+                <achievements>
+                    <achievement id="integrateddynamics.logicProgramming" />
+                    <achievement id="integrateddynamics.constantDefinition" />
+                    <achievement id="integrateddynamics.arithmeticAddition" />
+                </achievements>
+                <rewards>
+                    <reward type="item" amount="5">integrateddynamics:variablestore</reward>
+                    <reward type="item" amount="32">integrateddynamics:variable</reward>
+                </rewards>
+            </appendix>
+        </section>
     </section>
 </section>

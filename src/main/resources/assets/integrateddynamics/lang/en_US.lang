@@ -127,6 +127,12 @@ achievement.integrateddynamics.redstoneObservement=Redstone Observement
 achievement.integrateddynamics.redstoneObservement.desc=Place an §6Integer§7 variable card in a Display Panel.
 achievement.integrateddynamics.redstoneTransmission=Redstone Transmission
 achievement.integrateddynamics.redstoneTransmission.desc=Let a Redstone Writer write a maximal redstone level.
+achievement.integrateddynamics.logicProgramming=Logic Programming
+achievement.integrateddynamics.logicProgramming.desc=Open a Logic Programmer's GUI
+achievement.integrateddynamics.constantDefinition=Constant Definition
+achievement.integrateddynamics.constantDefinition.desc=Define a constant §6Integer§7 Variable Card.
+achievement.integrateddynamics.arithmeticAddition=Arithmetic Addition
+achievement.integrateddynamics.arithmeticAddition.desc=Add two §eNumbers§7 and display the result.
 
 # Value types
 valuetype.integrateddynamics.valueType=Value Type
@@ -1202,3 +1208,12 @@ info_book.integrateddynamics.tutorials.aspects.text2=Do this by attaching a &lRe
 info_book.integrateddynamics.tutorials.aspects.text3=After that, right-click on the &lRedstone Reader&r to to open the gui, after which you have to insert a &lVariable Card&r into the &6Integer&0 &lRedstone Value&r aspect, to bind the target’s redstone value to that &lVariable Card&r.
 info_book.integrateddynamics.tutorials.aspects.text4=Next, place a &lDisplay Panel&r in the same network as the &lRedstone Reader&r, and insert your bound &lVariable Card&r to display it value.
 info_book.integrateddynamics.tutorials.aspects.text5=As a next step, craft a &lRedstone Writer&r and let it write a maximal redstone value.
+
+info_book.integrateddynamics.tutorials.logicOperations=Logic Operations
+info_book.integrateddynamics.tutorials.logicOperations.text1=While displaying values that originate from readers can be useful, things get really interesting when you start combining certain values with other values using &lOperators&r. All &lOperators&r can be found in the &lLogic Programmer&r.
+info_book.integrateddynamics.tutorials.logicOperations.text2=Start by crafting a &lLogic Programmer&r, which exists in both item and block-form. Open its gui to see the list of all &loperators&r.
+info_book.integrateddynamics.tutorials.logicOperations.text3=Next, search for the &6Integer&0 operator, and click on it. This will open a window in which you should type a number. When you have done this, insert an empty &lVariable Card&r to bind that &6Integer&0 to the &lVariable Card&r. When you’re done, do that once more for another &6Integer&0.
+info_book.integrateddynamics.tutorials.logicOperations.text4=Finally, search for the &lAddition&r operator and open it. This allows you to add two &eNumbers&0. Insert your two &6Integer&0 &lVariable Cards&r into these slots, and bind it to a new &lVariable Card&r.
+info_book.integrateddynamics.tutorials.logicOperations.text5=As &1Integrated Dynamics&0 evaluates variables in a &olazy&r manner, this &lAddition&r &lVariable Card&r does not contain the addition of these &6Integers&0 directly, but the addition will only be performed when the value is needed in the network, based on the variable references. For this, the network has to be able to find these referenced &lVariable Card&r. For this, you will need to craft and place a &lVariable Store&r. Insert the two &6Integer&0 &lVariable Cards&r into this store to make them available to the network.
+info_book.integrateddynamics.tutorials.logicOperations.text6=Finally, you can now connect a cable to the &lVariable Store&r, attach a &lDisplay Panel&r, and insert the &lAddition&r &lVariable Card&r to display the addition.
+info_book.integrateddynamics.tutorials.logicOperations.text7=The &lLogic Programmer&r and &lVariable Stores&r are going to be your best friends when you want to do more complex automation.

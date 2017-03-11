@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.part.event;
 
 import net.minecraft.entity.player.EntityPlayer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -18,12 +19,15 @@ public class PartVariableDrivenVariableContentsUpdatedEvent<P extends PartTypePa
     @Nullable
     private final EntityPlayer entityPlayer;
     @Nullable
+    private final IVariable variable;
+    @Nullable
     private final IValue value;
 
     public PartVariableDrivenVariableContentsUpdatedEvent(INetwork network, IPartNetwork partNetwork, PartTarget target, P partType, S partState,
-                                                          @Nullable EntityPlayer entityPlayer, IValue value) {
+                                                          @Nullable EntityPlayer entityPlayer, IVariable variable, IValue value) {
         super(network, partNetwork, target, partType, partState);
         this.entityPlayer = entityPlayer;
+        this.variable = variable;
         this.value = value;
     }
 
@@ -35,5 +39,10 @@ public class PartVariableDrivenVariableContentsUpdatedEvent<P extends PartTypePa
     @Nullable
     public IValue getValue() {
         return value;
+    }
+
+    @Nullable
+    public IVariable getVariable() {
+        return variable;
     }
 }

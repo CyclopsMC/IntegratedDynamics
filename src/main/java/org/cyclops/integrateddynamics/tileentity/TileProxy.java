@@ -107,7 +107,7 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
             public IProxyVariableFacade create(int id) {
                 return new ProxyVariableFacade(id, proxyId);
             }
-        });
+        }, null);
     }
 
     @Override

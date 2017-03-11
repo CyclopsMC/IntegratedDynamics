@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
 import net.minecraft.client.gui.Gui;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,10 +58,11 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
 
     /**
      * The stack to write the current state of this element to.
+     * @param player The player that is writing the element.
      * @param itemStack The stack to write to.
      * @return The resulting itemstack.
      */
-    public ItemStack writeElement(ItemStack itemStack);
+    public ItemStack writeElement(EntityPlayer player, ItemStack itemStack);
 
     /**
      * If this element in its current state can be deactivated because of another item being inserted into the

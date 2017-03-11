@@ -97,7 +97,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
                 public IValueTypeVariableFacade create(int id) {
                     return new ValueTypeVariableFacade(id, valueType, value);
                 }
-            });
+            }, null);
         } catch (EvaluationException e) {
             addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
         }
