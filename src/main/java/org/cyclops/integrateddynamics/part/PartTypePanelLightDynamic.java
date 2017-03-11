@@ -51,8 +51,8 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void onValueChanged(IPartNetwork network, PartTarget target, State state, IValue lastValue, IValue newValue) {
-        super.onValueChanged(network, target, state, lastValue, newValue);
+    protected void onValueChanged(INetwork network, IPartNetwork partNetwork, PartTarget target, State state, IValue lastValue, IValue newValue) {
+        super.onValueChanged(network, partNetwork, target, state, lastValue, newValue);
         int lightLevel = 0;
         if(newValue != null) {
             lightLevel = getLightLevel(state, newValue);

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.part.write;
 
+import net.minecraft.entity.player.EntityPlayer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -7,6 +8,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -42,7 +44,8 @@ public interface IPartTypeWriter<P extends IPartTypeWriter<P, S>, S extends IPar
      * Update the active aspect and active variable for this part.
      * @param target The target block.
      * @param partState The state of this part.
+     * @param player The player activating the aspect, can be null.
      */
-    public void updateActivation(PartTarget target, S partState);
+    public void updateActivation(PartTarget target, S partState, @Nullable EntityPlayer player);
 
 }

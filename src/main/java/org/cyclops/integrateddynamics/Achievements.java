@@ -12,11 +12,20 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.player.ItemCraftedAchievements;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.core.part.event.PartReaderAspectEvent;
+import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariableContentsUpdatedEvent;
+import org.cyclops.integrateddynamics.core.part.event.PartWriterAspectEvent;
 import org.cyclops.integrateddynamics.item.*;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
  * Obtainable achievements in this mod.
@@ -44,6 +53,10 @@ public class Achievements {
 	public static final Achievement INVENTORY_READING = new ExtendedAchievement("inventoryReading", 1, -3, new ItemStack(PartTypes.INVENTORY_READER.getItem()), VARIABLEINPUT);
 	public static final Achievement VALUE_DISPLAYING = new ExtendedAchievement("valueDisplaying", 4, -1, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()), VARIABLEOUTPUT);
 
+	public static final Achievement REDSTONE_CAPTURING = new ExtendedAchievement("redstoneCapturing", 0, -2, new ItemStack(PartTypes.REDSTONE_READER.getItem()), REDSTONE_READING);
+	public static final Achievement REDSTONE_OBSERVEMENT= new ExtendedAchievement("redstoneObservement", -1, -2, new ItemStack(PartTypes.REDSTONE_READER.getItem()), REDSTONE_READING);
+	public static final Achievement REDSTONE_TRANSMISSION = new ExtendedAchievement("redstoneTransmission", -2, -2, new ItemStack(PartTypes.REDSTONE_READER.getItem()), REDSTONE_READING);
+
     private static final Achievement[] ACHIEVEMENTS = {
 			MENEGLIN_DISCOVERY,
 			SQUEEZING,
@@ -60,7 +73,11 @@ public class Achievements {
 			REDSTONE_READING,
 			BLOCK_READING,
 			INVENTORY_READING,
-			VALUE_DISPLAYING
+			VALUE_DISPLAYING,
+
+			REDSTONE_CAPTURING,
+			REDSTONE_OBSERVEMENT,
+			REDSTONE_TRANSMISSION
 	};
 
 	private Achievements() {
@@ -116,6 +133,43 @@ public class Achievements {
 	public void onCrafted(NetworkInitializedEvent event) {
 		if (event.getPlacer() != null && event.getPlacer() instanceof EntityPlayer && event.getNetwork().getCablesCount() >= 10) {
 			((EntityPlayer) event.getPlacer()).addStat(NETWORKS);
+		}
+	}
+
+	@SubscribeEvent
+	public void onPartReaderAspect(PartReaderAspectEvent event) {
+		if (event.getPartType() == PartTypes.REDSTONE_READER
+				&& event.getAspect() == Aspects.Read.Redstone.INTEGER_VALUE
+				&& event.getEntityPlayer() != null) {
+			event.getEntityPlayer().addStat(REDSTONE_CAPTURING);
+		}
+	}
+
+	@SubscribeEvent
+	public void onPartVariableDrivenUpdateEvent(PartVariableDrivenVariableContentsUpdatedEvent event) {
+		if (event.getPartType() == PartTypes.DISPLAY_PANEL
+				&& event.getValue() instanceof ValueTypeInteger.ValueInteger
+				&& event.getEntityPlayer() != null) {
+			event.getEntityPlayer().addStat(REDSTONE_OBSERVEMENT);
+		}
+	}
+
+	@SubscribeEvent
+	public void onPartWriterAspect(PartWriterAspectEvent event) {
+		try {
+			IVariable variable = ((IPartStateWriter) event.getPartState()).getVariable(event.getPartNetwork());
+			if (event.getPartType() == PartTypes.REDSTONE_WRITER
+					&& ((event.getAspect() == Aspects.Write.Redstone.INTEGER
+						&& variable.getValue() instanceof ValueTypeInteger.ValueInteger
+						&& ((ValueTypeInteger.ValueInteger) variable.getValue()).getRawValue() >= 15)
+					|| (event.getAspect() == Aspects.Write.Redstone.INTEGER)
+						&& variable.getValue() instanceof ValueTypeBoolean.ValueBoolean
+						&& ((ValueTypeBoolean.ValueBoolean) variable.getValue()).getRawValue())
+					&& event.getEntityPlayer() != null) {
+				event.getEntityPlayer().addStat(REDSTONE_TRANSMISSION);
+			}
+		} catch (EvaluationException e) {
+
 		}
 	}
 	

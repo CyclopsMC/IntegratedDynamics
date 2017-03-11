@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 /**
  * Container for parts.
+ *
  * @author rubensworks
  */
 @EqualsAndHashCode(callSuper = false)
@@ -60,11 +61,12 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
 
     /**
      * Make a new instance.
-     * @param target The target.
-     * @param player The player.
+     *
+     * @param target        The target.
+     * @param player        The player.
      * @param partContainer The part container.
-     * @param partType The part type.
-     * @param items The items.
+     * @param partType      The part type.
+     * @param items         The items.
      */
     public ContainerMultipartAspects(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType, List<A> items) {
         super(player.inventory, partType, items, new IItemPredicate<A>() {
@@ -87,7 +89,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
         putButtonAction(GuiMultipartAspects.BUTTON_SETTINGS, new IButtonActionServer<InventoryContainer>() {
             @Override
             public void onAction(int buttonId, InventoryContainer container) {
-                if(!world.isRemote) {
+                if (!world.isRemote) {
                     IGuiContainerProvider gui = ((PartTypeConfigurable) getPartType()).getSettingsGuiProvider();
                     IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
                     BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
@@ -98,15 +100,15 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
         });
 
         int nextButtonId = 2;
-        for(final IAspect aspect : getUnfilteredItems()) {
-            if(aspect.hasProperties()) {
+        for (final IAspect aspect : getUnfilteredItems()) {
+            if (aspect.hasProperties()) {
                 aspectPropertyButtons.put(aspect, nextButtonId);
                 putButtonAction(nextButtonId, new IButtonActionServer<InventoryContainer>() {
                     @Override
                     public void onAction(int buttonId, InventoryContainer container) {
                         IGuiContainerProvider gui = aspect.getPropertiesGuiProvider();
                         IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.ASPECT, Pair.of(getTarget().getCenter().getSide(), aspect));
-                        if(!world.isRemote) {
+                        if (!world.isRemote) {
                             BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
                             ContainerMultipartAspects.this.player.openGui(gui.getModGui(), gui.getGuiID(),
                                     world, cPos.getX(), cPos.getY(), cPos.getZ());
@@ -137,7 +139,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
 
     @Override
     public void onContainerClosed(EntityPlayer player) {
-        if(inputSlots instanceof SimpleInventory) {
+        if (inputSlots instanceof SimpleInventory) {
             ((SimpleInventory) inputSlots).removeDirtyMarkListener(this);
         }
     }
@@ -159,7 +161,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
 
     @Override
     protected void onScroll() {
-        for(int i = 0; i < getUnfilteredItemCount(); i++) {
+        for (int i = 0; i < getUnfilteredItemCount(); i++) {
             disableSlot(i);
         }
     }

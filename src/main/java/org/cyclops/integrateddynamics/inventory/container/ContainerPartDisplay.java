@@ -3,14 +3,21 @@ package org.cyclops.integrateddynamics.inventory.container;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
+import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
 /**
@@ -68,6 +75,18 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
     public void onDirty() {
         if(!MinecraftHelpers.isClientSide()) {
             getPartState().onVariableContentsUpdated(getPartType(), getTarget());
+            if (!getPartState().getInventory().isEmpty()) {
+                try {
+                    INetwork network = NetworkHelpers.getNetwork(getTarget().getCenter().getPos().getWorld(),
+                            getTarget().getCenter().getPos().getBlockPos());
+                    IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+                    IVariable variable = getPartState().getVariable(partNetwork);
+                    MinecraftForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network, partNetwork, getTarget(),
+                            getPartType(), getPartState(), getPlayer(), variable != null ? variable.getValue() : null));
+                } catch (EvaluationException e) {
+
+                }
+            }
         }
     }
 

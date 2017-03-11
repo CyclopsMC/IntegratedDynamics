@@ -81,5 +81,25 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.aspects">
+            <paragraph>info_book.integrateddynamics.tutorials.aspects.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.aspects.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.aspects.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.aspects.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.aspects.text5</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:part_redstoneWriterItem</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:aspects">
+                <achievements>
+                    <achievement id="integrateddynamics.redstoneCapturing" />
+                    <achievement id="integrateddynamics.redstoneObservement" />
+                    <achievement id="integrateddynamics.redstoneTransmission" />
+                </achievements>
+                <rewards>
+                    <reward type="item" amount="5">integrateddynamics:part_redstoneReaderItem</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_redstoneWriterItem</reward>
+                    <reward type="item" amount="16">integrateddynamics:variable</reward>
+                </rewards>
+            </appendix>
+        </section>
     </section>
 </section>
