@@ -14,11 +14,11 @@
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text3</paragraph>
             <appendix type="craftingRecipe">integrateddynamics:squeezer</appendix>
             <appendix type="craftingRecipe">integrateddynamics:dryingBasin</appendix>
-            <appendix type="integrateddynamics:squeezerRecipe" index="0">
+            <appendix type="integrateddynamics:squeezerRecipe">
                 <item />
                 <fluid amount="1000">menrilresin</fluid>
             </appendix>
-            <appendix type="integrateddynamics:dryingBasinRecipe" index="0">
+            <appendix type="integrateddynamics:dryingBasinRecipe">
                 <item>integrateddynamics:crystalizedMenrilBlock</item>
                 <fluid />
             </appendix>
@@ -58,6 +58,26 @@
                     <reward type="item" amount="64">integrateddynamics:cable</reward>
                     <reward type="item" amount="16" meta="1">integrateddynamics:variableTransformer</reward>
                     <reward type="item" amount="16" meta="0">integrateddynamics:variableTransformer</reward>
+                </rewards>
+            </appendix>
+        </section>
+        <section name="info_book.integrateddynamics.tutorials.basicNetworkComponents">
+            <paragraph>info_book.integrateddynamics.tutorials.basicNetworkComponents.text1</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:part_redstoneReaderItem</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:part_blockReaderItem</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:part_inventoryReaderItem</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:part_staticLightPanelItem</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:part_displayPanelItem</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:basicNetworkComponents">
+                <achievements>
+                    <achievement id="integrateddynamics.redstoneReading" />
+                    <achievement id="integrateddynamics.blockReading" />
+                    <achievement id="integrateddynamics.inventoryReading" />
+                    <achievement id="integrateddynamics.valueDisplaying" />
+                </achievements>
+                <rewards>
+                    <reward type="item" amount="10">integrateddynamics:variable</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_displayPanelItem</reward>
                 </rewards>
             </appendix>
         </section>

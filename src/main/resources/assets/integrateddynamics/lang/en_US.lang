@@ -113,6 +113,14 @@ achievement.integrateddynamics.variableInput=Variable Input Transformation
 achievement.integrateddynamics.variableInput.desc=Craft an Variable Input Transformer
 achievement.integrateddynamics.variableOutput=Variable Output Transformation
 achievement.integrateddynamics.variableOutput.desc=Craft Variable Output Transformer
+achievement.integrateddynamics.redstoneReading=Redstone Reading
+achievement.integrateddynamics.redstoneReading.desc=Craft a Redstone Reader
+achievement.integrateddynamics.blockReading=Block Reading
+achievement.integrateddynamics.blockReading.desc=Craft a Block Reader
+achievement.integrateddynamics.inventoryReading=Inventory Reading
+achievement.integrateddynamics.inventoryReading.desc=Craft an Inventory Reader
+achievement.integrateddynamics.valueDisplaying=Value Displaying
+achievement.integrateddynamics.valueDisplaying.desc=Craft a Display Panel
 
 # Value types
 valuetype.integrateddynamics.valueType=Value Type
@@ -1178,4 +1186,7 @@ info_book.integrateddynamics.tutorials.menrilBasics.text3=If you want to repeat 
 info_book.integrateddynamics.tutorials.networkFoundations=Network Foundations
 info_book.integrateddynamics.tutorials.networkFoundations.text1=The main goal of this mod is for building control networks for automation. This is done using &lLogic Cables&r. Try making a network with ten of those cables.
 info_book.integrateddynamics.tutorials.networkFoundations.text2=The next step will be to craft some &lVariable Cards&r and &lVariable Transformers&r. &lVariable Cards&r are used to store references to values in the network. &lVariable Transformers&r are crafting elements for components that can be placed on &lLogic Cables&r for reading and writing these values.
+
+info_book.integrateddynamics.tutorials.basicNetworkComponents=Basic Network Components
+info_book.integrateddynamics.tutorials.basicNetworkComponents.text1=One of the methods for binding &lVariable Cards&r to certain values, is by reading in values from &lReaders&r. Let’s start by crafting some basic readers. After that, craft a &lDisplay Panel&r, which is useful for displaying the values of &lVariable Cards&r.
 

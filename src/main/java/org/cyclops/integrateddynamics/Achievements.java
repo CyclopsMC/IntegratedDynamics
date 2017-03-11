@@ -15,6 +15,7 @@ import org.cyclops.cyclopscore.player.ItemCraftedAchievements;
 import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.item.*;
 
 /**
@@ -26,7 +27,7 @@ public class Achievements {
 
 	private static final Achievements _INSTANCE = new Achievements();
 
-	public static final Achievement MENEGLIN_DISCOVERY = new ExtendedAchievement("meneglinDiscovery", 0, 0, new ItemStack(ConfigHandler.isEnabled(BlockMenrilLogFilledConfig.class) ? BlockMenrilLogFilledConfig._instance.getBlockInstance() : Blocks.LOG), null);
+	public static final Achievement MENEGLIN_DISCOVERY = new ExtendedAchievement("meneglinDiscovery", -1, 0, new ItemStack(ConfigHandler.isEnabled(BlockMenrilLogFilledConfig.class) ? BlockMenrilLogFilledConfig._instance.getBlockInstance() : Blocks.LOG), null);
 	public static final Achievement SQUEEZING = new ExtendedAchievement("squeezing", -1, 1, new ItemStack(ConfigHandler.isEnabled(BlockSqueezerConfig.class) ? BlockSqueezer.getInstance() : Blocks.LOG), MENEGLIN_DISCOVERY);
 	public static final Achievement DRYING = new ExtendedAchievement("drying", -1, 2, new ItemStack(ConfigHandler.isEnabled(BlockDryingBasinConfig.class) ? BlockDryingBasin.getInstance() : Blocks.LOG), SQUEEZING);
 	public static final Achievement MENRIL_PRODUCTION = new ExtendedAchievement("menrilProduction", 0, 3, new ItemStack(ConfigHandler.isEnabled(BlockCrystalizedMenrilBlockConfig.class) ? BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance() : Blocks.LOG), DRYING);
@@ -36,7 +37,12 @@ public class Achievements {
 	public static final Achievement WRENCHING = new ExtendedAchievement("menrilWrenching", 2, 3, new ItemStack(ConfigHandler.isEnabled(ItemWrenchConfig.class) ? ItemWrench.getInstance() : Items.APPLE), MENRIL_PRODUCTION);
 	public static final Achievement VARIABLES = new ExtendedAchievement("variables", 2, 2, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), MENRIL_PRODUCTION);
 	public static final Achievement VARIABLEINPUT = new ExtendedAchievement("variableInput", 2, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableTransformerConfig.class) ? ItemVariableTransformerConfig._instance.getItemInstance() : Items.APPLE, 1, 1), MENRIL_PRODUCTION);
-	public static final Achievement VARIABLEOUTPUT = new ExtendedAchievement("variableOutput", 2, 0, new ItemStack(ConfigHandler.isEnabled(ItemVariableTransformerConfig.class) ? ItemVariableTransformerConfig._instance.getItemInstance() : Items.APPLE, 1, 0), MENRIL_PRODUCTION);
+	public static final Achievement VARIABLEOUTPUT = new ExtendedAchievement("variableOutput", 3, 0, new ItemStack(ConfigHandler.isEnabled(ItemVariableTransformerConfig.class) ? ItemVariableTransformerConfig._instance.getItemInstance() : Items.APPLE, 1, 0), MENRIL_PRODUCTION);
+
+	public static final Achievement REDSTONE_READING = new ExtendedAchievement("redstoneReading", 1, -1, new ItemStack(PartTypes.REDSTONE_READER.getItem()), VARIABLEINPUT);
+	public static final Achievement BLOCK_READING = new ExtendedAchievement("blockReading", 1, -2, new ItemStack(PartTypes.BLOCK_READER.getItem()), VARIABLEINPUT);
+	public static final Achievement INVENTORY_READING = new ExtendedAchievement("inventoryReading", 1, -3, new ItemStack(PartTypes.INVENTORY_READER.getItem()), VARIABLEINPUT);
+	public static final Achievement VALUE_DISPLAYING = new ExtendedAchievement("valueDisplaying", 4, -1, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()), VARIABLEOUTPUT);
 
     private static final Achievement[] ACHIEVEMENTS = {
 			MENEGLIN_DISCOVERY,
@@ -49,7 +55,12 @@ public class Achievements {
 			WRENCHING,
 			VARIABLES,
 			VARIABLEINPUT,
-			VARIABLEOUTPUT
+			VARIABLEOUTPUT,
+
+			REDSTONE_READING,
+			BLOCK_READING,
+			INVENTORY_READING,
+			VALUE_DISPLAYING
 	};
 
 	private Achievements() {
@@ -94,6 +105,11 @@ public class Achievements {
 				}
 			});
 		}
+
+		ItemCraftedAchievements.register(PartTypes.REDSTONE_READER.getItem(), REDSTONE_READING);
+		ItemCraftedAchievements.register(PartTypes.BLOCK_READER.getItem(), BLOCK_READING);
+		ItemCraftedAchievements.register(PartTypes.INVENTORY_READER.getItem(), INVENTORY_READING);
+		ItemCraftedAchievements.register(PartTypes.DISPLAY_PANEL.getItem(), VALUE_DISPLAYING);
 	}
 
 	@SubscribeEvent
