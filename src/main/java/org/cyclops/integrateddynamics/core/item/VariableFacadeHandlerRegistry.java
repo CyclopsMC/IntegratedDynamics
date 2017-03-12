@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.item;
 
 import com.google.common.collect.Maps;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -88,7 +89,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable EntityPlayer player) {
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable EntityPlayer player, @Nullable Block block) {
         if(itemStack == null) {
             return null;
         }
@@ -96,7 +97,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
         F variableFacade = writeVariableFacade(generateId, itemStack, variableFacadeHandler, variableFacadeFactory);
         if (player != null) {
-            MinecraftForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade));
+            MinecraftForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade, block));
         }
         this.write(tag, variableFacade, variableFacadeHandler);
         return itemStack;

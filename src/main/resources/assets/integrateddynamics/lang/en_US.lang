@@ -133,6 +133,10 @@ achievement.integrateddynamics.constantDefinition=Constant Definition
 achievement.integrateddynamics.constantDefinition.desc=Define a constant §6Integer§7 Variable Card.
 achievement.integrateddynamics.arithmeticAddition=Arithmetic Addition
 achievement.integrateddynamics.arithmeticAddition.desc=Add two §eNumbers§7 and display the result.
+achievement.integrateddynamics.variableMaterialization=Variable Materialization
+achievement.integrateddynamics.variableMaterialization.desc=Materialize a variable in a §lMaterializer§r.
+achievement.integrateddynamics.variableProxying=Variable Proxying
+achievement.integrateddynamics.variableProxying.desc=Create a valid proxy variable in a §lProxy§r.
 
 # Value types
 valuetype.integrateddynamics.valueType=Value Type
@@ -1217,3 +1221,10 @@ info_book.integrateddynamics.tutorials.logicOperations.text4=Finally, search for
 info_book.integrateddynamics.tutorials.logicOperations.text5=As &1Integrated Dynamics&0 evaluates variables in a &olazy&r manner, this &lAddition&r &lVariable Card&r does not contain the addition of these &6Integers&0 directly, but the addition will only be performed when the value is needed in the network, based on the variable references. For this, the network has to be able to find these referenced &lVariable Card&r. For this, you will need to craft and place a &lVariable Store&r. Insert the two &6Integer&0 &lVariable Cards&r into this store to make them available to the network.
 info_book.integrateddynamics.tutorials.logicOperations.text6=Finally, you can now connect a cable to the &lVariable Store&r, attach a &lDisplay Panel&r, and insert the &lAddition&r &lVariable Card&r to display the addition.
 info_book.integrateddynamics.tutorials.logicOperations.text7=The &lLogic Programmer&r and &lVariable Stores&r are going to be your best friends when you want to do more complex automation.
+
+info_book.integrateddynamics.tutorials.advancedNetworkComponents=Advanced Network Components
+info_book.integrateddynamics.tutorials.advancedNetworkComponents.text1=Now that you are familiar with basic logic, we can have a look at the more advanced network components: the &lMaterializer&r and the &lProxy&r.
+info_book.integrateddynamics.tutorials.advancedNetworkComponents.text2=As you may remember, the &lLogic Programmer&r allows you to create variables with &ostatic&r values, or you can create more complex variables based on &odynamic&r value evaluation.
+info_book.integrateddynamics.tutorials.advancedNetworkComponents.text3=The &lMaterializer&r can be used for converting a &odynamic&r value to a &ostatic&r one. This can be done by inserting the &odynamic&r &lVariable Card&r in the top slot of the &lMaterializer&r. Every &lVariable Card&r that is inserted into the left slot, will be set with the value the top variable has at that moment.
+info_book.integrateddynamics.tutorials.advancedNetworkComponents.text4=The &lProxy&r allows you to add an extra level of indirection for your variables. You may for example have a logic program that requires a &ostatic&r value in there. If at any point in the future, you want to change that value, you would have to rewrite your program, unless that value was &oproxied&r, in which case you would simply have to update the value in the &lProxy&r.
+info_book.integrateddynamics.tutorials.advancedNetworkComponents.text5=For this tutorial, create materialized and proxied &lVariable Cards&r.

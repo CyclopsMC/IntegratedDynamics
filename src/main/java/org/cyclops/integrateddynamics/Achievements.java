@@ -14,6 +14,7 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.player.ItemCraftedAchievements;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
@@ -67,6 +68,9 @@ public class Achievements {
 	public static final Achievement CONSTANT_DEFINITION = new ExtendedAchievement("constantDefinition", 4, 3, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), VARIABLES);
 	public static final Achievement ARITHMETIC_ADDITION = new ExtendedAchievement("arithmeticAddition", 4, 4, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), VARIABLES);
 
+	public static final Achievement VARIABLE_MATERIALIZATION = new ExtendedAchievement("variableMaterialization", 4, 5, new ItemStack(ConfigHandler.isEnabled(BlockMaterializerConfig.class) ? BlockMaterializer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
+	public static final Achievement VARIABLE_PROXYING = new ExtendedAchievement("variableProxying", 4, 6, new ItemStack(ConfigHandler.isEnabled(BlockProxyConfig.class) ? BlockProxy.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
+
     private static final Achievement[] ACHIEVEMENTS = {
 			MENEGLIN_DISCOVERY,
 			SQUEEZING,
@@ -91,7 +95,10 @@ public class Achievements {
 
 			LOGIC_PROGRAMMING,
 			CONSTANT_DEFINITION,
-			ARITHMETIC_ADDITION
+			ARITHMETIC_ADDITION,
+
+			VARIABLE_MATERIALIZATION,
+			VARIABLE_PROXYING
 	};
 
 	private Achievements() {
@@ -193,9 +200,15 @@ public class Achievements {
 
 	@SubscribeEvent
 	public void onVariableFacadeCreated(LogicProgrammerVariableFacadeCreatedEvent event) {
-		if (event.getVariableFacade() instanceof IValueTypeVariableFacade
+		if (event.getBlock() == BlockLogicProgrammer.getInstance()
+				&& event.getVariableFacade() instanceof IValueTypeVariableFacade
 				&& ((IValueTypeVariableFacade) event.getVariableFacade()).getValueType() == ValueTypes.INTEGER) {
 			event.getPlayer().addStat(CONSTANT_DEFINITION);
+		} else if (event.getBlock() == BlockMaterializer.getInstance()) {
+			event.getPlayer().addStat(VARIABLE_MATERIALIZATION);
+		} else if (event.getBlock() == BlockProxy.getInstance()
+				&& event.getVariableFacade() instanceof IProxyVariableFacade) {
+			event.getPlayer().addStat(VARIABLE_PROXYING);
 		}
 	}
 	

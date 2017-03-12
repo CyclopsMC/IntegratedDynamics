@@ -124,5 +124,24 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.advancedNetworkComponents">
+            <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text5</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:materializer</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:proxy</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:advancedNetworkComponents">
+                <achievements>
+                    <achievement id="integrateddynamics.variableMaterialization" />
+                    <achievement id="integrateddynamics.variableProxying" />
+                </achievements>
+                <rewards>
+                    <reward type="item" amount="5">integrateddynamics:materializer</reward>
+                    <reward type="item" amount="5">integrateddynamics:proxy</reward>
+                </rewards>
+            </appendix>
+        </section>
     </section>
 </section>
