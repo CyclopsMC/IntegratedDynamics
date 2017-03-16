@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.player.ItemCraftedAchievements;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
@@ -74,6 +75,9 @@ public class Achievements {
 	public static final Achievement ITEM_ORIGIN_IDENTIFICATION = new ExtendedAchievement("itemOriginIdentification", 6, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
 	public static final Achievement WHAT_WOULD_I_BE_LOOKING_AT = new ExtendedAchievement("whatWouldIBeLookingAt", 7, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
 
+	public static final Achievement DYNAMIC_ADDITIONS = new ExtendedAchievement("dynamicAdditions", 8, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement DYNAMIC_LIST_FILTERING = new ExtendedAchievement("dynamicListFiltering", 9, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
+
     private static final Achievement[] ACHIEVEMENTS = {
 			MENEGLIN_DISCOVERY,
 			SQUEEZING,
@@ -105,7 +109,10 @@ public class Achievements {
 
 			LOGICAL_LIST_BUILDING,
 			ITEM_ORIGIN_IDENTIFICATION,
-			WHAT_WOULD_I_BE_LOOKING_AT
+			WHAT_WOULD_I_BE_LOOKING_AT,
+
+			DYNAMIC_ADDITIONS,
+			DYNAMIC_LIST_FILTERING
 	};
 
 	private Achievements() {
@@ -186,6 +193,29 @@ public class Achievements {
 					event.getEntityPlayer().addStat(ITEM_ORIGIN_IDENTIFICATION);
 				} else if (((LazyExpression) event.getVariable()).getOperator() == Operators.OBJECT_PLAYER_TARGETBLOCK) {
 					event.getEntityPlayer().addStat(WHAT_WOULD_I_BE_LOOKING_AT);
+				} else if (((LazyExpression) event.getVariable()).getOperator() == Operators.OPERATOR_APPLY) {
+					if (((LazyExpression) event.getVariable()).getInput().length == 2) {
+						IVariable variable = ((LazyExpression) event.getVariable()).getInput()[0];
+						if (variable instanceof LazyExpression
+								&& ((LazyExpression) variable).getOperator() == Operators.OPERATOR_APPLY) {
+							try {
+								IValue value = event.getVariable().getValue();
+								if (value.getType() == ValueTypes.INTEGER) {
+									event.getEntityPlayer().addStat(DYNAMIC_ADDITIONS);
+								}
+							} catch (EvaluationException e) {}
+						}
+					}
+				} else if (((LazyExpression) event.getVariable()).getOperator() == Operators.OPERATOR_FILTER) {
+					try {
+						IValue value = event.getVariable().getValue();
+						if (value.getType() == ValueTypes.LIST
+								&& ((ValueTypeList.ValueList) value).getRawValue().getLength() == 1
+								&& ((ValueTypeList.ValueList) value).getRawValue().get(0).getType() == ValueTypes.INTEGER
+								&& ((ValueTypeInteger.ValueInteger) ((ValueTypeList.ValueList) value).getRawValue().get(0)).getRawValue() == 10) {
+							event.getEntityPlayer().addStat(DYNAMIC_LIST_FILTERING);
+                        }
+					} catch (EvaluationException e) {}
 				}
 			} else if (event.getVariable() instanceof Variable
 					&& event.getVariable().getType() == ValueTypes.LIST) {
@@ -198,9 +228,7 @@ public class Achievements {
 							&& ((ValueTypeInteger.ValueInteger) list.get(2)).getRawValue() == 100) {
 						event.getEntityPlayer().addStat(LOGICAL_LIST_BUILDING);
 					}
-				} catch (EvaluationException e) {
-
-				}
+				} catch (EvaluationException e) {}
 			}
 		}
 	}

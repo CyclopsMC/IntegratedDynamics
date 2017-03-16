@@ -143,6 +143,10 @@ achievement.integrateddynamics.itemOriginIdentification=Item Origin Identificati
 achievement.integrateddynamics.itemOriginIdentification.desc=Get the mod name of an Item.
 achievement.integrateddynamics.whatWouldIBeLookingAt=What Would I Be Looking At?
 achievement.integrateddynamics.whatWouldIBeLookingAt.desc=Get the Block you are looking at.
+achievement.integrateddynamics.dynamicAdditions=Dynamic Additions
+achievement.integrateddynamics.dynamicAdditions.desc=Invoke the addition Operator dynamically
+achievement.integrateddynamics.dynamicListFiltering=Dynamic List Filtering
+achievement.integrateddynamics.dynamicListFiltering.desc=Filter an Integer list 1, 10 and 100 to 10.
 
 # Value types
 valuetype.integrateddynamics.valueType=Value Type
@@ -1220,7 +1224,7 @@ info_book.integrateddynamics.tutorials.aspects.text4=Next, place a &lDisplay Pan
 info_book.integrateddynamics.tutorials.aspects.text5=As a next step, craft a &lRedstone Writer&r and let it write a maximal redstone value.
 
 info_book.integrateddynamics.tutorials.logicOperations=Logic Operations
-info_book.integrateddynamics.tutorials.logicOperations.text1=While displaying values that originate from readers can be useful, things get really interesting when you start combining certain values with other values using &lOperators&r. All &lOperators&r can be found in the &lLogic Programmer&r.
+info_book.integrateddynamics.tutorials.logicOperations.text1=While displaying values that originate from readers can be useful, things get really interesting when you start combining certain values with other values using &2Operators&0. All &2Operators&0 can be found in the &lLogic Programmer&r.
 info_book.integrateddynamics.tutorials.logicOperations.text2=Start by crafting a &lLogic Programmer&r, which exists in both item and block-form. Open its gui to see the list of all &loperators&r.
 info_book.integrateddynamics.tutorials.logicOperations.text3=Next, search for the &6Integer&0 operator, and click on it. This will open a window in which you should type a number. When you have done this, insert an empty &lVariable Card&r to bind that &6Integer&0 to the &lVariable Card&r. When you’re done, do that once more for another &6Integer&0.
 info_book.integrateddynamics.tutorials.logicOperations.text4=Finally, search for the &lAddition&r operator and open it. This allows you to add two &eNumbers&0. Insert your two &6Integer&0 &lVariable Cards&r into these slots, and bind it to a new &lVariable Card&r.
@@ -1241,3 +1245,9 @@ info_book.integrateddynamics.tutorials.advancedOperations.text2=Let’s start by
 info_book.integrateddynamics.tutorials.advancedOperations.text3=&7Items&0 are one of the possible value types in this mod. Let’s make a static &7Item&0 &lVariable Card&r, dynamically retrieve the mod name from that item, and visualize it in a &lDisplay Panel&r.
 info_book.integrateddynamics.tutorials.advancedOperations.text4=Remember that you’ll have to use a &lVariable Store&r to store your referenced variable.
 info_book.integrateddynamics.tutorials.advancedOperations.text5=For the final, part of this tutorial, we’ll combine dynamic variables with operators. Attach an &lEntity Reader&r to a network, read the target &7Entity&0, retrieve the &7Block&0 the target &7Entity&0 is looking at, and visualize that &7Block&0 in a &lDisplay Panel&r.
+
+info_book.integrateddynamics.tutorials.theValueOfOperators=The Value of Operators
+info_book.integrateddynamics.tutorials.theValueOfOperators.text1=In &1Integrated Dynamics&0, &2Operators&0 are first-class citizens. Up until now, we have only used manually using the &lLogic Programmer&r, but in this tutorial, we’ll look into how they can be used in a more dynamic way, by storing &2Operators&0 in &lVariable Cards&r, and invoking them dynamically.
+info_book.integrateddynamics.tutorials.theValueOfOperators.text2=As a first step, go to the &lLogic Programmer&r, and create a new static &2Operator&0, from the dropdown-list, choose the &oArithmetic Addition&r &2Operator&0, and write it to a &lVariable Card&r. After that, create two &6Integer&0 variables. Next, find the &oApply&r operator, and apply the first &6Integer&0 to the &2Operator&0, which will &obind&r the first input argument of the addition &2Operator&0 to that &6Integer&0, and will output a new &2Operator&0 with one remaining input argument. Next, use the &oApply&r operator again to &obind&r the final input argument of the newly created &2Operator&0. Finally, use a &lDisplay Panel&r to visualize your dynamically invoked addition.
+info_book.integrateddynamics.tutorials.theValueOfOperators.text3=Next to applying &2Operators&0, there are a lot of other advanced &2Operator&0 operations. We’ll now look into using &2Operators&0 on &7Lists&0, more specifically the &oFilter&r &2Operator&0 that takes a &7List&0 and a &oPredicate&r (an &2Operator&0 with one input argument and a &9Boolean&0 output value). Start by creating a &7List&0 of the &6Integers&0 &61&0, &610&0 and &6100&0. Next, store the &oRelational Equals&r &2Operator&0 in a variable. Next, apply this operator on the &6Integer&0 &610&0. Next, use the &oFilter&r &2Operator&0 with your &7List&0 and the applied &2Operator&0. This will filter away all the items from the &7List&0 that return &9False&0 by applying them on the given operator, which in this case means that all elements that are not equal to &610&0 will be removed from the list. Visualize the result in a &lDisplay Panel&r.
+info_book.integrateddynamics.tutorials.theValueOfOperators.text4=There are plenty of other operations on &2Operators&0, such as combining &oPredicates&r, flipping &2Operator&0 arguments, and more operations on &7Lists&0.
