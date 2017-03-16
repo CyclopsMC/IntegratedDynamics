@@ -137,6 +137,12 @@ achievement.integrateddynamics.variableMaterialization=Variable Materialization
 achievement.integrateddynamics.variableMaterialization.desc=Materialize a variable in a §lMaterializer§r.
 achievement.integrateddynamics.variableProxying=Variable Proxying
 achievement.integrateddynamics.variableProxying.desc=Create a valid proxy variable in a §lProxy§r.
+achievement.integrateddynamics.logicalListBuilding=Logical List Building
+achievement.integrateddynamics.logicalListBuilding.desc=Construct a static List with §6Integers§7 1, 10 and 100.
+achievement.integrateddynamics.itemOriginIdentification=Item Origin Identification
+achievement.integrateddynamics.itemOriginIdentification.desc=Get the mod name of an Item.
+achievement.integrateddynamics.whatWouldIBeLookingAt=What Would I Be Looking At?
+achievement.integrateddynamics.whatWouldIBeLookingAt.desc=Get the Block you are looking at.
 
 # Value types
 valuetype.integrateddynamics.valueType=Value Type
@@ -1228,3 +1234,10 @@ info_book.integrateddynamics.tutorials.advancedNetworkComponents.text2=As you ma
 info_book.integrateddynamics.tutorials.advancedNetworkComponents.text3=The &lMaterializer&r can be used for converting a &odynamic&r value to a &ostatic&r one. This can be done by inserting the &odynamic&r &lVariable Card&r in the top slot of the &lMaterializer&r. Every &lVariable Card&r that is inserted into the left slot, will be set with the value the top variable has at that moment.
 info_book.integrateddynamics.tutorials.advancedNetworkComponents.text4=The &lProxy&r allows you to add an extra level of indirection for your variables. You may for example have a logic program that requires a &ostatic&r value in there. If at any point in the future, you want to change that value, you would have to rewrite your program, unless that value was &oproxied&r, in which case you would simply have to update the value in the &lProxy&r.
 info_book.integrateddynamics.tutorials.advancedNetworkComponents.text5=For this tutorial, create materialized and proxied &lVariable Cards&r.
+
+info_book.integrateddynamics.tutorials.advancedOperations=Advanced Operations
+info_book.integrateddynamics.tutorials.advancedOperations.text1=As you may have noticed during the last tutorial, the &lLogic Programmer&r allows you to do way more than just adding numbers. In this tutorial, we’ll look into the more advanced datastructures and chaining of operators.
+info_book.integrateddynamics.tutorials.advancedOperations.text2=Let’s start by creating a static &7List&0 of the &6Integers&0 &61&0, &610&0 and &6100&0, and visualize it in a &lDisplay Panel&r.
+info_book.integrateddynamics.tutorials.advancedOperations.text3=&7Items&0 are one of the possible value types in this mod. Let’s make a static &7Item&0 &lVariable Card&r, dynamically retrieve the mod name from that item, and visualize it in a &lDisplay Panel&r.
+info_book.integrateddynamics.tutorials.advancedOperations.text4=Remember that you’ll have to use a &lVariable Store&r to store your referenced variable.
+info_book.integrateddynamics.tutorials.advancedOperations.text5=For the final, part of this tutorial, we’ll combine dynamic variables with operators. Attach an &lEntity Reader&r to a network, read the target &7Entity&0, retrieve the &7Block&0 the target &7Entity&0 is looking at, and visualize that &7Block&0 in a &lDisplay Panel&r.

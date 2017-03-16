@@ -143,5 +143,25 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.advancedOperations">
+            <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text5</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:part_entityReaderItem</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:advancedOperations">
+                <achievements>
+                    <achievement id="integrateddynamics.logicalListBuilding" />
+                    <achievement id="integrateddynamics.itemOriginIdentification" />
+                    <achievement id="integrateddynamics.whatWouldIBeLookingAt" />
+                </achievements>
+                <rewards>
+                    <reward type="item" amount="64">integrateddynamics:variable</reward>
+                    <reward type="item" amount="64">integrateddynamics:variable</reward>
+                    <reward type="item" amount="32">integrateddynamics:variablestore</reward>
+                </rewards>
+            </appendix>
+        </section>
     </section>
 </section>

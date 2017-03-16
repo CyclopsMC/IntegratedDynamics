@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.player.ItemCraftedAchievements;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
@@ -22,9 +23,7 @@ import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
@@ -71,6 +70,10 @@ public class Achievements {
 	public static final Achievement VARIABLE_MATERIALIZATION = new ExtendedAchievement("variableMaterialization", 4, 5, new ItemStack(ConfigHandler.isEnabled(BlockMaterializerConfig.class) ? BlockMaterializer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
 	public static final Achievement VARIABLE_PROXYING = new ExtendedAchievement("variableProxying", 4, 6, new ItemStack(ConfigHandler.isEnabled(BlockProxyConfig.class) ? BlockProxy.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
 
+	public static final Achievement LOGICAL_LIST_BUILDING = new ExtendedAchievement("logicalListBuilding", 5, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement ITEM_ORIGIN_IDENTIFICATION = new ExtendedAchievement("itemOriginIdentification", 6, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement WHAT_WOULD_I_BE_LOOKING_AT = new ExtendedAchievement("whatWouldIBeLookingAt", 7, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
+
     private static final Achievement[] ACHIEVEMENTS = {
 			MENEGLIN_DISCOVERY,
 			SQUEEZING,
@@ -98,7 +101,11 @@ public class Achievements {
 			ARITHMETIC_ADDITION,
 
 			VARIABLE_MATERIALIZATION,
-			VARIABLE_PROXYING
+			VARIABLE_PROXYING,
+
+			LOGICAL_LIST_BUILDING,
+			ITEM_ORIGIN_IDENTIFICATION,
+			WHAT_WOULD_I_BE_LOOKING_AT
 	};
 
 	private Achievements() {
@@ -172,9 +179,28 @@ public class Achievements {
 			if (event.getVariable() instanceof IAspectVariable
 					&& ((IAspectVariable) event.getVariable()).getAspect() == Aspects.Read.Redstone.INTEGER_VALUE) {
 				event.getEntityPlayer().addStat(REDSTONE_OBSERVEMENT);
-			} else if (event.getVariable() instanceof LazyExpression
-					&& ((LazyExpression) event.getVariable()).getOperator() == Operators.ARITHMETIC_ADDITION) {
-				event.getEntityPlayer().addStat(ARITHMETIC_ADDITION);
+			} else if (event.getVariable() instanceof LazyExpression) {
+				if (((LazyExpression) event.getVariable()).getOperator() == Operators.ARITHMETIC_ADDITION) {
+					event.getEntityPlayer().addStat(ARITHMETIC_ADDITION);
+				} else if (((LazyExpression) event.getVariable()).getOperator() == Operators.OBJECT_ITEMSTACK_MODNAME) {
+					event.getEntityPlayer().addStat(ITEM_ORIGIN_IDENTIFICATION);
+				} else if (((LazyExpression) event.getVariable()).getOperator() == Operators.OBJECT_PLAYER_TARGETBLOCK) {
+					event.getEntityPlayer().addStat(WHAT_WOULD_I_BE_LOOKING_AT);
+				}
+			} else if (event.getVariable() instanceof Variable
+					&& event.getVariable().getType() == ValueTypes.LIST) {
+				IValueTypeListProxy list = ((ValueTypeList.ValueList) event.getValue()).getRawValue();
+				try {
+					if (list.getLength() == 3
+							&& list.getValueType() == ValueTypes.INTEGER
+							&& ((ValueTypeInteger.ValueInteger) list.get(0)).getRawValue() == 1
+							&& ((ValueTypeInteger.ValueInteger) list.get(1)).getRawValue() == 10
+							&& ((ValueTypeInteger.ValueInteger) list.get(2)).getRawValue() == 100) {
+						event.getEntityPlayer().addStat(LOGICAL_LIST_BUILDING);
+					}
+				} catch (EvaluationException e) {
+
+				}
 			}
 		}
 	}
