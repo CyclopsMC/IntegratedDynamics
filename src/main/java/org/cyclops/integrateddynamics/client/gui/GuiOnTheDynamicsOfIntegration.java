@@ -15,10 +15,8 @@ import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
  */
 public class GuiOnTheDynamicsOfIntegration extends GuiInfoBook {
 
-    protected static final ResourceLocation texture = new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_GUI + "on_the_dynamics_of_integration_gui.png");
-
-    public static final int X_OFFSET_OUTER = 20;
-    public static final int X_OFFSET_INNER = 7;
+    protected static final ResourceLocation texture = new ResourceLocation(Reference.MOD_ID,
+            Reference.TEXTURE_PATH_GUI + "on_the_dynamics_of_integration_gui.png");
 
     public GuiOnTheDynamicsOfIntegration(EntityPlayer player, int itemIndex) {
         super(player, itemIndex, OnTheDynamicsOfIntegrationBook.getInstance(), texture);
@@ -40,8 +38,33 @@ public class GuiOnTheDynamicsOfIntegration extends GuiInfoBook {
     }
 
     @Override
+    protected int getPageYOffset() {
+        return 9;
+    }
+
+    @Override
+    protected int getFootnoteOffsetX() {
+        return -2;
+    }
+
+    @Override
+    protected int getFootnoteOffsetY() {
+        return -8;
+    }
+
+    @Override
+    protected int getPrevNextOffsetY() {
+        return 7;
+    }
+
+    @Override
+    protected int getPrevNextOffsetX() {
+        return 16;
+    }
+
+    @Override
     protected int getOffsetXForPageBase(int page) {
-        return page == 0 ? X_OFFSET_OUTER : X_OFFSET_INNER;
+        return page == 0 ? 20 : 10;
     }
 
     @Override
