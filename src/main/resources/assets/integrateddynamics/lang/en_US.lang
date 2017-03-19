@@ -147,6 +147,16 @@ achievement.integrateddynamics.dynamicAdditions=Dynamic Additions
 achievement.integrateddynamics.dynamicAdditions.desc=Invoke the addition Operator dynamically
 achievement.integrateddynamics.dynamicListFiltering=Dynamic List Filtering
 achievement.integrateddynamics.dynamicListFiltering.desc=Filter an Integer list 1, 10 and 100 to 10.
+achievement.integrateddynamics.creeperTaming=Creeper Taming
+achievement.integrateddynamics.creeperTaming.desc=Show the HP of a Creeper in a Display Panel
+achievement.integrateddynamics.spongeStepSound=Sponge Step Sound
+achievement.integrateddynamics.spongeStepSound.desc=Play the step sound of a wet Sponge block
+achievement.integrateddynamics.recursiveRecursion=Recursive Recursion
+achievement.integrateddynamics.recursiveRecursion.desc=Create an infinite List, and display it in a Display Panel
+achievement.integrateddynamics.toolForObsidian=Tools for Obsidian?
+achievement.integrateddynamics.toolForObsidian.desc=Check if a Stone Pickaxe can break an Obsidian block, and show the result in a Display Panel.
+achievement.integrateddynamics.smartPressurePlate=Smart Pressure Plate
+achievement.integrateddynamics.smartPressurePlate.desc=Create a system that automatically opens a door when you pass by an Entity Reader based on entity name matching, using a Redstone Writer directly pointing to the door.
 
 # Value types
 valuetype.integrateddynamics.valueType=Value Type
@@ -1251,3 +1261,6 @@ info_book.integrateddynamics.tutorials.theValueOfOperators.text1=In &1Integrated
 info_book.integrateddynamics.tutorials.theValueOfOperators.text2=As a first step, go to the &lLogic Programmer&r, and create a new static &2Operator&0, from the dropdown-list, choose the &oArithmetic Addition&r &2Operator&0, and write it to a &lVariable Card&r. After that, create two &6Integer&0 variables. Next, find the &oApply&r operator, and apply the first &6Integer&0 to the &2Operator&0, which will &obind&r the first input argument of the addition &2Operator&0 to that &6Integer&0, and will output a new &2Operator&0 with one remaining input argument. Next, use the &oApply&r operator again to &obind&r the final input argument of the newly created &2Operator&0. Finally, use a &lDisplay Panel&r to visualize your dynamically invoked addition.
 info_book.integrateddynamics.tutorials.theValueOfOperators.text3=Next to applying &2Operators&0, there are a lot of other advanced &2Operator&0 operations. We’ll now look into using &2Operators&0 on &7Lists&0, more specifically the &oFilter&r &2Operator&0 that takes a &7List&0 and a &oPredicate&r (an &2Operator&0 with one input argument and a &9Boolean&0 output value). Start by creating a &7List&0 of the &6Integers&0 &61&0, &610&0 and &6100&0. Next, store the &oRelational Equals&r &2Operator&0 in a variable. Next, apply this operator on the &6Integer&0 &610&0. Next, use the &oFilter&r &2Operator&0 with your &7List&0 and the applied &2Operator&0. This will filter away all the items from the &7List&0 that return &9False&0 by applying them on the given operator, which in this case means that all elements that are not equal to &610&0 will be removed from the list. Visualize the result in a &lDisplay Panel&r.
 info_book.integrateddynamics.tutorials.theValueOfOperators.text4=There are plenty of other operations on &2Operators&0, such as combining &oPredicates&r, flipping &2Operator&0 arguments, and more operations on &7Lists&0.
+
+info_book.integrateddynamics.tutorials.challenges=Challenges
+info_book.integrateddynamics.tutorials.challenges.text1=This final tutorial section contains several non-trivial challenges to show that you understand the basics of &1Integrated Dynamics&0. No further information will be given for each challenge, so good luck!

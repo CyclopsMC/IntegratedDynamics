@@ -181,5 +181,25 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.challenges">
+            <paragraph>info_book.integrateddynamics.tutorials.challenges.text1</paragraph>
+            <appendix type="achievement_rewards" id="integrateddynamics:challenges">
+                <achievements>
+                    <achievement id="integrateddynamics.creeperTaming" />
+                    <achievement id="integrateddynamics.spongeStepSound" />
+                    <achievement id="integrateddynamics.recursiveRecursion" />
+                    <achievement id="integrateddynamics.toolForObsidian" />
+                    <achievement id="integrateddynamics.smartPressurePlate" />
+                </achievements>
+                <rewards>
+                    <reward type="item" amount="64">integrateddynamics:variable</reward>
+                    <reward type="item" amount="64">integrateddynamics:variable</reward>
+                    <reward type="item" amount="64">integrateddynamics:variable</reward>
+                    <reward type="item" amount="64">integrateddynamics:variable</reward>
+                    <reward type="item" amount="64">integrateddynamics:variablestore</reward>
+                    <reward type="item" amount="64">integrateddynamics:part_displayPanelItem</reward>
+                </rewards>
+            </appendix>
+        </section>
     </section>
 </section>
