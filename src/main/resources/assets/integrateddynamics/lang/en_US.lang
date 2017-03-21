@@ -1264,3 +1264,21 @@ info_book.integrateddynamics.tutorials.theValueOfOperators.text4=There are plent
 
 info_book.integrateddynamics.tutorials.challenges=Challenges
 info_book.integrateddynamics.tutorials.challenges.text1=This final tutorial section contains several non-trivial challenges to show that you understand the basics of &1Integrated Dynamics&0. No further information will be given for each challenge, so good luck!
+
+info_book.integrateddynamics.manual=Manual
+info_book.integrateddynamics.manual.text1=This part of the book contains detail descriptions of all parts of the mod.
+
+info_book.integrateddynamics.manual.prerequisites=Prerequisites
+
+info_book.integrateddynamics.manual.prerequisites.menril_trees=Menril Trees
+info_book.integrateddynamics.manual.prerequisites.menril_trees.text1=You may occasionally encounter tall blue trees. Such trees are called &lMenril Trees&r, and have some very interesting properties. First, the leaves give off light. This is caused by the illuminating berries, which are also very tasty! Secondly, the nice-looking logs of the tree contain a lot of resin, which can be used for crafting most of the things in this mod.
+
+info_book.integrateddynamics.manual.prerequisites.meneglin_biome=Meneglin Biome
+info_book.integrateddynamics.manual.prerequisites.meneglin_biome.text1=&lMenril Trees&r are unfortunately quite hard to find. Luckily, there is one biome, the &lMeneglin Biome&r in which these trees thrive. The large amount of &lMenril Trees&r causes some things in this biome to become blue, which is because of the &lMenril Resin&r that is given off by these trees to the environment.
+
+info_book.integrateddynamics.manual.prerequisites.squeezer=Squeezer
+info_book.integrateddynamics.manual.prerequisites.squeezer.text1=The &lSqueezer&r is an early-game machine that allows you to jump on blocks and items to break or squeeze them. Not only players, but any kind of entity can jump or fall on it to perform the squeezing process. Resulting items will either fall into any adjacent inventory or on the ground. Resulting fluids will remain in the machine and will flow to one of the two sides when there is a target tank. The machine contains a small suspension that can enabled with a redstone pulse to reset it. Most notably, this machine can be used to squeeze the resin out of &lMenril Logs&r.
+
+info_book.integrateddynamics.manual.prerequisites.drying_basin=Drying Basin
+info_book.integrateddynamics.manual.prerequisites.drying_basin.text1=Drying out blocks and items can be done using the &lDrying Basin&r. This can for instance be useful when you want to let your &lMenril Resin&r dry into &lCrystalized Menril&r.
+info_book.integrateddynamics.manual.prerequisites.drying_basin.text2=Whatever you do, don’t insert hot fluids!

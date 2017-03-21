@@ -62,6 +62,15 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     return new SqueezerRecipeAppendix(infoBook, recipes.get(index));
                 }
             });
+
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezerRecipe", new InfoBookParser.IAppendixItemFactory<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent>() {
+
+                @Override
+                public SectionAppendix create(IInfoBook infoBook, IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) throws InfoBookParser.InvalidAppendixException {
+                    return new SqueezerRecipeAppendix(infoBook, recipe);
+                }
+
+            });
         } else {
             InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":squeezerRecipe");
         }
@@ -93,6 +102,15 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     }
                     return new DryingBasinRecipeAppendix(infoBook, recipes.get(index));
                 }
+            });
+
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":dryingBasinRecipe", new InfoBookParser.IAppendixItemFactory<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>() {
+
+                @Override
+                public SectionAppendix create(IInfoBook infoBook, IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) throws InfoBookParser.InvalidAppendixException {
+                    return new DryingBasinRecipeAppendix(infoBook, recipe);
+                }
+
             });
         } else {
             InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":dryingBasinRecipe");

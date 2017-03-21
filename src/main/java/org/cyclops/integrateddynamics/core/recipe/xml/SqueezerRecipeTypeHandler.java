@@ -3,12 +3,14 @@ package org.cyclops.integrateddynamics.core.recipe.xml;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.init.RecipeHandler;
+import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.OreDictItemStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.xml.SuperRecipeTypeHandler;
 import org.cyclops.cyclopscore.recipe.xml.XmlRecipeLoader;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.w3c.dom.Element;
 
@@ -17,10 +19,15 @@ import org.w3c.dom.Element;
  * @author rubensworks
  *
  */
-public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler {
+public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> {
+
+    @Override
+    public String getCategoryId() {
+        return Reference.MOD_ID + ":squeezerRecipe";
+    }
 
 	@Override
-	protected ItemStack handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
+	protected IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
         Object inputItem = null;
         Object outputItem = null;
@@ -55,13 +62,11 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler {
             outputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) outputItem, outputFluid);
         }
 
-
-		BlockSqueezer.getInstance().getRecipeRegistry().registerRecipe(
+		return BlockSqueezer.getInstance().getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,
                 outputRecipeComponent,
                 new DummyPropertiesComponent()
         );
-        return outputRecipeComponent.getItemStack();
 	}
 
 }
