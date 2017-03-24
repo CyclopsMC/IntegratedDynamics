@@ -232,5 +232,17 @@
                 <appendixList type="integrateddynamics:dryingBasinRecipe">convenience</appendixList>
             </section>
         </section>
+
+        <section name="info_book.integrateddynamics.manual.networks">
+            <tag>cable</tag>
+            <tag>wrench</tag>
+            <tag>facade</tag>
+            <paragraph>info_book.integrateddynamics.manual.networks.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.networks.text2</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:cable</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:wrench</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:facade</appendix>
+            <appendix type="image" width="71" height="67">integrateddynamics:textures/gui/infobook/network.png</appendix>
+        </section>
     </section>
 </section>

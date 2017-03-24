@@ -1282,3 +1282,7 @@ info_book.integrateddynamics.manual.prerequisites.squeezer.text1=The &lSqueezer&
 info_book.integrateddynamics.manual.prerequisites.drying_basin=Drying Basin
 info_book.integrateddynamics.manual.prerequisites.drying_basin.text1=Drying out blocks and items can be done using the &lDrying Basin&r. This can for instance be useful when you want to let your &lMenril Resin&r dry into &lCrystalized Menril&r.
 info_book.integrateddynamics.manual.prerequisites.drying_basin.text2=Whatever you do, don’t insert hot fluids!
+
+info_book.integrateddynamics.manual.networks=Networks
+info_book.integrateddynamics.manual.networks.text1=&lIntegrated Dynamics&r &lnetworks&r are the basis of any good automation system. A network consists of a collection of connected &lLogic Cables&r and parts can be placed on them. These cables should be managed using a &lWrench&r. Shift+right-clicking a cable or part will remove it, while a regular right-click will disconnect it from other cables.
+info_book.integrateddynamics.manual.networks.text2=Even though &lLogic Cables&r may look nice, in some cases you’ll probably want to hide them. You can do this using &lFacades&r, which can be resemble any material. Furthermore, these cables are also compatible with &lMC MultiPart&r, which means that you can hide your cables in more complex facade structures.
