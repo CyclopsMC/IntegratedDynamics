@@ -3,10 +3,12 @@ package org.cyclops.integrateddynamics.core.recipe.xml;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.init.RecipeHandler;
+import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.xml.SuperRecipeTypeHandler;
 import org.cyclops.cyclopscore.recipe.xml.XmlRecipeLoader;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 import org.w3c.dom.Element;
 
@@ -15,10 +17,15 @@ import org.w3c.dom.Element;
  * @author rubensworks
  *
  */
-public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler {
+public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> {
+
+    @Override
+    public String getCategoryId() {
+        return Reference.MOD_ID + ":dryingBasinRecipe";
+    }
 
 	@Override
-	protected ItemStack handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
+	protected IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
         Object inputItem = null;
         ItemStack outputItem = null;
@@ -53,12 +60,10 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler {
         }
 
         ItemAndFluidStackRecipeComponent outputRecipeComponent = new ItemAndFluidStackRecipeComponent(outputItem, outputFluid);
-		BlockDryingBasin.getInstance().getRecipeRegistry().registerRecipe(
+		return BlockDryingBasin.getInstance().getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,
                 outputRecipeComponent,
                 new DurationRecipeProperties(duration)
         );
-        return outputItem;
 	}
-
 }
