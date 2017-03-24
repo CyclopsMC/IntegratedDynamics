@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.infobook;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.config.ConfigHandler;
@@ -14,14 +16,20 @@ import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeCo
 import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockDryingBasinConfig;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.cyclops.integrateddynamics.block.BlockSqueezerConfig;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.infobook.pageelement.AspectAppendix;
 import org.cyclops.integrateddynamics.infobook.pageelement.DryingBasinRecipeAppendix;
 import org.cyclops.integrateddynamics.infobook.pageelement.SqueezerRecipeAppendix;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.w3c.dom.Element;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -115,6 +123,37 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
         } else {
             InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":dryingBasinRecipe");
         }
+
+        InfoBookParser.registerFactory(Reference.MOD_ID + ":aspect", new InfoBookParser.IAppendixFactory() {
+            @Override
+            public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
+                String aspectName = node.getTextContent();
+                IAspect aspect = Aspects.REGISTRY.getAspect(aspectName);
+                if (aspect == null) {
+                    throw new InfoBookParser.InvalidAppendixException(String.format("Could not find an aspect by name %s.", aspectName));
+                }
+                return new AspectAppendix(infoBook, aspect);
+            }
+        });
+
+        InfoBookParser.registerFactory(Reference.MOD_ID + ":part_aspects", new InfoBookParser.IAppendixListFactory() {
+            @Override
+            public List<SectionAppendix> create(final IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
+                String partName = node.getTextContent();
+                IPartType partType = PartTypes.REGISTRY.getPartType(partName);
+                if (partType == null) {
+                    throw new InfoBookParser.InvalidAppendixException(String.format("Could not find a part type by name '%s'.", partName));
+                }
+                List<IAspect> aspects = Lists.newArrayList(Aspects.REGISTRY.getAspects(partType));
+                return Lists.transform(aspects, new Function<IAspect, SectionAppendix>() {
+                    @Nullable
+                    @Override
+                    public SectionAppendix apply(IAspect input) {
+                        return new AspectAppendix(infoBook, input);
+                    }
+                });
+            }
+        });
     }
 
     private OnTheDynamicsOfIntegrationBook() {

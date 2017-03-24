@@ -89,6 +89,17 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(ItemStack itemStack, F variableFacade, IVariableFacadeHandler<F> variableFacadeHandler) {
+        if(itemStack == null) {
+            return null;
+        }
+        itemStack = itemStack.copy();
+        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        this.write(tag, variableFacade, variableFacadeHandler);
+        return itemStack;
+    }
+
+    @Override
     public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable EntityPlayer player, @Nullable Block block) {
         if(itemStack == null) {
             return null;

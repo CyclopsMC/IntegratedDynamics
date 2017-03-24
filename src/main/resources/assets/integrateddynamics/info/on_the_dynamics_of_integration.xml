@@ -213,6 +213,7 @@
         <section name="info_book.integrateddynamics.manual.prerequisites">
             <section name="info_book.integrateddynamics.manual.prerequisites.menril_trees">
                 <tag>menrilLog</tag>
+                <tag>menrilBerries</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.menril_trees.text1</paragraph>
                 <appendix type="image" width="120" height="67">integrateddynamics:textures/gui/infobook/menril_tree.png</appendix>
             </section>
@@ -301,17 +302,132 @@
                 <section name="info_book.integrateddynamics.manual.logic.variables.variable_card">
                     <tag>variable</tag>
                     <tag>labeller</tag>
+                    <tag>variableTransformer</tag>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text1</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text2</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text3</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text4</paragraph>
                     <appendix type="craftingRecipe">integrateddynamics:variable</appendix>
                     <appendix type="craftingRecipe">integrateddynamics:labeller</appendix>
+                    <appendix type="craftingRecipe" index="0">integrateddynamics:variableTransformer</appendix>
+                    <appendix type="craftingRecipe" index="1">integrateddynamics:variableTransformer</appendix>
                 </section>
                 <section name="info_book.integrateddynamics.manual.logic.variables.variable_store">
                     <tag>variablestore</tag>
                     <appendix type="craftingRecipe">integrateddynamics:variablestore</appendix>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_store.text1</paragraph>
+                </section>
+            </section>
+        </section>
+
+        <section name="info_book.integrateddynamics.manual.parts">
+            <section name="info_book.integrateddynamics.manual.parts.introduction">
+                <paragraph>info_book.integrateddynamics.manual.parts.introduction.text1</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.introduction.text2</paragraph>
+            </section>
+            <section name="info_book.integrateddynamics.manual.parts.reader">
+                <section name="info_book.integrateddynamics.manual.parts.reader.introduction">
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.introduction.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.audio">
+                    <tag>part_audioReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.audio.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_audioReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">audioReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.block">
+                    <tag>part_blockReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.block.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_blockReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">blockReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.entity">
+                    <tag>part_entityReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.entity.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_entityReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">entityReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.extra_dimensional">
+                    <tag>part_extraDimensionalReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.extra_dimensional.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_extraDimensionalReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">extraDimensionalReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.fluid">
+                    <tag>part_fluidReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.fluid.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_fluidReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">fluidReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.inventory">
+                    <tag>part_inventoryReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.inventory.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_inventoryReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">inventoryReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.machine">
+                    <tag>part_machineReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.machine.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_machineReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">machineReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.network">
+                    <tag>part_networkReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.network.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_networkReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">networkReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.redstone">
+                    <tag>part_redstoneReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.redstone.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_redstoneReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">redstoneReader</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.reader.world">
+                    <tag>part_worldReaderItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.reader.world.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_worldReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">worldReader</appendixList>
+                </section>
+            </section>
+            <section name="info_book.integrateddynamics.manual.parts.writer">
+                <section name="info_book.integrateddynamics.manual.parts.writer.audio">
+                    <tag>part_audioWriterItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.writer.audio.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_audioWriterItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">audioWriter</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.writer.effect">
+                    <tag>part_effectWriterItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.writer.effect.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_effectWriterItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">effectWriter</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.writer.inventory">
+                    <tag>part_inventoryWriterItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.writer.inventory.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_inventoryWriterItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">inventoryWriter</appendixList>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.writer.redstone">
+                    <tag>part_redstoneWriterItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.writer.redstone.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_redstoneWriterItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">redstoneWriter</appendixList>
+                </section>
+            </section>
+            <section name="info_book.integrateddynamics.manual.parts.other">
+                <section name="info_book.integrateddynamics.manual.parts.other.light">
+                    <tag>part_staticLightPanelItem</tag>
+                    <tag>part_dynamicLightPanelItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.light.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_staticLightPanelItem</appendix>
+                    <appendix type="craftingRecipe">integrateddynamics:part_dynamicLightPanelItem</appendix>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.other.display">
+                    <tag>part_displayPanelItem</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.display.text1</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:part_displayPanelItem</appendix>
                 </section>
             </section>
         </section>

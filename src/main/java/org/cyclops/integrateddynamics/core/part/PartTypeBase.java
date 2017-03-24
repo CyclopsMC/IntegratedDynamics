@@ -133,9 +133,15 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             public boolean isDisableable() {
                 return false;
             }
+
+            @Override
+            public String getFullUnlocalizedName() {
+                return PartTypeBase.this.getUnlocalizedName();
+            }
         };
         Item item = createItem(itemConfig);
         ItemAction.register(item, itemConfig, itemConfig.getTargetTab());
+        IntegratedDynamics._instance.getConfigHandler().addToConfigDictionary(itemConfig);
         return item;
     }
 

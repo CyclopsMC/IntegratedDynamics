@@ -44,6 +44,15 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
     public <F extends IVariableFacade> void write(NBTTagCompound tagCompound, F variableFacade, IVariableFacadeHandler<F> handler);
 
     /**
+     * Write the given variable facade to the given itemstack.
+     * @param itemStack The itemstack to write to.
+     * @param variableFacadeHandler The variable facade handler.
+     * @return A copy of the given itemstack with the written variable facade.
+     * @param <F> The variable facade type.
+     */
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(ItemStack itemStack, F variableFacade, IVariableFacadeHandler<F> variableFacadeHandler);
+
+    /**
      * Write a new variable facade to the given itemstack.
      * @param generateId If a new id should be generated. Otherwise the previous facade id will be used or -1 if non existing.
      * @param itemStack The itemstack to write to.

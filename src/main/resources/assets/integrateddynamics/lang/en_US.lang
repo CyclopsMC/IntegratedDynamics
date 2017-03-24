@@ -20,6 +20,8 @@ gui.integrateddynamics.rewards=Rewards
 gui.integrateddynamics.rewards.collect=Collect
 gui.integrateddynamics.rewards.collected=Collected
 gui.integrateddynamics.rewards.collectFailure=Can't collect rewards, is your inventory full?
+gui.integrateddynamics.aspect.input=Input: %s
+gui.integrateddynamics.aspect.output=Output: %s
 
 # Diagnostics
 gui.integrateddynamics.diagnostics.title=Network Diagnostics
@@ -254,6 +256,7 @@ aspect.integrateddynamics.tooltip.aspectName=§eAspect: §r%s
 aspect.integrateddynamics.tooltip.valueTypeName=§eType: §r%s
 aspect.integrateddynamics.tooltip.partId=§e§oPart ID: §r§o%s
 aspect.integrateddynamics.error.invalidType=This aspect expects %s, but %s was given.
+aspect.aspects.integrateddynamics.name=Aspect
 
 ## Audio aspects
 aspect.aspects.integrateddynamics.read.integer.audio.instrument.piano.name=Piano Note
@@ -1334,3 +1337,50 @@ info_book.integrateddynamics.manual.logic.variables.variable_card.text4=Each &lV
 
 info_book.integrateddynamics.manual.logic.variables.variable_store=Variable Store
 info_book.integrateddynamics.manual.logic.variables.variable_store.text1=Some dynamic variables are evaluated based on other variables, where access to those referenced variables must be possible. A dynamic variable representing the addition of two other variables must be able to access those two other variables when it is evaluated. Access to those other variables must be possible within the same network as where the dynamic variable is being evaluated, which can be done by placing the other variable cards in a &lVariable Store&r. Multiple &lVariable Stores&r can be present in a network. Those other variables may also reference certain variables, which should also be present in that same network.
+
+info_book.integrateddynamics.manual.parts=Parts
+
+info_book.integrateddynamics.manual.parts.introduction=Introduction
+info_book.integrateddynamics.manual.parts.introduction.text1=Parts can be placed on each side of a &lLogic Cable&r. This section describes parts that can read &lValues&r and place them available as a &lVariable Card&r, and parts that can perform actions based on the &lValues&r within &lVariable Cards&r.
+info_book.integrateddynamics.manual.parts.introduction.text2=Most parts have configurable settings, which can be accessed using the top-right button in the GUI of a part. This allows you to change the part &lFrequency&r, meaning per how many ticks this part should perform its actions. Secondly, the &lPriority&r of part can be changed, which indicates the order in which this part can act relative to the other parts in the same network in the same tick. If part A has a priority of -1, and part B has a priority of 1, then part B will always perform its actions before part A. If priorities of parts are the same, then the relative order is random.
+
+info_book.integrateddynamics.manual.parts.reader=Readers
+info_book.integrateddynamics.manual.parts.reader.introduction=Introduction
+info_book.integrateddynamics.manual.parts.reader.introduction.text1=The simplest method for creating a dynamic variable is done using &lReaders&r. Different types of readers exist for reading information from the world as storing it inside a &lVariable Card&r. Each &lReader&r contains one or more &lAspects&r for reading different things with different &lValue Types&r.
+
+info_book.integrateddynamics.manual.parts.reader.audio=Audio
+info_book.integrateddynamics.manual.parts.reader.audio.text1=Information about music and audio that is playing in the enviroment.
+info_book.integrateddynamics.manual.parts.reader.block=Block
+info_book.integrateddynamics.manual.parts.reader.block.text1=Information about the block the part is facing.
+info_book.integrateddynamics.manual.parts.reader.entity=Entity
+info_book.integrateddynamics.manual.parts.reader.entity.text1=Information about the entity or entities that are inside the square that the part is facing.
+info_book.integrateddynamics.manual.parts.reader.extra_dimensional=Extra-Dimensional
+info_book.integrateddynamics.manual.parts.reader.extra_dimensional.text1=Information about the server, such as the list of online players.
+info_book.integrateddynamics.manual.parts.reader.fluid=Fluid
+info_book.integrateddynamics.manual.parts.reader.fluid.text1=Read values from the fluid tank this part is facing.
+info_book.integrateddynamics.manual.parts.reader.inventory=Inventory
+info_book.integrateddynamics.manual.parts.reader.inventory.text1=Read information from the facing inventory, like the amount of slots and items. This will not transfer items itself.
+info_book.integrateddynamics.manual.parts.reader.machine=Machine
+info_book.integrateddynamics.manual.parts.reader.machine.text1=The machine this part is facing can be read, such as the work they are doing.
+info_book.integrateddynamics.manual.parts.reader.network=Network
+info_book.integrateddynamics.manual.parts.reader.network.text1=Read information about the &lIntegrated Dynamics&r network this part is facing. This does not have to be the same network as the network this part is on.
+info_book.integrateddynamics.manual.parts.reader.redstone=Redstone
+info_book.integrateddynamics.manual.parts.reader.redstone.text1=Read redstone information from the facing block.
+info_book.integrateddynamics.manual.parts.reader.world=World
+info_book.integrateddynamics.manual.parts.reader.world.text1=Information about the world this part is in, like the current weather and time.
+
+info_book.integrateddynamics.manual.parts.writer=Writers
+info_book.integrateddynamics.manual.parts.writer.audio=Audio
+info_book.integrateddynamics.manual.parts.writer.audio.text1=Play sounds and music.
+info_book.integrateddynamics.manual.parts.writer.effect=Effect
+info_book.integrateddynamics.manual.parts.writer.effect.text1=Emit particles based on certain values and settings.
+info_book.integrateddynamics.manual.parts.writer.inventory=Inventory
+info_book.integrateddynamics.manual.parts.writer.inventory.text1=Perform actions related to inventories and pipes. This will not transfer items itself.
+info_book.integrateddynamics.manual.parts.writer.redstone=Redstone
+info_book.integrateddynamics.manual.parts.writer.redstone.text1=Output a certain redstone level.
+
+info_book.integrateddynamics.manual.parts.other=Others
+info_book.integrateddynamics.manual.parts.other.light=Light
+info_book.integrateddynamics.manual.parts.other.light.text1=A simple light that is either always on, or can be controlled using a &1Boolean&0 or &6Integer&0 &lVariable Card&r.
+info_book.integrateddynamics.manual.parts.other.display=Display
+info_book.integrateddynamics.manual.parts.other.display.text1=A useful monitoring or debugging tool that simply shows the value of a &lVariable Card&r. &lDisplays&r can be rotated by right-clicking with a &lWrench&r.
