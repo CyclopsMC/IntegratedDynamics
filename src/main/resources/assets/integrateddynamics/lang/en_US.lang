@@ -1212,7 +1212,9 @@ info_book.integrateddynamics.introduction.text3=The goal of this book is twofold
 info_book.integrateddynamics.introduction.text4=You can navigate through this book by clicking on the arrows at the bottom, shift clicking will flip through whole sections instead of single pages. At the start of large sections you will see a content table which will contain hyperlinks to its subsections for faster browsing. When you come across recipes, the items that are explained in this book are clickable as a fast reference to the section they are explained in. You will also notice a button at the top left of this book, which will take you to the section above your current one. The button at the top right corner will go back to the previously visited page each time when clicked.
 
 info_book.integrateddynamics.tutorials=Tutorials
-info_book.integrateddynamics.tutorials.text1=This part of the book contains several tutorials that will help you understand the basics of the mod. Furthermore, it will allow you to earn some &lrewards&l while accomplishing the achievements of each tutorial.
+
+info_book.integrateddynamics.tutorials.introduction=Introduction
+info_book.integrateddynamics.tutorials.introduction.text1=This part of the book contains several tutorials that will help you understand the basics of the mod. Furthermore, it will allow you to earn some &lrewards&l while accomplishing the achievements of each tutorial.
 
 info_book.integrateddynamics.tutorials.menrilBasics=Menril Basics
 info_book.integrateddynamics.tutorials.menrilBasics.text1=To get started with this mod, you will need to find some &lMenril Trees&r which can most easily be found in &lMeneglin Biomes&r.
@@ -1266,7 +1268,9 @@ info_book.integrateddynamics.tutorials.challenges=Challenges
 info_book.integrateddynamics.tutorials.challenges.text1=This final tutorial section contains several non-trivial challenges to show that you understand the basics of &1Integrated Dynamics&0. No further information will be given for each challenge, so good luck!
 
 info_book.integrateddynamics.manual=Manual
-info_book.integrateddynamics.manual.text1=This part of the book contains detail descriptions of all parts of the mod.
+
+info_book.integrateddynamics.manual.introduction=Introduction
+info_book.integrateddynamics.manual.introduction.text1=This part of the book contains detail descriptions of all parts of the mod.
 
 info_book.integrateddynamics.manual.prerequisites=Prerequisites
 

@@ -8,7 +8,9 @@
     </section>
 
     <section name="info_book.integrateddynamics.tutorials">
-        <paragraph>info_book.integrateddynamics.tutorials.text1</paragraph>
+        <section name="info_book.integrateddynamics.tutorials.introduction">
+            <paragraph>info_book.integrateddynamics.tutorials.introduction.text1</paragraph>
+        </section>
         <section name="info_book.integrateddynamics.tutorials.menrilBasics">
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text1</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text2</paragraph>
@@ -205,7 +207,9 @@
     </section>
 
     <section name="info_book.integrateddynamics.manual">
-        <paragraph>info_book.integrateddynamics.manual.text1</paragraph>
+        <section name="info_book.integrateddynamics.manual.introduction">
+            <paragraph>info_book.integrateddynamics.manual.introduction.text1</paragraph>
+        </section>
         <section name="info_book.integrateddynamics.manual.prerequisites">
             <section name="info_book.integrateddynamics.manual.prerequisites.menril_trees">
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.menril_trees.text1</paragraph>
