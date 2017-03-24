@@ -212,6 +212,7 @@
         </section>
         <section name="info_book.integrateddynamics.manual.prerequisites">
             <section name="info_book.integrateddynamics.manual.prerequisites.menril_trees">
+                <tag>menrilLog</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.menril_trees.text1</paragraph>
                 <appendix type="image" width="120" height="67">integrateddynamics:textures/gui/infobook/menril_tree.png</appendix>
             </section>
@@ -229,10 +230,15 @@
             </section>
             <section name="info_book.integrateddynamics.manual.prerequisites.drying_basin">
                 <tag>dryingBasin</tag>
+                <tag>crystalizedMenrilBlock</tag>
+                <tag>crystalizedMenrilBrick</tag>
+                <tag>crystalizedMenrilChunk</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.drying_basin.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.drying_basin.text2</paragraph>
                 <appendix type="craftingRecipe">integrateddynamics:dryingBasin</appendix>
                 <appendixList type="integrateddynamics:dryingBasinRecipe">base</appendixList>
+                <appendix type="craftingRecipe">integrateddynamics:crystalizedMenrilBrick</appendix>
+                <appendix type="craftingRecipe">integrateddynamics:crystalizedMenrilChunk</appendix>
                 <appendixList type="integrateddynamics:dryingBasinRecipe">convenience</appendixList>
             </section>
         </section>
@@ -247,6 +253,67 @@
             <appendix type="craftingRecipe">integrateddynamics:wrench</appendix>
             <appendix type="craftingRecipe">integrateddynamics:facade</appendix>
             <appendix type="image" width="71" height="67">integrateddynamics:textures/gui/infobook/network.png</appendix>
+        </section>
+
+        <section name="info_book.integrateddynamics.manual.logic">
+            <section name="info_book.integrateddynamics.manual.logic.value_types">
+                <section name="info_book.integrateddynamics.manual.logic.value_types.boolean">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.boolean.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.integer">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.integer.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.integer.text2</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.integer.text3</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.double">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.double.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.double.text2</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.long">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.long.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.long.text2</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.string">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.string.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.list">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.list.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.operator">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.operator.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.operator.text2</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.operator.text3</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.block">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.block.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.item">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.item.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.entity">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.entity.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.fluid">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.fluid.text1</paragraph>
+                </section>
+            </section>
+            <section name="info_book.integrateddynamics.manual.logic.variables">
+                <section name="info_book.integrateddynamics.manual.logic.variables.variable_card">
+                    <tag>variable</tag>
+                    <tag>labeller</tag>
+                    <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text2</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text3</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text4</paragraph>
+                    <appendix type="craftingRecipe">integrateddynamics:variable</appendix>
+                    <appendix type="craftingRecipe">integrateddynamics:labeller</appendix>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.variables.variable_store">
+                    <tag>variablestore</tag>
+                    <appendix type="craftingRecipe">integrateddynamics:variablestore</appendix>
+                    <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_store.text1</paragraph>
+                </section>
+            </section>
         </section>
     </section>
 </section>

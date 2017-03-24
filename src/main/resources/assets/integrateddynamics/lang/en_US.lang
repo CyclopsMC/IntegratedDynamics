@@ -1290,3 +1290,47 @@ info_book.integrateddynamics.manual.prerequisites.drying_basin.text2=Whatever yo
 info_book.integrateddynamics.manual.networks=Networks
 info_book.integrateddynamics.manual.networks.text1=&lIntegrated Dynamics&r &lnetworks&r are the basis of any good automation system. A network consists of a collection of connected &lLogic Cables&r and parts can be placed on them. These cables should be managed using a &lWrench&r. Shift+right-clicking a cable or part will remove it, while a regular right-click will disconnect it from other cables.
 info_book.integrateddynamics.manual.networks.text2=Even though &lLogic Cables&r may look nice, in some cases you’ll probably want to hide them. You can do this using &lFacades&r, which can be resemble any material. Furthermore, these cables are also compatible with &lMC MultiPart&r, which means that you can hide your cables in more complex facade structures.
+
+info_book.integrateddynamics.manual.logic=Logic
+
+info_book.integrateddynamics.manual.logic.value_types=Value Types
+
+info_book.integrateddynamics.manual.logic.value_types.boolean=Boolean
+info_book.integrateddynamics.manual.logic.value_types.boolean.text1=The simplest value type, its values can be either &9True&0 or &9False&0.
+info_book.integrateddynamics.manual.logic.value_types.integer=Integer
+info_book.integrateddynamics.manual.logic.value_types.integer.text1=A value type for representing positive and negative numbers. For example &6-20&0, &60&0, &61000&0, &6333&0, ...
+info_book.integrateddynamics.manual.logic.value_types.integer.text2=The values can range between &6–2147483648&0 and &62147483647&0.
+info_book.integrateddynamics.manual.logic.value_types.integer.text3=This value type is part of the &lNumber&r category.
+info_book.integrateddynamics.manual.logic.value_types.double=Double
+info_book.integrateddynamics.manual.logic.value_types.double.text1=Real numbers, which can also be positive or negative. For example &e3.1415&0, &e4815162342&0, &e3.33333333&0, ...
+info_book.integrateddynamics.manual.logic.value_types.double.text2=This value type is part of the &lNumber&r category.
+info_book.integrateddynamics.manual.logic.value_types.long=Long
+info_book.integrateddynamics.manual.logic.value_types.long.text1=The same as &6Integers&0, but with a larger value range, which goes from &e-9223372036854775808&0 to &e9223372036854775807&0
+info_book.integrateddynamics.manual.logic.value_types.long.text2=This value type is part of the &lNumber&r category.
+info_book.integrateddynamics.manual.logic.value_types.string=String
+info_book.integrateddynamics.manual.logic.value_types.string.text1=A sequence of characters, for example &4”aaa”&0, &4“Hi!”&0, &4“x!(àà)ç”&0, ...
+info_book.integrateddynamics.manual.logic.value_types.list=List
+info_book.integrateddynamics.manual.logic.value_types.list.text1=A list containing values of a certain &lValue Type&r. All elements in a certain can only contain values of the same value types. For example &8(0, 1, 2, 3)&0, &8(“a”, “b”, “c”)&0, &8(3,33, 1,14, 5, 6)&0
+info_book.integrateddynamics.manual.logic.value_types.operator=Operator
+info_book.integrateddynamics.manual.logic.value_types.operator.text1=A value containing a reference to an &2Operator&0. Operators can be partially applied for more flexible evaluations based on the concept of &lCurrying&r.
+info_book.integrateddynamics.manual.logic.value_types.operator.text2=You can for example store the addition &2Operator&0 in a variable card. You can then partially apply it with one &6Integer&0 &lVariable Card&r, which will result in a new virtual operator with one input type and one output type, which internally contains a reference to that applied &6Integer&0. Applying another &6Integer&0 will result in an &6Integer&0.
+info_book.integrateddynamics.manual.logic.value_types.operator.text3=Other operations of &2Operators&0 are present in the &lLogic Programmer&r for more advanced evaluations, such as reducing a list to a single value, or filtering a list based on a &lPredicate&r.
+info_book.integrateddynamics.manual.logic.value_types.block=Block
+info_book.integrateddynamics.manual.logic.value_types.block.text1=A reference to a &lMinecraft&r block. For example &8Dirt&0, &8Cobblestone&0, &8Red Stained Clay&0, &8Chest&0, ....
+info_book.integrateddynamics.manual.logic.value_types.item=Item
+info_book.integrateddynamics.manual.logic.value_types.item.text1=A reference to a &lMinecraft&r item. For example &8Apple&0, &8Cobblestone&0, &8Diamond Pickaxe&0, &8Enchanted Sword&0, ....
+info_book.integrateddynamics.manual.logic.value_types.entity=Entity
+info_book.integrateddynamics.manual.logic.value_types.entity.text1=A reference to a certain &lMinecraft&r entity. For example &8Zombie&0, &8Cow&0, &8Player_abc&0 ....
+info_book.integrateddynamics.manual.logic.value_types.fluid=Fluid
+info_book.integrateddynamics.manual.logic.value_types.fluid.text1=A reference to a &lMinecraft&r fluid. For example &8Lava@1000mB&0, &8Water@3mB&0, &8Menril Resin@3030mB&0, ....
+
+info_book.integrateddynamics.manual.logic.variables=Variables
+
+info_book.integrateddynamics.manual.logic.variables.variable_card=Variable Card
+info_book.integrateddynamics.manual.logic.variables.variable_card.text1=&lVariable Cards&r are the primary mode of logic transport in this mod. A variable contains a reference to a certain &lValue&r with a certain &lValue Type&r.
+info_book.integrateddynamics.manual.logic.variables.variable_card.text2=Variables can either contain be either static or dynamic. Static variables are defined once, and will never change afterwards. Dynamic variables are the result of some form of &lLogic Evaluation&r, which are done by &lOperators&r or &lReader Aspects&r. An example of a dynamic variable is the time in the &lMinecraft&r world, which changes continuously.
+info_book.integrateddynamics.manual.logic.variables.variable_card.text3=Dynamic variables will only be evaluated when their value is requested in some way, such as displaying the value in a &lDisplay Panel&r, or using it being requested as part of the evaluation of another dynamic variable.
+info_book.integrateddynamics.manual.logic.variables.variable_card.text4=Each &lVariable Card&r has a unique ID, which is used internally in networks for &lLogic Evaluation&r. When an error occurs in the network, these ID’s will be shown to the player to help with debugging. For better usability, a label can be given to &lVariable Cards&r using a &lLabeler&r, which will allow players to see the label instead of the ID’s.
+
+info_book.integrateddynamics.manual.logic.variables.variable_store=Variable Store
+info_book.integrateddynamics.manual.logic.variables.variable_store.text1=Some dynamic variables are evaluated based on other variables, where access to those referenced variables must be possible. A dynamic variable representing the addition of two other variables must be able to access those two other variables when it is evaluated. Access to those other variables must be possible within the same network as where the dynamic variable is being evaluated, which can be done by placing the other variable cards in a &lVariable Store&r. Multiple &lVariable Stores&r can be present in a network. Those other variables may also reference certain variables, which should also be present in that same network.
