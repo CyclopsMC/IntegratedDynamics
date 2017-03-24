@@ -126,7 +126,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (getEnergyStored() > 0 && getWorld().isBlockPowered(getPos())) {
+        if (!getWorld().isRemote && getEnergyStored() > 0 && getWorld().isBlockPowered(getPos())) {
             addEnergy(Math.min(BlockEnergyBatteryConfig.energyPerTick, getEnergyStored()));
         }
     }
