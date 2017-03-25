@@ -91,6 +91,8 @@
             <paragraph>info_book.integrateddynamics.tutorials.aspects.text4</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.aspects.text5</paragraph>
             <appendix type="craftingRecipe">integrateddynamics:part_redstoneWriterItem</appendix>
+            <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.read.integer.redstone.value.name</appendix>
+            <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.write.integer.redstone.name</appendix>
             <appendix type="achievement_rewards" id="integrateddynamics:aspects">
                 <achievements>
                     <achievement id="integrateddynamics.redstoneCapturing" />

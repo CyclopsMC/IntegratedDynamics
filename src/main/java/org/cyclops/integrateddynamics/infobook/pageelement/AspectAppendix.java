@@ -69,7 +69,7 @@ public class AspectAppendix extends SectionAppendix {
         // Base information
         String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
         String valueTypeName = L10NHelpers.localize(aspect.getValueType().getUnlocalizedName());
-        gui.drawScaledCenteredString(TextFormatting.BOLD + L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
+        gui.drawScaledCenteredString(L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
         String valueString = L10NHelpers.localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
         boolean wasUnicode = gui.getFontRenderer().getUnicodeFlag();
         gui.getFontRenderer().setUnicodeFlag(true);
