@@ -117,6 +117,7 @@
             <appendix type="craftingRecipe">integrateddynamics:logicProgrammer</appendix>
             <appendix type="craftingRecipe">integrateddynamics:portableLogicProgrammer</appendix>
             <appendix type="craftingRecipe">integrateddynamics:variablestore</appendix>
+            <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.arithmetic.addition.name</appendix>
             <appendix type="achievement_rewards" id="integrateddynamics:logicOperations">
                 <achievements>
                     <achievement id="integrateddynamics.logicProgramming" />
@@ -155,6 +156,9 @@
             <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text4</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text5</paragraph>
             <appendix type="craftingRecipe">integrateddynamics:part_entityReaderItem</appendix>
+            <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.itemstack.mod.name</appendix>
+            <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.read.entity.entity.name</appendix>
+            <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.entity.targetblock.name</appendix>
             <appendix type="achievement_rewards" id="integrateddynamics:advancedOperations">
                 <achievements>
                     <achievement id="integrateddynamics.logicalListBuilding" />
@@ -173,6 +177,8 @@
             <paragraph>info_book.integrateddynamics.tutorials.theValueOfOperators.text2</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.theValueOfOperators.text3</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.theValueOfOperators.text4</paragraph>
+            <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.relational.equals.name</appendix>
+            <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.operator.filter.name</appendix>
             <appendix type="achievement_rewards" id="integrateddynamics:theValueOfOperators">
                 <achievements>
                     <achievement id="integrateddynamics.dynamicAdditions" />

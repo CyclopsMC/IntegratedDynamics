@@ -1218,7 +1218,7 @@ info_book.integrateddynamics.introduction.text4=You can navigate through this bo
 info_book.integrateddynamics.tutorials=Tutorials
 
 info_book.integrateddynamics.tutorials.introduction=Introduction
-info_book.integrateddynamics.tutorials.introduction.text1=This part of the book contains several tutorials that will help you understand the basics of the mod. Furthermore, it will allow you to earn some &lrewards&l while accomplishing the achievements of each tutorial.
+info_book.integrateddynamics.tutorials.introduction.text1=This part of the book contains several tutorials that will help you understand the basics of the mod. Furthermore, it will allow you to earn some &lrewards&r while accomplishing the achievements of each tutorial.
 
 info_book.integrateddynamics.tutorials.menrilBasics=Menril Basics
 info_book.integrateddynamics.tutorials.menrilBasics.text1=To get started with this mod, you will need to find some &lMenril Trees&r which can most easily be found in &lMeneglin Biomes&r.
