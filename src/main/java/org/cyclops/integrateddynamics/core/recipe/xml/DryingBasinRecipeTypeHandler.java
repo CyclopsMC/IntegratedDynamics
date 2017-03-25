@@ -66,5 +66,4 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler<ItemAnd
                 new DurationRecipeProperties(duration)
         );
 	}
-
 }
