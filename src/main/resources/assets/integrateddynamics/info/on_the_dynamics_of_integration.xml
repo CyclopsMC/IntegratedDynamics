@@ -433,5 +433,22 @@
                 </section>
             </section>
         </section>
+
+        <section name="info_book.integrateddynamics.manual.machines">
+            <section name="info_book.integrateddynamics.manual.machines.materializer">
+                <tag>materializer</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.materializer.text1</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.materializer.text2</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.materializer.text3</paragraph>
+                <appendix type="craftingRecipe">integrateddynamics:materializer</appendix>
+            </section>
+            <section name="info_book.integrateddynamics.manual.machines.proxy">
+                <tag>proxy</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.proxy.text1</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.proxy.text2</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.proxy.text3</paragraph>
+                <appendix type="craftingRecipe">integrateddynamics:proxy</appendix>
+            </section>
+        </section>
     </section>
 </section>

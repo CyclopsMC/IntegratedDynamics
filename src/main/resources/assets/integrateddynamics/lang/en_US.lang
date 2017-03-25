@@ -1384,3 +1384,15 @@ info_book.integrateddynamics.manual.parts.other.light=Light
 info_book.integrateddynamics.manual.parts.other.light.text1=A simple light that is either always on, or can be controlled using a &1Boolean&0 or &6Integer&0 &lVariable Card&r.
 info_book.integrateddynamics.manual.parts.other.display=Display
 info_book.integrateddynamics.manual.parts.other.display.text1=A useful monitoring or debugging tool that simply shows the value of a &lVariable Card&r. &lDisplays&r can be rotated by right-clicking with a &lWrench&r.
+
+info_book.integrateddynamics.manual.machines=Machines
+
+info_book.integrateddynamics.manual.machines.materializer=Materializer
+info_book.integrateddynamics.manual.machines.materializer.text1=In order to make a dynamic &lVariable Card&r static, a &lMaterializer&r can be used. The dynamic &lVariable Card&r must be inserted, and a new empty &lVariable Card&r must be inserted, which will cause it to contain the current value of the dynamic &lVariable Card&r as a static value.
+info_book.integrateddynamics.manual.machines.materializer.text2=This can be useful in situations where you want to log the values of a certain dynamic &lVariable Card&r, or when you don’t need the dynamic evaluation of a &lVariable Card&r anymore.
+info_book.integrateddynamics.manual.machines.materializer.text3=&lVariable Cards&r can be piped in and out the &lMaterializer&r.
+
+info_book.integrateddynamics.manual.machines.proxy=Proxy
+info_book.integrateddynamics.manual.machines.proxy.text1=A &lProxy&r can be used to make a dynamic reference to a certain &lVariable Card&r. It allows you to insert a &lVariable Card&r, and write a new &lVariable Card&r, which will dynamically take the value of the &lVariable Card&r that is present in the proxy.
+info_book.integrateddynamics.manual.machines.proxy.text2=This is useful in situations where you have a chain of &lVariable Cards&r, but you still would like to be able to change one value manually. You could then proxy that variable, which will allow it to be swapped with another variable at any time.
+info_book.integrateddynamics.manual.machines.proxy.text3=Just as with the &lMaterializer&r, &lVariable Cards&r can be piped in and out of it.
