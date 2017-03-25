@@ -16,15 +16,18 @@ import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeCo
 import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockDryingBasinConfig;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.cyclops.integrateddynamics.block.BlockSqueezerConfig;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.infobook.pageelement.AspectAppendix;
 import org.cyclops.integrateddynamics.infobook.pageelement.DryingBasinRecipeAppendix;
+import org.cyclops.integrateddynamics.infobook.pageelement.OperatorAppendix;
 import org.cyclops.integrateddynamics.infobook.pageelement.SqueezerRecipeAppendix;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.w3c.dom.Element;
@@ -150,6 +153,33 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     @Override
                     public SectionAppendix apply(IAspect input) {
                         return new AspectAppendix(infoBook, input);
+                    }
+                });
+            }
+        });
+
+        InfoBookParser.registerFactory(Reference.MOD_ID + ":operator", new InfoBookParser.IAppendixFactory() {
+            @Override
+            public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
+                String operatorName = node.getTextContent();
+                IOperator operator = Operators.REGISTRY.getOperator(operatorName);
+                if (operator == null) {
+                    throw new InfoBookParser.InvalidAppendixException(String.format("Could not find an operator by name %s.", operator));
+                }
+                return new OperatorAppendix(infoBook, operator);
+            }
+        });
+
+        InfoBookParser.registerFactory(Reference.MOD_ID + ":operators_output", new InfoBookParser.IAppendixListFactory() {
+            @Override
+            public List<SectionAppendix> create(final IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
+                String categoryName = node.getTextContent();
+                List<IOperator> operators = Lists.newArrayList("*".equals(categoryName) ? Operators.REGISTRY.getOperators() : Operators.REGISTRY.getOperatorsInCategory(categoryName));
+                return Lists.transform(operators, new Function<IOperator, SectionAppendix>() {
+                    @Nullable
+                    @Override
+                    public SectionAppendix apply(IOperator input) {
+                        return new OperatorAppendix(infoBook, input);
                     }
                 });
             }

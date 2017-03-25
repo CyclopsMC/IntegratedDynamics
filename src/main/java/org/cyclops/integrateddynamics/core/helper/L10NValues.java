@@ -24,8 +24,8 @@ public class L10NValues {
 
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
-    public static final String GUI_ASPECT_INPUT = "gui." + NS + ".aspect.input";
-    public static final String GUI_ASPECT_OUTPUT = "gui." + NS + ".aspect.output";
+    public static final String GUI_INPUT = "gui." + NS + ".input";
+    public static final String GUI_OUTPUT = "gui." + NS + ".output";
 
     public static final String VALUETYPE_VALUETYPE = "valuetype." + NS + ".valueType";
     public static final String VALUETYPE_TOOLTIP_TYPENAME = "valuetype." + NS + ".tooltip.typeName";

@@ -450,5 +450,18 @@
                 <appendix type="craftingRecipe">integrateddynamics:proxy</appendix>
             </section>
         </section>
+
+        <section name="info_book.integrateddynamics.manual.logic_programming">
+            <tag>logicProgrammer</tag>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.text5</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.text6</paragraph>
+            <appendix type="craftingRecipe">integrateddynamics:logicProgrammer</appendix>
+            <appendixList factory="integrateddynamics:operators_output">operator.operators.integrateddynamics.binary.name</appendixList>
+            <appendixList factory="integrateddynamics:operators_output">*</appendixList>
+        </section>
     </section>
 </section>

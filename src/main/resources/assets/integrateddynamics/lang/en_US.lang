@@ -20,8 +20,8 @@ gui.integrateddynamics.rewards=Rewards
 gui.integrateddynamics.rewards.collect=Collect
 gui.integrateddynamics.rewards.collected=Collected
 gui.integrateddynamics.rewards.collectFailure=Can't collect rewards, is your inventory full?
-gui.integrateddynamics.aspect.input=Input: %s
-gui.integrateddynamics.aspect.output=Output: %s
+gui.integrateddynamics.input=Input: %s
+gui.integrateddynamics.output=Output: %s
 
 # Diagnostics
 gui.integrateddynamics.diagnostics.title=Network Diagnostics
@@ -601,6 +601,7 @@ aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name=Force Spawning
 aspect.aspecttypes.integrateddynamics.boolean.strong_power.name=Strong Power
 
 # Operators
+operator.operators.integrateddynamics.name=Operator
 operator.integrateddynamics.applied.operatorName=%s [%s]
 operator.integrateddynamics.applied.type=§Applied to: §r%s
 operator.integrateddynamics.tooltip.operatorName=§eOperator: §r%s (%s)
@@ -1396,3 +1397,11 @@ info_book.integrateddynamics.manual.machines.proxy=Proxy
 info_book.integrateddynamics.manual.machines.proxy.text1=A &lProxy&r can be used to make a dynamic reference to a certain &lVariable Card&r. It allows you to insert a &lVariable Card&r, and write a new &lVariable Card&r, which will dynamically take the value of the &lVariable Card&r that is present in the proxy.
 info_book.integrateddynamics.manual.machines.proxy.text2=This is useful in situations where you have a chain of &lVariable Cards&r, but you still would like to be able to change one value manually. You could then proxy that variable, which will allow it to be swapped with another variable at any time.
 info_book.integrateddynamics.manual.machines.proxy.text3=Just as with the &lMaterializer&r, &lVariable Cards&r can be piped in and out of it.
+
+info_book.integrateddynamics.manual.logic_programming=Logic Programming
+info_book.integrateddynamics.manual.logic_programming.text1=Another method for creating dynamic variable cards, is by applying an &lOperator&r on one or more &lVariable Cards&r to produce a new &lVariable Card&r. An example of an &lOperator&r is the addition of two &lNumbers&r, resulting in a new &lNumber&r.
+info_book.integrateddynamics.manual.logic_programming.text2=An &lOperator&r can have one or more input values, and has one output value. In most cases the input and outputs have a certain &lValue Type&r, otherwise, they will have the &lAny&r value type. An &lOperator&r with a single input and one output &lBoolean&r is called a &lPredicate&r.
+info_book.integrateddynamics.manual.logic_programming.text3=The &lLogic Programmer&r contains a large collection of &lOperators&r. It also allows you to create static &lVariable Cards&r for all &lValue Types&r. After selecting an &lOperator&r, valid &lVariable Cards&r should be inserted in the expected input slots. Finally, another &lVariable Card&r should be inserted in the output slot. If the &lOperator&r is valid, a new dynamic variable will be written to the card. Remember that the referenced &lVariable Cards&r have to be present in a &lVariable Store&r in the same network where the &lOperator&r will be evaluated.
+info_book.integrateddynamics.manual.logic_programming.text4=The &lLogic Programmer&r allows you to search through the list of &lOperators&r by name using the textbox on the top. It also allows you to filter on input or output value types, by inserting a &lVariable Card&r of those types in the bottom-left slots.
+info_book.integrateddynamics.manual.logic_programming.text5=If a &lLabeller&r is present in the player’s inventory. The resulting &lVariable Card&r can be labelled immediately by clicking on the ‘E’ button next to the output slot.
+info_book.integrateddynamics.manual.logic_programming.text6=The &lLogic Programmer&r exists both in block-form and item-form. Both can be interchanged by placing them in a crafting grid.
