@@ -15,6 +15,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockItemConfigReference;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
 import org.cyclops.cyclopscore.infobook.InfoBookRegistry;
+import org.cyclops.cyclopscore.infobook.pageelement.AchievementRewardsAppendix;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
 import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
@@ -70,6 +71,7 @@ import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandl
 import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
+import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGeneratorTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
@@ -255,6 +257,8 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
         // Register achievements
         Achievements.registerAchievements();
+
+        putGenericReference(AchievementRewardsAppendix.REFKEY_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
     }
 
     @Mod.EventHandler

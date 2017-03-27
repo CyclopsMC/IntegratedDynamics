@@ -981,6 +981,7 @@ config.integrateddynamics.general.partOverlayRenderdistance=Part overlay render 
 config.integrateddynamics.variable=Variable Card
 config.integrateddynamics.variableTransformer=Variable Transformer
 config.integrateddynamics.menrilBerries.nightVision=Menril Berry night vision
+config.integrateddynamics.on_the_dynamics_of_integration.bookRewards=Book item rewards
 
 ## Machine settings
 config.integrateddynamics.energyBattery.capacity=Battery Capacity
