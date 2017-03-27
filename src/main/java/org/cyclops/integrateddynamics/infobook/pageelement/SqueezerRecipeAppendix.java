@@ -48,9 +48,9 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<ItemStackReci
 
     @Override
     public void bakeElement(InfoSection infoSection) {
-        renderItemHolders.put(INPUT_ITEM, new ItemButton());
-        renderItemHolders.put(RESULT_ITEM, new ItemButton());
-        renderItemHolders.put(RESULT_FLUID, new FluidButton());
+        renderItemHolders.put(INPUT_ITEM, new ItemButton(getInfoBook()));
+        renderItemHolders.put(RESULT_ITEM, new ItemButton(getInfoBook()));
+        renderItemHolders.put(RESULT_FLUID, new FluidButton(getInfoBook()));
         super.bakeElement(infoSection);
     }
 

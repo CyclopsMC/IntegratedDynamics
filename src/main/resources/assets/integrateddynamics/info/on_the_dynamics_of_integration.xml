@@ -356,10 +356,10 @@
                     <appendixList factory="integrateddynamics:part_aspects">entityReader</appendixList>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.extra_dimensional">
-                    <tag>part_extraDimensionalReaderItem</tag>
+                    <tag>part_extradimensionalReaderItem</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.extra_dimensional.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_extraDimensionalReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">extraDimensionalReader</appendixList>
+                    <appendix type="craftingRecipe">integrateddynamics:part_extradimensionalReaderItem</appendix>
+                    <appendixList factory="integrateddynamics:part_aspects">extradimensionalReader</appendixList>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.fluid">
                     <tag>part_fluidReaderItem</tag>

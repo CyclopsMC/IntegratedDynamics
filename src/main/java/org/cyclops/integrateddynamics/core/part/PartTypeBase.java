@@ -141,7 +141,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         };
         Item item = createItem(itemConfig);
         ItemAction.register(item, itemConfig, itemConfig.getTargetTab());
-        IntegratedDynamics._instance.getConfigHandler().addToConfigDictionary(itemConfig);
+        getMod().getConfigHandler().addToConfigDictionary(itemConfig);
         return item;
     }
 
