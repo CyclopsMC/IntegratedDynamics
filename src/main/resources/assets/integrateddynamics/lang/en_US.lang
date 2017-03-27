@@ -1398,6 +1398,14 @@ info_book.integrateddynamics.manual.machines.proxy.text1=A &lProxy&r can be used
 info_book.integrateddynamics.manual.machines.proxy.text2=This is useful in situations where you have a chain of &lVariable Cards&r, but you still would like to be able to change one value manually. You could then proxy that variable, which will allow it to be swapped with another variable at any time.
 info_book.integrateddynamics.manual.machines.proxy.text3=Just as with the &lMaterializer&r, &lVariable Cards&r can be piped in and out of it.
 
+info_book.integrateddynamics.manual.machines.energy_battery=Energy Battery
+info_book.integrateddynamics.manual.machines.energy_battery.text1=&lIntegrated Dynamics&r networks can be configured to consume energy. For this, you can attach &lEnergy Batteries&r to the network to add energy storage capacity for it.
+info_book.integrateddynamics.manual.machines.energy_battery.text2=These batteries accept both &lRF&r and &lTesla&r power.
+info_book.integrateddynamics.manual.machines.energy_battery.text3=Applying a redstone signal will enable auto-export mode of energy to all sides.
+
+info_book.integrateddynamics.manual.machines.generator=Generator
+info_book.integrateddynamics.manual.machines.generator.text1=When you need &lRF&r or &lTesla&r energy, you can use the &lGenerator&r to create energy from &oburnable&r items.
+
 info_book.integrateddynamics.manual.logic_programming=Logic Programming
 info_book.integrateddynamics.manual.logic_programming.text1=Another method for creating dynamic variable cards, is by applying an &lOperator&r on one or more &lVariable Cards&r to produce a new &lVariable Card&r. An example of an &lOperator&r is the addition of two &lNumbers&r, resulting in a new &lNumber&r.
 info_book.integrateddynamics.manual.logic_programming.text2=An &lOperator&r can have one or more input values, and has one output value. In most cases the input and outputs have a certain &lValue Type&r, otherwise, they will have the &lAny&r value type. An &lOperator&r with a single input and one output &lBoolean&r is called a &lPredicate&r.

@@ -222,8 +222,11 @@
             <section name="info_book.integrateddynamics.manual.prerequisites.menril_trees">
                 <tag>menrilLog</tag>
                 <tag>menrilBerries</tag>
+                <tag>menrilPlanks</tag>
+                <tag>menrilSapling</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.menril_trees.text1</paragraph>
                 <appendix type="image" width="120" height="67">integrateddynamics:textures/gui/infobook/menril_tree.png</appendix>
+                <appendix type="craftingRecipe">integrateddynamics:menrilPlanks</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.prerequisites.meneglin_biome">
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.meneglin_biome.text1</paragraph>
@@ -455,6 +458,18 @@
                 <paragraph>info_book.integrateddynamics.manual.machines.proxy.text3</paragraph>
                 <appendix type="craftingRecipe">integrateddynamics:proxy</appendix>
             </section>
+            <section name="info_book.integrateddynamics.manual.machines.energy_battery">
+                <tag>energyBattery</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text1</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text2</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text3</paragraph>
+                <appendix type="craftingRecipe">integrateddynamics:energyBattery</appendix>
+            </section>
+            <section name="info_book.integrateddynamics.manual.machines.generator">
+                <tag>coalGenerator</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.generator.text1</paragraph>
+                <appendix type="craftingRecipe">integrateddynamics:coalGenerator</appendix>
+            </section>
         </section>
 
         <section name="info_book.integrateddynamics.manual.logic_programming">
@@ -466,6 +481,7 @@
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text5</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text6</paragraph>
             <appendix type="craftingRecipe">integrateddynamics:logicProgrammer</appendix>
+            <appendix type="craftingRecipe">integrateddynamics:portableLogicProgrammer</appendix>
             <appendixList factory="integrateddynamics:operators_output">operator.operators.integrateddynamics.binary.name</appendixList>
             <appendixList factory="integrateddynamics:operators_output">*</appendixList>
         </section>
