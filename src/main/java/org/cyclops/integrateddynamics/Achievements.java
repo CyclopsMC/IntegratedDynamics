@@ -20,6 +20,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.block.*;
@@ -27,6 +29,8 @@ import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
+import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
@@ -42,6 +46,18 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
  *
  */
 public class Achievements {
+
+	public static ItemStack makeAspectItemStack(IAspect aspect) {
+		IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+		return registry.writeVariableFacadeItem(new ItemStack(ItemVariable.getInstance()),
+				new AspectVariableFacade(false, 0, aspect), Aspects.REGISTRY);
+	}
+
+	public static ItemStack makeValueItemStack(IValue value) {
+		IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+		return registry.writeVariableFacadeItem(new ItemStack(ItemVariable.getInstance()),
+				new ValueTypeVariableFacade(false, value.getType(), value), ValueTypes.REGISTRY);
+	}
 
 	private static final Achievements _INSTANCE = new Achievements();
 
@@ -62,23 +78,23 @@ public class Achievements {
 	public static final Achievement INVENTORY_READING = new ExtendedAchievement("inventoryReading", 1, -3, new ItemStack(PartTypes.INVENTORY_READER.getItem()), VARIABLEINPUT);
 	public static final Achievement VALUE_DISPLAYING = new ExtendedAchievement("valueDisplaying", 4, -1, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()), VARIABLEOUTPUT);
 
-	public static final Achievement REDSTONE_CAPTURING = new ExtendedAchievement("redstoneCapturing", 0, -2, new ItemStack(PartTypes.REDSTONE_READER.getItem()), REDSTONE_READING);
-	public static final Achievement REDSTONE_OBSERVEMENT= new ExtendedAchievement("redstoneObservement", -1, -2, new ItemStack(PartTypes.REDSTONE_READER.getItem()), REDSTONE_READING);
-	public static final Achievement REDSTONE_TRANSMISSION = new ExtendedAchievement("redstoneTransmission", -2, -2, new ItemStack(PartTypes.REDSTONE_READER.getItem()), REDSTONE_READING);
+	public static final Achievement REDSTONE_CAPTURING = new ExtendedAchievement("redstoneCapturing", 0, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeAspectItemStack(Aspects.Read.Redstone.INTEGER_VALUE) : new ItemStack(Items.APPLE), REDSTONE_READING);
+	public static final Achievement REDSTONE_OBSERVEMENT= new ExtendedAchievement("redstoneObservement", -1, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(10)) : new ItemStack(Items.APPLE), REDSTONE_READING);
+	public static final Achievement REDSTONE_TRANSMISSION = new ExtendedAchievement("redstoneTransmission", -2, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeAspectItemStack(Aspects.Write.Redstone.INTEGER) : new ItemStack(Items.APPLE), REDSTONE_READING);
 
 	public static final Achievement LOGIC_PROGRAMMING = new ExtendedAchievement("logicProgramming", 4, 2, new ItemStack(ConfigHandler.isEnabled(BlockLogicProgrammerConfig.class) ? BlockLogicProgrammer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
-	public static final Achievement CONSTANT_DEFINITION = new ExtendedAchievement("constantDefinition", 4, 3, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), VARIABLES);
-	public static final Achievement ARITHMETIC_ADDITION = new ExtendedAchievement("arithmeticAddition", 4, 4, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), VARIABLES);
+	public static final Achievement CONSTANT_DEFINITION = new ExtendedAchievement("constantDefinition", 4, 3, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(10)) : new ItemStack(Items.APPLE), VARIABLES);
+	public static final Achievement ARITHMETIC_ADDITION = new ExtendedAchievement("arithmeticAddition", 4, 4, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(20)) : new ItemStack(Items.APPLE), VARIABLES);
 
 	public static final Achievement VARIABLE_MATERIALIZATION = new ExtendedAchievement("variableMaterialization", 4, 5, new ItemStack(ConfigHandler.isEnabled(BlockMaterializerConfig.class) ? BlockMaterializer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
 	public static final Achievement VARIABLE_PROXYING = new ExtendedAchievement("variableProxying", 4, 6, new ItemStack(ConfigHandler.isEnabled(BlockProxyConfig.class) ? BlockProxy.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
 
-	public static final Achievement LOGICAL_LIST_BUILDING = new ExtendedAchievement("logicalListBuilding", 5, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
-	public static final Achievement ITEM_ORIGIN_IDENTIFICATION = new ExtendedAchievement("itemOriginIdentification", 6, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
-	public static final Achievement WHAT_WOULD_I_BE_LOOKING_AT = new ExtendedAchievement("whatWouldIBeLookingAt", 7, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement LOGICAL_LIST_BUILDING = new ExtendedAchievement("logicalListBuilding", 5, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeList.ValueList.ofAll(ValueTypeInteger.ValueInteger.of(1), ValueTypeInteger.ValueInteger.of(10), ValueTypeInteger.ValueInteger.of(100))) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement ITEM_ORIGIN_IDENTIFICATION = new ExtendedAchievement("itemOriginIdentification", 6, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE))) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement WHAT_WOULD_I_BE_LOOKING_AT = new ExtendedAchievement("whatWouldIBeLookingAt", 7, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState())) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
 
-	public static final Achievement DYNAMIC_ADDITIONS = new ExtendedAchievement("dynamicAdditions", 8, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
-	public static final Achievement DYNAMIC_LIST_FILTERING = new ExtendedAchievement("dynamicListFiltering", 9, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement DYNAMIC_ADDITIONS = new ExtendedAchievement("dynamicAdditions", 8, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION)) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement DYNAMIC_LIST_FILTERING = new ExtendedAchievement("dynamicListFiltering", 9, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_FILTER)) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
 
 	public static final Achievement CREEPER_TAMING = new ExtendedAchievement("creeperTaming", 8, 2, new ItemStack(Items.SKULL, 1, 4), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
 	public static final Achievement SPONGE_STEP_SOUND = new ExtendedAchievement("spongeStepSound", 8, 3, new ItemStack(Blocks.SPONGE, 1, 1), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
