@@ -4,6 +4,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.infobook.GuiInfoBook;
 import org.cyclops.integrateddynamics.IntegratedDynamicsSoundEvents;
 import org.cyclops.integrateddynamics.Reference;
@@ -65,6 +66,11 @@ public class GuiOnTheDynamicsOfIntegration extends GuiInfoBook {
     @Override
     protected int getOffsetXForPageBase(int page) {
         return page == 0 ? 20 : 10;
+    }
+
+    @Override
+    public int getTitleColor() {
+        return Helpers.RGBToInt(70, 70, 150);
     }
 
     @Override
