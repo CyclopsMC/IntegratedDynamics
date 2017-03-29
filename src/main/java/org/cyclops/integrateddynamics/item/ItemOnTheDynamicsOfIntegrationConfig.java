@@ -23,6 +23,12 @@ public class ItemOnTheDynamicsOfIntegrationConfig extends ItemConfig {
     public static boolean bookRewards = true;
 
     /**
+     * If the info book should automatically obtained when the player first spawns.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.ITEM, comment = "If the info book should automatically obtained when the player first spawns.")
+    public static boolean obtainOnSpawn = true;
+
+    /**
      * Make a new instance.
      */
     public ItemOnTheDynamicsOfIntegrationConfig() {
