@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.PartStateException;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -84,15 +85,17 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * Set the state of a part.
      * @param side The side.
      * @param partState The part state.
+     * @throws PartStateException If no part at the given position is available.
      */
-    public void setPartState(EnumFacing side, IPartState partState);
+    public void setPartState(EnumFacing side, IPartState partState) throws PartStateException;
 
     /**
      * Get the state of a part.
      * @param side The side.
      * @return The part state.
+     * @throws PartStateException If no part at the given position is available.
      */
-    public IPartState getPartState(EnumFacing side);
+    public IPartState getPartState(EnumFacing side) throws PartStateException;
 
     /**
      * Get the part side the player is watching.

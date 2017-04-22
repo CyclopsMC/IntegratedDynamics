@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -89,33 +90,38 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        if(!MinecraftHelpers.isClientSide()) {
-            String writeValue = "";
-            int writeValueColor = 0;
-            if(getPartState().hasVariable()) {
-                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(
-                        NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
-                                getPartContainer().getPosition().getBlockPos()));
-                if (partNetwork != null) {
-                    IVariable variable = getPartState().getVariable(partNetwork);
-                    if (variable != null) {
-                        try {
-                            IValue value = variable.getValue();
-                            writeValue = value.getType().toCompactString(value);
-                            writeValueColor = variable.getType().getDisplayColor();
-                        } catch (EvaluationException e) {
-                            writeValue = "ERROR";
-                            writeValueColor = Helpers.RGBToInt(255, 0, 0);
+
+        try {
+            if(!MinecraftHelpers.isClientSide()) {
+                String writeValue = "";
+                int writeValueColor = 0;
+                if(getPartState().hasVariable()) {
+                    IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(
+                            NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
+                                    getPartContainer().getPosition().getBlockPos()));
+                    if (partNetwork != null) {
+                        IVariable variable = getPartState().getVariable(partNetwork);
+                        if (variable != null) {
+                            try {
+                                IValue value = variable.getValue();
+                                writeValue = value.getType().toCompactString(value);
+                                writeValueColor = variable.getType().getDisplayColor();
+                            } catch (EvaluationException e) {
+                                writeValue = "ERROR";
+                                writeValueColor = Helpers.RGBToInt(255, 0, 0);
+                            }
                         }
+                    } else {
+                        writeValue = "NETWORK CORRUPTED!";
+                        writeValueColor = Helpers.RGBToInt(255, 100, 0);
                     }
                 } else {
-                    writeValue = "NETWORK CORRUPTED!";
-                    writeValueColor = Helpers.RGBToInt(255, 100, 0);
+                    writeValue = "";
                 }
-            } else {
-                writeValue = "";
+                setWriteValue(writeValue, writeValueColor);
             }
-            setWriteValue(writeValue, writeValueColor);
+        } catch (PartStateException e) {
+            getPlayer().closeScreen();
         }
     }
 
