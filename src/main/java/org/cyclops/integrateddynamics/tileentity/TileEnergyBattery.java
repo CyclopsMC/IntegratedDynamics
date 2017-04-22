@@ -153,7 +153,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Optional.Method(modid = Reference.MOD_RF_API)
     @Override
     public int getEnergyStored(EnumFacing from) {
-        return getMaxEnergyStored();
+        return getEnergyStored();
     }
 
     @Optional.Method(modid = Reference.MOD_RF_API)
