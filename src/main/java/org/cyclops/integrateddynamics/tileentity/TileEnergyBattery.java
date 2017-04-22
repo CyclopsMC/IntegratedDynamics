@@ -76,7 +76,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         if(!isCreative()) {
             IBlockState blockState = getWorld().getBlockState(getPos());
             if (blockState.getBlock() == BlockEnergyBattery.getInstance()) {
-                int fill = (int) Math.floor(((float) energy * (BlockEnergyBattery.FILL.getAllowedValues().size() - 1)) / (float) getMaxEnergyStored());
+                int fill = Math.max(0, (int) Math.floor(((float) energy * (BlockEnergyBattery.FILL.getAllowedValues().size() - 1)) / (float) getMaxEnergyStored()));
                 if (blockState.getValue(BlockEnergyBattery.FILL) != fill) {
                     getWorld().setBlockState(getPos(), blockState.withProperty(BlockEnergyBattery.FILL, fill));
                     sendUpdate();
@@ -99,7 +99,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         if(!isCreative()) {
-            energy = Math.min(energy, BlockEnergyBatteryConfig.energyPerTick);
+            energy = Math.max(0, Math.min(energy, BlockEnergyBatteryConfig.energyPerTick));
             int stored = getEnergyStored();
             int newEnergy = Math.min(stored + energy, getMaxEnergyStored());
             if(!simulate) {
@@ -113,7 +113,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int extractEnergy(int energy, boolean simulate) {
         if(isCreative()) return energy;
-        energy = Math.min(energy, BlockEnergyBatteryConfig.energyPerTick);
+        energy = Math.max(0, Math.min(energy, BlockEnergyBatteryConfig.energyPerTick));
         int stored = getEnergyStored();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {
