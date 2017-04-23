@@ -22,8 +22,8 @@ public class OperatorBuilders {
                 @Override
                 public Pair<IElectricItem, ItemStack> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0);
-                    if(a.getRawValue().isPresent() && a.getRawValue().get().getItem() instanceof IElectricItem) {
-                        return Pair.of((IElectricItem) a.getRawValue().get().getItem(), a.getRawValue().get());
+                    if(!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof IElectricItem) {
+                        return Pair.of((IElectricItem) a.getRawValue().getItem(), a.getRawValue());
                     }
                     return null;
                 }
