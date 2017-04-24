@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.button.IButtonActionServer;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -116,12 +117,16 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     @Override
     public void onUpdate(int valueId, NBTTagCompound value) {
         super.onUpdate(valueId, value);
-        if(!world.isRemote) {
-            getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
-            DimPos dimPos = getTarget().getCenter().getPos();
-            INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
-            PartNetworkElement networkElement = new PartNetworkElement(getPartType(), getTarget());
-            network.setPriority(networkElement, getLastPriorityValue());
+        try {
+            if(!world.isRemote) {
+                getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
+                DimPos dimPos = getTarget().getCenter().getPos();
+                INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
+                PartNetworkElement networkElement = new PartNetworkElement(getPartType(), getTarget());
+                network.setPriority(networkElement, getLastPriorityValue());
+            }
+        } catch (PartStateException e) {
+            player.closeScreen();
         }
     }
 }
