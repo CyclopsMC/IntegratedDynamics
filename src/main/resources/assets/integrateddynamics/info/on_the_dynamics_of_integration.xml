@@ -234,6 +234,7 @@
             </section>
             <section name="info_book.integrateddynamics.manual.prerequisites.squeezer">
                 <tag>squeezer</tag>
+                <tag>menrilresin</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.squeezer.text1</paragraph>
                 <appendix type="craftingRecipe">integrateddynamics:squeezer</appendix>
                 <appendixList type="integrateddynamics:squeezerRecipe">base</appendixList>
