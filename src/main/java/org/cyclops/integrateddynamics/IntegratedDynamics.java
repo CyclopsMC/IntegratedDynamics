@@ -15,8 +15,8 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockItemConfigReference;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
 import org.cyclops.cyclopscore.infobook.InfoBookRegistry;
-import org.cyclops.cyclopscore.infobook.pageelement.AchievementRewardsAppendix;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
+import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.item.BucketRegistry;
@@ -258,7 +258,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         // Register achievements
         Achievements.registerAchievements();
 
-        putGenericReference(AchievementRewardsAppendix.REFKEY_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
+        putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
     }
 
     @Mod.EventHandler
