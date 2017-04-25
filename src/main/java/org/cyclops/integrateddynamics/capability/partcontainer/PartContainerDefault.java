@@ -16,6 +16,7 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -152,7 +153,7 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public void setPartState(EnumFacing side, IPartState partState) {
+    public void setPartState(EnumFacing side, IPartState partState) throws PartStateException {
         if(!hasPart(side)) {
             throw new IllegalArgumentException(String.format("No part at position %s was found to update the state " +
                     "for.", getPosition()));
@@ -162,11 +163,11 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public IPartState getPartState(EnumFacing side) {
+    public IPartState getPartState(EnumFacing side) throws PartStateException {
         synchronized (partData) {
             PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
             if (partStateHolder == null) {
-                throw new IllegalArgumentException(String.format("No part at position %s was found to get the state from.",
+                throw new PartStateException(String.format("No part at position %s was found to get the state from.",
                         getPosition()));
             }
             return partStateHolder.getState();
@@ -265,4 +266,5 @@ public abstract class PartContainerDefault implements IPartContainer {
     public void silentResetPartData() {
         this.partData.clear();
     }
+
 }

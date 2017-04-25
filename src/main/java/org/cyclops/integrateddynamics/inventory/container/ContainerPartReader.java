@@ -14,6 +14,7 @@ import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -155,24 +156,28 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        if(!MinecraftHelpers.isClientSide()) {
-            for (IAspectRead aspectRead : getUnfilteredItems()) {
-                String readValue = "";
-                int readValueColor = 0;
-                IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
-                if(variable != null) {
-                    try {
-                        IValue value = variable.getValue();
-                        readValue = value.getType().toCompactString(value);
-                        readValueColor = variable.getType().getDisplayColor();
-                    } catch (EvaluationException | NullPointerException e) {
-                        readValue = "ERROR";
-                        readValueColor = Helpers.RGBToInt(255, 0, 0);
+        try {
+            if (!MinecraftHelpers.isClientSide()) {
+                for (IAspectRead aspectRead : getUnfilteredItems()) {
+                    String readValue = "";
+                    int readValueColor = 0;
+                    IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
+                    if (variable != null) {
+                        try {
+                            IValue value = variable.getValue();
+                            readValue = value.getType().toCompactString(value);
+                            readValueColor = variable.getType().getDisplayColor();
+                        } catch (EvaluationException | NullPointerException e) {
+                            readValue = "ERROR";
+                            readValueColor = Helpers.RGBToInt(255, 0, 0);
+                        }
                     }
-                }
 
-                setReadValue(aspectRead, Pair.of(readValue, readValueColor));
+                    setReadValue(aspectRead, Pair.of(readValue, readValueColor));
+                }
             }
+        } catch (PartStateException e) {
+            getPlayer().closeScreen();
         }
     }
 

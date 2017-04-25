@@ -2,13 +2,12 @@ package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 
 /**
  * A network that can hold energy.
@@ -154,7 +153,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
 
     @Override
     public boolean addPosition(PartPos pos, int priority) {
-        IEnergyStorage energyStorage = TileHelpers.getCapability(pos.getPos(), pos.getSide(), CapabilityEnergy.ENERGY);
+        IEnergyStorage energyStorage = EnergyHelpers.getEnergyStorage(pos);
         return energyStorage != null && super.addPosition(pos, priority);
     }
 
@@ -170,6 +169,6 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     }
 
     protected static IEnergyStorage getEnergyStorage(PrioritizedPartPos pos) {
-        return TileHelpers.getCapability(pos.getPartPos().getPos(), pos.getPartPos().getSide(), CapabilityEnergy.ENERGY);
+        return EnergyHelpers.getEnergyStorage(pos.getPartPos());
     }
 }

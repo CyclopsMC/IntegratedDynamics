@@ -7,7 +7,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -22,6 +24,14 @@ public class EnergyHelpers {
 
     public static void addEnergyStorageProxy(IEnergyStorageProxy energyStorageProxy) {
         ENERGY_STORAGE_PROXIES.add(energyStorageProxy);
+    }
+
+    public static IEnergyStorage getEnergyStorage(PartPos pos) {
+        return getEnergyStorage(pos.getPos(), pos.getSide());
+    }
+
+    public static IEnergyStorage getEnergyStorage(DimPos pos, EnumFacing facing) {
+        return getEnergyStorage(pos.getWorld(), pos.getBlockPos(), facing);
     }
 
     public static IEnergyStorage getEnergyStorage(IBlockAccess world, BlockPos pos, EnumFacing facing) {

@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.1 or higher.
+
+Fixes:
+* Add better energy support for machines not supporting FE, CyclopsMC/IntegratedTunnels#14
+* Fix incorrect Energy Battery blockstate when energy level becomes negative, Closes #171
+* Fix redstone writers block-updating incorrect side, Closes #170
+* Fix Energy Battery showing RF energy stored as max storable energy, Closes #169
+* Fix crash when breaking part and opening its gui during server lag, Closes #168
+* Fix rare crash for collidable components in cable, Closes #166
