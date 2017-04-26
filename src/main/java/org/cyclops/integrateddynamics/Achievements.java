@@ -338,6 +338,7 @@ public class Achievements {
 			} else if (event.getPartType() == PartTypes.AUDIO_WRITER
 					&& event.getAspect() == Aspects.Write.Audio.STRING_SOUND
 					&& event.getEntityPlayer() != null
+					&& variable instanceof LazyExpression
 					&& ((LazyExpression) variable).getOperator() == Operators.OBJECT_BLOCK_STEPSOUND) {
 				IValue value0 = ((LazyExpression) variable).getInput()[0].getValue();
 				if (value0.getType() == ValueTypes.OBJECT_BLOCK
