@@ -58,7 +58,7 @@ dependencies {
     deobfCompile("org.cyclops.commoncapabilities:CommonCapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
         exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
     }
-    //deobfCompile "MCMultiPart:MCMultiPart-experimental:${config.mcmultipart_version}:universal" // http://maven.amadornes.com/
+    deobfCompile "MCMultiPart2:MCMultiPart-exp:${config.mcmultipart_version}" // http://maven.amadornes.com/
     deobfCompile "mcp.mobius.waila:Waila:${config.waila_version}" // http://mobiusstrip.eu/maven/mcp/mobius/waila/Waila/
     deobfCompile "mezz.jei:jei_${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
     deobfCompile "pl.asie.charset:charset-api:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-api/maven-metadata.xml

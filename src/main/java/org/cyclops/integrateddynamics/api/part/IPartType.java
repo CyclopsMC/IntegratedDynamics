@@ -56,6 +56,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public Item getItem();
 
     /**
+     * @return The block associated with this part type.
+     */
+    public Block getBlock();
+
+    /**
      * @param state The state
      * @return If this element is solid.
      */

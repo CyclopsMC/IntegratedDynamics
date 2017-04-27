@@ -68,7 +68,6 @@ sourceSets {
     main {
         java {
             exclude '**/modcompat/thaumcraft/**'
-            exclude '**/modcompat/mcmultipart/**'
             exclude '**/modcompat/tconstruct/**'
             exclude '**/modcompat/immersiveengineering/**'
         }

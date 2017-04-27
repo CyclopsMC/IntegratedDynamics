@@ -1,14 +1,18 @@
 package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.modcompat.IModCompat;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 /**
  * Mod compat for the McMultiPart mod
  * @author rubensworks
  */
 public class McMultiPartModCompat implements IModCompat {
+
+    public static boolean ENABLED = false;
+
     @Override
     public String getModID() {
         return Reference.MOD_MCMULTIPART;
@@ -26,11 +30,8 @@ public class McMultiPartModCompat implements IModCompat {
 
     @Override
     public void onInit(Step step) {
-        if(step == Step.INIT) {
-            if(MinecraftHelpers.isClientSide()) {
-                McMultiPartHelpers.loadClient();
-            }
-            McMultiPartHelpers.load();
-        }
+        ENABLED = true;
+        IntegratedDynamics._instance.getCapabilityConstructorRegistry()
+                .registerTile(TileMultipartTicking.class, new MultipartTileCompat());
     }
 }
