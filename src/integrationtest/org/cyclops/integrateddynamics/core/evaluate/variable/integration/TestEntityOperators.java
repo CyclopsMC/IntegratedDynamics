@@ -1,10 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -37,6 +40,9 @@ public class TestEntityOperators {
     private DummyVariableEntity eItem;
     private DummyVariableEntity eItemFrame;
     private DummyVariableEntity ePlayer;
+    private DummyVariableEntity eZombieHeldItems;
+    private DummyVariableEntity eBoat;
+    private DummyVariableEntity eItemframe;
 
     @IntegrationBefore
     public void before() {
@@ -67,6 +73,17 @@ public class TestEntityOperators {
         eItem = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityItem(world)));
         eItemFrame = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityItemFrame(world)));
         ePlayer = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(world.playerEntities.get(0)));
+        EntityZombie zombieHeldItems = new EntityZombie(world);
+        zombieHeldItems.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.APPLE));
+        zombieHeldItems.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, new ItemStack(Items.POTATO));
+        eZombieHeldItems = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(zombieHeldItems));
+        EntityBoat boat = new EntityBoat(world);
+        eZombie.getValue().getRawValue().get().startRiding(boat);
+        eBoat = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(boat));
+        EntityItemFrame itemframe = new EntityItemFrame(world);
+        itemframe.setDisplayedItem(new ItemStack(Items.POTATO));
+        itemframe.setItemRotation(3);
+        eItemframe = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(itemframe));
     }
 
     /**
@@ -477,6 +494,189 @@ public class TestEntityOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeModName() throws EvaluationException {
         Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- HELDITEM_MAIN -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityHeldItemMain() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{eZombieHeldItems});
+        Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getItem(), Items.APPLE, "helditemmain(zombie) = apple");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeHeldItemMainLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{eZombieHeldItems, eZombieHeldItems});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeHeldItemMainSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeHeldItemMain() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- HELDITEM_OFF -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityHeldItemOff() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{eZombieHeldItems});
+        Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getItem(), Items.POTATO, "helditemoff(zombie) = potato");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeHeldItemOffLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{eZombieHeldItems, eZombieHeldItems});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeHeldItemOffSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeHeldItemOff() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MOUNTED -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityMounted() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_MOUNTED.evaluate(new IVariable[]{eBoat});
+        Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 1, "#mounted(boat) = 1");
+        TestHelpers.assertEqual(((ValueObjectTypeEntity.ValueEntity) ((ValueTypeList.ValueList) res1).getRawValue().get(0)).getRawValue().get(), eZombie.getValue().getRawValue().get(), "mounted(boat)(0) = zombie");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeMountedLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_MOUNTED.evaluate(new IVariable[]{eBoat, eBoat});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeMountedSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_MOUNTED.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeMounted() throws EvaluationException {
+        Operators.OBJECT_ENTITY_MOUNTED.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- ITEMFRAME_CONTENTS -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityItemframeContents() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{eItemframe});
+        Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getItem(), Items.POTATO, "itemframecontents(itemframe) = potato");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeItemframeContentsLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{eItemframe, eItemframe});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeItemframeContentsSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeItemframeContents() throws EvaluationException {
+        Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- ITEMFRAME_ROTATION -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityItemframeRotation() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMFRAME_ROTATION.evaluate(new IVariable[]{eItemframe});
+        Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 3, "itemframerotation(itemframe) = 3");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeItemframeRotationLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMFRAME_ROTATION.evaluate(new IVariable[]{eItemframe, eItemframe});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeItemframeRotationSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMFRAME_ROTATION.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeItemframeRotation() throws EvaluationException {
+        Operators.OBJECT_ITEMFRAME_ROTATION.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- HURTSOUND -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityHurtSound() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_HURTSOUND.evaluate(new IVariable[]{eZombie});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "minecraft:entity.zombie.hurt", "hurtsound(zomie) = minecraft:entity.zombie.hurt");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeHurtSoundLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HURTSOUND.evaluate(new IVariable[]{eZombie, eZombie});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeHurtSoundSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HURTSOUND.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeHurtSound() throws EvaluationException {
+        Operators.OBJECT_ENTITY_HURTSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- DEATHSOUND -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityDeathSound() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{eZombie});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "minecraft:entity.zombie.death", "deathsound(zomie) = minecraft:entity.zombie.death");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeDeathSoundLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{eZombie, eZombie});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeDeathSoundSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeDeathSound() throws EvaluationException {
+        Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }
