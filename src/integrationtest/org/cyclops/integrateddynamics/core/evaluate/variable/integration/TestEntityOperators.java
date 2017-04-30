@@ -7,6 +7,7 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -52,6 +53,8 @@ public class TestEntityOperators {
     private DummyVariableEntity eCowBaby;
     private DummyVariableEntity eCowInLove;
     private DummyVariableEntity ePig;
+    private DummyVariableEntity eSheep;
+    private DummyVariableEntity eSheepSheared;
 
     private DummyVariableItemStack iCarrot;
     private DummyVariableItemStack iWheat;
@@ -126,6 +129,10 @@ public class TestEntityOperators {
             }
         }));
         ePig = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityPig(world)));
+        eSheep = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntitySheep(world)));
+        EntitySheep sheepSheared = new EntitySheep(world);
+        sheepSheared.setSheared(true);
+        eSheepSheared = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(sheepSheared));
 
         iCarrot = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.CARROT)));
         iWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT)));
@@ -873,6 +880,38 @@ public class TestEntityOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeCanBreedWith() throws EvaluationException {
         Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- ISSHEARABLE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockIsShearable() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{eCow});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "isshearable(cow) = false");
+
+        IValue res2 = Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{eSheep});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isshearable(sheep) = true");
+
+        IValue res3 = Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{eSheepSheared});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), false, "isshearable(sheepsheared) = false");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsShearableLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{eCow, eCow});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsShearableSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeIsShearable() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

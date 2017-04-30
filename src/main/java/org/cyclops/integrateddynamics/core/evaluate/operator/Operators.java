@@ -26,6 +26,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.IShearable;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -876,6 +877,20 @@ public final class Operators {
                     },
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
+
+    /**
+     * If the block is shearable
+     */
+    public static final IOperator OBJECT_BLOCK_ISSHEARABLE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("isshearable")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
+                            && a.getRawValue().get().getBlock() instanceof IShearable
+                            && ((IShearable) a.getRawValue().get().getBlock()).isShearable(null, null, null));
+                }
+            }).build());
 
     /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
@@ -1792,6 +1807,20 @@ public final class Operators {
                         canBreedWith = ((EntityAnimal) a.getRawValue().get()).isBreedingItem(b.getRawValue().get());
                     }
                     return ValueTypeBoolean.ValueBoolean.of(canBreedWith);
+                }
+            }).build());
+
+    /**
+     * If the entity is shearable.
+     */
+    public static final IOperator OBJECT_ENTITY_ISSHEARABLE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("isshearable")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
+                            && a.getRawValue().get() instanceof IShearable
+                            && ((IShearable) a.getRawValue().get()).isShearable(null, null, null));
                 }
             }).build());
 

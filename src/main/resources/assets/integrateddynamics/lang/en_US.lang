@@ -649,6 +649,8 @@ operator.operators.integrateddynamics.block.placesound.name=Block Place Sound
 operator.operators.integrateddynamics.block.placesound.info=The place sound of the given block
 operator.operators.integrateddynamics.block.stepsound.name=Block Step Sound
 operator.operators.integrateddynamics.block.stepsound.info=The step sound of the given block
+operator.operators.integrateddynamics.block.isshearable.name=Block Is Shearable
+operator.operators.integrateddynamics.block.isshearable.info=If the given block is shearable
 
 operator.operators.integrateddynamics.itemstack.name=Item
 operator.operators.integrateddynamics.itemstack.basename=Item %s
@@ -767,6 +769,8 @@ operator.operators.integrateddynamics.entity.isinlove.name=Entity Is In Love
 operator.operators.integrateddynamics.entity.isinlove.info=If the given entity is in love and is ready to breed.
 operator.operators.integrateddynamics.entity.canbreedwith.name=Entity Can Breed With
 operator.operators.integrateddynamics.entity.canbreedwith.info=If the given entity can be breed using the given item.
+operator.operators.integrateddynamics.entity.isshearable.name=Entity Is Shearable
+operator.operators.integrateddynamics.entity.isshearable.info=If the given entity is shearable
 
 operator.operators.integrateddynamics.itemstack.isfecontainer.name=Is FE Container
 operator.operators.integrateddynamics.itemstack.isfecontainer.info=If the given item can hold FE

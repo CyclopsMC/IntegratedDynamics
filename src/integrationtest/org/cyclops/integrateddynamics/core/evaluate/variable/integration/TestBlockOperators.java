@@ -30,12 +30,14 @@ public class TestBlockOperators {
     private DummyVariableBlock bAir;
     private DummyVariableBlock bCoal;
     private DummyVariableBlock bLogicProgrammer;
+    private DummyVariableBlock bLeaves;
 
     @IntegrationBefore
     public void before() {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.getDefaultState()));
         bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.COAL_BLOCK.getDefaultState()));
         bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(BlockLogicProgrammer.getInstance().getDefaultState()));
+        bLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.LEAVES.getDefaultState()));
     }
 
     /**
@@ -163,6 +165,35 @@ public class TestBlockOperators {
         Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
         Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
         Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- ISSHEARABLE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockIsShearable() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{bAir});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "isshearable(air) = false");
+
+        IValue res2 = Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{bLeaves});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isshearable(leaves) = true");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsShearableLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{bAir, bAir});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsShearableSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeIsShearable() throws EvaluationException {
+        Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }
