@@ -103,7 +103,7 @@ public class OperatorBuilder<O> {
      * @param inputTypes Array of value types.
      * @return The builder instance.
      */
-    public OperatorBuilder<O> inputTypes(IValueType[] inputTypes) {
+    public OperatorBuilder<O> inputTypes(IValueType... inputTypes) {
         return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }

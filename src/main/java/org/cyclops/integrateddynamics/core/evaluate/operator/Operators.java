@@ -7,10 +7,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -1722,6 +1724,74 @@ public final class Operators {
                         age = ((EntityLivingBase) a.getRawValue().get()).getAge();
                     }
                     return ValueTypeInteger.ValueInteger.of(age);
+                }
+            }).build());
+
+    /**
+     * If the entity is a child.
+     */
+    public static final IOperator OBJECT_ENTITY_ISCHILD = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("ischild")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    boolean child = false;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        child = ((EntityLivingBase) a.getRawValue().get()).isChild();
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(child);
+                }
+            }).build());
+
+    /**
+     * If the entity can be bred.
+     */
+    public static final IOperator OBJECT_ENTITY_CANBREED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("canbreed")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    boolean canBreed = false;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityAgeable) {
+                        canBreed = ((EntityAgeable) a.getRawValue().get()).getGrowingAge() == 0;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(canBreed);
+                }
+            }).build());
+
+    /**
+     * If the entity is in love.
+     */
+    public static final IOperator OBJECT_ENTITY_ISINLOVE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("isinlove")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    boolean inLove = false;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityAnimal) {
+                        inLove = ((EntityAnimal) a.getRawValue().get()).isInLove();
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(inLove);
+                }
+            }).build());
+
+    /**
+     * If the entity can be bred with the given item.
+     */
+    public static final IOperator OBJECT_ENTITY_CANBREEDWITH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .inputTypes(ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK)
+            .output(ValueTypes.BOOLEAN).symbolOperator("canbreedwith")
+            .renderPattern(IConfigRenderPattern.INFIX)
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1);
+                    boolean canBreedWith = false;
+                    if (a.getRawValue().isPresent() && b.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityAnimal) {
+                        canBreedWith = ((EntityAnimal) a.getRawValue().get()).isBreedingItem(b.getRawValue().get());
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(canBreedWith);
                 }
             }).build());
 

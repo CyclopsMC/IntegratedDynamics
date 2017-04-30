@@ -5,6 +5,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -44,6 +46,15 @@ public class TestEntityOperators {
     private DummyVariableEntity eBoat;
     private DummyVariableEntity eItemframe;
     private DummyVariableEntity eZombieAged;
+    private DummyVariableEntity eZombieBaby;
+    private DummyVariableEntity eCow;
+    private DummyVariableEntity eCowAlreadyBred;
+    private DummyVariableEntity eCowBaby;
+    private DummyVariableEntity eCowInLove;
+    private DummyVariableEntity ePig;
+
+    private DummyVariableItemStack iCarrot;
+    private DummyVariableItemStack iWheat;
 
     @IntegrationBefore
     public void before() {
@@ -92,6 +103,32 @@ public class TestEntityOperators {
             }
         };
         eZombieAged = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(zombieAged));
+        EntityZombie zombieBaby = new EntityZombie(world);
+        zombieBaby.setChild(true);
+        eZombieBaby = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(zombieBaby));
+        eCow = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityCow(world)));
+        eCowAlreadyBred = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityCow(world) {
+            @Override
+            public int getGrowingAge() {
+                return 10;
+            }
+        }));
+        eCowBaby = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityCow(world) {
+            @Override
+            public int getGrowingAge() {
+                return -10;
+            }
+        }));
+        eCowInLove = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityCow(world) {
+            @Override
+            public boolean isInLove() {
+                return true;
+            }
+        }));
+        ePig = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(new EntityPig(world)));
+
+        iCarrot = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.CARROT)));
+        iWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT)));
     }
 
     /**
@@ -711,6 +748,131 @@ public class TestEntityOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeAge() throws EvaluationException {
         Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- ISCHILD -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockIsChild() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{eZombie});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "ischild(zombie) = false");
+
+        IValue res2 = Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{eZombieBaby});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "ischild(zombie) = true");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsChildLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{eZombie, eZombie});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsChildSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeIsChild() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- CANBREED -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockCanBreed() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{eCow});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), true, "canbreed(cow) = true");
+
+        IValue res2 = Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{eCowAlreadyBred});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), false, "canbreed(cowbred) = false");
+
+        IValue res3 = Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{eCowBaby});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), false, "canbreed(cowbaby) = false");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeCanBreedLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{eZombie, eZombie});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeCanBreedSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeCanBreed() throws EvaluationException {
+        Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- ISINLOVE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockIsInLove() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{eCow});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "isinlove(cow) = false");
+
+        IValue res2 = Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{eCowInLove});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isinlove(cowloving) = true");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsInLoveLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{eCow, eCow});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsInLoveSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeIsInLove() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- CANBREEDWITH -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockCanBreedWith() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{eCow, iCarrot});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "canbreedwith(cow, carrot) = false");
+
+        IValue res2 = Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{eCow, iWheat});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "canbreedwith(cow, wheat) = true");
+
+        IValue res3 = Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{ePig, iCarrot});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), true, "canbreedwith(pig, carrot) = true");
+
+        IValue res4 = Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{ePig, iWheat});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), false, "canbreedwith(pig, wheat) = false");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeCanBreedWithLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{eCow, iCarrot, iCarrot});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeCanBreedWithSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{eCow});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeCanBreedWith() throws EvaluationException {
+        Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }
