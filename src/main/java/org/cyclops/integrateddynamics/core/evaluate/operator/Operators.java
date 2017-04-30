@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -26,6 +27,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
@@ -893,6 +895,73 @@ public final class Operators {
             }).build());
 
     /**
+     * If the block is plantable
+     */
+    public static final IOperator OBJECT_BLOCK_ISPLANTABLE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("isplantable")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
+                            && a.getRawValue().get().getBlock() instanceof IPlantable);
+                }
+            }).build());
+
+    /**
+     * The block plant type
+     */
+    public static final IOperator OBJECT_BLOCK_PLANTTYPE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("planttype")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    String type = "None";
+                    if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
+                        type = ((IPlantable) a.getRawValue().get().getBlock()).getPlantType(null, null).name();
+                    }
+                    return ValueTypeString.ValueString.of(type);
+                }
+            }).build());
+
+    /**
+     * The block when this block is planted
+     */
+    public static final IOperator OBJECT_BLOCK_PLANT = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    IBlockState plant = null;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
+                        plant = ((IPlantable) a.getRawValue().get().getBlock()).getPlant(null, null);
+                    }
+                    return ValueObjectTypeBlock.ValueBlock.of(plant);
+                }
+            }).build());
+
+    /**
+     * The block when this block is planted
+     */
+    public static final IOperator OBJECT_BLOCK_PLANTAGE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("plantage")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    int age = 0;
+                    if (a.getRawValue().isPresent()) {
+                        for (IProperty<?> prop : a.getRawValue().get().getProperties().keySet()) {
+                            if (prop.getName().equals("age") && prop.getValueClass() == Integer.class) {
+                                age = (Integer) a.getRawValue().get().getValue(prop);
+                            }
+                        }
+                    }
+                    return ValueTypeInteger.ValueInteger.of(age);
+                }
+            }).build());
+
+    /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
      */
 
@@ -1301,6 +1370,54 @@ public final class Operators {
                     return input != null ? input.getMaxEnergyStored() : 0;
                 }
             })).build());
+
+    /**
+     * If the item is plantable
+     */
+    public static final IOperator OBJECT_ITEMSTACK_ISPLANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isplantable")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
+                            && a.getRawValue().get().getItem() instanceof IPlantable);
+                }
+            }).build());
+
+    /**
+     * The item plant type
+     */
+    public static final IOperator OBJECT_ITEMSTACK_PLANTTYPE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("planttype")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    String type = "None";
+                    if (a.getRawValue().isPresent() && a.getRawValue().get().getItem() instanceof IPlantable) {
+                        type = ((IPlantable) a.getRawValue().get().getItem()).getPlantType(null, null).name();
+                    }
+                    return ValueTypeString.ValueString.of(type);
+                }
+            }).build());
+
+    /**
+     * The item when this item is planted
+     */
+    public static final IOperator OBJECT_ITEMSTACK_PLANT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    IBlockState plant = null;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get().getItem() instanceof IPlantable) {
+                        plant = ((IPlantable) a.getRawValue().get().getItem()).getPlant(null, null);
+                    }
+                    return ValueObjectTypeBlock.ValueBlock.of(plant);
+                }
+            }).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
