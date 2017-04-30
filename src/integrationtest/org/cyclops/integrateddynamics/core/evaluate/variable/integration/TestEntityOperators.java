@@ -43,6 +43,7 @@ public class TestEntityOperators {
     private DummyVariableEntity eZombieHeldItems;
     private DummyVariableEntity eBoat;
     private DummyVariableEntity eItemframe;
+    private DummyVariableEntity eZombieAged;
 
     @IntegrationBefore
     public void before() {
@@ -84,6 +85,13 @@ public class TestEntityOperators {
         itemframe.setDisplayedItem(new ItemStack(Items.POTATO));
         itemframe.setItemRotation(3);
         eItemframe = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(itemframe));
+        EntityZombie zombieAged = new EntityZombie(world) {
+            @Override
+            public int getAge() {
+                return 3;
+            }
+        };
+        eZombieAged = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(zombieAged));
     }
 
     /**
@@ -677,6 +685,32 @@ public class TestEntityOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeDeathSound() throws EvaluationException {
         Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- AGE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockAge() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{eZombieAged});
+        Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 3, "age(zombie) = 3");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeAgeLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{eZombieAged, eZombieAged});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeAgeSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeAge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

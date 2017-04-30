@@ -1710,6 +1710,22 @@ public final class Operators {
             }).build());
 
     /**
+     * The age of this entity.
+     */
+    public static final IOperator OBJECT_ENTITY_AGE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.INTEGER).symbolOperator("age")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    int age = 0;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        age = ((EntityLivingBase) a.getRawValue().get()).getAge();
+                    }
+                    return ValueTypeInteger.ValueInteger.of(age);
+                }
+            }).build());
+
+    /**
      * ----------------------------------- FLUID STACK OBJECT OPERATORS -----------------------------------
      */
 

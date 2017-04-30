@@ -757,6 +757,8 @@ operator.operators.integrateddynamics.entity.hurtsound.name=Entity Hurt Sound
 operator.operators.integrateddynamics.entity.hurtsound.info=The hurt sound of the given entity.
 operator.operators.integrateddynamics.entity.deathsound.name=Entity Death Sound
 operator.operators.integrateddynamics.entity.deathsound.info=The death sound of the given entity.
+operator.operators.integrateddynamics.entity.age.name=Entity Age
+operator.operators.integrateddynamics.entity.age.info=The age of the given entity.
 
 operator.operators.integrateddynamics.itemstack.isfecontainer.name=Is FE Container
 operator.operators.integrateddynamics.itemstack.isfecontainer.info=If the given item can hold FE
