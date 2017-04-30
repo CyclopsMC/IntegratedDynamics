@@ -9,18 +9,21 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.IModelState;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
 
 /**
- * Variable model provider for the proxy model.
+ * Variable model provider for a single model.
  * @author rubensworks
  */
-public class ProxyVariableModelProvider implements IVariableModelProvider<BakedSingleVariableModelProvider> {
+public class SingleVariableModelProvider implements IVariableModelProvider<BakedSingleVariableModelProvider> {
 
-    private ResourceLocation model = new ResourceLocation(Reference.MOD_ID + ":customoverlay/proxy");
+    private final ResourceLocation model;
+
+    public SingleVariableModelProvider(ResourceLocation model) {
+        this.model = model;
+    }
 
     @Override
     public BakedSingleVariableModelProvider bakeOverlayModels(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {

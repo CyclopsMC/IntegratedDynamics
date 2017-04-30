@@ -51,6 +51,7 @@ import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
+import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -219,6 +220,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
             getRegistryManager().addRegistry(IVariableModelProviderRegistry.class, VariableModelProviderRegistry.getInstance());
         }
         getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(ProxyVariableFacadeHandler.getInstance());
+        getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(DelayVariableFacadeHandler.getInstance());
 
         addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
 

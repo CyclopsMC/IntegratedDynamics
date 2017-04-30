@@ -9,6 +9,7 @@ gui.integrateddynamics.button.save=Save
 gui.integrateddynamics.button.rename=Rename
 gui.integrateddynamics.partsettings.updateInterval=Frequency
 gui.integrateddynamics.partsettings.priority=Priority
+gui.integrateddynamics.delay.capacity=Capacity
 gui.integrateddynamics.part.properties=Properties:
 gui.integrateddynamics.logicprogrammer.filter=Filter
 gui.integrateddynamics.waila.partConfig=Part Information
@@ -59,6 +60,8 @@ tile.blocks.integrateddynamics.squeezer.info=Squeezes, flattens and crushes by j
 tile.blocks.integrateddynamics.menrilTorch.name=Menril Torch
 tile.blocks.integrateddynamics.menrilTorchStone.name=Menril Stone Torch
 tile.blocks.integrateddynamics.invisibleLight.name=Invisible Light
+tile.blocks.integrateddynamics.delay.name=Delayer
+tile.blocks.integrateddynamics.delay.info=Expose the history of a variable as an aspect
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
@@ -176,6 +179,12 @@ proxy.integrateddynamics.tooltip.proxyId=§e§oProxy ID: §r§o%s
 proxy.integrateddynamics.error.proxyNotInNetwork=Proxy with id %s could not be found within the current network.
 proxy.integrateddynamics.error.proxyInvalid=Proxy with id %s is not exposing a variable.
 proxy.integrateddynamics.error.proxyInvalidType=Proxy with id %s is expected to expose a variable with type %s while %s is found.
+
+# Delay
+delay.integrateddynamics.tooltip.delayId=§e§oDelay ID: §r§o%s
+delay.integrateddynamics.error.delayNotInNetwork=Delay with id %s could not be found within the current network.
+delay.integrateddynamics.error.delayInvalid=Delay with id %s is not exposing a variable.
+delay.integrateddynamics.error.delayInvalidType=Delay with id %s is expected to expose a variable with type %s while %s is found.
 
 # Aspects
 aspect.integrateddynamics.tooltip.aspectName=§eAspect: §r%s
