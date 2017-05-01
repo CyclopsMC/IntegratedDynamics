@@ -36,6 +36,7 @@ key.integrateddynamics.logicProgrammerOpenRename=Focus Search Logic Programmer
 tile.blocks.integrateddynamics.cable.name=Logic Cable
 tile.blocks.integrateddynamics.variablestore.name=Variable Store
 tile.blocks.integrateddynamics.energyBattery.name=Energy Battery
+tile.blocks.integrateddynamics.energyBattery.info=Place in crafting grid with other Energy Batteries to increase capacity.
 tile.blocks.integrateddynamics.creativeEnergyBattery.name=Creative Energy Battery
 tile.blocks.integrateddynamics.logicProgrammer.name=Logic Programmer
 tile.blocks.integrateddynamics.coalGenerator.name=Generator

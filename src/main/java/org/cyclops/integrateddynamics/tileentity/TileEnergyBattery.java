@@ -7,7 +7,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -16,6 +15,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
+import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
@@ -31,10 +31,12 @@ import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
         @Optional.Interface(iface = "cofh.api.energy.IEnergyProvider", modid = Reference.MOD_RF_API, striprefs = true),
         @Optional.Interface(iface = "cofh.api.energy.IEnergyReceiver", modid = Reference.MOD_RF_API, striprefs = true)
 })
-public class TileEnergyBattery extends TileCableConnectable implements IEnergyStorage, IEnergyProvider, IEnergyReceiver {
+public class TileEnergyBattery extends TileCableConnectable implements IEnergyStorageCapacity, IEnergyProvider, IEnergyReceiver {
 
     @NBTPersist
     private int energy;
+    @NBTPersist(useDefaultValue = false)
+    private int capacity = BlockEnergyBatteryConfig.capacity;
 
     public TileEnergyBattery() {
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
@@ -59,7 +61,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int getMaxEnergyStored() {
         if(isCreative()) return Integer.MAX_VALUE;
-        return BlockEnergyBatteryConfig.capacity;
+        return capacity;
     }
 
     @Override
@@ -172,5 +174,10 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         return receiveEnergy(maxReceive, simulate);
+    }
+
+    @Override
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }
