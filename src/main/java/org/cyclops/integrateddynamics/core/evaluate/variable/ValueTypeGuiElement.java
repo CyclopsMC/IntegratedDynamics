@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import net.minecraft.client.gui.FontRenderer;
@@ -17,11 +19,13 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
 
 import java.util.Collections;
@@ -36,6 +40,7 @@ import java.util.Set;
 public class ValueTypeGuiElement<G extends Gui, C extends Container> implements IGuiInputElement<SubGuiConfigRenderPattern, G, C>, IDropdownEntryListener {
 
     private final IValueType valueType;
+    private Predicate<IValue> validator;
     private final IConfigRenderPattern renderPattern;
     private String defaultInputString;
     private String inputString;
@@ -44,6 +49,7 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
 
     public ValueTypeGuiElement(IValueType valueType, IConfigRenderPattern renderPattern) {
         this.valueType = valueType;
+        this.validator = Predicates.alwaysTrue();
         this.renderPattern = renderPattern;
         defaultInputString = getValueType().toCompactString(getValueType().getDefault());
     }
@@ -53,6 +59,10 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
         if(subGui != null) {
             subGui.getSearchField().setText(inputString);
         }
+    }
+
+    public void setValidator(Predicate<IValue> validator) {
+        this.validator = validator;
     }
 
     @Override
@@ -82,7 +92,11 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
 
     @Override
     public L10NHelpers.UnlocalizedString validate() {
-        return getValueType().canDeserialize(inputString);
+        L10NHelpers.UnlocalizedString error = getValueType().canDeserialize(inputString);
+        if (error == null && !this.validator.apply(getValueType().deserialize(inputString))) {
+            error = new L10NHelpers.UnlocalizedString(L10NValues.VALUE_ERROR);
+        }
+        return error;
     }
 
     @Override

@@ -88,6 +88,7 @@ fluid.fluids.integrateddynamics.menrilresin=Menril Resin
 biomes.integrateddynamics.biomeMeneglin=Meneglin
 
 # Value types
+valuetype.integrateddynamics.error.value=Invalid value
 valuetype.integrateddynamics.valueType=Value Type
 valuetype.integrateddynamics.tooltip.typeName=§eType: §r%s
 valuetype.integrateddynamics.tooltip.value=§e§oValue: §r%s
