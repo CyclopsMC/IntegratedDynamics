@@ -61,6 +61,12 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If cable models should be cached for rendering optimization.", isCommandable = true)
     public static boolean cacheCableModels = true;
+
+    /**
+     * The maximum network energy transfer rate.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "The maximum network energy transfer rate.", isCommandable = true, minimalValue = 0)
+    public static int energyRateLimit = Integer.MAX_VALUE;
     
     /**
      * Create a new instance.

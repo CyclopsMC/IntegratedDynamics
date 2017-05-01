@@ -129,6 +129,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
 
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
+        energy = Math.min(energy, GeneralConfig.energyRateLimit);
         int toAdd = energy;
         for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
@@ -141,6 +142,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
 
     @Override
     public int extractEnergy(int energy, boolean simulate) {
+        energy = Math.min(energy, GeneralConfig.energyRateLimit);
         int toConsume = energy;
         for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
