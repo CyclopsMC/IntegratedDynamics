@@ -213,6 +213,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
             subGuiHolder.removeSubGui(propertyInfo);
         }
         guiElement = new ValueTypeGuiElement<>(property.getType(), IConfigRenderPattern.NONE);
+        guiElement.setValidator(property.getValidator());
         subGuiHolder.addSubGui(propertyConfigPattern = guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getContainer()));
         subGuiHolder.addSubGui(propertyInfo = new SubGuiValueTypeInfo(guiElement));
         propertyConfigPattern.initGui(guiLeft, guiTop);
