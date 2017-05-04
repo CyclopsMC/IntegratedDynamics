@@ -30,6 +30,25 @@ public interface IPositionedAddonsNetwork {
      */
     public void removePosition(PartPos pos);
 
+    /**
+     * Check if the given position is disabled.
+     * @param pos The position.
+     * @return If it is disabled.
+     */
+    public boolean isPositionDisabled(PartPos pos);
+
+    /**
+     * Disable a position.
+     * @param pos The position.
+     */
+    public void disablePosition(PartPos pos);
+
+    /**
+     * Enable a position.
+     * @param pos The position.
+     */
+    public void enablePosition(PartPos pos);
+
     public static class PrioritizedPartPos implements Comparable<PrioritizedPartPos> {
         private final PartPos partPos;
         private final int priority;

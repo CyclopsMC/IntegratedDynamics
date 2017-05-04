@@ -21,7 +21,8 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     @Getter
     @Setter
     private INetwork network;
-    private TreeSet<PrioritizedPartPos> positions = Sets.newTreeSet();
+    private final TreeSet<PrioritizedPartPos> positions = Sets.newTreeSet();
+    private final Set<PartPos> disabledPositions = Sets.newHashSet();
 
     @Override
     public Set<PrioritizedPartPos> getPositions() {
@@ -41,5 +42,20 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
                 it.remove();
             }
         }
+    }
+
+    @Override
+    public boolean isPositionDisabled(PartPos pos) {
+        return disabledPositions.contains(pos);
+    }
+
+    @Override
+    public void disablePosition(PartPos pos) {
+        disabledPositions.add(pos);
+    }
+
+    @Override
+    public void enablePosition(PartPos pos) {
+        disabledPositions.remove(pos);
     }
 }

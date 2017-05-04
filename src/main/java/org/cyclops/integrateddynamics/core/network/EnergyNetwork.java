@@ -99,7 +99,9 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
         for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
+                disablePosition(partPos.getPartPos());
                 energy = addSafe(energy, energyStorage.getEnergyStored());
+                enablePosition(partPos.getPartPos());
             }
         }
         return energy;
@@ -111,7 +113,9 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
         for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
+                disablePosition(partPos.getPartPos());
                 maxEnergy = addSafe(maxEnergy, energyStorage.getMaxEnergyStored());
+                enablePosition(partPos.getPartPos());
             }
         }
         return maxEnergy;
@@ -134,7 +138,9 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
         for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
+                disablePosition(partPos.getPartPos());
                 toAdd -= energyStorage.receiveEnergy(toAdd, simulate);
+                enablePosition(partPos.getPartPos());
             }
         }
         return energy - toAdd;
@@ -147,7 +153,9 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
         for(PrioritizedPartPos partPos : getPositions()) {
             IEnergyStorage energyStorage = getEnergyStorage(partPos);
             if (energyStorage != null) {
+                disablePosition(partPos.getPartPos());
                 toConsume -= energyStorage.extractEnergy(toConsume, simulate);
+                enablePosition(partPos.getPartPos());
             }
         }
         return energy - toConsume;
@@ -170,7 +178,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
         return consumption;
     }
 
-    protected static IEnergyStorage getEnergyStorage(PrioritizedPartPos pos) {
-        return EnergyHelpers.getEnergyStorage(pos.getPartPos());
+    protected IEnergyStorage getEnergyStorage(PrioritizedPartPos pos) {
+        return isPositionDisabled(pos.getPartPos()) ? null : EnergyHelpers.getEnergyStorage(pos.getPartPos());
     }
 }
