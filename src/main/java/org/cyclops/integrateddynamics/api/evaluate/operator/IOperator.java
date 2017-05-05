@@ -70,7 +70,7 @@ public interface IOperator {
      * @return The output value.
      * @throws EvaluationException When something went wrong while evaluating.
      */
-    public IValue evaluate(IVariable[] input) throws EvaluationException;
+    public IValue evaluate(IVariable... input) throws EvaluationException;
 
     /**
      * @return The required input length.

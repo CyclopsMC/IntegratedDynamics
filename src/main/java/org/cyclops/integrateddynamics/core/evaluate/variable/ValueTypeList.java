@@ -108,6 +108,11 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
             return o instanceof ValueList && ((ValueList) o).value.equals(this.value);
         }
 
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
     }
 
     public static class ListFactoryIterator<T extends IValueType<V>, V extends IValue> implements Iterator<V> {

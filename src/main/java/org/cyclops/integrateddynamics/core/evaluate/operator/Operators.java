@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import lombok.SneakyThrows;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -49,7 +51,9 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Collection of available operators.
@@ -777,6 +781,59 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
                     return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyTail(a));
+                }
+            }).build());
+
+    /**
+     * Deduplicate the given list elements based on the given predicate.
+     */
+    public static final IOperator LIST_UNIQ_PREDICATE = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
+            .symbolOperator("uniq_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    final IOperator operator = OperatorBuilders.getSafePredictate((ValueTypeOperator.ValueOperator) variables.getValue(1));
+                    Set<IValue> values = Sets.newTreeSet(new Comparator<IValue>() {
+                        @Override
+                        @SneakyThrows
+                        public int compare(IValue o1, IValue o2) {
+                            ValueTypeBoolean.ValueBoolean value = (ValueTypeBoolean.ValueBoolean) operator
+                                    .evaluate(new Variable(o1), new Variable(o2));
+                            return value.getRawValue() ? 0 : o1.hashCode() - o2.hashCode();
+                        }
+                    });
+                    for (IValue value : list) {
+                        values.add(value);
+                    }
+                    return ValueTypeList.ValueList.ofList(list.getValueType(), Lists.newArrayList(values));
+                }
+            }).build());
+
+    /**
+     * Deduplicate the given list elements.
+     */
+    public static final IOperator LIST_UNIQ = REGISTRY.register(OperatorBuilders.LIST
+            .inputType(ValueTypes.LIST)
+            .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).output(ValueTypes.LIST)
+            .symbolOperator("uniq")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    Set<IValue> values = Sets.newTreeSet(new Comparator<IValue>() {
+                        @Override
+                        @SneakyThrows
+                        public int compare(IValue o1, IValue o2) {
+                            return o1.equals(o2) ? 0 : o1.hashCode() - o2.hashCode();
+                        }
+                    });
+                    for (IValue value : list) {
+                        values.add(value);
+                    }
+                    return ValueTypeList.ValueList.ofList(list.getValueType(), Lists.newArrayList(values));
                 }
             }).build());
 

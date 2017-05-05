@@ -19,6 +19,10 @@ public class Variable<V extends IValue> implements IVariable<V> {
         this.value = value;
     }
 
+    public Variable(V value) {
+        this(value.getType(), value);
+    }
+
     @Override
     public IValueType<V> getType() {
         return type;

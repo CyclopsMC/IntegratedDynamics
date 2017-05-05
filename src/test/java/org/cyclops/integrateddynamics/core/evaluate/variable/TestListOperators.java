@@ -491,4 +491,68 @@ public class TestListOperators {
         Operators.LIST_TAIL.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- UNIQ_PREDICATE -----------------------------------
+     */
+
+    @Test
+    public void testListUniqPredicate() throws EvaluationException {
+        IValue res1 = Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{lintegers_dup, oRelationalEquals});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==)[0] = 0", list.get(0).getRawValue(), is(0));
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==)[1] = 1", list.get(1).getRawValue(), is(1));
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==)[2] = 2", list.get(2).getRawValue(), is(2));
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==)[3] = 3", list.get(3).getRawValue(), is(3));
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==).size = 4", list.getLength(), is(4));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeUniqPredicateLarge() throws EvaluationException {
+        Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{lintegers, oRelationalEquals, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeUniqPredicateSmall() throws EvaluationException {
+        Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeUniqPredicate() throws EvaluationException {
+        Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- UNIQ -----------------------------------
+     */
+
+    @Test
+    public void testListUniq() throws EvaluationException {
+        IValue res1 = Operators.LIST_UNIQ.evaluate(new IVariable[]{lintegers_dup});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[0] = 0", list.get(0).getRawValue(), is(0));
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[1] = 1", list.get(1).getRawValue(), is(1));
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[2] = 2", list.get(2).getRawValue(), is(2));
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[3] = 3", list.get(3).getRawValue(), is(3));
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3]).size = 4", list.getLength(), is(4));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeUniqLarge() throws EvaluationException {
+        Operators.LIST_UNIQ.evaluate(new IVariable[]{lintegers, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeUniqSmall() throws EvaluationException {
+        Operators.LIST_UNIQ.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeUniq() throws EvaluationException {
+        Operators.LIST_UNIQ.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
 }

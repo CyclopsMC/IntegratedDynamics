@@ -128,7 +128,7 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public IValue evaluate(IVariable[] input) throws EvaluationException {
+    public IValue evaluate(IVariable... input) throws EvaluationException {
         L10NHelpers.UnlocalizedString error = validateTypes(ValueHelpers.from(input));
         if(error != null) {
             throw new EvaluationException(error.localize());

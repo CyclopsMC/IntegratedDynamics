@@ -112,6 +112,11 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
         public boolean equals(Object o) {
             return o instanceof ValueDouble && ((ValueDouble) o).value == this.value;
         }
+
+        @Override
+        public int hashCode() {
+            return getType().hashCode() + ((int) value * 100);
+        }
     }
 
 }

@@ -113,6 +113,11 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
         public boolean equals(Object o) {
             return o instanceof ValueInteger && ((ValueInteger) o).value == this.value;
         }
+
+        @Override
+        public int hashCode() {
+            return getType().hashCode() + value;
+        }
     }
 
 }

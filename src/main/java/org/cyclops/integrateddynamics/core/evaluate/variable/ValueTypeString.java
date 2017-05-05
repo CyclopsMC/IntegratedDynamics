@@ -56,6 +56,11 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString> 
         public boolean equals(Object o) {
             return o instanceof ValueString && ((ValueString) o).value.equals(this.value);
         }
+
+        @Override
+        public int hashCode() {
+            return getType().hashCode() + value.hashCode();
+        }
     }
 
 }
