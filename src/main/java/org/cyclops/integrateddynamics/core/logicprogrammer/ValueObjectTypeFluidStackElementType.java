@@ -18,6 +18,11 @@ public class ValueObjectTypeFluidStackElementType extends SingleElementType<Valu
             public ValueTypeItemStackElement construct() {
                 return new ValueTypeItemStackElement<>(ValueTypes.OBJECT_FLUIDSTACK, new ValueTypeItemStackElement.IItemStackToValue<ValueObjectTypeFluidStack.ValueFluidStack>() {
                     @Override
+                    public boolean isNullable() {
+                        return true;
+                    }
+
+                    @Override
                     public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
                         return Helpers.getFluidStack(itemStack) != null ? null : new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
                     }

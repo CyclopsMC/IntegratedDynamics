@@ -53,7 +53,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
 
     @Override
     public boolean canWriteElementPre() {
-        return itemStack != null;
+        return this.itemStackToValue.isNullable() || this.itemStack != null;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
 
     @Override
     public L10NHelpers.UnlocalizedString validate() {
-        if(this.itemStack == null) {
+        if(!this.itemStackToValue.isNullable() && this.itemStack == null) {
             return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
         return itemStackToValue.validate(itemStack);
@@ -139,6 +139,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
 
     public static interface IItemStackToValue<V extends IValue> {
 
+        public boolean isNullable();
         public L10NHelpers.UnlocalizedString validate(ItemStack itemStack);
         public V getValue(ItemStack itemStack);
 

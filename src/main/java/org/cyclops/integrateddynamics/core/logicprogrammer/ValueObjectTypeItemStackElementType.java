@@ -16,6 +16,11 @@ public class ValueObjectTypeItemStackElementType extends SingleElementType<Value
             public ValueTypeItemStackElement construct() {
                 return new ValueTypeItemStackElement<>(ValueTypes.OBJECT_ITEMSTACK, new ValueTypeItemStackElement.IItemStackToValue<ValueObjectTypeItemStack.ValueItemStack>() {
                     @Override
+                    public boolean isNullable() {
+                        return true;
+                    }
+
+                    @Override
                     public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
                         return null;
                     }

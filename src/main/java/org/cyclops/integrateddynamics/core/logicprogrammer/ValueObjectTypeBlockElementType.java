@@ -19,6 +19,11 @@ public class ValueObjectTypeBlockElementType extends SingleElementType<ValueType
             public ValueTypeItemStackElement construct() {
                 return new ValueTypeItemStackElement<>(ValueTypes.OBJECT_BLOCK, new ValueTypeItemStackElement.IItemStackToValue<ValueObjectTypeBlock.ValueBlock>() {
                     @Override
+                    public boolean isNullable() {
+                        return true;
+                    }
+
+                    @Override
                     public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
                         if(!(itemStack.getItem() instanceof ItemBlock)) {
                             return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
