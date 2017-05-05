@@ -25,7 +25,7 @@ public class ValueObjectTypeBlockElementType extends SingleElementType<ValueType
 
                     @Override
                     public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
-                        if(!(itemStack.getItem() instanceof ItemBlock)) {
+                        if(itemStack != null && !(itemStack.getItem() instanceof ItemBlock)) {
                             return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
                         }
                         return null;
