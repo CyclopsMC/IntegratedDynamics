@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.tileentity;
 
 import cofh.api.energy.IEnergyConnection;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +22,8 @@ import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 import org.cyclops.integrateddynamics.network.CoalGeneratorNetworkElement;
+
+import java.util.Collection;
 
 /**
  * A part entity for the coal energy generator.
@@ -47,6 +50,11 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
             }
         });
         addCapabilityInternal(CapabilityEnergy.ENERGY, this);
+
+        Collection<Integer> allSlots = Lists.newArrayList(SLOT_FUEL);
+        for (EnumFacing side : EnumFacing.VALUES) {
+            addSlotsToSide(side, allSlots);
+        }
     }
 
     public IEnergyNetwork getEnergyNetwork() {
