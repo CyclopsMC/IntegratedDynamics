@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -37,7 +35,7 @@ public class ValueTypeListProxyTail<T extends IValueType<V>, V extends IValue> e
         return null;
     }
 
-    public static class Factory implements IValueTypeListProxyFactoryTypeRegistry.IProxyFactory<IValueType<IValue>, IValue, ValueTypeListProxyTail<IValueType<IValue>, IValue>> {
+    public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyTail<IValueType<IValue>, IValue>> {
 
         @Override
         public String getName() {
@@ -45,22 +43,14 @@ public class ValueTypeListProxyTail<T extends IValueType<V>, V extends IValue> e
         }
 
         @Override
-        public String serialize(ValueTypeListProxyTail<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(values.list));
-            return tag.toString();
+        protected void serializeNbt(ValueTypeListProxyTail<IValueType<IValue>, IValue> value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            tag.setString("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
         }
 
         @Override
-        public ValueTypeListProxyTail<IValueType<IValue>, IValue> deserialize(String data) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            try {
-                NBTTagCompound tag = JsonToNBT.getTagFromJson(data);
-                IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
-                return new ValueTypeListProxyTail<>(list);
-            } catch (NBTException e) {
-                e.printStackTrace();
-                throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(e.getMessage());
-            }
+        protected ValueTypeListProxyTail<IValueType<IValue>, IValue> deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
+            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
+            return new ValueTypeListProxyTail<>(list);
         }
     }
 }

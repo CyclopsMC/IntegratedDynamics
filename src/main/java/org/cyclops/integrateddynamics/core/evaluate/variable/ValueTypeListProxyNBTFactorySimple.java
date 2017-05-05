@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
@@ -26,12 +27,12 @@ public abstract class ValueTypeListProxyNBTFactorySimple<T extends IValueType<V>
         try {
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
             return deserializeNbt(tag);
-        } catch (NBTException e) {
+        } catch (NBTException | EvaluationException e) {
             e.printStackTrace();
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(e.getMessage());
         }
     }
 
     protected abstract void serializeNbt(P value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException;
-    protected abstract P deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException;
+    protected abstract P deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException;
 }

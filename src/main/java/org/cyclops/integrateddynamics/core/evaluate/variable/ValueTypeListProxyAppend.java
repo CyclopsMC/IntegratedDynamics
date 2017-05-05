@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -41,7 +39,7 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
         return null;
     }
 
-    public static class Factory implements IValueTypeListProxyFactoryTypeRegistry.IProxyFactory<IValueType<IValue>, IValue, ValueTypeListProxyAppend<IValueType<IValue>, IValue>> {
+    public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyAppend<IValueType<IValue>, IValue>> {
 
         @Override
         public String getName() {
@@ -49,26 +47,18 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
         }
 
         @Override
-        public String serialize(ValueTypeListProxyAppend<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("valueType", values.value.getType().getUnlocalizedName());
-            tag.setString("value", values.value.getType().serialize(values.value));
-            tag.setString("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(values.list));
-            return tag.toString();
+        protected void serializeNbt(ValueTypeListProxyAppend<IValueType<IValue>, IValue> value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            tag.setString("valueType", value.value.getType().getUnlocalizedName());
+            tag.setString("value", value.value.getType().serialize(value.value));
+            tag.setString("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
         }
 
         @Override
-        public ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserialize(String data) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            try {
-                NBTTagCompound tag = JsonToNBT.getTagFromJson(data);
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
-                IValue value = valueType.deserialize(tag.getString("value"));
-                IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
-                return new ValueTypeListProxyAppend<>(list, value);
-            } catch (NBTException e) {
-                e.printStackTrace();
-                throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(e.getMessage());
-            }
+        protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
+            IValue value = valueType.deserialize(tag.getString("value"));
+            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
+            return new ValueTypeListProxyAppend<>(list, value);
         }
     }
 }
