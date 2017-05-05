@@ -10,6 +10,8 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.http.util.Asserts;
 import org.cyclops.cyclopscore.helper.EnchantmentHelpers;
@@ -48,6 +50,7 @@ public class TestItemStackOperators {
     private DummyVariableItemStack iEnergyBatteryEmpty;
     private DummyVariableItemStack iEnergyBatteryFull;
     private DummyVariableItemStack iIronOre;
+    private DummyVariableItemStack iShulkerBox;
 
     private DummyVariableBlock bStone;
     private DummyVariableBlock bObsidian;
@@ -80,6 +83,11 @@ public class TestItemStackOperators {
         energyStorage.receiveEnergy(energyStorage.getMaxEnergyStored(), false);
         iEnergyBatteryFull = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(energyBatteryFull));
         iIronOre = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.IRON_ORE)));
+        ItemStack shulkerBox = new ItemStack(Blocks.BLACK_SHULKER_BOX);
+        IItemHandler itemHandler = shulkerBox.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        itemHandler.insertItem(0, new ItemStack(Items.APPLE), false);
+        itemHandler.insertItem(10, new ItemStack(Items.APPLE, 10), false);
+        iShulkerBox = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(shulkerBox));
 
         bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState()));
         bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.getDefaultState()));
@@ -954,6 +962,96 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeFeCapacity() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- HASINVENTORY -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackHasInventory() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_HASINVENTORY.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "hasinventory(apple) == false");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_HASINVENTORY.evaluate(new IVariable[]{iShulkerBox});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "hasinventory(shulkerbox) == true");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeHasInventoryLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASINVENTORY.evaluate(new IVariable[]{iApple, int100});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeHasInventorySmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASINVENTORY.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeHasInventory() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASINVENTORY.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- INVENTORYSIZE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackInventorySize() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_INVENTORYSIZE.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "inventorysize(apple) == 0");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_INVENTORYSIZE.evaluate(new IVariable[]{iShulkerBox});
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), 27, "inventory(shulkerbox) == 27");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeInventorySizeLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_INVENTORYSIZE.evaluate(new IVariable[]{iApple, int100});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeInventorySizeSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_INVENTORYSIZE.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeInventorySize() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_INVENTORYSIZE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- INVENTORY -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackInventory() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_INVENTORY.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 0, "inventory(apple).size == 0");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_INVENTORY.evaluate(new IVariable[]{iShulkerBox});
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 27, "inventory(shulkerbox).size == 27");
+
+        IValue res3 = Operators.OBJECT_ITEMSTACK_INVENTORY.evaluate(new IVariable[]{iShulkerBox});
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) (((ValueTypeList.ValueList) res3).getRawValue().get(10))).getRawValue().getItem(), Items.APPLE, "inventory(shulkerbox)[10] == apple");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputInventoryLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_INVENTORY.evaluate(new IVariable[]{iApple, int100});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputInventorySmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_INVENTORY.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeInventory() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_INVENTORY.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

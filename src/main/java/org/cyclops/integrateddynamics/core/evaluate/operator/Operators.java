@@ -29,6 +29,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
@@ -1284,6 +1286,60 @@ public final class Operators {
                     return input != null ? input.getMaxEnergyStored() : 0;
                 }
             })).build());
+
+    /**
+     * If the given item has an inventory.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_HASINVENTORY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("hasinventory")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
+                }
+            }).build());
+
+    /**
+     * Retrieve the inventory size of the given item handler contents.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_INVENTORYSIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("inventorysize")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    int size = 0;
+                    if (!a.getRawValue().isEmpty()
+                            && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                        IItemHandler itemHandler = a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                        size = itemHandler.getSlots();
+                    }
+                    return ValueTypeInteger.ValueInteger.of(size);
+                }
+            }).build());
+
+    /**
+     * Retrieve the inventory of the given item handler contents.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_INVENTORY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("inventory")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    if (!a.getRawValue().isEmpty()
+                            && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                        IItemHandler itemHandler = a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                        List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.getSlots());
+                        for (int i = 0; i < itemHandler.getSlots(); i++) {
+                            values.add(ValueObjectTypeItemStack.ValueItemStack.of(itemHandler.getStackInSlot(i)));
+                        }
+                        return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
+                    }
+                    return ValueTypes.LIST.getDefault();
+                }
+            }).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------

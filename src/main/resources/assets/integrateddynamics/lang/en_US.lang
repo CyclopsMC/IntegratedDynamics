@@ -702,8 +702,12 @@ operator.operators.integrateddynamics.itemstack.oredict.name=Oredictionary Names
 operator.operators.integrateddynamics.itemstack.oredict.info=The oredictionary names (strings) of the given item
 operator.operators.integrateddynamics.string.oredict.name=Oredictionary Values
 operator.operators.integrateddynamics.string.oredict.info=The oredictionary values (items) of the given name
-operator.operators.integrateddynamics.itemstack.withsize.name=Item With Stacksize
-operator.operators.integrateddynamics.itemstack.withsize.info=Set the stacksize for the given item
+operator.operators.integrateddynamics.itemstack.hasinventory.name=Item Has Inventory
+operator.operators.integrateddynamics.itemstack.hasinventory.info=If the given item has an inventory
+operator.operators.integrateddynamics.itemstack.inventorysize.name=Item Inventory Size
+operator.operators.integrateddynamics.itemstack.inventorysize.info=Retrieve the inventory size of the given item handler contents
+operator.operators.integrateddynamics.itemstack.inventory.name=Item Inventory
+operator.operators.integrateddynamics.itemstack.inventory.info=Retrieve the inventory of the given item handler contents
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s
