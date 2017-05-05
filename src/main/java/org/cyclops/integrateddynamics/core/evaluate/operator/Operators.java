@@ -838,6 +838,29 @@ public final class Operators {
             }).build());
 
     /**
+     * Take a subset of the given list from the given index (inclusive) to the given index (exclusive).
+     */
+    public static final IOperator LIST_SLICE = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(ValueTypes.LIST, ValueTypes.INTEGER, ValueTypes.INTEGER)
+            .renderPattern(IConfigRenderPattern.PREFIX_3_LONG).output(ValueTypes.LIST)
+            .symbolOperator("slice")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    ValueTypeInteger.ValueInteger from = variables.getValue(1);
+                    ValueTypeInteger.ValueInteger to = variables.getValue(2);
+                    if (from.getRawValue() >= to.getRawValue()) {
+                        throw new EvaluationException("The 'from' value must be stricly smaller than the 'to' value in the slice operator.");
+                    }
+                    if (from.getRawValue() < 0 || to.getRawValue() < 0){
+                        throw new EvaluationException("The 'from' and 'to' values in the slice operator must not be negative.");
+                    }
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxySlice<>(list, from.getRawValue(), to.getRawValue()));
+                }
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 

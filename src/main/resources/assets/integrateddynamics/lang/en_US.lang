@@ -639,6 +639,8 @@ operator.operators.integrateddynamics.list.uniq_p.name=Unique Predicate
 operator.operators.integrateddynamics.list.uniq_p.info=Deduplicate all elements in the list based on the given comparator predicate.
 operator.operators.integrateddynamics.list.uniq.name=Uniq
 operator.operators.integrateddynamics.list.uniq.info=Deduplicate all elements in the list.
+operator.operators.integrateddynamics.list.slice.name=Slice
+operator.operators.integrateddynamics.list.slice.info=Take a subset of the given list from the given index (inclusive) to the given index (exclusive).
 
 operator.operators.integrateddynamics.block.name=Block
 operator.operators.integrateddynamics.block.basename=Block %s
