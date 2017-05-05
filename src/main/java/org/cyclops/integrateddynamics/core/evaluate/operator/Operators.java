@@ -1189,7 +1189,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
                 @Override
                 public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null && FurnaceRecipes.instance().getSmeltingResult(itemStack) != null;
+                    return itemStack != null && !FurnaceRecipes.instance().getSmeltingResult(itemStack).isEmpty();
                 }
             })).build());
 
