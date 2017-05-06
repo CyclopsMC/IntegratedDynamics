@@ -25,6 +25,7 @@ public final class Reference {
     public static final String DICT_SAPLINGTREE = "treeSapling";
     public static final String DICT_WOODPLANK = "plankWood";
     public static final String DICT_TORCH = "torch";
+    public static final String DICT_STAIRWOOD = "stairWood";
 
     // MOD ID's
     public static final String MOD_FORGE = "Forge";

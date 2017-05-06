@@ -851,4 +851,85 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">menrilPlanks</condition>
+		<condition type="config">menrilPlanksStairs</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:menrilPlanks</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menrilPlanks</item>
+					<item>integrateddynamics:menrilPlanks</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menrilPlanks</item>
+					<item>integrateddynamics:menrilPlanks</item>
+					<item>integrateddynamics:menrilPlanks</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:menrilPlanksStairs</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">crystalizedMenrilBlockStairs</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+					<item>integrateddynamics:crystalizedMenrilBlock</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:crystalizedMenrilBlockStairs</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">crystalizedMenrilBrick</condition>
+		<condition type="config">crystalizedMenrilBrickStairs</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilBrick</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilBrick</item>
+					<item>integrateddynamics:crystalizedMenrilBrick</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalizedMenrilBrick</item>
+					<item>integrateddynamics:crystalizedMenrilBrick</item>
+					<item>integrateddynamics:crystalizedMenrilBrick</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:crystalizedMenrilBrickStairs</item>
+		</output>
+	</recipe>
+
 </recipes>
