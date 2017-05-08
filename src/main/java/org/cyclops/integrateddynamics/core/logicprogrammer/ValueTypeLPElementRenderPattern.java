@@ -6,17 +6,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeStringRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-public class ValueTypeElementSubGuiRenderPattern extends ValueTypeSubGuiRenderPattern<SubGuiConfigRenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+public class ValueTypeLPElementRenderPattern extends GuiElementValueTypeStringRenderPattern<RenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
-    public ValueTypeElementSubGuiRenderPattern(ValueTypeElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                               GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+    public ValueTypeLPElementRenderPattern(ValueTypeLPElementBase element, int baseX, int baseY, int maxWidth, int maxHeight,
+                                           GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         super(element.getInnerGuiElement(), baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

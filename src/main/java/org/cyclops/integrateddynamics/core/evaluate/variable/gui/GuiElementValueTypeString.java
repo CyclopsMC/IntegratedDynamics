@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.evaluate.variable;
+package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -26,18 +26,18 @@ import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Element for value type.
+ * GUI element for value type that can be read from and written to strings.
  * @author rubensworks
  */
 @Data
-public class ValueTypeGuiElement<G extends Gui, C extends Container> implements IGuiInputElement<SubGuiConfigRenderPattern, G, C>, IDropdownEntryListener {
+public class GuiElementValueTypeString<G extends Gui, C extends Container> implements IGuiInputElement<RenderPattern, G, C>, IDropdownEntryListener {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
@@ -47,14 +47,14 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
     private Set<IDropdownEntry<?>> dropdownPossibilities = Collections.emptySet();
     private IDropdownEntryListener dropdownEntryListener = null;
 
-    public ValueTypeGuiElement(IValueType valueType, IConfigRenderPattern renderPattern) {
+    public GuiElementValueTypeString(IValueType valueType, IConfigRenderPattern renderPattern) {
         this.valueType = valueType;
         this.validator = Predicates.alwaysTrue();
         this.renderPattern = renderPattern;
         defaultInputString = getValueType().toCompactString(getValueType().getDefault());
     }
 
-    public void setInputString(String inputString, ValueTypeSubGuiRenderPattern subGui) {
+    public void setInputString(String inputString, GuiElementValueTypeStringRenderPattern subGui) {
         this.inputString = inputString;
         if(subGui != null) {
             subGui.getSearchField().setText(inputString);
@@ -118,9 +118,9 @@ public class ValueTypeGuiElement<G extends Gui, C extends Container> implements 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ValueTypeSubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public GuiElementValueTypeStringRenderPattern<GuiElementValueTypeStringRenderPattern, G, C> createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   G gui, C container) {
-        return new ValueTypeSubGuiRenderPattern<ValueTypeSubGuiRenderPattern, G, C>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+        return new GuiElementValueTypeStringRenderPattern<>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     @SideOnly(Side.CLIENT)

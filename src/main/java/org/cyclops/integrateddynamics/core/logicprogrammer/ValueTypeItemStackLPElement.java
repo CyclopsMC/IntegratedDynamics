@@ -6,39 +6,31 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * Element for a value type that can be derived from an {@link ItemStack}.
  * @author rubensworks
  */
-public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElement {
+public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPElementBase<ValueTypeItemStackLPElement.SubGuiRenderPattern> {
 
     private final IItemStackToValue<V> itemStackToValue;
-    private final ILogicProgrammerElementType type;
     private ItemStack itemStack;
 
-    public ValueTypeItemStackElement(IValueType valueType, IItemStackToValue<V> itemStackToValue, ILogicProgrammerElementType type) {
+    public ValueTypeItemStackLPElement(IValueType valueType, IItemStackToValue<V> itemStackToValue) {
         super(valueType);
         this.itemStackToValue = itemStackToValue;
-        this.type = type;
     }
 
     @Override
     public ILogicProgrammerElementType getType() {
-        return type;
+        return LogicProgrammerElementTypes.VALUETYPE;
     }
 
     @Override
@@ -54,12 +46,6 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
     @Override
     public boolean canWriteElementPre() {
         return this.itemStackToValue.isNullable() || this.itemStack != null;
-    }
-
-    @Override
-    public ItemStack writeElement(ItemStack itemStack) {
-        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY, new ValueTypeVariableFacadeFactory(getInnerGuiElement().getValueType(), itemStackToValue.getValue(this.itemStack)));
     }
 
     @Override
@@ -86,16 +72,26 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
     }
 
     @Override
+    public IValue getValue() {
+        return this.itemStackToValue.getValue(this.itemStack);
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
-    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public SubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
-    @SideOnly(Side.CLIENT)
-    protected static class SubGuiRenderPattern extends SubGuiConfigRenderPattern<ValueTypeItemStackElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+    @Override
+    public void setValueInGui(SubGuiRenderPattern subGui) {
+        subGui.container.getTemporaryInputSlots().setInventorySlotContents(0, this.itemStack);
+    }
 
-        public SubGuiRenderPattern(ValueTypeItemStackElement element, int baseX, int baseY, int maxWidth, int maxHeight,
+    @SideOnly(Side.CLIENT)
+    protected static class SubGuiRenderPattern extends RenderPattern<ValueTypeItemStackLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+
+        public SubGuiRenderPattern(ValueTypeItemStackLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                    GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
         }
@@ -103,7 +99,7 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
         @Override
         public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-            IValueType valueType = element.getInnerGuiElement().getValueType();
+            IValueType valueType = element.getValueType();
 
             // Output type tooltip
             if(!container.hasWriteItemInSlot()) {
@@ -114,27 +110,6 @@ public class ValueTypeItemStackElement<V extends IValue> extends ValueTypeElemen
             }
         }
 
-    }
-
-    protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IValueTypeVariableFacade> {
-
-        private final IValueType valueType;
-        private final IValue value;
-
-        public ValueTypeVariableFacadeFactory(IValueType valueType, IValue value) {
-            this.valueType = valueType;
-            this.value = value;
-        }
-
-        @Override
-        public IValueTypeVariableFacade create(boolean generateId) {
-            return new ValueTypeVariableFacade(generateId, valueType, value);
-        }
-
-        @Override
-        public IValueTypeVariableFacade create(int id) {
-            return new ValueTypeVariableFacade(id, valueType, value);
-        }
     }
 
     public static interface IItemStackToValue<V extends IValue> {

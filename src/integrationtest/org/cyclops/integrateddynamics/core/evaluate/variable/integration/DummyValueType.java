@@ -4,6 +4,7 @@ import lombok.ToString;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueBase;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import java.util.List;
 
@@ -86,8 +87,8 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public boolean hasDefaultLogicProgrammerElement() {
-        return true;
+    public ValueTypeLPElementBase createLogicProgrammerElement() {
+        return null;
     }
 
     @ToString

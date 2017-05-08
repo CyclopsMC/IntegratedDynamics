@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.core.evaluate.variable;
+package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -14,25 +14,26 @@ import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.core.client.gui.GuiTextFieldDropdown;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
-import org.cyclops.integrateddynamics.core.logicprogrammer.SubGuiConfigRenderPattern;
-import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeValueChangedPacket;
+import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeStringValueChangedPacket;
 
 import java.io.IOException;
 import java.util.Set;
 
 /**
+ * A render pattern for value types that can be read from and written to strings.
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C extends Container> extends SubGuiConfigRenderPattern<ValueTypeGuiElement<G, C>, G, C> implements IDropdownEntryListener {
+public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G extends Gui, C extends Container> extends RenderPattern<GuiElementValueTypeString<G, C>, G, C> implements IDropdownEntryListener {
 
     @Getter
-    protected final ValueTypeGuiElement<G, C> element;
+    protected final GuiElementValueTypeString<G, C> element;
     @Getter
     private GuiTextFieldDropdown searchField = null;
 
-    public ValueTypeSubGuiRenderPattern(ValueTypeGuiElement<G, C> element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                        G gui, C container) {
+    public GuiElementValueTypeStringRenderPattern(GuiElementValueTypeString<G, C> element, int baseX, int baseY, int maxWidth, int maxHeight,
+                                                  G gui, C container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
         this.element = element;
     }
@@ -81,7 +82,7 @@ public class ValueTypeSubGuiRenderPattern<S extends ISubGuiBox, G extends Gui, C
                     ((IDirtyMarkListener) container).onDirty();
                 }
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                        new LogicProgrammerValueTypeValueChangedPacket(element.getInputString()));
+                        new LogicProgrammerValueTypeStringValueChangedPacket(element.getInputString()));
                 return true;
             }
         }

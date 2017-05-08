@@ -4,11 +4,16 @@ import com.google.common.base.Strings;
 import lombok.ToString;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 /**
  * Value type with values that are blocks (these are internally stored as blockstates).
@@ -68,6 +73,30 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     @Override
     public boolean isNull(ValueBlock a) {
         return !a.getRawValue().isPresent();
+    }
+
+    @Override
+    public ValueTypeLPElementBase createLogicProgrammerElement() {
+        return new ValueTypeItemStackLPElement<>(this, new ValueTypeItemStackLPElement.IItemStackToValue<ValueObjectTypeBlock.ValueBlock>() {
+            @Override
+            public boolean isNullable() {
+                return true;
+            }
+
+            @Override
+            public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
+                if(itemStack != null && !(itemStack.getItem() instanceof ItemBlock)) {
+                    return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
+                }
+                return null;
+            }
+
+            @Override
+            public ValueObjectTypeBlock.ValueBlock getValue(ItemStack itemStack) {
+                return ValueObjectTypeBlock.ValueBlock.of(
+                        itemStack == null ? null : BlockHelpers.getBlockStateFromItemStack(itemStack));
+            }
+        });
     }
 
     @ToString

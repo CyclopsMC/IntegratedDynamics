@@ -1,0 +1,71 @@
+package org.cyclops.integrateddynamics.core.logicprogrammer;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
+
+/**
+ * Element for value types that can be read from and written to strings.
+ * @author rubensworks
+ */
+public class ValueTypeStringLPElement extends ValueTypeLPElementBase<ValueTypeLPElementRenderPattern> {
+
+    public ValueTypeStringLPElement(IValueType valueType) {
+        super(valueType);
+    }
+
+    @Override
+    public boolean canWriteElementPre() {
+        return getInnerGuiElement().getInputString() != null;
+    }
+
+    @Override
+    public boolean canCurrentlyReadFromOtherItem() {
+        return this.getInnerGuiElement().getInputString() == null || this.getInnerGuiElement().getInputString().equals(getInnerGuiElement().getDefaultInputString());
+    }
+
+    @Override
+    public void activate() {
+        getInnerGuiElement().setInputString(new String(getInnerGuiElement().getDefaultInputString()));
+    }
+
+    @Override
+    public void deactivate() {
+        getInnerGuiElement().setInputString(null);
+    }
+
+    @Override
+    public L10NHelpers.UnlocalizedString validate() {
+        return getValueType().canDeserialize(getInnerGuiElement().getInputString());
+    }
+
+    @Override
+    public IValue getValue() {
+        return getInnerGuiElement().getValueType().deserialize(getInnerGuiElement().getInputString());
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean isFocused(ValueTypeLPElementRenderPattern subGui) {
+        subGui.getSearchField().isFocused();
+        return subGui.getSearchField().isFocused();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void setFocused(ValueTypeLPElementRenderPattern subGui, boolean focused) {
+        subGui.getSearchField().setFocused(focused);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public ValueTypeLPElementRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+                                                            GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+        return new ValueTypeLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+    }
+
+}

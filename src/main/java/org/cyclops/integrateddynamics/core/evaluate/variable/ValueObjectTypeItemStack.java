@@ -7,8 +7,11 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 /**
  * Value type with values that are itemstacks.
@@ -65,6 +68,26 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     @Override
     public boolean isNull(ValueItemStack a) {
         return !a.getRawValue().isPresent();
+    }
+
+    @Override
+    public ValueTypeLPElementBase createLogicProgrammerElement() {
+        return new ValueTypeItemStackLPElement<>(this, new ValueTypeItemStackLPElement.IItemStackToValue<ValueObjectTypeItemStack.ValueItemStack>() {
+            @Override
+            public boolean isNullable() {
+                return true;
+            }
+
+            @Override
+            public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
+                return null;
+            }
+
+            @Override
+            public ValueObjectTypeItemStack.ValueItemStack getValue(ItemStack itemStack) {
+                return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
+            }
+        });
     }
 
     @ToString

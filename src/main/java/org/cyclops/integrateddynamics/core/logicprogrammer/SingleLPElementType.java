@@ -10,12 +10,12 @@ import java.util.List;
  * Element type that provides exactly one element.
  * @author rubensworks
  */
-public class SingleElementType<E extends ILogicProgrammerElement> implements ILogicProgrammerElementType<E> {
+public class SingleLPElementType<E extends ILogicProgrammerElement> implements ILogicProgrammerElementType<E> {
 
     private final ILogicProgrammerElementConstructor<E> constructor;
     private final String id;
 
-    public SingleElementType(ILogicProgrammerElementConstructor<E> constructor, String id) {
+    public SingleLPElementType(ILogicProgrammerElementConstructor<E> constructor, String id) {
         this.constructor = constructor;
         this.id = id;
     }

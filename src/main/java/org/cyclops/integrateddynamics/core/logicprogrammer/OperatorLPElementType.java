@@ -11,15 +11,15 @@ import java.util.List;
  * Operator element type.
  * @author rubensworks
  */
-public class OperatorElementType implements ILogicProgrammerElementType<OperatorElement> {
+public class OperatorLPElementType implements ILogicProgrammerElementType<OperatorLPElement> {
 
     @Override
-    public OperatorElement getByName(String name) {
-        return new OperatorElement(Operators.REGISTRY.getOperator(name));
+    public OperatorLPElement getByName(String name) {
+        return new OperatorLPElement(Operators.REGISTRY.getOperator(name));
     }
 
     @Override
-    public String getName(OperatorElement element) {
+    public String getName(OperatorLPElement element) {
         return element.getOperator().getUniqueName();
     }
 
@@ -29,10 +29,10 @@ public class OperatorElementType implements ILogicProgrammerElementType<Operator
     }
 
     @Override
-    public List<OperatorElement> createElements() {
-        List<OperatorElement> elements = Lists.newArrayList();
+    public List<OperatorLPElement> createElements() {
+        List<OperatorLPElement> elements = Lists.newArrayList();
         for(IOperator operator : Operators.REGISTRY.getOperators()) {
-            elements.add(new OperatorElement(operator));
+            elements.add(new OperatorLPElement(operator));
         }
         return elements;
     }

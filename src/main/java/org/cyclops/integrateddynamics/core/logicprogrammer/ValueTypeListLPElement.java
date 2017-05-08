@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonArrow;
@@ -20,16 +19,13 @@ import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeSubGuiRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeListValueChangedPacket;
 
@@ -41,18 +37,18 @@ import java.util.Map;
  * Element for the list value type.
  * @author rubensworks
  */
-public class ValueTypeListElement extends ValueTypeElement {
+public class ValueTypeListLPElement extends ValueTypeLPElementBase<ValueTypeListLPElement.MasterSubGuiRenderPattern> {
 
     private IValueType listValueType;
-    private Map<Integer, ValueTypeElement> subElements;
-    private Map<Integer, ValueTypeSubGuiRenderPattern> subElementGuis;
+    private Map<Integer, IValueTypeLogicProgrammerElement> subElements;
+    private Map<Integer, RenderPattern> subElementGuis;
     private int length = 0;
     private int activeElement = -1;
     private MasterSubGuiRenderPattern masterGui;
 
     private ValueTypeList.ValueList serverValue = null;
 
-    public ValueTypeListElement() {
+    public ValueTypeListLPElement() {
         super(ValueTypes.LIST);
     }
 
@@ -62,7 +58,7 @@ public class ValueTypeListElement extends ValueTypeElement {
 
     @Override
     public ILogicProgrammerElementType getType() {
-        return LogicProgrammerElementTypes.LIST_ELEMENT_TYPE;
+        return LogicProgrammerElementTypes.VALUETYPE;
     }
 
     @Override
@@ -77,7 +73,7 @@ public class ValueTypeListElement extends ValueTypeElement {
 
     protected List<IValue> constructValues() {
         List<IValue> valueList = Lists.newArrayListWithExpectedSize(this.length);
-        for (Map.Entry<Integer, ValueTypeElement> value : this.subElements.entrySet()) {
+        for (Map.Entry<Integer, IValueTypeLogicProgrammerElement> value : this.subElements.entrySet()) {
             if(value.getValue().validate() == null) {
                 valueList.add(value.getKey(), value.getValue().getValue());
             } else {
@@ -88,15 +84,9 @@ public class ValueTypeListElement extends ValueTypeElement {
     }
 
     @Override
-    public ItemStack writeElement(ItemStack itemStack) {
-        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        ValueTypeVariableFacadeFactory factory;
-        if(MinecraftHelpers.isClientSide()) {
-            factory = new ValueTypeVariableFacadeFactory(listValueType, constructValues());
-        } else {
-            factory = new ValueTypeVariableFacadeFactory(serverValue);
-        }
-        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY, factory);
+    public IValue getValue() {
+        return MinecraftHelpers.isClientSide()
+                ? ValueTypeList.ValueList.ofList(listValueType, constructValues()) : serverValue;
     }
 
     public void setListValueType(IValueType listValueType) {
@@ -114,18 +104,18 @@ public class ValueTypeListElement extends ValueTypeElement {
     public void setActiveElement(int index) {
         activeElement = index;
         if(index >= 0 && !subElements.containsKey(index)) {
-            subElements.put(index, LogicProgrammerElementTypes.VALUETYPE.getByValueType(listValueType));
+            subElements.put(index, listValueType.createLogicProgrammerElement());
         }
         masterGui.setActiveElement(activeElement);
         masterGui.container.onDirty();
     }
 
     public void removeElement(int index) {
-        Map<Integer, ValueTypeElement> oldSubElements = subElements;
-        Map<Integer, ValueTypeSubGuiRenderPattern> oldSubElementGuis = subElementGuis;
+        Map<Integer, IValueTypeLogicProgrammerElement> oldSubElements = subElements;
+        Map<Integer, RenderPattern> oldSubElementGuis = subElementGuis;
         subElements = Maps.newHashMap();
         subElementGuis = Maps.newHashMap();
-        for(Map.Entry<Integer, ValueTypeElement> entry : oldSubElements.entrySet()) {
+        for(Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : oldSubElements.entrySet()) {
             int i = entry.getKey();
             if(i < index) {
                 subElements.put(i, entry.getValue());
@@ -154,12 +144,13 @@ public class ValueTypeListElement extends ValueTypeElement {
             return serverValue == null ? new L10NHelpers.UnlocalizedString() : null;
         }
         if(MinecraftHelpers.isClientSide()) {
-            IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeListValueChangedPacket(listValueType == null ? ValueTypes.LIST.getDefault() : ValueTypeList.ValueList.ofList(listValueType, constructValues())));
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeListValueChangedPacket(
+                    listValueType == null ? ValueTypes.LIST.getDefault() : ValueTypeList.ValueList.ofList(listValueType, constructValues())));
         }
         if(this.listValueType == null) {
             return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
-        for(Map.Entry<Integer, ValueTypeElement> entry : subElements.entrySet()) {
+        for(Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : subElements.entrySet()) {
             L10NHelpers.UnlocalizedString error = entry.getValue().validate();
             if(error != null) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDLISTELEMENT, entry.getKey(), error);
@@ -170,7 +161,7 @@ public class ValueTypeListElement extends ValueTypeElement {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SubGuiConfigRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public MasterSubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return masterGui = new MasterSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
@@ -179,7 +170,7 @@ public class ValueTypeListElement extends ValueTypeElement {
      * Sub gui that holds the list element value type panel and the panel for browsing through the elements.
      */
     @SideOnly(Side.CLIENT)
-    protected static class MasterSubGuiRenderPattern extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+    protected static class MasterSubGuiRenderPattern extends RenderPattern<ValueTypeListLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
         private final int baseX;
         private final int baseY;
@@ -192,7 +183,7 @@ public class ValueTypeListElement extends ValueTypeElement {
         protected int lastGuiLeft;
         protected int lastGuiTop;
 
-        public MasterSubGuiRenderPattern(ValueTypeListElement element, int baseX, int baseY, int maxWidth, int maxHeight,
+        public MasterSubGuiRenderPattern(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                          GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             subGuiHolder.addSubGui(new SelectionSubGui(element, baseX, baseY, maxWidth, maxHeight, gui, container));
@@ -209,7 +200,8 @@ public class ValueTypeListElement extends ValueTypeElement {
                 subGuiHolder.removeSubGui(elementSubGui);
             }
             if(index >= 0) {
-                subGuiHolder.addSubGui(elementSubGui = new ListElementSubGui(element, baseX, baseY + (getHeight() / 4), maxWidth, maxHeight, gui, container));
+                subGuiHolder.addSubGui(elementSubGui = new ListElementSubGui(element, baseX, baseY + (getHeight() / 4),
+                        maxWidth, maxHeight, gui, container));
                 elementSubGui.initGui(lastGuiLeft, lastGuiTop);
             }
         }
@@ -224,7 +216,7 @@ public class ValueTypeListElement extends ValueTypeElement {
         @Override
         public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-            IValueType valueType = element.getInnerGuiElement().getValueType();
+            IValueType valueType = element.getValueType();
 
             // Output type tooltip
             if(!container.hasWriteItemInSlot()) {
@@ -240,12 +232,12 @@ public class ValueTypeListElement extends ValueTypeElement {
      * Selection panel for the list element value type.
      */
     @SideOnly(Side.CLIENT)
-    protected static class SelectionSubGui extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> implements IInputListener {
+    protected static class SelectionSubGui extends RenderPattern<ValueTypeListLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> implements IInputListener {
 
         private GuiArrowedListField<IValueType> valueTypeSelector = null;
         private GuiButton arrowAdd;
 
-        public SelectionSubGui(ValueTypeListElement element, int baseX, int baseY, int maxWidth, int maxHeight,
+        public SelectionSubGui(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
         }
@@ -262,7 +254,8 @@ public class ValueTypeListElement extends ValueTypeElement {
         @Override
         public void initGui(int guiLeft, int guiTop) {
             super.initGui(guiLeft, guiTop);
-            valueTypeSelector = new GuiArrowedListField<>(0, Minecraft.getMinecraft().fontRendererObj, getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes());
+            valueTypeSelector = new GuiArrowedListField<>(0, Minecraft.getMinecraft().fontRendererObj,
+                    getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes());
             valueTypeSelector.setListener(this);
             onChanged();
             int x = guiLeft + getX();
@@ -300,22 +293,26 @@ public class ValueTypeListElement extends ValueTypeElement {
      * Panel for browsing through the list elements and updating them.
      */
     @SideOnly(Side.CLIENT)
-    protected static class ListElementSubGui extends SubGuiConfigRenderPattern<ValueTypeListElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+    protected static class ListElementSubGui extends RenderPattern<ValueTypeListLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
         private GuiButtonArrow arrowLeft;
         private GuiButtonArrow arrowRight;
         private GuiButton arrowRemove;
 
-        public ListElementSubGui(ValueTypeListElement element, int baseX, int baseY, int maxWidth, int maxHeight,
+        public ListElementSubGui(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-            ValueTypeSubGuiRenderPattern subGui = element.subElementGuis.get(element.activeElement);
+            RenderPattern subGui = element.subElementGuis.get(element.activeElement);
+            IValueTypeLogicProgrammerElement subElement = element.subElements.get(element.activeElement);
             if(subGui == null) {
-                subGui = (ValueTypeSubGuiRenderPattern) element.subElements.get(element.activeElement).createSubGui(baseX, baseY, maxWidth, maxHeight / 3 * 2, gui, container);
+                subGui = (RenderPattern) subElement.createSubGui(baseX, baseY, maxWidth,
+                        maxHeight / 3 * 2, gui, container);
                 element.subElementGuis.put(
                         element.activeElement,
                         subGui);
             }
+            gui.getContainer().setElementInventory(subElement, getX() + baseX - 24, getY() + baseY - 23);
+            subElement.setValueInGui(subGui);
             subGuiHolder.addSubGui(subGui);
         }
 
@@ -355,29 +352,6 @@ public class ValueTypeListElement extends ValueTypeElement {
             int x = guiLeft + getX() + (getWidth() / 2);
             int y = guiTop + getY() + 4;
             RenderHelpers.drawScaledCenteredString(fontRenderer, String.valueOf(element.activeElement), x - 4, y + 2, 10, Helpers.RGBToInt(20, 20, 20));
-        }
-    }
-
-    protected static class ValueTypeVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IValueTypeVariableFacade> {
-
-        private final ValueTypeList.ValueList values;
-
-        public ValueTypeVariableFacadeFactory(IValueType valueType, List<IValue> values) {
-            this(ValueTypeList.ValueList.ofList(valueType, values));
-        }
-
-        public ValueTypeVariableFacadeFactory(ValueTypeList.ValueList values) {
-            this.values = values;
-        }
-
-        @Override
-        public IValueTypeVariableFacade create(boolean generateId) {
-            return new ValueTypeVariableFacade(generateId, ValueTypes.LIST, values);
-        }
-
-        @Override
-        public IValueTypeVariableFacade create(int id) {
-            return new ValueTypeVariableFacade(id, ValueTypes.LIST, values);
         }
     }
 

@@ -16,10 +16,10 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-class OperatorElementSubGuiRenderPattern extends SubGuiConfigRenderPattern<OperatorElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
-    public OperatorElementSubGuiRenderPattern(OperatorElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                              GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+    public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
+                                          GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

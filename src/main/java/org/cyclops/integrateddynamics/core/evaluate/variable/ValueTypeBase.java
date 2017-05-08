@@ -10,6 +10,8 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeStringLPElement;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -114,8 +116,8 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public boolean hasDefaultLogicProgrammerElement() {
-        return !isObject();
+    public ValueTypeLPElementBase createLogicProgrammerElement() {
+        return new ValueTypeStringLPElement(this);
     }
 
     protected String getModId() {
