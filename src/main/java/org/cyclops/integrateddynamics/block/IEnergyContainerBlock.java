@@ -7,5 +7,6 @@ package org.cyclops.integrateddynamics.block;
 public interface IEnergyContainerBlock {
 
     public String getEneryContainerNBTName();
+    public String getEneryContainerCapacityNBTName();
 
 }

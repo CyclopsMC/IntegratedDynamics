@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.capability.energystorage;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
@@ -11,7 +10,7 @@ import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
  * Energy Battery implementation for ItemBlock's.
  * @author rubensworks
  */
-public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorage {
+public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapacity {
 
     private final ItemBlockEnergyContainer itemBlockEnergyContainer;
     private final ItemStack itemStack;
@@ -29,7 +28,11 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorage {
 
     @Override
     public int getMaxEnergyStored() {
-        return BlockEnergyBatteryConfig.capacity;
+        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        if (!tag.hasKey(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName())) {
+            return BlockEnergyBatteryConfig.capacity;
+        }
+        return tag.getInteger(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
     }
 
     @Override
@@ -65,5 +68,11 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorage {
     protected void setEnergy(ItemStack itemStack, int energy) {
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
         tag.setInteger(itemBlockEnergyContainer.get().getEneryContainerNBTName(), energy);
+    }
+
+    @Override
+    public void setCapacity(int capacity) {
+        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        tag.setInteger(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName(), capacity);
     }
 }

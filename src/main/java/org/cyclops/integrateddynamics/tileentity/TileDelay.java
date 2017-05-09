@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -44,6 +45,9 @@ public class TileDelay extends TileProxy {
     private ValueTypeList.ValueList list = ValueTypes.LIST.getDefault();
     private final IVariable<?> variable;
 
+    @Setter
+    private EntityPlayer lastPlayer = null;
+
     public TileDelay() {
         this.variable = new IVariable<ValueTypeList.ValueList>() {
 
@@ -72,7 +76,7 @@ public class TileDelay extends TileProxy {
             public IDelayVariableFacade create(int id) {
                 return new DelayVariableFacade(id, proxyId);
             }
-        });
+        }, lastPlayer, getBlock());
     }
 
     @Override

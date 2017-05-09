@@ -5,9 +5,12 @@ import mezz.jei.api.ingredients.IModIngredientRegistration;
 import net.minecraft.item.ItemStack;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerPortable;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeCategory;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeHandler;
 import org.cyclops.integrateddynamics.modcompat.jei.dryingbasin.DryingBasinRecipeJEI;
+import org.cyclops.integrateddynamics.modcompat.jei.logicprogrammer.LogicProgrammerTransferHandler;
 import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeCategory;
 import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeHandler;
 import org.cyclops.integrateddynamics.modcompat.jei.squeezer.SqueezerRecipeJEI;
@@ -49,6 +52,12 @@ public class JEIIntegratedDynamicsConfig implements IModPlugin {
             registry.addRecipeCategories(new SqueezerRecipeCategory(JEI_HELPER.getGuiHelper()));
             registry.addRecipeHandlers(new SqueezerRecipeHandler());
             registry.addRecipeCategoryCraftingItem(new ItemStack(BlockSqueezer.getInstance()), SqueezerRecipeHandler.CATEGORY);
+
+            // Logic programmer
+            registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(
+                    new LogicProgrammerTransferHandler<>(ContainerLogicProgrammer.class));
+            registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(
+                    new LogicProgrammerTransferHandler<>(ContainerLogicProgrammerPortable.class));
         }
     }
 

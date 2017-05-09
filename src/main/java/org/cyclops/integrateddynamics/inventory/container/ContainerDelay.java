@@ -32,6 +32,7 @@ public class ContainerDelay extends ContainerActiveVariableBase<TileDelay> {
 
         lastUpdateValueId = getNextValueId();
         lastCapacityValueId = getNextValueId();
+        tile.setLastPlayer(inventory.player);
     }
 
     @Override
