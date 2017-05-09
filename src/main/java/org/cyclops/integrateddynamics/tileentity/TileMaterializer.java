@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.tileentity;
 
 import com.google.common.collect.Sets;
+import lombok.Setter;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -33,6 +35,9 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     public static final int SLOT_READ = 0;
     public static final int SLOT_WRITE_IN = 1;
     public static final int SLOT_WRITE_OUT = 2;
+
+    @Setter
+    private EntityPlayer lastPlayer = null;
 
     public TileMaterializer() {
         super(3, "materializer");
@@ -97,7 +102,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
                 public IValueTypeVariableFacade create(int id) {
                     return new ValueTypeVariableFacade(id, valueType, value);
                 }
-            });
+            }, lastPlayer, getBlock());
         } catch (EvaluationException e) {
             addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
         }

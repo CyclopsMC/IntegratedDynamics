@@ -13,7 +13,10 @@ import org.cyclops.cyclopscore.command.CommandMod;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockItemConfigReference;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
+import org.cyclops.cyclopscore.infobook.InfoBookRegistry;
 import org.cyclops.cyclopscore.init.ItemCreativeTab;
+import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.item.BucketRegistry;
@@ -67,6 +70,8 @@ import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
+import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
+import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGeneratorTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
@@ -218,7 +223,9 @@ public class IntegratedDynamics extends ModBaseVersionable {
             getRegistryManager().addRegistry(IValueTypeWorldRendererRegistry.class, ValueTypeWorldRendererRegistry.getInstance());
             getRegistryManager().addRegistry(IVariableModelProviderRegistry.class, VariableModelProviderRegistry.getInstance());
         }
+
         getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(ProxyVariableFacadeHandler.getInstance());
+        getRegistryManager().addRegistry(IInfoBookRegistry.class, new InfoBookRegistry());
 
         addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
 
@@ -247,12 +254,21 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     public final void init(FMLInitializationEvent event) {
         super.init(event);
+
+        // Register achievements
+        Achievements.registerAchievements();
+
+        putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
     }
 
     @Mod.EventHandler
     @Override
     public final void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
+
+        // Initialize info book
+        getRegistryManager().getRegistry(IInfoBookRegistry.class).registerInfoBook(
+                OnTheDynamicsOfIntegrationBook.getInstance(), "/assets/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");
     }
 
     @Mod.EventHandler

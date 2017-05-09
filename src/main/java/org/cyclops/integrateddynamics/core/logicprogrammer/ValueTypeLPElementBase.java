@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Getter;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,6 +16,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
+import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -99,10 +101,10 @@ public abstract class ValueTypeLPElementBase<S extends RenderPattern> implements
     }
 
     @Override
-    public ItemStack writeElement(ItemStack itemStack) {
+    public ItemStack writeElement(EntityPlayer player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY,
-                new ValueTypeVariableFacadeFactory(getValueType(), getValue()));
+                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player, BlockLogicProgrammer.getInstance());
     }
 
     @Override

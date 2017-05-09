@@ -2,6 +2,7 @@
 <recipes>
 
 	<recipe type="integrateddynamics:squeezer">
+		<tag>base</tag>
 		<condition type="config">squeezer</condition>
 		<condition type="config">menrilLog</condition>
 		<condition type="config">menrilresin</condition>

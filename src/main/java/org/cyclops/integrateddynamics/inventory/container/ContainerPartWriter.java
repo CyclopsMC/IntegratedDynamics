@@ -83,7 +83,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     @Override
     public void onDirty() {
         if(!MinecraftHelpers.isClientSide()) {
-            getPartType().updateActivation(getTarget(), getPartState());
+            getPartType().updateActivation(getTarget(), getPartState(), getPlayer());
         }
     }
 

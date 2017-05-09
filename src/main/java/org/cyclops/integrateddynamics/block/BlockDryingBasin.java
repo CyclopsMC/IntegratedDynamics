@@ -4,6 +4,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -24,6 +25,7 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.integrateddynamics.Achievements;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
 
@@ -63,6 +65,11 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                 IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
                 SingleUseTank tank = tile.getTank();
                 ItemStack tileStack = tile.getStackInSlot(0);
+
+                // Menril production achievement
+                if (tileStack != null && tileStack.getItem() == Item.getItemFromBlock(BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance())) {
+                    player.addStat(Achievements.MENRIL_PRODUCTION);
+                }
 
                 if (itemStack == null && tileStack != null) {
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);

@@ -24,6 +24,7 @@ public class ContainerMaterializer extends ContainerActiveVariableBase<TileMater
         addSlotToContainer(new SlotVariable(tile, TileProxy.SLOT_WRITE_IN, 56, 78));
         addSlotToContainer(new SlotRemoveOnly(tile, TileProxy.SLOT_WRITE_OUT, 104, 78));
         addPlayerInventory(inventory, offsetX + 9, offsetY + 107);
+        tile.setLastPlayer(inventory.player);
     }
 
 }

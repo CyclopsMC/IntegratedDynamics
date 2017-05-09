@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Data;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,6 +16,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
+import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -101,10 +103,10 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public ItemStack writeElement(ItemStack itemStack) {
+    public ItemStack writeElement(EntityPlayer player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         int[] variableIds = getVariableIds(inputVariables);
-        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, Operators.REGISTRY, new OperatorVariableFacadeFactory(operator, variableIds));
+        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, Operators.REGISTRY, new OperatorVariableFacadeFactory(operator, variableIds), player, BlockLogicProgrammer.getInstance());
     }
 
     @Override

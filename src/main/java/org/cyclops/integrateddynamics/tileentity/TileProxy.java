@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.tileentity;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
+import lombok.Setter;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -38,6 +40,9 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
     @NBTPersist
     @Getter
     private int proxyId = -1;
+
+    @Setter
+    private EntityPlayer lastPlayer = null;
 
     public TileProxy() {
         super(3, "proxy");
@@ -107,7 +112,7 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
             public IProxyVariableFacade create(int id) {
                 return new ProxyVariableFacade(id, proxyId);
             }
-        });
+        }, lastPlayer, getBlock());
     }
 
     @Override

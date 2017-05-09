@@ -2,6 +2,7 @@
 <recipes>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:stone</item>
@@ -12,6 +13,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:cobblestone</item>
@@ -22,6 +24,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:gravel</item>
@@ -32,6 +35,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:stonebrick</item>
@@ -42,6 +46,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item type="oredict">blockGlass</item>
@@ -52,6 +57,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:sandstone</item>
@@ -62,6 +68,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:glowstone</item>
@@ -72,6 +79,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:lapis_ore</item>
@@ -82,6 +90,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:redstone_ore</item>
@@ -92,6 +101,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:reeds</item>
@@ -102,6 +112,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:bone</item>
@@ -112,6 +123,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:blaze_rod</item>
@@ -122,6 +134,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreGold</condition>
         <condition type="oredict">dustGold</condition>
@@ -134,6 +147,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreIron</condition>
         <condition type="oredict">dustIron</condition>
@@ -146,6 +160,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreCopper</condition>
         <condition type="oredict">dustCopper</condition>
@@ -158,6 +173,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreTin</condition>
         <condition type="oredict">dustTin</condition>
@@ -170,6 +186,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreSilver</condition>
         <condition type="oredict">dustSilver</condition>
@@ -182,6 +199,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreLead</condition>
         <condition type="oredict">dustLead</condition>
@@ -194,6 +212,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreNickel</condition>
         <condition type="oredict">dustNickel</condition>
@@ -206,6 +225,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">orePlatinum</condition>
         <condition type="oredict">dustPlatinum</condition>
@@ -218,6 +238,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreMithril</condition>
         <condition type="oredict">dustMithril</condition>
@@ -230,6 +251,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreCobalt</condition>
         <condition type="oredict">dustCobalt</condition>
@@ -242,6 +264,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">oreArdite</condition>
         <condition type="oredict">dustArdite</condition>
@@ -254,6 +277,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">dustNetherQuartz</condition>
         <input>
@@ -265,6 +289,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <condition type="oredict">dustObsidian</condition>
         <input>
@@ -276,6 +301,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:diamond_ore</item>
@@ -286,6 +312,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:emerald_ore</item>
@@ -296,6 +323,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:coal_ore</item>

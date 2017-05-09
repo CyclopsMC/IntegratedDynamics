@@ -128,7 +128,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             }
         }
         if(!ValueHelpers.areValuesEqual(lastValue, newValue)) {
-            onValueChanged(partNetwork, target, state, lastValue, newValue);
+            onValueChanged(network, partNetwork, target, state, lastValue, newValue);
 
             // We can't call state.sendUpdate() here, so we must trigger a block update manually.
             // This was the cause of issue #46 which made it so that values that change after one tick are
@@ -147,7 +147,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
     }
 
-    protected void onValueChanged(IPartNetwork network, PartTarget target, S state, IValue lastValue, IValue newValue) {
+    protected void onValueChanged(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
+                                  IValue lastValue, IValue newValue) {
         if (newValue == null) {
             state.setDisplayValue(null);
         } else {

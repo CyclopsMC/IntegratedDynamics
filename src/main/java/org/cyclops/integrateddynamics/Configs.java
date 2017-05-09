@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConf
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
+import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
@@ -80,10 +81,13 @@ public class Configs {
         configHandler.add(new ItemVariableTransformerConfig());
         configHandler.add(new ItemMenrilBerriesConfig());
         configHandler.add(new ItemPortableLogicProgrammerConfig());
+        configHandler.add(new ItemOnTheDynamicsOfIntegrationConfig());
 
         // Biomes
         configHandler.add(new BiomeMeneglinConfig());
 
+        // Entities
+        configHandler.add(new EntityItemTargettedConfig());
     }
 
 }
