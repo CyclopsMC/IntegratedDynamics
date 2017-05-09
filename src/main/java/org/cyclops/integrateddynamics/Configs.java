@@ -71,6 +71,7 @@ public class Configs {
         configHandler.add(new BlockMenrilPlanksStairsConfig());
         configHandler.add(new BlockCrystalizedMenrilBlockStairsConfig());
         configHandler.add(new BlockCrystalizedMenrilBrickStairsConfig());
+        configHandler.add(new BlockDelayConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());

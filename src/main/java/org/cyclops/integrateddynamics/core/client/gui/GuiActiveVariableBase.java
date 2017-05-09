@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerConfigurable;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.core.client.gui.container.DisplayErrorsComponent;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerActiveVariableBase;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
@@ -35,8 +35,8 @@ public abstract class GuiActiveVariableBase<C extends ContainerActiveVariableBas
         boolean ok = false;
         if(getContainer().getTile().hasVariable() && readValue != null) {
             ok = true;
-            FontRenderer fontRenderer = fontRendererObj;
-            fontRenderer.drawString(readValue, getGuiLeft() + 53, getGuiTop() + 53, readValueColor);
+            RenderHelpers.drawScaledCenteredString(fontRendererObj, readValue,
+                    getGuiLeft() + 54, getGuiTop() + 57, 70, readValueColor);
         }
 
         GlStateManager.color(1, 1, 1);

@@ -58,6 +58,11 @@ public class L10NValues {
     public static final String PROXY_ERROR_PROXYINVALID = "proxy." + NS + ".error.proxyInvalid";
     public static final String PROXY_ERROR_PROXYINVALIDTYPE = "proxy." + NS + ".error.proxyInvalidType";
 
+    public static final String DELAY_TOOLTIP_DELAYID = "delay." + NS + ".tooltip.delayId";
+    public static final String DELAY_ERROR_DELAYNOTINNETWORK = "delay." + NS + ".error.delayNotInNetwork";
+    public static final String DELAY_ERROR_DELAYINVALID = "delay." + NS + ".error.delayInvalid";
+    public static final String DELAY_ERROR_DELAYINVALIDTYPE = "delay." + NS + ".error.delayInvalidType";
+
     public static final String VARIABLE_ERROR_INVALIDITEM = "variable." + NS + ".error.invalidItem";
     public static final String VARIABLE_ERROR_PARTNOTINNETWORK = "variable." + NS + ".error.partNotInNetwork";
     public static final String VARIABLE_ERROR_RECURSION = "variable." + NS + ".error.recursion";
