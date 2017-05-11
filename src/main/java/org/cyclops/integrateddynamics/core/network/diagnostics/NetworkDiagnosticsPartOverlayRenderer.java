@@ -67,7 +67,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (Iterator<PartPos> it = partList.iterator(); it.hasNext(); ) {
                 PartPos partPos = it.next();
-                if (partPos.getPos().getWorld() == player.worldObj && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
+                if (partPos.getPos().getDimensionId() == player.worldObj.provider.getDimension() && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
                     if (partStateHolder != null) {
                         AxisAlignedBB bb = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide())

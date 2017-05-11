@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -18,8 +19,9 @@ public interface IPartNetworkElement<P extends IPartType<P, S>, S extends IPartS
 
     /**
      * @return The state for this part.
+     * @throws PartStateException If the part state could not be found.
      */
-    public S getPartState();
+    public S getPartState() throws PartStateException;
 
     /**
      * @return The container in which this part resides.

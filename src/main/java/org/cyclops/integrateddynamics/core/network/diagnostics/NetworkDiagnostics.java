@@ -58,7 +58,7 @@ public class NetworkDiagnostics {
                 IPartNetworkElement partNetworkElement = (IPartNetworkElement) networkElement;
                 PartPos pos = partNetworkElement.getTarget().getCenter();
                 long lastSecondDurationNs = network.getLastSecondDuration(networkElement);
-                rawParts.add(new RawPartData(pos.getPos().getWorld().provider.getDimension(),
+                rawParts.add(new RawPartData(pos.getPos().getDimensionId(),
                         pos.getPos().getBlockPos(), pos.getSide(),
                         L10NHelpers.localize(partNetworkElement.getPart().getUnlocalizedName()),
                         lastSecondDurationNs));

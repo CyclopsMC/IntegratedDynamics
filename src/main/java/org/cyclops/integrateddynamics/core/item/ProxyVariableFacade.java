@@ -48,7 +48,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     protected TileProxy getProxy(IPartNetwork network) {
         DimPos dimPos = network.getProxy(proxyId);
         if(dimPos != null) {
-            return TileHelpers.getSafeTile(dimPos.getWorld(), dimPos.getBlockPos(), TileProxy.class);
+            return TileHelpers.getSafeTile(dimPos, TileProxy.class);
         }
         return null;
     }

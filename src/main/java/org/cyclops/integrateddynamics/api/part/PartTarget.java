@@ -23,7 +23,7 @@ public class PartTarget {
     public static PartTarget fromCenter(DimPos pos, EnumFacing side) {
         return PartTarget.of(
                 PartPos.of(pos, side),
-                PartPos.of(DimPos.of(pos.getWorld(), pos.getBlockPos().offset(side)), side.getOpposite())
+                PartPos.of(DimPos.of(pos.getDimensionId(), pos.getBlockPos().offset(side)), side.getOpposite())
         );
     }
 

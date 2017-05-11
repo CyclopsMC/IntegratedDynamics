@@ -9,6 +9,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -134,7 +135,8 @@ public final class Helpers {
      * @return The instance or null.
      */
     public static <C> C getInterface(DimPos dimPos, Class<C> clazz) {
-        return getInterface(dimPos.getWorld(), dimPos.getBlockPos(), clazz);
+        World world = dimPos.getWorld();
+        return world != null ? getInterface(world, dimPos.getBlockPos(), clazz) : null;
     }
 
     public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {

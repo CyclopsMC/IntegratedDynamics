@@ -48,7 +48,7 @@ public class Cluster implements Collection<IPathElement>, INBTSerializable {
 
         for(IPathElement e : elements) {
             NBTTagCompound elementTag = new NBTTagCompound();
-            elementTag.setInteger("dimension", e.getPosition().getWorld().provider.getDimension());
+            elementTag.setInteger("dimension", e.getPosition().getDimensionId());
             elementTag.setLong("pos", e.getPosition().getBlockPos().toLong());
             list.appendTag(elementTag);
         }

@@ -31,7 +31,8 @@ public class EnergyHelpers {
     }
 
     public static IEnergyStorage getEnergyStorage(DimPos pos, EnumFacing facing) {
-        return getEnergyStorage(pos.getWorld(), pos.getBlockPos(), facing);
+        World world = pos.getWorld();
+        return world != null ? getEnergyStorage(world, pos.getBlockPos(), facing) : null;
     }
 
     public static IEnergyStorage getEnergyStorage(IBlockAccess world, BlockPos pos, EnumFacing facing) {
