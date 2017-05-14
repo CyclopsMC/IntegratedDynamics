@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.cyclops.integrateddynamics.block.BlockSqueezerConfig;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Category for the Squeezer recipes.
@@ -55,6 +56,12 @@ public class SqueezerRecipeCategory implements IRecipeCategory {
     @Override
     public IDrawable getBackground() {
         return background;
+    }
+
+    @Nullable
+    @Override
+    public IDrawable getIcon() {
+        return null;
     }
 
     @Override
