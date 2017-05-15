@@ -348,6 +348,35 @@
 	</recipe>
 
 	<recipe type="shaped">
+		<condition type="config">delay</condition>
+		<condition type="config">variablestore</condition>
+		<condition type="config">variable</condition>
+		<condition type="config">crystalizedMenrilChunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:variable</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:variable</item>
+				</gridrow>
+				<gridrow>
+					<item>minecraft:clock</item>
+					<item>integrateddynamics:variablestore</item>
+					<item>minecraft:clock</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:variable</item>
+					<item>integrateddynamics:crystalizedMenrilChunk</item>
+					<item>integrateddynamics:variable</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:delay</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
 		<condition type="config">materializer</condition>
 		<condition type="config">variablestore</condition>
 		<condition type="config">variable</condition>
