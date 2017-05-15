@@ -459,6 +459,13 @@
                 <paragraph>info_book.integrateddynamics.manual.machines.proxy.text3</paragraph>
                 <appendix type="craftingRecipe">integrateddynamics:proxy</appendix>
             </section>
+            <section name="info_book.integrateddynamics.manual.machines.delay">
+                <tag>delay</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.delay.text1</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.delay.text2</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.delay.text3</paragraph>
+                <appendix type="craftingRecipe">integrateddynamics:delay</appendix>
+            </section>
             <section name="info_book.integrateddynamics.manual.machines.energy_battery">
                 <tag>energyBattery</tag>
                 <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text1</paragraph>
