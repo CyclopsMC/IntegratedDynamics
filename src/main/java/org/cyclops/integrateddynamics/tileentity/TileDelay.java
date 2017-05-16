@@ -89,11 +89,18 @@ public class TileDelay extends TileProxy {
         this.values = Queues.newArrayBlockingQueue(this.capacity);
     }
 
+    public Queue<IValue> getValues() {
+        if (values == null) {
+            values = Queues.newArrayBlockingQueue(this.capacity);
+        }
+        return values;
+    }
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag = super.writeToNBT(tag);
         NBTTagList valueList = new NBTTagList();
-        for (IValue value : values) {
+        for (IValue value : getValues()) {
             valueList.appendTag(ValueHelpers.serialize(value));
         }
         tag.setTag("values", valueList);
@@ -119,8 +126,8 @@ public class TileDelay extends TileProxy {
         super.updateTileEntity();
         if (!getWorld().isRemote && updateInterval > 0 && getWorld().getTotalWorldTime() % updateInterval == 0) {
             // Remove oldest elements from the queue until we have room for a new one.
-            while (values.size() >= this.capacity) {
-                values.poll();
+            while (getValues().size() >= this.capacity) {
+                getValues().poll();
             }
 
             // Add new value to the queue
@@ -133,13 +140,13 @@ public class TileDelay extends TileProxy {
                     addError(new L10NHelpers.UnlocalizedString(e.toString()));
                 }
                 if (value != null) {
-                    values.add(value);
+                    getValues().add(value);
 
                     // Update variable with as value the materialized queue list
                     this.list = ValueTypeList.ValueList.ofList(value.getType(), Lists.newArrayList(values));
                 }
             } else {
-                values.clear();
+                getValues().clear();
                 this.list = ValueTypes.LIST.getDefault();
             }
         }
