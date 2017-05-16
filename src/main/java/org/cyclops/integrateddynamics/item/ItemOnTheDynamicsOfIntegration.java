@@ -26,7 +26,7 @@ import org.cyclops.integrateddynamics.entity.item.EntityItemTargetted;
  */
 public class ItemOnTheDynamicsOfIntegration extends ItemGui {
 
-    private static final int SPAWN_RANGE = 10;
+    private static final int SPAWN_RANGE = 25;
 
     private static ItemOnTheDynamicsOfIntegration _instance = null;
 
