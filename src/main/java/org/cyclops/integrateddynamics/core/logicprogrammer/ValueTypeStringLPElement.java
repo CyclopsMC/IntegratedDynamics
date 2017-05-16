@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
@@ -12,7 +13,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * Element for value types that can be read from and written to strings.
  * @author rubensworks
  */
-public class ValueTypeStringLPElement extends ValueTypeLPElementBase<ValueTypeLPElementRenderPattern> {
+public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
 
     public ValueTypeStringLPElement(IValueType valueType) {
         super(valueType);
@@ -50,20 +51,19 @@ public class ValueTypeStringLPElement extends ValueTypeLPElementBase<ValueTypeLP
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean isFocused(ValueTypeLPElementRenderPattern subGui) {
-        subGui.getSearchField().isFocused();
-        return subGui.getSearchField().isFocused();
+    public boolean isFocused(ISubGuiBox subGui) {
+        return ((ValueTypeLPElementRenderPattern) subGui).getSearchField().isFocused();
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void setFocused(ValueTypeLPElementRenderPattern subGui, boolean focused) {
-        subGui.getSearchField().setFocused(focused);
+    public void setFocused(ISubGuiBox subGui, boolean focused) {
+        ((ValueTypeLPElementRenderPattern) subGui).getSearchField().setFocused(focused);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ValueTypeLPElementRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                             GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new ValueTypeLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }

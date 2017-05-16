@@ -35,7 +35,7 @@ import java.util.Set;
  * Element for the operator value type.
  * @author rubensworks
  */
-public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase<ValueTypeOperatorLPElement.RenderPattern> implements IDropdownEntryListener {
+public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implements IDropdownEntryListener {
 
     @Setter
     private IOperator selectedOperator = null;
@@ -94,7 +94,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase<ValueType
 
     @Override
     @SideOnly(Side.CLIENT)
-    public RenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new RenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

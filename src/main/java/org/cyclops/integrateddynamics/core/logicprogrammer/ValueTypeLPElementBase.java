@@ -8,6 +8,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGui;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
@@ -29,10 +31,9 @@ import java.util.List;
 
 /**
  * Element for value type.
- * @param <S> The gui type for rendering the element for showing the value.
  * @author rubensworks
  */
-public abstract class ValueTypeLPElementBase<S extends RenderPattern> implements IValueTypeLogicProgrammerElement<S, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgrammerElement<ISubGuiBox, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     @Getter
     private final IValueType valueType;
@@ -138,22 +139,25 @@ public abstract class ValueTypeLPElementBase<S extends RenderPattern> implements
     }
 
     @Override
-    public boolean isFocused(S subGui) {
+    @SideOnly(Side.CLIENT)
+    public boolean isFocused(ISubGuiBox subGui) {
         return false;
     }
 
     @Override
-    public void setFocused(S subGui, boolean focused) {
+    @SideOnly(Side.CLIENT)
+    public void setFocused(ISubGuiBox subGui, boolean focused) {
 
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public abstract S createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public abstract ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container);
 
     @Override
-    public void setValueInGui(S subGui) {
+    @SideOnly(Side.CLIENT)
+    public void setValueInGui(ISubGuiBox subGui) {
 
     }
 

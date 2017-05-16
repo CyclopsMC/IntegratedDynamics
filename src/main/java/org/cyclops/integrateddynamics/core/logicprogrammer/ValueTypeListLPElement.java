@@ -17,6 +17,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -37,13 +38,14 @@ import java.util.Map;
  * Element for the list value type.
  * @author rubensworks
  */
-public class ValueTypeListLPElement extends ValueTypeLPElementBase<ValueTypeListLPElement.MasterSubGuiRenderPattern> {
+public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     private IValueType listValueType;
     private Map<Integer, IValueTypeLogicProgrammerElement> subElements;
     private Map<Integer, RenderPattern> subElementGuis;
     private int length = 0;
     private int activeElement = -1;
+    @SideOnly(Side.CLIENT)
     private MasterSubGuiRenderPattern masterGui;
 
     private ValueTypeList.ValueList serverValue = null;
@@ -161,7 +163,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase<ValueTypeList
 
     @Override
     @SideOnly(Side.CLIENT)
-    public MasterSubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return masterGui = new MasterSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }

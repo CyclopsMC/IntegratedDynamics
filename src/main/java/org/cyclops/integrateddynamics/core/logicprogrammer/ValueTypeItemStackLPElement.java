@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -20,7 +21,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * Element for a value type that can be derived from an {@link ItemStack}.
  * @author rubensworks
  */
-public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPElementBase<ValueTypeItemStackLPElement.SubGuiRenderPattern> {
+public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPElementBase {
 
     private final IItemStackToValue<V> itemStackToValue;
     private ItemStack itemStack;
@@ -80,14 +81,15 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
 
     @Override
     @SideOnly(Side.CLIENT)
-    public SubGuiRenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     @Override
-    public void setValueInGui(SubGuiRenderPattern subGui) {
-        subGui.container.getTemporaryInputSlots().setInventorySlotContents(0, this.itemStack);
+    @SideOnly(Side.CLIENT)
+    public void setValueInGui(ISubGuiBox subGui) {
+        ((ValueTypeItemStackLPElement.SubGuiRenderPattern) subGui).container.getTemporaryInputSlots().setInventorySlotContents(0, this.itemStack);
     }
 
     @SideOnly(Side.CLIENT)
