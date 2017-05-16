@@ -29,11 +29,13 @@ public class TestListOperators {
     private DummyVariableList lempty;
     private DummyVariableList lintegers_dup;
 
+    private DummyVariableInteger im1;
     private DummyVariableInteger i0;
     private DummyVariableInteger i1;
     private DummyVariableInteger i2;
     private DummyVariableInteger i3;
     private DummyVariableInteger i4;
+    private DummyVariableInteger i5;
 
     private DummyVariableOperator oRelationalEquals;
     private DummyVariableOperator oIntegerIncrement;
@@ -45,11 +47,13 @@ public class TestListOperators {
 
     @Before
     public void before() {
+        im1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-1));
         i0 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
         i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
         i2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2));
         i3 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3));
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
+        i5 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(5));
 
         oRelationalEquals = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
         oIntegerIncrement = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
@@ -489,6 +493,131 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeTail() throws EvaluationException {
         Operators.LIST_TAIL.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- UNIQ_PREDICATE -----------------------------------
+     */
+
+    @Test
+    public void testListUniqPredicate() throws EvaluationException {
+        IValue res1 = Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{lintegers_dup, oRelationalEquals});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==)[0] = 0", list.get(0).getRawValue(), is(0));
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==)[1] = 1", list.get(1).getRawValue(), is(1));
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==)[2] = 2", list.get(2).getRawValue(), is(2));
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==)[3] = 3", list.get(3).getRawValue(), is(3));
+        assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==).size = 4", list.getLength(), is(4));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeUniqPredicateLarge() throws EvaluationException {
+        Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{lintegers, oRelationalEquals, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeUniqPredicateSmall() throws EvaluationException {
+        Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeUniqPredicate() throws EvaluationException {
+        Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- UNIQ -----------------------------------
+     */
+
+    @Test
+    public void testListUniq() throws EvaluationException {
+        IValue res1 = Operators.LIST_UNIQ.evaluate(new IVariable[]{lintegers_dup});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[0] = 0", list.get(0).getRawValue(), is(0));
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[1] = 1", list.get(1).getRawValue(), is(1));
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[2] = 2", list.get(2).getRawValue(), is(2));
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[3] = 3", list.get(3).getRawValue(), is(3));
+        assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3]).size = 4", list.getLength(), is(4));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeUniqLarge() throws EvaluationException {
+        Operators.LIST_UNIQ.evaluate(new IVariable[]{lintegers, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeUniqSmall() throws EvaluationException {
+        Operators.LIST_UNIQ.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeUniq() throws EvaluationException {
+        Operators.LIST_UNIQ.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- SLICE -----------------------------------
+     */
+
+    @Test
+    public void testListSlice() throws EvaluationException {
+        IValue res1 = Operators.LIST_SLICE.evaluate(new IVariable[]{lintegers, i0, i4});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("slice([0, 1, 2, 3], 0, 4)[0] = 0", list.get(0).getRawValue(), is(0));
+        assertThat("slice([0, 1, 2, 3], 0, 4)[1] = 1", list.get(1).getRawValue(), is(1));
+        assertThat("slice([0, 1, 2, 3], 0, 4)[2] = 2", list.get(2).getRawValue(), is(2));
+        assertThat("slice([0, 1, 2, 3], 0, 4)[3] = 3", list.get(3).getRawValue(), is(3));
+        assertThat("slice([0, 1, 2, 3], 0, 4).size = 4", list.getLength(), is(4));
+
+        IValue res2 = Operators.LIST_SLICE.evaluate(new IVariable[]{lintegers, i1, i4});
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list2 = ((ValueTypeList.ValueList) res2).getRawValue();
+
+        assertThat("slice([0, 1, 2, 3], 1, 4)[0] = 1", list2.get(0).getRawValue(), is(1));
+        assertThat("slice([0, 1, 2, 3], 1, 4)[1] = 2", list2.get(1).getRawValue(), is(2));
+        assertThat("slice([0, 1, 2, 3], 1, 4)[2] = 3", list2.get(2).getRawValue(), is(3));
+        assertThat("slice([0, 1, 2, 3], 1, 4).size = 3", list2.getLength(), is(3));
+
+        IValue res3 = Operators.LIST_SLICE.evaluate(new IVariable[]{lintegers, i3, i5});
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list3 = ((ValueTypeList.ValueList) res3).getRawValue();
+
+        assertThat("slice([0, 1, 2, 3], 3, 5)[0] = 3", list3.get(0).getRawValue(), is(3));
+        assertThat("slice([0, 1, 2, 3], 3, 5).size = 1", list3.getLength(), is(1));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeSliceNegative1() throws EvaluationException {
+        Operators.LIST_SLICE.evaluate(new IVariable[]{lintegers, i0, im1});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeSliceNegative2() throws EvaluationException {
+        Operators.LIST_SLICE.evaluate(new IVariable[]{lintegers, im1, i1});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeSliceToNotLargerThanFrom() throws EvaluationException {
+        Operators.LIST_SLICE.evaluate(new IVariable[]{lintegers, i1, i1});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeSliceLarge() throws EvaluationException {
+        Operators.LIST_SLICE.evaluate(new IVariable[]{lintegers, i2, i2, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeSliceSmall() throws EvaluationException {
+        Operators.LIST_SLICE.evaluate(new IVariable[]{lintegers, i2});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeSlice() throws EvaluationException {
+        Operators.LIST_SLICE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }

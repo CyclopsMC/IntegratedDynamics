@@ -197,7 +197,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                                                 BlockPos blockPos = pos.getPos().getBlockPos().offset(pos.getSide());
                                                 float yaw = pos.getSide().getOpposite().getHorizontalAngle();
                                                 IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
-                                                        pos.getPos().getWorld().provider.getDimension(),
+                                                        pos.getPos().getDimensionId(),
                                                         blockPos.getX(),
                                                         blockPos.getY() - 1,
                                                         blockPos.getZ(),

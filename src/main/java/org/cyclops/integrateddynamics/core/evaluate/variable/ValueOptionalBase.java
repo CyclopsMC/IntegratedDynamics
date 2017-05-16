@@ -38,4 +38,9 @@ public abstract class ValueOptionalBase<T> extends ValueBase {
 
     protected abstract boolean isEqual(T a, T b);
 
+    @Override
+    public int hashCode() {
+        return getType().hashCode() + (getRawValue().isPresent() ? getRawValue().get().hashCode() : 0);
+    }
+
 }

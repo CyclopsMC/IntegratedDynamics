@@ -112,6 +112,11 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
         public boolean equals(Object o) {
             return o instanceof ValueLong && ((ValueLong) o).value == this.value;
         }
+
+        @Override
+        public int hashCode() {
+            return getType().hashCode() + (int) value;
+        }
     }
 
 }

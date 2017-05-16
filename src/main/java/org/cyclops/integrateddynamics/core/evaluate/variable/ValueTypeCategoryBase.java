@@ -4,6 +4,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import java.util.Collections;
 import java.util.Set;
@@ -84,7 +85,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public boolean hasDefaultLogicProgrammerElement() {
-        return false;
+    public ValueTypeLPElementBase createLogicProgrammerElement() {
+        return null;
     }
 }

@@ -16,6 +16,9 @@ public final class Reference {
     public static final String GA_TRACKING_ID = "UA-65307010-4";
     public static final String VERSION_URL = "https://raw.githubusercontent.com/CyclopsMC/Versions/master/1.11/IntegratedDynamics.txt";
 
+    // Paths
+    public static final String TEXTURE_PATH_GUI = "textures/gui/";
+
     // Biome ID's
     public static final int BIOME_MENEGLIN = 193;
 
@@ -25,11 +28,12 @@ public final class Reference {
     public static final String DICT_SAPLINGTREE = "treeSapling";
     public static final String DICT_WOODPLANK = "plankWood";
     public static final String DICT_TORCH = "torch";
+    public static final String DICT_STAIRWOOD = "stairWood";
 
     // MOD ID's
     public static final String MOD_FORGE = "forge";
     public static final String MOD_FORGE_VERSION = "@FORGE_VERSION@";
-    public static final String MOD_FORGE_VERSION_MIN = "13.20.0.2206";
+    public static final String MOD_FORGE_VERSION_MIN = "13.20.0.2282";
     public static final String MOD_CYCLOPSCORE = "cyclopscore";
     public static final String MOD_CYCLOPSCORE_VERSION = "@CYCLOPSCORE_VERSION@";
     public static final String MOD_CYCLOPSCORE_VERSION_MIN = "0.10.1";
@@ -47,6 +51,7 @@ public final class Reference {
     public static final String MOD_TOP = "theoneprobe";
     public static final String MOD_REFINEDSTORAGE = "refinedstorage";
     public static final String MOD_IMMERSIVEENGINEERING = "immersiveengineering";
+    public static final String MOD_MINETWEAKER = "MineTweaker3";
 
     public static final String MOD_DEPENDENCIES =
             "required-after:" + MOD_FORGE       + "@[" + MOD_FORGE_VERSION_MIN       + ",);" +

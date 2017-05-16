@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -101,9 +102,9 @@ public interface IValueType<V extends IValue> {
     public V materialize(V value) throws EvaluationException;
 
     /**
-     * @return If a default logic programmer element has to be generated.
+     * @return A new logic programmer element for this value type.
      */
-    public boolean hasDefaultLogicProgrammerElement();
+    public IValueTypeLogicProgrammerElement createLogicProgrammerElement();
 
     /**
      * Use this comparator for any comparisons with value types.

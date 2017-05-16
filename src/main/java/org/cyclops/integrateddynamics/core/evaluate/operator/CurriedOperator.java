@@ -129,6 +129,10 @@ public class CurriedOperator implements IOperator {
         return new CurriedOperator(baseOperator, new Variable(appliedVariable.getType(), appliedVariable.getValue()));
     }
 
+    public IOperator getBaseOperator() {
+        return baseOperator;
+    }
+
     public static class Serializer implements IOperatorSerializer<CurriedOperator> {
 
         @Override

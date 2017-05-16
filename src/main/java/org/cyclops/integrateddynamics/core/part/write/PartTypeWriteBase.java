@@ -3,10 +3,12 @@ package org.cyclops.integrateddynamics.core.part.write;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
@@ -31,6 +33,7 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
+import org.cyclops.integrateddynamics.core.part.event.PartWriterAspectEvent;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -116,7 +119,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @Override
     public void afterNetworkAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
         super.afterNetworkAlive(network, partNetwork, target, state);
-        updateActivation(target, state);
+        updateActivation(target, state, null);
     }
 
     @Override
@@ -139,7 +142,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void updateActivation(PartTarget target, S partState) {
+    public void updateActivation(PartTarget target, S partState, @Nullable EntityPlayer player) {
         // Check inside the inventory for a variable item and determine everything with that.
         int activeIndex = -1;
         for(int i = 0 ; i < partState.getInventory().getSizeInventory(); i++) {
@@ -150,6 +153,13 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         }
         IAspectWrite aspect = activeIndex == -1 ? null : getWriteAspects().get(activeIndex);
         partState.triggerAspectInfoUpdate((P) this, target, aspect);
+
+        if (aspect != null) {
+            INetwork network = NetworkHelpers.getNetwork(target.getCenter().getPos().getWorld(), target.getCenter().getPos().getBlockPos());
+            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+            MinecraftForge.EVENT_BUS.post(new PartWriterAspectEvent<>(network, partNetwork, target, (P) this, partState, player,
+                    aspect, partState.getInventory().getStackInSlot(activeIndex)));
+        }
     }
 
     protected void onVariableContentsUpdated(IPartNetwork network, PartTarget target, S state) {

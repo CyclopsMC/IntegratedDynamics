@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -30,6 +31,7 @@ import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropaga
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectWriteDeactivator;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
+import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.redstone.IWriteRedstoneComponent;
 import org.cyclops.integrateddynamics.part.aspect.write.redstone.WriteRedstoneComponent;
 
@@ -115,9 +117,9 @@ public class AspectWriteBuilders {
     public static final class Audio {
 
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_VOLUME =
-                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.volume.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.volume.name", AspectReadBuilders.VALIDATOR_DOUBLE_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_FREQUENCY =
-                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.frequency.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.frequency.name", AspectReadBuilders.VALIDATOR_DOUBLE_POSITIVE);
         public static final IAspectProperties PROPERTIES_NOTE = new AspectProperties(Sets.<IAspectPropertyTypeInstance>newHashSet(
                 PROP_VOLUME
         ));
@@ -126,6 +128,12 @@ public class AspectWriteBuilders {
                 PROP_FREQUENCY
         ));
         static {
+            Predicate<ValueTypeDouble.ValueDouble> POSITIVE = new Predicate<ValueTypeDouble.ValueDouble>() {
+                @Override
+                public boolean apply(ValueTypeDouble.ValueDouble input) {
+                    return input.getRawValue() >= 0;
+                }
+            };
             PROPERTIES_NOTE.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
             PROPERTIES_SOUND.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
             PROPERTIES_SOUND.setValue(PROP_FREQUENCY, ValueTypeDouble.ValueDouble.of(1D));
@@ -184,19 +192,19 @@ public class AspectWriteBuilders {
     public static final class Effect {
 
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_OFFSET_X =
-                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetX.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetX.name", AspectReadBuilders.VALIDATOR_DOUBLE_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_OFFSET_Y =
-                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetY.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetY.name", AspectReadBuilders.VALIDATOR_DOUBLE_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_OFFSET_Z =
-                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetZ.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.offsetZ.name", AspectReadBuilders.VALIDATOR_DOUBLE_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_PARTICLES =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.particles.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.particles.name", AspectReadBuilders.VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_SPREAD_X =
-                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadX.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadX.name", AspectReadBuilders.VALIDATOR_DOUBLE_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_SPREAD_Y =
-                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadY.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadY.name", AspectReadBuilders.VALIDATOR_DOUBLE_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeDouble, ValueTypeDouble.ValueDouble> PROP_SPREAD_Z =
-                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadZ.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.DOUBLE, "aspect.aspecttypes.integrateddynamics.double.spreadZ.name", AspectReadBuilders.VALIDATOR_DOUBLE_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROP_FORCE =
                 new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name");
         public static final IAspectProperties PROPERTIES_PARTICLE = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
@@ -212,8 +220,8 @@ public class AspectWriteBuilders {
 
         static {
             PROPERTIES_PARTICLE.setValue(PROP_OFFSET_X, ValueTypeDouble.ValueDouble.of(0.5D));
-            PROPERTIES_PARTICLE.setValue(PROP_OFFSET_Y, ValueTypeDouble.ValueDouble.of(0.5D));
             PROPERTIES_PARTICLE.setValue(PROP_OFFSET_Z, ValueTypeDouble.ValueDouble.of(0.5D));
+            PROPERTIES_PARTICLE.setValue(PROP_OFFSET_Y, ValueTypeDouble.ValueDouble.of(0.5D));
             PROPERTIES_PARTICLE.setValue(PROP_PARTICLES, ValueTypeInteger.ValueInteger.of(1));
             PROPERTIES_PARTICLE.setValue(PROP_SPREAD_X, ValueTypeDouble.ValueDouble.of(0.0D));
             PROPERTIES_PARTICLE.setValue(PROP_SPREAD_Y, ValueTypeDouble.ValueDouble.of(0.0D));

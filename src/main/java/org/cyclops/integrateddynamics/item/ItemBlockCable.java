@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.item;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
@@ -70,7 +71,8 @@ public class ItemBlockCable extends ItemBlockMetadata {
         return world.getBlockState(target).getBlock().isReplaceable(world, pos);
     }
 
-    protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable, boolean offsetAdded) {
+    protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable,
+                                          EntityLivingBase placer, boolean offsetAdded) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         if(!block.isAir(blockState, world, pos)) {
@@ -78,7 +80,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
             if (cable != null && !cable.isRealCable()) {
                 cable.setRealCable(true);
                 CableHelpers.updateConnections(world, pos);
-                CableHelpers.onCableAdded(world, pos);
+                CableHelpers.onCableAdded(world, pos, placer);
                 return true;
             }
             if(!offsetAdded){
@@ -121,14 +123,14 @@ public class ItemBlockCable extends ItemBlockMetadata {
         blockCable.setDisableCollisionBox(true);
 
         // Avoid regular block placement when the target is an unreal cable.
-        if(attempItemUseTarget(itemStack, worldIn, pos, blockCable, false)) {
+        if(attempItemUseTarget(itemStack, worldIn, pos, blockCable, playerIn, false)) {
             afterItemUse(itemStack, worldIn, pos, blockCable, false);
             return EnumActionResult.SUCCESS;
         }
 
         // Change pos and side when we are targeting a block that is blocked by an unreal cable, so we want to target
         // the unreal cable.
-        if(attempItemUseTarget(itemStack, worldIn, pos.offset(side), blockCable, true)) {
+        if(attempItemUseTarget(itemStack, worldIn, pos.offset(side), blockCable, playerIn, true)) {
             afterItemUse(itemStack, worldIn, pos.offset(side), blockCable, false);
             return EnumActionResult.SUCCESS;
         }

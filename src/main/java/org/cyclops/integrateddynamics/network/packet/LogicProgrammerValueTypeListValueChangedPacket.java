@@ -10,7 +10,7 @@ import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeListElement;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeListLPElement;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
@@ -50,8 +50,8 @@ public class LogicProgrammerValueTypeListValueChangedPacket extends PacketCodec 
 	public void actionServer(World world, EntityPlayerMP player) {
 		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
 			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
-			if(element instanceof ValueTypeListElement) {
-				((ValueTypeListElement) element).setServerValue(getListValue());
+			if(element instanceof ValueTypeListLPElement) {
+				((ValueTypeListLPElement) element).setServerValue(getListValue());
 				((ContainerLogicProgrammerBase) player.openContainer).onDirty();
 			}
 		}

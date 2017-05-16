@@ -3,12 +3,14 @@ package org.cyclops.integrateddynamics.core.helper;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
@@ -25,6 +27,7 @@ import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
+import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import javax.annotation.Nullable;
@@ -199,11 +202,13 @@ public class CableHelpers {
      * This method automatically notifies the neighbours and (re-)initializes the network if this cable carries one.
      * @param world The world.
      * @param pos The position.
+     * @param placer The entity who placed the cable.
      */
-    public static void onCableAdded(World world, BlockPos pos) {
+    public static void onCableAdded(World world, BlockPos pos, @Nullable EntityLivingBase placer) {
         CableHelpers.updateConnectionsNeighbours(world, pos);
         if(!world.isRemote) {
-            NetworkHelpers.initNetwork(world, pos);
+            INetwork network = NetworkHelpers.initNetwork(world, pos);
+            MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer));
         }
     }
 

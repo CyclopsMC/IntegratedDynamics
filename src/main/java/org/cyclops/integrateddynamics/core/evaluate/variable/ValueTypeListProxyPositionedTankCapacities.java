@@ -18,7 +18,7 @@ public class ValueTypeListProxyPositionedTankCapacities extends ValueTypeListPro
     }
 
     protected IFluidHandler getTank() {
-        return TileHelpers.getCapability(getPos().getWorld(), getPos().getBlockPos(), getSide(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+        return TileHelpers.getCapability(getPos(), getSide(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
     }
 
     @Override

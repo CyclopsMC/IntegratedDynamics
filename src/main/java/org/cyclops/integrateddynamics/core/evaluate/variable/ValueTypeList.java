@@ -11,6 +11,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeListLPElement;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -77,6 +79,11 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         return ValueList.ofList(list.getValueType(), values);
     }
 
+    @Override
+    public ValueTypeLPElementBase createLogicProgrammerElement() {
+        return new ValueTypeListLPElement();
+    }
+
     @ToString
     public static class ValueList<T extends IValueType<V>, V extends IValue> extends ValueBase {
 
@@ -106,6 +113,11 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         @Override
         public boolean equals(Object o) {
             return o instanceof ValueList && ((ValueList) o).value.equals(this.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
         }
 
     }

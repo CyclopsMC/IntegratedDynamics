@@ -65,7 +65,6 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<ItemStackR
             outputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) outputItem, outputFluid);
         }
 
-
 		return BlockSqueezer.getInstance().getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,
                 outputRecipeComponent,

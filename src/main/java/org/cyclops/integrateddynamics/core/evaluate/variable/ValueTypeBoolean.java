@@ -67,6 +67,11 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
         public boolean equals(Object o) {
             return o instanceof ValueBoolean && ((ValueBoolean) o).value == this.value;
         }
+
+        @Override
+        public int hashCode() {
+            return getType().hashCode() + (value ? 1 : 0);
+        }
     }
 
 }

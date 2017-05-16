@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -18,6 +19,7 @@ import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
+import org.cyclops.integrateddynamics.Achievements;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -52,6 +54,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     private final SimpleInventory writeSlot;
     private final SimpleInventory filterSlots;
     private ILogicProgrammerElement activeElement = null;
+    private ILogicProgrammerElement temporarySlotsElement = null;
     private SimpleInventory temporaryInputSlots = null;
     private L10NHelpers.UnlocalizedString lastError;
     private LoadConfigListener loadConfigListener;
@@ -74,6 +77,8 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         this.writeSlot.addDirtyMarkListener(loadConfigListener = new LoadConfigListener());
         this.temporaryInputSlots = new SimpleInventory(0, "temporaryInput", 1);
         initializeSlots();
+
+        inventory.player.addStat(Achievements.LOGIC_PROGRAMMING);
     }
 
     protected static List<ILogicProgrammerElement> getElements() {
@@ -138,11 +143,29 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
      * @param baseY The slots Y coordinate
      */
     public void setActiveElement(final ILogicProgrammerElement activeElement, int baseX, int baseY) {
-        this.lastError = null;
         if(this.activeElement != null) {
             this.activeElement.deactivate();
         }
         this.activeElement = activeElement;
+
+        this.lastError = null;
+        this.activeElement = activeElement;
+
+        this.setElementInventory(this.activeElement, baseX, baseY);
+
+        if(activeElement != null) {
+            activeElement.activate();
+        }
+    }
+
+    /**
+     * Set the new active element.
+     * @param element The new element.
+     * @param baseX The slots X coordinate
+     * @param baseY The slots Y coordinate
+     */
+    public void setElementInventory(final ILogicProgrammerElement element, int baseX, int baseY) {
+        this.lastError = null;
 
         // This assumes that there is only one other slot, the remaining slots will be erased!
         // (We can do this because they are all ghost slots)
@@ -150,20 +173,18 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         inventorySlots = Lists.newArrayList();
         initializeSlots();
         this.temporaryInputSlots.removeDirtyMarkListener(this);
-        if(activeElement != null) {
-            activeElement.activate();
-        }
-        this.temporaryInputSlots = new SimpleInventory(activeElement == null ? 0 : activeElement.getRenderPattern().getSlotPositions().length, "temporaryInput", 1);
+        this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, "temporaryInput", 1);
         temporaryInputSlots.addDirtyMarkListener(this);
-        if(activeElement != null) {
-            Pair<Integer, Integer>[] slotPositions = activeElement.getRenderPattern().getSlotPositions();
+        this.temporarySlotsElement = element;
+        if(element != null) {
+            Pair<Integer, Integer>[] slotPositions = element.getRenderPattern().getSlotPositions();
             for (int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
                 final int slotId = i;
                 SlotExtended slot = new SlotExtended(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
                         1 + baseY + slotPositions[i].getRight()) {
                     @Override
                     public boolean isItemValid(ItemStack itemStack) {
-                        return activeElement.isItemValidForSlot(slotId, itemStack);
+                        return element.isItemValidForSlot(slotId, itemStack);
                     }
                 };
                 slot.setPhantom(true);
@@ -220,7 +241,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     protected ItemStack writeElementInfo() {
         ItemStack itemStack = writeSlot.getStackInSlot(0);
-        ItemStack result = getActiveElement().writeElement(itemStack.copy());
+        ItemStack result = getActiveElement().writeElement(player, itemStack.copy());
         return result;
     }
 
@@ -230,7 +251,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         if(activeElement != null) {
             for (int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
                 ItemStack itemStack = temporaryInputSlots.getStackInSlot(i);
-                activeElement.onInputSlotUpdated(i, itemStack);
+                temporarySlotsElement.onInputSlotUpdated(i, itemStack);
             }
         }
 
@@ -276,6 +297,15 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         return (
                 ((filterIn1 == null || item.matchesInput(filterIn1)) && (filterIn2 == null || item.matchesInput(filterIn2))) || (filterIn1 == null && filterIn2 == null))
                 && (filterOut == null || item.matchesOutput(filterOut));
+    }
+
+    @Override
+    public ItemStack slotClick(int slotId, int arg, ClickType clickType, EntityPlayer player) {
+        // Handle cases where the client may have more (phantom) slots than the server.
+        if (slotId >= this.inventorySlots.size()) {
+            return null;
+        }
+        return super.slotClick(slotId, arg, clickType, player);
     }
 
     /**

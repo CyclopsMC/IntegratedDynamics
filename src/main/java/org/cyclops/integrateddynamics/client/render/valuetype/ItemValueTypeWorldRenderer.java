@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -31,7 +31,7 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
             // Stack size
             GlStateManager.pushMatrix();
-            GlStateManager.translate(7F, 8.5F, 0.1F);
+            GlStateManager.translate(7F, 8.5F, 0.3F);
             String stackSize = String.valueOf(itemStackOptional.getCount());
             float scale = 1F / ((float) stackSize.length() + 1F);
             GlStateManager.scale(scale, scale, 1F);
@@ -45,9 +45,31 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         // ItemStack
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(3F, 3F, 0);
-        GlStateManager.scale(0.4, 0.4, 0.01);
-        RenderHelpers.renderItem(itemStack, ItemCameraTransforms.TransformType.NONE);
+        GlStateManager.translate(0, 0, -1F);
+        GlStateManager.scale(0.78, 0.78, 0.01);
+
+        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+        GlStateManager.pushMatrix();
+        GlStateManager.rotate(40f, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(95F, 1.0F, 0.0F, 0.0F);
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.popMatrix();
+
+        // Inspired by: https://github.com/jaquadro/StorageDrawers/blob/1.10/src/com/jaquadro/minecraft/storagedrawers/client/renderer/TileEntityDrawersRenderer.java#L180
+
+        GlStateManager.enablePolygonOffset();
+        GlStateManager.doPolygonOffset(-1, -1);
+
+        GlStateManager.pushAttrib();
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.popAttrib();
+
+        renderItem.renderItemIntoGUI(itemStack, 0, 0);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+
+        GlStateManager.disablePolygonOffset();
+
         GlStateManager.popMatrix();
         RenderHelper.disableStandardItemLighting();
     }

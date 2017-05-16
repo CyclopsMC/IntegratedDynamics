@@ -14,16 +14,8 @@ public class LogicProgrammerElementTypes {
 
     public static void load() {}
 
-    // General types
-    public static final OperatorElementType  OPERATOR  = REGISTRY.addType(new OperatorElementType());
-    public static final ValueTypeElementType VALUETYPE = REGISTRY.addType(new ValueTypeElementType());
-
-    // Specific types
-    public static final ValueTypeListElementType             LIST_ELEMENT_TYPE      = REGISTRY.addType(new ValueTypeListElementType());
-    public static final ValueTypeOperatorElementType         OPERATOR_ELEMENT_TYPE  = REGISTRY.addType(new ValueTypeOperatorElementType());
-    public static final ValueObjectTypeBlockElementType      OBJECT_BLOCK_TYPE      = REGISTRY.addType(new ValueObjectTypeBlockElementType());
-    public static final ValueObjectTypeItemStackElementType  OBJECT_ITEMSTACK_TYPE  = REGISTRY.addType(new ValueObjectTypeItemStackElementType());
-    public static final ValueObjectTypeFluidStackElementType OBJECT_FLUIDSTACK_TYPE = REGISTRY.addType(new ValueObjectTypeFluidStackElementType());
+    public static final ValueTypeLPElementType VALUETYPE = REGISTRY.addType(new ValueTypeLPElementType());
+    public static final OperatorLPElementType OPERATOR  = REGISTRY.addType(new OperatorLPElementType());
 
     public static boolean areEqual(ILogicProgrammerElement e1, ILogicProgrammerElement e2) {
         if(e1 == null) {

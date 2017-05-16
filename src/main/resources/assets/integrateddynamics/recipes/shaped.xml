@@ -348,6 +348,35 @@
 	</recipe>
 
 	<recipe type="shaped">
+		<condition type="config">delay</condition>
+		<condition type="config">variablestore</condition>
+		<condition type="config">variable</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:variable</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:variable</item>
+				</gridrow>
+				<gridrow>
+					<item>minecraft:clock</item>
+					<item>integrateddynamics:variablestore</item>
+					<item>minecraft:clock</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:variable</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:variable</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:delay</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
 		<condition type="config">materializer</condition>
 		<condition type="config">variablestore</condition>
 		<condition type="config">variable</condition>
@@ -848,6 +877,87 @@
 		</input>
 		<output>
 			<item>integrateddynamics:part_display_panel_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">menril_planks</condition>
+		<condition type="config">menril_planks_stairs</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:menril_planks_stairs</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">crystalized_menril_block</condition>
+		<condition type="config">crystalized_menril_block_stairs</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+					<item>integrateddynamics:crystalized_menril_block</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:crystalized_menril_block_stairs</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">crystalized_menril_brick</condition>
+		<condition type="config">crystalized_menril_brick_stairs</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalized_menril_brick</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_menril_brick</item>
+					<item>integrateddynamics:crystalized_menril_brick</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_menril_brick</item>
+					<item>integrateddynamics:crystalized_menril_brick</item>
+					<item>integrateddynamics:crystalized_menril_brick</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:crystalized_menril_brick_stairs</item>
 		</output>
 	</recipe>
 

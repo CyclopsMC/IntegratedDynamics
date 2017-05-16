@@ -4,13 +4,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
+import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
@@ -22,10 +22,12 @@ import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-public class TileEnergyBattery extends TileCableConnectable implements IEnergyStorage {
+public class TileEnergyBattery extends TileCableConnectable implements IEnergyStorageCapacity {
 
     @NBTPersist
     private int energy;
+    @NBTPersist(useDefaultValue = false)
+    private int capacity = BlockEnergyBatteryConfig.capacity;
 
     public TileEnergyBattery() {
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
@@ -50,7 +52,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int getMaxEnergyStored() {
         if(isCreative()) return Integer.MAX_VALUE;
-        return BlockEnergyBatteryConfig.capacity;
+        return capacity;
     }
 
     @Override
@@ -129,5 +131,10 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         if (!getWorld().isRemote && getEnergyStored() > 0 && getWorld().isBlockPowered(getPos())) {
             addEnergy(Math.min(BlockEnergyBatteryConfig.energyPerTick, getEnergyStored()));
         }
+    }
+
+    @Override
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }

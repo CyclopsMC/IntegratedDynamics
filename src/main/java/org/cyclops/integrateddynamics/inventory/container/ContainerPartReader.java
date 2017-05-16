@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -17,13 +18,18 @@ import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
+import org.cyclops.integrateddynamics.core.part.event.PartReaderAspectEvent;
 
 /**
  * Container for reader parts.
@@ -190,6 +196,18 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
         } catch(NullPointerException e) {
             return null;
         }
+    }
+
+    @Override
+    public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
+        ItemStack resultStack = super.writeAspectInfo(generateId, itemStack, aspect);
+        INetwork network = NetworkHelpers.getNetwork(getTarget().getCenter().getPos().getWorld(),
+                getTarget().getCenter().getPos().getBlockPos());
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+        PartReaderAspectEvent event = new PartReaderAspectEvent<>(network, partNetwork, getTarget(), getPartType(),
+                getPartState(), getPlayer(), (IAspectRead) aspect, resultStack);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getItemStack();
     }
 
 }

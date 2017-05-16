@@ -48,7 +48,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     protected TileProxy getProxy(IPartNetwork network) {
         DimPos dimPos = network.getProxy(proxyId);
         if(dimPos != null) {
-            return TileHelpers.getSafeTile(dimPos.getWorld(), dimPos.getBlockPos(), TileProxy.class);
+            return TileHelpers.getSafeTile(dimPos, TileProxy.class);
         }
         return null;
     }
@@ -82,20 +82,33 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
         return proxyId >= 0;
     }
 
+    protected L10NHelpers.UnlocalizedString getProxyNotInNetworkError() {
+        return new L10NHelpers.UnlocalizedString(L10NValues.PROXY_ERROR_PROXYNOTINNETWORK, Integer.toString(proxyId));
+    }
+
+    protected L10NHelpers.UnlocalizedString getProxyInvalidError() {
+        return new L10NHelpers.UnlocalizedString(L10NValues.PROXY_ERROR_PROXYINVALID, Integer.toString(proxyId));
+    }
+
+    protected L10NHelpers.UnlocalizedString getProxyInvalidTypeError(IPartNetwork network,
+                                                                     IValueType containingValueType,
+                                                                     IValueType actualType) {
+        return new L10NHelpers.UnlocalizedString(L10NValues.PROXY_ERROR_PROXYINVALIDTYPE,
+                new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
+                new L10NHelpers.UnlocalizedString(actualType.getUnlocalizedName()));
+    }
+
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if (!isValid()) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else if (network.getProxy(proxyId) == null) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.PROXY_ERROR_PROXYNOTINNETWORK,
-                    Integer.toString(proxyId)));
+            validator.addError(getProxyNotInNetworkError());
         } else if (getTargetVariable(network) == null) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.PROXY_ERROR_PROXYINVALID,
-                    Integer.toString(proxyId)));
+            validator.addError(getProxyInvalidError());
         } else if (!ValueHelpers.correspondsTo(containingValueType, getTargetVariable(network).getType())) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.PROXY_ERROR_PROXYINVALIDTYPE,
-                    new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                    new L10NHelpers.UnlocalizedString(getTargetVariable(network).getType().getUnlocalizedName())));
+            validator.addError(getProxyInvalidTypeError(network, containingValueType,
+                    getTargetVariable(network).getType()));
         }
 
         // Check if we are entering an infinite recursion (e.g. proxies refering to each other)
@@ -112,11 +125,15 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
         return ValueTypes.CATEGORY_ANY;
     }
 
+    protected String getProxyTooltip() {
+        return L10NHelpers.localize(L10NValues.PROXY_TOOLTIP_PROXYID, proxyId);
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(List<String> list, EntityPlayer entityPlayer) {
         if(isValid()) {
-            list.add(L10NHelpers.localize(L10NValues.PROXY_TOOLTIP_PROXYID, proxyId));
+            list.add(getProxyTooltip());
         }
         super.addInformation(list, entityPlayer);
     }

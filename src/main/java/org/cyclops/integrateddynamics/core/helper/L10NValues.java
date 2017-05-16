@@ -24,7 +24,10 @@ public class L10NValues {
 
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
+    public static final String GUI_INPUT = "gui." + NS + ".input";
+    public static final String GUI_OUTPUT = "gui." + NS + ".output";
 
+    public static final String VALUE_ERROR = "valuetype." + NS + ".error.value";
     public static final String VALUETYPE_VALUETYPE = "valuetype." + NS + ".value_type";
     public static final String VALUETYPE_TOOLTIP_TYPENAME = "valuetype." + NS + ".tooltip.type_name";
     public static final String VALUETYPE_TOOLTIP_VALUE = "valuetype." + NS + ".tooltip.value";
@@ -54,6 +57,11 @@ public class L10NValues {
     public static final String PROXY_ERROR_PROXYNOTINNETWORK = "proxy." + NS + ".error.proxy_not_in_network";
     public static final String PROXY_ERROR_PROXYINVALID = "proxy." + NS + ".error.proxy_invalid";
     public static final String PROXY_ERROR_PROXYINVALIDTYPE = "proxy." + NS + ".error.proxy_invalid_type";
+
+    public static final String DELAY_TOOLTIP_DELAYID = "delay." + NS + ".tooltip.delay_id";
+    public static final String DELAY_ERROR_DELAYNOTINNETWORK = "delay." + NS + ".error.delay_not_in_network";
+    public static final String DELAY_ERROR_DELAYINVALID = "delay." + NS + ".error.delay_invalid";
+    public static final String DELAY_ERROR_DELAYINVALIDTYPE = "delay." + NS + ".error.delay_invalid_type";
 
     public static final String VARIABLE_ERROR_INVALIDITEM = "variable." + NS + ".error.invalid_item";
     public static final String VARIABLE_ERROR_PARTNOTINNETWORK = "variable." + NS + ".error.part_not_in_network";

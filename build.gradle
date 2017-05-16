@@ -71,6 +71,7 @@ sourceSets {
             exclude '**/modcompat/mcmultipart/**'
             exclude '**/modcompat/tconstruct/**'
             exclude '**/modcompat/immersiveengineering/**'
+            exclude '**/modcompat/minetweaker/**'
         }
     }
 }

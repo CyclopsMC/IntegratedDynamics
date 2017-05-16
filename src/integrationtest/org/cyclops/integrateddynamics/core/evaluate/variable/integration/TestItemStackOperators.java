@@ -51,6 +51,7 @@ public class TestItemStackOperators {
     private DummyVariableItemStack iEnergyBatteryFull;
     private DummyVariableItemStack iIronOre;
     private DummyVariableItemStack iShulkerBox;
+    private DummyVariableItemStack iSeedWheat;
 
     private DummyVariableBlock bStone;
     private DummyVariableBlock bObsidian;
@@ -88,6 +89,7 @@ public class TestItemStackOperators {
         itemHandler.insertItem(0, new ItemStack(Items.APPLE), false);
         itemHandler.insertItem(10, new ItemStack(Items.APPLE, 10), false);
         iShulkerBox = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(shulkerBox));
+        iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
 
         bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState()));
         bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.getDefaultState()));
@@ -1052,6 +1054,93 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeInventory() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_INVENTORY.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- ISPLANTABLE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackIsPlantable() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "isplantable(apple) = false");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{iSeedWheat});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isplantable(seedWheat) = true");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsPlantableLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeIsPlantableSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeIsPlantable() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- PLANTTYPE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackPlantType() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "None", "planttype(apple) = None");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{iSeedWheat});
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Crop", "planttype(seedWheat) = Crop");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizePlantTypeLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizePlantTypeSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypePlantType() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- PLANT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackPlant() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().isPresent(), false, "plant(apple) = null");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{iSeedWheat});
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get().getBlock() == Blocks.WHEAT, true, "plant(seedWheat) = wheat");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizePlantLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizePlantSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypePlant() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

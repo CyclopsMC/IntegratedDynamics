@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -84,12 +85,12 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public S getPartState() {
+    public S getPartState() throws PartStateException {
         IPartContainer partContainer = getPartContainer();
         if(partContainer != null) {
             return (S) partContainer.getPartState(getCenterSide(getTarget()));
         } else {
-            throw new IllegalStateException(String.format("The part container at %s could not be found.", getCenterSide(getTarget())));
+            throw new PartStateException(getCenterPos(getTarget()));
         }
     }
 

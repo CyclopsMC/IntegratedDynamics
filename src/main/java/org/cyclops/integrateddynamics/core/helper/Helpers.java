@@ -5,11 +5,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -36,7 +40,13 @@ public final class Helpers {
      * @return The fluidstack or null.
      */
     public static FluidStack getFluidStack(ItemStack itemStack) {
-        return FluidUtil.getFluidContained(itemStack);
+        FluidStack fluidStack = FluidUtil.getFluidContained(itemStack);
+        if (fluidStack == null
+                && itemStack.getItem() instanceof ItemBlock
+                && ((ItemBlock) itemStack.getItem()).getBlock() instanceof IFluidBlock) {
+            fluidStack = new FluidStack(((IFluidBlock) ((ItemBlock) itemStack.getItem()).getBlock()).getFluid(), Fluid.BUCKET_VOLUME);
+        }
+        return fluidStack;
     }
 
     /**
@@ -125,7 +135,8 @@ public final class Helpers {
      * @return The instance or null.
      */
     public static <C> C getInterface(DimPos dimPos, Class<C> clazz) {
-        return getInterface(dimPos.getWorld(), dimPos.getBlockPos(), clazz);
+        World world = dimPos.getWorld();
+        return world != null ? getInterface(world, dimPos.getBlockPos(), clazz) : null;
     }
 
     public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {

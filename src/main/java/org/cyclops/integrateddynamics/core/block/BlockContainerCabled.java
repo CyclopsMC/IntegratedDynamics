@@ -51,7 +51,7 @@ public abstract class BlockContainerCabled extends ConfigurableBlockContainer {
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        CableHelpers.onCableAdded(world, pos);
+        CableHelpers.onCableAdded(world, pos, placer);
     }
 
     @Override

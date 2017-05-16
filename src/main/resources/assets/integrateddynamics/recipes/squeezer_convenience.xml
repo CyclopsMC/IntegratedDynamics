@@ -2,6 +2,7 @@
 <recipes>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item meta="1">minecraft:sponge</item>
@@ -13,6 +14,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:snowball</item>
@@ -23,6 +25,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:ice</item>
@@ -33,6 +36,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:snow</item>
@@ -43,6 +47,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:blaze_powder</item>
@@ -53,7 +58,8 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
-        <condition type="mod">Mine_factory_reloaded</condition>
+        <condition type="mod">minefactoryreloaded</condition>
+        <tag>convenience</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:brown_mushroom</item>
@@ -64,7 +70,8 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
-        <condition type="mod">Mine_factory_reloaded</condition>
+        <condition type="mod">minefactoryreloaded</condition>
+        <tag>convenience</tag>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:red_mushroom</item>
@@ -75,6 +82,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">evilcraft</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -86,6 +94,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">evilcraft</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -97,6 +106,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">evilcraft</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -108,6 +118,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">evilcraft</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -120,6 +131,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -132,6 +144,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -144,6 +157,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -156,6 +170,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -168,6 +183,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -180,6 +196,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -192,6 +209,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -204,6 +222,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -216,6 +235,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -228,6 +248,7 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>

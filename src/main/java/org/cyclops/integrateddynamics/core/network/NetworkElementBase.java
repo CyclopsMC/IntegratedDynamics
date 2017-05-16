@@ -90,7 +90,7 @@ public abstract class NetworkElementBase implements INetworkElement {
     }
 
     protected boolean canRevalidatePositioned(INetwork network, DimPos dimPos) {
-        return dimPos.getWorld().isBlockLoaded(dimPos.getBlockPos());
+        return dimPos.isLoaded();
     }
 
     protected void revalidatePositioned(INetwork network, DimPos dimPos) {

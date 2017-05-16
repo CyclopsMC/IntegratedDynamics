@@ -10,6 +10,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 
 /**
  * A block that can hold defined variables so that they can be referred to elsewhere in the network.
@@ -46,12 +47,21 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
     @Override
     public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
-        ItemStack empty = new ItemStack(this);
-        ItemStack full = new ItemStack(this);
-        IEnergyStorage energyStorage = full.getCapability(CapabilityEnergy.ENERGY, null);
-        energyStorage.receiveEnergy(energyStorage.getMaxEnergyStored(), false);
-        list.add(empty);
-        list.add(full);
+        ItemStack itemStack = new ItemStack(this);
+
+        int capacityOriginal = BlockEnergyBatteryConfig.capacity;
+        int capacity = capacityOriginal;
+        int lastCapacity;
+        do{
+            ItemStack currentStack = itemStack.copy();
+            IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) currentStack.getCapability(CapabilityEnergy.ENERGY, null);
+            energyStorage.setCapacity(capacity);
+            list.add(currentStack.copy());
+            energyStorage.receiveEnergy(capacity, false);
+            list.add(currentStack.copy());
+            lastCapacity = capacity;
+            capacity = capacity << 2;
+        } while(capacity < Math.min(BlockEnergyBatteryConfig.maxCreativeCapacity, BlockEnergyBatteryConfig.maxCapacity) && capacity > lastCapacity);
     }
 
     public boolean isCreative() {

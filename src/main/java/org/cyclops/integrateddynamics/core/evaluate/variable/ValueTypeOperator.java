@@ -11,6 +11,8 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeOperatorLPElement;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -65,8 +67,8 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     }
 
     @Override
-    public boolean hasDefaultLogicProgrammerElement() {
-        return false;
+    public ValueTypeLPElementBase createLogicProgrammerElement() {
+        return new ValueTypeOperatorLPElement();
     }
 
     @Override

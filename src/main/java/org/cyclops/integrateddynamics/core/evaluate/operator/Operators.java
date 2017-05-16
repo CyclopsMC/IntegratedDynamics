@@ -3,14 +3,19 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import lombok.SneakyThrows;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,6 +29,8 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.IShearable;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -51,7 +58,9 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Collection of available operators.
@@ -783,6 +792,82 @@ public final class Operators {
             }).build());
 
     /**
+     * Deduplicate the given list elements based on the given predicate.
+     */
+    public static final IOperator LIST_UNIQ_PREDICATE = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
+            .symbolOperator("uniq_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    final IOperator operator = OperatorBuilders.getSafePredictate((ValueTypeOperator.ValueOperator) variables.getValue(1));
+                    Set<IValue> values = Sets.newTreeSet(new Comparator<IValue>() {
+                        @Override
+                        @SneakyThrows
+                        public int compare(IValue o1, IValue o2) {
+                            ValueTypeBoolean.ValueBoolean value = (ValueTypeBoolean.ValueBoolean) operator
+                                    .evaluate(new Variable(o1), new Variable(o2));
+                            return value.getRawValue() ? 0 : o1.hashCode() - o2.hashCode();
+                        }
+                    });
+                    for (IValue value : list) {
+                        values.add(value);
+                    }
+                    return ValueTypeList.ValueList.ofList(list.getValueType(), Lists.newArrayList(values));
+                }
+            }).build());
+
+    /**
+     * Deduplicate the given list elements.
+     */
+    public static final IOperator LIST_UNIQ = REGISTRY.register(OperatorBuilders.LIST
+            .inputType(ValueTypes.LIST)
+            .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).output(ValueTypes.LIST)
+            .symbolOperator("uniq")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    Set<IValue> values = Sets.newTreeSet(new Comparator<IValue>() {
+                        @Override
+                        @SneakyThrows
+                        public int compare(IValue o1, IValue o2) {
+                            return o1.equals(o2) ? 0 : o1.hashCode() - o2.hashCode();
+                        }
+                    });
+                    for (IValue value : list) {
+                        values.add(value);
+                    }
+                    return ValueTypeList.ValueList.ofList(list.getValueType(), Lists.newArrayList(values));
+                }
+            }).build());
+
+    /**
+     * Take a subset of the given list from the given index (inclusive) to the given index (exclusive).
+     */
+    public static final IOperator LIST_SLICE = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(ValueTypes.LIST, ValueTypes.INTEGER, ValueTypes.INTEGER)
+            .renderPattern(IConfigRenderPattern.PREFIX_3_LONG).output(ValueTypes.LIST)
+            .symbolOperator("slice")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    ValueTypeInteger.ValueInteger from = variables.getValue(1);
+                    ValueTypeInteger.ValueInteger to = variables.getValue(2);
+                    if (from.getRawValue() >= to.getRawValue()) {
+                        throw new EvaluationException("The 'from' value must be stricly smaller than the 'to' value in the slice operator.");
+                    }
+                    if (from.getRawValue() < 0 || to.getRawValue() < 0){
+                        throw new EvaluationException("The 'from' and 'to' values in the slice operator must not be negative.");
+                    }
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxySlice<>(list, from.getRawValue(), to.getRawValue()));
+                }
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 
@@ -876,6 +961,87 @@ public final class Operators {
                     },
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
+
+    /**
+     * If the block is shearable
+     */
+    public static final IOperator OBJECT_BLOCK_ISSHEARABLE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("isshearable")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
+                            && a.getRawValue().get().getBlock() instanceof IShearable
+                            && ((IShearable) a.getRawValue().get().getBlock()).isShearable(null, null, null));
+                }
+            }).build());
+
+    /**
+     * If the block is plantable
+     */
+    public static final IOperator OBJECT_BLOCK_ISPLANTABLE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("isplantable")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
+                            && a.getRawValue().get().getBlock() instanceof IPlantable);
+                }
+            }).build());
+
+    /**
+     * The block plant type
+     */
+    public static final IOperator OBJECT_BLOCK_PLANTTYPE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("planttype")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    String type = "None";
+                    if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
+                        type = ((IPlantable) a.getRawValue().get().getBlock()).getPlantType(null, null).name();
+                    }
+                    return ValueTypeString.ValueString.of(type);
+                }
+            }).build());
+
+    /**
+     * The block when this block is planted
+     */
+    public static final IOperator OBJECT_BLOCK_PLANT = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    IBlockState plant = null;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
+                        plant = ((IPlantable) a.getRawValue().get().getBlock()).getPlant(null, null);
+                    }
+                    return ValueObjectTypeBlock.ValueBlock.of(plant);
+                }
+            }).build());
+
+    /**
+     * The block when this block is planted
+     */
+    public static final IOperator OBJECT_BLOCK_PLANTAGE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("plantage")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
+                    int age = 0;
+                    if (a.getRawValue().isPresent()) {
+                        for (IProperty<?> prop : a.getRawValue().get().getProperties().keySet()) {
+                            if (prop.getName().equals("age") && prop.getValueClass() == Integer.class) {
+                                age = (Integer) a.getRawValue().get().getValue(prop);
+                            }
+                        }
+                    }
+                    return ValueTypeInteger.ValueInteger.of(age);
+                }
+            }).build());
 
     /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
@@ -1287,6 +1453,7 @@ public final class Operators {
                 }
             })).build());
 
+
     /**
      * If the given item has an inventory.
      */
@@ -1299,6 +1466,23 @@ public final class Operators {
                     return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
                 }
             }).build());
+
+    /**
+     * If the item is plantable
+     */
+    public static final IOperator OBJECT_ITEMSTACK_ISPLANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isplantable")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty()
+                            && a.getRawValue().getItem() instanceof IPlantable);
+                }
+            }).build());
+
+
+
 
     /**
      * Retrieve the inventory size of the given item handler contents.
@@ -1316,6 +1500,23 @@ public final class Operators {
                         size = itemHandler.getSlots();
                     }
                     return ValueTypeInteger.ValueInteger.of(size);
+                }
+            }).build());
+
+    /**
+     * The item plant type
+     */
+    public static final IOperator OBJECT_ITEMSTACK_PLANTTYPE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("planttype")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    String type = "None";
+                    if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof IPlantable) {
+                        type = ((IPlantable) a.getRawValue().getItem()).getPlantType(null, null).name();
+                    }
+                    return ValueTypeString.ValueString.of(type);
                 }
             }).build());
 
@@ -1338,6 +1539,23 @@ public final class Operators {
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
                     }
                     return ValueTypes.LIST.getDefault();
+                }
+            }).build());
+
+    /**
+     * The item when this item is planted
+     */
+    public static final IOperator OBJECT_ITEMSTACK_PLANT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    IBlockState plant = null;
+                    if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof IPlantable) {
+                        plant = ((IPlantable) a.getRawValue().getItem()).getPlant(null, null);
+                    }
+                    return ValueObjectTypeBlock.ValueBlock.of(plant);
                 }
             }).build());
 
@@ -1762,6 +1980,104 @@ public final class Operators {
                         }
                     }
                     return ValueTypeString.ValueString.of(hurtSound);
+                }
+            }).build());
+
+    /**
+     * The age of this entity.
+     */
+    public static final IOperator OBJECT_ENTITY_AGE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.INTEGER).symbolOperator("age")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    int age = 0;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        age = ((EntityLivingBase) a.getRawValue().get()).getAge();
+                    }
+                    return ValueTypeInteger.ValueInteger.of(age);
+                }
+            }).build());
+
+    /**
+     * If the entity is a child.
+     */
+    public static final IOperator OBJECT_ENTITY_ISCHILD = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("ischild")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    boolean child = false;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
+                        child = ((EntityLivingBase) a.getRawValue().get()).isChild();
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(child);
+                }
+            }).build());
+
+    /**
+     * If the entity can be bred.
+     */
+    public static final IOperator OBJECT_ENTITY_CANBREED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("canbreed")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    boolean canBreed = false;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityAgeable) {
+                        canBreed = ((EntityAgeable) a.getRawValue().get()).getGrowingAge() == 0;
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(canBreed);
+                }
+            }).build());
+
+    /**
+     * If the entity is in love.
+     */
+    public static final IOperator OBJECT_ENTITY_ISINLOVE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("isinlove")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    boolean inLove = false;
+                    if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityAnimal) {
+                        inLove = ((EntityAnimal) a.getRawValue().get()).isInLove();
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(inLove);
+                }
+            }).build());
+
+    /**
+     * If the entity can be bred with the given item.
+     */
+    public static final IOperator OBJECT_ENTITY_CANBREEDWITH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .inputTypes(ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK)
+            .output(ValueTypes.BOOLEAN).symbolOperator("canbreedwith")
+            .renderPattern(IConfigRenderPattern.INFIX)
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1);
+                    boolean canBreedWith = false;
+                    if (a.getRawValue().isPresent() && !b.getRawValue().isEmpty() && a.getRawValue().get() instanceof EntityAnimal) {
+                        canBreedWith = ((EntityAnimal) a.getRawValue().get()).isBreedingItem(b.getRawValue());
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(canBreedWith);
+                }
+            }).build());
+
+    /**
+     * If the entity is shearable.
+     */
+    public static final IOperator OBJECT_ENTITY_ISSHEARABLE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("isshearable")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
+                            && a.getRawValue().get() instanceof IShearable
+                            && ((IShearable) a.getRawValue().get()).isShearable(null, null, null));
                 }
             }).build());
 

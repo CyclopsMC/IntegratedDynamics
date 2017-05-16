@@ -25,7 +25,7 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
     protected abstract Class<T> getTileClass();
 
     protected T getTile() {
-        return TileHelpers.getSafeTile(getPos().getWorld(), getPos().getBlockPos(), getTileClass());
+        return TileHelpers.getSafeTile(getPos(), getTileClass());
     }
 
     @Override

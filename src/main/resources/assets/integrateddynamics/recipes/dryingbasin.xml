@@ -2,6 +2,7 @@
 <recipes>
 
 	<recipe type="integrateddynamics:dryingbasin">
+		<tag>base</tag>
 		<condition type="config">drying_basin</condition>
 		<condition type="config">crystalized_menril_block</condition>
 		<condition type="config">menrilresin</condition>

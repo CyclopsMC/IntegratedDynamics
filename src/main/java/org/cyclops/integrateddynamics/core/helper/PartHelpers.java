@@ -320,9 +320,8 @@ public class PartHelpers {
      * @return If the player can interact with it.
      */
     public static boolean canInteractWith(PartTarget target, EntityPlayer player, IPartContainer expectedPartContainer) {
-        World world = target.getCenter().getPos().getWorld();
         BlockPos blockPos = target.getCenter().getPos().getBlockPos();
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, blockPos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(target.getCenter().getPos());
         return partContainer == expectedPartContainer
                 && player.getDistanceSq((double) blockPos.getX() + 0.5D,
                 (double) blockPos.getY() + 0.5D,
@@ -335,11 +334,9 @@ public class PartHelpers {
      * @return The part.
      */
     public static @Nullable PartStateHolder<?, ?> getPart(PartPos partPos) {
-        World world = partPos.getPos().getWorld();
-        BlockPos pos = partPos.getPos().getBlockPos();
         EnumFacing side = partPos.getSide();
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
-        if (partContainer.hasPart(side)) {
+        IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos());
+        if (partContainer != null && partContainer.hasPart(side)) {
             return PartStateHolder.of(partContainer.getPart(side), partContainer.getPartState(side));
         }
         return null;

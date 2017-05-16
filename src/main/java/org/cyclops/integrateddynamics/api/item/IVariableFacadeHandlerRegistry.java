@@ -1,8 +1,12 @@
 package org.cyclops.integrateddynamics.api.item;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.init.IRegistry;
+
+import javax.annotation.Nullable;
 
 /**
  * Registry for retrieving variable facade handlers.
@@ -40,15 +44,27 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
     public <F extends IVariableFacade> void write(NBTTagCompound tagCompound, F variableFacade, IVariableFacadeHandler<F> handler);
 
     /**
+     * Write the given variable facade to the given itemstack.
+     * @param itemStack The itemstack to write to.
+     * @param variableFacade The variable facade.
+     * @param variableFacadeHandler The variable facade handler.
+     * @return A copy of the given itemstack with the written variable facade.
+     * @param <F> The variable facade type.
+     */
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(ItemStack itemStack, F variableFacade, IVariableFacadeHandler<F> variableFacadeHandler);
+
+    /**
      * Write a new variable facade to the given itemstack.
      * @param generateId If a new id should be generated. Otherwise the previous facade id will be used or -1 if non existing.
      * @param itemStack The itemstack to write to.
      * @param variableFacadeHandler The variable facade handler.
      * @param variableFacadeFactory A factory for creating a variable facade.
+     * @param player The player crafting the item.
+     * @param block The block in which the facade was created.
      * @return A copy of the given itemstack with the written variable facade.
      * @param <F> The variable facade type.
      */
-    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory);
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable EntityPlayer player, @Nullable Block block);
 
     /**
      * Create a new variable facade..
