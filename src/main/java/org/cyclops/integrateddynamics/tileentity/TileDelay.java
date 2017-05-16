@@ -140,6 +140,11 @@ public class TileDelay extends TileProxy {
                     addError(new L10NHelpers.UnlocalizedString(e.toString()));
                 }
                 if (value != null) {
+                    try {
+                        if (this.list.getRawValue().getLength() > 0 && this.list.getRawValue().getValueType() != value.getType()) {
+                            getValues().clear();
+                        }
+                    } catch (EvaluationException e) {}
                     getValues().add(value);
 
                     // Update variable with as value the materialized queue list
