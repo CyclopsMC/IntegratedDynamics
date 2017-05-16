@@ -248,7 +248,9 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase<ValueTypeList
         }
 
         protected static List<IValueType> getValueTypes() {
-            return LogicProgrammerElementTypes.VALUETYPE.getValueTypes();
+            List<IValueType> valueTypes = Lists.newArrayList(LogicProgrammerElementTypes.VALUETYPE.getValueTypes());
+            valueTypes.remove(ValueTypes.LIST);
+            return valueTypes;
         }
 
         @Override
