@@ -25,6 +25,7 @@ public class ItemBlockEnergyContainerCombinationRecipe implements IRecipe {
 	 * Make a new instance.
 	 * @param size The recipe size (should be called multiple times (1 to 9) to allow for all shapeless crafting types.
 	 * @param batteryItem The battery item that is combinable.
+	 * @param maxCapacity The maximum allowed capacity.
 	 */
 	public ItemBlockEnergyContainerCombinationRecipe(int size, ItemBlockEnergyContainer batteryItem, int maxCapacity) {
 		this.size = size;

@@ -46,6 +46,7 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
     /**
      * Write the given variable facade to the given itemstack.
      * @param itemStack The itemstack to write to.
+     * @param variableFacade The variable facade.
      * @param variableFacadeHandler The variable facade handler.
      * @return A copy of the given itemstack with the written variable facade.
      * @param <F> The variable facade type.

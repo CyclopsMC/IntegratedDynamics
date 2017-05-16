@@ -98,7 +98,7 @@ public class CableHelpers {
      * @param world The world.
      * @param pos The position.
      * @param side The side to check a connection for.
-     * @return
+     * @return If the cable is connected.
      */
     public static boolean isCableConnected(IBlockAccess world, BlockPos pos, EnumFacing side) {
         ICable cable = getCable(world, pos);
