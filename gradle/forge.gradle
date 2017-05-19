@@ -63,8 +63,8 @@ dependencies {
     deobfCompile "mezz.jei:jei_${config.jei_version}" // https://dvs1.progwml6.com/jenkins/
     deobfCompile "pl.asie.charset:charset-api:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-api/maven-metadata.xml
     deobfCompile "net.darkhax.tesla:Tesla:${config.teslaapi_version}" // http://maven.epoxide.xyz/net/darkhax/tesla/Tesla/
-    //deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}" // https://dvs1.progwml6.com/jenkins/
-    //deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tconstruct_version}" // http://dvs1.progwml6.com/files/maven/slimeknights/TConstruct/maven-metadata.xml
+    deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}" // https://dvs1.progwml6.com/jenkins/
+    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tconstruct_version}" // http://dvs1.progwml6.com/files/maven/slimeknights/TConstruct/maven-metadata.xml
     deobfCompile "net.sengir.forestry:forestry_${config.minecraft_version}:${config.forestry_version}" // http://maven.ic2.player.to/
     deobfCompile "net.industrial-craft:industrialcraft-2:${config.IC2_version}:dev" // http://maven.ic2.player.to/
     deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.top_version}" // http://maven.tterrag.com/mcjty/theoneprobe/TheOneProbe/

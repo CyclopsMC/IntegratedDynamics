@@ -18,7 +18,7 @@ public class TConstructRecipeManager {
                 new ItemAndFluidStackRecipeComponent(
                         new ItemStack(BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance()), null));
         if (recipe != null) {
-            TinkerRegistry.registerBasinCasting(recipe.getOutput().getItemStack(), null,
+            TinkerRegistry.registerBasinCasting(recipe.getOutput().getItemStack(), ItemStack.EMPTY,
                     recipe.getInput().getFluidStack().getFluid(), recipe.getInput().getFluidStack().amount);
         }
     }
