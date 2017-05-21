@@ -1,0 +1,32 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.3 or higher.
+
+Additions:
+* Add 'On the Dynamics of Integration', an in-game guide to the mod, which also contains achievement-based tutorials.
+* Add achievements
+* Add MineTweaker support for Drying Basin and Squeezer
+* Support dynamic item list creation in the Logic Programmer
+* Add Crystalized Menril Block/Brick and Menril Plank Stairs
+* Add Delayer block. It allows you to maintain a relative history of values.
+* Add operators:
+  * slice
+  * uniq
+  * plant-related operators
+  * shearable block and entity
+  * breeding-related entity operators
+  * entity age
+* Add config option to change max network energy transfer rate
+* Allow JEI recipe transfers to Logic Programmer elements with slots.
+* Make Energy Battery capacity increasable by combining them in a crafting grid
+
+Changes:
+* Improve block and item value type rendering in world
+* Make part loaded checks safer, Closes CyclopsMC/IntegratedTunnels#29
+* Move value types before operators in logic programmer
+* Allow null items, blocks and fluids to be defined, Closes #133
+* Expose generator slots for piping, Closes #174
+* Add check to disallow positioned network elements to interact with themselves
+* Properly scale values in variable-activatable tile gui's
+
+Fixes:
+* Fix energy transfer happening client-side, Closes #160
