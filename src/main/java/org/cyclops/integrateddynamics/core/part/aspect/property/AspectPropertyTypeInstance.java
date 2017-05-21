@@ -27,4 +27,16 @@ public class AspectPropertyTypeInstance<T extends IValueType<V>, V extends IValu
         this.unlocalizedName = unlocalizedName;
         this.validator = validator;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof AspectPropertyTypeInstance
+                && ((AspectPropertyTypeInstance) o).type.equals(this.type)
+                && ((AspectPropertyTypeInstance) o).unlocalizedName.equals(this.unlocalizedName);
+    }
+
+    @Override
+    public int hashCode() {
+        return unlocalizedName.hashCode() + type.hashCode() << 2 + 11;
+    }
 }
