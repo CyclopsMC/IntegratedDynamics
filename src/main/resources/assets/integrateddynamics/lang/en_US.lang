@@ -49,7 +49,7 @@ tile.blocks.integrateddynamics.logicProgrammer.name=Logic Programmer
 tile.blocks.integrateddynamics.coalGenerator.name=Generator
 tile.blocks.integrateddynamics.coalGenerator.info=Produces energy from fuel items
 tile.blocks.integrateddynamics.proxy.name=Proxy
-tile.blocks.integrateddynamics.proxy.info=Expose a variable reference as an aspect
+tile.blocks.integrateddynamics.proxy.info=Expose a variable reference as an aspect. Clear in a crafting grid.
 tile.blocks.integrateddynamics.materializer.name=Materializer
 tile.blocks.integrateddynamics.materializer.info=Materialize the value of a variable in a new variable
 tile.blocks.integrateddynamics.menrilLog.name=Menril Log
@@ -71,7 +71,7 @@ tile.blocks.integrateddynamics.menrilPlanksStairs.name=Menril Plank Stairs
 tile.blocks.integrateddynamics.crystalizedMenrilBlockStairs.name=Crystalized Menril Stairs
 tile.blocks.integrateddynamics.crystalizedMenrilBrickStairs.name=Crystalized Menril Brick Stairs
 tile.blocks.integrateddynamics.delay.name=Delayer
-tile.blocks.integrateddynamics.delay.info=Expose the history of a variable as an aspect
+tile.blocks.integrateddynamics.delay.info=Expose the history of a variable as an aspect. Clear in a crafting grid.
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s

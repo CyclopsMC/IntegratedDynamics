@@ -24,6 +24,7 @@ public class ItemBlockProxy extends ItemBlockNBT {
      */
     public ItemBlockProxy(Block block) {
         super(block);
+        this.setMaxStackSize(64);
     }
 
     @SuppressWarnings("rawtypes")

@@ -1,17 +1,29 @@
 package org.cyclops.integrateddynamics.recipe;
 
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
-import org.cyclops.integrateddynamics.core.item.ItemPart;
-import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 /**
- * Crafting recipe to clear part data.
+ * Crafting recipe to clear item NBT data.
  * @author rubensworks
  */
-public class ItemPartClearRecipe implements IRecipe {
+public class ItemNbtClearRecipe implements IRecipe {
+
+    private final Class<? extends Item> clazz;
+    private final Item dummyInstance;
+
+    public ItemNbtClearRecipe(Class<? extends Item> clazz, Item dummyInstance) {
+        this.clazz = clazz;
+        this.dummyInstance = dummyInstance;
+    }
+
+    public ItemNbtClearRecipe(Item dummyInstance) {
+        this(dummyInstance.getClass(), dummyInstance);
+    }
+
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
         return getCraftingResult(inv) != null;
@@ -19,14 +31,18 @@ public class ItemPartClearRecipe implements IRecipe {
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
+        ItemStack ret = null;
         for(int j = 0; j < inv.getSizeInventory(); j++) {
             ItemStack element = inv.getStackInSlot(j);
-            if(element != null && element.getItem() instanceof ItemPart) {
+            if(element != null && this.clazz.isInstance(element.getItem())) {
+                if (ret != null) {
+                    return null;
+                }
                 // Create copy of the stack WITHOUT the NBT tag.
-                return new ItemStack(element.getItem(), 1, element.getItemDamage());
+                ret = new ItemStack(element.getItem(), 1, element.getItemDamage());
             }
         }
-        return null;
+        return ret;
     }
 
     @Override
@@ -36,7 +52,7 @@ public class ItemPartClearRecipe implements IRecipe {
 
     @Override
     public ItemStack getRecipeOutput() {
-        return new ItemStack(PartTypes.REDSTONE_READER.getItem(), 1); // This is just a dummy item!
+        return new ItemStack(dummyInstance, 1); // This is just a dummy item!
     }
 
     @Override
