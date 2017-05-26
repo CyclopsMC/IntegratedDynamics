@@ -49,7 +49,7 @@ tile.blocks.integrateddynamics.logic_programmer.name=Logic Programmer
 tile.blocks.integrateddynamics.coal_generator.name=Generator
 tile.blocks.integrateddynamics.coal_generator.info=Produces energy from fuel items
 tile.blocks.integrateddynamics.proxy.name=Proxy
-tile.blocks.integrateddynamics.proxy.info=Expose a variable reference as an aspect
+tile.blocks.integrateddynamics.proxy.info=Expose a variable reference as an aspect. Clear in a crafting grid.
 tile.blocks.integrateddynamics.materializer.name=Materializer
 tile.blocks.integrateddynamics.materializer.info=Materialize the value of a variable in a new variable
 tile.blocks.integrateddynamics.menril_log.name=Menril Log
@@ -71,7 +71,7 @@ tile.blocks.integrateddynamics.menril_planks_stairs.name=Menril Plank Stairs
 tile.blocks.integrateddynamics.crystalized_menril_block_stairs.name=Crystalized Menril Stairs
 tile.blocks.integrateddynamics.crystalized_menril_brick_stairs.name=Crystalized Menril Brick Stairs
 tile.blocks.integrateddynamics.delay.name=Delayer
-tile.blocks.integrateddynamics.delay.info=Expose the history of a variable as an aspect
+tile.blocks.integrateddynamics.delay.info=Expose the history of a variable as an aspect. Clear in a crafting grid.
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
@@ -1325,7 +1325,7 @@ info_book.integrateddynamics.tutorials.advancedOperations.text5=For the final, p
 
 info_book.integrateddynamics.tutorials.theValueOfOperators=The Value of Operators
 info_book.integrateddynamics.tutorials.theValueOfOperators.text1=In &1Integrated Dynamics&0, &2Operators&0 are first-class citizens. Up until now, we have only used manually using the &lLogic Programmer&r, but in this tutorial, we’ll look into how they can be used in a more dynamic way, by storing &2Operators&0 in &lVariable Cards&r, and invoking them dynamically.
-info_book.integrateddynamics.tutorials.theValueOfOperators.text2=As a first step, go to the &lLogic Programmer&r, and create a new static &2Operator&0, from the dropdown-list, choose the &oArithmetic Addition&r &2Operator&0, and write it to a &lVariable Card&r. After that, create two &6Integer&0 variables. Next, find the &oApply&r operator, and apply the first &6Integer&0 to the &2Operator&0, which will &obind&r the first input argument of the addition &2Operator&0 to that &6Integer&0, and will output a new &2Operator&0 with one remaining input argument. Next, use the &oApply&r operator again to &obind&r the final input argument of the newly created &2Operator&0. Finally, use a &lDisplay Panel&r to visualize your dynamically invoked addition.
+info_book.integrateddynamics.tutorials.theValueOfOperators.text2=As a first step, go to the &lLogic Programmer&r, and create a new static &2Operator&0, by starting to type &oArithmetic Addition&r &2Operator&0 in the autocomplete dropdown-list and clicking it, and write it to a &lVariable Card&r. After that, create two &6Integer&0 variables. Next, find the &oApply&r operator, and apply the first &6Integer&0 to the &2Operator&0, which will &obind&r the first input argument of the addition &2Operator&0 to that &6Integer&0, and will output a new &2Operator&0 with one remaining input argument. Next, use the &oApply&r operator again to &obind&r the final input argument of the newly created &2Operator&0. Finally, use a &lDisplay Panel&r to visualize your dynamically invoked addition.
 info_book.integrateddynamics.tutorials.theValueOfOperators.text3=Next to applying &2Operators&0, there are a lot of other advanced &2Operator&0 operations. We’ll now look into using &2Operators&0 on &7Lists&0, more specifically the &oFilter&r &2Operator&0 that takes a &7List&0 and a &oPredicate&r (an &2Operator&0 with one input argument and a &9Boolean&0 output value). Start by creating a &7List&0 of the &6Integers&0 &61&0, &610&0 and &6100&0. Next, store the &oRelational Equals&r &2Operator&0 in a variable. Next, apply this operator on the &6Integer&0 &610&0. Next, use the &oFilter&r &2Operator&0 with your &7List&0 and the applied &2Operator&0. This will filter away all the items from the &7List&0 that return &9False&0 by applying them on the given operator, which in this case means that all elements that are not equal to &610&0 will be removed from the list. Visualize the result in a &lDisplay Panel&r.
 info_book.integrateddynamics.tutorials.theValueOfOperators.text4=There are plenty of other operations on &2Operators&0, such as combining &oPredicates&r, flipping &2Operator&0 arguments, and more operations on &7Lists&0.
 
@@ -1378,7 +1378,7 @@ info_book.integrateddynamics.manual.logic.value_types.list=List
 info_book.integrateddynamics.manual.logic.value_types.list.text1=A list containing values of a certain &lValue Type&r. All elements in a certain can only contain values of the same value types. For example &8(0, 1, 2, 3)&0, &8(“a”, “b”, “c”)&0, &8(3,33, 1,14, 5, 6)&0
 info_book.integrateddynamics.manual.logic.value_types.operator=Operator
 info_book.integrateddynamics.manual.logic.value_types.operator.text1=A value containing a reference to an &2Operator&0. Operators can be partially applied for more flexible evaluations based on the concept of &lCurrying&r.
-info_book.integrateddynamics.manual.logic.value_types.operator.text2=You can for example store the addition &2Operator&0 in a variable card. You can then partially apply it with one &6Integer&0 &lVariable Card&r, which will result in a new virtual operator with one input type and one output type, which internally contains a reference to that applied &6Integer&0. Applying another &6Integer&0 will result in an &6Integer&0.
+info_book.integrateddynamics.manual.logic.value_types.operator.text2=You can for example store the addition &2Operator&0 in a variable card. Do this by starting to type the operator name and selecting it from the autocomplete dropdown-list and clicking it. You can then partially apply it with one &6Integer&0 &lVariable Card&r, which will result in a new virtual operator with one input type and one output type, which internally contains a reference to that applied &6Integer&0. Applying another &6Integer&0 will result in an &6Integer&0.
 info_book.integrateddynamics.manual.logic.value_types.operator.text3=Other operations of &2Operators&0 are present in the &lLogic Programmer&r for more advanced evaluations, such as reducing a list to a single value, or filtering a list based on a &lPredicate&r.
 info_book.integrateddynamics.manual.logic.value_types.block=Block
 info_book.integrateddynamics.manual.logic.value_types.block.text1=A reference to a &lMinecraft&r block. For example &8Dirt&0, &8Cobblestone&0, &8Red Stained Clay&0, &8Chest&0, ....

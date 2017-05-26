@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.4 or higher.
+
+Changes:
+* Make proxies and delays stackable and clearable, Closes #181
+* Clarify infobook instruction on operator creation, #181
+
+Fixes:
+* Fix LP element activation using hotkeys not working

@@ -8,7 +8,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGui;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -141,13 +140,18 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     @Override
     @SideOnly(Side.CLIENT)
     public boolean isFocused(ISubGuiBox subGui) {
+        if (subGui instanceof ValueTypeLPElementRenderPattern) {
+            return ((ValueTypeLPElementRenderPattern) subGui).getSearchField().isFocused();
+        }
         return false;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
-
+        if (subGui instanceof ValueTypeLPElementRenderPattern) {
+            ((ValueTypeLPElementRenderPattern) subGui).getSearchField().setFocused(focused);
+        }
     }
 
     @Override
