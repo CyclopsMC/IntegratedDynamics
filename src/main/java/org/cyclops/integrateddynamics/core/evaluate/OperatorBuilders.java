@@ -158,7 +158,7 @@ public class OperatorBuilders {
                 @Override
                 public ItemStack getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0);
-                    return !a.getRawValue().isEmpty() ? a.getRawValue() : null;
+                    return a.getRawValue();
                 }
             });
     public static final IterativeFunction.PrePostBuilder<ItemStack, Integer> FUNCTION_ITEMSTACK_TO_INT =
