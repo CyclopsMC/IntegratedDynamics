@@ -4,20 +4,23 @@ import net.minecraft.tileentity.TileEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 /**
- * Implementation of {@link IPathElement} for {@link TileMultipartTicking}.
+ * Implementation of {@link IPathElement} for a tile entity.
  * @author rubensworks
  */
-public class PathElementTile extends PathElementCable {
+public class PathElementTile<T extends TileEntity> extends PathElementCable {
 
-    private final TileEntity tile;
+    private final T tile;
     private final ICable cable;
 
-    public PathElementTile(TileEntity tile, ICable cable) {
+    public PathElementTile(T tile, ICable cable) {
         this.tile = tile;
         this.cable = cable;
+    }
+
+    protected T getTile() {
+        return tile;
     }
 
     @Override
@@ -29,4 +32,5 @@ public class PathElementTile extends PathElementCable {
     public DimPos getPosition() {
         return DimPos.of(tile.getWorld(), tile.getPos());
     }
+
 }

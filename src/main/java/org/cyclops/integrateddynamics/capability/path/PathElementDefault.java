@@ -18,7 +18,7 @@ public abstract class PathElementDefault implements IPathElement {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof PathElementDefault && compareTo(o) == 0;
+        return o instanceof IPathElement && compareTo(o) == 0;
     }
 
     @Override

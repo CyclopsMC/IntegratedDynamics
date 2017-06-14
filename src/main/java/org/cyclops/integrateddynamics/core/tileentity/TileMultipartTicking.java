@@ -38,7 +38,7 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerTileMultipartTicking;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
-import org.cyclops.integrateddynamics.capability.path.PathElementTile;
+import org.cyclops.integrateddynamics.capability.path.PathElementTileMultipartTicking;
 import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -97,7 +97,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
         cableFakeable = new CableFakeableMultipartTicking(this);
         addCapabilityInternal(CableFakeableConfig.CAPABILITY, cableFakeable);
-        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile(this, cable));
+        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTileMultipartTicking(this, cable));
         for (EnumFacing facing : EnumFacing.VALUES) {
             addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, new DynamicLightTileMultipartTicking(this, facing));
             addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, new DynamicRedstoneTileMultipartTicking(this, facing));

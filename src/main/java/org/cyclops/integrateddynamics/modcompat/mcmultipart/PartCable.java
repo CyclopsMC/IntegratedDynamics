@@ -50,7 +50,7 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderPartContainer;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
-import org.cyclops.integrateddynamics.capability.path.PathElementPart;
+import org.cyclops.integrateddynamics.capability.path.PathElementPartCable;
 import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -112,7 +112,7 @@ public class PartCable extends MultipartBase implements ITickable {
         addCapabilityInternal(CableConfig.CAPABILITY, cable);
         networkCarrier = new NetworkCarrierDefault();
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
-        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementPart(this, cable));
+        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementPartCable(this, cable));
         this.forceDisconnected = forceDisconnected;
         dynamicLights = EnumFacingMap.newMap();
         for (EnumFacing facing : EnumFacing.VALUES) {
