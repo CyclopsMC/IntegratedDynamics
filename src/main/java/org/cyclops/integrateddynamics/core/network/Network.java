@@ -236,7 +236,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public void setPriority(INetworkElement element, int priority) {
+    public synchronized void setPriority(INetworkElement element, int priority) {
         elements.remove(element);
         Integer oldTickValue = null;
         if (element.isUpdate()) {
@@ -276,7 +276,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public void removeNetworkElementUpdateable(INetworkElement element) {
+    public synchronized void removeNetworkElementUpdateable(INetworkElement element) {
         updateableElements.remove(element);
         updateableElementsTicks.remove(element);
     }
