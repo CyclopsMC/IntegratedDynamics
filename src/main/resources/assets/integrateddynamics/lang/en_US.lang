@@ -248,6 +248,11 @@ parttype.parttypes.integrateddynamics.dynamicLightPanel.info=Visually display a 
 parttype.parttypes.integrateddynamics.displayPanel.name=Display Panel
 parttype.parttypes.integrateddynamics.displayPanel.info=Visually display a variable value in the world as text
 
+parttype.parttypes.integrateddynamics.connectorMonoDirectional.name=Mono-Directional Connector
+parttype.parttypes.integrateddynamics.connectorMonoDirectional.info=Can connect to other Mono-Directional Connectors over a distance in a straight line
+parttype.parttypes.integrateddynamics.connectorOmniDirectional.name=Omni-Directional Connector
+parttype.parttypes.integrateddynamics.connectorOmniDirectional.info=Can connect to other Omni-Directional Connectors anywhere, including different dimensions.
+
 # Variables facades
 variable.integrateddynamics.error.invalidItem=The current variable can not be used in this aspect.
 variable.integrateddynamics.error.partNotInNetwork=Part with id %s could not be found within the current network.

@@ -1,0 +1,8 @@
+{
+  "forge_marker": 1,
+  "parent": "integrateddynamics:block/connectorMonoDirectional",
+  "textures": {
+    "back" : "integrateddynamics:parts/connectorMonoDirectional_back",
+    "front": "integrateddynamics:parts/connectorMonoDirectional_front_inactive"
+  }
+}
