@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.modcompat.jei.dryingbasin;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeWrapper;
 import net.minecraft.item.ItemStack;
@@ -20,16 +19,17 @@ import java.util.List;
  * Recipe wrapper for Drying Basin recipes
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = false)
 @Data
 public class DryingBasinRecipeJEI extends BlankRecipeWrapper {
 
+    private final IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe;
     private final List<ItemStack> inputItem;
     private final FluidStack inputFluid;
     private final List<ItemStack> outputItem;
     private final FluidStack outputFluid;
 
     public DryingBasinRecipeJEI(IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
+        this.recipe = recipe;
         this.inputItem = recipe.getInput().getItemStacks();
         this.inputFluid = recipe.getInput().getFluidStack();
         this.outputItem = recipe.getOutput().getItemStacks();
@@ -62,6 +62,16 @@ public class DryingBasinRecipeJEI extends BlankRecipeWrapper {
     @Override
     public List<FluidStack> getFluidOutputs() {
         return Lists.newArrayList(getOutputFluid());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof DryingBasinRecipeJEI && ((DryingBasinRecipeJEI) object).recipe.equals(this.recipe);
+    }
+
+    @Override
+    public int hashCode() {
+        return 2 | this.recipe.hashCode();
     }
 
     public static List<DryingBasinRecipeJEI> getAllRecipes() {
