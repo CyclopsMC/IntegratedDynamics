@@ -49,7 +49,6 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderPartContainer;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
-import org.cyclops.integrateddynamics.capability.path.PathElementPartCable;
 import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;

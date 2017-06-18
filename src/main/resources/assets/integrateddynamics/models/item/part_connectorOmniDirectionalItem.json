@@ -1,8 +1,0 @@
-{
-  "forge_marker": 1,
-  "parent": "integrateddynamics:block/connectorOmniDirectional",
-  "textures": {
-    "back" : "integrateddynamics:parts/connectorOmniDirectional_back",
-    "front": "integrateddynamics:parts/connectorOmniDirectional_front_inactive"
-  }
-}

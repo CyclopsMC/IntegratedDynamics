@@ -2,8 +2,8 @@
 "parent": "integrateddynamics:block/part",
 "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
 "textures": {
-    "front": "parts/connectorOmniDirectional_front",
-    "back": "parts/connectorOmniDirectional_back"
+    "front": "parts/connector_omni_directional_front",
+    "back": "parts/connector_omni_directional_back"
 },
 "elements": [ 
 {

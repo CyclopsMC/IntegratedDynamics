@@ -1,9 +1,10 @@
-package org.cyclops.integrateddynamics.capability.path;
+package org.cyclops.integrateddynamics.modcompat.mcmultipart;
 
 import mcmultipart.multipart.IMultipart;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.modcompat.mcmultipart.PartCable;
 
 import java.util.Set;
