@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.6 or higher.
+
+Changes:
+* Update zh_CN.lang
+
+Fixes:
+* Fix localization entry for wrongCurryingType, Closes CyclopsMC/IntegratedTunnels#36
+* Fix incorrect logicProgrammerOpenRename key localization, Closes #198
+* Fix Minetweaker JEI integration, Closes #187
