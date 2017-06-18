@@ -21,7 +21,6 @@ import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.item.BucketRegistry;
 import org.cyclops.cyclopscore.item.IBucketRegistry;
-import org.cyclops.cyclopscore.modcompat.ModCompatLoader;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
 import org.cyclops.cyclopscore.recipe.custom.SuperRecipeRegistry;
@@ -59,7 +58,6 @@ import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypeRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
@@ -73,7 +71,11 @@ import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
-import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGeneratorTileCompat;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
+
+import java.util.Map;
+
+/*import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGeneratorTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTileCompat;
 import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
 import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
@@ -87,14 +89,7 @@ import org.cyclops.integrateddynamics.modcompat.tconstruct.TConstructModCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.*;
 import org.cyclops.integrateddynamics.modcompat.top.TopModCompat;
-import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;
-import org.cyclops.integrateddynamics.part.aspect.Aspects;
-import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
-import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
-import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
-import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
-
-import java.util.Map;
+import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;*/
 
 /**
  * The main mod class of IntegratedDynamics.
@@ -170,41 +165,9 @@ public class IntegratedDynamics extends ModBaseVersionable {
         return new CommandMod(this, commands);
     }
 
-    @Override
-    protected void loadModCompats(ModCompatLoader modCompatLoader) {
-        super.loadModCompats(modCompatLoader);
-        // TODO: temporarily disable some mod compats
-        // Mod compats
-        modCompatLoader.addModCompat(new CharsetPipesModCompat());
-        //modCompatLoader.addModCompat(new McMultiPartModCompat());
-        modCompatLoader.addModCompat(new WailaModCompat());
-        //modCompatLoader.addModCompat(new ThaumcraftModCompat());
-        modCompatLoader.addModCompat(new JEIModCompat());
-        modCompatLoader.addModCompat(new TConstructModCompat());
-        modCompatLoader.addModCompat(new ForestryModCompat());
-        modCompatLoader.addModCompat(new Ic2ModCompat());
-        modCompatLoader.addModCompat(new TopModCompat());
-        modCompatLoader.addModCompat(new TeslaApiCompat());
-        modCompatLoader.addModCompat(new RefinedStorageModCompat());
-        modCompatLoader.addModCompat(new ImmersiveEngineeringModCompat());
-        modCompatLoader.addModCompat(new MineTweakerModCompat());
-    }
-
     @Mod.EventHandler
     @Override
     public final void preInit(FMLPreInitializationEvent event) {
-        // Capabilities
-        getCapabilityConstructorRegistry().registerTile(TileDryingBasin.class, new WorkerDryingBasinTileCompat());
-        getCapabilityConstructorRegistry().registerTile(TileSqueezer.class, new WorkerSqueezerTileCompat());
-        getCapabilityConstructorRegistry().registerTile(TileCoalGenerator.class, new WorkerCoalGeneratorTileCompat());
-        getCapabilityConstructorRegistry().registerTile(TileCoalGenerator.class, new TeslaProducerCoalGeneratorTileCompat());
-        getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaConsumerEnergyBatteryTileCompat());
-        getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaProducerEnergyBatteryTileCompat());
-        getCapabilityConstructorRegistry().registerTile(TileEnergyBattery.class, new TeslaHolderEnergyBatteryTileCompat());
-        getCapabilityConstructorRegistry().registerItem(ItemBlockEnergyContainer.class, new TeslaConsumerEnergyContainerItemCompat());
-        getCapabilityConstructorRegistry().registerItem(ItemBlockEnergyContainer.class, new TeslaProducerEnergyContainerItemCompat());
-        getCapabilityConstructorRegistry().registerItem(ItemBlockEnergyContainer.class, new TeslaHolderEnergyContainerItemCompat());
-
         // Registries
         getRegistryManager().addRegistry(IBucketRegistry.class, new BucketRegistry());
         getRegistryManager().addRegistry(ISuperRecipeRegistry.class, new SuperRecipeRegistry(this));
