@@ -69,7 +69,6 @@ sourceSets {
         java {
             exclude '**/modcompat/thaumcraft/**'
             exclude '**/modcompat/mcmultipart/**'
-            exclude '**/modcompat/immersiveengineering/**'
         }
     }
 }

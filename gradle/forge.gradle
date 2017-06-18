@@ -29,9 +29,14 @@ repositories {
         name = "Dankhax"
         url = "http://maven.epoxide.xyz"
     }
-    maven {
+    // TODO: temp while player's maven is fixed
+    /*maven {
         name 'Player Maven FS'
         url 'http://maven.ic2.player.to/'
+    }*/
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
     }
     maven {
         name 'tterrag'
@@ -65,11 +70,15 @@ dependencies {
     deobfCompile "net.darkhax.tesla:Tesla:${config.teslaapi_version}" // http://maven.epoxide.xyz/net/darkhax/tesla/Tesla/
     deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}" // https://dvs1.progwml6.com/jenkins/
     deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tconstruct_version}" // http://dvs1.progwml6.com/files/maven/slimeknights/TConstruct/maven-metadata.xml
-    deobfCompile "net.sengir.forestry:forestry_${config.minecraft_version}:${config.forestry_version}" // http://maven.ic2.player.to/
-    deobfCompile "net.industrial-craft:industrialcraft-2:${config.IC2_version}:dev" // http://maven.ic2.player.to/
+    // TODO: temp while player's maven is fixed
+    //deobfCompile "net.sengir.forestry:forestry_${config.minecraft_version}:${config.forestry_version}" // http://maven.ic2.player.to/
+    deobfCompile 'forestry:forestry_1.11.2:5.3.4.102' // https://minecraft.curseforge.com/api/maven/
+    //deobfCompile "net.industrial-craft:industrialcraft-2:${config.IC2_version}:dev" // http://maven.ic2.player.to/
+    // TODO: temp while player's maven is fixed
+    deobfCompile 'industrial-craft:industrialcraft-2:2.7.59:ex111' // https://minecraft.curseforge.com/api/maven/
     deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.top_version}" // http://maven.tterrag.com/mcjty/theoneprobe/TheOneProbe/
     deobfCompile "refinedstorage:refinedstorage:${config.refinedstorage_version}" // https://dl.bintray.com/raoulvdberge/dev/refinedstorage/refinedstorage/
-    //deobfCompile "blusunrize:ImmersiveEngineering:${config.ie_version}"// http://maven.blamejared.com/blusunrize/ImmersiveEngineering/
+    deobfCompile "blusunrize:ImmersiveEngineering:${config.ie_version}"// http://maven.blamejared.com/blusunrize/ImmersiveEngineering/
     deobfCompile "MineTweaker3:MineTweaker3-API:${config.minetweakerapi_version}"; // http://blamejared.com/maven/MineTweaker3/MineTweaker3-API/maven-metadata.xml
 
     // Only needed for testing
