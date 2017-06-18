@@ -1,6 +1,6 @@
 # General
 itemGroup.integrateddynamics=集成动力
-general.integrateddynamics.info.none=None
+general.integrateddynamics.info.none=无
 general.integrateddynamics.energyUnit.name=RF
 general.integrateddynamics.error.noNetwork=找不到有效的网络
 
@@ -15,7 +15,7 @@ gui.integrateddynamics.logicprogrammer.filter=过滤
 gui.integrateddynamics.waila.partConfig=部件信息
 gui.integrateddynamics.waila.proxyConfig=代理信息
 gui.integrateddynamics.waila.dryingBasinConfig=烘干池信息
-gui.integrateddynamics.waila.item=物品: %s
+gui.integrateddynamics.waila.item=项目: %s
 gui.integrateddynamics.waila.fluid=流体: %s (%s mB)
 gui.integrateddynamics.rewards=奖励
 gui.integrateddynamics.rewards.collect=收集
@@ -31,28 +31,29 @@ gui.integrateddynamics.diagnostics.table.cables=导线
 gui.integrateddynamics.diagnostics.table.part=部件
 gui.integrateddynamics.diagnostics.table.ticktime=Ticktime (ms)
 gui.integrateddynamics.diagnostics.table.dimension=维度
-gui.integrateddynamics.diagnostics.table.position=坐标
-gui.integrateddynamics.diagnostics.table.side=朝向
+gui.integrateddynamics.diagnostics.table.position=位置
+gui.integrateddynamics.diagnostics.table.side=side
 
 # Keybindings
 key.categories.integrateddynamics=集成动力
 key.integrateddynamics.logicProgrammerFocusSearch=在逻辑编程器中搜索
-key.integrateddynamics.logicProgrammerOpenRename=在逻辑编程器中搜索
+key.integrateddynamics.logicProgrammerOpenRename=Focus Search 逻辑编程器
 
 # Blocks
 tile.blocks.integrateddynamics.cable.name=逻辑线缆
 tile.blocks.integrateddynamics.variablestore.name=变量卡箱
 tile.blocks.integrateddynamics.energyBattery.name=能量电池
+tile.blocks.integrateddynamics.energyBattery.info=与其他能量电池放在合成网格中以增加容量。
 tile.blocks.integrateddynamics.creativeEnergyBattery.name=创造能量电池
 tile.blocks.integrateddynamics.logicProgrammer.name=逻辑编程器
 tile.blocks.integrateddynamics.coalGenerator.name=发电机
 tile.blocks.integrateddynamics.coalGenerator.info=从燃料中获取能量
 tile.blocks.integrateddynamics.proxy.name=代理器
+tile.blocks.integrateddynamics.proxy.info=将一个变量卡输出为一个检测类型。在合成网格中清除。
 tile.blocks.integrateddynamics.materializer.name=复制器
 tile.blocks.integrateddynamics.materializer.info=复制变量的数据作为新的变量
 tile.blocks.integrateddynamics.menrilLog.name=门瑞欧原木
 tile.blocks.integrateddynamics.menrilLogFilled.name=富集门瑞欧原木
-tile.blocks.integrateddynamics.menrilLeaves.name=门瑞欧树叶
 tile.blocks.integrateddynamics.menrilLeaves.name=门瑞欧树叶
 tile.blocks.integrateddynamics.menrilSapling.name=门瑞欧树苗
 tile.blocks.integrateddynamics.menrilPlanks.name=门瑞欧木板
@@ -73,7 +74,6 @@ tile.blocks.integrateddynamics.delay.name=延迟器
 tile.blocks.integrateddynamics.delay.info=将变量的历史显示在一个面上。
 
 # Items
-# Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
 item.items.integrateddynamics.wrench.name=扳手
 item.items.integrateddynamics.variable.name=变量卡
@@ -92,6 +92,7 @@ item.items.integrateddynamics.variableTransformer.input.name=变量输入
 item.items.integrateddynamics.menrilBerries.name=门瑞欧浆果
 item.items.integrateddynamics.menrilBerries.info=美味又明亮
 item.items.integrateddynamics.portableLogicProgrammer.name=便携式逻辑编辑器
+item.items.integrateddynamics.on_the_dynamics_of_integration.name=论集成动力
 item.items.integrateddynamics.on_the_dynamics_of_integration.info=一个完整的mod参考指南与教程
 
 # Fluids
@@ -101,70 +102,70 @@ fluid.fluids.integrateddynamics.menrilresin=门瑞欧树脂
 biomes.integrateddynamics.biomeMeneglin=门勒格林
 
 # Achievements
-achievement.integrateddynamics.meneglinDiscovery=Meneglin Discovery
-achievement.integrateddynamics.meneglinDiscovery.desc=Chop down a Menril tree, which can most easily be found in Meneglin biomes.
-achievement.integrateddynamics.squeezing=Squeezing like a boss
-achievement.integrateddynamics.squeezing.desc=Craft a Squeezer.
-achievement.integrateddynamics.drying=Drying like a boss
-achievement.integrateddynamics.drying.desc=Craft a Drying Basin.
-achievement.integrateddynamics.menrilProduction=Menril Production
-achievement.integrateddynamics.menrilProduction.desc=Process a Menril Log into Menril Resin and dry it to obtain Crystalized Menril Resin.
-achievement.integrateddynamics.cablesLogic=Cables, for logic
-achievement.integrateddynamics.cablesLogic.desc=Craft a Logic Cable
-achievement.integrateddynamics.networksLogic=Networks, for logic
-achievement.integrateddynamics.networksLogic.desc=Build a logic network with at least 10 connected Logic Cables.
-achievement.integrateddynamics.menrilWrenching=Menril Wrenching
-achievement.integrateddynamics.menrilWrenching.desc=Craft a Wrench
-achievement.integrateddynamics.variables=Variables, For Values
-achievement.integrateddynamics.variables.desc=Craft a Variable Card
-achievement.integrateddynamics.variableInput=Variable Input Transformation
-achievement.integrateddynamics.variableInput.desc=Craft an Variable Input Transformer
-achievement.integrateddynamics.variableOutput=Variable Output Transformation
-achievement.integrateddynamics.variableOutput.desc=Craft Variable Output Transformer
-achievement.integrateddynamics.redstoneReading=Redstone Reading
-achievement.integrateddynamics.redstoneReading.desc=Craft a Redstone Reader
-achievement.integrateddynamics.blockReading=Block Reading
-achievement.integrateddynamics.blockReading.desc=Craft a Block Reader
-achievement.integrateddynamics.inventoryReading=Inventory Reading
-achievement.integrateddynamics.inventoryReading.desc=Craft an Inventory Reader
-achievement.integrateddynamics.valueDisplaying=Value Displaying
-achievement.integrateddynamics.valueDisplaying.desc=Craft a Display Panel
-achievement.integrateddynamics.redstoneCapturing=Redstone Capturing
-achievement.integrateddynamics.redstoneCapturing.desc=Make a variable card for a redstone §6Integer§7 value.
-achievement.integrateddynamics.redstoneObservement=Redstone Observement
-achievement.integrateddynamics.redstoneObservement.desc=Place an §6Integer§7 variable card in a Display Panel.
-achievement.integrateddynamics.redstoneTransmission=Redstone Transmission
-achievement.integrateddynamics.redstoneTransmission.desc=Let a Redstone Writer write a maximal redstone level.
-achievement.integrateddynamics.logicProgramming=Logic Programming
-achievement.integrateddynamics.logicProgramming.desc=Open a Logic Programmer's GUI
-achievement.integrateddynamics.constantDefinition=Constant Definition
-achievement.integrateddynamics.constantDefinition.desc=Define a constant §6Integer§7 Variable Card.
-achievement.integrateddynamics.arithmeticAddition=Arithmetic Addition
-achievement.integrateddynamics.arithmeticAddition.desc=Add two §eNumbers§7 and display the result.
-achievement.integrateddynamics.variableMaterialization=Variable Materialization
-achievement.integrateddynamics.variableMaterialization.desc=Materialize a variable in a §lMaterializer§r.
-achievement.integrateddynamics.variableProxying=Variable Proxying
-achievement.integrateddynamics.variableProxying.desc=Create a valid proxy variable in a §lProxy§r.
-achievement.integrateddynamics.logicalListBuilding=Logical List Building
-achievement.integrateddynamics.logicalListBuilding.desc=Construct a static List with §6Integers§7 1, 10 and 100.
-achievement.integrateddynamics.itemOriginIdentification=Item Origin Identification
-achievement.integrateddynamics.itemOriginIdentification.desc=Get the mod name of an Item.
-achievement.integrateddynamics.whatWouldIBeLookingAt=What Would I Be Looking At?
-achievement.integrateddynamics.whatWouldIBeLookingAt.desc=Get the Block you are looking at.
-achievement.integrateddynamics.dynamicAdditions=Dynamic Additions
-achievement.integrateddynamics.dynamicAdditions.desc=Invoke the addition Operator dynamically
-achievement.integrateddynamics.dynamicListFiltering=Dynamic List Filtering
-achievement.integrateddynamics.dynamicListFiltering.desc=Filter an Integer list 1, 10 and 100 to 10.
-achievement.integrateddynamics.creeperTaming=Creeper Taming
-achievement.integrateddynamics.creeperTaming.desc=Show the HP of a Creeper in a Display Panel
-achievement.integrateddynamics.spongeStepSound=Sponge Step Sound
-achievement.integrateddynamics.spongeStepSound.desc=Play the step sound of a wet Sponge block
-achievement.integrateddynamics.recursiveRecursion=Recursive Recursion
-achievement.integrateddynamics.recursiveRecursion.desc=Create an infinite List, and display it in a Display Panel
-achievement.integrateddynamics.toolForObsidian=Tools for Obsidian?
-achievement.integrateddynamics.toolForObsidian.desc=Check if a Stone Pickaxe can break an Obsidian block, and show the result in a Display Panel.
-achievement.integrateddynamics.smartPressurePlate=Smart Pressure Plate
-achievement.integrateddynamics.smartPressurePlate.desc=Create a system that automatically opens a door when you pass by an Entity Reader based on entity name matching, using a Redstone Writer directly pointing to the door.
+achievement.integrateddynamics.meneglinDiscovery=发现门勒格林
+achievement.integrateddynamics.meneglinDiscovery.desc=砍下位于门勒格林的门瑞欧树
+achievement.integrateddynamics.squeezing=像boss一样挤压
+achievement.integrateddynamics.squeezing.desc=制作一台挤压机
+achievement.integrateddynamics.drying=像boss一样烘干
+achievement.integrateddynamics.drying.desc=制作一个洪干池
+achievement.integrateddynamics.menrilProduction=门瑞欧加工
+achievement.integrateddynamics.menrilProduction.desc=将门瑞欧原木加工成树脂并烘干得到门瑞欧水晶.
+achievement.integrateddynamics.cablesLogic=逻辑线缆
+achievement.integrateddynamics.cablesLogic.desc=制作一个逻辑线缆
+achievement.integrateddynamics.networksLogic=逻辑网络
+achievement.integrateddynamics.networksLogic.desc=构建具有至少10个相互连接的逻辑电缆的逻辑网络。
+achievement.integrateddynamics.menrilWrenching=门瑞欧扳手
+achievement.integrateddynamics.menrilWrenching.desc=制作一个扳手
+achievement.integrateddynamics.variables=变量评测
+achievement.integrateddynamics.variables.desc=制作一个变量卡
+achievement.integrateddynamics.variableInput=变量输入转换
+achievement.integrateddynamics.variableInput.desc=制作一个变量输入装换器
+achievement.integrateddynamics.variableOutput=变量输出装换器
+achievement.integrateddynamics.variableOutput.desc=制作一个变量输出转换器
+achievement.integrateddynamics.redstoneReading=红石读取
+achievement.integrateddynamics.redstoneReading.desc=制作一个红石读取器
+achievement.integrateddynamics.blockReading=方块读取
+achievement.integrateddynamics.blockReading.desc=制作一个方块读取器
+achievement.integrateddynamics.inventoryReading=物品栏读取
+achievement.integrateddynamics.inventoryReading.desc=制作一个物品栏读取器
+achievement.integrateddynamics.valueDisplaying=数据显示
+achievement.integrateddynamics.valueDisplaying.desc=制作一个现实面板
+achievement.integrateddynamics.redstoneCapturing=红石信号捕捉
+achievement.integrateddynamics.redstoneCapturing.desc=制作一个红石§6Integer§7数据的变量卡。
+achievement.integrateddynamics.redstoneObservement=红石观测
+achievement.integrateddynamics.redstoneObservement.desc=放置一个§6Integer§7变量卡到显示面板里。
+achievement.integrateddynamics.redstoneTransmission=红石信号传输
+achievement.integrateddynamics.redstoneTransmission.desc=让一个红石输出器输出一个最大等级的红石信号。
+achievement.integrateddynamics.logicProgramming=逻辑编程
+achievement.integrateddynamics.logicProgramming.desc=打开逻辑编辑器的GUI
+achievement.integrateddynamics.constantDefinition=常量定义
+achievement.integrateddynamics.constantDefinition.desc=定义一个常量§6Integer§7变量卡。
+achievement.integrateddynamics.arithmeticAddition=算数加发
+achievement.integrateddynamics.arithmeticAddition.desc=相加§e数字§7并显示其结果。
+achievement.integrateddynamics.variableMaterialization=变量复制
+achievement.integrateddynamics.variableMaterialization.desc=在§l复制器§r中复制一个变量。
+achievement.integrateddynamics.variableProxying=变量代理
+achievement.integrateddynamics.variableProxying.desc=在§l代理器§r中创建一个变量代理。
+achievement.integrateddynamics.logicalListBuilding=逻辑列表构建。
+achievement.integrateddynamics.logicalListBuilding.desc=构建一个静态列表§6Integers§7 1, 10 和 100。
+achievement.integrateddynamics.itemOriginIdentification=物品初始ID
+achievement.integrateddynamics.itemOriginIdentification.desc=获得一个物品的mod名称。
+achievement.integrateddynamics.whatWouldIBeLookingAt=我在看什么？
+achievement.integrateddynamics.whatWouldIBeLookingAt.desc=获取你视线所指向的方块。
+achievement.integrateddynamics.dynamicAdditions=动态添加
+achievement.integrateddynamics.dynamicAdditions.desc=动态调用加法运算符
+achievement.integrateddynamics.dynamicListFiltering=动态列表过滤
+achievement.integrateddynamics.dynamicListFiltering.desc=过滤一个整型列表 1, 10 和 100 到 10.
+achievement.integrateddynamics.creeperTaming=驯服爬行者
+achievement.integrateddynamics.creeperTaming.desc=在显示面板显示一直爬行者的血量
+achievement.integrateddynamics.spongeStepSound=踩海绵音效
+achievement.integrateddynamics.spongeStepSound.desc=播放踩在湿海绵上的音效
+achievement.integrateddynamics.recursiveRecursion=递归
+achievement.integrateddynamics.recursiveRecursion.desc=创建一个无限列表并将它显示在显示面板上
+achievement.integrateddynamics.toolForObsidian=能否采掘黑曜石?
+achievement.integrateddynamics.toolForObsidian.desc=测试一把石镐是否能够破坏黑曜石,并将结果显示在显示面板上。
+achievement.integrateddynamics.smartPressurePlate=智能压力板
+achievement.integrateddynamics.smartPressurePlate.desc=制作一个自动开门系统 。经过一个基于实体名称匹配的实体读取器时, 红石输出器向门输出信号。
 
 # Value types
 valuetype.integrateddynamics.error.value=无效数据
@@ -188,25 +189,25 @@ valuetype.valuetypes.integrateddynamics.number.info=接受所有类型的数字
 valuetype.valuetypes.integrateddynamics.named.name=named
 valuetype.valuetypes.integrateddynamics.named.info=接受所有被命名的数据
 
-valuetype.valuetypes.integrateddynamics.boolean.name=boolean
-valuetype.valuetypes.integrateddynamics.integer.name=integer
-valuetype.valuetypes.integrateddynamics.double.name=double
-valuetype.valuetypes.integrateddynamics.long.name=long
-valuetype.valuetypes.integrateddynamics.string.name=string
-valuetype.valuetypes.integrateddynamics.operator.name=operator
+valuetype.valuetypes.integrateddynamics.boolean.name=boolean（布朗）
+valuetype.valuetypes.integrateddynamics.integer.name=integer（整型）
+valuetype.valuetypes.integrateddynamics.double.name=double（双精度型）
+valuetype.valuetypes.integrateddynamics.long.name=long（长整型）
+valuetype.valuetypes.integrateddynamics.string.name=string（字符串）
+valuetype.valuetypes.integrateddynamics.operator.name=operator（运算符）
 
-valuetype.valuetypes.integrateddynamics.list.name=list
-valuetype.valuetypes.integrateddynamics.block.name=block
-valuetype.valuetypes.integrateddynamics.itemstack.name=item
-valuetype.valuetypes.integrateddynamics.entity.name=entity
-valuetype.valuetypes.integrateddynamics.fluidstack.name=fluid
+valuetype.valuetypes.integrateddynamics.list.name=列表
+valuetype.valuetypes.integrateddynamics.block.name=方块
+valuetype.valuetypes.integrateddynamics.itemstack.name=物品
+valuetype.valuetypes.integrateddynamics.entity.name=实体
+valuetype.valuetypes.integrateddynamics.fluidstack.name=流体
 
 # Part types
 parttype.parttypes.integrateddynamics.error.lowEnergy=缺少能源
 parttype.parttypes.integrateddynamics.tooltip.disabled=关闭
 parttype.parttypes.integrateddynamics.tooltip.inactive=激活
 parttype.parttypes.integrateddynamics.tooltip.errors=错误:
-parttype.parttypes.integrateddynamics.tooltip.writer.activeAspect=引用源: %s (%s)
+parttype.parttypes.integrateddynamics.tooltip.writer.activeAspect=设置面: %s (%s)
 parttype.parttypes.integrateddynamics.tooltip.display.activeValue=值: %s (%s)
 
 parttype.parttypes.integrateddynamics.audioReader.name=声音读取器
@@ -247,7 +248,6 @@ parttype.parttypes.integrateddynamics.dynamicLightPanel.info=用光亮显示变�
 parttype.parttypes.integrateddynamics.displayPanel.name=显示器
 parttype.parttypes.integrateddynamics.displayPanel.info=用文本显示变量的值
 
-
 # Variables facades
 variable.integrateddynamics.error.invalidItem=当前变量不能被用在这个检测类型
 variable.integrateddynamics.error.partNotInNetwork=在当前网络中未找到部件 ID:%s
@@ -270,6 +270,7 @@ aspect.integrateddynamics.tooltip.aspectName=§e检测类型: §r%s
 aspect.integrateddynamics.tooltip.valueTypeName=§e数据类型: §r%s
 aspect.integrateddynamics.tooltip.partId=§e§o部件ID: §r§o%s
 aspect.integrateddynamics.error.invalidType=这个检测类型期望%s而不是%s
+aspect.aspects.integrateddynamics.name=检测类型
 
 ## Audio aspects
 aspect.aspects.integrateddynamics.read.integer.audio.instrument.piano.name=音符盒-钢琴/竖琴
@@ -362,8 +363,8 @@ aspect.aspects.integrateddynamics.write.double.effect.particle.slime.name=效果
 aspect.aspects.integrateddynamics.write.double.effect.particle.slime.info=以特定的速度发出史莱姆蹦跳效果
 aspect.aspects.integrateddynamics.write.double.effect.particle.heart.name=效果-爱心
 aspect.aspects.integrateddynamics.write.double.effect.particle.heart.info=以特定的速度产生爱心
-aspect.aspects.integrateddynamics.write.double.effect.particle.barrier.name=效果-Barrier
-aspect.aspects.integrateddynamics.write.double.effect.particle.barrier.info=以特定的速度发出barrier particle
+aspect.aspects.integrateddynamics.write.double.effect.particle.barrier.name=效果-屏障
+aspect.aspects.integrateddynamics.write.double.effect.particle.barrier.info=以特定的速度发出屏障效果
 aspect.aspects.integrateddynamics.write.double.effect.particle.droplet.name=效果-掉入水中
 aspect.aspects.integrateddynamics.write.double.effect.particle.droplet.info=以特定的速度发出掉入水中效果
 
@@ -590,7 +591,6 @@ aspect.aspects.integrateddynamics.read.string.world.worldname.info=当前世界�
 aspect.aspects.integrateddynamics.read.list.world.players.name=玩家
 aspect.aspects.integrateddynamics.read.list.world.players.info=当前世界玩家
 
-
 # Aspect property types
 aspect.aspecttypes.integrateddynamics.integer.tankid.name=水槽ID
 aspect.aspecttypes.integrateddynamics.integer.slotid.name=槽ID
@@ -612,9 +612,10 @@ aspect.aspecttypes.integrateddynamics.double.spreadY.name=Y轴放大
 aspect.aspecttypes.integrateddynamics.double.spreadZ.name=Z轴放大
 aspect.aspecttypes.integrateddynamics.boolean.forceParticle.name=强制渲染
 
-aspect.aspecttypes.integrateddynamics.boolean.strong_power.name=Strong Power
+aspect.aspecttypes.integrateddynamics.boolean.strong_power.name=高能
 
 # Operators
+operator.operators.integrateddynamics.name=Operator
 operator.integrateddynamics.applied.operatorName=%s [%s]
 operator.integrateddynamics.applied.type=§应用于: §r%s
 operator.integrateddynamics.tooltip.operatorName=§e运算符: §r%s (%s)
@@ -625,7 +626,7 @@ operator.integrateddynamics.tooltip.outputTypeName=§e输出值类型: §r%s
 operator.integrateddynamics.error.wrongInputLength=运算符%s接收长度为%3$s的输入而不是%2$s
 operator.integrateddynamics.error.nullType=运算符%s在%s接收到null
 operator.integrateddynamics.error.wrongType=运算符%s在%3$s接收到了%2$s类型而不是%s类型
-operator.integrateddynamics.error.wrongCurryingType=The operator %s received an input with type %s at position %s while the type %s was expected for currying.
+operator.integrateddynamics.error.wrongCurryingType=运算符 %s 接收到了一个位于 %s  %s 类型输入 当类型 %s 预计会进行currying。
 operator.integrateddynamics.error.wrongPredicate=运算符%s接收到了输入运算符输出的类型%s而不是%s
 operator.integrateddynamics.error.illegalProperty=该Property被认为将输出%1$s,但运算符%3$s收到了%2$s 
 operator.integrateddynamics.error.variableNotInNetwork=当前网络中找不到ID为%s的变量
@@ -709,12 +710,12 @@ operator.operators.integrateddynamics.list.get.name=获取
 operator.operators.integrateddynamics.list.get.info=获取对应下标的列表元素
 operator.operators.integrateddynamics.list.contains.name=包含
 operator.operators.integrateddynamics.list.contains.info=此列表是否包含给定元素
-operator.operators.integrateddynamics.list.contains_p.name=包含Predicate
-operator.operators.integrateddynamics.list.contains_p.info=如果列表的至少一个元素对于给定的Predicate返回true。
+operator.operators.integrateddynamics.list.contains_p.name=包含谓词
+operator.operators.integrateddynamics.list.contains_p.info=如果列表的至少一个元素对于给定的谓词返回true。
 operator.operators.integrateddynamics.list.count.name=计数
 operator.operators.integrateddynamics.list.count.info=在列表中找到给定元素的次数。
 operator.operators.integrateddynamics.list.count_p.name=计数
-operator.operators.integrateddynamics.list.count_p.info=给定Predicate对于列表中的元素返回true的次数。
+operator.operators.integrateddynamics.list.count_p.info=给定谓词对于列表中的元素返回true的次数。
 operator.operators.integrateddynamics.list.append.name=附加
 operator.operators.integrateddynamics.list.append.info=在给定的列表中附加给定的项目。
 operator.operators.integrateddynamics.list.lazybuilt.name=懒人列表生成器
@@ -723,6 +724,12 @@ operator.operators.integrateddynamics.list.head.name=首
 operator.operators.integrateddynamics.list.head.info=获取给定列表的第一个元素。
 operator.operators.integrateddynamics.list.tail.name=尾
 operator.operators.integrateddynamics.list.tail.info=从列表中删除第一个元素。
+operator.operators.integrateddynamics.list.uniq_p.name=条件唯一
+operator.operators.integrateddynamics.list.uniq_p.info=基于给定的比较条件删除列表中所有的重复元素。
+operator.operators.integrateddynamics.list.uniq.name=唯一
+operator.operators.integrateddynamics.list.uniq.info=删除列表中所有的重复元素。
+operator.operators.integrateddynamics.list.slice.name=切片
+operator.operators.integrateddynamics.list.slice.info=将给定列表的子集从给定索引（包括）移到给定索引（不包括）。
 
 operator.operators.integrateddynamics.block.name=方块
 operator.operators.integrateddynamics.block.basename=方块%s
@@ -738,6 +745,20 @@ operator.operators.integrateddynamics.block.placesound.name=方块放置声
 operator.operators.integrateddynamics.block.placesound.info=给定方块被放置的声音
 operator.operators.integrateddynamics.block.stepsound.name=方块行走声
 operator.operators.integrateddynamics.block.stepsound.info=在给定方块上行走的声音
+operator.operators.integrateddynamics.block.isshearable.name=Block Is Shearable
+operator.operators.integrateddynamics.block.isshearable.info=If the given block is shearable
+operator.operators.integrateddynamics.block.isplantable.name=Block Is Plant
+operator.operators.integrateddynamics.block.isplantable.info=If the given block is a plant
+operator.operators.integrateddynamics.block.planttype.name=Block Plant Type
+operator.operators.integrateddynamics.block.planttype.info=The plant type of the given block
+operator.operators.integrateddynamics.block.plant.name=Block Plant
+operator.operators.integrateddynamics.block.plant.info=The resulting block when this block is planted
+operator.operators.integrateddynamics.block.cansustainplantblock.name=Block Can Sustain Block Plant
+operator.operators.integrateddynamics.block.cansustainplantblock.info=If the given block can sustain the given block plant
+operator.operators.integrateddynamics.block.cansustainplantitem.name=Block Can Sustain Item Plant
+operator.operators.integrateddynamics.block.cansustainplantitem.info=If the given block can sustain the given item plant
+operator.operators.integrateddynamics.block.plantage.name=Block Plant Age
+operator.operators.integrateddynamics.block.plantage.info=The age of the given plant block
 
 operator.operators.integrateddynamics.itemstack.name=物品
 operator.operators.integrateddynamics.itemstack.basename=物品%s
@@ -793,6 +814,12 @@ operator.operators.integrateddynamics.string.oredict.name=矿物字典值
 operator.operators.integrateddynamics.string.oredict.info=注册为给定矿物字典名的物品
 operator.operators.integrateddynamics.itemstack.withsize.name=物品堆叠大小
 operator.operators.integrateddynamics.itemstack.withsize.info=设置给定物品的堆叠大小
+operator.operators.integrateddynamics.itemstack.isplantable.name=Item Is Plant
+operator.operators.integrateddynamics.itemstack.isplantable.info=If the given item is a plant
+operator.operators.integrateddynamics.itemstack.planttype.name=Item Plant Type
+operator.operators.integrateddynamics.itemstack.planttype.info=The plant type of the given item
+operator.operators.integrateddynamics.itemstack.plant.name=Item Plant
+operator.operators.integrateddynamics.itemstack.plant.info=The resulting block when this item is planted
 
 operator.operators.integrateddynamics.entity.name=实体
 operator.operators.integrateddynamics.entity.basename=实体%s
@@ -846,6 +873,18 @@ operator.operators.integrateddynamics.entity.hurtsound.name=实体受伤声
 operator.operators.integrateddynamics.entity.hurtsound.info=给定实体受伤的声音
 operator.operators.integrateddynamics.entity.deathsound.name=实体死亡声
 operator.operators.integrateddynamics.entity.deathsound.info=给定实体死亡的声音
+operator.operators.integrateddynamics.entity.age.name=Entity Age
+operator.operators.integrateddynamics.entity.age.info=The age of the given entity.
+operator.operators.integrateddynamics.entity.ischild.name=Entity Is Child
+operator.operators.integrateddynamics.entity.ischild.info=If the given entity is a child.
+operator.operators.integrateddynamics.entity.canbreed.name=Entity Can Breed
+operator.operators.integrateddynamics.entity.canbreed.info=If the given entity is ready to be bred.
+operator.operators.integrateddynamics.entity.isinlove.name=Entity Is In Love
+operator.operators.integrateddynamics.entity.isinlove.info=If the given entity is in love and is ready to breed.
+operator.operators.integrateddynamics.entity.canbreedwith.name=Entity Can Breed With
+operator.operators.integrateddynamics.entity.canbreedwith.info=If the given entity can be breed using the given item.
+operator.operators.integrateddynamics.entity.isshearable.name=Entity Is Shearable
+operator.operators.integrateddynamics.entity.isshearable.info=If the given entity is shearable
 
 operator.operators.integrateddynamics.itemstack.isfecontainer.name=FE容器
 operator.operators.integrateddynamics.itemstack.isfecontainer.info=如果给定的项目可以保存FE
@@ -885,14 +924,13 @@ operator.operators.integrateddynamics.operator.filter.name=过滤
 operator.operators.integrateddynamics.operator.filter.info=用给定的断言过滤元素列表
 operator.operators.integrateddynamics.operator.conjunction.name=连词
 operator.operators.integrateddynamics.operator.conjunction.info=结合两个Predicate。
-operator.operators.integrateddynamics.virtual.p_conjunction.name=Predicate连接。
+operator.operators.integrateddynamics.virtual.p_conjunction.name=谓词连接
 operator.operators.integrateddynamics.operator.disjunction.name=析取
-operator.operators.integrateddynamics.operator.disjunction.info=取消两个Predicate的分离。
-operator.operators.integrateddynamics.virtual.p_disjunction.name=Predicate分离
+operator.operators.integrateddynamics.operator.disjunction.info=取消两个谓词的分离。
+operator.operators.integrateddynamics.virtual.p_disjunction.name=谓词分离
 operator.operators.integrateddynamics.operator.negation.name=反转
 operator.operators.integrateddynamics.operator.negation.info=取断言的相反值
-operator.operators.integrateddynamics.virtual.p_negation.name=Predicate 否定
-
+operator.operators.integrateddynamics.virtual.p_negation.name=谓词否定
 operator.operators.integrateddynamics.operator.pipe.name=管道
 operator.operators.integrateddynamics.operator.pipe.info=创建一个新的运算符把第一个操作的输出值传递给第二个运算符
 operator.operators.integrateddynamics.virtual.piped.name=管道操作
@@ -915,19 +953,18 @@ operator.operators.integrateddynamics.general.isnotnull.info=给定的值是否�
 
 operator.operators.integrateddynamics.virtual.name=虚拟运算符
 operator.operators.integrateddynamics.virtual.basename=虚拟运算符%s
-operator.operators.integrateddynamics.virtual.p_conjunction.name=Predicate Conjunction
-operator.operators.integrateddynamics.virtual.p_conjunction.info=The conjunction of two predicates
-operator.operators.integrateddynamics.virtual.p_disjunction.name=Predicate Disjunction
-operator.operators.integrateddynamics.virtual.p_disjunction.info=The disjunction of two predicates
-operator.operators.integrateddynamics.virtual.p_negation.name=Predicate Negation
-operator.operators.integrateddynamics.virtual.p_negation.info=The disjunction of a predicate
+operator.operators.integrateddynamics.virtual.p_conjunction.name=谓词连接
+operator.operators.integrateddynamics.virtual.p_conjunction.info=两个谓词的结合
+operator.operators.integrateddynamics.virtual.p_disjunction.name=谓词分离
+operator.operators.integrateddynamics.virtual.p_disjunction.info=两个谓词的分离
+operator.operators.integrateddynamics.virtual.p_negation.name=谓词否定
+operator.operators.integrateddynamics.virtual.p_negation.info=谓词的分离
 operator.operators.integrateddynamics.virtual.piped.name=管道操作
 operator.operators.integrateddynamics.virtual.piped.info=运算符链
 
 operator.operators.integrateddynamics.cast.name=投
 operator.operators.integrateddynamics.cast.basename=投
 operator.operators.integrateddynamics.cast.tooltip=投%s入%s
-
 
 ## Config categories
 config.integrateddynamics.item=物品设置
@@ -990,12 +1027,13 @@ config.integrateddynamics.general.versionChecker=版本检查
 
 ## General settings
 config.integrateddynamics.general.energyConsumptionMultiplier=能耗倍数
-config.integrateddynamics.general.partOverlayRenderdistance=部件叠加渲染距离
+config.integrateddynamics.general.partOverlayRenderdistance=部分叠加渲染距离
 
 ## Item settings
 config.integrateddynamics.variable=变量卡
 config.integrateddynamics.variableTransformer=变量转换器
 config.integrateddynamics.menrilBerries.nightVision=门瑞欧浆果（夜间版本）
+config.integrateddynamics.on_the_dynamics_of_integration.bookRewards=书籍物品奖励
 
 ## Machine settings
 config.integrateddynamics.energyBattery.capacity=电池容量
@@ -1006,18 +1044,17 @@ config.integrateddynamics.general.defaultPartUpdateFreq=部件更新频率
 config.integrateddynamics.CharsetPipes=字符串管道
 config.integrateddynamics.CoFHAPI=RF API
 config.integrateddynamics.JEI=JEI
-config.integrateddynamics.forestry=Forestry配方
+config.integrateddynamics.forestry=Forestry支持
 config.integrateddynamics.mcmultipart=MCMultiPart支持
-config.integrateddynamics.refinedstorage=Refined Storage
-config.integrateddynamics.tconstruct=Tinkers' Construct
-config.integrateddynamics.tesla=Tesla
-config.integrateddynamics.theoneprobe=The One Probe
-config.integrateddynamics.Waila=Waila
+config.integrateddynamics.refinedstorage=Refined Storage支持
+config.integrateddynamics.tconstruct=Tinkers' Construct支持
+config.integrateddynamics.tesla=Tesla支持
+config.integrateddynamics.theoneprobe=The One Probe支持
+config.integrateddynamics.Waila=Waila支持
 
 ## World generation settings
 config.integrateddynamics.general.wildMenrilTreeChance=Wild 门瑞欧树生成概率
 config.integrateddynamics.menrilLogFilled.filledMenrilLogChance=Enriched 门瑞欧原木生成概率
-
 
 ### ----- Mod Compats ----- ###
 
@@ -1192,33 +1229,33 @@ operator.operators.integrateddynamics.itemstack.ic2eucapacity.info=该物品存�
 ## ----- Refined Storage ----- ##
 
 # Aspect property types
-aspect.aspecttypes.integrateddynamics.boolean.refinedstorage.skipcrafting.name=Skip If Crafting
-aspect.aspecttypes.integrateddynamics.boolean.refinedstorage.skipstorage.name=Skip If In Storage
+aspect.aspecttypes.integrateddynamics.boolean.refinedstorage.skipcrafting.name=在制作中跳过
+aspect.aspecttypes.integrateddynamics.boolean.refinedstorage.skipstorage.name=在存储中跳过
 
 ## Aspects
-aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.name=Is RS Network
-aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.info=If the target has a Refined Storage network.
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.name=RS network items
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.info=A list of all the items in the RS network.
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftableitems.name=RS craftable items
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftableitems.info=A list of all the craftable items in the RS network.
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftingitems.name=RS crafting items
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftingitems.info=A list of all the items that are currently being crafted in the RS network.
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.missingcraftingitems.name=RS missing crafting items
-aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.missingcraftingitems.info=A list of all the missing items in the current crafting jobs for the RS network.
-aspect.aspects.integrateddynamics.read.list.refinedstorage.fluid.fluidstacks.name=RS network fluids
-aspect.aspects.integrateddynamics.read.list.refinedstorage.fluid.fluidstacks.info=A list of all the fluids in the RS network.
+aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.name=是RS网络
+aspect.aspects.integrateddynamics.read.boolean.refinedstorage.network.applicable.info=如果目标具有RS网络。
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.name=RS网络物品
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.itemstacks.info=RS网络中所有物品的列表。
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftableitems.name=RS工作台物品
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftableitems.info=RS网络中所有可合成物品的列表。
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftingitems.name=RS合成物品
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.craftingitems.info=目前在RS网络中合成的所有物品的列表。
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.missingcraftingitems.name=RS缺少合成物品。
+aspect.aspects.integrateddynamics.read.list.refinedstorage.inventory.missingcraftingitems.info=RS网络当前工作作业中缺少的所有物品的列表。
+aspect.aspects.integrateddynamics.read.list.refinedstorage.fluid.fluidstacks.name=RS网络流体
+aspect.aspects.integrateddynamics.read.list.refinedstorage.fluid.fluidstacks.info=RS网络中所有流体的列表。
 
-aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.craft.name=RS craft item
-aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.craft.info=Trigger a crafting job for the given item.
-aspect.aspects.integrateddynamics.write.list.refinedstorage.craft.name=RS craft items
-aspect.aspects.integrateddynamics.write.list.refinedstorage.craft.info=Trigger a crafting job for all the items in the given list.
-aspect.aspects.integrateddynamics.write.boolean.refinedstorage.cancelcraft.name=RS cancel all crafting jobs
-aspect.aspects.integrateddynamics.write.boolean.refinedstorage.cancelcraft.info=Cancel all running crafting jobs in the RS network.
-aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.cancelcraft.name=RS cancel crafting jobs
-aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.cancelcraft.info=Cancel all running crafting jobs for the given item in the RS network.
-aspect.aspects.integrateddynamics.write.list.refinedstorage.cancelcraft.name=RS cancel crafting jobs
-aspect.aspects.integrateddynamics.write.list.refinedstorage.cancelcraft.info=Cancel all running crafting jobs for the given items in the RS network.
+aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.craft.name=RS合成物品
+aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.craft.info=触发指定物品的合成任务。
+aspect.aspects.integrateddynamics.write.list.refinedstorage.craft.name=RS合成物品
+aspect.aspects.integrateddynamics.write.list.refinedstorage.craft.info=触发指定列表里的所有物品的合成任务。
+aspect.aspects.integrateddynamics.write.boolean.refinedstorage.cancelcraft.name=取消RS所有合成任务
+aspect.aspects.integrateddynamics.write.boolean.refinedstorage.cancelcraft.info=取消RS网络中所有运行的合成任务
+aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.cancelcraft.name=RS取消合成任务
+aspect.aspects.integrateddynamics.write.itemstack.refinedstorage.cancelcraft.info=取消RS网络中给定物品的所有运行的合成任务。
+aspect.aspects.integrateddynamics.write.list.refinedstorage.cancelcraft.name=RS取消合成任务
+aspect.aspects.integrateddynamics.write.list.refinedstorage.cancelcraft.info=取消RS网络中给定物品的所有运行的合成任务。
 
 # ------ On the Dynamics of Integration contents ------
 
@@ -1248,10 +1285,10 @@ info_book.integrateddynamics.tutorials.networkFoundations.text2=下一步需要�
 info_book.integrateddynamics.tutorials.basicNetworkComponents=基本网络元件
 info_book.integrateddynamics.tutorials.basicNetworkComponents.text1=为&l变量卡&r创建特定数据的一种方法是,通过&l读取器&r读取它的数据。去做一些基础读取器吧。然后, 再做一个&l显示面板&r,他能够方便的显示&l变量卡&r的数据。
 
-info_book.integrateddynamics.tutorials.aspects=面
+info_book.integrateddynamics.tutorials.aspects=设置面
 info_book.integrateddynamics.tutorials.aspects.text1=举个简单的例子, 我们来读取一个红石的数据并将它显示出来
 info_book.integrateddynamics.tutorials.aspects.text2=将&l红石读取器&r接到&l逻辑线缆&r上。确保读取的目标是红石数据, 如&l红石火把&r。
-info_book.integrateddynamics.tutorials.aspects.text3=接下来, 右击打开&l红石读取器&r的GUI, 将&l变量卡&r插入&6Integer&0 &l红石数据&r面, 来把目标的红石数据绑定到&l变量卡&r上。
+info_book.integrateddynamics.tutorials.aspects.text3=接下来, 右击打开&l红石读取器&r的GUI, 将&l变量卡&r插入&6Integer&0 &l红石数据&r设置面, 来把目标的红石数据绑定到&l变量卡&r上。
 info_book.integrateddynamics.tutorials.aspects.text4=然后，在该&l红石读取器&r所在的网络上接上一个&l显示面板&r，插入你所绑定的&l变量卡&r显示它的数据。
 info_book.integrateddynamics.tutorials.aspects.text5=下一步, 做一个&l红石输出器&r 并让他输出一个最大的红石数据
 
@@ -1309,7 +1346,7 @@ info_book.integrateddynamics.manual.prerequisites.drying_basin.text2=无论如�
 
 info_book.integrateddynamics.manual.networks=网络
 info_book.integrateddynamics.manual.networks.text1=&l集成动力&r &l网络&r是一切自动化系统的基础。 网络有相互连接的&l逻辑线缆&r构成，一些部件可以直接安置在上面。 这些电缆应使用&l扳手&r进行管理。Shift+右击一个线缆或者部件将其拆卸, 而常规右键单击将与其他电缆断开连接。
-info_book.integrateddynamics.manual.networks.text2=即使&l逻辑线缆&r的材质看起来不错，在某些情况下，您可能希望隐藏它们。 您可以使用&l伪装体&r，它可以伪装成任何材质。 此外，这些电缆也与&lMC MultiPart&r兼容，这意味着您可以将电缆隐藏在更复杂的门面结构中。
+info_book.integrateddynamics.manual.networks.text2=即使&l逻辑线缆&r的材质看起来不错，在某些情况下，您可能希望隐藏它们。 您可以使用&l伪装体&r，它可以伪装成任何材质。 此外，这些电缆也与&lMC MultiPart&r兼容，这意味着您可以将电缆隐藏在更复杂的门设置面结构中。
 
 info_book.integrateddynamics.manual.logic=逻辑
 
@@ -1332,7 +1369,7 @@ info_book.integrateddynamics.manual.logic.value_types.string.text1=一系列的�
 info_book.integrateddynamics.manual.logic.value_types.list=List
 info_book.integrateddynamics.manual.logic.value_types.list.text1=包含某个&l数据类型&r的数据的列表。 某个特定的所有元素只能包含相同数据类型的数据。例如 &8(0, 1, 2, 3)&0, &8(“a”, “b”, “c”)&0, &8(3,33, 1,14, 5, 6)&0
 info_book.integrateddynamics.manual.logic.value_types.operator=Operator
-info_book.integrateddynamics.manual.logic.value_types.operator.text1=包含对&2运算符&0的引用的数据。运算符可以根据&lCurrying&r的概念部分应用于更灵活的评测。
+info_book.integrateddynamics.manual.logic.value_types.operator.text1=包含对&2运算符&0的引用的数据。运算符可以根据&lCurrying&r的概念部分应用于更灵活的评测。This is part of the concept of &lmetaprogramming&r (look it up, it's a thing!), where operators are treated as data by other operators. This basically allows you to create new operators yourself, which can then be used for more complex operations.
 info_book.integrateddynamics.manual.logic.value_types.operator.text2=例如你可以将加法&2运算符&0存入变量卡中。通过在operator界面入运算符名称并从自动匹配的下拉列表中选择它并单击来执行此操作。 然后，您可以将其部分应用于&6Integer&0 &l变量卡&r中,这将形成具有一个输入类型和一个输出类型的新的虚拟运算符，其内部包含对应用的&6Integer&0的引用。 应用另一个&6Integer&0将导致&6Integer&0。
 info_book.integrateddynamics.manual.logic.value_types.operator.text3=&2运算符&0的其他操作存在于&l逻辑编程器&r中以进行更高级的评估, 例如将列表减少为单个数据，或者基于&lPredicate&r过滤列表。
 info_book.integrateddynamics.manual.logic.value_types.block=Block
@@ -1348,7 +1385,7 @@ info_book.integrateddynamics.manual.logic.variables=变量
 
 info_book.integrateddynamics.manual.logic.variables.variable_card=变量卡
 info_book.integrateddynamics.manual.logic.variables.variable_card.text1=&l变量卡&r是这个MOD中逻辑传输的主要模式。变量包含对具有某个&l数据类型&r的某个&l数据&r的引用。
-info_book.integrateddynamics.manual.logic.variables.variable_card.text2=变量可以是静态的还是动态的。 静态变量定义一次，之后永远不会改变。动态变量是由&l运算符&r或&l读取面&r完成的某种形式的&l逻辑评测&r的结果。 动态变量的一个典型的例子是Minecraft世界中不断变化的时间。
+info_book.integrateddynamics.manual.logic.variables.variable_card.text2=变量可以是静态的还是动态的。 静态变量定义一次，之后永远不会改变。动态变量是由&l运算符&r或&l读取设置面&r完成的某种形式的&l逻辑评测&r的结果。 动态变量的一个典型的例子是Minecraft世界中不断变化的时间。
 info_book.integrateddynamics.manual.logic.variables.variable_card.text3=动态变量仅在以某种方式请求数据时进行评估，例如在&l显示面板&r中显示数据，或者将其用作另一个动态变量评测的一部分。
 info_book.integrateddynamics.manual.logic.variables.variable_card.text4=每个&l变量卡&r都有一个独有的ID，用于在内部网络中逻辑评测。 当网络出现错误时，这些ID将显示给玩家以帮助调试。 为了增强其可用性，可以使用&l注释器&r来给&l变量卡&r附上标签，这样可以让玩家看到标签而不是ID。
 
@@ -1368,21 +1405,21 @@ info_book.integrateddynamics.manual.parts.reader.introduction.text1=使用&lRead
 info_book.integrateddynamics.manual.parts.reader.audio=音频
 info_book.integrateddynamics.manual.parts.reader.audio.text1=有关在环境中播放的音乐和音频的信息。
 info_book.integrateddynamics.manual.parts.reader.block=方块
-info_book.integrateddynamics.manual.parts.reader.block.text1=关于部件正面临的阻塞的信息。
+info_book.integrateddynamics.manual.parts.reader.block.text1=关于部件正设置面临的阻塞的信息。
 info_book.integrateddynamics.manual.parts.reader.entity=实体
 info_book.integrateddynamics.manual.parts.reader.entity.text1=有关该部件所在正方形内的实体或实体的信息。
 info_book.integrateddynamics.manual.parts.reader.extra_dimensional=额外维度
 info_book.integrateddynamics.manual.parts.reader.extra_dimensional.text1=有关服务器的信息，如在线玩家列表。
 info_book.integrateddynamics.manual.parts.reader.fluid=流体
-info_book.integrateddynamics.manual.parts.reader.fluid.text1=从这个部件面临的流体容器读取数值。
+info_book.integrateddynamics.manual.parts.reader.fluid.text1=从这个部件设置面临的流体容器读取数值。
 info_book.integrateddynamics.manual.parts.reader.inventory=物品栏
-info_book.integrateddynamics.manual.parts.reader.inventory.text1=从面向容器中读取信息，如插槽和项目数量。 这不会转移项目本身。
+info_book.integrateddynamics.manual.parts.reader.inventory.text1=从设置面向容器中读取信息，如插槽和项目数量。 这不会转移项目本身。
 info_book.integrateddynamics.manual.parts.reader.machine=机器
-info_book.integrateddynamics.manual.parts.reader.machine.text1=该部件可读取面对的机器，例如他们正在做的工作。
+info_book.integrateddynamics.manual.parts.reader.machine.text1=该部件可读取设置面对的机器，例如他们正在做的工作。
 info_book.integrateddynamics.manual.parts.reader.network=网络
-info_book.integrateddynamics.manual.parts.reader.network.text1=阅读有关本部件所面临的集成动力网络的信息。 这不一定是与本部件网络相同的网络。
+info_book.integrateddynamics.manual.parts.reader.network.text1=阅读有关本部件所设置面临的集成动力网络的信息。 这不一定是与本部件网络相同的网络。
 info_book.integrateddynamics.manual.parts.reader.redstone=红石
-info_book.integrateddynamics.manual.parts.reader.redstone.text1=从这个部件面临读取红石信息。
+info_book.integrateddynamics.manual.parts.reader.redstone.text1=从这个部件设置面临读取红石信息。
 info_book.integrateddynamics.manual.parts.reader.world=世界
 info_book.integrateddynamics.manual.parts.reader.world.text1=关于这个部分的世界的信息，比如当前的天气和时间。
 
@@ -1422,8 +1459,7 @@ info_book.integrateddynamics.manual.machines.delay.text3=最旧的数据对应�
 info_book.integrateddynamics.manual.machines.energy_battery=能量电池
 info_book.integrateddynamics.manual.machines.energy_battery.text1=&l集成动力&r网络可以配置为消耗能量。为此，您可以将&l能量电池&r连接到网络，为其添加能量存储容量。
 info_book.integrateddynamics.manual.machines.energy_battery.text2=这些电池支持&lRF&r能量和&lTesla&r能量。
-info_book.integrateddynamics.manual.machines.energy_battery.text3=应用红石信号将使能量的自动出口模式到所有面。
-
+info_book.integrateddynamics.manual.machines.energy_battery.text3=应用红石信号将使能量的自动出口模式到所有设置面。
 
 info_book.integrateddynamics.manual.machines.generator=发电机
 info_book.integrateddynamics.manual.machines.generator.text1=当您需要&lRF&r或&lTesla&r的能量时，您可以使用&l发电机&r来创建能量和可再生能源。
