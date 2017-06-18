@@ -37,7 +37,7 @@ gui.integrateddynamics.diagnostics.table.side=side
 # Keybindings
 key.categories.integrateddynamics=Integrated Dynamics
 key.integrateddynamics.logic_programmer_focus_search=Focus Search Logic Programmer
-key.integrateddynamics.logic_programmer_open_rename=Focus Search Logic Programmer
+key.integrateddynamics.logic_programmer_open_rename=Rename Variable Logic Programmer
 
 # Blocks
 tile.blocks.integrateddynamics.cable.name=Logic Cable
