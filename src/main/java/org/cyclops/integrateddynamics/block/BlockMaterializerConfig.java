@@ -23,7 +23,7 @@ public class BlockMaterializerConfig extends BlockContainerConfig {
             true,
             "materializer",
             null,
-                BlockMaterializer.class
+            BlockMaterializer.class
         );
     }
 }

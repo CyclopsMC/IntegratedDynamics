@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model"    : "integrateddynamics:energy_battery",
+    "textures" : {
+      "overlay_side" : "integrateddynamics:blocks/energy_battery_overlay_side_creative"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{
+      "y": 0
+    }]
+  }
+}

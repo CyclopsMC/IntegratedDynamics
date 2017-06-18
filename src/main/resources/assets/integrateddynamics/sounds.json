@@ -1,9 +1,9 @@
 {
     "effect.page.flipsingle": {
         "sounds": [
-            "integrateddynamics:pageFlip1",
-            "integrateddynamics:pageFlip2",
-            "integrateddynamics:pageFlip3"
+            "integrateddynamics:page_flip1",
+            "integrateddynamics:page_flip2",
+            "integrateddynamics:page_flip3"
         ],
         "subtitle": "subtitles.integrateddynamics.effect.page.flipsingle"
     },

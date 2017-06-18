@@ -1,6 +1,6 @@
 ## Integrated Dynamics
 
-[![Build Status](https://travis-ci.org/CyclopsMC/IntegratedDynamics.svg?branch=master-1.10)](https://travis-ci.org/CyclopsMC/IntegratedDynamics)
+[![Build Status](https://travis-ci.org/CyclopsMC/IntegratedDynamics.svg?branch=master-1.11)](https://travis-ci.org/CyclopsMC/IntegratedDynamics)
 [![Download](https://api.bintray.com/packages/cyclopsmc/dev/IntegratedDynamics/images/download.svg) ](https://bintray.com/cyclopsmc/dev/IntegratedDynamics/_latestVersion)
 [![CurseForge](http://cf.way2muchnoise.eu/full_236307_downloads.svg)](https://minecraft.curseforge.com/projects/integrated-dynamics)
 

@@ -68,6 +68,7 @@ sourceSets {
     main {
         java {
             exclude '**/modcompat/thaumcraft/**'
+            exclude '**/modcompat/mcmultipart/**'
         }
     }
 }

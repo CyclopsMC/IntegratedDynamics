@@ -35,7 +35,7 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "menrilBerries",
+                "menril_berries",
                 null,
                 null
         );

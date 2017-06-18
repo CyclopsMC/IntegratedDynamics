@@ -48,7 +48,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
                     IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
                     IVariableFacade variableFacade = registry.handle(itemStack);
                     String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
-                    if(label == null && itemStack != null && itemStack.hasDisplayName()) {
+                    if(label == null && !itemStack.isEmpty() && itemStack.hasDisplayName()) {
                         label = itemStack.getDisplayName();
                     }
                     if(label != null) {
@@ -81,9 +81,9 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
     @Override
     public void onContainerClosed(EntityPlayer player) {
         super.onContainerClosed(player);
-        if (!player.worldObj.isRemote) {
+        if (!player.world.isRemote) {
             ItemStack itemStack = temporaryInputSlots.getStackInSlot(0);
-            if(itemStack != null) {
+            if(!itemStack.isEmpty()) {
                 player.dropItem(itemStack, false);
             }
         }
@@ -91,7 +91,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
 
     public void setItemStackName(String name) {
         ItemStack itemStack = getItemStack();
-        if(itemStack != null) {
+        if(!itemStack.isEmpty()) {
             if (StringUtils.isBlank(name)) {
                 itemStack.clearCustomName();
             } else {

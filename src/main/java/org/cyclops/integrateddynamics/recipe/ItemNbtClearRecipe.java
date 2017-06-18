@@ -4,6 +4,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 /**
@@ -26,17 +27,17 @@ public class ItemNbtClearRecipe implements IRecipe {
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        return getCraftingResult(inv) != null;
+        return !getCraftingResult(inv).isEmpty();
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ItemStack ret = null;
+        ItemStack ret = ItemStack.EMPTY;
         for(int j = 0; j < inv.getSizeInventory(); j++) {
             ItemStack element = inv.getStackInSlot(j);
-            if(element != null && this.clazz.isInstance(element.getItem())) {
-                if (ret != null) {
-                    return null;
+            if(!element.isEmpty() && this.clazz.isInstance(element.getItem())) {
+                if (!ret.isEmpty()) {
+                    return ItemStack.EMPTY;
                 }
                 // Create copy of the stack WITHOUT the NBT tag.
                 ret = new ItemStack(element.getItem(), 1, element.getItemDamage());
@@ -56,7 +57,7 @@ public class ItemNbtClearRecipe implements IRecipe {
     }
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-        return new ItemStack[inv.getSizeInventory()];
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
     }
 }

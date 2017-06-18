@@ -30,7 +30,7 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
 	@Override
 	public void renderTileEntityAt(TileDryingBasin tile, double x, double y, double z, float partialTickTime, int partialDamage) {
         if(tile != null) {
-            if(tile.getStackInSlot(0) != null) {
+            if(!tile.getStackInSlot(0).isEmpty()) {
                 GlStateManager.pushMatrix();
                 float var10 = (float) (x - 0.5F);
                 float var11 = (float) (y - 0.5F);

@@ -30,7 +30,7 @@ public class EnergyNetworkConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "energyNetwork",
+                "energy_network",
                 "A capability for networks that can hold energy.",
                 IEnergyNetwork.class,
                 new DefaultCapabilityStorage<IEnergyNetwork>(),

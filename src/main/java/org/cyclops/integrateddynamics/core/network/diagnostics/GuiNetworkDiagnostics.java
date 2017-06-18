@@ -255,7 +255,7 @@ public class GuiNetworkDiagnostics extends JFrame {
         private final long last20TicksDurationNs;
 
         public PartPos toPartPos() {
-            World world = Minecraft.getMinecraft().theWorld;
+            World world = Minecraft.getMinecraft().world;
             if (getDimension() == world.provider.getDimension()) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }

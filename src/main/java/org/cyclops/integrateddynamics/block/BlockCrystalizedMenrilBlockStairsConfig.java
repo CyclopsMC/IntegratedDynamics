@@ -25,7 +25,7 @@ public class BlockCrystalizedMenrilBlockStairsConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "crystalizedMenrilBlockStairs",
+                "crystalized_menril_block_stairs",
                 null,
                 null
         );

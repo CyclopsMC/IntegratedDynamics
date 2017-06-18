@@ -21,7 +21,7 @@ public class BlockInvisibleLightConfig extends BlockConfig {
         super(
             IntegratedDynamics._instance,
             true,
-            "invisibleLight",
+            "invisible_light",
             null,
             BlockInvisibleLight.class
         );

@@ -1,0 +1,22 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model"    : "integrateddynamics:energy_battery",
+    "textures" : {
+      "overlay_front": "cyclopscore:blocks/empty",
+      "overlay_side" : "cyclopscore:blocks/empty"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{
+      "y": 0
+    }],
+    "fill": {
+      "0" : {},
+      "1" : { "textures": { "overlay_side": "integrateddynamics:blocks/energy_battery_overlay_side_0" } },
+      "2" : { "textures": { "overlay_side": "integrateddynamics:blocks/energy_battery_overlay_side_1" } },
+      "3" : { "textures": { "overlay_side": "integrateddynamics:blocks/energy_battery_overlay_side_2" } }
+    }
+  }
+}

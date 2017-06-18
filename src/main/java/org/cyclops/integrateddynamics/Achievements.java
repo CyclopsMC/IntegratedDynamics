@@ -61,46 +61,46 @@ public class Achievements {
 
 	private static final Achievements _INSTANCE = new Achievements();
 
-	public static final Achievement MENEGLIN_DISCOVERY = new ExtendedAchievement("meneglinDiscovery", -1, 0, new ItemStack(ConfigHandler.isEnabled(BlockMenrilLogFilledConfig.class) ? BlockMenrilLogFilledConfig._instance.getBlockInstance() : Blocks.LOG), null);
+	public static final Achievement MENEGLIN_DISCOVERY = new ExtendedAchievement("meneglin_discovery", -1, 0, new ItemStack(ConfigHandler.isEnabled(BlockMenrilLogFilledConfig.class) ? BlockMenrilLogFilledConfig._instance.getBlockInstance() : Blocks.LOG), null);
 	public static final Achievement SQUEEZING = new ExtendedAchievement("squeezing", -1, 1, new ItemStack(ConfigHandler.isEnabled(BlockSqueezerConfig.class) ? BlockSqueezer.getInstance() : Blocks.LOG), MENEGLIN_DISCOVERY);
 	public static final Achievement DRYING = new ExtendedAchievement("drying", -1, 2, new ItemStack(ConfigHandler.isEnabled(BlockDryingBasinConfig.class) ? BlockDryingBasin.getInstance() : Blocks.LOG), SQUEEZING);
-	public static final Achievement MENRIL_PRODUCTION = new ExtendedAchievement("menrilProduction", 0, 3, new ItemStack(ConfigHandler.isEnabled(BlockCrystalizedMenrilBlockConfig.class) ? BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance() : Blocks.LOG), DRYING);
+	public static final Achievement MENRIL_PRODUCTION = new ExtendedAchievement("menril_production", 0, 3, new ItemStack(ConfigHandler.isEnabled(BlockCrystalizedMenrilBlockConfig.class) ? BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance() : Blocks.LOG), DRYING);
 
-	public static final Achievement CABLES = new ExtendedAchievement("cablesLogic", 0, 4, new ItemStack(ConfigHandler.isEnabled(CableConfig.class) ? BlockCable.getInstance() : Blocks.LOG), MENRIL_PRODUCTION);
-	public static final Achievement NETWORKS = new ExtendedAchievement("networksLogic", 1, 2, new ItemStack(ConfigHandler.isEnabled(CableConfig.class) ? BlockCable.getInstance() : Blocks.LOG), CABLES);
-	public static final Achievement WRENCHING = new ExtendedAchievement("menrilWrenching", 2, 3, new ItemStack(ConfigHandler.isEnabled(ItemWrenchConfig.class) ? ItemWrench.getInstance() : Items.APPLE), MENRIL_PRODUCTION);
+	public static final Achievement CABLES = new ExtendedAchievement("cables_logic", 0, 4, new ItemStack(ConfigHandler.isEnabled(CableConfig.class) ? BlockCable.getInstance() : Blocks.LOG), MENRIL_PRODUCTION);
+	public static final Achievement NETWORKS = new ExtendedAchievement("networks_logic", 1, 2, new ItemStack(ConfigHandler.isEnabled(CableConfig.class) ? BlockCable.getInstance() : Blocks.LOG), CABLES);
+	public static final Achievement WRENCHING = new ExtendedAchievement("menril_wrenching", 2, 3, new ItemStack(ConfigHandler.isEnabled(ItemWrenchConfig.class) ? ItemWrench.getInstance() : Items.APPLE), MENRIL_PRODUCTION);
 	public static final Achievement VARIABLES = new ExtendedAchievement("variables", 2, 2, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), MENRIL_PRODUCTION);
-	public static final Achievement VARIABLEINPUT = new ExtendedAchievement("variableInput", 2, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableTransformerConfig.class) ? ItemVariableTransformerConfig._instance.getItemInstance() : Items.APPLE, 1, 1), MENRIL_PRODUCTION);
-	public static final Achievement VARIABLEOUTPUT = new ExtendedAchievement("variableOutput", 3, 0, new ItemStack(ConfigHandler.isEnabled(ItemVariableTransformerConfig.class) ? ItemVariableTransformerConfig._instance.getItemInstance() : Items.APPLE, 1, 0), MENRIL_PRODUCTION);
+	public static final Achievement VARIABLEINPUT = new ExtendedAchievement("variable_input", 2, 1, new ItemStack(ConfigHandler.isEnabled(ItemVariableTransformerConfig.class) ? ItemVariableTransformerConfig._instance.getItemInstance() : Items.APPLE, 1, 1), MENRIL_PRODUCTION);
+	public static final Achievement VARIABLEOUTPUT = new ExtendedAchievement("variable_output", 3, 0, new ItemStack(ConfigHandler.isEnabled(ItemVariableTransformerConfig.class) ? ItemVariableTransformerConfig._instance.getItemInstance() : Items.APPLE, 1, 0), MENRIL_PRODUCTION);
 
-	public static final Achievement REDSTONE_READING = new ExtendedAchievement("redstoneReading", 1, -1, new ItemStack(PartTypes.REDSTONE_READER.getItem()), VARIABLEINPUT);
-	public static final Achievement BLOCK_READING = new ExtendedAchievement("blockReading", 1, -2, new ItemStack(PartTypes.BLOCK_READER.getItem()), VARIABLEINPUT);
-	public static final Achievement INVENTORY_READING = new ExtendedAchievement("inventoryReading", 1, -3, new ItemStack(PartTypes.INVENTORY_READER.getItem()), VARIABLEINPUT);
-	public static final Achievement VALUE_DISPLAYING = new ExtendedAchievement("valueDisplaying", 4, -1, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()), VARIABLEOUTPUT);
+	public static final Achievement REDSTONE_READING = new ExtendedAchievement("redstone_reading", 1, -1, new ItemStack(PartTypes.REDSTONE_READER.getItem()), VARIABLEINPUT);
+	public static final Achievement BLOCK_READING = new ExtendedAchievement("block_reading", 1, -2, new ItemStack(PartTypes.BLOCK_READER.getItem()), VARIABLEINPUT);
+	public static final Achievement INVENTORY_READING = new ExtendedAchievement("inventory_reading", 1, -3, new ItemStack(PartTypes.INVENTORY_READER.getItem()), VARIABLEINPUT);
+	public static final Achievement VALUE_DISPLAYING = new ExtendedAchievement("value_displaying", 4, -1, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()), VARIABLEOUTPUT);
 
-	public static final Achievement REDSTONE_CAPTURING = new ExtendedAchievement("redstoneCapturing", 0, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeAspectItemStack(Aspects.Read.Redstone.INTEGER_VALUE) : new ItemStack(Items.APPLE), REDSTONE_READING);
-	public static final Achievement REDSTONE_OBSERVEMENT= new ExtendedAchievement("redstoneObservement", -1, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(10)) : new ItemStack(Items.APPLE), REDSTONE_READING);
-	public static final Achievement REDSTONE_TRANSMISSION = new ExtendedAchievement("redstoneTransmission", -2, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeAspectItemStack(Aspects.Write.Redstone.INTEGER) : new ItemStack(Items.APPLE), REDSTONE_READING);
+	public static final Achievement REDSTONE_CAPTURING = new ExtendedAchievement("redstone_capturing", 0, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeAspectItemStack(Aspects.Read.Redstone.INTEGER_VALUE) : new ItemStack(Items.APPLE), REDSTONE_READING);
+	public static final Achievement REDSTONE_OBSERVEMENT= new ExtendedAchievement("redstone_observement", -1, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(10)) : new ItemStack(Items.APPLE), REDSTONE_READING);
+	public static final Achievement REDSTONE_TRANSMISSION = new ExtendedAchievement("redstone_transmission", -2, -2, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeAspectItemStack(Aspects.Write.Redstone.INTEGER) : new ItemStack(Items.APPLE), REDSTONE_READING);
 
-	public static final Achievement LOGIC_PROGRAMMING = new ExtendedAchievement("logicProgramming", 4, 2, new ItemStack(ConfigHandler.isEnabled(BlockLogicProgrammerConfig.class) ? BlockLogicProgrammer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
-	public static final Achievement CONSTANT_DEFINITION = new ExtendedAchievement("constantDefinition", 4, 3, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(10)) : new ItemStack(Items.APPLE), VARIABLES);
-	public static final Achievement ARITHMETIC_ADDITION = new ExtendedAchievement("arithmeticAddition", 4, 4, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(20)) : new ItemStack(Items.APPLE), VARIABLES);
+	public static final Achievement LOGIC_PROGRAMMING = new ExtendedAchievement("logic_programming", 4, 2, new ItemStack(ConfigHandler.isEnabled(BlockLogicProgrammerConfig.class) ? BlockLogicProgrammer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
+	public static final Achievement CONSTANT_DEFINITION = new ExtendedAchievement("constant_definition", 4, 3, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(10)) : new ItemStack(Items.APPLE), VARIABLES);
+	public static final Achievement ARITHMETIC_ADDITION = new ExtendedAchievement("arithmetic_addition", 4, 4, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeInteger.ValueInteger.of(20)) : new ItemStack(Items.APPLE), VARIABLES);
 
-	public static final Achievement VARIABLE_MATERIALIZATION = new ExtendedAchievement("variableMaterialization", 4, 5, new ItemStack(ConfigHandler.isEnabled(BlockMaterializerConfig.class) ? BlockMaterializer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
-	public static final Achievement VARIABLE_PROXYING = new ExtendedAchievement("variableProxying", 4, 6, new ItemStack(ConfigHandler.isEnabled(BlockProxyConfig.class) ? BlockProxy.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
+	public static final Achievement VARIABLE_MATERIALIZATION = new ExtendedAchievement("variable_materialization", 4, 5, new ItemStack(ConfigHandler.isEnabled(BlockMaterializerConfig.class) ? BlockMaterializer.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
+	public static final Achievement VARIABLE_PROXYING = new ExtendedAchievement("variable_proxying", 4, 6, new ItemStack(ConfigHandler.isEnabled(BlockProxyConfig.class) ? BlockProxy.getInstance() : Blocks.CRAFTING_TABLE), VARIABLES);
 
-	public static final Achievement LOGICAL_LIST_BUILDING = new ExtendedAchievement("logicalListBuilding", 5, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeList.ValueList.ofAll(ValueTypeInteger.ValueInteger.of(1), ValueTypeInteger.ValueInteger.of(10), ValueTypeInteger.ValueInteger.of(100))) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
-	public static final Achievement ITEM_ORIGIN_IDENTIFICATION = new ExtendedAchievement("itemOriginIdentification", 6, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE))) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
-	public static final Achievement WHAT_WOULD_I_BE_LOOKING_AT = new ExtendedAchievement("whatWouldIBeLookingAt", 7, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState())) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement LOGICAL_LIST_BUILDING = new ExtendedAchievement("logical_list_building", 5, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeList.ValueList.ofAll(ValueTypeInteger.ValueInteger.of(1), ValueTypeInteger.ValueInteger.of(10), ValueTypeInteger.ValueInteger.of(100))) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement ITEM_ORIGIN_IDENTIFICATION = new ExtendedAchievement("item_origin_identification", 6, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE))) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement WHAT_WOULD_I_BE_LOOKING_AT = new ExtendedAchievement("what_would_i_be_looking_at", 7, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState())) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
 
-	public static final Achievement DYNAMIC_ADDITIONS = new ExtendedAchievement("dynamicAdditions", 8, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION)) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
-	public static final Achievement DYNAMIC_LIST_FILTERING = new ExtendedAchievement("dynamicListFiltering", 9, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_FILTER)) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement DYNAMIC_ADDITIONS = new ExtendedAchievement("dynamic_additions", 8, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION)) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
+	public static final Achievement DYNAMIC_LIST_FILTERING = new ExtendedAchievement("dynamic_list_filtering", 9, 1, ConfigHandler.isEnabled(ItemVariableConfig.class) ? makeValueItemStack(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_FILTER)) : new ItemStack(Items.APPLE), LOGIC_PROGRAMMING);
 
-	public static final Achievement CREEPER_TAMING = new ExtendedAchievement("creeperTaming", 8, 2, new ItemStack(Items.SKULL, 1, 4), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
-	public static final Achievement SPONGE_STEP_SOUND = new ExtendedAchievement("spongeStepSound", 8, 3, new ItemStack(Blocks.SPONGE, 1, 1), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
-	public static final Achievement RECURSIVE_RECURSION = new ExtendedAchievement("recursiveRecursion", 6, 2, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
-	public static final Achievement TOOL_FOR_OBSIDIAN = new ExtendedAchievement("toolForObsidian", 6, 3, new ItemStack(Blocks.OBSIDIAN), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
-	public static final Achievement SMART_PRESSURE_PLATE = new ExtendedAchievement("smartPressurePlate", 7, 4, new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
+	public static final Achievement CREEPER_TAMING = new ExtendedAchievement("creeper_taming", 8, 2, new ItemStack(Items.SKULL, 1, 4), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
+	public static final Achievement SPONGE_STEP_SOUND = new ExtendedAchievement("sponge_step_sound", 8, 3, new ItemStack(Blocks.SPONGE, 1, 1), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
+	public static final Achievement RECURSIVE_RECURSION = new ExtendedAchievement("recursive_recursion", 6, 2, new ItemStack(ConfigHandler.isEnabled(ItemVariableConfig.class) ? ItemVariable.getInstance() : Items.APPLE), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
+	public static final Achievement TOOL_FOR_OBSIDIAN = new ExtendedAchievement("tool_for_obsidian", 6, 3, new ItemStack(Blocks.OBSIDIAN), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
+	public static final Achievement SMART_PRESSURE_PLATE = new ExtendedAchievement("smart_pressure_plate", 7, 4, new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE), WHAT_WOULD_I_BE_LOOKING_AT).setSpecial();
 
     private static final Achievement[] ACHIEVEMENTS = {
 			MENEGLIN_DISCOVERY,
@@ -260,8 +260,8 @@ public class Achievements {
 						IValue value0 = ((LazyExpression) event.getVariable()).getInput()[0].getValue();
 						IValue value1 = ((LazyExpression) event.getVariable()).getInput()[1].getValue();
 						if (value0.getType() == ValueTypes.OBJECT_ITEMSTACK
-								&& ((ValueObjectTypeItemStack.ValueItemStack) value0).getRawValue().isPresent()
-								&& ((ValueObjectTypeItemStack.ValueItemStack) value0).getRawValue().get().getItem() == Items.STONE_PICKAXE
+								&& !((ValueObjectTypeItemStack.ValueItemStack) value0).getRawValue().isEmpty()
+								&& ((ValueObjectTypeItemStack.ValueItemStack) value0).getRawValue().getItem() == Items.STONE_PICKAXE
 								&& value1.getType() == ValueTypes.OBJECT_BLOCK
 								&& ((ValueObjectTypeBlock.ValueBlock) value1).getRawValue().isPresent()
 								&& ((ValueObjectTypeBlock.ValueBlock) value1).getRawValue().get().getBlock() == Blocks.OBSIDIAN) {

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.recipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -18,32 +19,32 @@ public class ItemVariableCopyRecipe implements IRecipe {
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        return getCraftingResult(inv) != null;
+        return !getCraftingResult(inv).isEmpty();
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ItemStack withData = null;
-        ItemStack withoutData = null;
+        ItemStack withData = ItemStack.EMPTY;
+        ItemStack withoutData = ItemStack.EMPTY;
         IVariableFacade facade;
         int count = 0;
         for(int j = 0; j < inv.getSizeInventory(); j++) {
             ItemStack element = inv.getStackInSlot(j);
-            if(element != null && element.getItem() instanceof ItemVariable) {
+            if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 count++;
                 facade = ItemVariable.getInstance().getVariableFacade(element);
-                if(!facade.isValid() && withoutData == null && element.stackSize == 1) {
+                if(!facade.isValid() && withoutData.isEmpty() && element.getCount() == 1) {
                     withoutData = element;
                 }
-                if(facade.isValid() && withData == null && element.stackSize == 1) {
+                if(facade.isValid() && withData.isEmpty() && element.getCount() == 1) {
                     withData = element.copy();
                 }
             }
         }
-        if(count == 2 && withoutData != null && withData != null) {
+        if(count == 2 && !withoutData.isEmpty() && !withData.isEmpty()) {
             return withData;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -57,16 +58,16 @@ public class ItemVariableCopyRecipe implements IRecipe {
     }
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-        ItemStack[] ret = new ItemStack[inv.getSizeInventory()];
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        NonNullList<ItemStack> ret = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         for(int j = 0; j < inv.getSizeInventory(); j++) {
             ItemStack element = inv.getStackInSlot(j);
-            if(element != null && element.getItem() instanceof ItemVariable) {
+            if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 IVariableFacade facade = ItemVariable.getInstance().getVariableFacade(element);
                 if(facade.isValid()) {
                     // Create a copy with a new id.
-                    ret[j] = IntegratedDynamics._instance.getRegistryManager()
-                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSide(), element);
+                    ret.set(j, IntegratedDynamics._instance.getRegistryManager()
+                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSide(), element));
                 }
             }
         }

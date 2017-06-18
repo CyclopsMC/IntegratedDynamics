@@ -21,14 +21,14 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler<ItemAnd
 
     @Override
     public String getCategoryId() {
-        return Reference.MOD_ID + ":dryingBasinRecipe";
+        return Reference.MOD_ID + ":drying_basin_recipe";
     }
 
 	@Override
 	protected IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
         Object inputItem = null;
-        ItemStack outputItem = null;
+        ItemStack outputItem = ItemStack.EMPTY;
         FluidStack inputFluid = null;
         FluidStack outputFluid = null;
 
@@ -54,6 +54,9 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler<ItemAnd
 
         ItemAndFluidStackRecipeComponent inputRecipeComponent;
         if(inputItem == null || inputItem instanceof ItemStack) {
+            if (inputItem == null) {
+                inputItem = ItemStack.EMPTY;
+            }
             inputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) inputItem, inputFluid);
         } else {
             inputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) inputItem, inputFluid);

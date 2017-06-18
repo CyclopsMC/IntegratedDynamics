@@ -1,0 +1,7 @@
+{
+  "parent": "block/column_side",
+  "textures": {
+    "end" : "integrateddynamics:blocks/menril_log_top",
+    "side": "integrateddynamics:blocks/menril_log"
+  }
+}

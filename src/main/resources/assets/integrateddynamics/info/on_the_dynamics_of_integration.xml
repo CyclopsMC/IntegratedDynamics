@@ -15,72 +15,72 @@
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text1</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text2</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text3</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:squeezer</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:dryingBasin</appendix>
-            <appendix type="integrateddynamics:squeezerRecipe">
+            <appendix type="crafting_recipe">integrateddynamics:squeezer</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:drying_basin</appendix>
+            <appendix type="integrateddynamics:squeezer_recipe">
                 <item />
                 <fluid amount="1000">menrilresin</fluid>
             </appendix>
-            <appendix type="integrateddynamics:dryingBasinRecipe">
-                <item>integrateddynamics:crystalizedMenrilBlock</item>
+            <appendix type="integrateddynamics:drying_basin_recipe">
+                <item>integrateddynamics:crystalized_menril_block</item>
                 <fluid />
             </appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:meneglinBasics">
+            <appendix type="achievement_rewards" id="integrateddynamics:meneglin_basics">
                 <achievements>
-                    <achievement id="integrateddynamics.meneglinDiscovery" />
+                    <achievement id="integrateddynamics.meneglin_discovery" />
                     <achievement id="integrateddynamics.squeezing" />
                     <achievement id="integrateddynamics.drying" />
-                    <achievement id="integrateddynamics.menrilProduction" />
+                    <achievement id="integrateddynamics.menril_production" />
                 </achievements>
                 <rewards>
-                    <reward type="item" amount="64">integrateddynamics:menrilLog</reward>
-                    <reward type="item" amount="10">integrateddynamics:crystalizedMenrilBlock</reward>
-                    <reward type="item" amount="10">integrateddynamics:crystalizedMenrilBrick</reward>
-                    <reward type="item" amount="20">integrateddynamics:menrilBerries</reward>
+                    <reward type="item" amount="64">integrateddynamics:menril_log</reward>
+                    <reward type="item" amount="10">integrateddynamics:crystalized_menril_block</reward>
+                    <reward type="item" amount="10">integrateddynamics:crystalized_menril_brick</reward>
+                    <reward type="item" amount="20">integrateddynamics:menril_berries</reward>
                 </rewards>
             </appendix>
         </section>
         <section name="info_book.integrateddynamics.tutorials.networkFoundations">
             <paragraph>info_book.integrateddynamics.tutorials.networkFoundations.text1</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.networkFoundations.text2</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:cable</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:wrench</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:variable</appendix>
-            <appendix type="craftingRecipe" index="0">integrateddynamics:variableTransformer</appendix>
-            <appendix type="craftingRecipe" index="1">integrateddynamics:variableTransformer</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:networkFoundations">
+            <appendix type="crafting_recipe">integrateddynamics:cable</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:wrench</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:variable</appendix>
+            <appendix type="crafting_recipe" index="0">integrateddynamics:variableTransformer</appendix>
+            <appendix type="crafting_recipe" index="1">integrateddynamics:variableTransformer</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:network_foundations">
                 <achievements>
-                    <achievement id="integrateddynamics.cablesLogic" />
-                    <achievement id="integrateddynamics.networksLogic" />
-                    <achievement id="integrateddynamics.menrilWrenching" />
+                    <achievement id="integrateddynamics.cables_logic" />
+                    <achievement id="integrateddynamics.networks_logic" />
+                    <achievement id="integrateddynamics.menril_wrenching" />
                     <achievement id="integrateddynamics.variables" />
-                    <achievement id="integrateddynamics.variableInput" />
-                    <achievement id="integrateddynamics.variableOutput" />
+                    <achievement id="integrateddynamics.variable_input" />
+                    <achievement id="integrateddynamics.variable_output" />
                 </achievements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:cable</reward>
-                    <reward type="item" amount="16" meta="1">integrateddynamics:variableTransformer</reward>
-                    <reward type="item" amount="16" meta="0">integrateddynamics:variableTransformer</reward>
+                    <reward type="item" amount="16" meta="1">integrateddynamics:variable_transformer</reward>
+                    <reward type="item" amount="16" meta="0">integrateddynamics:variable_transformer</reward>
                 </rewards>
             </appendix>
         </section>
         <section name="info_book.integrateddynamics.tutorials.basicNetworkComponents">
             <paragraph>info_book.integrateddynamics.tutorials.basicNetworkComponents.text1</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:part_redstoneReaderItem</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:part_blockReaderItem</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:part_inventoryReaderItem</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:part_staticLightPanelItem</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:part_displayPanelItem</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:basicNetworkComponents">
+            <appendix type="crafting_recipe">integrateddynamics:part_redstone_reader_item</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:part_block_reader_item</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:part_inventory_reader_item</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:part_static_light_panel_item</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:part_display_panel_item</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:basic_network_components">
                 <achievements>
-                    <achievement id="integrateddynamics.redstoneReading" />
-                    <achievement id="integrateddynamics.blockReading" />
-                    <achievement id="integrateddynamics.inventoryReading" />
-                    <achievement id="integrateddynamics.valueDisplaying" />
+                    <achievement id="integrateddynamics.redstone_reading" />
+                    <achievement id="integrateddynamics.block_reading" />
+                    <achievement id="integrateddynamics.inventory_reading" />
+                    <achievement id="integrateddynamics.value_displaying" />
                 </achievements>
                 <rewards>
                     <reward type="item" amount="10">integrateddynamics:variable</reward>
-                    <reward type="item" amount="5">integrateddynamics:part_displayPanelItem</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_display_panel_item</reward>
                 </rewards>
             </appendix>
         </section>
@@ -90,18 +90,18 @@
             <paragraph>info_book.integrateddynamics.tutorials.aspects.text3</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.aspects.text4</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.aspects.text5</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:part_redstoneWriterItem</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:part_redstone_writer_item</appendix>
             <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.read.integer.redstone.value.name</appendix>
             <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.write.integer.redstone.name</appendix>
             <appendix type="achievement_rewards" id="integrateddynamics:aspects">
                 <achievements>
-                    <achievement id="integrateddynamics.redstoneCapturing" />
-                    <achievement id="integrateddynamics.redstoneObservement" />
-                    <achievement id="integrateddynamics.redstoneTransmission" />
+                    <achievement id="integrateddynamics.redstone_capturing" />
+                    <achievement id="integrateddynamics.redstone_observement" />
+                    <achievement id="integrateddynamics.redstone_transmission" />
                 </achievements>
                 <rewards>
-                    <reward type="item" amount="5">integrateddynamics:part_redstoneReaderItem</reward>
-                    <reward type="item" amount="5">integrateddynamics:part_redstoneWriterItem</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_redstone_reader_item</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_redstone_writer_item</reward>
                     <reward type="item" amount="16">integrateddynamics:variable</reward>
                 </rewards>
             </appendix>
@@ -114,15 +114,15 @@
             <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text5</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text6</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text7</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:logicProgrammer</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:portableLogicProgrammer</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:variablestore</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:logic_programmer</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:portable_logic_programmer</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:variablestore</appendix>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.arithmetic.addition.name</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:logicOperations">
+            <appendix type="achievement_rewards" id="integrateddynamics:logic_operations">
                 <achievements>
-                    <achievement id="integrateddynamics.logicProgramming" />
-                    <achievement id="integrateddynamics.constantDefinition" />
-                    <achievement id="integrateddynamics.arithmeticAddition" />
+                    <achievement id="integrateddynamics.logic_programming" />
+                    <achievement id="integrateddynamics.constant_definition" />
+                    <achievement id="integrateddynamics.arithmetic_addition" />
                 </achievements>
                 <rewards>
                     <reward type="item" amount="5">integrateddynamics:variablestore</reward>
@@ -136,12 +136,12 @@
             <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text3</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text4</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text5</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:materializer</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:proxy</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:advancedNetworkComponents">
+            <appendix type="crafting_recipe">integrateddynamics:materializer</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:proxy</appendix>
+            <appendix type="achievement_rewards" id="integrateddynamics:advanced_network_components">
                 <achievements>
-                    <achievement id="integrateddynamics.variableMaterialization" />
-                    <achievement id="integrateddynamics.variableProxying" />
+                    <achievement id="integrateddynamics.variable_materialization" />
+                    <achievement id="integrateddynamics.variable_proxying" />
                 </achievements>
                 <rewards>
                     <reward type="item" amount="5">integrateddynamics:materializer</reward>
@@ -155,15 +155,15 @@
             <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text3</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text4</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.advancedOperations.text5</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:part_entityReaderItem</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:part_entity_reader_item</appendix>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.itemstack.mod.name</appendix>
             <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.read.entity.entity.name</appendix>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.entity.targetblock.name</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:advancedOperations">
+            <appendix type="achievement_rewards" id="integrateddynamics:advanced_operations">
                 <achievements>
-                    <achievement id="integrateddynamics.logicalListBuilding" />
-                    <achievement id="integrateddynamics.itemOriginIdentification" />
-                    <achievement id="integrateddynamics.whatWouldIBeLookingAt" />
+                    <achievement id="integrateddynamics.logical_list_building" />
+                    <achievement id="integrateddynamics.item_origin_identification" />
+                    <achievement id="integrateddynamics.what_would_i_be_looking_at" />
                 </achievements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
@@ -179,10 +179,10 @@
             <paragraph>info_book.integrateddynamics.tutorials.theValueOfOperators.text4</paragraph>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.relational.equals.name</appendix>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.operator.filter.name</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:theValueOfOperators">
+            <appendix type="achievement_rewards" id="integrateddynamics:the_value_of_operators">
                 <achievements>
-                    <achievement id="integrateddynamics.dynamicAdditions" />
-                    <achievement id="integrateddynamics.dynamicListFiltering" />
+                    <achievement id="integrateddynamics.dynamic_additions" />
+                    <achievement id="integrateddynamics.dynamic_list_filtering" />
                 </achievements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
@@ -196,11 +196,11 @@
             <paragraph>info_book.integrateddynamics.tutorials.challenges.text1</paragraph>
             <appendix type="achievement_rewards" id="integrateddynamics:challenges">
                 <achievements>
-                    <achievement id="integrateddynamics.creeperTaming" />
-                    <achievement id="integrateddynamics.spongeStepSound" />
-                    <achievement id="integrateddynamics.recursiveRecursion" />
-                    <achievement id="integrateddynamics.toolForObsidian" />
-                    <achievement id="integrateddynamics.smartPressurePlate" />
+                    <achievement id="integrateddynamics.creeper_taming" />
+                    <achievement id="integrateddynamics.sponge_step_sound" />
+                    <achievement id="integrateddynamics.recursive_recursion" />
+                    <achievement id="integrateddynamics.tool_for_obsidian" />
+                    <achievement id="integrateddynamics.smart_pressure_plate" />
                 </achievements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
@@ -208,7 +208,7 @@
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
                     <reward type="item" amount="64">integrateddynamics:variablestore</reward>
-                    <reward type="item" amount="64">integrateddynamics:part_displayPanelItem</reward>
+                    <reward type="item" amount="64">integrateddynamics:part_display_panel_item</reward>
                 </rewards>
             </appendix>
         </section>
@@ -220,13 +220,13 @@
         </section>
         <section name="info_book.integrateddynamics.manual.prerequisites">
             <section name="info_book.integrateddynamics.manual.prerequisites.menril_trees">
-                <tag>menrilLog</tag>
-                <tag>menrilBerries</tag>
-                <tag>menrilPlanks</tag>
-                <tag>menrilSapling</tag>
+                <tag>menril_log</tag>
+                <tag>menril_berries</tag>
+                <tag>menril_planks</tag>
+                <tag>menril_sapling</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.menril_trees.text1</paragraph>
                 <appendix type="image" width="120" height="67">integrateddynamics:textures/gui/infobook/menril_tree.png</appendix>
-                <appendix type="craftingRecipe">integrateddynamics:menrilPlanks</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:menril_planks</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.prerequisites.meneglin_biome">
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.meneglin_biome.text1</paragraph>
@@ -236,23 +236,23 @@
                 <tag>squeezer</tag>
                 <tag>menrilresin</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.squeezer.text1</paragraph>
-                <appendix type="craftingRecipe">integrateddynamics:squeezer</appendix>
-                <appendixList type="integrateddynamics:squeezerRecipe">base</appendixList>
-                <appendixList type="integrateddynamics:squeezerRecipe">convenience</appendixList>
-                <appendixList type="integrateddynamics:squeezerRecipe">ores</appendixList>
+                <appendix type="crafting_recipe">integrateddynamics:squeezer</appendix>
+                <appendix_list type="integrateddynamics:squeezer_recipe">base</appendix_list>
+                <appendix_list type="integrateddynamics:squeezer_recipe">convenience</appendix_list>
+                <appendix_list type="integrateddynamics:squeezer_recipe">ores</appendix_list>
             </section>
             <section name="info_book.integrateddynamics.manual.prerequisites.drying_basin">
-                <tag>dryingBasin</tag>
-                <tag>crystalizedMenrilBlock</tag>
-                <tag>crystalizedMenrilBrick</tag>
-                <tag>crystalizedMenrilChunk</tag>
+                <tag>drying_basin</tag>
+                <tag>crystalized_menril_block</tag>
+                <tag>crystalized_menril_brick</tag>
+                <tag>crystalized_menril_chunk</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.drying_basin.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.drying_basin.text2</paragraph>
-                <appendix type="craftingRecipe">integrateddynamics:dryingBasin</appendix>
-                <appendixList type="integrateddynamics:dryingBasinRecipe">base</appendixList>
-                <appendix type="craftingRecipe">integrateddynamics:crystalizedMenrilBrick</appendix>
-                <appendix type="craftingRecipe">integrateddynamics:crystalizedMenrilChunk</appendix>
-                <appendixList type="integrateddynamics:dryingBasinRecipe">convenience</appendixList>
+                <appendix type="crafting_recipe">integrateddynamics:drying_basin</appendix>
+                <appendix_list type="integrateddynamics:drying_basin_recipe">base</appendix_list>
+                <appendix type="crafting_recipe">integrateddynamics:crystalized_menril_brick</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:crystalized_menril_chunk</appendix>
+                <appendix_list type="integrateddynamics:drying_basin_recipe">convenience</appendix_list>
             </section>
         </section>
 
@@ -262,9 +262,9 @@
             <tag>facade</tag>
             <paragraph>info_book.integrateddynamics.manual.networks.text1</paragraph>
             <paragraph>info_book.integrateddynamics.manual.networks.text2</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:cable</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:wrench</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:facade</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:cable</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:wrench</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:facade</appendix>
             <appendix type="image" width="71" height="67">integrateddynamics:textures/gui/infobook/network.png</appendix>
         </section>
 
@@ -314,19 +314,19 @@
                 <section name="info_book.integrateddynamics.manual.logic.variables.variable_card">
                     <tag>variable</tag>
                     <tag>labeller</tag>
-                    <tag>variableTransformer</tag>
+                    <tag>variable_transformer</tag>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text1</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text2</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text3</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text4</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:variable</appendix>
-                    <appendix type="craftingRecipe">integrateddynamics:labeller</appendix>
-                    <appendix type="craftingRecipe" index="0">integrateddynamics:variableTransformer</appendix>
-                    <appendix type="craftingRecipe" index="1">integrateddynamics:variableTransformer</appendix>
+                    <appendix type="crafting_recipe">integrateddynamics:variable</appendix>
+                    <appendix type="crafting_recipe">integrateddynamics:labeller</appendix>
+                    <appendix type="crafting_recipe" index="0">integrateddynamics:variable_transformer</appendix>
+                    <appendix type="crafting_recipe" index="1">integrateddynamics:variable_transformer</appendix>
                 </section>
                 <section name="info_book.integrateddynamics.manual.logic.variables.variable_store">
                     <tag>variablestore</tag>
-                    <appendix type="craftingRecipe">integrateddynamics:variablestore</appendix>
+                    <appendix type="crafting_recipe">integrateddynamics:variablestore</appendix>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_store.text1</paragraph>
                 </section>
             </section>
@@ -342,104 +342,104 @@
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.introduction.text1</paragraph>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.audio">
-                    <tag>part_audioReaderItem</tag>
+                    <tag>part_audio_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.audio.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_audioReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">audioReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_audio_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">audio_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.block">
-                    <tag>part_blockReaderItem</tag>
+                    <tag>part_block_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.block.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_blockReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">blockReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_block_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">block_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.entity">
-                    <tag>part_entityReaderItem</tag>
+                    <tag>part_entity_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.entity.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_entityReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">entityReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_entity_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">entity_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.extra_dimensional">
-                    <tag>part_extradimensionalReaderItem</tag>
+                    <tag>part_extradimensional_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.extra_dimensional.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_extradimensionalReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">extradimensionalReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_extradimensional_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">extradimensional_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.fluid">
-                    <tag>part_fluidReaderItem</tag>
+                    <tag>part_fluid_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.fluid.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_fluidReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">fluidReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_fluid_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">fluid_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.inventory">
-                    <tag>part_inventoryReaderItem</tag>
+                    <tag>part_inventory_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.inventory.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_inventoryReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">inventoryReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_inventory_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">inventory_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.machine">
-                    <tag>part_machineReaderItem</tag>
+                    <tag>part_machine_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.machine.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_machineReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">machineReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_machine_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">machine_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.network">
-                    <tag>part_networkReaderItem</tag>
+                    <tag>part_network_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.network.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_networkReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">networkReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_network_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">network_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.redstone">
-                    <tag>part_redstoneReaderItem</tag>
+                    <tag>part_redstone_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.redstone.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_redstoneReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">redstoneReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_redstone_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">redstone_reader</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.reader.world">
-                    <tag>part_worldReaderItem</tag>
+                    <tag>part_world_reader_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.world.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_worldReaderItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">worldReader</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_world_reader_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">world_reader</appendix_list>
                 </section>
             </section>
             <section name="info_book.integrateddynamics.manual.parts.writer">
                 <section name="info_book.integrateddynamics.manual.parts.writer.audio">
-                    <tag>part_audioWriterItem</tag>
+                    <tag>part_audio_writer_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.writer.audio.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_audioWriterItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">audioWriter</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_audio_writer_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">audio_writer</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.writer.effect">
-                    <tag>part_effectWriterItem</tag>
+                    <tag>part_effect_writer_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.writer.effect.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_effectWriterItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">effectWriter</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_effect_writer_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">effect_writer</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.writer.inventory">
-                    <tag>part_inventoryWriterItem</tag>
+                    <tag>part_inventory_writer_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.writer.inventory.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_inventoryWriterItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">inventoryWriter</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_inventory_writer_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">inventory_writer</appendix_list>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.writer.redstone">
-                    <tag>part_redstoneWriterItem</tag>
+                    <tag>part_redstone_writer_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.writer.redstone.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_redstoneWriterItem</appendix>
-                    <appendixList factory="integrateddynamics:part_aspects">redstoneWriter</appendixList>
+                    <appendix type="crafting_recipe">integrateddynamics:part_redstone_writer_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">redstone_writer</appendix_list>
                 </section>
             </section>
             <section name="info_book.integrateddynamics.manual.parts.other">
                 <section name="info_book.integrateddynamics.manual.parts.other.light">
-                    <tag>part_staticLightPanelItem</tag>
-                    <tag>part_dynamicLightPanelItem</tag>
+                    <tag>part_static_light_panel_item</tag>
+                    <tag>part_dynamic_light_panel_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.other.light.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_staticLightPanelItem</appendix>
-                    <appendix type="craftingRecipe">integrateddynamics:part_dynamicLightPanelItem</appendix>
+                    <appendix type="crafting_recipe">integrateddynamics:part_static_light_panel_item</appendix>
+                    <appendix type="crafting_recipe">integrateddynamics:part_dynamic_light_panel_item</appendix>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.other.display">
-                    <tag>part_displayPanelItem</tag>
+                    <tag>part_display_panel_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.other.display.text1</paragraph>
-                    <appendix type="craftingRecipe">integrateddynamics:part_displayPanelItem</appendix>
+                    <appendix type="crafting_recipe">integrateddynamics:part_display_panel_item</appendix>
                 </section>
             </section>
         </section>
@@ -450,48 +450,48 @@
                 <paragraph>info_book.integrateddynamics.manual.machines.materializer.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.materializer.text2</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.materializer.text3</paragraph>
-                <appendix type="craftingRecipe">integrateddynamics:materializer</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:materializer</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.machines.proxy">
                 <tag>proxy</tag>
                 <paragraph>info_book.integrateddynamics.manual.machines.proxy.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.proxy.text2</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.proxy.text3</paragraph>
-                <appendix type="craftingRecipe">integrateddynamics:proxy</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:proxy</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.machines.delay">
                 <tag>delay</tag>
                 <paragraph>info_book.integrateddynamics.manual.machines.delay.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.delay.text2</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.delay.text3</paragraph>
-                <appendix type="craftingRecipe">integrateddynamics:delay</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:delay</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.machines.energy_battery">
-                <tag>energyBattery</tag>
+                <tag>energy_battery</tag>
                 <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text2</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text3</paragraph>
-                <appendix type="craftingRecipe">integrateddynamics:energyBattery</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:energy_battery</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.machines.generator">
-                <tag>coalGenerator</tag>
+                <tag>coal_generator</tag>
                 <paragraph>info_book.integrateddynamics.manual.machines.generator.text1</paragraph>
-                <appendix type="craftingRecipe">integrateddynamics:coalGenerator</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:coal_generator</appendix>
             </section>
         </section>
 
         <section name="info_book.integrateddynamics.manual.logic_programming">
-            <tag>logicProgrammer</tag>
+            <tag>logic_programmer</tag>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text1</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text2</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text3</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text4</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text5</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text6</paragraph>
-            <appendix type="craftingRecipe">integrateddynamics:logicProgrammer</appendix>
-            <appendix type="craftingRecipe">integrateddynamics:portableLogicProgrammer</appendix>
-            <appendixList factory="integrateddynamics:operators_output">operator.operators.integrateddynamics.binary.name</appendixList>
-            <appendixList factory="integrateddynamics:operators_output">*</appendixList>
+            <appendix type="crafting_recipe">integrateddynamics:logic_programmer</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:portable_logic_programmer</appendix>
+            <appendix_list factory="integrateddynamics:operators_output">operator.operators.integrateddynamics.binary.name</appendix_list>
+            <appendix_list factory="integrateddynamics:operators_output">*</appendix_list>
         </section>
     </section>
 </section>

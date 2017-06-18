@@ -21,7 +21,7 @@ public class ItemPortableLogicProgrammerConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "portableLogicProgrammer",
+                "portable_logic_programmer",
                 null,
                 ItemPortableLogicProgrammer.class
         );

@@ -148,8 +148,8 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
         Slot slot = getSlot(slotIndex);
         // Yes I know this is ugly.
         // If you are reading this and know a better way, please tell me.
-        slot.xDisplayPosition = Integer.MIN_VALUE;
-        slot.yDisplayPosition = Integer.MIN_VALUE;
+        slot.xPos = Integer.MIN_VALUE;
+        slot.yPos = Integer.MIN_VALUE;
     }
 
     protected abstract void enableSlot(int slotIndex, int row);

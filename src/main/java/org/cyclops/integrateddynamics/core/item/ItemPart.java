@@ -67,8 +67,9 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand,
+    public EnumActionResult onItemUse(EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand,
                                       EnumFacing side, float hitX, float hitY, float hitZ) {
+        ItemStack itemStack = playerIn.getHeldItem(hand);
         IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos);
         if(partContainerFirst != null) {
             // Add part to existing cable
@@ -77,7 +78,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     ItemBlockCable.playPlaceSound(world, pos);
                 }
                 if(!playerIn.capabilities.isCreativeMode) {
-                    itemStack.stackSize--;
+                    itemStack.shrink(1);
                 }
             }
             return EnumActionResult.SUCCESS;
@@ -86,7 +87,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             BlockPos target = pos.offset(side);
             if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
-                if (itemBlockCable.onItemUse(itemStack, playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+                if (itemBlockCable.onItemUse(playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
                     IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
                     if (partContainer != null) {
                         if(!world.isRemote) {
@@ -112,7 +113,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                             ItemBlockCable.playPlaceSound(world, target);
                         }
                         if(!playerIn.capabilities.isCreativeMode) {
-                            itemStack.stackSize--;
+                            itemStack.shrink(1);
                         }
                     }
                     return EnumActionResult.SUCCESS;
@@ -126,7 +127,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 }
             }
         }
-        return super.onItemUse(itemStack, playerIn, world, pos, hand, side, hitX, hitY, hitZ);
+        return super.onItemUse(playerIn, world, pos, hand, side, hitX, hitY, hitZ);
     }
 
     @SuppressWarnings("rawtypes")

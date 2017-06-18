@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.3 or higher.
+
+Fixes:
+* Fix part aspect settings not being restored on world load

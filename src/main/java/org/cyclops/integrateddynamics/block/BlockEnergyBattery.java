@@ -5,12 +5,12 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
-
-import java.util.List;
 
 /**
  * A block that can hold defined variables so that they can be referred to elsewhere in the network.
@@ -46,8 +46,8 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
-        ItemStack itemStack = new ItemStack(item);
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
+        ItemStack itemStack = new ItemStack(this);
 
         int capacityOriginal = BlockEnergyBatteryConfig.capacity;
         int capacity = capacityOriginal;

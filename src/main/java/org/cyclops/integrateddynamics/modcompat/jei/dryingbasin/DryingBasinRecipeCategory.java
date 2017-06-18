@@ -73,13 +73,7 @@ public class DryingBasinRecipeCategory implements IRecipeCategory {
     }
 
     @Override
-    public void drawAnimations(Minecraft minecraft) {
-
-    }
-
-    @Override
-    @Deprecated
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
+    public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
         recipeLayout.getItemStacks().init(INPUT_SLOT, true, 1, 7);
         recipeLayout.getItemStacks().init(OUTPUT_SLOT, false, 75, 7);
         recipeLayout.getItemStacks().init(FLUIDINPUT_SLOT, true, 6, 28);
@@ -87,10 +81,10 @@ public class DryingBasinRecipeCategory implements IRecipeCategory {
 
         if(recipeWrapper instanceof DryingBasinRecipeJEI) {
             DryingBasinRecipeJEI recipe = (DryingBasinRecipeJEI) recipeWrapper;
-            if(recipe.getInputItem() != null) {
+            if(!recipe.getInputItem().isEmpty()) {
                 recipeLayout.getItemStacks().set(INPUT_SLOT, recipe.getInputItem());
             }
-            if(recipe.getOutputItem() != null) {
+            if(!recipe.getOutputItem().isEmpty()) {
                 recipeLayout.getItemStacks().set(OUTPUT_SLOT, recipe.getOutputItem());
             }
 
@@ -103,10 +97,5 @@ public class DryingBasinRecipeCategory implements IRecipeCategory {
                 recipeLayout.getFluidStacks().set(FLUIDOUTPUT_SLOT, recipe.getOutputFluid());
             }
         }
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
-        setRecipe(recipeLayout, recipeWrapper);
     }
 }

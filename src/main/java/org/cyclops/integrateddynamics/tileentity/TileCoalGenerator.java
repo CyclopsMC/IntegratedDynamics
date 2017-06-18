@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.tileentity;
 
-import cofh.api.energy.IEnergyConnection;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
@@ -9,10 +8,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.common.Optional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
@@ -29,8 +26,7 @@ import java.util.Collection;
  * A part entity for the coal energy generator.
  * @author rubensworks
  */
-@Optional.Interface(iface = "cofh.api.energy.IEnergyConnection", modid = Reference.MOD_RF_API, striprefs = true)
-public class TileCoalGenerator extends TileCableConnectableInventory implements IEnergyConnection, IEnergyStorage {
+public class TileCoalGenerator extends TileCableConnectableInventory implements IEnergyStorage {
 
     public static final int MAX_PROGRESS = 13;
     public static final int ENERGY_PER_TICK = 20;
@@ -159,15 +155,5 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     @Override
     public boolean canReceive() {
         return false;
-    }
-
-    /*
-     * ------------------ RF API ------------------
-     */
-
-    @Optional.Method(modid = Reference.MOD_RF_API)
-    @Override
-    public boolean canConnectEnergy(EnumFacing from) {
-        return true;
     }
 }

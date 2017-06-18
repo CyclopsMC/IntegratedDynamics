@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.base.Optional;
 import lombok.ToString;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -12,6 +11,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+
+import java.util.Objects;
 
 /**
  * Value type with values that are itemstacks.
@@ -26,22 +27,22 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     @Override
     public ValueItemStack getDefault() {
-        return ValueItemStack.of(null);
+        return ValueItemStack.of(ItemStack.EMPTY);
     }
 
     @Override
     public String toCompactString(ValueItemStack value) {
-        Optional<ItemStack> itemStack = value.getRawValue();
-        return itemStack.isPresent() ? itemStack.get().getDisplayName() : "";
+        ItemStack itemStack = value.getRawValue();
+        return !itemStack.isEmpty() ? itemStack.getDisplayName() : "";
     }
 
     @Override
     public String serialize(ValueItemStack value) {
         NBTTagCompound tag = new NBTTagCompound();
-        Optional<ItemStack> itemStack = value.getRawValue();
-        if(itemStack.isPresent()) {
-            itemStack.get().writeToNBT(tag);
-            tag.setInteger("Count", itemStack.get().stackSize);
+        ItemStack itemStack = value.getRawValue();
+        if(!itemStack.isEmpty()) {
+            itemStack.writeToNBT(tag);
+            tag.setInteger("Count", itemStack.getCount());
         }
         return tag.toString();
     }
@@ -50,13 +51,13 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     public ValueItemStack deserialize(String value) {
         try {
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
-            ItemStack itemStack = ItemStack.loadItemStackFromNBT(tag);
-            if (itemStack != null) {
-                itemStack.stackSize = tag.getInteger("Count");
+            ItemStack itemStack = new ItemStack(tag);
+            if (!itemStack.isEmpty()) {
+                itemStack.setCount(tag.getInteger("Count"));
             }
             return ValueItemStack.of(itemStack);
         } catch (NBTException e) {
-            return null;
+            return ValueItemStack.of(ItemStack.EMPTY);
         }
     }
 
@@ -67,7 +68,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     @Override
     public boolean isNull(ValueItemStack a) {
-        return !a.getRawValue().isPresent();
+        return !a.getRawValue().isEmpty();
     }
 
     @Override
@@ -91,19 +92,26 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     @ToString
-    public static class ValueItemStack extends ValueOptionalBase<ItemStack> {
+    public static class ValueItemStack extends ValueBase {
+
+        private final ItemStack itemStack;
 
         private ValueItemStack(ItemStack itemStack) {
-            super(ValueTypes.OBJECT_ITEMSTACK, itemStack);
+            super(ValueTypes.OBJECT_ITEMSTACK);
+            this.itemStack = Objects.requireNonNull(itemStack, "Attempted to create a ValueItemStack for a null ItemStack.");
         }
 
         public static ValueItemStack of(ItemStack itemStack) {
             return new ValueItemStack(itemStack);
         }
 
+        public ItemStack getRawValue() {
+            return itemStack;
+        }
+
         @Override
-        protected boolean isEqual(ItemStack a, ItemStack b) {
-            return ItemStackHelpers.areItemStacksIdentical(a, b);
+        public boolean equals(Object o) {
+            return o instanceof ValueItemStack && ItemStackHelpers.areItemStacksIdentical(((ValueItemStack) o).itemStack, this.itemStack);
         }
     }
 

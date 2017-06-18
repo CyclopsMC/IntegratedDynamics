@@ -24,7 +24,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPElementBase {
 
     private final IItemStackToValue<V> itemStackToValue;
-    private ItemStack itemStack;
+    private ItemStack itemStack = ItemStack.EMPTY;
 
     public ValueTypeItemStackLPElement(IValueType valueType, IItemStackToValue<V> itemStackToValue) {
         super(valueType);
@@ -48,12 +48,12 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
 
     @Override
     public boolean canWriteElementPre() {
-        return this.itemStackToValue.isNullable() || this.itemStack != null;
+        return this.itemStackToValue.isNullable() || !this.itemStack.isEmpty();
     }
 
     @Override
     public void activate() {
-        this.itemStack = null;
+        this.itemStack = ItemStack.EMPTY;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
 
     @Override
     public L10NHelpers.UnlocalizedString validate() {
-        if(!this.itemStackToValue.isNullable() && this.itemStack == null) {
+        if(!this.itemStackToValue.isNullable() && this.itemStack.isEmpty()) {
             return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
         return itemStackToValue.validate(itemStack);

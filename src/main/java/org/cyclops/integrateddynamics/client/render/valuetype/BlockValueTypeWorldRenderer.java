@@ -26,7 +26,7 @@ public class BlockValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         if(blockOptional.isPresent()) {
             // ItemStack
             ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockOptional.get());
-            if(itemStack != null) {
+            if(!itemStack.isEmpty()) {
                 ItemValueTypeWorldRenderer.renderItemStack(itemStack, alpha);
             }
         }

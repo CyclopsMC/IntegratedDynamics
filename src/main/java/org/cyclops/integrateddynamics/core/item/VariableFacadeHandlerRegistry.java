@@ -57,7 +57,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public IVariableFacade handle(ItemStack itemStack) {
-        if(itemStack == null || !itemStack.hasTagCompound()) {
+        if(itemStack.isEmpty() || !itemStack.hasTagCompound()) {
             return DUMMY_FACADE;
         }
         return handle(itemStack.getTagCompound());
@@ -90,8 +90,8 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(ItemStack itemStack, F variableFacade, IVariableFacadeHandler<F> variableFacadeHandler) {
-        if(itemStack == null) {
-            return null;
+        if(itemStack.isEmpty()) {
+            return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
@@ -101,8 +101,8 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable EntityPlayer player, @Nullable Block block) {
-        if(itemStack == null) {
-            return null;
+        if(itemStack.isEmpty()) {
+            return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
@@ -116,7 +116,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
-        if(itemStack == null) {
+        if(itemStack.isEmpty()) {
             return null;
         }
         NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);

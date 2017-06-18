@@ -28,7 +28,7 @@ import java.util.List;
 public abstract class SubGuiBox extends Gui implements ISubGuiBox {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID,
-            IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "subGui.png");
+            IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "sub_gui.png");
 
     private final Box type;
 

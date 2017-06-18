@@ -117,7 +117,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     @Override
     public S getState(ItemStack itemStack) {
         S partState = null;
-        if(itemStack != null && itemStack.getTagCompound() != null) {
+        if(!itemStack.isEmpty() && itemStack.getTagCompound() != null) {
             partState = fromNBT(itemStack.getTagCompound());
         }
         if(partState == null) {

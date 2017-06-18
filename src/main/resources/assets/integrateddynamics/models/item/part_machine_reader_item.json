@@ -1,0 +1,8 @@
+{
+  "forge_marker": 1,
+  "parent": "integrateddynamics:block/reader",
+  "textures": {
+    "back" : "integrateddynamics:parts/machine_reader_back",
+    "front": "integrateddynamics:parts/machine_reader_front"
+  }
+}

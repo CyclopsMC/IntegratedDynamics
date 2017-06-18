@@ -74,7 +74,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     }
 
     public IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
-        return recipeCache.get(getStackInSlot(0));
+        return recipeCache.get(getStackInSlot(0).copy());
     }
 
     @Override
@@ -97,17 +97,19 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
             } else {
                 if (itemHeight == 7 && getCurrentRecipe() != null) {
                     IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
-                        setInventorySlotContents(0, null);
+                        setInventorySlotContents(0, ItemStack.EMPTY);
                         ItemStack resultStack = recipe.getOutput().getItemStack();
-                        if(resultStack != null) {
+                        if(!resultStack.isEmpty()) {
                             resultStack = resultStack.copy();
                             for(EnumFacing side : EnumFacing.VALUES) {
-                                if(resultStack != null && side != EnumFacing.UP) {
+                                if(!resultStack.isEmpty() && side != EnumFacing.UP) {
                                     IItemHandler itemHandler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-                                    resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
+                                    if (itemHandler != null) {
+                                        resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
+                                    }
                                 }
                             }
-                            if(resultStack != null) {
+                            if(!resultStack.isEmpty()) {
                                 ItemStackHelpers.spawnItemStack(getWorld(), getPos(), resultStack);
                             }
                         }
@@ -123,7 +125,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
 
     @Override
     public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing side) {
-        return getWorld().getBlockState(getPos()).getValue(BlockSqueezer.HEIGHT) == 1 && super.canInsertItem(slot, itemStack, side);
+        return getWorld().getBlockState(getPos()).getValue(BlockSqueezer.HEIGHT) == 1 && getStackInSlot(0).isEmpty() && super.canInsertItem(slot, itemStack, side);
     }
 
     @Override

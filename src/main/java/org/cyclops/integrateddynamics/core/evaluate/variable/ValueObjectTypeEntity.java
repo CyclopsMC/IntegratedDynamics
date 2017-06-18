@@ -48,7 +48,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     public String serialize(ValueEntity value) {
         Optional<Entity> entity = value.getRawValue();
         if(entity.isPresent()) {
-            int world = entity.get().worldObj.provider.getDimension();
+            int world = entity.get().world.provider.getDimension();
             int id = entity.get().getEntityId();
             return world + DELIMITER + id;
         }
@@ -64,9 +64,9 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
                 int world = Integer.parseInt(split[0]);
                 int id = Integer.parseInt(split[1]);
                 if(MinecraftHelpers.isClientSide()) {
-                    entity = Minecraft.getMinecraft().theWorld.getEntityByID(id);
+                    entity = Minecraft.getMinecraft().world.getEntityByID(id);
                 } else {
-                    WorldServer[] servers = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers;
+                    WorldServer[] servers = FMLCommonHandler.instance().getMinecraftServerInstance().worlds;
                     if (servers.length > world) {
                         entity = servers[world].getEntityByID(id);
                     }

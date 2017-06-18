@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.modcompat.charset.aspect.CharsetAspects;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
+import pl.asie.charset.api.pipes.IPipeView;
 import pl.asie.charset.api.pipes.IShifter;
 
 /**
@@ -21,13 +22,17 @@ public class CharsetPipesModCompat implements IModCompat {
 	@CapabilityInject(IShifter.class)
 	public static Capability<IShifter> SHIFTER = null;
 
+	@CapabilityInject(IPipeView.class)
+	public static Capability<IPipeView> PIPE = null;
+
 	@Override
 	public void onInit(Step initStep) {
 		if(initStep == Step.PREINIT) {
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_READER, Lists.<IAspect>newArrayList(
 					CharsetAspects.Read.Pipe.BOOLEAN_ISAPPLICABLE,
 					CharsetAspects.Read.Pipe.BOOLEAN_HASCONTENTS,
-					CharsetAspects.Read.Pipe.ITEMSTACK_CONTENTS
+					CharsetAspects.Read.Pipe.ITEMSTACK_CONTENT,
+					CharsetAspects.Read.Pipe.LIST_CONTENTS
 			));
 			Aspects.REGISTRY.register(PartTypes.INVENTORY_WRITER, Lists.<IAspect>newArrayList(
 					CharsetAspects.Write.Pipe.SHIFTER_BOOLEAN,

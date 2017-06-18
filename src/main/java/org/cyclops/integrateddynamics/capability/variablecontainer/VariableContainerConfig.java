@@ -29,7 +29,7 @@ public class VariableContainerConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "variableContainer",
+                "variable_container",
                 "Allows storage of variables.",
                 IVariableContainer.class,
                 new DefaultCapabilityStorage<IVariableContainer>(),

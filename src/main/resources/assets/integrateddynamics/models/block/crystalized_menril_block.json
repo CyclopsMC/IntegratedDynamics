@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "integrateddynamics:blocks/crystalized_menril_block"
+  }
+}

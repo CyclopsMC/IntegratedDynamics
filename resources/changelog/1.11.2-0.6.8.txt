@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.9.2 or higher.
+
+Changes:
+* Restore Forestry mod compat
+* Remove invalid number casting, Closes #123 This was introduced because of #15, but this was not required after all.
+
+Fixes:
+* Fix breakage of generic unshaped recipes, Closes #121
+* Fix localization of LP keybindings, Closes #118

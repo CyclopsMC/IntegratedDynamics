@@ -1,8 +1,0 @@
-{
-  "forge_marker": 1,
-  "variants": {
-    "stage=0": { "model": "integrateddynamics:menrilSapling" },
-    "stage=1": { "model": "integrateddynamics:menrilSapling" },
-    "inventory": { "model": "integrateddynamics:menrilSapling_inventory" }
-  }
-}

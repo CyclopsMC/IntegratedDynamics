@@ -33,7 +33,7 @@ public class BiomeMeneglinConfig extends BiomeConfig {
         super(
                 IntegratedDynamics._instance,
                 Reference.BIOME_MENEGLIN,
-                "biomeMeneglin",
+                "biome_meneglin",
                 null,
                 BiomeMeneglin.class
         );
@@ -47,7 +47,7 @@ public class BiomeMeneglinConfig extends BiomeConfig {
         BiomeManager.addSpawnBiome(getBiome());
         BiomeManager.addStrongholdBiome(getBiome());
         BiomeManager.addVillageBiome(getBiome(), true);
-        BiomeDictionary.registerBiomeType(getBiome(),
+        BiomeDictionary.addTypes(getBiome(),
                 BiomeDictionary.Type.COLD,
                 BiomeDictionary.Type.MAGICAL
         );

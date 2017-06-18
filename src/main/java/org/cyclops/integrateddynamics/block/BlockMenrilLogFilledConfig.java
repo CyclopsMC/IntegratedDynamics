@@ -32,7 +32,7 @@ public class BlockMenrilLogFilledConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "menrilLogFilled",
+                "menril_log_filled",
                 null,
                 BlockMenrilLogFilled.class
         );

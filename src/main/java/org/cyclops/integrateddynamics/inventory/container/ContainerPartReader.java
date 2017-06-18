@@ -85,22 +85,22 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     @Override
     protected void enableSlot(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex);
-        slot.xDisplayPosition = SLOT_IN_X;
-        slot.yDisplayPosition = SLOT_IN_Y + getAspectBoxHeight() * row;
+        slot.xPos = SLOT_IN_X;
+        slot.yPos = SLOT_IN_Y + getAspectBoxHeight() * row;
     }
 
     protected void disableSlotOutput(int slotIndex) {
         Slot slot = getSlot(slotIndex + getUnfilteredItemCount());
         // Yes I know this is ugly.
         // If you are reading this and know a better way, please tell me.
-        slot.xDisplayPosition = Integer.MIN_VALUE;
-        slot.yDisplayPosition = Integer.MIN_VALUE;
+        slot.xPos = Integer.MIN_VALUE;
+        slot.yPos = Integer.MIN_VALUE;
     }
 
     protected void enableSlotOutput(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex + getUnfilteredItemCount());
-        slot.xDisplayPosition = SLOT_OUT_X;
-        slot.yDisplayPosition = SLOT_OUT_Y + getAspectBoxHeight() * row;
+        slot.xPos = SLOT_OUT_X;
+        slot.yPos = SLOT_OUT_Y + getAspectBoxHeight() * row;
     }
 
     @Override
@@ -127,14 +127,14 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
         super.onContainerClosed(player);
         if (!getWorld().isRemote) {
             for (int i = 0; i < getUnfilteredItemCount(); ++i) {
-                ItemStack itemstack;
-                itemstack = inputSlots.removeStackFromSlot(i);
-                if (itemstack != null) {
-                    player.dropItem(itemstack, false);
+                ItemStack itemStack;
+                itemStack = inputSlots.removeStackFromSlot(i);
+                if (!itemStack.isEmpty()) {
+                    player.dropItem(itemStack, false);
                 }
-                itemstack = outputSlots.removeStackFromSlot(i);
-                if (itemstack != null) {
-                    player.dropItem(itemstack, false);
+                itemStack = outputSlots.removeStackFromSlot(i);
+                if (!itemStack.isEmpty()) {
+                    player.dropItem(itemStack, false);
                 }
             }
         }
@@ -144,7 +144,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     public void onDirty() {
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
             ItemStack itemStack = inputSlots.getStackInSlot(i);
-            if(itemStack != null && outputSlots.getStackInSlot(i) == null) {
+            if(!itemStack.isEmpty() && outputSlots.getStackInSlot(i).isEmpty()) {
                 ItemStack outputStack = writeAspectInfo(!getWorld().isRemote, itemStack.copy(), getUnfilteredItems().get(i));
                 outputSlots.setInventorySlotContents(i, outputStack);
                 inputSlots.decrStackSize(i, 1);

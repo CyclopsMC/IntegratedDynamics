@@ -6,6 +6,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -168,7 +169,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
         // This assumes that there is only one other slot, the remaining slots will be erased!
         // (We can do this because they are all ghost slots)
-        inventoryItemStacks = Lists.newArrayList();
+        inventoryItemStacks = NonNullList.create();
         inventorySlots = Lists.newArrayList();
         initializeSlots();
         this.temporaryInputSlots.removeDirtyMarkListener(this);
@@ -215,9 +216,9 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     @Override
     public void onContainerClosed(EntityPlayer player) {
         super.onContainerClosed(player);
-        if (!player.worldObj.isRemote) {
+        if (!player.world.isRemote) {
             ItemStack itemStack = writeSlot.getStackInSlot(0);
-            if(itemStack != null) {
+            if(!itemStack.isEmpty()) {
                 player.dropItem(itemStack, false);
             }
         }
@@ -230,7 +231,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     protected void labelCurrent() {
         ItemStack itemStack = writeSlot.getStackInSlot(0);
-        if(itemStack != null) {
+        if(!itemStack.isEmpty()) {
             IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
             if(variableFacade.isValid()) {
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableFacade.getId(), this.lastLabel);
@@ -255,7 +256,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         }
 
         ItemStack itemStack = writeSlot.getStackInSlot(0);
-        if(canWriteActiveElement() && itemStack != null) {
+        if(canWriteActiveElement() && !itemStack.isEmpty()) {
             ItemStack outputStack = writeElementInfo();
             writeSlot.removeDirtyMarkListener(this);
             writeSlot.setInventorySlotContents(0, outputStack);
@@ -302,7 +303,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public ItemStack slotClick(int slotId, int arg, ClickType clickType, EntityPlayer player) {
         // Handle cases where the client may have more (phantom) slots than the server.
         if (slotId >= this.inventorySlots.size()) {
-            return null;
+            return ItemStack.EMPTY;
         }
         return super.slotClick(slotId, arg, clickType, player);
     }
@@ -319,7 +320,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
             /*if ((temporaryInputSlots == null || temporaryInputSlots.isEmpty())
                     && (activeElement == null || activeElement.canCurrentlyReadFromOtherItem())) {
                 ItemStack itemStack = writeSlot.getStackInSlot(0);
-                if (itemStack != null) {
+                if (!itemStack.isEmpty()) {
                     ContainerLogicProgrammer.this.loadConfigFrom(itemStack);
                 }
             }*/

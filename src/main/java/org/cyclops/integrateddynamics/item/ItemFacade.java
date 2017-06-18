@@ -56,7 +56,7 @@ public class ItemFacade extends ConfigurableItem {
     }
 
     public IBlockState getFacadeBlock(ItemStack itemStack) {
-        if(itemStack != null && itemStack.hasTagCompound()) {
+        if(!itemStack.isEmpty() && itemStack.hasTagCompound()) {
             NBTTagCompound tag = itemStack.getTagCompound();
             String blockName = tag.getString("blockName");
             int meta = tag.getInteger("meta");
@@ -91,8 +91,9 @@ public class ItemFacade extends ConfigurableItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer playerIn, World world, BlockPos pos,
+    public EnumActionResult onItemUse(EntityPlayer playerIn, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack itemStack = playerIn.getHeldItem(hand);
         if(!world.isRemote) {
             IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
             IBlockState blockState = getFacadeBlock(itemStack);
@@ -101,12 +102,12 @@ public class ItemFacade extends ConfigurableItem {
                 if (!facadeable.hasFacade()) {
                     facadeable.setFacade(blockState);
                     ItemBlockCable.playPlaceSound(world, pos);
-                    itemStack.stackSize--;
+                    itemStack.shrink(1);
                 }
             }
             return EnumActionResult.SUCCESS;
         }
-        return super.onItemUse(itemStack, playerIn, world, pos, hand, facing, hitX, hitY, hitZ);
+        return super.onItemUse(playerIn, world, pos, hand, facing, hitX, hitY, hitZ);
     }
 
     @Override

@@ -14,7 +14,7 @@ public final class Reference {
     public static final String MOD_BUILD_NUMBER = "@BUILD_NUMBER@";
     public static final String MOD_MC_VERSION = "@MC_VERSION@";
     public static final String GA_TRACKING_ID = "UA-65307010-4";
-    public static final String VERSION_URL = "https://raw.githubusercontent.com/CyclopsMC/Versions/master/1.10/IntegratedDynamics.txt";
+    public static final String VERSION_URL = "https://raw.githubusercontent.com/CyclopsMC/Versions/master/1.11/IntegratedDynamics.txt";
 
     // Paths
     public static final String TEXTURE_PATH_GUI = "textures/gui/";
@@ -31,24 +31,23 @@ public final class Reference {
     public static final String DICT_STAIRWOOD = "stairWood";
 
     // MOD ID's
-    public static final String MOD_FORGE = "Forge";
+    public static final String MOD_FORGE = "forge";
     public static final String MOD_FORGE_VERSION = "@FORGE_VERSION@";
-    public static final String MOD_FORGE_VERSION_MIN = "12.18.2.2122";
+    public static final String MOD_FORGE_VERSION_MIN = "13.20.0.2282";
     public static final String MOD_CYCLOPSCORE = "cyclopscore";
     public static final String MOD_CYCLOPSCORE_VERSION = "@CYCLOPSCORE_VERSION@";
-    public static final String MOD_CYCLOPSCORE_VERSION_MIN = "0.10.5";
+    public static final String MOD_CYCLOPSCORE_VERSION_MIN = "0.10.6";
     public static final String MOD_COMMONCAPABILITIES = "commoncapabilities";
     public static final String MOD_COMMONCAPABILITIES_VERSION_MIN = "1.3.0";
-    public static final String MOD_CHARSETPIPES = "CharsetPipes";
+    public static final String MOD_CHARSETPIPES = "charsetpipes";
     public static final String MOD_MCMULTIPART = "mcmultipart";
     public static final String MOD_WAILA = "Waila";
     public static final String MOD_THAUMCRAFT = "Thaumcraft";
-    public static final String MOD_JEI = "JEI";
-    public static final String MOD_RF_API = "CoFHAPI";
+    public static final String MOD_JEI = "jei";
     public static final String MOD_TESLA = "tesla";
     public static final String MOD_TCONSTRUCT = "tconstruct";
     public static final String MOD_FORESTRY = "forestry";
-    public static final String MOD_IC2 = "IC2";
+    public static final String MOD_IC2 = "ic2";
     public static final String MOD_TOP = "theoneprobe";
     public static final String MOD_REFINEDSTORAGE = "refinedstorage";
     public static final String MOD_IMMERSIVEENGINEERING = "immersiveengineering";

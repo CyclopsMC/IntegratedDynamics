@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.raoulvdberge.refinedstorage.api.network.INetworkMaster;
-import com.raoulvdberge.refinedstorage.api.storage.fluid.IFluidStorage;
+import com.raoulvdberge.refinedstorage.api.storage.IStorage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -45,10 +45,10 @@ public class ValueTypeListProxyPositionedNetworkMasterFluidInventory extends Val
                 if (networkMaster == null) {
                     return null;
                 }
-                List<List<FluidStack>> fluidStacksLists = Lists.transform(networkMaster.getFluidStorageCache().getStorages(), new Function<IFluidStorage, List<FluidStack>>() {
+                List<List<FluidStack>> fluidStacksLists = Lists.transform(networkMaster.getFluidStorageCache().getStorages(), new Function<IStorage<FluidStack>, List<FluidStack>>() {
                     @Nullable
                     @Override
-                    public List<FluidStack> apply(@Nullable IFluidStorage fluidStorage) {
+                    public List<FluidStack> apply(@Nullable IStorage<FluidStack> fluidStorage) {
                         return fluidStorage.getStacks();
                     }
                 });

@@ -66,28 +66,22 @@ public class SqueezerRecipeCategory implements IRecipeCategory {
 
     @Override
     public void drawExtras(Minecraft minecraft) {
-        int height = (int) ((minecraft.theWorld.getTotalWorldTime() / 4) % 7);
+        int height = (int) ((minecraft.world.getTotalWorldTime() / 4) % 7);
         arrowDrawable.draw(minecraft, 41, 18 + height * 2);
     }
 
     @Override
-    public void drawAnimations(Minecraft minecraft) {
-
-    }
-
-    @Override
-    @Deprecated
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
+    public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
         recipeLayout.getItemStacks().init(INPUT_SLOT, true, 1, 17);
         recipeLayout.getItemStacks().init(OUTPUT_SLOT, false, 75, 7);
         recipeLayout.getItemStacks().init(FLUIDOUTPUT_SLOT, false, 75, 30);
 
         if(recipeWrapper instanceof SqueezerRecipeJEI) {
             SqueezerRecipeJEI recipe = (SqueezerRecipeJEI) recipeWrapper;
-            if(recipe.getInputItem() != null) {
+            if(!recipe.getInputItem().isEmpty()) {
                 recipeLayout.getItemStacks().set(INPUT_SLOT, recipe.getInputItem());
             }
-            if(recipe.getOutputItem() != null) {
+            if(!recipe.getOutputItem().isEmpty()) {
                 recipeLayout.getItemStacks().set(OUTPUT_SLOT, recipe.getOutputItem());
             }
 
@@ -96,10 +90,5 @@ public class SqueezerRecipeCategory implements IRecipeCategory {
                 recipeLayout.getFluidStacks().set(FLUIDOUTPUT_SLOT, recipe.getOutputFluid());
             }
         }
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
-        setRecipe(recipeLayout, recipeWrapper);
     }
 }

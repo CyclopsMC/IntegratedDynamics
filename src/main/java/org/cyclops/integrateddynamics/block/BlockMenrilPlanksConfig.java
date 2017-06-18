@@ -28,7 +28,7 @@ public class BlockMenrilPlanksConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
         	true,
-            "menrilPlanks",
+            "menril_planks",
             null,
             null
         );

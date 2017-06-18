@@ -23,7 +23,7 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<ItemStackR
 
     @Override
     public String getCategoryId() {
-        return Reference.MOD_ID + ":squeezerRecipe";
+        return Reference.MOD_ID + ":squeezer_recipe";
     }
 
 	@Override
@@ -57,6 +57,9 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<ItemStackR
 
         ItemAndFluidStackRecipeComponent outputRecipeComponent;
         if(outputItem == null || outputItem instanceof ItemStack) {
+            if (outputItem == null) {
+                outputItem = ItemStack.EMPTY;
+            }
             outputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) outputItem, outputFluid);
         } else {
             outputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) outputItem, outputFluid);

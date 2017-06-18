@@ -45,7 +45,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
 
     static {
         if (ConfigHandler.isEnabled(BlockSqueezerConfig.class)) {
-            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezerRecipe", new InfoBookParser.IAppendixFactory() {
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezer_recipe", new InfoBookParser.IAppendixFactory() {
 
                 @Override
                 public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
@@ -53,7 +53,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     try {
                         itemStack = InfoBookParser.createStack((Element) node.getElementsByTagName("item").item(0), infoBook.getMod().getRecipeHandler());
                     } catch (InfoBookParser.InvalidAppendixException e) {
-                        itemStack = null;
+                        itemStack = ItemStack.EMPTY;
                     }
                     FluidStack fluidStack;
                     try {
@@ -74,7 +74,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                 }
             });
 
-            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezerRecipe", new InfoBookParser.IAppendixItemFactory<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent>() {
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezer_recipe", new InfoBookParser.IAppendixItemFactory<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent>() {
 
                 @Override
                 public SectionAppendix create(IInfoBook infoBook, IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) throws InfoBookParser.InvalidAppendixException {
@@ -83,10 +83,10 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
 
             });
         } else {
-            InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":squeezerRecipe");
+            InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":squeezer_recipe");
         }
         if (ConfigHandler.isEnabled(BlockDryingBasinConfig.class)) {
-            InfoBookParser.registerFactory(Reference.MOD_ID + ":dryingBasinRecipe", new InfoBookParser.IAppendixFactory() {
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":drying_basin_recipe", new InfoBookParser.IAppendixFactory() {
 
                 @Override
                 public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
@@ -94,7 +94,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     try {
                         itemStack = InfoBookParser.createStack((Element) node.getElementsByTagName("item").item(0), infoBook.getMod().getRecipeHandler());
                     } catch (InfoBookParser.InvalidAppendixException e) {
-                        itemStack = null;
+                        itemStack = ItemStack.EMPTY;
                     }
                     FluidStack fluidStack;
                     try {
@@ -115,7 +115,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                 }
             });
 
-            InfoBookParser.registerFactory(Reference.MOD_ID + ":dryingBasinRecipe", new InfoBookParser.IAppendixItemFactory<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>() {
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":drying_basin_recipe", new InfoBookParser.IAppendixItemFactory<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>() {
 
                 @Override
                 public SectionAppendix create(IInfoBook infoBook, IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) throws InfoBookParser.InvalidAppendixException {
@@ -124,7 +124,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
 
             });
         } else {
-            InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":dryingBasinRecipe");
+            InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":drying_basin_recipe");
         }
 
         InfoBookParser.registerFactory(Reference.MOD_ID + ":aspect", new InfoBookParser.IAppendixFactory() {

@@ -111,7 +111,7 @@ public class GuiDelay extends GuiActiveVariableBase<ContainerDelay, TileDelay> {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         numberFieldUpdateInterval.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
         numberFieldCapacity.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
-        fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.updateInterval"), guiLeft + 8, guiTop + 104, Helpers.RGBToInt(0, 0, 0));
+        fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 104, Helpers.RGBToInt(0, 0, 0));
         fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.delay.capacity"), guiLeft + 8, guiTop + 128, Helpers.RGBToInt(0, 0, 0));
     }
 

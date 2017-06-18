@@ -36,6 +36,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
@@ -1053,7 +1055,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
                 @Override
                 public Integer getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null ? itemStack.stackSize : 0;
+                    return !itemStack.isEmpty() ? itemStack.getCount() : 0;
                 }
             })).build());
 
@@ -1065,7 +1067,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
                 @Override
                 public Integer getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null ? itemStack.getMaxStackSize() : 0;
+                    return !itemStack.isEmpty() ? itemStack.getMaxStackSize() : 0;
                 }
             })).build());
 
@@ -1077,7 +1079,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
                 @Override
                 public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null && itemStack.isStackable();
+                    return !itemStack.isEmpty() && itemStack.isStackable();
                 }
             })).build());
 
@@ -1089,7 +1091,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
                 @Override
                 public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null && itemStack.isItemStackDamageable();
+                    return !itemStack.isEmpty() && itemStack.isItemStackDamageable();
                 }
             })).build());
 
@@ -1101,7 +1103,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
                 @Override
                 public Integer getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null ? itemStack.getItemDamage() : 0;
+                    return !itemStack.isEmpty() ? itemStack.getItemDamage() : 0;
                 }
             })).build());
 
@@ -1113,7 +1115,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
                 @Override
                 public Integer getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null ? itemStack.getMaxDamage() : 0;
+                    return !itemStack.isEmpty() ? itemStack.getMaxDamage() : 0;
                 }
             })).build());
 
@@ -1125,7 +1127,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
                 @Override
                 public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null && itemStack.isItemEnchanted();
+                    return !itemStack.isEmpty() && itemStack.isItemEnchanted();
                 }
             })).build());
 
@@ -1137,7 +1139,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
                 @Override
                 public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null && itemStack.isItemEnchantable();
+                    return !itemStack.isEmpty() && itemStack.isItemEnchantable();
                 }
             })).build());
 
@@ -1149,7 +1151,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
                 @Override
                 public Integer getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null ? itemStack.getRepairCost() : 0;
+                    return !itemStack.isEmpty() ? itemStack.getRepairCost() : 0;
                 }
             })).build());
 
@@ -1162,7 +1164,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                    return ValueTypeString.ValueString.of(a.getRawValue().isPresent() ? a.getRawValue().get().getRarity().rarityName : "");
+                    return ValueTypeString.ValueString.of(!a.getRawValue().isEmpty() ? a.getRawValue().getRarity().rarityName : "");
                 }
             }).build());
 
@@ -1177,7 +1179,7 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
-                    return ValueTypeDouble.ValueDouble.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() ? a.getRawValue().get().getStrVsBlock(b.getRawValue().get()) : 0);
+                    return ValueTypeDouble.ValueDouble.of(!a.getRawValue().isEmpty() && b.getRawValue().isPresent() ? a.getRawValue().getStrVsBlock(b.getRawValue().get()) : 0);
                 }
             }).build());
 
@@ -1192,7 +1194,7 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
-                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && b.getRawValue().isPresent() && a.getRawValue().get().canHarvestBlock(b.getRawValue().get()));
+                    return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && b.getRawValue().isPresent() && a.getRawValue().canHarvestBlock(b.getRawValue().get()));
                 }
             }).build());
 
@@ -1205,7 +1207,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                    return ValueObjectTypeBlock.ValueBlock.of((a.getRawValue().isPresent() && a.getRawValue().get().getItem() instanceof ItemBlock) ? BlockHelpers.getBlockStateFromItemStack(a.getRawValue().get()) : null);
+                    return ValueObjectTypeBlock.ValueBlock.of((!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof ItemBlock) ? BlockHelpers.getBlockStateFromItemStack(a.getRawValue()) : null);
                 }
             }).build());
 
@@ -1217,7 +1219,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
                 @Override
                 public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null && Helpers.getFluidStack(itemStack) != null;
+                    return !itemStack.isEmpty() && Helpers.getFluidStack(itemStack) != null;
                 }
             })).build());
 
@@ -1230,7 +1232,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                    return ValueObjectTypeFluidStack.ValueFluidStack.of(a.getRawValue().isPresent() ? Helpers.getFluidStack(a.getRawValue().get()) : null);
+                    return ValueObjectTypeFluidStack.ValueFluidStack.of(!a.getRawValue().isEmpty() ? Helpers.getFluidStack(a.getRawValue()) : null);
                 }
             }).build());
 
@@ -1242,7 +1244,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
                 @Override
                 public Integer getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null ? Helpers.getFluidStackCapacity(itemStack) : 0;
+                    return !itemStack.isEmpty() ? Helpers.getFluidStackCapacity(itemStack) : 0;
                 }
             })).build());
 
@@ -1254,12 +1256,12 @@ public final class Operators {
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
-                    Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
+                    ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+                    ItemStack b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
                     boolean equal = false;
-                    if(a.isPresent() && b.isPresent()) {
-                        equal = a.get().isItemEqual(b.get()) && ItemStack.areItemStackTagsEqual(a.get(), b.get());
-                    } else if(!a.isPresent() && !b.isPresent()) {
+                    if(!a.isEmpty() && !b.isEmpty()) {
+                        equal = a.isItemEqual(b) && ItemStack.areItemStackTagsEqual(a, b);
+                    } else if(a.isEmpty() && b.isEmpty()) {
                         equal = true;
                     }
                     return ValueTypeBoolean.ValueBoolean.of(equal);
@@ -1274,12 +1276,12 @@ public final class Operators {
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
-                    Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
+                    ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+                    ItemStack b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
                     boolean equal = false;
-                    if(a.isPresent() && b.isPresent()) {
-                        equal = ItemStack.areItemsEqual(a.get(), b.get());
-                    } else if(!a.isPresent() && !b.isPresent()) {
+                    if(!a.isEmpty() && !b.isEmpty()) {
+                        equal = ItemStack.areItemsEqual(a, b);
+                    } else if(a.isEmpty() && b.isEmpty()) {
                         equal = true;
                     }
                     return ValueTypeBoolean.ValueBoolean.of(equal);
@@ -1294,12 +1296,12 @@ public final class Operators {
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    Optional<ItemStack> a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
-                    Optional<ItemStack> b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
+                    ItemStack a = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(0)).getRawValue();
+                    ItemStack b = ((ValueObjectTypeItemStack.ValueItemStack) variables.getValue(1)).getRawValue();
                     boolean equal = false;
-                    if(a.isPresent() && b.isPresent()) {
-                        equal = ItemStack.areItemsEqualIgnoreDurability(a.get(), b.get());
-                    } else if(!a.isPresent() && !b.isPresent()) {
+                    if(!a.isEmpty() && !b.isEmpty()) {
+                        equal = ItemStack.areItemsEqualIgnoreDurability(a, b);
+                    } else if(a.isEmpty() && b.isEmpty()) {
                         equal = true;
                     }
                     return ValueTypeBoolean.ValueBoolean.of(equal);
@@ -1315,7 +1317,7 @@ public final class Operators {
                         @Override
                         public ResourceLocation getOutput(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                             ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                            return a.getRawValue().isPresent() ? Item.REGISTRY.getNameForObject(a.getRawValue().get().getItem()) : null;
+                            return !a.getRawValue().isEmpty() ? Item.REGISTRY.getNameForObject(a.getRawValue().getItem()) : null;
                         }
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
@@ -1329,7 +1331,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(new IOperatorValuePropagator<ItemStack, Integer>() {
                 @Override
                 public Integer getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null ? TileEntityFurnace.getItemBurnTime(itemStack) : 0;
+                    return !itemStack.isEmpty() ? TileEntityFurnace.getItemBurnTime(itemStack) : 0;
                 }
             })).build());
 
@@ -1353,7 +1355,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(new IOperatorValuePropagator<ItemStack, Boolean>() {
                 @Override
                 public Boolean getOutput(ItemStack itemStack) throws EvaluationException {
-                    return itemStack != null && FurnaceRecipes.instance().getSmeltingResult(itemStack) != null;
+                    return itemStack != null && !FurnaceRecipes.instance().getSmeltingResult(itemStack).isEmpty();
                 }
             })).build());
 
@@ -1367,8 +1369,8 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
-                    if(a.getRawValue().isPresent()) {
-                        for (int i : OreDictionary.getOreIDs(a.getRawValue().get())) {
+                    if(!a.getRawValue().isEmpty()) {
+                        for (int i : OreDictionary.getOreIDs(a.getRawValue())) {
                             builder.add(ValueTypeString.ValueString.of(OreDictionary.getOreName(i)));
                         }
                     }
@@ -1406,9 +1408,9 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     ValueTypeInteger.ValueInteger b = variables.getValue(1);
-                    if (a.getRawValue().isPresent()) {
-                        ItemStack itemStack = a.getRawValue().get().copy();
-                        itemStack.stackSize = b.getRawValue();
+                    if (!a.getRawValue().isEmpty()) {
+                        ItemStack itemStack = a.getRawValue().copy();
+                        itemStack.setCount(b.getRawValue());
                         return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
                     }
                     return a;
@@ -1451,6 +1453,20 @@ public final class Operators {
                 }
             })).build());
 
+
+    /**
+     * If the given item has an inventory.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_HASINVENTORY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("hasinventory")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
+                }
+            }).build());
+
     /**
      * If the item is plantable
      */
@@ -1460,8 +1476,30 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                    return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
-                            && a.getRawValue().get().getItem() instanceof IPlantable);
+                    return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty()
+                            && a.getRawValue().getItem() instanceof IPlantable);
+                }
+            }).build());
+
+
+
+
+    /**
+     * Retrieve the inventory size of the given item handler contents.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_INVENTORYSIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("inventorysize")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    int size = 0;
+                    if (!a.getRawValue().isEmpty()
+                            && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                        IItemHandler itemHandler = a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                        size = itemHandler.getSlots();
+                    }
+                    return ValueTypeInteger.ValueInteger.of(size);
                 }
             }).build());
 
@@ -1475,10 +1513,32 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     String type = "None";
-                    if (a.getRawValue().isPresent() && a.getRawValue().get().getItem() instanceof IPlantable) {
-                        type = ((IPlantable) a.getRawValue().get().getItem()).getPlantType(null, null).name();
+                    if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof IPlantable) {
+                        type = ((IPlantable) a.getRawValue().getItem()).getPlantType(null, null).name();
                     }
                     return ValueTypeString.ValueString.of(type);
+                }
+            }).build());
+
+    /**
+     * Retrieve the inventory of the given item handler contents.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_INVENTORY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("inventory")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
+                    if (!a.getRawValue().isEmpty()
+                            && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                        IItemHandler itemHandler = a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                        List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.getSlots());
+                        for (int i = 0; i < itemHandler.getSlots(); i++) {
+                            values.add(ValueObjectTypeItemStack.ValueItemStack.of(itemHandler.getStackInSlot(i)));
+                        }
+                        return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
+                    }
+                    return ValueTypes.LIST.getDefault();
                 }
             }).build());
 
@@ -1492,8 +1552,8 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     IBlockState plant = null;
-                    if (a.getRawValue().isPresent() && a.getRawValue().get().getItem() instanceof IPlantable) {
-                        plant = ((IPlantable) a.getRawValue().get().getItem()).getPlant(null, null);
+                    if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof IPlantable) {
+                        plant = ((IPlantable) a.getRawValue().getItem()).getPlant(null, null);
                     }
                     return ValueObjectTypeBlock.ValueBlock.of(plant);
                 }
@@ -1560,7 +1620,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
-                    return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : null);
+                    return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : ItemStack.EMPTY);
                 }
             }).build());
 
@@ -1659,7 +1719,7 @@ public final class Operators {
                     Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
                     if(a.isPresent()) {
                         Entity entity = a.get();
-                        return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.worldObj, entity));
+                        return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.world, entity));
                     } else {
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.<ValueObjectTypeEntity.ValueEntity>emptyList());
                     }
@@ -1677,7 +1737,7 @@ public final class Operators {
                     Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
                     if(a.isPresent()) {
                         Entity entity = a.get();
-                        return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.worldObj, entity));
+                        return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.world, entity));
                     } else {
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.<ValueObjectTypeEntity.ValueEntity>emptyList());
                     }
@@ -1726,9 +1786,9 @@ public final class Operators {
                         Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
                         Vec3d direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
-                        RayTraceResult mop = entity.worldObj.rayTraceBlocks(origin, direction, true);
+                        RayTraceResult mop = entity.world.rayTraceBlocks(origin, direction, true);
                         if(mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
-                            blockState = entity.worldObj.getBlockState(mop.getBlockPos());
+                            blockState = entity.world.getBlockState(mop.getBlockPos());
                         }
                     }
                     return ValueObjectTypeBlock.ValueBlock.of(blockState);
@@ -1756,7 +1816,7 @@ public final class Operators {
                         Vec3d direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
                         float size = entity.getCollisionBorderSize();
-                        List<Entity> list = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity,
+                        List<Entity> list = entity.world.getEntitiesWithinAABBExcludingEntity(entity,
                                 entity.getEntityBoundingBox().addCoord(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance)
                                         .expand((double) size, (double) size, (double) size));
                         for (Entity e : list) {
@@ -2000,8 +2060,8 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1);
                     boolean canBreedWith = false;
-                    if (a.getRawValue().isPresent() && b.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityAnimal) {
-                        canBreedWith = ((EntityAnimal) a.getRawValue().get()).isBreedingItem(b.getRawValue().get());
+                    if (a.getRawValue().isPresent() && !b.getRawValue().isEmpty() && a.getRawValue().get() instanceof EntityAnimal) {
+                        canBreedWith = ((EntityAnimal) a.getRawValue().get()).isBreedingItem(b.getRawValue());
                     }
                     return ValueTypeBoolean.ValueBoolean.of(canBreedWith);
                 }

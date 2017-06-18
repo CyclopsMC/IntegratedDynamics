@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.recipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -35,7 +36,7 @@ public class ItemBlockEnergyContainerCombinationRecipe implements IRecipe {
 
 	@Override
 	public boolean matches(InventoryCrafting grid, World world) {
-		return getCraftingResult(grid) != null;
+		return !getCraftingResult(grid).isEmpty();
 	}
 	
 	@Override
@@ -49,12 +50,12 @@ public class ItemBlockEnergyContainerCombinationRecipe implements IRecipe {
 	}
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inventory) {
-		ItemStack[] aitemstack = new ItemStack[inventory.getSizeInventory()];
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inventory) {
+		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
 
-        for (int i = 0; i < aitemstack.length; ++i) {
+        for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getStackInSlot(i);
-            aitemstack[i] =  net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+            aitemstack.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
         }
 
         return aitemstack;
@@ -72,21 +73,21 @@ public class ItemBlockEnergyContainerCombinationRecipe implements IRecipe {
 		// Loop over the grid and count the total contents and capacity + collect energy.
 		for(int j = 0; j < grid.getSizeInventory(); j++) {
 			ItemStack element = grid.getStackInSlot(j);
-			if(element != null) {
+			if(!element.isEmpty()) {
 				if(element.getItem() == batteryItem) {
 					IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(CapabilityEnergy.ENERGY, null);
 					inputItems++;
 					totalEnergy = Helpers.addSafe(totalEnergy, currentEnergyStorage.getEnergyStored());
 					totalCapacity = Helpers.addSafe(totalCapacity, currentEnergyStorage.getMaxEnergyStored());
 				} else {
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}
 		}
 		
 		if(inputItems < 2
 				|| totalCapacity > this.maxCapacity) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 		
 		// Set capacity and fill fluid into output.

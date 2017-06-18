@@ -58,52 +58,52 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float motionX, float motionY, float motionZ) {
-            TileDryingBasin tile = TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class);
-            if (tile != null) {
-                ItemStack itemStack = player.inventory.getCurrentItem();
-                IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
-                SingleUseTank tank = tile.getTank();
-                ItemStack tileStack = tile.getStackInSlot(0);
+    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, EnumFacing side, float motionX, float motionY, float motionZ) {
+        TileDryingBasin tile = TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class);
+        if (tile != null) {
+            ItemStack itemStack = player.inventory.getCurrentItem();
+            IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
+            SingleUseTank tank = tile.getTank();
+            ItemStack tileStack = tile.getStackInSlot(0);
 
-                // Menril production achievement
-                if (tileStack != null && tileStack.getItem() == Item.getItemFromBlock(BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance())) {
-                    player.addStat(Achievements.MENRIL_PRODUCTION);
-                }
-
-                if (itemStack == null && tileStack != null) {
-                    player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
-                    tile.setInventorySlotContents(0, null);
-                    tile.sendUpdate();
-                    return true;
-                } else if(player.inventory.addItemStackToInventory(tileStack)){
-                    tile.setInventorySlotContents(0, null);
-                    tile.sendUpdate();
-                    return true;
-                } else if (itemFluidHandler != null && !tank.isFull()
-                        && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false) != null) {
-                    ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
-                    InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
-                    tile.sendUpdate();
-                    return true;
-                } else if (itemFluidHandler != null && !tank.isEmpty() &&
-                        FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false) != null) {
-                    ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
-                    InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
-                    return true;
-                } else if (itemStack != null && tileStack == null) {
-                    tile.setInventorySlotContents(0, itemStack.splitStack(1));
-                    if(itemStack.stackSize <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-                    tile.sendUpdate();
-                    return true;
-                }
+            // Menril production achievement
+            if (!tileStack.isEmpty() && tileStack.getItem() == Item.getItemFromBlock(BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance())) {
+                player.addStat(Achievements.MENRIL_PRODUCTION);
             }
+
+            if (itemStack.isEmpty() && !tileStack.isEmpty()) {
+                player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
+                tile.setInventorySlotContents(0, ItemStack.EMPTY);
+                tile.sendUpdate();
+                return true;
+            } else if(player.inventory.addItemStackToInventory(tileStack)){
+                tile.setInventorySlotContents(0, ItemStack.EMPTY);
+                tile.sendUpdate();
+                return true;
+            } else if (itemFluidHandler != null && !tank.isFull()
+                    && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
+                ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
+                InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                tile.sendUpdate();
+                return true;
+            } else if (itemFluidHandler != null && !tank.isEmpty() &&
+                    FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
+                ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
+                InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                return true;
+            } else if (!itemStack.isEmpty() && tileStack.isEmpty()) {
+                tile.setInventorySlotContents(0, itemStack.splitStack(1));
+                if(itemStack.getCount() <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
+                tile.sendUpdate();
+                return true;
+            }
+        }
         return false;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos blockPos, AxisAlignedBB area, List<AxisAlignedBB> collisionBoxes, Entity entity) {
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos blockPos, AxisAlignedBB area, List<AxisAlignedBB> collisionBoxes, Entity entity, boolean useProvidedState) {
         float f = 0.125F;
         BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.3125F, 1.0F));
         BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, 0.0F, 0.0F, f, 1.0F, 1.0F));

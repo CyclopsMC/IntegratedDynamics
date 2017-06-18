@@ -66,7 +66,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float motionX, float motionY, float motionZ) {
+    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, EnumFacing side, float motionX, float motionY, float motionZ) {
         if (world.isRemote) {
             return true;
         } else if(world.getBlockState(blockPos).getValue(BlockSqueezer.HEIGHT) == 1) {
@@ -75,19 +75,19 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
                 ItemStack itemStack = player.inventory.getCurrentItem();
                 ItemStack tileStack = tile.getStackInSlot(0);
 
-                if (itemStack == null && tileStack != null) {
+                if (itemStack.isEmpty() && !tileStack.isEmpty()) {
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
-                    tile.setInventorySlotContents(0, null);
+                    tile.setInventorySlotContents(0, ItemStack.EMPTY);
                     tile.sendUpdate();
                     return true;
                 } else if(player.inventory.addItemStackToInventory(tileStack)){
-                    tile.setInventorySlotContents(0, null);
+                    tile.setInventorySlotContents(0, ItemStack.EMPTY);
                     tile.sendUpdate();
                     return true;
-                } else if (itemStack != null && tile.getStackInSlot(0) == null) {
+                } else if (!itemStack.isEmpty() && tile.getStackInSlot(0).isEmpty()) {
                     tile.setInventorySlotContents(0, itemStack.splitStack(1));
-                    if (itemStack.stackSize <= 0)
-                        player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+                    if (itemStack.getCount() <= 0)
+                        player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
                     tile.sendUpdate();
                     return true;
                 }
@@ -102,14 +102,14 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
         super.onLanded(worldIn, entityIn);
         if(!worldIn.isRemote && motionY <= -0.37D && entityIn instanceof EntityLivingBase) {
             // Same way of deriving blockPos as is done in Entity#moveEntity
-            int i = MathHelper.floor_double(entityIn.posX);
-            int j = MathHelper.floor_double(entityIn.posY - 0.2D);
-            int k = MathHelper.floor_double(entityIn.posZ);
+            int i = MathHelper.floor(entityIn.posX);
+            int j = MathHelper.floor(entityIn.posY - 0.2D);
+            int k = MathHelper.floor(entityIn.posZ);
             BlockPos blockPos = new BlockPos(i, j, k);
             IBlockState blockState = worldIn.getBlockState(blockPos);
 
             // The faster the entity is falling, the more steps to advance by
-            int steps = 1 + MathHelper.floor_double((-motionY - 0.37D) * 5);
+            int steps = 1 + MathHelper.floor((-motionY - 0.37D) * 5);
 
             if((entityIn.posY - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
                 if (blockState.getBlock() == this) { // Just to be sure...
@@ -124,8 +124,8 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block neighborBlock) {
-        super.neighborChanged(state, worldIn, pos, neighborBlock);
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
+        super.neighborChanged(state, worldIn, pos, neighborBlock, fromPos);
         if(!worldIn.isRemote) {
             for (EnumFacing enumfacing : EnumFacing.values()) {
                 if (worldIn.isSidePowered(pos.offset(enumfacing), enumfacing)) {
@@ -140,9 +140,9 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
         }
     }
 
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         EnumFacing.Axis axis = placer.getHorizontalFacing().getAxis();
-        return super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(AXIS, BlockSqueezer.EnumAxis.fromFacingAxis(axis));
+        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(AXIS, BlockSqueezer.EnumAxis.fromFacingAxis(axis));
     }
 
     public float getRelativeTopPositionTop(IBlockAccess world, BlockPos blockPos, IBlockState blockState) {
@@ -151,7 +151,11 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
 
     @SuppressWarnings("deprecation")
     @Override
-    public void addCollisionBoxToList(IBlockState blockState, World world, BlockPos blockPos, AxisAlignedBB area, List<AxisAlignedBB> collisionBoxes, Entity entity) {
+    public void addCollisionBoxToList(IBlockState blockState, World world, BlockPos blockPos, AxisAlignedBB area, List<AxisAlignedBB> collisionBoxes, Entity entity, boolean useProvidedState) {
+        if (!useProvidedState) {
+            blockState = blockState.getActualState(world, blockPos);
+        }
+
         // Bottom
         BlockHelpers.addCollisionBoxToList(blockPos, area, collisionBoxes, new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F));
 

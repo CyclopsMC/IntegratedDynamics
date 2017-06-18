@@ -4,10 +4,10 @@
 	<recipe type="integrateddynamics:squeezer">
 		<tag>base</tag>
 		<condition type="config">squeezer</condition>
-		<condition type="config">menrilLog</condition>
+		<condition type="config">menril_log</condition>
 		<condition type="config">menrilresin</condition>
 		<input>
-			<item>integrateddynamics:menrilLog</item>
+			<item>integrateddynamics:menril_log</item>
 		</input>
 		<output>
 			<fluid amount="1000">menrilresin</fluid>

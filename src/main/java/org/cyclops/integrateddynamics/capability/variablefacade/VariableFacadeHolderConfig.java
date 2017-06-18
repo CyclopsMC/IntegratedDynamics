@@ -30,7 +30,7 @@ public class VariableFacadeHolderConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "variableFacadeHolder",
+                "variable_facade_holder",
                 "Allows holding of variable facades.",
                 IVariableFacadeHolder.class,
                 new DefaultCapabilityStorage<IVariableFacadeHolder>(),

@@ -69,8 +69,8 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     @Override
     protected void enableSlot(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex);
-        slot.xDisplayPosition = SLOT_X;
-        slot.yDisplayPosition = SLOT_Y + ASPECT_BOX_HEIGHT * row;
+        slot.xPos = SLOT_X;
+        slot.yPos = SLOT_Y + ASPECT_BOX_HEIGHT * row;
     }
 
     @Override

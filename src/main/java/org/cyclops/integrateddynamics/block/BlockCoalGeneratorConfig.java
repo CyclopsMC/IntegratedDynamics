@@ -21,7 +21,7 @@ public class BlockCoalGeneratorConfig extends BlockContainerConfig {
         super(
             IntegratedDynamics._instance,
             true,
-            "coalGenerator",
+            "coal_generator",
             null,
             BlockCoalGenerator.class
         );

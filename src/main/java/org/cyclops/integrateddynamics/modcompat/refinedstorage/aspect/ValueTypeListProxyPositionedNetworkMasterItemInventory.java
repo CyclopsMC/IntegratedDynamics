@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.raoulvdberge.refinedstorage.api.network.INetworkMaster;
-import com.raoulvdberge.refinedstorage.api.storage.item.IItemStorage;
+import com.raoulvdberge.refinedstorage.api.storage.IStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -45,10 +45,10 @@ public class ValueTypeListProxyPositionedNetworkMasterItemInventory extends Valu
                 if (networkMaster == null) {
                     return null;
                 }
-                List<List<ItemStack>> itemStacksLists = Lists.transform(networkMaster.getItemStorageCache().getStorages(), new Function<IItemStorage, List<ItemStack>>() {
+                List<List<ItemStack>> itemStacksLists = Lists.transform(networkMaster.getItemStorageCache().getStorages(), new Function<IStorage<ItemStack>, List<ItemStack>>() {
                     @Nullable
                     @Override
-                    public List<ItemStack> apply(@Nullable IItemStorage itemStorage) {
+                    public List<ItemStack> apply(@Nullable IStorage<ItemStack> itemStorage) {
                         return itemStorage.getStacks();
                     }
                 });

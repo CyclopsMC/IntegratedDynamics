@@ -58,8 +58,8 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">minefactoryreloaded</condition>
         <tag>convenience</tag>
-        <condition type="mod">MineFactoryReloaded</condition>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:brown_mushroom</item>
@@ -70,8 +70,8 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
+        <condition type="mod">minefactoryreloaded</condition>
         <tag>convenience</tag>
-        <condition type="mod">MineFactoryReloaded</condition>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:red_mushroom</item>
@@ -86,10 +86,10 @@
         <condition type="mod">evilcraft</condition>
         <condition type="config">squeezer</condition>
         <input>
-            <item>evilcraft:darkOre</item>
+            <item>evilcraft:dark_ore</item>
         </input>
         <output>
-            <item amount="2">evilcraft:darkGem</item>
+            <item amount="2">evilcraft:dark_gem</item>
         </output>
     </recipe>
 
@@ -98,10 +98,10 @@
         <condition type="mod">evilcraft</condition>
         <condition type="config">squeezer</condition>
         <input>
-            <item>evilcraft:darkGem</item>
+            <item>evilcraft:dark_gem</item>
         </input>
         <output>
-            <item>evilcraft:darkGemCrushed</item>
+            <item>evilcraft:dark_gem_crushed</item>
         </output>
     </recipe>
 
@@ -110,7 +110,7 @@
         <condition type="mod">evilcraft</condition>
         <condition type="config">squeezer</condition>
         <input>
-            <item>evilcraft:undeadLog</item>
+            <item>evilcraft:undead_log</item>
         </input>
         <output>
             <fluid amount="100">evilcraftblood</fluid>
@@ -122,11 +122,11 @@
         <condition type="mod">evilcraft</condition>
         <condition type="config">squeezer</condition>
         <input>
-            <item>evilcraft:undeadLeaves</item>
+            <item>evilcraft:undead_leaves</item>
         </input>
         <output>
             <fluid amount="50">evilcraftblood</fluid>
-            <item>evilcraft:hardenedBloodShard</item>
+            <item>evilcraft:hardened_blood_shard</item>
         </output>
     </recipe>
 
@@ -226,7 +226,7 @@
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
-            <item meta="0">forestry:honeyDrop</item>
+            <item meta="0">forestry:honey_drop</item>
         </input>
         <output>
             <fluid amount="180">for.honey</fluid>

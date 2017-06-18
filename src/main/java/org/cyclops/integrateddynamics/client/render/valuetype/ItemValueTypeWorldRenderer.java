@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.google.common.base.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -25,15 +24,15 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
                             int destroyStage, EnumFacing direction, IPartType partType, IValue value,
                             TileEntityRendererDispatcher rendererDispatcher, float alpha) {
-        Optional<ItemStack> itemStackOptional = ((ValueObjectTypeItemStack.ValueItemStack) value).getRawValue();
-        if(itemStackOptional.isPresent()) {
+        ItemStack itemStackOptional = ((ValueObjectTypeItemStack.ValueItemStack) value).getRawValue();
+        if(!itemStackOptional.isEmpty()) {
             // ItemStack
-            renderItemStack(itemStackOptional.get(), alpha);
+            renderItemStack(itemStackOptional, alpha);
 
             // Stack size
             GlStateManager.pushMatrix();
             GlStateManager.translate(7F, 8.5F, 0.3F);
-            String stackSize = String.valueOf(itemStackOptional.get().stackSize);
+            String stackSize = String.valueOf(itemStackOptional.getCount());
             float scale = 1F / ((float) stackSize.length() + 1F);
             GlStateManager.scale(scale, scale, 1F);
             rendererDispatcher.getFontRenderer().drawString(stackSize,

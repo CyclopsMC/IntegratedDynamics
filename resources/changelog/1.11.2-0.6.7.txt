@@ -1,0 +1,22 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.9.1 or higher.
+
+Additions:
+* Add Menril Stone Torch, Closes #114
+* Add recipe for clearing part id's in a crafting grid, Closes CyclopsMC/IntegratedTunnels#13
+* Added category tooltips
+* Added localization for configuration gui
+* Added config GUI restriction
+
+Changes:
+* Add 'torch' oredict entries for Menril Torches
+* Improved item collecting from Squeezer and Drying Basin
+
+Fixes:
+* Fix Energy Battery causing too many unneeded block updates, Closes #117
+* Fix incorrect Menril Torch recipe, Closes #115
+* Fix cable not always visually connecting when placing on a part, Closes #102
+* Fix recipes still using null ItemStacks
+* Fix bucket fill and empty sounds not being heard by the player, Closes #106
+* Fix wrench not rotating all blocks, Closes #107
+* Fix oredict recipe entries being incorrect, #108

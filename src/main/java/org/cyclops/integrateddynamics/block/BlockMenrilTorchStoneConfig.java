@@ -32,7 +32,7 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 true,
-                "menrilTorchStone",
+                "menril_torch_stone",
                 null,
                 null
         );

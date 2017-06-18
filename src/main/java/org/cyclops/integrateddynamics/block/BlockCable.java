@@ -193,7 +193,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-                                    EnumHand hand, ItemStack heldItem, EnumFacing side,
+                                    EnumHand hand, EnumFacing side,
                                     float hitX, float hitY, float hitZ) {
         /*
             Wrench: sneak + right-click anywhere on cable to remove cable
@@ -202,6 +202,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
             No wrench: right-click to open GUI
          */
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
+        ItemStack heldItem = player.getHeldItem(hand);
         if(tile != null) {
             RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
             if(rayTraceResult != null) {
@@ -209,7 +210,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
                 if(rayTraceResult.getCollisionType() == FACADE_COMPONENT) {
                     if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
                         FACADE_COMPONENT.destroy(world, pos, side, player);
-                        world.notifyNeighborsOfStateChange(pos, this);
+                        world.notifyNeighborsOfStateChange(pos, this, true);
                         return true;
                     }
                     return false;
@@ -235,7 +236,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
                 }
             }
         }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
     @Override
@@ -267,8 +268,8 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
-        super.neighborChanged(state, world, pos, neighborBlock);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
+        super.neighborChanged(state, world, pos, neighborBlock, fromPos);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock);
     }
 
@@ -284,7 +285,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @SuppressWarnings("deprecation")
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         if(disableCollisionBox) return new AxisAlignedBB(0, 0, 0, 0, 0, 0);
         return super.getCollisionBoundingBox(blockState, worldIn, pos);
     }

@@ -91,8 +91,8 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
     @Override
     public void onDirty() {
         super.onDirty();
-        if(!worldObj.isRemote) {
-            if (getStackInSlot(SLOT_WRITE_IN) != null && getStackInSlot(SLOT_WRITE_OUT) == null) {
+        if(!world.isRemote) {
+            if (!getStackInSlot(SLOT_WRITE_IN).isEmpty() && getStackInSlot(SLOT_WRITE_OUT).isEmpty()) {
                 // Write proxy reference
                 ItemStack outputStack = writeProxyInfo(!getWorld().isRemote, removeStackFromSlot(SLOT_WRITE_IN), proxyId);
                 setInventorySlotContents(SLOT_WRITE_OUT, outputStack);

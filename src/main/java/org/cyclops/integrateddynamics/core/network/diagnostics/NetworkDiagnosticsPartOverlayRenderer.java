@@ -51,7 +51,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
     @SubscribeEvent
     public void onRender(RenderWorldLastEvent event) {
         if (!partPositions.isEmpty()) {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            EntityPlayer player = Minecraft.getMinecraft().player;
             float partialTicks = event.getPartialTicks();
 
             double offsetX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
@@ -67,14 +67,14 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (Iterator<PartPos> it = partList.iterator(); it.hasNext(); ) {
                 PartPos partPos = it.next();
-                if (partPos.getPos().getDimensionId() == player.worldObj.provider.getDimension() && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
+                if (partPos.getPos().getDimensionId() == player.world.provider.getDimension() && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
                     if (partStateHolder != null) {
                         AxisAlignedBB bb = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide())
                                 .offset(partPos.getPos().getBlockPos())
                                 .offset(-offsetX, -offsetY, -offsetZ)
                                 .expand(0.05, 0.05, 0.05);
-                        RenderGlobal.func_189697_a(bb, 1.0F, 0.2F, 0.1F, 0.8F);
+                        RenderGlobal.drawSelectionBoundingBox(bb, 1.0F, 0.2F, 0.1F, 0.8F);
                     } else {
                         it.remove();
                     }

@@ -298,10 +298,10 @@ public class TestEntityOperators {
     public void testBlockItemStack() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an itemstack");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().isPresent(), false, "itemstack(zombie) = null");
+        TestHelpers.assertEqual(!((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().isEmpty(), false, "itemstack(zombie) = null");
 
         IValue res2 = Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{eItem});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().isItemEqual(new ItemStack(Blocks.AIR)), true, "itemstack(item:air) = air");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().isEmpty(), true, "itemstack(null) = null");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -556,7 +556,7 @@ public class TestEntityOperators {
     public void testEntityHeldItemMain() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{eZombieHeldItems});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getItem(), Items.APPLE, "helditemmain(zombie) = apple");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getItem(), Items.APPLE, "helditemmain(zombie) = apple");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -582,7 +582,7 @@ public class TestEntityOperators {
     public void testEntityHeldItemOff() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{eZombieHeldItems});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getItem(), Items.POTATO, "helditemoff(zombie) = potato");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getItem(), Items.POTATO, "helditemoff(zombie) = potato");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -635,7 +635,7 @@ public class TestEntityOperators {
     public void testEntityItemframeContents() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{eItemframe});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getItem(), Items.POTATO, "itemframecontents(itemframe) = potato");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getItem(), Items.POTATO, "itemframecontents(itemframe) = potato");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

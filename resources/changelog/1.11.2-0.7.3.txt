@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.5 or higher.
+
+Changes:
+* Clarify need of operator variables in infobook, Closes #190
+* Update zh_CN file
+
+Fixes:
+* Fix CME when changing part priorities, Closes CyclopsMC/IntegratedTunnels#34
+* Fix crash when setting filledMenrilLogChance to zero, Closes #188
+* Fix Menril Trees not spawning when Meneglin Biome is disabled, #186
+* Fix NPE when filtering lists of items, Closes #185
+* Fix variable card localized tooltip

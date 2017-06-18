@@ -81,10 +81,8 @@ import org.cyclops.integrateddynamics.modcompat.forestry.ForestryModCompat;
 import org.cyclops.integrateddynamics.modcompat.ic2.Ic2ModCompat;
 import org.cyclops.integrateddynamics.modcompat.immersiveengineering.ImmersiveEngineeringModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
-import org.cyclops.integrateddynamics.modcompat.mcmultipart.McMultiPartModCompat;
 import org.cyclops.integrateddynamics.modcompat.minetweaker.MineTweakerModCompat;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
-import org.cyclops.integrateddynamics.modcompat.rf.RfApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tconstruct.TConstructModCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.*;
@@ -175,9 +173,10 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     protected void loadModCompats(ModCompatLoader modCompatLoader) {
         super.loadModCompats(modCompatLoader);
+        // TODO: temporarily disable some mod compats
         // Mod compats
         modCompatLoader.addModCompat(new CharsetPipesModCompat());
-        modCompatLoader.addModCompat(new McMultiPartModCompat());
+        //modCompatLoader.addModCompat(new McMultiPartModCompat());
         modCompatLoader.addModCompat(new WailaModCompat());
         //modCompatLoader.addModCompat(new ThaumcraftModCompat());
         modCompatLoader.addModCompat(new JEIModCompat());
@@ -189,8 +188,6 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new RefinedStorageModCompat());
         modCompatLoader.addModCompat(new ImmersiveEngineeringModCompat());
         modCompatLoader.addModCompat(new MineTweakerModCompat());
-
-        modCompatLoader.addApiCompat(new RfApiCompat());
     }
 
     @Mod.EventHandler
@@ -291,6 +288,12 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     public void onServerStopping(FMLServerStoppingEvent event) {
         super.onServerStopping(event);
+    }
+
+    @Mod.EventHandler
+    @Override
+    public void onMissingMappings(FMLMissingMappingsEvent event) {
+        super.onMissingMappings(event);
     }
 
     @Override

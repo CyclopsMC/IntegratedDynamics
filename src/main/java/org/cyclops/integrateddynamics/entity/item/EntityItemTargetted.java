@@ -98,7 +98,7 @@ public class EntityItemTargetted extends EntityItem {
 		double dz = this.posZ - target.getZ();
 		double strength = -0.1;
 
-		double d = MathHelper.sqrt_double(dx * dx + dy * dy + dz * dz);
+		double d = MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
 		if(d > 1D) {
 			double m = 1 / (2 * (Math.max(1, d)));
 			dx *= m;
@@ -112,21 +112,21 @@ public class EntityItemTargetted extends EntityItem {
 			}
 		}
 
-		if(worldObj.isRemote) {
+		if(world.isRemote) {
 			showEntityMoved();
 		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	protected void showEntityMoved() {
-		Random rand = worldObj.rand;
+		Random rand = world.rand;
 		float scale = 0.05F;
 		float red = rand.nextFloat() * 0.10F + 0.5F;
 		float green = rand.nextFloat() * 0.10F + 0.5F;
 		float blue = rand.nextFloat() * 0.20F + 0.80F;
 		float ageMultiplier = (float) (rand.nextDouble() * 2.5D + 10D);
 
-		ParticleBlur blur = new ParticleBlur(worldObj, this.posX, this.posY + 0.5D, this.posZ, scale,
+		ParticleBlur blur = new ParticleBlur(world, this.posX, this.posY + 0.5D, this.posZ, scale,
 				0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2,
 				red, green, blue, ageMultiplier);
 		Minecraft.getMinecraft().effectRenderer.addEffect(blur);
@@ -141,7 +141,7 @@ public class EntityItemTargetted extends EntityItem {
 			double x = this.posX - dx * factor;
 			double y = this.posY - dy * factor;
 			double z = this.posZ - dz * factor;
-			ParticleBlur blur2 = new ParticleBlur(worldObj, x, y, z, scale,
+			ParticleBlur blur2 = new ParticleBlur(world, x, y, z, scale,
 					-0.02 * dx, -0.02 * dy, -0.02 * dz, red, green, blue, ageMultiplier);
 			Minecraft.getMinecraft().effectRenderer.addEffect(blur2);
 		}

@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.modcompat.forestry;
 
 import forestry.api.recipes.RecipeManagers;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
@@ -25,12 +26,13 @@ public class ForestryRecipeManager {
     public static void register() {
         IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = BlockSqueezer.getInstance().getRecipeRegistry().findRecipeByOutput(
                 new ItemAndFluidStackRecipeComponent(
-                        (ItemStack) null, new FluidStack(FluidMenrilResin.getInstance(), Fluid.BUCKET_VOLUME)));
+                        ItemStack.EMPTY, new FluidStack(FluidMenrilResin.getInstance(), Fluid.BUCKET_VOLUME)));
 
         // Register Menril Resin squeezer recipe.
         if(recipe != null) {
             int time = 20;
-            ItemStack[] input = {recipe.getInput().getItemStack()};
+            NonNullList<ItemStack> input = NonNullList.create();
+            input.add(recipe.getInput().getItemStack());
             FluidStack fluidStack = recipe.getOutput().getFluidStack();
             ItemStack output = new ItemStack(ItemCrystalizedMenrilChunkConfig._instance.getItemInstance());
             int outputChance = 5; // Out of 100

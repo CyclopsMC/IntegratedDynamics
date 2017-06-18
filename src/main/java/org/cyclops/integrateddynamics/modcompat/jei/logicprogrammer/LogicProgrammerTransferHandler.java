@@ -34,11 +34,6 @@ public class LogicProgrammerTransferHandler<T extends ContainerLogicProgrammerBa
         return clazz;
     }
 
-    @Override
-    public String getRecipeCategoryUid() {
-        return null;
-    }
-
     @Nullable
     @Override
     public IRecipeTransferError transferRecipe(T container, IRecipeLayout recipeLayout,

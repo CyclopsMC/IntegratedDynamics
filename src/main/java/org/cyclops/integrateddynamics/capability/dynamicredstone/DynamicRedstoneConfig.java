@@ -29,7 +29,7 @@ public class DynamicRedstoneConfig extends CapabilityConfig {
         super(
                 CommonCapabilities._instance,
                 true,
-                "dynamicRedstone",
+                "dynamic_redstone",
                 "Allows redstone level modifications.",
                 IDynamicRedstone.class,
                 new DefaultCapabilityStorage<IDynamicRedstone>(),

@@ -2,121 +2,121 @@
 <recipes>
 
 	<recipe type="shapeless">
-		<condition type="config">menrilLog</condition>
-		<condition type="config">menrilPlanks</condition>
+		<condition type="config">menril_log</condition>
+		<condition type="config">menril_planks</condition>
 		<input>
-			<item>integrateddynamics:menrilLog</item>
+			<item>integrateddynamics:menril_log</item>
 		</input>
 		<output>
-			<item amount="4">integrateddynamics:menrilPlanks</item>
+			<item amount="4">integrateddynamics:menril_planks</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">crystalizedMenrilBlock</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_block</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
-			<item>integrateddynamics:crystalizedMenrilBlock</item>
+			<item>integrateddynamics:crystalized_menril_block</item>
 		</input>
 		<output>
-			<item amount="9">integrateddynamics:crystalizedMenrilChunk</item>
+			<item amount="9">integrateddynamics:crystalized_menril_chunk</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">logicProgrammer</condition>
-		<condition type="config">crystalizedMenrilBlock</condition>
+		<condition type="config">logic_programmer</condition>
+		<condition type="config">crystalized_menril_block</condition>
 		<input>
-			<item>integrateddynamics:crystalizedMenrilBlock</item>
+			<item>integrateddynamics:crystalized_menril_block</item>
 			<item>minecraft:crafting_table</item>
 		</input>
 		<output>
-			<item>integrateddynamics:logicProgrammer</item>
+			<item>integrateddynamics:logic_programmer</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">logicProgrammer</condition>
-		<condition type="config">portableLogicProgrammer</condition>
+		<condition type="config">logic_programmer</condition>
+		<condition type="config">portable_logic_programmer</condition>
 		<input>
-			<item>integrateddynamics:logicProgrammer</item>
+			<item>integrateddynamics:logic_programmer</item>
 		</input>
 		<output>
-			<item>integrateddynamics:portableLogicProgrammer</item>
+			<item>integrateddynamics:portable_logic_programmer</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">portableLogicProgrammer</condition>
-		<condition type="config">logicProgrammer</condition>
+		<condition type="config">portable_logic_programmer</condition>
+		<condition type="config">logic_programmer</condition>
 		<input>
-			<item>integrateddynamics:portableLogicProgrammer</item>
+			<item>integrateddynamics:portable_logic_programmer</item>
 		</input>
 		<output>
-			<item>integrateddynamics:logicProgrammer</item>
+			<item>integrateddynamics:logic_programmer</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">coalGenerator</condition>
-		<condition type="config">energyBattery</condition>
+		<condition type="config">coal_generator</condition>
+		<condition type="config">energy_battery</condition>
 		<input>
-			<item>integrateddynamics:energyBattery</item>
+			<item>integrateddynamics:energy_battery</item>
 			<item>minecraft:furnace</item>
 		</input>
 		<output>
-			<item>integrateddynamics:coalGenerator</item>
+			<item>integrateddynamics:coal_generator</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">menrilTorch</condition>
-		<condition type="config">menrilBerries</condition>
+		<condition type="config">menril_torch</condition>
+		<condition type="config">menril_berries</condition>
 		<input>
 			<item type="oredict">stickWood</item>
-			<item>integrateddynamics:menrilBerries</item>
+			<item>integrateddynamics:menril_berries</item>
 		</input>
 		<output>
-			<item amount="4">integrateddynamics:menrilTorch</item>
+			<item amount="4">integrateddynamics:menril_torch</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">menrilTorchStone</condition>
-		<condition type="config">menrilBerries</condition>
+		<condition type="config">menril_torch_stone</condition>
+		<condition type="config">menril_berries</condition>
 		<condition type="oredict">rodStone</condition>
 		<input>
 			<item type="oredict">rodStone</item>
-			<item>integrateddynamics:menrilBerries</item>
+			<item>integrateddynamics:menril_berries</item>
 		</input>
 		<output>
-			<item amount="4">integrateddynamics:menrilTorchStone</item>
+			<item amount="4">integrateddynamics:menril_torch_stone</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">menrilTorchStone</condition>
-		<condition type="config">menrilBerries</condition>
+		<condition type="config">menril_torch_stone</condition>
+		<condition type="config">menril_berries</condition>
 		<input>
 			<item type="oredict">stone</item>
 			<item type="oredict">stone</item>
-			<item>integrateddynamics:menrilBerries</item>
+			<item>integrateddynamics:menril_berries</item>
 		</input>
 		<output>
-			<item amount="4">integrateddynamics:menrilTorchStone</item>
+			<item amount="4">integrateddynamics:menril_torch_stone</item>
 		</output>
 	</recipe>
 
 	<recipe type="shapeless">
-		<condition type="config">menrilTorchStone</condition>
-		<condition type="config">menrilBerries</condition>
+		<condition type="config">menril_torch_stone</condition>
+		<condition type="config">menril_berries</condition>
 		<input>
 			<item type="oredict">cobblestone</item>
 			<item type="oredict">cobblestone</item>
-			<item>integrateddynamics:menrilBerries</item>
+			<item>integrateddynamics:menril_berries</item>
 		</input>
 		<output>
-			<item amount="4">integrateddynamics:menrilTorchStone</item>
+			<item amount="4">integrateddynamics:menril_torch_stone</item>
 		</output>
 	</recipe>
 

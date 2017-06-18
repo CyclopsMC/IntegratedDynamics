@@ -90,7 +90,7 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
 
                 entity.setEntityItemStack(itemStack);
                 entity.setTarget(player);
-                world.spawnEntityInWorld(entity);
+                world.spawnEntity(entity);
             }
         }
     }

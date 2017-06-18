@@ -36,7 +36,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         if (value.getRawValue().isPresent()) {
             IBlockState blockState = value.getRawValue().get();
             ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockState);
-            if (itemStack != null) {
+            if (!itemStack.isEmpty()) {
                 return itemStack.getDisplayName();
             }
             return blockState.getBlock().getLocalizedName();

@@ -4,6 +4,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.item.ItemFacade;
@@ -17,7 +18,7 @@ public class ItemFacadeRecipe implements IRecipe {
 
 	@Override
 	public boolean matches(InventoryCrafting grid, World world) {
-		return getCraftingResult(grid) != null;
+		return !getCraftingResult(grid).isEmpty();
 	}
 	
 	@Override
@@ -31,12 +32,12 @@ public class ItemFacadeRecipe implements IRecipe {
 	}
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inventory) {
-        ItemStack[] aitemstack = new ItemStack[inventory.getSizeInventory()];
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inventory) {
+		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
 
-        for (int i = 0; i < aitemstack.length; ++i) {
+        for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getStackInSlot(i);
-            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+            aitemstack.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
         }
 
         return aitemstack;
@@ -47,23 +48,23 @@ public class ItemFacadeRecipe implements IRecipe {
 		ItemStack output = getRecipeOutput().copy();
 
 		int facades = 0;
-		ItemStack block = null;
+		ItemStack block = ItemStack.EMPTY;
 
 		for(int j = 0; j < grid.getSizeInventory(); j++) {
 			ItemStack element = grid.getStackInSlot(j);
-			if(element != null) {
+			if(!element.isEmpty()) {
 				if(element.getItem() == output.getItem()) {
 					facades++;
-				} else if(block == null && element.getItem() instanceof ItemBlock) {
+				} else if(block.isEmpty() && element.getItem() instanceof ItemBlock) {
 					block = element;
 				} else {
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}
 		}
 		
-		if(facades != 1 || block == null) {
-			return null;
+		if(facades != 1 || block.isEmpty()) {
+			return ItemStack.EMPTY;
 		}
 		
 		ItemFacade.getInstance().writeFacadeBlock(output, BlockHelpers.getBlockStateFromItemStack(block));
