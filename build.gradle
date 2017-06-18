@@ -70,7 +70,6 @@ sourceSets {
             exclude '**/modcompat/thaumcraft/**'
             exclude '**/modcompat/mcmultipart/**'
             exclude '**/modcompat/immersiveengineering/**'
-            exclude '**/modcompat/minetweaker/**'
         }
     }
 }

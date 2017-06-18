@@ -80,6 +80,7 @@ import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
 import org.cyclops.integrateddynamics.modcompat.forestry.ForestryModCompat;
 import org.cyclops.integrateddynamics.modcompat.ic2.Ic2ModCompat;
 import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
+import org.cyclops.integrateddynamics.modcompat.minetweaker.MineTweakerModCompat;
 import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
 import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.*;
@@ -184,7 +185,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         modCompatLoader.addModCompat(new TeslaApiCompat());
         modCompatLoader.addModCompat(new RefinedStorageModCompat());
         //modCompatLoader.addModCompat(new ImmersiveEngineeringModCompat());
-        //modCompatLoader.addModCompat(new MineTweakerModCompat());
+        modCompatLoader.addModCompat(new MineTweakerModCompat());
     }
 
     @Mod.EventHandler

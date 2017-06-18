@@ -70,7 +70,7 @@ dependencies {
     deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.top_version}" // http://maven.tterrag.com/mcjty/theoneprobe/TheOneProbe/
     deobfCompile "refinedstorage:refinedstorage:${config.refinedstorage_version}" // https://dl.bintray.com/raoulvdberge/dev/refinedstorage/refinedstorage/
     //deobfCompile "blusunrize:ImmersiveEngineering:${config.ie_version}"// http://maven.blamejared.com/blusunrize/ImmersiveEngineering/
-    //deobfCompile "MineTweaker3:MineTweaker3-API:${config.minetweakerapi_version}"; // http://blamejared.com/maven/MineTweaker3/MineTweaker3-API/maven-metadata.xml
+    deobfCompile "MineTweaker3:MineTweaker3-API:${config.minetweakerapi_version}"; // http://blamejared.com/maven/MineTweaker3/MineTweaker3-API/maven-metadata.xml
 
     // Only needed for testing
     deobfCompile "pl.asie.charset:charset-lib:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml
