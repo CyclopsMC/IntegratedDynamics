@@ -50,6 +50,10 @@ repositories {
         name "Blamejared Maven Repo"
         url "http://maven.blamejared.com/"
     }
+    maven {
+        name 'K4 maven'
+        url "http://maven.k-4u.nl/"
+    }
 }
 
 dependencies {
@@ -77,6 +81,7 @@ dependencies {
     // TODO: temp while player's maven is fixed
     deobfCompile 'industrial-craft:industrialcraft-2:2.7.59:ex111' // https://minecraft.curseforge.com/api/maven/
     deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.top_version}" // http://maven.tterrag.com/mcjty/theoneprobe/TheOneProbe/
+    deobfCompile "com.github.mcjty:compatlayer:${config.compatlayer_version}" // http://maven.k-4u.nl/com/github/mcjty/compatlayer/
     deobfCompile "refinedstorage:refinedstorage:${config.refinedstorage_version}" // https://dl.bintray.com/raoulvdberge/dev/refinedstorage/refinedstorage/
     deobfCompile "blusunrize:ImmersiveEngineering:${config.ie_version}"// http://maven.blamejared.com/blusunrize/ImmersiveEngineering/
     deobfCompile "MineTweaker3:MineTweaker3-API:${config.minetweakerapi_version}"; // http://blamejared.com/maven/MineTweaker3/MineTweaker3-API/maven-metadata.xml
