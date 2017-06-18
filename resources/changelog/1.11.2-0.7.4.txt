@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.6 or higher.
+
+Additions:
+* Restore Immersive Engineering compat
+* Restore Minetweaker compat
+
+Changes:
+* Update zh_CN.lang
+
+Fixes:
+* Fix TConstruct compat not being registered
+* Fix localization entry for wrongCurryingType, Closes CyclopsMC/IntegratedTunnels#36
+* Fix incorrect logicProgrammerOpenRename key localization, Closes #198
