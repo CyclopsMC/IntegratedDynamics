@@ -80,6 +80,6 @@ public class L10NValues {
     public static final String OPERATOR_ERROR_WRONGINPUTLENGTH = "operator." + NS + ".error.wrongInputLength";
     public static final String OPERATOR_ERROR_NULLTYPE = "operator." + NS + ".error.nullType";
     public static final String OPERATOR_ERROR_WRONGTYPE = "operator." + NS + ".error.wrongType";
-    public static final String OPERATOR_ERROR_WRONGCURRYINGTYPE = "operator." + NS + ".error.wrongCurringType";
+    public static final String OPERATOR_ERROR_WRONGCURRYINGTYPE = "operator." + NS + ".error.wrongCurryingType";
 
 }
