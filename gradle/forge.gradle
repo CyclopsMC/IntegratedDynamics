@@ -65,9 +65,13 @@ dependencies {
     }
     // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local Integrated Dynamics Compat version.
     if(project.hasProperty("integrateddynamicscompat_version_local")) {
-        shadow "org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.minecraft_version}-${project.integrateddynamicscompat_version_local}"
+        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.minecraft_version}-${project.integrateddynamicscompat_version_local}") {
+            exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+        }
     } else {
-        shadow "org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.minecraft_version}-${config.integrateddynamicscompat_version}"
+        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.minecraft_version}-${config.integrateddynamicscompat_version}") {
+            exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+        }
     }
 
     deobfCompile("org.cyclops.commoncapabilities:CommonCapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
