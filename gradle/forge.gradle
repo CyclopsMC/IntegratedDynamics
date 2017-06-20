@@ -67,10 +67,12 @@ dependencies {
     if(project.hasProperty("integrateddynamicscompat_version_local")) {
         shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.minecraft_version}-${project.integrateddynamicscompat_version_local}") {
             exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+            exclude group: 'org.cyclops.integrateddynamics', module: 'IntegratedDynamics'
         }
     } else {
         shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.minecraft_version}-${config.integrateddynamicscompat_version}") {
             exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+            exclude group: 'org.cyclops.integrateddynamics', module: 'IntegratedDynamics'
         }
     }
 
