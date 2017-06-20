@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A network element for parts.
@@ -27,6 +28,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     private final P part;
     private final PartTarget target;
+
+    private S tempState = null;
 
     protected static DimPos getCenterPos(PartTarget target) {
         return target.getCenter().getPos();
@@ -158,12 +161,13 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void onPreRemoved(INetwork network) {
-        part.onPreRemoved(network, NetworkHelpers.getPartNetwork(network), target, getPartState());
+        part.onPreRemoved(network, NetworkHelpers.getPartNetwork(network), target, (tempState = getPartState()));
     }
 
     @Override
     public void onPostRemoved(INetwork network) {
-        part.onPostRemoved(network, NetworkHelpers.getPartNetwork(network), target, getPartState());
+        part.onPostRemoved(network, NetworkHelpers.getPartNetwork(network), target, Objects.requireNonNull(tempState));
+        tempState = null;
     }
 
     @Override
