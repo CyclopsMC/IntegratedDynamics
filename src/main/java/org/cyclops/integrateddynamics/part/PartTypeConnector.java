@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -49,26 +50,30 @@ public abstract class PartTypeConnector<P extends PartTypeConnector<P, S>, S ext
     @Override
     public void afterNetworkReAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
         super.afterNetworkReAlive(network, partNetwork, target, state);
-        state.setPosition(target.getCenter().getPos());
+        state.setPosition(target.getCenter());
     }
 
     @Override
     public void onNetworkAddition(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
         super.onNetworkAddition(network, partNetwork, target, state);
-        state.setPosition(target.getCenter().getPos());
+        state.setPosition(target.getCenter());
     }
 
     public static abstract class State<P extends PartTypeConnector> extends PartStateBase<P> implements IPathElement {
 
-        private DimPos dimPos;
+        private PartPos partPos;
+
+        protected PartPos getPartPos() {
+            return partPos;
+        }
 
         @Override
         public DimPos getPosition() {
-            return this.dimPos;
+            return this.partPos == null ? null : this.partPos.getPos();
         }
 
-        public void setPosition(DimPos dimPos) {
-            this.dimPos = dimPos;
+        public void setPosition(PartPos partPos) {
+            this.partPos = partPos;
         }
 
         @Override
