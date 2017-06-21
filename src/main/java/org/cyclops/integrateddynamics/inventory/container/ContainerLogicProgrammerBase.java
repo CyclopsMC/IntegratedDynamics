@@ -289,7 +289,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     public boolean hasWriteItemInSlot() {
-        return this.writeSlot.getStackInSlot(0) != null;
+        return !this.writeSlot.getStackInSlot(0).isEmpty();
     }
 
     @Override

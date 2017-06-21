@@ -34,7 +34,7 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Gu
         for (int i = 0; i < valueTypes.length; i++) {
             IValueType valueType = valueTypes[i];
             IInventory temporaryInputSlots = container.getTemporaryInputSlots();
-            if (temporaryInputSlots.getStackInSlot(i) == null) {
+            if (temporaryInputSlots.getStackInSlot(i).isEmpty()) {
                 Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
                 if (gui.isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
                         GuiLogicProgrammerBase.BOX_HEIGHT, GuiLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
