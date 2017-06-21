@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.6 or higher.
+
+Additions:
+
+Changes:
+* Move mod compats to a separate jar which is shadowed in the main jar dynamically
+
+Fixes:
+* Fix Logic Programmer input type tooltips not showing, Closes #200
