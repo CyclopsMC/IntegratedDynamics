@@ -39,10 +39,6 @@ public class L10NValues {
     public static final String VALUETYPE_ERROR_INVALIDLISTVALUETYPE = "valuetype." + NS + ".error.invalidListValueType";
     public static final String VALUETYPE_ERROR_INVALIDOPERATOROPERATOR = "valuetype." + NS + ".error.invalidOperatorOperator";
     public static final String VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE = "valuetype." + NS + ".error.invalidOperatorSignature";
-    // 0: operator, 1: given-output, 2: expected-output
-    public static final String VALUETYPE_ERROR_WRONGPREDICATE = "valuetype." + NS + ".error.wrongPredicate";
-    // 0: expected-output, 1:given-output, 2:given-operator
-    public static final String VALUETYPE_ERROR_ILLEGALPROPERY = "valuetype." + NS + ".error.illegalProperty";
     public static final String VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK = "valuetype." + NS + ".error.block.noBlock";
     public static final String VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID = "valuetype." + NS + ".error.fluid.noFluid";
     public static final String VALUETYPE_OBJECT_THAUMCRAFTASPECT_ERROR_NOASPECT = "valuetype." + NS + ".error.thaumcraftaspect.noAspect";
@@ -81,5 +77,9 @@ public class L10NValues {
     public static final String OPERATOR_ERROR_NULLTYPE = "operator." + NS + ".error.nullType";
     public static final String OPERATOR_ERROR_WRONGTYPE = "operator." + NS + ".error.wrongType";
     public static final String OPERATOR_ERROR_WRONGCURRYINGTYPE = "operator." + NS + ".error.wrongCurryingType";
+    // 0: operator, 1: given-output, 2: expected-output
+    public static final String OPERATOR_ERROR_WRONGPREDICATE = "operator." + NS + ".error.wrongPredicate";
+    // 0: expected-output, 1:given-output, 2:given-operator
+    public static final String OPERATOR_ERROR_ILLEGALPROPERY = "operator." + NS + ".error.illegalProperty";
 
 }

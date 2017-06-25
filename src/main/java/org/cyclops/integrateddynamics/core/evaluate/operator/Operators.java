@@ -2226,7 +2226,7 @@ public final class Operators {
                                 IValue result = ValueHelpers.evaluateOperator(innerOperator, value);
                                 if (result.getType() != ValueTypes.BOOLEAN) {
                                     L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
-                                            L10NValues.VALUETYPE_ERROR_WRONGPREDICATE,
+                                            L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
                                             OPERATOR_FILTER.getLocalizedNameFull(),
                                             result.getType(), ValueTypes.BOOLEAN);
                                     throw new EvaluationException(error.localize());
