@@ -327,6 +327,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public void loadTooltip(S state, List<String> lines);
 
     /**
+     * Add tooltip lines for this aspect when this part's item is being hovered.
+     * @param itemStack The itemstack.
+     * @param lines The list to add lines to.
+     */
+    public void loadTooltip(ItemStack itemStack, List<String> lines);
+
+    /**
      * Check if the given state change should trigger a block render update.
      * This is only called client-side.
      * The new and old partstates are never both null, at most one will be null.
