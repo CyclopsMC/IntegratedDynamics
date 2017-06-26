@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -161,6 +162,11 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     @Override
     public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         return false;
+    }
+
+    @Override
+    public void updateTick(World world, BlockPos pos, S partState, Random random) {
+
     }
 
     @Override

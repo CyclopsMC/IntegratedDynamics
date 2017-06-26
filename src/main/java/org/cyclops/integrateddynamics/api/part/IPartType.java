@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.network.*;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A type of part that can be inserted into a {@link IPartContainer}.
@@ -257,6 +258,15 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @return The default block state representation of this part.
      */
     public BlockStateContainer getBaseBlockState();
+
+    /**
+     * Called when a block update occurs
+     * @param world The world.
+     * @param pos The position.
+     * @param partState The part state.
+     * @param random A random instance.
+     */
+    public void updateTick(World world, BlockPos pos, S partState, Random random);
 
     /**
      * Called when this element is about to be removed.
