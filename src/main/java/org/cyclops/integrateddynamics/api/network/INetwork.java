@@ -14,6 +14,11 @@ import java.util.Set;
 public interface INetwork extends IFullNetworkListener, INBTSerializable {
 
     /**
+     * @return If this network and its elements have been fully initialized.
+     */
+    public boolean isInitialized();
+
+    /**
      * @return The event bus for this network.
      */
     public INetworkEventBus getEventBus();

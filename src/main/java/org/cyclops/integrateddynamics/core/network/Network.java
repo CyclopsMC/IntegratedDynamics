@@ -146,6 +146,11 @@ public class Network implements INetwork {
     }
 
     @Override
+    public boolean isInitialized() {
+        return updateableElements != null;
+    }
+
+    @Override
     public INetworkEventBus getEventBus() {
         return this.eventBus;
     }
