@@ -91,6 +91,7 @@ public class Configs {
         configHandler.add(new ItemPortableLogicProgrammerConfig());
         configHandler.add(new ItemOnTheDynamicsOfIntegrationConfig());
         configHandler.add(new ItemCrystalizedChorusChunkConfig());
+        configHandler.add(new ItemLogicDirectorConfig());
 
         // Biomes
         configHandler.add(new BiomeMeneglinConfig());

@@ -1062,4 +1062,32 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">logic_director</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
+		<condition type="config">crystalized_chorus_chunk</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item type="oredict">gemDiamond</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item>integrateddynamics:crystalized_menril_chunk</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item meta="0" amount="4">integrateddynamics:logic_director</item>
+		</output>
+	</recipe>
+
 </recipes>

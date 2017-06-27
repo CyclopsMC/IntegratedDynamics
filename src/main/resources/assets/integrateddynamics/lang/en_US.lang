@@ -100,6 +100,7 @@ item.items.integrateddynamics.portable_logic_programmer.name=Portable Logic Prog
 item.items.integrateddynamics.on_the_dynamics_of_integration.name=On the Dynamics of Integration
 item.items.integrateddynamics.on_the_dynamics_of_integration.info=A complete mod reference guide with tutorials
 item.items.integrateddynamics.crystalized_chorus_chunk.name=Crystalized Chorus Chunk
+item.items.integrateddynamics.logic_director.name=Logic Director
 
 # Fluids
 fluid.fluids.integrateddynamics.menrilresin=Menril Resin
