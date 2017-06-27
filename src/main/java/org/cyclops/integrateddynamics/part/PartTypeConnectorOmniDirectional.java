@@ -7,11 +7,15 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -41,6 +45,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
 
     public PartTypeConnectorOmniDirectional(String name) {
         super(name, new PartRenderPosition(0.25F, 0.3125F, 0.625F, 0.625F));
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -113,8 +118,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     public static int generateGroupId() {
-        //return IntegratedDynamics.globalCounters.getNext("omnidir-connectors");
-        return 100; // TODO: change when implemented recipes
+        return IntegratedDynamics.globalCounters.getNext("omnidir-connectors");
     }
 
     @Override
@@ -143,6 +147,32 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 ? (PartTypeConnectorOmniDirectional.State) partContainer.getPartState(side) : null);
         return super.getBlockState(partContainer, side).withProperty(IgnoredBlock.FACING, side).
                 withProperty(IgnoredBlockStatus.STATUS, status);
+    }
+
+    @SubscribeEvent
+    public void onCrafted(PlayerEvent.ItemCraftedEvent event) {
+        // When crafting the item, either copy the group id from the existing item or generate a new id.
+        if (event.crafting.getItem() == this.getItem()) {
+            int groupId = -1;
+            for (int i = 0; i < event.craftMatrix.getSizeInventory(); i++) {
+                ItemStack slotStack = event.craftMatrix.getStackInSlot(i);
+                if (!slotStack.isEmpty() && slotStack.getItem() == this.getItem() && slotStack.hasTagCompound()) {
+                    NBTTagCompound tag = slotStack.getTagCompound();
+                    if (tag.hasKey(NBT_KEY_ID, MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
+                        groupId = tag.getInteger(NBT_KEY_ID);
+                        break;
+                    }
+                }
+            }
+
+            if (!MinecraftHelpers.isClientSide()) {
+                if (groupId < 0) {
+                    groupId = generateGroupId();
+                }
+                NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(event.crafting);
+                tag.setInteger(NBT_KEY_ID, groupId);
+            }
+        }
     }
 
     public static class State extends PartTypeConnector.State<PartTypeConnectorOmniDirectional> {

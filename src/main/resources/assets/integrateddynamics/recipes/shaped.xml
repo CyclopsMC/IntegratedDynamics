@@ -1090,4 +1090,75 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">logic_director</condition>
+		<condition type="config">cable</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:cable</item>
+					<item>integrateddynamics:logic_director</item>
+					<item>integrateddynamics:cable</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_connector_mono_directional_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">logic_director</condition>
+		<condition type="config">cable</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:logic_director</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:cable</item>
+					<item type="oredict">gemEmerald</item>
+					<item>integrateddynamics:cable</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:logic_director</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="2">integrateddynamics:part_connector_omni_directional_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">logic_director</condition>
+		<condition type="config">cable</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:logic_director</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:cable</item>
+					<item>integrateddynamics:part_connector_omni_directional_item</item>
+					<item>integrateddynamics:cable</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>integrateddynamics:logic_director</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="2">integrateddynamics:part_connector_omni_directional_item</item>
+		</output>
+	</recipe>
+
 </recipes>
