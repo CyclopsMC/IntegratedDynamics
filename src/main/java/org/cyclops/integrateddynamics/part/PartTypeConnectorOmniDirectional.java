@@ -44,6 +44,11 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
+    public int getConsumptionRate(State state) {
+        return 128;
+    }
+
+    @Override
     public PartTypeConnectorOmniDirectional.State constructDefaultState() {
         return new PartTypeConnectorOmniDirectional.State();
     }

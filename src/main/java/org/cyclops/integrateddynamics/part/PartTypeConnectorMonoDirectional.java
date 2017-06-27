@@ -38,6 +38,11 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
     }
 
     @Override
+    public int getConsumptionRate(State state) {
+        return 32;
+    }
+
+    @Override
     public PartTypeConnectorMonoDirectional.State constructDefaultState() {
         return new PartTypeConnectorMonoDirectional.State();
     }
