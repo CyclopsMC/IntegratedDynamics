@@ -209,6 +209,7 @@ parttype.parttypes.integrateddynamics.tooltip.inactive=Inactive
 parttype.parttypes.integrateddynamics.tooltip.errors=Errors:
 parttype.parttypes.integrateddynamics.tooltip.writer.active_aspect=Aspect: %s (%s)
 parttype.parttypes.integrateddynamics.tooltip.display.active_value=Value: %s (%s)
+parttype.parttypes.integrateddynamics.tooltip.monodirectionalconnector.group=Group: %s
 
 parttype.parttypes.integrateddynamics.audio_reader.name=Audio Reader
 parttype.parttypes.integrateddynamics.audio_reader.info=Reads audio information

@@ -71,6 +71,7 @@ import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
+import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Map;
@@ -245,6 +246,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     public void onServerStarted(FMLServerStartedEvent event) {
         super.onServerStarted(event);
+        PartTypeConnectorOmniDirectional.LOADED_GROUPS.onStartedEvent(event);
     }
 
     @Mod.EventHandler
