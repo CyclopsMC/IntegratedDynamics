@@ -961,4 +961,105 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">crystalized_chorus_block</condition>
+		<condition type="config">crystalized_chorus_brick</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:crystalized_chorus_brick</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">crystalized_chorus_chunk</condition>
+		<condition type="config">crystalized_chorus_block</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+					<item>integrateddynamics:crystalized_chorus_chunk</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:crystalized_chorus_block</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">crystalized_chorus_block</condition>
+		<condition type="config">crystalized_chorus_block_stairs</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+					<item>integrateddynamics:crystalized_chorus_block</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:crystalized_chorus_block_stairs</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">crystalized_chorus_brick</condition>
+		<condition type="config">crystalized_chorus_brick_stairs</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_brick</item>
+					<item />
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_brick</item>
+					<item>integrateddynamics:crystalized_chorus_brick</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:crystalized_chorus_brick</item>
+					<item>integrateddynamics:crystalized_chorus_brick</item>
+					<item>integrateddynamics:crystalized_chorus_brick</item>
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="4">integrateddynamics:crystalized_chorus_brick_stairs</item>
+		</output>
+	</recipe>
+
 </recipes>

@@ -72,6 +72,11 @@ tile.blocks.integrateddynamics.crystalized_menril_block_stairs.name=Crystalized 
 tile.blocks.integrateddynamics.crystalized_menril_brick_stairs.name=Crystalized Menril Brick Stairs
 tile.blocks.integrateddynamics.delay.name=Delayer
 tile.blocks.integrateddynamics.delay.info=Expose the history of a variable as an aspect. Clear in a crafting grid.
+tile.blocks.integrateddynamics.block_liquid_chorus.name=Liquid Chorus
+tile.blocks.integrateddynamics.crystalized_chorus_block.name=Block of Crystalized Chorus
+tile.blocks.integrateddynamics.crystalized_chorus_brick.name=Crystalized Chorus Brick
+tile.blocks.integrateddynamics.crystalized_chorus_block_stairs.name=Crystalized Chorus Stairs
+tile.blocks.integrateddynamics.crystalized_chorus_brick_stairs.name=Crystalized Chorus Brick Stairs
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
@@ -94,9 +99,11 @@ item.items.integrateddynamics.menril_berries.info=Tasty and illuminating
 item.items.integrateddynamics.portable_logic_programmer.name=Portable Logic Programmer
 item.items.integrateddynamics.on_the_dynamics_of_integration.name=On the Dynamics of Integration
 item.items.integrateddynamics.on_the_dynamics_of_integration.info=A complete mod reference guide with tutorials
+item.items.integrateddynamics.crystalized_chorus_chunk.name=Crystalized Chorus Chunk
 
 # Fluids
 fluid.fluids.integrateddynamics.menrilresin=Menril Resin
+fluid.fluids.integrateddynamics.liquidchorus=Liquid Chorus
 
 # Biomes
 biomes.integrateddynamics.biome_meneglin=Meneglin
