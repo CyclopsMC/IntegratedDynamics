@@ -5,55 +5,6 @@ repositories {
         name "Cyclops Repo"
         url "https://dl.bintray.com/cyclopsmc/dev/"
     }
-    maven {
-        name "Amadornes"
-        url "http://maven.amadornes.com/"
-    }
-    maven {
-        name "Mobius Repo"
-        url "http://mobiusstrip.eu/maven"
-    }
-    maven {
-        name 'DVS1 Maven FS'
-        url 'http://dvs1.progwml6.com/files/maven'
-    }
-    maven {
-        name = "bdew"
-        url = "http://jenkins.bdew.net/maven"
-    }
-    maven {
-        name = "Charset Maven"
-        url = "http://charset.asie.pl/maven"
-    }
-    maven {
-        name = "Dankhax"
-        url = "http://maven.epoxide.xyz"
-    }
-    // TODO: temp while player's maven is fixed
-    /*maven {
-        name 'Player Maven FS'
-        url 'http://maven.ic2.player.to/'
-    }*/
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-    maven {
-        name 'tterrag'
-        url 'http://maven.tterrag.com/'
-    }
-    maven {
-        name "Raoulvdberge Repo"
-        url "https://dl.bintray.com/raoulvdberge/dev/"
-    }
-    maven {
-        name "Blamejared Maven Repo"
-        url "http://maven.blamejared.com/"
-    }
-    maven {
-        name 'K4 maven'
-        url "http://maven.k-4u.nl/"
-    }
 }
 
 dependencies {
