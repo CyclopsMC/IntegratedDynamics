@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics;
 
-import net.minecraft.init.Bootstrap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * All mod SoundEvent references.
@@ -11,20 +13,21 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public class IntegratedDynamicsSoundEvents {
 
-    public static final SoundEvent effect_page_flipsingle;
-    public static final SoundEvent effect_page_flipmultiple;
+    public static SoundEvent effect_page_flipsingle;
+    public static SoundEvent effect_page_flipmultiple;
 
-    private static SoundEvent getRegisteredSoundEvent(String id) {
+    private static SoundEvent getRegisteredSoundEvent(IForgeRegistry<SoundEvent> registry,  String id) {
         ResourceLocation resourceLocation = new ResourceLocation(Reference.MOD_ID, id);
-        return GameRegistry.register(new SoundEvent(resourceLocation).setRegistryName(resourceLocation));
+        SoundEvent soundEvent = new SoundEvent(resourceLocation).setRegistryName(resourceLocation);
+        registry.register(soundEvent);
+        return soundEvent;
     }
 
-    static {
-        if (!Bootstrap.isRegistered()) {
-            throw new RuntimeException("Accessed Sounds before Bootstrap!");
-        } else {
-            effect_page_flipsingle = getRegisteredSoundEvent("effect.page.flipsingle");
-            effect_page_flipmultiple = getRegisteredSoundEvent("effect.page.flipmultiple");
+    @SubscribeEvent
+    public static void registerSoundEvents(RegistryEvent.Register event) {
+        if (event.getRegistry() == ForgeRegistries.SOUND_EVENTS) {
+            effect_page_flipsingle = getRegisteredSoundEvent(event.getRegistry(), "effect.page.flipsingle");
+            effect_page_flipmultiple = getRegisteredSoundEvent(event.getRegistry(), "effect.page.flipmultiple");
         }
     }
 

@@ -52,7 +52,7 @@ public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
         int searchWidth = 87;
         int searchX = 36;
         int searchY = 11;
-        this.searchField = new GuiTextField(0, this.fontRendererObj, this.guiLeft + searchX, this.guiTop + searchY, searchWidth, this.fontRendererObj.FONT_HEIGHT);
+        this.searchField = new GuiTextField(0, this.fontRenderer, this.guiLeft + searchX, this.guiTop + searchY, searchWidth, this.fontRenderer.FONT_HEIGHT);
         this.searchField.setMaxStringLength(64);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
@@ -61,7 +61,7 @@ public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
         this.searchField.setCanLoseFocus(false);
         this.searchField.setText("");
         this.searchField.width = searchWidth;
-        this.searchField.xPosition = this.guiLeft + (searchX + searchWidth) - this.searchField.width;
+        this.searchField.x = this.guiLeft + (searchX + searchWidth) - this.searchField.width;
     }
 
     @Override

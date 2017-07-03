@@ -115,8 +115,8 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
             FontRenderer fontRenderer = minecraft.getRenderManager().getFontRenderer();
             int yOffset = fontRenderer.FONT_HEIGHT + 3;
 
-            int x = this.xPosition;
-            int y = this.yPosition + yOffset;
+            int x = this.x;
+            int y = this.y + yOffset;
             int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
             int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
             int cy = y;
@@ -157,13 +157,13 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (this.getVisible() && isFocused()) {
             FontRenderer fontRenderer = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
             int yOffset = fontRenderer.FONT_HEIGHT + 3;
 
-            int x = this.xPosition;
-            int y = this.yPosition + yOffset;
+            int x = this.x;
+            int y = this.y + yOffset;
             int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
             int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
             int cy = y;
@@ -178,7 +178,7 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
                         || RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
                 if (RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY)) {
                     selectPossibility(i);
-                    return;
+                    return true;
                 }
                 List<String> tooltipLines = null;
                 if (addTooltip) {
@@ -189,7 +189,7 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
                 cy += entryHeight;
             }
         }
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+        return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
 }

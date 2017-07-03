@@ -73,7 +73,7 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         ContainerPartWriter container = (ContainerPartWriter) getContainer();
-        RenderHelpers.drawScaledCenteredString(fontRendererObj, container.getWriteValue(), this.guiLeft + offsetX + 53,
+        RenderHelpers.drawScaledCenteredString(fontRenderer, container.getWriteValue(), this.guiLeft + offsetX + 53,
                 this.guiTop + offsetY + 132, 70, container.getWriteValueColor());
     }
 

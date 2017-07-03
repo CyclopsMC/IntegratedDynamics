@@ -9,14 +9,14 @@ import org.cyclops.cyclopscore.infobook.InfoSection;
 import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 
 /**
  * Drying basin recipes.
  * @author rubensworks
  */
-public class DryingBasinRecipeAppendix extends RecipeAppendix<IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>> {
+public class DryingBasinRecipeAppendix extends RecipeAppendix<IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties>> {
 
     private static final int SLOT_INPUT_OFFSET_X = 16;
     private static final int SLOT_OFFSET_Y = 23;
@@ -27,7 +27,7 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<IRecipe<ItemAndFlu
     private static final AdvancedButton.Enum RESULT_ITEM = AdvancedButton.Enum.create();
     private static final AdvancedButton.Enum RESULT_FLUID = AdvancedButton.Enum.create();
 
-    public DryingBasinRecipeAppendix(IInfoBook infoBook, IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
+    public DryingBasinRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
         super(infoBook, recipe);
     }
 
@@ -62,9 +62,9 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<IRecipe<ItemAndFlu
 
         // Prepare items
         int tick = getTick(gui);
-        ItemStack inputItem = recipe.getInput().getItemStack() == null ? null : prepareItemStacks(recipe.getInput().getItemStacks(), tick);
+        ItemStack inputItem = recipe.getInput().getIngredient() == null ? null : prepareItemStacks(recipe.getInput().getItemStacks(), tick);
         FluidStack inputFluid = recipe.getInput().getFluidStack();
-        ItemStack resultItem = recipe.getOutput().getItemStack() == null ? null : prepareItemStacks(recipe.getOutput().getItemStacks(), tick);
+        ItemStack resultItem = recipe.getOutput().getIngredient() == null ? null : prepareItemStacks(recipe.getOutput().getItemStacks(), tick);
         FluidStack resultFluid = recipe.getOutput().getFluidStack();
 
         // Items

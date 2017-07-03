@@ -8,7 +8,6 @@ import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -101,7 +100,7 @@ public class TestEntityOperators {
         eItemframe = new DummyVariableEntity(ValueObjectTypeEntity.ValueEntity.of(itemframe));
         EntityZombie zombieAged = new EntityZombie(world) {
             @Override
-            public int getAge() {
+            public int getIdleTime() {
                 return 3;
             }
         };

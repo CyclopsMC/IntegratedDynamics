@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -13,6 +12,7 @@ import net.minecraftforge.common.model.ITransformation;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.function.Function;
 
 /**
  * Several helpers for models.

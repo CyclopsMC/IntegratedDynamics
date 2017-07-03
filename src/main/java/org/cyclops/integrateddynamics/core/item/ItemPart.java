@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -133,13 +134,13 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     @SuppressWarnings("rawtypes")
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean par4) {
+    public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag) {
         if(itemStack.getTagCompound() != null) {
             int id = itemStack.getTagCompound().getInteger("id");
             list.add(L10NHelpers.localize(L10NValues.GENERAL_ITEM_ID, id));
         }
         L10NHelpers.addOptionalInfo(list, getPart().getUnlocalizedNameBase());
-        super.addInformation(itemStack, entityPlayer, list, par4);
+        super.addInformation(itemStack, world, list, flag);
     }
 
     public static interface IUseAction {

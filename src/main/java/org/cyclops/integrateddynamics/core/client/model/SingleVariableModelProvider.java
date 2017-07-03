@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -12,6 +11,7 @@ import net.minecraftforge.common.model.IModelState;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * Variable model provider for a single model.

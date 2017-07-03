@@ -18,7 +18,7 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.TankInventoryTileEntity;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -43,7 +43,7 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     private int fire = 0;
 
     private SingleCache<Pair<ItemStack, FluidStack>,
-            IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>> recipeCache;
+            IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties>> recipeCache;
 
     public TileDryingBasin() {
         super(1, "dryingBasingInventory", 1, Fluid.BUCKET_VOLUME, "dryingBasingTank");
@@ -58,13 +58,13 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(
                 new SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>,
-                        IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties>>() {
+                        IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties>>() {
                     @Override
-                    public IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getNewValue(Pair<ItemStack, FluidStack> key) {
-                        ItemAndFluidStackRecipeComponent recipeInput =
-                                new ItemAndFluidStackRecipeComponent(key.getLeft(), key.getRight());
-                        IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> maxRecipe = null;
-                        for (IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe : getRegistry().findRecipesByInput(recipeInput)) {
+                    public IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getNewValue(Pair<ItemStack, FluidStack> key) {
+                        IngredientAndFluidStackRecipeComponent recipeInput =
+                                new IngredientAndFluidStackRecipeComponent(key.getLeft(), key.getRight());
+                        IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> maxRecipe = null;
+                        for (IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe : getRegistry().findRecipesByInput(recipeInput)) {
                             if(key.getRight() == null) {
                                 return recipe;
                             } else if(key.getRight().amount >= recipe.getInput().getFluidStack().amount
@@ -86,12 +86,12 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                 });
     }
 
-    protected IRecipeRegistry<BlockDryingBasin, ItemAndFluidStackRecipeComponent,
-            ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getRegistry() {
+    protected IRecipeRegistry<BlockDryingBasin, IngredientAndFluidStackRecipeComponent,
+            IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRegistry() {
         return BlockDryingBasin.getInstance().getRecipeRegistry();
     }
 
-    public IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getCurrentRecipe() {
+    public IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getCurrentRecipe() {
         return recipeCache.get(Pair.of(getStackInSlot(0).copy(), FluidHelpers.copy(getTank().getFluid())));
     }
 
@@ -107,9 +107,9 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                 }
 
             } else if (getCurrentRecipe() != null) {
-                IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> recipe = getCurrentRecipe();
+                IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe = getCurrentRecipe();
                 if (progress >= recipe.getProperties().getDuration()) {
-                    ItemStack output = recipe.getOutput().getItemStack();
+                    ItemStack output = recipe.getOutput().getIngredient();
                     if (output != null) {
                         output = output.copy();
                     }

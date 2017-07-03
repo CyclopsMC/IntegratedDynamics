@@ -6,6 +6,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
@@ -16,7 +17,7 @@ import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
  * @author rubensworks
  *
  */
-public class ItemBlockEnergyContainerCombinationRecipe implements IRecipe {
+public class ItemBlockEnergyContainerCombinationRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
 	private final int size;
 	private final ItemBlockEnergyContainer batteryItem;
@@ -37,11 +38,6 @@ public class ItemBlockEnergyContainerCombinationRecipe implements IRecipe {
 	@Override
 	public boolean matches(InventoryCrafting grid, World world) {
 		return !getCraftingResult(grid).isEmpty();
-	}
-	
-	@Override
-	public int getRecipeSize() {
-		return size;
 	}
 	
 	@Override
@@ -96,5 +92,10 @@ public class ItemBlockEnergyContainerCombinationRecipe implements IRecipe {
 		
 		return output;
 	}
-	
+
+	@Override
+	public boolean canFit(int width, int height) {
+		return width * height >= size;
+	}
+
 }

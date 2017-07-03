@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -81,12 +81,12 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(List<String> list, EntityPlayer entityPlayer) {
+    public void addInformation(List<String> list, World world) {
         if(isValid()) {
             getAspect().loadTooltip(list, false);
             list.add(L10NHelpers.localize(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
         }
-        super.addInformation(list, entityPlayer);
+        super.addInformation(list, world);
     }
 
     @SuppressWarnings("unchecked")

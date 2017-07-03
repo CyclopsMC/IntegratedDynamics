@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.client.gui;
 
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -49,7 +48,6 @@ public class GuiPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S exten
         boolean ok = false;
         if(readValue != null) {
             ok = true;
-            FontRenderer fontRenderer = fontRendererObj;
             RenderHelpers.drawScaledCenteredString(fontRenderer, readValue,
                     getGuiLeft() + 53, getGuiTop() + 38, 70, readValueColor);
         }

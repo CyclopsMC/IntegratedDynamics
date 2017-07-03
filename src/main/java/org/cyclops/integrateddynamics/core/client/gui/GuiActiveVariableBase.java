@@ -35,7 +35,7 @@ public abstract class GuiActiveVariableBase<C extends ContainerActiveVariableBas
         boolean ok = false;
         if(getContainer().getTile().hasVariable() && readValue != null) {
             ok = true;
-            RenderHelpers.drawScaledCenteredString(fontRendererObj, readValue,
+            RenderHelpers.drawScaledCenteredString(fontRenderer, readValue,
                     getGuiLeft() + 54, getGuiTop() + 57, 70, readValueColor);
         }
 

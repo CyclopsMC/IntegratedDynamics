@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -94,13 +94,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(List<String> list, EntityPlayer entityPlayer) {
+    public void addInformation(List<String> list, World world) {
         if(isValid()) {
             V value = getValue();
             getValueType().loadTooltip(list, false, value);
             list.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
         }
-        super.addInformation(list, entityPlayer);
+        super.addInformation(list, world);
     }
 
     @SuppressWarnings("unchecked")

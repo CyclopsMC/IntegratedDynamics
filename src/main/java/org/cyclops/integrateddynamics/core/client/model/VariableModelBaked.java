@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
@@ -58,7 +59,7 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
         variableFacade.addModelOverlay(this, quads);
 
-        return new MapWrapper(new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.isGui3d(),
+        return new PerspectiveMapWrapper(new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.isGui3d(),
                 this.getParticleTexture(), this.getItemCameraTransforms(), this.getOverrides()), ModelHelpers.DEFAULT_PERSPECTIVE_TRANSFORMS_ITEM);
     }
 

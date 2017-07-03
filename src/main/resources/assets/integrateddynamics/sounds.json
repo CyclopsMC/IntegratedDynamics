@@ -9,7 +9,7 @@
     },
     "effect.page.flipmultiple": {
         "sounds": [
-            "integrateddynamics:pagesFlip"
+            "integrateddynamics:pages_flip"
         ],
         "subtitle": "subtitles.integrateddynamics.effect.page.flipmultiple"
     }

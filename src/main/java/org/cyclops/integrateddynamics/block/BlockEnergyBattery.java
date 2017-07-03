@@ -3,13 +3,12 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 
 /**
@@ -46,7 +45,8 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
     }
 
     @Override
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+        if (BlockHelpers.isValidCreativeTab(this, tab)) return;
         ItemStack itemStack = new ItemStack(this);
 
         int capacityOriginal = BlockEnergyBatteryConfig.capacity;

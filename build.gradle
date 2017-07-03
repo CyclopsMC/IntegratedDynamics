@@ -8,7 +8,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
 }
@@ -16,7 +16,7 @@ buildscript {
 plugins {
     // For people who want stable
     //id "net.minecraftforge.gradle.forge" version "2.0.2"
-    id 'com.matthewprenger.cursegradle' version '1.0.5'
+    id 'com.matthewprenger.cursegradle' version '1.0.9'
 }
 
 // For those who want the bleeding edge
@@ -28,8 +28,8 @@ loadProperties()
 version = config.mod_version
 group = "org.cyclops.integrateddynamics"
 archivesBaseName = "IntegratedDynamics"
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 configurations {
     shadow

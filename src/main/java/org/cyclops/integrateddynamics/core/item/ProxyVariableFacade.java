@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -131,11 +131,11 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(List<String> list, EntityPlayer entityPlayer) {
+    public void addInformation(List<String> list, World world) {
         if(isValid()) {
             list.add(getProxyTooltip());
         }
-        super.addInformation(list, entityPlayer);
+        super.addInformation(list, world);
     }
 
     @SuppressWarnings("unchecked")

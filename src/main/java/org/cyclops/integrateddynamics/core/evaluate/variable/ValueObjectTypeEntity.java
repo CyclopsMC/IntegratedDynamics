@@ -36,7 +36,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         if(entity.isPresent()) {
             Entity e = entity.get();
             if(e instanceof EntityItem) {
-                return ((EntityItem) e).getEntityItem().getDisplayName();
+                return ((EntityItem) e).getItem().getDisplayName();
             } else {
                 return e.getName();
             }

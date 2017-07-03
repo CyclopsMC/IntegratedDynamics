@@ -258,7 +258,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         @Override
         public void initGui(int guiLeft, int guiTop) {
             super.initGui(guiLeft, guiTop);
-            valueTypeSelector = new GuiArrowedListField<>(0, Minecraft.getMinecraft().fontRendererObj,
+            valueTypeSelector = new GuiArrowedListField<>(0, Minecraft.getMinecraft().fontRenderer,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes());
             valueTypeSelector.setListener(this);
             onChanged();

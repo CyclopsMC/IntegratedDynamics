@@ -40,7 +40,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
 
     @Override
     public void initGui(int guiLeft, int guiTop) {
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         int searchWidth = getElement().getRenderPattern().getWidth() - 28;
         int searchX = getX() + 14;
         int searchY = getY() + 6;
@@ -59,7 +59,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         this.searchField.setText(value);
         element.setInputString(searchField.getText());
         this.searchField.width = searchWidth;
-        this.searchField.xPosition = guiLeft + (searchX + searchWidth) - this.searchField.width;
+        this.searchField.x = guiLeft + (searchX + searchWidth) - this.searchField.width;
     }
 
     protected Set<IDropdownEntry<?>> getDropdownPossibilities() {

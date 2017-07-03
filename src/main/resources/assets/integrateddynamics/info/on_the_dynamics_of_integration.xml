@@ -25,13 +25,13 @@
                 <item>integrateddynamics:crystalized_menril_block</item>
                 <fluid />
             </appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:meneglin_basics">
-                <achievements>
-                    <achievement id="integrateddynamics.meneglin_discovery" />
-                    <achievement id="integrateddynamics.squeezing" />
-                    <achievement id="integrateddynamics.drying" />
-                    <achievement id="integrateddynamics.menril_production" />
-                </achievements>
+            <appendix type="advancement_rewards" id="integrateddynamics:meneglin_basics">
+                <advancements>
+                    <advancement id="integrateddynamics.meneglin_discovery" />
+                    <advancement id="integrateddynamics.squeezing" />
+                    <advancement id="integrateddynamics.drying" />
+                    <advancement id="integrateddynamics.menril_production" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:menril_log</reward>
                     <reward type="item" amount="10">integrateddynamics:crystalized_menril_block</reward>
@@ -46,17 +46,17 @@
             <appendix type="crafting_recipe">integrateddynamics:cable</appendix>
             <appendix type="crafting_recipe">integrateddynamics:wrench</appendix>
             <appendix type="crafting_recipe">integrateddynamics:variable</appendix>
-            <appendix type="crafting_recipe" index="0">integrateddynamics:variableTransformer</appendix>
-            <appendix type="crafting_recipe" index="1">integrateddynamics:variableTransformer</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:network_foundations">
-                <achievements>
-                    <achievement id="integrateddynamics.cables_logic" />
-                    <achievement id="integrateddynamics.networks_logic" />
-                    <achievement id="integrateddynamics.menril_wrenching" />
-                    <achievement id="integrateddynamics.variables" />
-                    <achievement id="integrateddynamics.variable_input" />
-                    <achievement id="integrateddynamics.variable_output" />
-                </achievements>
+            <appendix type="crafting_recipe" index="0">integrateddynamics:variable_transformer</appendix>
+            <appendix type="crafting_recipe" index="1">integrateddynamics:variable_transformer</appendix>
+            <appendix type="advancement_rewards" id="integrateddynamics:network_foundations">
+                <advancements>
+                    <advancement id="integrateddynamics.cables_logic" />
+                    <advancement id="integrateddynamics.networks_logic" />
+                    <advancement id="integrateddynamics.menril_wrenching" />
+                    <advancement id="integrateddynamics.variables" />
+                    <advancement id="integrateddynamics.variable_input" />
+                    <advancement id="integrateddynamics.variable_output" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:cable</reward>
                     <reward type="item" amount="16" meta="1">integrateddynamics:variable_transformer</reward>
@@ -71,13 +71,13 @@
             <appendix type="crafting_recipe">integrateddynamics:part_inventory_reader_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_static_light_panel_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_display_panel_item</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:basic_network_components">
-                <achievements>
-                    <achievement id="integrateddynamics.redstone_reading" />
-                    <achievement id="integrateddynamics.block_reading" />
-                    <achievement id="integrateddynamics.inventory_reading" />
-                    <achievement id="integrateddynamics.value_displaying" />
-                </achievements>
+            <appendix type="advancement_rewards" id="integrateddynamics:basic_network_components">
+                <advancements>
+                    <advancement id="integrateddynamics.redstone_reading" />
+                    <advancement id="integrateddynamics.block_reading" />
+                    <advancement id="integrateddynamics.inventory_reading" />
+                    <advancement id="integrateddynamics.value_displaying" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="10">integrateddynamics:variable</reward>
                     <reward type="item" amount="5">integrateddynamics:part_display_panel_item</reward>
@@ -93,12 +93,12 @@
             <appendix type="crafting_recipe">integrateddynamics:part_redstone_writer_item</appendix>
             <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.read.integer.redstone.value.name</appendix>
             <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.write.integer.redstone.name</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:aspects">
-                <achievements>
-                    <achievement id="integrateddynamics.redstone_capturing" />
-                    <achievement id="integrateddynamics.redstone_observement" />
-                    <achievement id="integrateddynamics.redstone_transmission" />
-                </achievements>
+            <appendix type="advancement_rewards" id="integrateddynamics:aspects">
+                <advancements>
+                    <advancement id="integrateddynamics.redstone_capturing" />
+                    <advancement id="integrateddynamics.redstone_observement" />
+                    <advancement id="integrateddynamics.redstone_transmission" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="5">integrateddynamics:part_redstone_reader_item</reward>
                     <reward type="item" amount="5">integrateddynamics:part_redstone_writer_item</reward>
@@ -118,12 +118,12 @@
             <appendix type="crafting_recipe">integrateddynamics:portable_logic_programmer</appendix>
             <appendix type="crafting_recipe">integrateddynamics:variablestore</appendix>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.arithmetic.addition.name</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:logic_operations">
-                <achievements>
-                    <achievement id="integrateddynamics.logic_programming" />
-                    <achievement id="integrateddynamics.constant_definition" />
-                    <achievement id="integrateddynamics.arithmetic_addition" />
-                </achievements>
+            <appendix type="advancement_rewards" id="integrateddynamics:logic_operations">
+                <advancements>
+                    <advancement id="integrateddynamics.logic_programming" />
+                    <advancement id="integrateddynamics.constant_definition" />
+                    <advancement id="integrateddynamics.arithmetic_addition" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="5">integrateddynamics:variablestore</reward>
                     <reward type="item" amount="32">integrateddynamics:variable</reward>
@@ -138,11 +138,11 @@
             <paragraph>info_book.integrateddynamics.tutorials.advancedNetworkComponents.text5</paragraph>
             <appendix type="crafting_recipe">integrateddynamics:materializer</appendix>
             <appendix type="crafting_recipe">integrateddynamics:proxy</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:advanced_network_components">
-                <achievements>
-                    <achievement id="integrateddynamics.variable_materialization" />
-                    <achievement id="integrateddynamics.variable_proxying" />
-                </achievements>
+            <appendix type="advancement_rewards" id="integrateddynamics:advanced_network_components">
+                <advancements>
+                    <advancement id="integrateddynamics.variable_materialization" />
+                    <advancement id="integrateddynamics.variable_proxying" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="5">integrateddynamics:materializer</reward>
                     <reward type="item" amount="5">integrateddynamics:proxy</reward>
@@ -159,12 +159,12 @@
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.itemstack.mod.name</appendix>
             <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.read.entity.entity.name</appendix>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.entity.targetblock.name</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:advanced_operations">
-                <achievements>
-                    <achievement id="integrateddynamics.logical_list_building" />
-                    <achievement id="integrateddynamics.item_origin_identification" />
-                    <achievement id="integrateddynamics.what_would_i_be_looking_at" />
-                </achievements>
+            <appendix type="advancement_rewards" id="integrateddynamics:advanced_operations">
+                <advancements>
+                    <advancement id="integrateddynamics.logical_list_building" />
+                    <advancement id="integrateddynamics.item_origin_identification" />
+                    <advancement id="integrateddynamics.what_would_i_be_looking_at" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
@@ -179,11 +179,11 @@
             <paragraph>info_book.integrateddynamics.tutorials.theValueOfOperators.text4</paragraph>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.relational.equals.name</appendix>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.operator.filter.name</appendix>
-            <appendix type="achievement_rewards" id="integrateddynamics:the_value_of_operators">
-                <achievements>
-                    <achievement id="integrateddynamics.dynamic_additions" />
-                    <achievement id="integrateddynamics.dynamic_list_filtering" />
-                </achievements>
+            <appendix type="advancement_rewards" id="integrateddynamics:the_value_of_operators">
+                <advancements>
+                    <advancement id="integrateddynamics.dynamic_additions" />
+                    <advancement id="integrateddynamics.dynamic_list_filtering" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
@@ -194,14 +194,14 @@
         </section>
         <section name="info_book.integrateddynamics.tutorials.challenges">
             <paragraph>info_book.integrateddynamics.tutorials.challenges.text1</paragraph>
-            <appendix type="achievement_rewards" id="integrateddynamics:challenges">
-                <achievements>
-                    <achievement id="integrateddynamics.creeper_taming" />
-                    <achievement id="integrateddynamics.sponge_step_sound" />
-                    <achievement id="integrateddynamics.recursive_recursion" />
-                    <achievement id="integrateddynamics.tool_for_obsidian" />
-                    <achievement id="integrateddynamics.smart_pressure_plate" />
-                </achievements>
+            <appendix type="advancement_rewards" id="integrateddynamics:challenges">
+                <advancements>
+                    <advancement id="integrateddynamics.creeper_taming" />
+                    <advancement id="integrateddynamics.sponge_step_sound" />
+                    <advancement id="integrateddynamics.recursive_recursion" />
+                    <advancement id="integrateddynamics.tool_for_obsidian" />
+                    <advancement id="integrateddynamics.smart_pressure_plate" />
+                </advancements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>

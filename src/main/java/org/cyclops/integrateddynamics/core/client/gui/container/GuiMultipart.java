@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.gui.FontRenderer;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonImage;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
@@ -88,7 +87,6 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        FontRenderer fontRenderer = fontRendererObj;
 
         // Draw part name
         fontRenderer.drawString(L10NHelpers.localize(getPartType().getUnlocalizedName()), guiLeft + 8, guiTop + 6, Helpers.RGBToInt(0, 0, 0));

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.client.render.tileentity;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -73,7 +73,7 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
     private TileSqueezer lastTile;
 
 	@Override
-	public void renderTileEntityAt(TileSqueezer tile, double x, double y, double z, float partialTickTime, int partialDamage) {
+	public void render(TileSqueezer tile, double x, double y, double z, float partialTickTime, int partialDamage, float alpha) {
         if(tile != null) {
             if(tile.getStackInSlot(0) != null) {
                 GlStateManager.pushMatrix();
@@ -119,7 +119,7 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
             TextureAtlasSprite icon = RenderHelpers.getFluidIcon(lastTile.getTank().getFluid(), EnumFacing.UP);
 
             Tessellator t = Tessellator.getInstance();
-            VertexBuffer worldRenderer = t.getBuffer();
+            BufferBuilder worldRenderer = t.getBuffer();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
 
             double[][] c = coordinates[side.ordinal()];

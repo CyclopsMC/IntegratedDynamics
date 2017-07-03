@@ -19,7 +19,6 @@ import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
-import org.cyclops.integrateddynamics.Achievements;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -77,8 +76,6 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         this.writeSlot.addDirtyMarkListener(loadConfigListener = new LoadConfigListener());
         this.temporaryInputSlots = new SimpleInventory(0, "temporaryInput", 1);
         initializeSlots();
-
-        inventory.player.addStat(Achievements.LOGIC_PROGRAMMING);
     }
 
     protected static List<ILogicProgrammerElement> getElements() {

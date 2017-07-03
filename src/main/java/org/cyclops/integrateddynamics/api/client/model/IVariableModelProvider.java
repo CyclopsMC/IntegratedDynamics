@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
-import com.google.common.base.Function;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.model.IModelState;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * A provider of variable overlay models.

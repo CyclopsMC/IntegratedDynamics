@@ -19,8 +19,8 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.TankInventoryTileEntity;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
@@ -39,7 +39,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     private int itemHeight = 1;
 
     private SingleCache<ItemStack,
-            IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent>> recipeCache;
+            IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>> recipeCache;
 
     public TileSqueezer() {
         super(1, "squeezerInventory", 1, Fluid.BUCKET_VOLUME, "squeezerTank");
@@ -54,10 +54,10 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(
                 new SingleCache.ICacheUpdater<ItemStack,
-                        IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent>>() {
+                        IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>>() {
                     @Override
-                    public IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getNewValue(ItemStack key) {
-                        ItemStackRecipeComponent recipeInput = new ItemStackRecipeComponent(key);
+                    public IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> getNewValue(ItemStack key) {
+                        IngredientRecipeComponent recipeInput = new IngredientRecipeComponent(key);
                         return getRegistry().findRecipeByInput(recipeInput);
                     }
 
@@ -68,12 +68,12 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                 });
     }
 
-    protected IRecipeRegistry<BlockSqueezer, ItemStackRecipeComponent,
-            ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getRegistry() {
+    protected IRecipeRegistry<BlockSqueezer, IngredientRecipeComponent,
+            IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> getRegistry() {
         return BlockSqueezer.getInstance().getRecipeRegistry();
     }
 
-    public IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
+    public IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
         return recipeCache.get(getStackInSlot(0).copy());
     }
 
@@ -96,9 +96,9 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                 }
             } else {
                 if (itemHeight == 7 && getCurrentRecipe() != null) {
-                    IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
+                    IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
                         setInventorySlotContents(0, ItemStack.EMPTY);
-                        ItemStack resultStack = recipe.getOutput().getItemStack();
+                        ItemStack resultStack = recipe.getOutput().getIngredient();
                         if(!resultStack.isEmpty()) {
                             resultStack = resultStack.copy();
                             for(EnumFacing side : EnumFacing.VALUES) {

@@ -20,7 +20,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.Attributes;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.commons.lang3.tuple.Pair;
@@ -115,13 +114,13 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     private EnumFacing getSideFromVecs(Vec3d a, Vec3d b, Vec3d c) {
-        int dir = a.yCoord == b.yCoord && b.yCoord == c.yCoord ? 0 : (a.xCoord == b.xCoord && b.xCoord == c.xCoord ? 2 : 4);
+        int dir = a.y == b.y && b.y == c.y ? 0 : (a.x == b.x && b.x == c.x ? 2 : 4);
         if (dir == 0) {
-            dir += (c.yCoord >= 0.5) ? 1 : 0;
+            dir += (c.y >= 0.5) ? 1 : 0;
         } else if (dir == 2) {
-            dir += (c.xCoord >= 0.5) ? 1 : 0;
+            dir += (c.x >= 0.5) ? 1 : 0;
         } else if (dir == 4) {
-            dir += (c.zCoord >= 0.5) ? 1 : 0;
+            dir += (c.z >= 0.5) ? 1 : 0;
         }
         return EnumFacing.getFront(dir);
     }
@@ -228,13 +227,13 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                             int length = hasPart ? LENGTH_CONNECTION_LIMITED : LENGTH_CONNECTION;
 
                             int[] data = Ints.concat(
-                                    vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture,
+                                    vertexToInts((float) v1.x, (float) v1.y, (float) v1.z, -1, texture,
                                             LENGTH_CONNECTION, invert ? length : 0),
-                                    vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture,
+                                    vertexToInts((float) v2.x, (float) v2.y, (float) v2.z, -1, texture,
                                             INV_LENGTH_CONNECTION, invert ? length : 0),
-                                    vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture,
+                                    vertexToInts((float) v3.x, (float) v3.y, (float) v3.z, -1, texture,
                                             INV_LENGTH_CONNECTION, invert ? 0 : length),
-                                    vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture,
+                                    vertexToInts((float) v4.x, (float) v4.y, (float) v4.z, -1, texture,
                                             LENGTH_CONNECTION, invert ? 0 : length)
                             );
                             i++;
@@ -282,7 +281,9 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-
-        return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, TRANSFORMS, cameraTransformType);
+        TRSRTransformation tr = ModelHelpers.DEFAULT_PERSPECTIVE_TRANSFORMS.get(cameraTransformType);
+        Matrix4f mat = null;
+        if(tr != null && !tr.equals(TRSRTransformation.identity())) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
+        return Pair.of(this, mat);
     }
 }

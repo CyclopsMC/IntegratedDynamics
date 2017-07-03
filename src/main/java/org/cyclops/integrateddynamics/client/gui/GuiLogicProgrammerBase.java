@@ -120,8 +120,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerBackgroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRendererObj, partialTicks, mouseX, mouseY);
-        FontRenderer fontRenderer = fontRendererObj;
+        subGuiHolder.drawGuiContainerBackgroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRenderer, partialTicks, mouseX, mouseY);
 
         // Draw container name
         fontRenderer.drawString(L10NHelpers.localize(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
@@ -176,7 +175,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRendererObj, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRenderer, mouseX, mouseY);
         // Draw operator tooltips
         ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getScrollingInventoryContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
@@ -359,7 +358,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
             }
 
             int searchWidth = 113;
-            this.searchField = new GuiTextField(0, GuiLogicProgrammerBase.this.fontRendererObj, 0, 0, searchWidth, 11);
+            this.searchField = new GuiTextField(0, GuiLogicProgrammerBase.this.fontRenderer, 0, 0, searchWidth, 11);
             this.searchField.setMaxStringLength(64);
             this.searchField.setEnableBackgroundDrawing(true);
             this.searchField.setVisible(false);
@@ -374,12 +373,12 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
             super.initGui(guiLeft, guiTop);
             int searchX = 90;
             int searchY = 110;
-            this.searchField.xPosition = guiLeft + searchX;
-            this.searchField.yPosition = guiTop + searchY;
+            this.searchField.x = guiLeft + searchX;
+            this.searchField.y = guiTop + searchY;
 
             if (hasLabeller()) {
-                button.xPosition = guiLeft + 220;
-                button.yPosition = guiTop + 111;
+                button.x = guiLeft + 220;
+                button.y = guiTop + 111;
             }
         }
 

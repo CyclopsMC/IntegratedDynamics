@@ -43,7 +43,7 @@ public class ContainerCoalGenerator extends TileInventoryContainerConfigurable<T
         for (int i = 0; i < this.listeners.size(); ++i) {
             IContainerListener crafting = this.listeners.get(i);
             if(lastProgress != getTile().getProgress()) {
-                crafting.sendProgressBarUpdate(this, 0, getTile().getProgress());
+                crafting.sendWindowProperty(this, 0, getTile().getProgress());
             }
         }
         this.lastProgress = getTile().getProgress();

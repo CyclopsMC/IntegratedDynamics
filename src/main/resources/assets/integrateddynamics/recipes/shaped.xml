@@ -236,7 +236,7 @@
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">labeller</condition>
+		<condition type="config">facade</condition>
 		<condition type="config">crystalized_menril_block</condition>
 		<input>
 			<grid>

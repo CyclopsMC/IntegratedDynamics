@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.datastructure.Wrapper;
@@ -157,7 +157,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(List<String> list, EntityPlayer entityPlayer) {
+    public void addInformation(List<String> list, World world) {
         if(isValid()) {
             getOperator().loadTooltip(list, false);
             StringBuilder sb = new StringBuilder();
@@ -173,7 +173,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
             sb.append("}");
             list.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_VARIABLEIDS, sb.toString()));
         }
-        super.addInformation(list, entityPlayer);
+        super.addInformation(list, world);
     }
 
     @SuppressWarnings("unchecked")

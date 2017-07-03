@@ -24,6 +24,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -1620,7 +1621,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) variables.getValue(0)).getRawValue();
-                    return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getEntityItem() : ItemStack.EMPTY);
+                    return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getItem() : ItemStack.EMPTY);
                 }
             }).build());
 
@@ -1784,7 +1785,7 @@ public final class Operators {
                         }
                         Vec3d lookVec = entity.getLookVec();
                         Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
-                        Vec3d direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
+                        Vec3d direction = origin.addVector(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
                         RayTraceResult mop = entity.world.rayTraceBlocks(origin, direction, true);
                         if(mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -1813,11 +1814,11 @@ public final class Operators {
                         }
                         Vec3d lookVec = entity.getLookVec();
                         Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
-                        Vec3d direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
+                        Vec3d direction = origin.addVector(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
                         float size = entity.getCollisionBorderSize();
                         List<Entity> list = entity.world.getEntitiesWithinAABBExcludingEntity(entity,
-                                entity.getEntityBoundingBox().addCoord(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance)
+                                entity.getEntityBoundingBox().offset(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance)
                                         .expand((double) size, (double) size, (double) size));
                         for (Entity e : list) {
                             if (e.canBeCollidedWith()) {
@@ -1825,7 +1826,7 @@ public final class Operators {
                                 AxisAlignedBB axisalignedbb = e.getEntityBoundingBox().expand((double) f10, (double) f10, (double) f10);
                                 RayTraceResult mop = axisalignedbb.calculateIntercept(origin, direction);
 
-                                if (axisalignedbb.isVecInside(origin)) {
+                                if (axisalignedbb.contains(origin)) {
                                     entityOut = e;
                                 } else if (mop != null) {
                                     double distance = origin.distanceTo(mop.hitVec);
@@ -1955,7 +1956,7 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     String hurtSound = "";
                     if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                        String sound = ObfuscationHelpers.getEntityLivingBaseHurtSound((EntityLivingBase) a.getRawValue().get()).getSoundName().toString();
+                        String sound = ObfuscationHelpers.getEntityLivingBaseHurtSound((EntityLivingBase) a.getRawValue().get(), DamageSource.GENERIC).getSoundName().toString();
                         if (sound != null) {
                             hurtSound = sound;
                         }
@@ -1993,7 +1994,7 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     int age = 0;
                     if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                        age = ((EntityLivingBase) a.getRawValue().get()).getAge();
+                        age = ((EntityLivingBase) a.getRawValue().get()).getIdleTime();
                     }
                     return ValueTypeInteger.ValueInteger.of(age);
                 }

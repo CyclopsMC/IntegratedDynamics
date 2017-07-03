@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -15,6 +14,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Variable model provider for aspects.

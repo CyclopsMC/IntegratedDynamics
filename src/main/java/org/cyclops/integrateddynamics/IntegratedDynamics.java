@@ -75,22 +75,6 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Map;
 
-/*import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerCoalGeneratorTileCompat;
-import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerDryingBasinTileCompat;
-import org.cyclops.integrateddynamics.modcompat.capabilities.WorkerSqueezerTileCompat;
-import org.cyclops.integrateddynamics.modcompat.charset.CharsetPipesModCompat;
-import org.cyclops.integrateddynamics.modcompat.forestry.ForestryModCompat;
-import org.cyclops.integrateddynamics.modcompat.ic2.Ic2ModCompat;
-import org.cyclops.integrateddynamics.modcompat.immersiveengineering.ImmersiveEngineeringModCompat;
-import org.cyclops.integrateddynamics.modcompat.jei.JEIModCompat;
-import org.cyclops.integrateddynamics.modcompat.minetweaker.MineTweakerModCompat;
-import org.cyclops.integrateddynamics.modcompat.refinedstorage.RefinedStorageModCompat;
-import org.cyclops.integrateddynamics.modcompat.tconstruct.TConstructModCompat;
-import org.cyclops.integrateddynamics.modcompat.tesla.TeslaApiCompat;
-import org.cyclops.integrateddynamics.modcompat.tesla.capabilities.*;
-import org.cyclops.integrateddynamics.modcompat.top.TopModCompat;
-import org.cyclops.integrateddynamics.modcompat.waila.WailaModCompat;*/
-
 /**
  * The main mod class of IntegratedDynamics.
  * @author rubensworks
@@ -209,9 +193,16 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
         super.preInit(event);
 
+        // Initialize info book
+        getRegistryManager().getRegistry(IInfoBookRegistry.class).registerInfoBook(
+                OnTheDynamicsOfIntegrationBook.getInstance(), "/assets/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");
+
         MinecraftForge.EVENT_BUS.register(TickHandler.getInstance());
         MinecraftForge.EVENT_BUS.register(NoteBlockEventReceiver.getInstance());
         MinecraftForge.EVENT_BUS.register(new NetworkCapabilityConstructors());
+        if (MinecraftHelpers.isClientSide()) {
+            MinecraftForge.EVENT_BUS.register(IntegratedDynamicsSoundEvents.class);
+        }
     }
 
     @Mod.EventHandler
@@ -219,20 +210,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
     public final void init(FMLInitializationEvent event) {
         super.init(event);
 
-        // Register achievements
-        Achievements.registerAchievements();
-
         putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
-    }
-
-    @Mod.EventHandler
-    @Override
-    public final void postInit(FMLPostInitializationEvent event) {
-        super.postInit(event);
-
-        // Initialize info book
-        getRegistryManager().getRegistry(IInfoBookRegistry.class).registerInfoBook(
-                OnTheDynamicsOfIntegrationBook.getInstance(), "/assets/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");
     }
 
     @Mod.EventHandler
@@ -251,12 +229,6 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     public void onServerStopping(FMLServerStoppingEvent event) {
         super.onServerStopping(event);
-    }
-
-    @Mod.EventHandler
-    @Override
-    public void onMissingMappings(FMLMissingMappingsEvent event) {
-        super.onMissingMappings(event);
     }
 
     @Override

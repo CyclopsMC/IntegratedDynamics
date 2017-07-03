@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.item.ItemFacade;
 
@@ -14,16 +15,11 @@ import org.cyclops.integrateddynamics.item.ItemFacade;
  * @author rubensworks
  *
  */
-public class ItemFacadeRecipe implements IRecipe {
+public class ItemFacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
 	@Override
 	public boolean matches(InventoryCrafting grid, World world) {
 		return !getCraftingResult(grid).isEmpty();
-	}
-	
-	@Override
-	public int getRecipeSize() {
-		return 2;
 	}
 	
 	@Override
@@ -70,5 +66,10 @@ public class ItemFacadeRecipe implements IRecipe {
 		ItemFacade.getInstance().writeFacadeBlock(output, BlockHelpers.getBlockStateFromItemStack(block));
 		return output;
 	}
-	
+
+	@Override
+	public boolean canFit(int width, int height) {
+		return width * height >= 2;
+	}
+
 }

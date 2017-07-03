@@ -107,6 +107,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             public boolean isDisableable() {
                 return false;
             }
+
+            @Override
+            public Block getBlockInstance() {
+                return PartTypeBase.this.getBlock();
+            }
         };
         Block block = createBlock(blockConfig);
         BlockAction.register(block, blockConfig, blockConfig.getTargetTab());
@@ -138,6 +143,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             public String getFullUnlocalizedName() {
                 return PartTypeBase.this.getUnlocalizedName();
             }
+
+            @Override
+            public Item getItemInstance() {
+                return PartTypeBase.this.getItem();
+            }
         };
         Item item = createItem(itemConfig);
         ItemAction.register(item, itemConfig, itemConfig.getTargetTab());
@@ -157,8 +167,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public void onInit(IInitListener.Step initStep) {
-        if(MinecraftHelpers.isClientSide() && initStep == IInitListener.Step.INIT) {
-            ItemAction.handleItemModel(getItem(), itemConfig.getNamedId(), itemConfig.getTargetTab(), getMod().getModId(), itemConfig);
+        if(MinecraftHelpers.isClientSide() && initStep == IInitListener.Step.PREINIT) {
+            ItemAction.handleItemModel(itemConfig);
         }
     }
 

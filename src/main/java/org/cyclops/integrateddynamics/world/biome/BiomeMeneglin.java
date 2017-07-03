@@ -41,8 +41,8 @@ public class BiomeMeneglin extends ConfigurableBiome {
                 .setHeightVariation(0.4F).setTemperature(0.75F)
                 .setRainfall(0.25F).setWaterColor(Helpers.RGBToInt(85, 221, 168)), eConfig.downCast());
 
-        this.theBiomeDecorator.treesPerChunk = 3;
-        this.theBiomeDecorator.flowersPerChunk = 70;
+        this.decorator.treesPerChunk = 3;
+        this.decorator.flowersPerChunk = 70;
     }
     
     @SideOnly(Side.CLIENT)

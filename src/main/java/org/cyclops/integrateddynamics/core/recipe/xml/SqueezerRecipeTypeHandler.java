@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.core.recipe.xml;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.ItemStackRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.OreDictItemStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.xml.SuperRecipeTypeHandler;
 import org.cyclops.cyclopscore.recipe.xml.XmlRecipeLoader;
 import org.cyclops.integrateddynamics.Reference;
@@ -19,7 +18,7 @@ import org.w3c.dom.Element;
  * @author rubensworks
  *
  */
-public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> {
+public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> {
 
     @Override
     public String getCategoryId() {
@@ -27,18 +26,18 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<ItemStackR
     }
 
 	@Override
-	protected IRecipe<ItemStackRecipeComponent, ItemAndFluidStackRecipeComponent, DummyPropertiesComponent> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
+	protected IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
-        Object inputItem = null;
-        Object outputItem = null;
+        Ingredient inputItem = Ingredient.EMPTY;
+        Ingredient outputItem = Ingredient.EMPTY;
         FluidStack outputFluid = null;
 
         if(input.getElementsByTagName("item").getLength() > 0) {
-            inputItem = getItem(recipeHandler, input.getElementsByTagName("item").item(0));
+            inputItem = getIngredient(recipeHandler, input.getElementsByTagName("item").item(0));
         }
 
         if(output.getElementsByTagName("item").getLength() > 0) {
-            outputItem = getItem(recipeHandler, output.getElementsByTagName("item").item(0));
+            outputItem = getIngredient(recipeHandler, output.getElementsByTagName("item").item(0));
         }
         if(output.getElementsByTagName("fluid").getLength() > 0) {
             outputFluid = getFluid(recipeHandler, output.getElementsByTagName("fluid").item(0));
@@ -48,22 +47,9 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<ItemStackR
             throw new XmlRecipeLoader.XmlRecipeException("Squeezer recipes must have an output item or fluid.");
         }
 
-        ItemStackRecipeComponent inputRecipeComponent;
-        if(inputItem instanceof ItemStack) {
-            inputRecipeComponent = new ItemStackRecipeComponent((ItemStack) inputItem);
-        } else {
-            inputRecipeComponent = new OreDictItemStackRecipeComponent((String) inputItem);
-        }
+        IngredientRecipeComponent inputRecipeComponent = new IngredientRecipeComponent(inputItem);
 
-        ItemAndFluidStackRecipeComponent outputRecipeComponent;
-        if(outputItem == null || outputItem instanceof ItemStack) {
-            if (outputItem == null) {
-                outputItem = ItemStack.EMPTY;
-            }
-            outputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) outputItem, outputFluid);
-        } else {
-            outputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) outputItem, outputFluid);
-        }
+        IngredientAndFluidStackRecipeComponent outputRecipeComponent = new IngredientAndFluidStackRecipeComponent(outputItem, outputFluid);
 
 		return BlockSqueezer.getInstance().getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,

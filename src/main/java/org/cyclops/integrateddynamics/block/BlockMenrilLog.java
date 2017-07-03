@@ -2,12 +2,8 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.Achievements;
 import org.cyclops.integrateddynamics.GeneralConfig;
 
 /**
@@ -60,14 +56,5 @@ public class BlockMenrilLog extends ConfigurableBlockLog {
             return super.getMetaFromState(state) * 3;
         }
         return super.getMetaFromState(state);
-    }
-
-    @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-        if (super.removedByPlayer(state, world, pos, player, willHarvest)) {
-            player.addStat(Achievements.MENEGLIN_DISCOVERY);
-            return true;
-        }
-        return false;
     }
 }

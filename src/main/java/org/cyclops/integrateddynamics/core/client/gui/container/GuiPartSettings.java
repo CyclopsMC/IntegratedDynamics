@@ -79,14 +79,14 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.initGui();
         Keyboard.enableRepeatEvents(true);
 
-        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRendererObj, guiLeft + 68, guiTop + 9, 70, 14, true, true);
+        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 68, guiTop + 9, 70, 14, true, true);
         numberFieldUpdateInterval.setMaxStringLength(64);
         numberFieldUpdateInterval.setMaxStringLength(15);
         numberFieldUpdateInterval.setVisible(true);
         numberFieldUpdateInterval.setTextColor(16777215);
         numberFieldUpdateInterval.setCanLoseFocus(true);
 
-        numberFieldPriority = new GuiNumberField(0, Minecraft.getMinecraft().fontRendererObj, guiLeft + 68, guiTop + 34, 70, 14, true, true);
+        numberFieldPriority = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 68, guiTop + 34, 70, 14, true, true);
         numberFieldPriority.setPositiveOnly(false);
         numberFieldPriority.setMaxStringLength(64);
         numberFieldPriority.setMaxStringLength(15);
@@ -95,7 +95,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         numberFieldPriority.setCanLoseFocus(true);
 
         String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
-        buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 140, this.guiTop + 8, fontRendererObj.getStringWidth(save) + 6, 16, save, true));
+        buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 140, this.guiTop + 8, fontRenderer.getStringWidth(save) + 6, 16, save, true));
     }
 
     @Override
@@ -121,8 +121,8 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         numberFieldUpdateInterval.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
         numberFieldPriority.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
-        fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
-        fontRendererObj.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
+        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
+        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
     }
 
     @Override

@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -185,7 +186,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void addInformation(List<String> list, EntityPlayer entityPlayer) {
+        public void addInformation(List<String> list, World world) {
 
         }
 

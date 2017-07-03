@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -43,9 +43,10 @@ public class ItemVariableTransformerConfig extends ItemConfig {
             }
 
             @Override
-            public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-                super.getSubItems(itemIn, tab, subItems);
-                subItems.add(new ItemStack(itemIn, 1, 1));
+            public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+                if (!ItemStackHelpers.isValidCreativeTab(this, tab)) return;
+                super.getSubItems(tab, subItems);
+                subItems.add(new ItemStack(this, 1, 1));
             }
         }.setHasSubtypes(true).setMaxDamage(0);
     }

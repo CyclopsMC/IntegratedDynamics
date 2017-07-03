@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.client.render.tileentity;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -28,7 +28,7 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
     private TileDryingBasin lastTile;
 
 	@Override
-	public void renderTileEntityAt(TileDryingBasin tile, double x, double y, double z, float partialTickTime, int partialDamage) {
+	public void render(TileDryingBasin tile, double x, double y, double z, float partialTickTime, int partialDamage, float alpha) {
         if(tile != null) {
             if(!tile.getStackInSlot(0).isEmpty()) {
                 GlStateManager.pushMatrix();
@@ -76,7 +76,7 @@ public class RenderTileEntityDryingBasin extends TileEntitySpecialRenderer<TileD
         TextureAtlasSprite icon = RenderHelpers.getFluidIcon(lastTile.getTank().getFluid(), EnumFacing.UP);
 
         Tessellator t = Tessellator.getInstance();
-        VertexBuffer worldRenderer = t.getBuffer();
+        BufferBuilder worldRenderer = t.getBuffer();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
 
         worldRenderer.pos(0.0625F, height, 0.0625F).tex(icon.getMinU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();

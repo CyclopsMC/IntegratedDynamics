@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -16,6 +15,7 @@ import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 /**
  * Model for a variant of a variable item.

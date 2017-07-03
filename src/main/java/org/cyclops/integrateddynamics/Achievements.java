@@ -1,53 +1,14 @@
 package org.cyclops.integrateddynamics;
 
-import com.google.common.base.Predicate;
-import net.minecraft.block.BlockSponge;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Achievement;
-import net.minecraftforge.common.AchievementPage;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.cyclops.cyclopscore.config.ConfigHandler;
-import org.cyclops.cyclopscore.player.ItemCraftedAchievements;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
-import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
-import org.cyclops.integrateddynamics.block.*;
-import org.cyclops.integrateddynamics.capability.cable.CableConfig;
-import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
-import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
-import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
-import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
-import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
-import org.cyclops.integrateddynamics.core.part.PartTypes;
-import org.cyclops.integrateddynamics.core.part.event.PartReaderAspectEvent;
-import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariableContentsUpdatedEvent;
-import org.cyclops.integrateddynamics.core.part.event.PartWriterAspectEvent;
-import org.cyclops.integrateddynamics.item.*;
-import org.cyclops.integrateddynamics.part.aspect.Aspects;
-
 /**
  * Obtainable achievements in this mod.
  * @author rubensworks
  *
  */
+// TODO: rm
 public class Achievements {
 
-	public static ItemStack makeAspectItemStack(IAspect aspect) {
+	/*public static ItemStack makeAspectItemStack(IAspect aspect) {
 		IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
 		return registry.writeVariableFacadeItem(new ItemStack(ItemVariable.getInstance()),
 				new AspectVariableFacade(false, 0, aspect), Aspects.REGISTRY);
@@ -148,10 +109,7 @@ public class Achievements {
 	private Achievements() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
-	
-	/**
-	 * Register the achievements.
-	 */
+
 	public static void registerAchievements() {
 		AchievementPage.registerAchievementPage(new AchievementPage(Reference.MOD_NAME, ACHIEVEMENTS));
 
@@ -373,6 +331,6 @@ public class Achievements {
 			registerStat();
 		}
 		
-	}
+	}*/
 	
 }

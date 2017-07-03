@@ -4,7 +4,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -24,8 +23,7 @@ import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.Achievements;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
 
@@ -35,7 +33,7 @@ import java.util.List;
  * A block for drying stuff.
  * @author rubensworks
  */
-public class BlockDryingBasin extends ConfigurableBlockContainer implements IMachine<BlockDryingBasin, ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> {
+public class BlockDryingBasin extends ConfigurableBlockContainer implements IMachine<BlockDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     private static BlockDryingBasin _instance = null;
 
@@ -65,11 +63,6 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
             IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack);
             SingleUseTank tank = tile.getTank();
             ItemStack tileStack = tile.getStackInSlot(0);
-
-            // Menril production achievement
-            if (!tileStack.isEmpty() && tileStack.getItem() == Item.getItemFromBlock(BlockCrystalizedMenrilBlockConfig._instance.getBlockInstance())) {
-                player.addStat(Achievements.MENRIL_PRODUCTION);
-            }
 
             if (itemStack.isEmpty() && !tileStack.isEmpty()) {
                 player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
@@ -149,7 +142,7 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
     }
 
     @Override
-    public IRecipeRegistry<BlockDryingBasin, ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
+    public IRecipeRegistry<BlockDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
         return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
 

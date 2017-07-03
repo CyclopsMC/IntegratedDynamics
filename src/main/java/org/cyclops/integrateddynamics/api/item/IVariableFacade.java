@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.item;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -59,10 +59,10 @@ public interface IVariableFacade {
     /**
      * Add information about this variable facade to the list.
      * @param list The list to add lines to.
-     * @param entityPlayer The player that will see the information.
+     * @param world The world.
      */
     @SideOnly(Side.CLIENT)
-    public void addInformation(List<String> list, EntityPlayer entityPlayer);
+    public void addInformation(List<String> list, World world);
 
     /**
      * Handle the quads for the given baked model.

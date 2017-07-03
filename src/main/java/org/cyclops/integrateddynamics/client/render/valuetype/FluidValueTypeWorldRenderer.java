@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.google.common.base.Optional;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -34,7 +34,7 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             // Fluid
             GlStateManager.pushMatrix();
             GlStateManager.enableRescaleNormal();
-            VertexBuffer worldRenderer = Tessellator.getInstance().getBuffer();
+            BufferBuilder worldRenderer = Tessellator.getInstance().getBuffer();
             worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
             TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStackOptional.get(), EnumFacing.NORTH);
             rendererDispatcher.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);

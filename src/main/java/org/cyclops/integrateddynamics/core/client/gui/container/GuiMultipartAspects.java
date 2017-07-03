@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.Triple;
@@ -108,12 +107,11 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        FontRenderer fontRenderer = fontRendererObj;
 
         // Reset button positions
         for(Map.Entry<IAspect, GuiButtonText> entry : this.aspectPropertyButtons.entrySet()) {
-            entry.getValue().xPosition = -20;
-            entry.getValue().yPosition = -20;
+            entry.getValue().x = -20;
+            entry.getValue().y = -20;
         }
 
         // Draw part name
@@ -148,8 +146,8 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
 
                 if(aspectPropertyButtons.containsKey(aspect)) {
                     GuiButtonText button = aspectPropertyButtons.get(aspect);
-                    button.xPosition = this.guiLeft + offsetX + 116;
-                    button.yPosition = this.guiTop + offsetY + 20 + aspectBoxHeight * i;
+                    button.x = this.guiLeft + offsetX + 116;
+                    button.y = this.guiTop + offsetY + 20 + aspectBoxHeight * i;
                 }
             }
         }
@@ -182,8 +180,8 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
                 IAspect aspect = container.getVisibleElement(i);
                 if(aspectPropertyButtons.containsKey(aspect)) {
                     GuiButtonText button = aspectPropertyButtons.get(aspect);
-                    int x = button.xPosition - guiLeft;
-                    int y = button.yPosition - guiTop;
+                    int x = button.x - guiLeft;
+                    int y = button.y - guiTop;
                     if(isPointInRegion(x, y, button.width, button.height, mouseX, mouseY)) {
                         List<String> lines = Lists.newLinkedList();
                         lines.add(TextFormatting.WHITE + L10NHelpers.localize("gui.integrateddynamics.part.properties"));

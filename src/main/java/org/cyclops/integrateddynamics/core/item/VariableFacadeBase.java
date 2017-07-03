@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -54,7 +54,7 @@ public abstract class VariableFacadeBase implements IVariableFacade {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(List<String> list, EntityPlayer entityPlayer) {
+    public void addInformation(List<String> list, World world) {
         list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
     }
 

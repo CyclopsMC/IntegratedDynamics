@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -15,7 +16,7 @@ import org.cyclops.integrateddynamics.item.ItemVariable;
  * Crafting recipe to copy variable data.
  * @author rubensworks
  */
-public class ItemVariableCopyRecipe implements IRecipe {
+public class ItemVariableCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
@@ -48,8 +49,8 @@ public class ItemVariableCopyRecipe implements IRecipe {
     }
 
     @Override
-    public int getRecipeSize() {
-        return 2;
+    public boolean canFit(int width, int height) {
+        return width * height >= 2;
     }
 
     @Override

@@ -6,12 +6,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
  * Crafting recipe to clear item NBT data.
  * @author rubensworks
  */
-public class ItemNbtClearRecipe implements IRecipe {
+public class ItemNbtClearRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
     private final Class<? extends Item> clazz;
     private final Item dummyInstance;
@@ -35,20 +36,24 @@ public class ItemNbtClearRecipe implements IRecipe {
         ItemStack ret = ItemStack.EMPTY;
         for(int j = 0; j < inv.getSizeInventory(); j++) {
             ItemStack element = inv.getStackInSlot(j);
-            if(!element.isEmpty() && this.clazz.isInstance(element.getItem())) {
-                if (!ret.isEmpty()) {
+            if(!element.isEmpty()) {
+                if (this.clazz.isInstance(element.getItem())) {
+                    if (!ret.isEmpty()) {
+                        return ItemStack.EMPTY;
+                    }
+                    // Create copy of the stack WITHOUT the NBT tag.
+                    ret = new ItemStack(element.getItem(), 1, element.getItemDamage());
+                } else {
                     return ItemStack.EMPTY;
                 }
-                // Create copy of the stack WITHOUT the NBT tag.
-                ret = new ItemStack(element.getItem(), 1, element.getItemDamage());
             }
         }
         return ret;
     }
 
     @Override
-    public int getRecipeSize() {
-        return 1;
+    public boolean canFit(int width, int height) {
+        return width * height >= 1;
     }
 
     @Override

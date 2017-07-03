@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.client.gui;
 
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -49,14 +48,12 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
 
     @Override
     protected void drawAdditionalElementInfo(ContainerMultipartAspects container, int index, IAspectRead aspect) {
-        FontRenderer fontRenderer = fontRendererObj;
-
         // Get current aspect value
         ContainerPartReader reader = (ContainerPartReader) container;
 
         Pair<String, Integer> readValues = reader.getReadValue(aspect);
         if(readValues != null) {
-            RenderHelpers.drawScaledCenteredString(fontRendererObj, readValues.getLeft(), this.guiLeft + offsetX + 16,
+            RenderHelpers.drawScaledCenteredString(fontRenderer, readValues.getLeft(), this.guiLeft + offsetX + 16,
                     this.guiTop + offsetY + 39 + container.getAspectBoxHeight() * index,
                     70, readValues.getRight());
         }

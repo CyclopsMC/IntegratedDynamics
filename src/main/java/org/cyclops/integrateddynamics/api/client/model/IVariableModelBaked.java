@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 
 /**
  * A model for variable items.
  * @author rubensworks
  */
-public interface IVariableModelBaked extends IPerspectiveAwareModel {
+public interface IVariableModelBaked extends IBakedModel {
 
     /**
      * Set the baked submodels for the given provider.

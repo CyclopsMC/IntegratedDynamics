@@ -88,7 +88,7 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
                         player.getPosition().getZ() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.rand.nextFloat()
                 );
 
-                entity.setEntityItemStack(itemStack);
+                entity.setItem(itemStack);
                 entity.setTarget(player);
                 world.spawnEntity(entity);
             }

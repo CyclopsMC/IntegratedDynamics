@@ -149,7 +149,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
         GuiButtonText buttonSave;
         buttonList.add(buttonSave = new GuiButtonText(BUTTON_SAVE, this.guiLeft,  this.guiTop + 88,
                 L10NHelpers.localize("item.items.integrateddynamics.labeller.button.write")));
-        buttonSave.xPosition += this.getBaseXSize() - buttonSave.width - 9;
+        buttonSave.x += this.getBaseXSize() - buttonSave.width - 9;
         buttonList.add(buttonExit = new GuiButtonText(BUTTON_EXIT, guiLeft + 7, guiTop + 5, 12, 10, "<<", true));
         buttonList.add(buttonLeft = new GuiButtonText(BUTTON_LEFT, guiLeft + 21, guiTop + 5, 10, 10, "<", true));
         buttonList.add(buttonRight = new GuiButtonText(BUTTON_RIGHT, guiLeft + 159, guiTop + 5, 10, 10, ">", true));
@@ -161,18 +161,18 @@ public class GuiAspectSettings extends GuiContainerExtended {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerBackgroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRendererObj, partialTicks, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerBackgroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRenderer, partialTicks, mouseX, mouseY);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRendererObj, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, mc.renderEngine, fontRenderer, mouseX, mouseY);
 
         IAspectPropertyTypeInstance activeProperty = getActiveProperty();
         if(activeProperty != null) {
             String label = L10NHelpers.localize(activeProperty.getUnlocalizedName());
-            RenderHelpers.drawScaledCenteredString(fontRendererObj, label, 88, 10, 0,
+            RenderHelpers.drawScaledCenteredString(fontRenderer, label, 88, 10, 0,
                     1.0F, 140, Helpers.RGBToInt(10, 10, 10));
         }
     }

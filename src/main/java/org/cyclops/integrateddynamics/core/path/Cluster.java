@@ -70,7 +70,7 @@ public class Cluster implements Collection<IPathElement>, INBTSerializable {
                 IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at the " +
                         "invalid dimension id %s.", dimensionId));
             } else {
-                World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimensionId);
+                World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimensionId);
                 IPathElement pathElement = TileHelpers.getCapability(world, pos, null, PathElementConfig.CAPABILITY);
                 if(pathElement == null) {
                     IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +

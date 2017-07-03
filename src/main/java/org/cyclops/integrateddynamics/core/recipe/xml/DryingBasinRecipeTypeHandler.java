@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.recipe.xml;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.ItemAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.xml.SuperRecipeTypeHandler;
 import org.cyclops.cyclopscore.recipe.xml.XmlRecipeLoader;
 import org.cyclops.integrateddynamics.Reference;
@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
  * @author rubensworks
  *
  */
-public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> {
+public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     @Override
     public String getCategoryId() {
@@ -25,22 +25,22 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler<ItemAnd
     }
 
 	@Override
-	protected IRecipe<ItemAndFluidStackRecipeComponent, ItemAndFluidStackRecipeComponent, DurationRecipeProperties> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
+	protected IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
-        Object inputItem = null;
-        ItemStack outputItem = ItemStack.EMPTY;
+        Ingredient inputItem = Ingredient.EMPTY;
+        Ingredient outputItem = Ingredient.EMPTY;
         FluidStack inputFluid = null;
         FluidStack outputFluid = null;
 
         if(input.getElementsByTagName("item").getLength() > 0) {
-            inputItem = getItem(recipeHandler, input.getElementsByTagName("item").item(0));
+            inputItem = getIngredient(recipeHandler, input.getElementsByTagName("item").item(0));
         }
         if(input.getElementsByTagName("fluid").getLength() > 0) {
             inputFluid = getFluid(recipeHandler, input.getElementsByTagName("fluid").item(0));
         }
 
         if(output.getElementsByTagName("item").getLength() > 0) {
-            outputItem = (ItemStack) getItem(recipeHandler, output.getElementsByTagName("item").item(0));
+            outputItem = getIngredient(recipeHandler, output.getElementsByTagName("item").item(0));
         }
         if(output.getElementsByTagName("fluid").getLength() > 0) {
             outputFluid = getFluid(recipeHandler, output.getElementsByTagName("fluid").item(0));
@@ -52,17 +52,9 @@ public class DryingBasinRecipeTypeHandler extends SuperRecipeTypeHandler<ItemAnd
 
 		int duration = Integer.parseInt(properties.getElementsByTagName("duration").item(0).getTextContent());
 
-        ItemAndFluidStackRecipeComponent inputRecipeComponent;
-        if(inputItem == null || inputItem instanceof ItemStack) {
-            if (inputItem == null) {
-                inputItem = ItemStack.EMPTY;
-            }
-            inputRecipeComponent = new ItemAndFluidStackRecipeComponent((ItemStack) inputItem, inputFluid);
-        } else {
-            inputRecipeComponent = new ItemAndFluidStackRecipeComponent((String) inputItem, inputFluid);
-        }
+        IngredientAndFluidStackRecipeComponent inputRecipeComponent = new IngredientAndFluidStackRecipeComponent(inputItem, inputFluid);
 
-        ItemAndFluidStackRecipeComponent outputRecipeComponent = new ItemAndFluidStackRecipeComponent(outputItem, outputFluid);
+        IngredientAndFluidStackRecipeComponent outputRecipeComponent = new IngredientAndFluidStackRecipeComponent(outputItem, outputFluid);
 		return BlockDryingBasin.getInstance().getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,
                 outputRecipeComponent,
