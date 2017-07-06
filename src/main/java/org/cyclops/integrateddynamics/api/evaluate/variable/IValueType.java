@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
+import com.google.gson.JsonObject;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 
@@ -105,6 +107,16 @@ public interface IValueType<V extends IValue> {
      * @return A new logic programmer element for this value type.
      */
     public IValueTypeLogicProgrammerElement createLogicProgrammerElement();
+
+    /**
+     * Deserialize the given JSON element to a value predicate.
+     * @param element The JSON element.
+     * @param value The value.
+     * @return The value predicate.
+     */
+    default public ValuePredicate<V> deserializeValuePredicate(JsonObject element, @Nullable IValue value) {
+        return new ValuePredicate<>(this, value);
+    }
 
     /**
      * Use this comparator for any comparisons with value types.

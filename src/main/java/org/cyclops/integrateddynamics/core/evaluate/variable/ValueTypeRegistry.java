@@ -1,12 +1,16 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
+import com.google.gson.JsonObject;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.advancement.criterion.JsonDeserializers;
+import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
+import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
@@ -15,6 +19,7 @@ import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -111,5 +116,30 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     public void setVariableFacade(NBTTagCompound tag, IValueTypeVariableFacade variableFacade) {
         tag.setString("typeName", variableFacade.getValueType().getUnlocalizedName());
         tag.setString("value", variableFacade.getValue().getType().serialize(variableFacade.getValue()));
+    }
+
+    @Override
+    public VariableFacadePredicate deserializeVariableFacadePredicate(JsonObject element) {
+        IValueType valueType = JsonDeserializers.deserializeValueType(element);
+        return new AspectVariableFacadePredicate(valueType, JsonDeserializers.deserializeValue(element, valueType));
+    }
+
+    public static class AspectVariableFacadePredicate extends VariableFacadePredicate<IValueTypeVariableFacade> {
+
+        private final IValueType valueType;
+        private final ValuePredicate valuePredicate;
+
+        public AspectVariableFacadePredicate(@Nullable IValueType valueType, ValuePredicate valuePredicate) {
+            super(IValueTypeVariableFacade.class);
+            this.valueType = valueType;
+            this.valuePredicate = valuePredicate;
+        }
+
+        @Override
+        protected boolean testTyped(IValueTypeVariableFacade variableFacade) {
+            return super.testTyped(variableFacade)
+                    && (valueType == null || ValueHelpers.correspondsTo(variableFacade.getValueType(), valueType))
+                    && valuePredicate.test(variableFacade.getValue());
+        }
     }
 }

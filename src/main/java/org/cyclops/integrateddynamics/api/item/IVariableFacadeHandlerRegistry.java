@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Registry for retrieving variable facade handlers.
@@ -33,6 +34,19 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @return The variable facade handled by the appropriate handler.
      */
     public IVariableFacade handle(NBTTagCompound tagCompound);
+
+    /**
+     * Find a handler by name.
+     * @param type The handler name.
+     * @return The handler.
+     */
+    @Nullable
+    public IVariableFacadeHandler getHandler(String type);
+
+    /**
+     * @return All registered handler names.
+     */
+    public Collection<String> getHandlerNames();
 
     /**
      * Set the type of the given tag and uses the corresponding handler to write the variable facade.

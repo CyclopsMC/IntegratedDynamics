@@ -26,6 +26,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -75,11 +76,22 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
         String type = tagCompound.getString("_type");
         int id = tagCompound.getInteger("_id");
-        IVariableFacadeHandler handler = handlers.get(type);
+        IVariableFacadeHandler handler = getHandler(type);
         if(handler != null) {
             return handler.getVariableFacade(id, tagCompound);
         }
         return DUMMY_FACADE;
+    }
+
+    @Nullable
+    @Override
+    public IVariableFacadeHandler getHandler(String type) {
+        return handlers.get(type);
+    }
+
+    @Override
+    public Collection<String> getHandlerNames() {
+        return handlers.keySet();
     }
 
     @Override

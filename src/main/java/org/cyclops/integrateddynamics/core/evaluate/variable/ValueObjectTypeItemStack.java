@@ -1,17 +1,24 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lombok.ToString;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -91,6 +98,16 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         });
     }
 
+    @Override
+    public ValuePredicate<ValueItemStack> deserializeValuePredicate(JsonObject element, @Nullable IValue value) {
+        JsonElement jsonElement = element.get("value");
+        ItemPredicate itemPredicate = null;
+        if (jsonElement != null && !jsonElement.isJsonNull()) {
+            itemPredicate = ItemPredicate.deserialize(element.get("value"));
+        }
+        return new ValueItemStackPredicate(this, value, itemPredicate);
+    }
+
     @ToString
     public static class ValueItemStack extends ValueBase {
 
@@ -112,6 +129,21 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         @Override
         public boolean equals(Object o) {
             return o instanceof ValueItemStack && ItemStackHelpers.areItemStacksIdentical(((ValueItemStack) o).itemStack, this.itemStack);
+        }
+    }
+
+    public static class ValueItemStackPredicate extends ValuePredicate<ValueItemStack> {
+
+        private final @Nullable ItemPredicate itemPredicate;
+
+        public ValueItemStackPredicate(@Nullable IValueType valueType, @Nullable IValue value, @Nullable ItemPredicate itemPredicate) {
+            super(valueType, value);
+            this.itemPredicate = itemPredicate;
+        }
+
+        @Override
+        protected boolean testTyped(ValueItemStack value) {
+            return super.testTyped(value) && (itemPredicate == null || itemPredicate.test(value.getRawValue()));
         }
     }
 

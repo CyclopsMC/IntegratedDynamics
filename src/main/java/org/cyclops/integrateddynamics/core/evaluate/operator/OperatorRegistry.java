@@ -1,24 +1,36 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.JsonUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
+import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Registry for {@link IOperator}
@@ -145,5 +157,61 @@ public class OperatorRegistry implements IOperatorRegistry {
     public void setVariableFacade(NBTTagCompound tag, IOperatorVariableFacade variableFacade) {
         tag.setString("operatorName", serialize(variableFacade.getOperator()));
         tag.setIntArray("variableIds", variableFacade.getVariableIds());
+    }
+
+    @Override
+    public VariablePredicate deserializeVariablePredicate(JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
+        JsonElement operatorElement = element.get("operator");
+        IOperator operator = null;
+        if (operatorElement != null && !operatorElement.isJsonNull()) {
+            operator = Operators.REGISTRY.getOperator(JsonUtils.getString(element, "operator"));
+            if (operator == null) {
+                throw new JsonSyntaxException("Unknown operator type '" + JsonUtils.getString(element, "operator")
+                        + "', valid types are: " + Operators.REGISTRY.getOperators().stream()
+                        .map(IOperator::getUniqueName).collect(Collectors.toList()));
+            }
+        }
+        JsonElement inputElement = element.get("input");
+        TIntObjectMap<VariablePredicate> inputPredicates = new TIntObjectHashMap<>();
+        if (inputElement != null && !inputElement.isJsonNull()) {
+            for (Map.Entry<String, JsonElement> inputEntry : inputElement.getAsJsonObject().entrySet()) {
+                try {
+                    int slot = Integer.parseInt(inputEntry.getKey());
+                    inputPredicates.put(slot, VariablePredicate.deserialize(inputEntry.getValue()));
+                } catch (NumberFormatException e) {
+                    throw new JsonSyntaxException("All inputs must refer to an input id as key, but got '" + inputEntry.getKey() + '"');
+                }
+            }
+        }
+        return new OperatorVariablePredicate(valueType, valuePredicate, operator, inputPredicates);
+    }
+
+    public static class OperatorVariablePredicate extends VariablePredicate<LazyExpression> {
+
+        private final IOperator operator;
+        private final TIntObjectMap<VariablePredicate> inputPredicates;
+
+        public OperatorVariablePredicate(@Nullable IValueType valueType, ValuePredicate valuePredicate,
+                                         @Nullable IOperator operator, TIntObjectMap<VariablePredicate> inputPredicates) {
+            super(LazyExpression.class, valueType, valuePredicate);
+            this.operator = operator;
+            this.inputPredicates = inputPredicates;
+        }
+
+        @Override
+        protected boolean testTyped(LazyExpression variable) {
+            if (!super.testTyped(variable)
+                    || !(operator == null || variable.getOperator() == operator)) {
+                return false;
+            }
+            for (int i = 0; i < variable.getInput().length; i++) {
+                IVariable inputVariable = variable.getInput()[i];
+                VariablePredicate variablePredicate = inputPredicates.get(i);
+                if (variablePredicate != null && !variablePredicate.test(inputVariable)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
