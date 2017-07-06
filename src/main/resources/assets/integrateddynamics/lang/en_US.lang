@@ -1,5 +1,6 @@
 # General
 itemGroup.integrateddynamics=Integrated Dynamics
+general.integrateddynamics.description=Take full and automated control of your appliances.
 general.integrateddynamics.info.none=None
 general.integrateddynamics.energy_unit.name=RF
 general.integrateddynamics.error.no_network=No valid network found

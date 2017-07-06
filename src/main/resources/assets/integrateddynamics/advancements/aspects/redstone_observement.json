@@ -1,0 +1,33 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable",
+      "nbt": {
+        "typeName" : "valuetype.valuetypes.integrateddynamics.integer.name",
+        "partId": 1,
+        "_type": "valuetype",
+        "value": "10",
+        "_id": 1
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.redstone_observement"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.redstone_observement.desc"
+    }
+  },
+  "parent": "integrateddynamics:aspects/redstone_capturing",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "parttype": "display_panel",
+        "variable": {
+          "type": "aspect",
+          "aspect": "aspect.aspects.integrateddynamics.read.integer.redstone.value.name"
+        }
+      }
+    }
+  }
+}

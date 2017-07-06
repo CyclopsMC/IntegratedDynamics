@@ -122,11 +122,11 @@
 
 	<recipe type="shapeless">
 		<condition type="config">on_the_dynamics_of_integration</condition>
-		<condition type="config">crystalizedMenrilChunk</condition>
+		<condition type="config">crystalized_menril_chunk</condition>
 		<input>
 			<item>minecraft:book</item>
-			<item>integrateddynamics:crystalizedMenrilChunk</item>
-			<item>integrateddynamics:crystalizedMenrilChunk</item>
+			<item>integrateddynamics:crystalized_menril_chunk</item>
+			<item>integrateddynamics:crystalized_menril_chunk</item>
 		</input>
 		<output>
 			<item>integrateddynamics:on_the_dynamics_of_integration</item>

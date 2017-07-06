@@ -1,0 +1,42 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable_transformer",
+      "durability": 1
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.variable_input"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.variable_input.desc"
+    }
+  },
+  "parent": "integrateddynamics:network_foundations/variables",
+  "rewards": {
+    "recipes": [
+      "integrateddynamics:part_audio_reader_item",
+      "integrateddynamics:part_block_reader_item",
+      "integrateddynamics:part_entity_reader_item",
+      "integrateddynamics:part_extradimensional_reader_item",
+      "integrateddynamics:part_fluid_reader_item",
+      "integrateddynamics:part_inventory_reader_item",
+      "integrateddynamics:part_machine_reader_item",
+      "integrateddynamics:part_network_reader_item",
+      "integrateddynamics:part_redstone_reader_item",
+      "integrateddynamics:part_world_reader_item"
+    ]
+  },
+  "criteria": {
+    "criteria_0": {
+      "trigger": "cyclopscore:item_crafted",
+      "conditions": {
+        "items": [
+          {
+            "item": "integrateddynamics:variable_transformer",
+            "durability": 1
+          }
+        ]
+      }
+    }
+  }
+}

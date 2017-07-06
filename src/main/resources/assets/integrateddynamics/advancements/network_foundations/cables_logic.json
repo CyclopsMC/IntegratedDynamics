@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:cable"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.cables_logic"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.cables_logic.desc"
+    }
+  },
+  "parent": "integrateddynamics:meneglin_basics/menril_production",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "cyclopscore:item_crafted",
+      "conditions": {
+        "items": [
+          {
+            "item": "integrateddynamics:cable"
+          }
+        ]
+      }
+    }
+  }
+}

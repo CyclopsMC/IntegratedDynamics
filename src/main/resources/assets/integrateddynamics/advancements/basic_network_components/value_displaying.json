@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:part_display_panel_item"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.value_displaying"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.value_displaying.desc"
+    }
+  },
+  "parent": "integrateddynamics:network_foundations/variable_output",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "cyclopscore:item_crafted",
+      "conditions": {
+        "items": [
+          {
+            "item": "integrateddynamics:part_display_panel_item"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:obsidian"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.tool_for_obsidian"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.tool_for_obsidian.desc"
+    },
+    "frame": "challenge"
+  },
+  "parent": "integrateddynamics:advanced_operations/what_would_i_be_looking_at",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "parttype": "display_panel",
+        "variable": {
+          "type": "operator",
+          "operator": "operator.operators.integrateddynamics.itemstack.canharvest.name",
+          "input": {
+            "0": {
+              "valuetype": "valuetype.valuetypes.integrateddynamics.itemstack.name",
+              "value": {
+                "item": "minecraft:stone_pickaxe"
+              }
+            },
+            "1": {
+              "valuetype": "valuetype.valuetypes.integrateddynamics.block.name",
+              "value": "minecraft:obsidian$0"
+            }
+          }
+        }
+      }
+    }
+  }
+}

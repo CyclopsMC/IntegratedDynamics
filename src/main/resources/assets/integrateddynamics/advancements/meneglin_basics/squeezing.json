@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:squeezer"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.squeezing"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.squeezing.desc"
+    }
+  },
+  "parent": "integrateddynamics:meneglin_basics/meneglin_discovery",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "cyclopscore:item_crafted",
+      "conditions": {
+        "items": [
+          {
+            "item": "integrateddynamics:squeezer"
+          }
+        ]
+      }
+    }
+  }
+}

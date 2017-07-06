@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable",
+      "nbt": {
+        "_type": "aspect",
+        "aspectName": "aspect.aspects.integrateddynamics.read.entity.entity.name",
+        "_id": 1
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.smart_pressure_plate"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.smart_pressure_plate.desc"
+    },
+    "frame": "challenge"
+  },
+  "parent": "integrateddynamics:advanced_operations/what_would_i_be_looking_at",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_writer_aspect",
+      "conditions": {
+        "parttype": "redstone_writer",
+        "variable": {
+          "type": "operator",
+          "input": {
+            "0": {
+              "type": "aspect",
+              "aspect": "aspect.aspects.integrateddynamics.read.entity.entity.name"
+            }
+          }
+        }
+      }
+    }
+  }
+}

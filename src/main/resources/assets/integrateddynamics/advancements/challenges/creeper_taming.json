@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:skull",
+      "damage": 4
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.creeper_taming"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.creeper_taming.desc"
+    },
+    "frame": "challenge"
+  },
+  "parent": "integrateddynamics:advanced_operations/what_would_i_be_looking_at",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "parttype": "display_panel",
+        "variable": {
+          "type": "operator",
+          "operator": "operator.operators.integrateddynamics.entity.health.name",
+          "input": {
+            "0": {
+              "valuetype": "valuetype.valuetypes.integrateddynamics.entity.name",
+              "value": {
+                "entity_class": "net.minecraft.entity.monster.EntityCreeper"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

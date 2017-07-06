@@ -1,0 +1,41 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:crystalized_menril_block"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.menril_production"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.menril_production.desc"
+    }
+  },
+  "parent": "integrateddynamics:meneglin_basics/squeezing",
+  "rewards": {
+    "recipes": [
+      "integrateddynamics:wrench",
+      "integrateddynamics:variable",
+      "integrateddynamics:menril_torch",
+      "integrateddynamics:menril_torch_stone",
+      "integrateddynamics:crystalized_menril_chunk",
+      "integrateddynamics:crystalized_menril_block",
+      "integrateddynamics:crystalized_menril_brick",
+      "integrateddynamics:crystalized_menril_block_stairs",
+      "integrateddynamics:crystalized_menril_brick_stairs",
+      "integrateddynamics:menril_planks",
+      "integrateddynamics:menril_planks_stairs"
+    ]
+  },
+  "criteria": {
+    "criteria_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "integrateddynamics:crystalized_menril_block"
+          }
+        ]
+      }
+    }
+  }
+}

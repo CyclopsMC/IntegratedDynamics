@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:cable"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.networks_logic"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.networks_logic.desc"
+    }
+  },
+  "parent": "integrateddynamics:network_foundations/cables_logic",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:network_initialized",
+      "conditions": {
+        "min_cables": 10
+      }
+    }
+  }
+}

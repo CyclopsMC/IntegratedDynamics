@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:materializer"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.variable_materialization"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.variable_materialization.desc"
+    }
+  },
+  "parent": "integrateddynamics:logic_operations/arithmetic_addition",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:variable_created",
+      "conditions": {
+        "block": "integrateddynamics:materializer"
+      }
+    }
+  }
+}

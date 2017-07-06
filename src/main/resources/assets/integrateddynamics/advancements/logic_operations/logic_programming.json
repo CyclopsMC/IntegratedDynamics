@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:logic_programmer"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.logic_programming"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.logic_programming.desc"
+    }
+  },
+  "parent": "integrateddynamics:network_foundations/variables",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "cyclopscore:container_gui_open",
+      "conditions": {
+        "container_class": "org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase"
+      }
+    }
+  }
+}

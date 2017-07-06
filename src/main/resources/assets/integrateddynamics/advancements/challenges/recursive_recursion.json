@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable",
+      "nbt": {
+        "_type": "valuetype",
+        "typeName": "valuetype.valuetypes.integrateddynamics.list.name",
+        "_id": 1,
+        "value": "materialized;valuetype.valuetypes.integrateddynamics.integer.name\\;1\\;10\\;100"
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.recursive_recursion"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.recursive_recursion.desc"
+    },
+    "frame": "challenge"
+  },
+  "parent": "integrateddynamics:advanced_operations/what_would_i_be_looking_at",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "parttype": "display_panel",
+        "variable": {
+          "valuetype": "valuetype.valuetypes.integrateddynamics.list.name",
+          "value": {
+            "infinite_list": true
+          }
+        }
+      }
+    }
+  }
+}

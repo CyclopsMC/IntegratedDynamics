@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:cable"
+    },
+    "title": {
+      "translate": "itemGroup.integrateddynamics"
+    },
+    "description": {
+      "translate": "general.integrateddynamics.description"
+    },
+    "background": "integrateddynamics:textures/gui/advancements/backgrounds/dynamics.png",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "rewards": {
+    "recipes": [
+      "integrateddynamics:on_the_dynamics_of_integration"
+    ]
+  },
+  "criteria": {
+    "criteria_0": {
+      "trigger": "cyclopscore:mod_item_obtained",
+      "conditions": {
+        "mod_id": "integrateddynamics"
+      }
+    }
+  }
+}

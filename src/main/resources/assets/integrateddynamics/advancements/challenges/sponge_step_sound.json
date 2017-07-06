@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:sponge",
+      "damage": 1
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.sponge_step_sound"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.sponge_step_sound.desc"
+    },
+    "frame": "challenge"
+  },
+  "parent": "integrateddynamics:advanced_operations/what_would_i_be_looking_at",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_writer_aspect",
+      "conditions": {
+        "parttype": "audio_writer",
+        "aspect": "aspect.aspects.integrateddynamics.write.string.audio.sound.name",
+        "variable": {
+          "type": "operator",
+          "operator": "operator.operators.integrateddynamics.block.stepsound.name",
+          "input": {
+            "0": {
+              "valuetype": "valuetype.valuetypes.integrateddynamics.block.name",
+              "value": "minecraft:sponge$1"
+            }
+          }
+        }
+      }
+    }
+  }
+}

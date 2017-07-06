@@ -1,0 +1,39 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable",
+      "nbt": {
+        "typeName" : "valuetype.valuetypes.integrateddynamics.integer.name",
+        "partId": 1,
+        "_type": "valuetype",
+        "value": "20",
+        "_id": 1
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.arithmetic_addition"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.arithmetic_addition.desc"
+    }
+  },
+  "rewards": {
+    "recipes": [
+      "integrateddynamics:materializer",
+      "integrateddynamics:proxy"
+    ]
+  },
+  "parent": "integrateddynamics:logic_operations/constant_definition",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "parttype": "display_panel",
+        "variable": {
+          "type": "operator",
+          "operator": "operator.operators.integrateddynamics.arithmetic.addition.name"
+        }
+      }
+    }
+  }
+}

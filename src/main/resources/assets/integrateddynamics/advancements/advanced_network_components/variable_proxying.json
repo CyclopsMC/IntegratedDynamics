@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:proxy"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.variable_proxying"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.variable_proxying.desc"
+    }
+  },
+  "parent": "integrateddynamics:logic_operations/arithmetic_addition",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:variable_created",
+      "conditions": {
+        "block": "integrateddynamics:proxy"
+      }
+    }
+  }
+}

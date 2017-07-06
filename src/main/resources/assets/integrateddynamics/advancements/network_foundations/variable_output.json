@@ -1,0 +1,39 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable_transformer",
+      "durability": 0
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.variable_output"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.variable_output.desc"
+    }
+  },
+  "parent": "integrateddynamics:network_foundations/variables",
+  "rewards": {
+    "recipes": [
+      "integrateddynamics:part_audio_writer_item",
+      "integrateddynamics:part_effect_writer_item",
+      "integrateddynamics:part_inventory_writer_item",
+      "integrateddynamics:part_redstone_writer_item",
+      "integrateddynamics:part_static_light_panel_item",
+      "integrateddynamics:part_dynamic_light_panel_item",
+      "integrateddynamics:part_display_panel_item"
+    ]
+  },
+  "criteria": {
+    "criteria_0": {
+      "trigger": "cyclopscore:item_crafted",
+      "conditions": {
+        "items": [
+          {
+            "item": "integrateddynamics:variable_transformer",
+            "durability": 0
+          }
+        ]
+      }
+    }
+  }
+}
