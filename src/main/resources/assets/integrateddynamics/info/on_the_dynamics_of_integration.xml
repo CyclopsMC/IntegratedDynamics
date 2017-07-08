@@ -120,9 +120,9 @@
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.arithmetic.addition.name</appendix>
             <appendix type="advancement_rewards" id="integrateddynamics:logic_operations">
                 <advancements>
-                    <advancement id="integrateddynamics:logic_programming/logic_programming" />
-                    <advancement id="integrateddynamics:logic_programming/constant_definition" />
-                    <advancement id="integrateddynamics:logic_programming/arithmetic_addition" />
+                    <advancement id="integrateddynamics:logic_operations/logic_programming" />
+                    <advancement id="integrateddynamics:logic_operations/constant_definition" />
+                    <advancement id="integrateddynamics:logic_operations/arithmetic_addition" />
                 </advancements>
                 <rewards>
                     <reward type="item" amount="5">integrateddynamics:variablestore</reward>
