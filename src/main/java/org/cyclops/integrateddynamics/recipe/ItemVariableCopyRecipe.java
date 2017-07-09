@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.recipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -73,5 +74,10 @@ public class ItemVariableCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> im
             }
         }
         return ret;
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()), Ingredient.fromStacks(getRecipeOutput()));
     }
 }

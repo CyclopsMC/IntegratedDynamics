@@ -1,14 +1,19 @@
 package org.cyclops.integrateddynamics.recipe;
 
+import lombok.Getter;
+import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.item.ItemFacade;
+
+import java.util.stream.StreamSupport;
 
 /**
  * Recipe for combining facades with blocks.
@@ -16,6 +21,10 @@ import org.cyclops.integrateddynamics.item.ItemFacade;
  *
  */
 public class ItemFacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+
+	@Getter(lazy = true)
+	private final NonNullList<Ingredient> ingredients =
+			NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()), new BlocksIngredient());
 
 	@Override
 	public boolean matches(InventoryCrafting grid, World world) {
@@ -70,6 +79,21 @@ public class ItemFacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implemen
 	@Override
 	public boolean canFit(int width, int height) {
 		return width * height >= 2;
+	}
+
+	public static class BlocksIngredient extends Ingredient {
+
+		@Override
+		public ItemStack[] getMatchingStacks() {
+			return StreamSupport.stream(Block.REGISTRY.spliterator(), false)
+					.map(ItemStack::new)
+					.toArray(ItemStack[]::new);
+		}
+
+		@Override
+		public boolean apply(ItemStack itemStack) {
+			return !itemStack.isEmpty() && itemStack.getItem() instanceof ItemBlock;
+		}
 	}
 
 }
