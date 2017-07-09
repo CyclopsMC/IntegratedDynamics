@@ -98,7 +98,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                 if (itemHeight == 7 && getCurrentRecipe() != null) {
                     IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
                         setInventorySlotContents(0, ItemStack.EMPTY);
-                        ItemStack resultStack = recipe.getOutput().getIngredient();
+                        ItemStack resultStack = recipe.getOutput().getFirstItemStack();
                         if(!resultStack.isEmpty()) {
                             resultStack = resultStack.copy();
                             for(EnumFacing side : EnumFacing.VALUES) {

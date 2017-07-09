@@ -68,7 +68,9 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     int index = InfoBookParser.getIndex(node);
                     if(index >= recipes.size()) {
                         throw new InfoBookParser.InvalidAppendixException("Could not find Squeezer recipe for "
-                                + itemStack.getItem().getUnlocalizedName() + "with index " + index);
+                                + itemStack.getItem().getUnlocalizedName() + " and "
+                                + (fluidStack != null ? fluidStack.getFluid().getName() : "null")
+                                + " with index " + index);
                     }
                     return new SqueezerRecipeAppendix(infoBook, recipes.get(index));
                 }

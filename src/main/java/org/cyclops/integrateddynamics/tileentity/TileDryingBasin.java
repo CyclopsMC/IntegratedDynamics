@@ -109,16 +109,16 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
             } else if (getCurrentRecipe() != null) {
                 IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe = getCurrentRecipe();
                 if (progress >= recipe.getProperties().getDuration()) {
-                    ItemStack output = recipe.getOutput().getIngredient();
-                    if (output != null) {
+                    ItemStack output = recipe.getOutput().getFirstItemStack();
+                    if (!output.isEmpty()) {
                         output = output.copy();
-                    }
-                    setInventorySlotContents(0, output);
-                    int amount = FluidHelpers.getAmount(recipe.getInput().getFluidStack());
-                    drain(amount, true);
-                    if (recipe.getOutput().getFluidStack() != null) {
-                        if (fill(recipe.getOutput().getFluidStack(), true) == 0) {
-                            IntegratedDynamics.clog(Level.ERROR, "Encountered an invalid recipe: " + recipe.getNamedId());
+                        setInventorySlotContents(0, output);
+                        int amount = FluidHelpers.getAmount(recipe.getInput().getFluidStack());
+                        drain(amount, true);
+                        if (recipe.getOutput().getFluidStack() != null) {
+                            if (fill(recipe.getOutput().getFluidStack(), true) == 0) {
+                                IntegratedDynamics.clog(Level.ERROR, "Encountered an invalid recipe: " + recipe.getNamedId());
+                            }
                         }
                     }
                     progress = 0;
