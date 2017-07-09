@@ -34,7 +34,7 @@
 		<tag>convenience</tag>
 		<condition type="config">drying_basin</condition>
 		<input>
-			<item type="oredict">tree_sapling</item>
+			<item type="oredict">treeSapling</item>
 		</input>
 		<output>
 			<item>minecraft:deadbush</item>
