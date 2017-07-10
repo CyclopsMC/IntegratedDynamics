@@ -41,7 +41,7 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        if (BlockHelpers.isValidCreativeTab(this, tab)) return;
+        if (!BlockHelpers.isValidCreativeTab(this, tab)) return;
         ItemStack full = new ItemStack(this);
         IEnergyStorage energyStorage = full.getCapability(CapabilityEnergy.ENERGY, null);
         energyStorage.receiveEnergy(energyStorage.getMaxEnergyStored(), false);

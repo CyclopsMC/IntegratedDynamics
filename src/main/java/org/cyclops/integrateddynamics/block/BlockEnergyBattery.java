@@ -46,7 +46,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        if (BlockHelpers.isValidCreativeTab(this, tab)) return;
+        if (!BlockHelpers.isValidCreativeTab(this, tab)) return;
         ItemStack itemStack = new ItemStack(this);
 
         int capacityOriginal = BlockEnergyBatteryConfig.capacity;
