@@ -2,11 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": {
-        "_type": "operator",
-        "_id": 1,
-        "value": "operator.operators.integrateddynamics.arithmetic.addition.name"
-      }
+      "nbt": "{\"_type\":\"operator\",\"_id\":1,\"operatorName\":\"operator.operators.integrateddynamics.arithmetic.addition.name\",\"variableIds\":[I;1,1]}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.dynamic_additions"

@@ -2,13 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": {
-        "typeName" : "valuetype.valuetypes.integrateddynamics.block.name",
-        "partId": 1,
-        "_type": "valuetype",
-        "value": "minecraft:stone",
-        "_id": 1
-      }
+      "nbt": "{\"typeName\":\"valuetype.valuetypes.integrateddynamics.block.name\",\"partId\":1,\"_type\":\"valuetype\",\"value\":\"minecraft:stone$0\",\"_id\":1}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.what_would_i_be_looking_at"

@@ -2,13 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": {
-        "typeName" : "valuetype.valuetypes.integrateddynamics.itemstack.name",
-        "partId": 1,
-        "_type": "valuetype",
-        "value": "minecraft:apple",
-        "_id": 1
-      }
+      "nbt": "{\"typeName\":\"valuetype.valuetypes.integrateddynamics.itemstack.name\",\"partId\":1,\"_type\":\"valuetype\",\"value\":\"minecraft:apple\",\"_id\":1}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.item_origin_identification"
