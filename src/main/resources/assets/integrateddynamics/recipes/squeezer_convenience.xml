@@ -58,8 +58,8 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
-        <condition type="mod">minefactoryreloaded</condition>
         <tag>convenience</tag>
+        <condition type="mod">minefactoryreloaded</condition>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:brown_mushroom</item>
@@ -70,8 +70,8 @@
     </recipe>
 
     <recipe type="integrateddynamics:squeezer">
-        <condition type="mod">minefactoryreloaded</condition>
         <tag>convenience</tag>
+        <condition type="mod">minefactoryreloaded</condition>
         <condition type="config">squeezer</condition>
         <input>
             <item>minecraft:red_mushroom</item>
