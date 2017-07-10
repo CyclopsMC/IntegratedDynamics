@@ -23,7 +23,7 @@ public class VariablePredicate<V extends IVariable> {
     private static final IVariableFacadeHandlerRegistry VARIABLE_FACADE_HANDLER_REGISTRY = IntegratedDynamics._instance
             .getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
 
-    public static final VariablePredicate ANY = new VariablePredicate<>(IVariable.class, null, null);
+    public static final VariablePredicate ANY = new VariablePredicate<>(IVariable.class, null, ValuePredicate.ANY);
 
     private final Class<V> variableClass;
     private final IValueType valueType;
