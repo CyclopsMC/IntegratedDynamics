@@ -20,7 +20,6 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -151,6 +150,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         };
         Item item = createItem(itemConfig);
         ItemAction.register(item, itemConfig, itemConfig.getTargetTab());
+        if(MinecraftHelpers.isClientSide()) {
+            ItemAction.handleItemModel(itemConfig);
+        }
         getMod().getConfigHandler().addToConfigDictionary(itemConfig);
         return item;
     }
@@ -163,13 +165,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public String getUnlocalizedNameBase() {
         return "parttype.parttypes." + getMod().getModId() + "." + getName();
-    }
-
-    @Override
-    public void onInit(IInitListener.Step initStep) {
-        if(MinecraftHelpers.isClientSide() && initStep == IInitListener.Step.PREINIT) {
-            ItemAction.handleItemModel(itemConfig);
-        }
     }
 
     @SuppressWarnings("unchecked")
