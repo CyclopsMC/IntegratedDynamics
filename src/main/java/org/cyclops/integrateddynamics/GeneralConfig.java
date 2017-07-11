@@ -51,9 +51,9 @@ public class GeneralConfig extends DummyConfig {
     public static int partOverlayRenderdistance = 15;
 
     /**
-     * The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.
+     * The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The chance at which a Menril Tree will spawn in the wild, the higher, the lower the chance.", minimalValue = 0)
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0)
     public static int wildMenrilTreeChance = 350;
 
     /**

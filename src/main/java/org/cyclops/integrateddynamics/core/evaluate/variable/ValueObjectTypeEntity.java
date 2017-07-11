@@ -2,15 +2,17 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.base.Optional;
 import lombok.ToString;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * Value type with values that are itemstacks.
@@ -19,15 +21,13 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBas
 public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEntity.ValueEntity> implements
         IValueTypeNamed<ValueObjectTypeEntity.ValueEntity>, IValueTypeNullable<ValueObjectTypeEntity.ValueEntity> {
 
-    private static final String DELIMITER = ";";
-
     public ValueObjectTypeEntity() {
         super("entity");
     }
 
     @Override
     public ValueEntity getDefault() {
-        return ValueEntity.of(null);
+        return ValueEntity.of((UUID) null);
     }
 
     @Override
@@ -46,34 +46,19 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
     @Override
     public String serialize(ValueEntity value) {
-        Optional<Entity> entity = value.getRawValue();
-        if(entity.isPresent()) {
-            int world = entity.get().world.provider.getDimension();
-            int id = entity.get().getEntityId();
-            return world + DELIMITER + id;
+        Optional<UUID> uuid = value.getUuid();
+        if(uuid.isPresent()) {
+            return uuid.get().toString();
         }
         return "";
     }
 
     @Override
     public ValueEntity deserialize(String value) {
-        String[] split = value.split(DELIMITER);
-        Entity entity = null;
-        if(split.length == 2) {
-            try {
-                int world = Integer.parseInt(split[0]);
-                int id = Integer.parseInt(split[1]);
-                if(MinecraftHelpers.isClientSide()) {
-                    entity = Minecraft.getMinecraft().world.getEntityByID(id);
-                } else {
-                    WorldServer[] servers = FMLCommonHandler.instance().getMinecraftServerInstance().worlds;
-                    if (servers.length > world) {
-                        entity = servers[world].getEntityByID(id);
-                    }
-                }
-            } catch (NumberFormatException e) {}
-        }
-        return ValueEntity.of(entity);
+        try {
+            return ValueEntity.of(UUID.fromString(value));
+        } catch (IllegalArgumentException e) {}
+        return ValueEntity.of((UUID) null);
     }
 
     @Override
@@ -92,20 +77,68 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     }
 
     @ToString
-    public static class ValueEntity extends ValueOptionalBase<Entity> {
+    public static class ValueEntity extends ValueBase {
 
-        private ValueEntity(Entity entity) {
-            super(ValueTypes.OBJECT_ENTITY, entity);
+        private final Optional<UUID> value;
+
+        private ValueEntity(@Nullable Entity value) {
+            super(ValueTypes.OBJECT_ENTITY);
+            this.value = value == null ? Optional.<UUID>absent() : Optional.of(value.getUniqueID());
         }
 
-        public static ValueEntity of(Entity entity) {
-            return new ValueEntity(entity);
+        private ValueEntity(@Nullable UUID entityUuid) {
+            super(ValueTypes.OBJECT_ENTITY);
+            this.value = Optional.fromNullable(entityUuid);
+        }
+
+        /**
+         * @return The raw value in an optional holder.
+         */
+        public Optional<Entity> getRawValue() {
+            Optional<UUID> uuid = getUuid();
+            if (uuid.isPresent()) {
+                if (MinecraftHelpers.isClientSide()) {
+                    for (Entity entity : FMLClientHandler.instance().getWorldClient().getLoadedEntityList()) {
+                        if (entity.getUniqueID().equals(uuid.get())) {
+                            return Optional.of(entity);
+                        }
+                    }
+                }
+                return Optional.fromNullable(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid.get()));
+            }
+            return Optional.absent();
+        }
+
+        public Optional<UUID> getUuid() {
+            return value;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean equals(Object o) {
+            if(o instanceof ValueEntity) {
+                if (((ValueEntity) o).value.isPresent() && value.isPresent()) {
+                    return ((ValueEntity) o).value.get().equals(value.get());
+                } else if (!((ValueEntity) o).value.isPresent() && !value.isPresent()) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override
-        protected boolean isEqual(Entity a, Entity b) {
-            return a.getEntityId() == b.getEntityId();
+        public int hashCode() {
+            return getType().hashCode() + (getRawValue().isPresent() ? getRawValue().get().hashCode() : 0);
         }
+
+        public static ValueEntity of(@Nullable Entity entity) {
+            return new ValueEntity(entity);
+        }
+
+        public static ValueEntity of(@Nullable UUID entityUuid) {
+            return new ValueEntity(entityUuid);
+        }
+
     }
 
 }

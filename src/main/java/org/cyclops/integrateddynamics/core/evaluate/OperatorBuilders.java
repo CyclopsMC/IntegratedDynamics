@@ -340,7 +340,7 @@ public class OperatorBuilders {
         IOperator operator = value.getRawValue();
         if (!ValueHelpers.correspondsTo(operator.getOutputType(), expectedOutput)) {
             L10NHelpers.UnlocalizedString error =
-                    new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_ILLEGALPROPERY,
+                    new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_ILLEGALPROPERY,
                             expectedOutput, operator.getOutputType(), operator.getLocalizedNameFull());
             throw new EvaluationException(error.localize());
         }
