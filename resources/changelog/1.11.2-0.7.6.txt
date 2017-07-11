@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.6 or higher.
+
+Changes:
+* Improve chance-related config descriptions, Closes #202
+
+Fixes:
+* Improve entity value storage, Closes #201. We now use persistent entity UUID's to refer to entities, so that references to entities persist after world restarts.
+* Fix localization error with pipe operator, Closes #39
