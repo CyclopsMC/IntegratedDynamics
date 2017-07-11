@@ -12,7 +12,7 @@ import org.cyclops.cyclopscore.tracking.Versions;
  *
  */
 public class GeneralConfig extends DummyConfig {
-    
+
     /**
      * The current mod version, will be used to check if the player's config isn't out of date and
      * warn the player accordingly.
@@ -77,10 +77,6 @@ public class GeneralConfig extends DummyConfig {
     
     @Override
     public void onRegistered() {
-        // Check version of config file
-        if(!version.equals(Reference.MOD_VERSION))
-            System.err.println("The config file of " + Reference.MOD_NAME + " is out of date and might cause problems, please remove it so it can be regenerated.");
-
         if(analytics) {
             Analytics.registerMod(getMod(), Reference.GA_TRACKING_ID);
         }
