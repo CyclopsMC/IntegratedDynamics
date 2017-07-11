@@ -18,6 +18,10 @@ cache:
 before_cache:
     - rm -f $HOME/.gradle/caches/*/*.lock
 
+branches:
+  except:
+  - /^release-.*$/
+
 deploy:
 - provider: script
   script: ./gradlew curseforge -S
