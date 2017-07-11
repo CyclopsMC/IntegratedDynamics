@@ -4,7 +4,9 @@ import com.google.common.base.Optional;
 import lombok.ToString;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -95,7 +97,14 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         public Optional<Entity> getRawValue() {
             Optional<UUID> uuid = getUuid();
             if (uuid.isPresent()) {
-                return Optional.of(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid.get()));
+                if (MinecraftHelpers.isClientSide()) {
+                    for (Entity entity : FMLClientHandler.instance().getWorldClient().getLoadedEntityList()) {
+                        if (entity.getUniqueID().equals(uuid.get())) {
+                            return Optional.of(entity);
+                        }
+                    }
+                }
+                return Optional.fromNullable(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid.get()));
             }
             return Optional.absent();
         }
