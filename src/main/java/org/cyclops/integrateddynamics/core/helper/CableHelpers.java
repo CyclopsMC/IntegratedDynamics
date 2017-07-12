@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,6 +32,7 @@ import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +41,13 @@ import java.util.Map;
  * @author rubensworks
  */
 public class CableHelpers {
+
+    public static final Collection<EnumFacing> ALL_SIDES = Sets.newIdentityHashSet();
+    static {
+        for (EnumFacing side : EnumFacing.VALUES) {
+            ALL_SIDES.add(side);
+        }
+    }
 
     /**
      * Get the cable capability at the given position.
@@ -74,9 +83,10 @@ public class CableHelpers {
      * Request to update the cable connections of all neighbours of the given position.
      * @param world The world.
      * @param pos The center position.
+     * @param sides The sides to update connections for.
      */
-    public static void updateConnectionsNeighbours(IBlockAccess world, BlockPos pos) {
-        for(EnumFacing side : EnumFacing.VALUES) {
+    public static void updateConnectionsNeighbours(IBlockAccess world, BlockPos pos, Collection<EnumFacing> sides) {
+        for(EnumFacing side : sides) {
             updateConnections(world, pos.offset(side));
         }
     }
@@ -164,7 +174,9 @@ public class CableHelpers {
 
                 // Signal changes
                 cable.updateConnections();
-                CableHelpers.updateConnectionsNeighbours(world, pos);
+                Collection<EnumFacing> sidesToUpdate = getCableConnections(cable);
+                sidesToUpdate.add(cableConnectionHit);
+                CableHelpers.updateConnectionsNeighbours(world, pos, sidesToUpdate);
 
                 // Reinit the networks for this block and the disconnected neighbour.
                 NetworkHelpers.initNetwork(world, pos);
@@ -184,7 +196,9 @@ public class CableHelpers {
 
                     // Signal changes
                     cable.updateConnections();
-                    CableHelpers.updateConnectionsNeighbours(world, pos);
+                    Collection<EnumFacing> sidesToUpdate = getCableConnections(cable);
+                    sidesToUpdate.add(side);
+                    CableHelpers.updateConnectionsNeighbours(world, pos, sidesToUpdate);
 
                     // Reinit the networks for this block and the connected neighbour.
                     NetworkHelpers.initNetwork(world, pos);
@@ -205,7 +219,7 @@ public class CableHelpers {
      * @param placer The entity who placed the cable.
      */
     public static void onCableAdded(World world, BlockPos pos, @Nullable EntityLivingBase placer) {
-        CableHelpers.updateConnectionsNeighbours(world, pos);
+        CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
         if(!world.isRemote) {
             INetwork network = NetworkHelpers.initNetwork(world, pos);
             MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer));
@@ -252,13 +266,14 @@ public class CableHelpers {
      * This method won't do anything when called client-side.
      * @param world The world.
      * @param pos The position.
+     * @param sides The sides to update connections for.
      * @return If the cable was removed from the network.
      */
-    public static boolean onCableRemoved(World world, BlockPos pos) {
-        updateConnectionsNeighbours(world, pos);
+    public static boolean onCableRemoved(World world, BlockPos pos, Collection<EnumFacing> sides) {
+        updateConnectionsNeighbours(world, pos, sides);
         if (!world.isRemote) {
             // Reinit neighbouring networks.
-            for(EnumFacing side : EnumFacing.VALUES) {
+            for(EnumFacing side : sides) {
                 BlockPos sidePos = pos.offset(side);
                 NetworkHelpers.initNetwork(world, sidePos);
             }
@@ -294,7 +309,7 @@ public class CableHelpers {
         } else if (!player.capabilities.isCreativeMode) {
             ItemStackHelpers.spawnItemStackToPlayer(world, pos, cable.getItemStack(), player);
         }
-        CableHelpers.onCableRemoved(world, pos);
+        CableHelpers.onCableRemoved(world, pos, getCableConnections(cable));
 
         ItemBlockCable.playBreakSound(world, pos, blockState);
     }
@@ -332,5 +347,36 @@ public class CableHelpers {
             }
         }
         return false;
+    }
+
+    /**
+     * Get the sides the cable is currently connected to.
+     * @param cable A cable.
+     * @return The cable connections.
+     */
+    public static Collection<EnumFacing> getCableConnections(ICable cable) {
+        Collection<EnumFacing> sides = Sets.newIdentityHashSet();
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (cable.isConnected(side)) {
+                sides.add(side);
+            }
+        }
+        return sides;
+    }
+
+    /**
+     * Get the sides that are externally connected to the given position.
+     * @param world The world.
+     * @param pos The position.
+     * @return The sides.
+     */
+    public static Collection<EnumFacing> getExternallyConnectedCables(World world, BlockPos pos) {
+        Collection<EnumFacing> sides = Sets.newIdentityHashSet();
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (CableHelpers.isCableConnected(world, pos.offset(side), side.getOpposite())) {
+                sides.add(side);
+            }
+        }
+        return sides;
     }
 }
