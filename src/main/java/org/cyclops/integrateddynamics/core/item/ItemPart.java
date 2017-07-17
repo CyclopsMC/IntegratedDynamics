@@ -97,7 +97,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                             if (cableFakeable != null) {
                                 CableHelpers.onCableRemoving(world, target, false);
                                 cableFakeable.setRealCable(false);
-                                CableHelpers.onCableRemoved(world, target);
+                                CableHelpers.onCableRemoved(world, target, CableHelpers.ALL_SIDES);
                             } else {
                                 IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable at %s", target));
                             }

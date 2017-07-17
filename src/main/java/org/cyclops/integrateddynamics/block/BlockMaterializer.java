@@ -52,6 +52,6 @@ public class BlockMaterializer extends BlockContainerGuiCabled {
 
     @Override
     public boolean saveNBTToDroppedItem() {
-        return true;
+        return false;
     }
 }

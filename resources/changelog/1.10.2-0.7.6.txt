@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.6 or higher.
+
+Changes:
+* Add out-of-energy tooltip when parts are disabled, Closes #208
+
+Fixes:
+* Add additional debug information on PartStateExceptions, #204
+* Fix Redstone Writer achievement not obtaining when using the Boolean aspect, Closes #207
+* Fix broken Materializers not stacking, Closes #206
+* Catch infinite recursion in operation variables

@@ -38,16 +38,21 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     private IExpression expression = null;
     private int lastNetworkHash = -1;
 
+    // Flags to detect infinite recursion
+    private final boolean[] validatingVariables;
+
     public OperatorVariableFacade(boolean generateId, IOperator operator, int[] variableIds) {
         super(generateId);
         this.operator = operator;
         this.variableIds = variableIds;
+        this.validatingVariables = this.variableIds != null ? new boolean[this.variableIds.length] : null;
     }
 
     public OperatorVariableFacade(int id, IOperator operator, int[] variableIds) {
         super(id);
         this.operator = operator;
         this.variableIds = variableIds;
+        this.validatingVariables = this.variableIds != null ? new boolean[this.variableIds.length] : null;
     }
 
     @Override
@@ -111,6 +116,13 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                     } else if (variableFacade != null) {
                         IValueType valueType = getOperator().getInputTypes()[i];
                         final Wrapper<Boolean> isValid = new Wrapper<>(true);
+                        if (validatingVariables[i]) {
+                            validator.addError(new L10NHelpers.UnlocalizedString(
+                                    L10NValues.OPERATOR_ERROR_CYCLICREFERENCE, getId()));
+                            checkFurther = false;
+                            break;
+                        }
+                        validatingVariables[i] = true;
                         variableFacade.validate(network, new IValidator() {
                             @Override
                             public void addError(L10NHelpers.UnlocalizedString error) {
@@ -118,6 +130,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                                 isValid.set(false);
                             }
                         }, valueType);
+                        validatingVariables[i] = false;
                         if (isValid.get()) {
                             IVariable variable = variableFacade.getVariable(network);
                             if (variable != null) {
