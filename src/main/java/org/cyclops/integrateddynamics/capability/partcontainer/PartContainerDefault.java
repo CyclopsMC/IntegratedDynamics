@@ -155,7 +155,7 @@ public abstract class PartContainerDefault implements IPartContainer {
     @Override
     public void setPartState(EnumFacing side, IPartState partState) throws PartStateException {
         if(!hasPart(side)) {
-            throw new PartStateException(getPosition());
+            throw new PartStateException(getPosition(), side);
         }
         partData.put(side, PartHelpers.PartStateHolder.of(getPart(side), partState));
         onPartsChanged();
@@ -166,7 +166,7 @@ public abstract class PartContainerDefault implements IPartContainer {
         synchronized (partData) {
             PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
             if (partStateHolder == null) {
-                throw new PartStateException(getPosition());
+                throw new PartStateException(getPosition(), side);
             }
             return partStateHolder.getState();
         }
