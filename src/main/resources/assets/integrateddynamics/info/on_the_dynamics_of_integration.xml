@@ -441,6 +441,20 @@
                     <paragraph>info_book.integrateddynamics.manual.parts.other.display.text1</paragraph>
                     <appendix type="crafting_recipe">integrateddynamics:part_display_panel_item</appendix>
                 </section>
+                <section name="info_book.integrateddynamics.manual.parts.other.connector_mono_directional">
+                    <tag>part_connector_mono_directional_item</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.connector_mono_directional.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.connector_mono_directional.text2</paragraph>
+                    <appendix type="crafting_recipe">integrateddynamics:part_connector_mono_directional_item</appendix>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.other.connector_omni_directional">
+                    <tag>part_connector_omni_directional_item</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text2</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text3</paragraph>
+                    <appendix type="crafting_recipe" index="0">integrateddynamics:part_connector_omni_directional_item</appendix>
+                    <appendix type="crafting_recipe" index="1">integrateddynamics:part_connector_omni_directional_item</appendix>
+                </section>
             </section>
         </section>
 
