@@ -1,0 +1,12 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.8 or higher.
+
+Changes:
+* Add additional debug information on PartStateExceptions, #204
+* Add out-of-energy tooltip when parts are disabled, Closes #208
+* Reduce number of cable connection updates to the bare minimum. Not all sides always need to be updated, only those sides that had a cable connection.
+
+Fixes:
+* Fix Redstone Writer achievement not obtaining when using the Boolean aspect, Closes #207
+* Fix broken Materializers not stacking, Closes #206
+* Catch infinite recursion in operation variables
