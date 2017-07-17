@@ -235,6 +235,7 @@
             <section name="info_book.integrateddynamics.manual.prerequisites.squeezer">
                 <tag>squeezer</tag>
                 <tag>menrilresin</tag>
+                <tag>liquidchorus</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.squeezer.text1</paragraph>
                 <appendix type="crafting_recipe">integrateddynamics:squeezer</appendix>
                 <appendix_list type="integrateddynamics:squeezer_recipe">base</appendix_list>
@@ -246,12 +247,17 @@
                 <tag>crystalized_menril_block</tag>
                 <tag>crystalized_menril_brick</tag>
                 <tag>crystalized_menril_chunk</tag>
+                <tag>crystalized_chorus_block</tag>
+                <tag>crystalized_chorus_brick</tag>
+                <tag>crystalized_chorus_chunk</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.drying_basin.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.drying_basin.text2</paragraph>
                 <appendix type="crafting_recipe">integrateddynamics:drying_basin</appendix>
                 <appendix_list type="integrateddynamics:drying_basin_recipe">base</appendix_list>
                 <appendix type="crafting_recipe">integrateddynamics:crystalized_menril_brick</appendix>
                 <appendix type="crafting_recipe">integrateddynamics:crystalized_menril_chunk</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:crystalized_chorus_brick</appendix>
+                <appendix type="crafting_recipe">integrateddynamics:crystalized_chorus_chunk</appendix>
                 <appendix_list type="integrateddynamics:drying_basin_recipe">convenience</appendix_list>
             </section>
         </section>
@@ -315,6 +321,7 @@
                     <tag>variable</tag>
                     <tag>labeller</tag>
                     <tag>variable_transformer</tag>
+                    <tag>logic_director</tag>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text1</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text2</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_card.text3</paragraph>
@@ -323,6 +330,7 @@
                     <appendix type="crafting_recipe">integrateddynamics:labeller</appendix>
                     <appendix type="crafting_recipe" index="0">integrateddynamics:variable_transformer</appendix>
                     <appendix type="crafting_recipe" index="1">integrateddynamics:variable_transformer</appendix>
+                    <appendix type="crafting_recipe">integrateddynamics:logic_director</appendix>
                 </section>
                 <section name="info_book.integrateddynamics.manual.logic.variables.variable_store">
                     <tag>variablestore</tag>
