@@ -305,7 +305,7 @@ public class Achievements {
 				if (((event.getAspect() == Aspects.Write.Redstone.INTEGER
 						&& variable.getValue() instanceof ValueTypeInteger.ValueInteger
 						&& ((ValueTypeInteger.ValueInteger) variable.getValue()).getRawValue() >= 15)
-						|| (event.getAspect() == Aspects.Write.Redstone.INTEGER)
+						|| (event.getAspect() == Aspects.Write.Redstone.BOOLEAN)
 						&& variable.getValue() instanceof ValueTypeBoolean.ValueBoolean
 						&& ((ValueTypeBoolean.ValueBoolean) variable.getValue()).getRawValue())) {
 					event.getEntityPlayer().addStat(REDSTONE_TRANSMISSION);
