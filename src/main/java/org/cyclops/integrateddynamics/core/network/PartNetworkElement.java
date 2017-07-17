@@ -90,7 +90,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         if(partContainer != null) {
             return (S) partContainer.getPartState(getCenterSide(getTarget()));
         } else {
-            throw new PartStateException(getCenterPos(getTarget()));
+            throw new PartStateException(getCenterPos(getTarget()), getTarget().getCenter().getSide());
         }
     }
 
