@@ -98,21 +98,19 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     protected void addPosition(INetwork network, State state, PartPos pos) {
-        if (network.isInitialized()
-                && !PartTypeConnectorOmniDirectional.LOADED_GROUPS.isModifyingPositions()
+        if (!PartTypeConnectorOmniDirectional.LOADED_GROUPS.isModifyingPositions()
                 && !state.isAddedToGroup()) {
             state.setAddedToGroup(true);
-            PartTypeConnectorOmniDirectional.LOADED_GROUPS.addPosition(state.getGroupId(), pos);
+            PartTypeConnectorOmniDirectional.LOADED_GROUPS.addPosition(state.getGroupId(), pos, network.isInitialized());
         }
     }
 
     protected void removePosition(INetwork network, State state, PartPos pos) {
-        if (network.isInitialized()
-                && !PartTypeConnectorOmniDirectional.LOADED_GROUPS.isModifyingPositions()
+        if (!PartTypeConnectorOmniDirectional.LOADED_GROUPS.isModifyingPositions()
                 && state.isAddedToGroup()) {
             if (state.hasConnectorId()) {
                 state.setAddedToGroup(false);
-                PartTypeConnectorOmniDirectional.LOADED_GROUPS.removePosition(state.getGroupId(), pos);
+                PartTypeConnectorOmniDirectional.LOADED_GROUPS.removePosition(state.getGroupId(), pos, network.isInitialized());
             }
         }
     }
@@ -255,31 +253,35 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
             }
         }
 
-        public void addPosition(int group, PartPos pos) {
+        public void addPosition(int group, PartPos pos, boolean initNetwork) {
             Set<PartPos> positions = groupPositions.get(group);
             if (positions == null) {
                 groupPositions.put(group, positions = Sets.newTreeSet());
             }
             positions.add(pos);
 
-            modifyingPositions = true;
-            initNetworkGroup(positions);
-            modifyingPositions = false;
+            if (initNetwork) {
+                modifyingPositions = true;
+                initNetworkGroup(positions);
+                modifyingPositions = false;
+            }
         }
 
-        public void removePosition(int group, PartPos pos) {
+        public void removePosition(int group, PartPos pos, boolean initNetwork) {
             Set<PartPos> positions = groupPositions.get(group);
             if (positions == null) {
                 groupPositions.put(group, positions = Sets.newTreeSet());
             }
             positions.remove(pos);
 
-            modifyingPositions = true;
-            initNetworkGroup(positions);
-            if (pos.getPos().isLoaded()) {
-                NetworkHelpers.initNetwork(pos.getPos().getWorld(), pos.getPos().getBlockPos());
+            if (initNetwork) {
+                modifyingPositions = true;
+                initNetworkGroup(positions);
+                if (pos.getPos().isLoaded()) {
+                    NetworkHelpers.initNetwork(pos.getPos().getWorld(), pos.getPos().getBlockPos());
+                }
+                modifyingPositions = false;
             }
-            modifyingPositions = false;
         }
 
         public boolean isModifyingPositions() {

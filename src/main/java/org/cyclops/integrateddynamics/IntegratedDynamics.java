@@ -245,8 +245,8 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Mod.EventHandler
     @Override
     public void onServerStarted(FMLServerStartedEvent event) {
-        super.onServerStarted(event);
         PartTypeConnectorOmniDirectional.LOADED_GROUPS.onStartedEvent(event);
+        super.onServerStarted(event);
     }
 
     @Mod.EventHandler
