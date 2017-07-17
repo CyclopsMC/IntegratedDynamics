@@ -1091,14 +1091,24 @@
 	</recipe>
 
 	<recipe type="shaped">
-		<condition type="config">logic_director</condition>
+		<condition type="config">variable_transformer</condition>
 		<condition type="config">cable</condition>
 		<input>
 			<grid>
 				<gridrow>
+					<item/>
+					<item meta="0">integrateddynamics:variable_transformer</item>
+					<item/>
+				</gridrow>
+				<gridrow>
 					<item>integrateddynamics:cable</item>
-					<item>integrateddynamics:logic_director</item>
 					<item>integrateddynamics:cable</item>
+					<item>integrateddynamics:cable</item>
+				</gridrow>
+				<gridrow>
+					<item/>
+					<item meta="1">integrateddynamics:variable_transformer</item>
+					<item/>
 				</gridrow>
 			</grid>
 		</input>
@@ -1118,9 +1128,9 @@
 					<item />
 				</gridrow>
 				<gridrow>
+					<item>integrateddynamics:part_connector_mono_directional_item</item>
 					<item>integrateddynamics:cable</item>
-					<item type="oredict">gemEmerald</item>
-					<item>integrateddynamics:cable</item>
+					<item>integrateddynamics:part_connector_mono_directional_item</item>
 				</gridrow>
 				<gridrow>
 					<item />
@@ -1145,9 +1155,9 @@
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>integrateddynamics:cable</item>
+					<item>integrateddynamics:part_connector_mono_directional_item</item>
 					<item>integrateddynamics:part_connector_omni_directional_item</item>
-					<item>integrateddynamics:cable</item>
+					<item>integrateddynamics:part_connector_mono_directional_item</item>
 				</gridrow>
 				<gridrow>
 					<item />
