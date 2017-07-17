@@ -103,6 +103,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
                             return Optional.of(entity);
                         }
                     }
+                    return Optional.absent();
                 }
                 return Optional.fromNullable(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid.get()));
             }
