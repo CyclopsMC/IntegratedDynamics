@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.fluid;
 
+import net.minecraft.item.EnumRarity;
 import net.minecraftforge.fluids.Fluid;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableFluid;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
@@ -26,6 +27,7 @@ public class FluidLiquidChorus extends ConfigurableFluid {
         super(eConfig);
         setDensity(1500); // How tick the fluid is, affects movement inside the liquid.
         setViscosity(3000); // How fast the fluid flows.
+        setRarity(EnumRarity.EPIC);
     }
 
 }
