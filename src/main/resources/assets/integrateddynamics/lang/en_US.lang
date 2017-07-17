@@ -204,7 +204,7 @@ valuetype.valuetypes.integrateddynamics.fluidstack.name=Fluid
 
 # Part types
 parttype.parttypes.integrateddynamics.error.lowEnergy=Not enough energy
-parttype.parttypes.integrateddynamics.tooltip.disabled=Disabled
+parttype.parttypes.integrateddynamics.tooltip.disabled=Out of Energy
 parttype.parttypes.integrateddynamics.tooltip.inactive=Inactive
 parttype.parttypes.integrateddynamics.tooltip.errors=Errors:
 parttype.parttypes.integrateddynamics.tooltip.writer.activeAspect=Aspect: %s (%s)
