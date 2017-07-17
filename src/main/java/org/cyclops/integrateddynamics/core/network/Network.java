@@ -146,6 +146,11 @@ public class Network implements INetwork {
     }
 
     @Override
+    public boolean isInitialized() {
+        return updateableElements != null;
+    }
+
+    @Override
     public INetworkEventBus getEventBus() {
         return this.eventBus;
     }
@@ -408,14 +413,12 @@ public class Network implements INetwork {
                 Collection<INetworkElement> networkElements = networkElementProvider.
                         createNetworkElements(pathElement.getPosition().getWorld(), pathElement.getPosition().getBlockPos());
                 for (INetworkElement networkElement : networkElements) {
-                    networkElement.onPreRemoved(this);
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;
                     }
                 }
                 for (INetworkElement networkElement : networkElements) {
                     removeNetworkElementPost(networkElement);
-                    networkElement.onPostRemoved(this);
                 }
                 onNetworkChanged();
                 return true;

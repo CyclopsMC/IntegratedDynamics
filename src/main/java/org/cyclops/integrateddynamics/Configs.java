@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
+import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
@@ -45,6 +46,7 @@ public class Configs {
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());
+        configHandler.add(new FluidLiquidChorusConfig());
 
         // Blocks
         configHandler.add(new BlockCableConfig());
@@ -72,6 +74,11 @@ public class Configs {
         configHandler.add(new BlockCrystalizedMenrilBlockStairsConfig());
         configHandler.add(new BlockCrystalizedMenrilBrickStairsConfig());
         configHandler.add(new BlockDelayConfig());
+        configHandler.add(new BlockFluidLiquidChorusConfig());
+        configHandler.add(new BlockCrystalizedChorusBlockConfig());
+        configHandler.add(new BlockCrystalizedChorusBrickConfig());
+        configHandler.add(new BlockCrystalizedChorusBlockStairsConfig());
+        configHandler.add(new BlockCrystalizedChorusBrickStairsConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());
@@ -83,6 +90,8 @@ public class Configs {
         configHandler.add(new ItemMenrilBerriesConfig());
         configHandler.add(new ItemPortableLogicProgrammerConfig());
         configHandler.add(new ItemOnTheDynamicsOfIntegrationConfig());
+        configHandler.add(new ItemCrystalizedChorusChunkConfig());
+        configHandler.add(new ItemLogicDirectorConfig());
 
         // Biomes
         configHandler.add(new BiomeMeneglinConfig());

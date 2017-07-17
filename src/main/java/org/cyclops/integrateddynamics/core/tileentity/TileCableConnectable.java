@@ -48,7 +48,7 @@ public class TileCableConnectable extends CyclopsTileEntity implements CyclopsTi
         };
         addCapabilityInternal(CableConfig.CAPABILITY, cable);
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, new NetworkCarrierDefault());
-        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile(this, cable));
+        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile<>(this, cable));
     }
 
     @Override
