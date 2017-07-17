@@ -14,4 +14,16 @@
 		</output>
 	</recipe>
 
+	<recipe type="integrateddynamics:squeezer">
+		<tag>base</tag>
+		<condition type="config">squeezer</condition>
+		<condition type="config">liquidchorus</condition>
+		<input>
+			<item>minecraft:chorus_fruit_popped</item>
+		</input>
+		<output>
+			<fluid amount="125">liquidchorus</fluid>
+		</output>
+	</recipe>
+
 </recipes>

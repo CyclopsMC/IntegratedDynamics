@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -135,10 +136,12 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag) {
-        if(itemStack.getTagCompound() != null) {
+        if(itemStack.getTagCompound() != null
+                && itemStack.getTagCompound().hasKey("id", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
             int id = itemStack.getTagCompound().getInteger("id");
             list.add(L10NHelpers.localize(L10NValues.GENERAL_ITEM_ID, id));
         }
+        getPart().loadTooltip(itemStack, list);
         L10NHelpers.addOptionalInfo(list, getPart().getUnlocalizedNameBase());
         super.addInformation(itemStack, world, list, flag);
     }

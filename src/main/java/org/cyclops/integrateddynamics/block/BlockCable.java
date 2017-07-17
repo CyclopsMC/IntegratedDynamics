@@ -40,6 +40,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.collidable.CollidableComponentCableCenter;
@@ -61,6 +62,8 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 
 /**
@@ -271,6 +274,22 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, neighborBlock, fromPos);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock);
+    }
+
+    @Override
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
+        super.updateTick(world, pos, state, rand);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
+        if (tile != null) {
+            for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : tile
+                    .getPartContainer().getPartData().entrySet()) {
+                updateTickPart(entry.getValue().getPart(), world, pos, entry.getValue().getState(), rand);
+            }
+        }
+    }
+
+    protected void updateTickPart(IPartType partType, World world, BlockPos pos, IPartState partState, Random random) {
+        partType.updateTick(world, pos, partState, random);
     }
 
     /* --------------- Start ICollidable and rendering --------------- */

@@ -238,7 +238,10 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @SuppressWarnings("unchecked")
     @Override
     public final void onEvent(INetworkEvent event, IPartNetworkElement<P, S> networkElement) {
-        networkEventActions.get(event.getClass()).onAction(event.getNetwork(), networkElement.getTarget(), networkElement.getPartState(), event);
+        if (networkElement.getTarget().getCenter().getPos().isLoaded()) {
+            networkEventActions.get(event.getClass()).onAction(event.getNetwork(), networkElement.getTarget(),
+                    networkElement.getPartState(), event);
+        }
     }
 
     @Override

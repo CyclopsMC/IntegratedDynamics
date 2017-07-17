@@ -13,6 +13,7 @@ public class PartOverlayRenderers {
     public static final IPartOverlayRendererRegistry REGISTRY = IntegratedDynamics._instance.getRegistryManager().getRegistry(IPartOverlayRendererRegistry.class);
 
     public static final DisplayPartOverlayRenderer DISPLAY = REGISTRY.register(PartTypes.DISPLAY_PANEL, new DisplayPartOverlayRenderer());
+    public static final ConnectorOmniPartOverlayRenderer CONNECTOR_OMNIDIRECTIONAL = REGISTRY.register(PartTypes.CONNECTOR_OMNI, new ConnectorOmniPartOverlayRenderer());
 
     public static void load() {}
 

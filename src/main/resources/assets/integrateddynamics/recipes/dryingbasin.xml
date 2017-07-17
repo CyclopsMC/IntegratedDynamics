@@ -17,4 +17,20 @@
 		</properties>
 	</recipe>
 
+	<recipe type="integrateddynamics:dryingbasin">
+		<tag>base</tag>
+		<condition type="config">drying_basin</condition>
+		<condition type="config">crystalized_chorus_block</condition>
+		<condition type="config">liquidchorus</condition>
+		<input>
+			<fluid amount="1000">liquidchorus</fluid>
+		</input>
+		<output>
+			<item>integrateddynamics:crystalized_chorus_block</item>
+		</output>
+		<properties>
+			<duration>250</duration>
+		</properties>
+	</recipe>
+
 </recipes>

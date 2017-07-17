@@ -54,7 +54,7 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
         addCapabilityInternal(CableConfig.CAPABILITY, cable);
         networkCarrier = new NetworkCarrierDefault();
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
-        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile(this, cable));
+        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile<>(this, cable));
     }
 
     @Override

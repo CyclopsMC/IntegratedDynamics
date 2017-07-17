@@ -9,6 +9,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -18,6 +19,7 @@ import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -117,7 +119,8 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     @Override
     public S getState(ItemStack itemStack) {
         S partState = null;
-        if(!itemStack.isEmpty() && itemStack.getTagCompound() != null) {
+        if(!itemStack.isEmpty() && itemStack.getTagCompound() != null
+                && itemStack.getTagCompound().hasKey("id", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
             partState = fromNBT(itemStack.getTagCompound());
         }
         if(partState == null) {
@@ -162,6 +165,11 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
+    public void updateTick(World world, BlockPos pos, S partState, Random random) {
+
+    }
+
+    @Override
     public void onPreRemoved(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
 
     }
@@ -198,6 +206,11 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public void loadTooltip(S state, List<String> lines) {
+
+    }
+
+    @Override
+    public void loadTooltip(ItemStack itemStack, List<String> lines) {
 
     }
 

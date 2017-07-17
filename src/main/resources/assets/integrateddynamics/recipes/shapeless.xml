@@ -133,4 +133,15 @@
 		</output>
 	</recipe>
 
+	<recipe type="shapeless">
+		<condition type="config">crystalized_chorus_block</condition>
+		<condition type="config">crystalized_chorus_chunk</condition>
+		<input>
+			<item>integrateddynamics:crystalized_chorus_block</item>
+		</input>
+		<output>
+			<item amount="9">integrateddynamics:crystalized_chorus_chunk</item>
+		</output>
+	</recipe>
+
 </recipes>

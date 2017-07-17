@@ -37,4 +37,7 @@ public final class PartTypes {
     public static final PartTypePanelLightDynamic DYNAMIC_LIGHT_PANEL = REGISTRY.register(new PartTypePanelLightDynamic("dynamic_light_panel"));
     public static final PartTypePanelDisplay DISPLAY_PANEL = REGISTRY.register(new PartTypePanelDisplay("display_panel"));
 
+    // Connectors
+    public static final PartTypeConnectorMonoDirectional CONNECTOR_MONO = REGISTRY.register(new PartTypeConnectorMonoDirectional("connector_mono_directional"));
+    public static final PartTypeConnectorOmniDirectional CONNECTOR_OMNI = REGISTRY.register(new PartTypeConnectorOmniDirectional("connector_omni_directional"));
 }
