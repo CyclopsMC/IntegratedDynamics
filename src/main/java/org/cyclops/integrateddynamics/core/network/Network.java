@@ -12,6 +12,7 @@ import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
@@ -357,32 +358,40 @@ public class Network implements INetwork {
                 lastSecondDurations.clear();
             }
             for (INetworkElement element : updateableElements) {
-                if (isValid(element)) {
-                    long startTime = 0;
-                    if (isBeingDiagnozed) {
-                        startTime = System.nanoTime();
-                    }
-                    int lastElementTick = updateableElementsTicks.get(element);
-                    if (canUpdate(element)) {
-                        if (lastElementTick <= 0) {
-                            updateableElementsTicks.put(element, element.getUpdateInterval() - 1);
-                            element.update(this);
-                            postUpdate(element);
+                try {
+                    if (isValid(element)) {
+                        long startTime = 0;
+                        if (isBeingDiagnozed) {
+                            startTime = System.nanoTime();
+                        }
+                        int lastElementTick = updateableElementsTicks.get(element);
+                        if (canUpdate(element)) {
+                            if (lastElementTick <= 0) {
+                                updateableElementsTicks.put(element, element.getUpdateInterval() - 1);
+                                element.update(this);
+                                postUpdate(element);
+                            } else {
+                                updateableElementsTicks.put(element, lastElementTick - 1);
+                            }
                         } else {
+                            onSkipUpdate(element);
                             updateableElementsTicks.put(element, lastElementTick - 1);
                         }
-                    } else {
-                        onSkipUpdate(element);
-                        updateableElementsTicks.put(element, lastElementTick - 1);
-                    }
-                    if (isBeingDiagnozed) {
-                        long duration = System.nanoTime() - startTime;
-                        Long lastDuration = lastSecondDurations.get(element);
-                        if (lastDuration != null) {
-                            duration = duration + lastDuration;
+                        if (isBeingDiagnozed) {
+                            long duration = System.nanoTime() - startTime;
+                            Long lastDuration = lastSecondDurations.get(element);
+                            if (lastDuration != null) {
+                                duration = duration + lastDuration;
+                            }
+                            lastSecondDurations.put(element, duration);
                         }
-                        lastSecondDurations.put(element, duration);
                     }
+                } catch (PartStateException e) {
+                    IntegratedDynamics.clog(Level.WARN, "Attempted to tick a part that was not properly unloaded. " +
+                            "Report this to the Integrated Dynamics issue tracker with details on what you did " +
+                            "leading up to this stacktrace. The part was forcefully unloaded");
+                    e.printStackTrace();
+                    element.invalidate(this);
                 }
             }
         }
