@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.6 or higher.
+
+Fixes:
+* Fix Lombok being packaged
+* Forcefully invalidate parts that throw a PartStateException, Closes #204
