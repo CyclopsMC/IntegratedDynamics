@@ -36,6 +36,14 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
+shadowJar {
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup == 'org.projectlombok'
+        })
+    }
+}
+
 minecraft {
     version = "${config.minecraft_version}-${config.forge_version}"
     runDir = "run"
