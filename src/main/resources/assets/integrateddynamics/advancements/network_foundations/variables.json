@@ -14,7 +14,7 @@
   "rewards": {
     "recipes": [
       "integrateddynamics:variable_transformer",
-      "integrateddynamics:variable_transformer_1",
+      "integrateddynamics:variable_transformer_11",
       "integrateddynamics:logic_programmer",
       "integrateddynamics:portable_logic_programmer",
       "integrateddynamics:variablestore"
