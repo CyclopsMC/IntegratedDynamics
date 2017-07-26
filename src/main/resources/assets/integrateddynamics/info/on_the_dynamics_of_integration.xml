@@ -490,7 +490,6 @@
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text6</paragraph>
             <appendix type="craftingRecipe">integrateddynamics:logicProgrammer</appendix>
             <appendix type="craftingRecipe">integrateddynamics:portableLogicProgrammer</appendix>
-            <appendixList factory="integrateddynamics:operators_output">operator.operators.integrateddynamics.binary.name</appendixList>
             <appendixList factory="integrateddynamics:operators_output">*</appendixList>
         </section>
     </section>
