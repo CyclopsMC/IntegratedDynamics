@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 
 import javax.annotation.Nullable;
 
@@ -95,7 +96,22 @@ public class ValueHelpers {
             IValue value = values[i];
             variables[i] = new Variable<>(value.getType(), value);
         }
-        return operator.evaluate(variables);
+        return ValueHelpers.evaluateOperator(operator, variables);
+    }
+
+    /**
+     * Evaluate an operator for the given variables.
+     * @param operator The operator.
+     * @param variables The variables.
+     * @return The resulting value.
+     * @throws EvaluationException If something went wrong during operator evaluation.
+     */
+    public static IValue evaluateOperator(IOperator operator, IVariable... variables) throws EvaluationException {
+        if (operator.getRequiredInputLength() == variables.length) {
+            return operator.evaluate(variables);
+        } else {
+            return ValueTypeOperator.ValueOperator.of(new CurriedOperator(operator, variables));
+        }
     }
 
     /**

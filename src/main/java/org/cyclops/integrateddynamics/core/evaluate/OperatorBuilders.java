@@ -261,7 +261,11 @@ public class OperatorBuilders {
                 @Override
                 public Pair<IOperator, IOperator> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                     IOperator second = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(1), ValueTypes.CATEGORY_ANY);
-                    IOperator first = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), second.getInputTypes()[0]);
+                    IValueType secondInputType = second.getInputTypes()[0];
+                    if (ValueHelpers.correspondsTo(secondInputType, ValueTypes.OPERATOR)) {
+                        secondInputType = ValueTypes.CATEGORY_ANY;
+                    }
+                    IOperator first = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), secondInputType);
                     return Pair.of(first, second);
                 }
             });

@@ -2179,11 +2179,7 @@ public final class Operators {
                             IOperator innerOperator = input.getLeft();
                             OperatorBase.SafeVariablesGetter variables = input.getRight();
                             IVariable variable = variables.getVariables()[0];
-                            if (innerOperator.getRequiredInputLength() == 1) {
-                                return innerOperator.evaluate(new IVariable[]{variable});
-                            } else {
-                                return ValueTypeOperator.ValueOperator.of(new CurriedOperator(innerOperator, variable));
-                            }
+                            return ValueHelpers.evaluateOperator(innerOperator, variable);
                         }
                     })).build());
     static {

@@ -48,6 +48,8 @@ public class TestOperatorOperators {
 
     @Before
     public void before() {
+        ValueTypeListProxyFactories.load();
+
         bFalse = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(false));
         bTrue  = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
 
