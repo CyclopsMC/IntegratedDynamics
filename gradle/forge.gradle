@@ -77,7 +77,7 @@ dependencies {
     deobfCompile "pl.asie.charset:charset-lib:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-lib/maven-metadata.xml
     deobfCompile "pl.asie.charset:charset-pipes:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-pipes/maven-metadata.xml
     deobfCompile "pl.asie.charset:charset-wires:${config.charset_version}" // http://charset.asie.pl/maven/pl/asie/charset/charset-wires/maven-metadata.xml
-    //deobfCompile "MineTweaker3:MineTweaker3-MC1102-Main:${config.minetweakermain_version}" // http://blamejared.com/maven/MineTweaker3/MineTweaker3-MC1102-Main/maven-metadata.xml
+    deobfCompile "MineTweaker3:MineTweaker3-MC1102-Main:${config.minetweakermain_version}" // http://blamejared.com/maven/MineTweaker3/MineTweaker3-MC1102-Main/maven-metadata.xml
 
     // Project lombok
     provided "org.projectlombok:lombok:1.16.8"
