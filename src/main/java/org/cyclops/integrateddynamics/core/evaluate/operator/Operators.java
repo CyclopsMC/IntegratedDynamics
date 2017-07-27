@@ -731,6 +731,28 @@ public final class Operators {
             }).build());
 
     /**
+     * Concatenate two lists
+     */
+    public static final IOperator LIST_CONCAT = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.LIST})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
+            .symbolOperator("concat")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    IValueTypeListProxy b = ((ValueTypeList.ValueList) variables.getValue(1)).getRawValue();
+                    if (!ValueHelpers.correspondsTo(a.getValueType(), b.getValueType())) {
+                        L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                                a.getValueType(), b.getValueType());
+                        throw new EvaluationException(error.localize());
+                    }
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyConcat(a, b));
+                }
+            }).build());
+
+    /**
      * Build a list lazily using a start value and an operator that is applied to the previous element to get a next element.
      */
     public static final IOperator LIST_LAZYBUILT = REGISTRY.register(OperatorBuilders.LIST
