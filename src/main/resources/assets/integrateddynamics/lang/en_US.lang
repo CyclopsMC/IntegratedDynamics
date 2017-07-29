@@ -826,6 +826,8 @@ operator.operators.integrateddynamics.itemstack.plant.name=Item Plant
 operator.operators.integrateddynamics.itemstack.plant.info=The resulting block when this item is planted
 operator.operators.integrateddynamics.itemstack.itembyname.name=Item By Name
 operator.operators.integrateddynamics.itemstack.itembyname.info=Get the item corresponding to the given name, add space+number for indicating the metadata.
+operator.operators.integrateddynamics.itemstack.itemlistcount.name=Item List Count
+operator.operators.integrateddynamics.itemstack.itemlistcount.info=Get the total item count of exactly the given item in a list.
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s

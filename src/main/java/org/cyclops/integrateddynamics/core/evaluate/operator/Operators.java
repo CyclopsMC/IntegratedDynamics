@@ -1558,6 +1558,45 @@ public final class Operators {
                     })).build());
 
     /**
+     * Get the total item count of the given item in a list.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_LIST_COUNT= REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .inputTypes(ValueTypes.LIST, ValueTypes.OBJECT_ITEMSTACK)
+            .output(ValueTypes.INTEGER).symbolOperator("itemlistcount")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeList.ValueList a = variables.getValue(0);
+                    ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1);
+                    if (!ValueHelpers.correspondsTo(a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK)) {
+                        L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                                a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK);
+                        throw new EvaluationException(error.localize());
+                    }
+
+                    ItemStack itemStack = b.getRawValue().isPresent() ? b.getRawValue().get() : null;
+                    int count = 0;
+                    for (ValueObjectTypeItemStack.ValueItemStack listValue :
+                            (IValueTypeListProxy<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack>) a.getRawValue()) {
+                        if (listValue.getRawValue().isPresent()) {
+                            ItemStack listItem = listValue.getRawValue().get();
+                            if (itemStack != null) {
+                                if (itemStack.isItemEqual(listItem) && ItemStack.areItemStackTagsEqual(itemStack, listItem)) {
+                                    count += listItem.stackSize;
+                                }
+
+                            } else {
+                                count += listItem.stackSize;
+                            }
+                        }
+                    }
+
+                    return ValueTypeInteger.ValueInteger.of(count);
+                }
+            }).build());
+
+    /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
      */
 
