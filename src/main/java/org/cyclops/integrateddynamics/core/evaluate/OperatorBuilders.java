@@ -331,6 +331,30 @@ public class OperatorBuilders {
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.PREFIX_1_LONG);
 
+    // --------------- String builders ---------------
+
+    public static final IterativeFunction.PrePostBuilder<Pair<ResourceLocation, Integer>, IValue> FUNCTION_STRING_TO_RESOURCE_LOCATION = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Pair<ResourceLocation, Integer>>() {
+                @Override
+                public Pair<ResourceLocation, Integer> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueTypeString.ValueString a = input.getValue(0);
+                    String[] split = a.getRawValue().split(" ");
+                    if (split.length > 2) {
+                        throw new EvaluationException("Invalid block name.");
+                    }
+                    ResourceLocation resourceLocation = new ResourceLocation(split[0]);
+                    int meta = 0;
+                    if (split.length > 1) {
+                        try {
+                            meta = Integer.parseInt(split[1]);
+                        } catch (NumberFormatException e) {
+                            throw new EvaluationException(e.getMessage());
+                        }
+                    }
+                    return Pair.of(resourceLocation, meta);
+                }
+            });
+
     // --------------- Operator helpers ---------------
 
     /**

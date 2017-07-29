@@ -1064,6 +1064,24 @@ public final class Operators {
             }).build());
 
     /**
+     * Get a block by name.
+     */
+    public static final IOperator OBJECT_BLOCK_BY_NAME = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .inputType(ValueTypes.STRING).output(ValueTypes.OBJECT_BLOCK).symbolOperator("blockbyname")
+            .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
+                    .build(new IOperatorValuePropagator<Pair<ResourceLocation, Integer>, IValue>() {
+                        @Override
+                        public IValue getOutput(Pair<ResourceLocation, Integer> input) throws EvaluationException {
+                            Block block = Block.REGISTRY.getObject(input.getLeft());
+                            IBlockState blockState = null;
+                            if (block != null) {
+                                blockState = block.getStateFromMeta(input.getRight());
+                            }
+                            return ValueObjectTypeBlock.ValueBlock.of(blockState);
+                        }
+                    })).build());
+
+    /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
      */
 
@@ -1520,6 +1538,24 @@ public final class Operators {
                     return ValueObjectTypeBlock.ValueBlock.of(plant);
                 }
             }).build());
+
+    /**
+     * Get an item by name.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_BY_NAME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .inputType(ValueTypes.STRING).output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("itembyname")
+            .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
+                    .build(new IOperatorValuePropagator<Pair<ResourceLocation, Integer>, IValue>() {
+                        @Override
+                        public IValue getOutput(Pair<ResourceLocation, Integer> input) throws EvaluationException {
+                            Item item = Item.REGISTRY.getObject(input.getLeft());
+                            ItemStack itemStack = null;
+                            if (item != null) {
+                                itemStack = new ItemStack(item, 1, input.getRight());
+                            }
+                            return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
+                        }
+                    })).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------

@@ -761,6 +761,8 @@ operator.operators.integrateddynamics.block.cansustainplantitem.name=Block Can S
 operator.operators.integrateddynamics.block.cansustainplantitem.info=If the given block can sustain the given item plant
 operator.operators.integrateddynamics.block.plantage.name=Block Plant Age
 operator.operators.integrateddynamics.block.plantage.info=The age of the given plant block
+operator.operators.integrateddynamics.block.blockbyname.name=Block By Name
+operator.operators.integrateddynamics.block.blockbyname.info=Get the block corresponding to the given name, add space+number for indicating the metadata.
 
 operator.operators.integrateddynamics.itemstack.name=Item
 operator.operators.integrateddynamics.itemstack.basename=Item %s
@@ -822,6 +824,8 @@ operator.operators.integrateddynamics.itemstack.planttype.name=Item Plant Type
 operator.operators.integrateddynamics.itemstack.planttype.info=The plant type of the given item
 operator.operators.integrateddynamics.itemstack.plant.name=Item Plant
 operator.operators.integrateddynamics.itemstack.plant.info=The resulting block when this item is planted
+operator.operators.integrateddynamics.itemstack.itembyname.name=Item By Name
+operator.operators.integrateddynamics.itemstack.itembyname.info=Get the item corresponding to the given name, add space+number for indicating the metadata.
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s
