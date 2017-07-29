@@ -302,25 +302,27 @@ public class OperatorBuilders {
                             new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
                 }
             });
-    public static final OperatorBuilder.IConditionalOutputTypeDeriver OPERATOR_CONDITIONAL_OUTPUT_DERIVER = new OperatorBuilder.IConditionalOutputTypeDeriver() {
-        @Override
-        public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
-            try {
-                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input[0].getValue()).getRawValue();
-                if (innerOperator.getRequiredInputLength() == 1) {
-                    IVariable[] innerVariables = Arrays.copyOfRange(input, 1, input.length);
-                    L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(ValueHelpers.from(innerVariables));
-                    if (error != null) {
-                        return innerOperator.getOutputType();
+    public static OperatorBuilder.IConditionalOutputTypeDeriver newOperatorConditionalOutputDeriver(final int consumeArguments) {
+        return new OperatorBuilder.IConditionalOutputTypeDeriver() {
+            @Override
+            public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
+                try {
+                    IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input[0].getValue()).getRawValue();
+                    if (innerOperator.getRequiredInputLength() == consumeArguments) {
+                        IVariable[] innerVariables = Arrays.copyOfRange(input, consumeArguments, input.length);
+                        L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(ValueHelpers.from(innerVariables));
+                        if (error != null) {
+                            return innerOperator.getOutputType();
+                        }
+                        return innerOperator.getConditionalOutputType(innerVariables);
+                    } else {
+                        return ValueTypes.OPERATOR;
                     }
-                    return innerOperator.getConditionalOutputType(innerVariables);
-                } else {
-                    return ValueTypes.OPERATOR;
+                } catch (EvaluationException e) {
+                    return ValueTypes.CATEGORY_ANY;
                 }
-            } catch (EvaluationException e) {
-                return ValueTypes.CATEGORY_ANY;
             }
-        }
+        };
     };
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> OPERATOR = OperatorBuilder
             .forType(ValueTypes.OPERATOR).appendKind("operator");

@@ -2266,7 +2266,7 @@ public final class Operators {
      * Apply for a given operator a given value.
      */
     public static final IOperator OPERATOR_APPLY = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
-            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
+            .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(1))
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply")
             .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
@@ -2282,6 +2282,49 @@ public final class Operators {
     static {
         REGISTRY.registerSerializer(new CurriedOperator.Serializer());
     }
+
+    /**
+     * Apply for a given operator the given 2 values.
+     */
+    public static final IOperator OPERATOR_APPLY_2 = REGISTRY.register(OperatorBuilders.OPERATOR
+            .renderPattern(IConfigRenderPattern.INFIX_2)
+            .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(2))
+            .inputTypes(ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY)
+            .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply2")
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST, ValueTypes.LIST))
+            .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
+                    new IOperatorValuePropagator<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue>() {
+                        @Override
+                        public IValue getOutput(Pair<IOperator, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                            IOperator innerOperator = input.getLeft();
+                            OperatorBase.SafeVariablesGetter variables = input.getRight();
+                            IVariable variable0 = variables.getVariables()[0];
+                            IVariable variable1 = variables.getVariables()[1];
+                            return ValueHelpers.evaluateOperator(innerOperator, variable0, variable1);
+                        }
+                    })).build());
+
+    /**
+     * Apply for a given operator the given 3 values.
+     */
+    public static final IOperator OPERATOR_APPLY_3 = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
+            .renderPattern(IConfigRenderPattern.INFIX_3)
+            .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(3))
+            .inputTypes(ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY)
+            .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply3")
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST, ValueTypes.LIST, ValueTypes.LIST))
+            .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
+                    new IOperatorValuePropagator<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue>() {
+                        @Override
+                        public IValue getOutput(Pair<IOperator, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                            IOperator innerOperator = input.getLeft();
+                            OperatorBase.SafeVariablesGetter variables = input.getRight();
+                            IVariable variable0 = variables.getVariables()[0];
+                            IVariable variable1 = variables.getVariables()[1];
+                            IVariable variable2 = variables.getVariables()[2];
+                            return ValueHelpers.evaluateOperator(innerOperator, variable0, variable1, variable2);
+                        }
+                    })).build());
 
     /**
      * Apply the given operator on all elements of a list, resulting in a new list of mapped values.

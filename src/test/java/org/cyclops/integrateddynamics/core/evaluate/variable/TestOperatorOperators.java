@@ -181,6 +181,78 @@ public class TestOperatorOperators {
     }
 
     /**
+     * ----------------------------------- APPLY_2 -----------------------------------
+     */
+
+    @Test
+    public void testApply2() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bTrue, bFalse});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("and(true, false) == false", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+
+        IValue res2 = Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bTrue, bTrue});
+        assertThat("and(true, true) == true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+
+        IValue res3 = Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oRelationalGreaterThan, i0, i1});
+        assertThat("0 > 1 == false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(false));
+
+        IValue res4 = Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oRelationalGreaterThan, i2, i1});
+        assertThat("2 > 1 == true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeApply2Large() throws EvaluationException {
+        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bFalse, bFalse, bFalse});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeApply2Small() throws EvaluationException {
+        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypeApply2() throws EvaluationException {
+        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{bFalse, bFalse, bFalse});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypeApply2() throws EvaluationException {
+        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalNot, oGeneralIdentity, bTrue});
+    }
+
+    @Test
+    public void testValidateTypesApply2() {
+        assertThat(Operators.OPERATOR_APPLY_2.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_2.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_2.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_2.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesApply2() {
+        assertThat(Operators.OPERATOR_APPLY_2.getConditionalOutputType(new IVariable[]{oLogicalAnd, bFalse, bFalse}),
+                CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
+        assertThat(Operators.OPERATOR_APPLY_2.getConditionalOutputType(new IVariable[]{oIntegerModulus, i0, i0}),
+                CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
+
+        assertThat(Operators.OPERATOR_APPLY_2.getConditionalOutputType(new IVariable[]{oRelationalEquals, bFalse, bFalse}),
+                CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
+    }
+
+    /**
+     * ----------------------------------- APPLY_3 -----------------------------------
+     */
+
+    @Test
+    public void testValidateTypesApply3() {
+        assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}), nullValue());
+    }
+
+    /**
      * ----------------------------------- MAP -----------------------------------
      */
 
