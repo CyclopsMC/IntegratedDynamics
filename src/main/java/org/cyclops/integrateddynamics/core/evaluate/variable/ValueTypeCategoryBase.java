@@ -47,7 +47,8 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
 
     @Override
     public V getDefault() {
-        return null;
+        // Avoid crashes when default values would be used somewhere.
+        return (V) ValueTypeBoolean.ValueBoolean.of(false);
     }
 
     @Override

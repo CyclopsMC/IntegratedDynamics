@@ -62,6 +62,11 @@ public class TestItemStackOperators {
     private DummyVariable<ValueTypeInteger.ValueInteger> int100;
     private DummyVariable<ValueTypeInteger.ValueInteger> int200;
 
+    private DummyVariable<ValueTypeString.ValueString> sApple;
+    private DummyVariable<ValueTypeString.ValueString> sApple1;
+
+    private DummyVariable<ValueTypeList.ValueList> lApples;
+
     @IntegrationBefore
     public void before() {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
@@ -99,6 +104,20 @@ public class TestItemStackOperators {
 
         int100 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(100));
         int200 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(200));
+
+        sApple = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:apple"));
+        sApple1 = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:apple 1"));
+
+        lApples = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
+                iApple.getValue(),
+                iApple2.getValue(),
+                iIronOre.getValue(),
+                iApple.getValue(),
+                iApple.getValue(),
+                iHoe.getValue(),
+                iHoe100.getValue(),
+                iApple2.getValue()
+        ));
     }
 
     /**
@@ -1141,6 +1160,70 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypePlant() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- ITEMBYNAME -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemItemByName() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_BY_NAME.evaluate(new IVariable[]{sApple});
+        Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is a block");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getItem(),
+                new ItemStack(Items.APPLE).getItem(), "itembyname(minecraft:apple) = apple");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getMetadata(),
+                new ItemStack(Items.APPLE).getMetadata(), "itembyname(minecraft:apple) = apple");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_BY_NAME.evaluate(new IVariable[]{sApple1});
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().getItem(),
+                new ItemStack(Items.APPLE, 1, 1).getItem(), "itembyname(minecraft:apple 1) = apple@1");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().getMetadata(),
+                new ItemStack(Items.APPLE, 1, 1).getMetadata(), "itembyname(minecraft:apple 1) = apple@1");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeItemByNameLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_BY_NAME.evaluate(new IVariable[]{sApple, sApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeItemByNameSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_BY_NAME.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeItemByName() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_BY_NAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- LIST_COUNT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackListCount() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_LIST_COUNT.evaluate(new IVariable[]{lApples, iApple});
+        Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 7, "listcount(apple) = 7");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_LIST_COUNT.evaluate(new IVariable[]{lApples, iStone});
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), 0, "listcount(stone) = 0");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeListCountLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_LIST_COUNT.evaluate(new IVariable[]{lApples, iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeListCountSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_LIST_COUNT.evaluate(new IVariable[]{lApples});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeListCount() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_LIST_COUNT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }

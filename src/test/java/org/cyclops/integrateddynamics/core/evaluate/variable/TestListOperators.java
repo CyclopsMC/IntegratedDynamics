@@ -400,6 +400,47 @@ public class TestListOperators {
     }
 
     /**
+     * ----------------------------------- CONCAT -----------------------------------
+     */
+
+    @Test
+    public void testListConcat() throws EvaluationException {
+        IValue res1 = Operators.LIST_CONCAT.evaluate(new IVariable[]{lintegers_012, lintegers});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("concat([0, 1, 2], [0, 1, 2, 3])[0] = 0", list.get(0).getRawValue(), is(0));
+        assertThat("concat([0, 1, 2], [0, 1, 2, 3])[1] = 1", list.get(1).getRawValue(), is(1));
+        assertThat("concat([0, 1, 2], [0, 1, 2, 3])[2] = 2", list.get(2).getRawValue(), is(2));
+        assertThat("concat([0, 1, 2], [0, 1, 2, 3])[3] = 0", list.get(3).getRawValue(), is(0));
+        assertThat("concat([0, 1, 2], [0, 1, 2, 3])[4] = 1", list.get(4).getRawValue(), is(1));
+        assertThat("concat([0, 1, 2], [0, 1, 2, 3])[5] = 2", list.get(5).getRawValue(), is(2));
+        assertThat("concat([0, 1, 2], [0, 1, 2, 3])[6] = 3", list.get(6).getRawValue(), is(3));
+        assertThat("concat([0, 1, 2], [0, 1, 2, 3]).size = 7", list.getLength(), is(7));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeConcatInvalidType() throws EvaluationException {
+        Operators.LIST_CONCAT.evaluate(new IVariable[]{lintegers_012, oRelationalEquals});
+        Operators.LIST_CONCAT.evaluate(new IVariable[]{oRelationalEquals, lintegers_012});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeConcatLarge() throws EvaluationException {
+        Operators.LIST_CONCAT.evaluate(new IVariable[]{lintegers, lintegers_012, lintegers_012});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeConcatSmall() throws EvaluationException {
+        Operators.LIST_CONCAT.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeConcat() throws EvaluationException {
+        Operators.LIST_CONCAT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
      * ----------------------------------- LAZYBUILT -----------------------------------
      */
 
