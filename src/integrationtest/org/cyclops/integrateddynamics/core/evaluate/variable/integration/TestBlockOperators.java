@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockSponge;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -39,6 +40,9 @@ public class TestBlockOperators {
     private DummyVariableItemStack iApple;
     private DummyVariableItemStack iSeedWheat;
 
+    private DummyVariable<ValueTypeString.ValueString> sSponge;
+    private DummyVariable<ValueTypeString.ValueString> sSpongeWet;
+
     @IntegrationBefore
     public void before() {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.getDefaultState()));
@@ -53,6 +57,9 @@ public class TestBlockOperators {
 
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
         iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
+
+        sSponge = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:sponge"));
+        sSpongeWet = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:sponge 1"));
     }
 
     /**
@@ -328,6 +335,36 @@ public class TestBlockOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypePlantAge() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANTAGE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- BLOCKBYNAME -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockBlockByName() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{sSponge});
+        Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.SPONGE.getDefaultState(), "blockbyname(minecraft:sponge) = sponge");
+
+        IValue res2 = Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{sSpongeWet});
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get(),
+                Blocks.SPONGE.getDefaultState().withProperty(BlockSponge.WET, true), "blockbyname(minecraft:sponge 1) = sponge_wet");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeBlockByNameLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{sSponge, sSponge});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeBlockByNameSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeBlockByName() throws EvaluationException {
+        Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

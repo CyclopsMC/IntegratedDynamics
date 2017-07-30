@@ -261,7 +261,11 @@ public class OperatorBuilders {
                 @Override
                 public Pair<IOperator, IOperator> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                     IOperator second = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(1), ValueTypes.CATEGORY_ANY);
-                    IOperator first = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), second.getInputTypes()[0]);
+                    IValueType secondInputType = second.getInputTypes()[0];
+                    if (ValueHelpers.correspondsTo(secondInputType, ValueTypes.OPERATOR)) {
+                        secondInputType = ValueTypes.CATEGORY_ANY;
+                    }
+                    IOperator first = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), secondInputType);
                     return Pair.of(first, second);
                 }
             });
@@ -298,25 +302,27 @@ public class OperatorBuilders {
                             new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
                 }
             });
-    public static final OperatorBuilder.IConditionalOutputTypeDeriver OPERATOR_CONDITIONAL_OUTPUT_DERIVER = new OperatorBuilder.IConditionalOutputTypeDeriver() {
-        @Override
-        public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
-            try {
-                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input[0].getValue()).getRawValue();
-                if (innerOperator.getRequiredInputLength() == 1) {
-                    IVariable[] innerVariables = Arrays.copyOfRange(input, 1, input.length);
-                    L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(ValueHelpers.from(innerVariables));
-                    if (error != null) {
-                        return innerOperator.getOutputType();
+    public static OperatorBuilder.IConditionalOutputTypeDeriver newOperatorConditionalOutputDeriver(final int consumeArguments) {
+        return new OperatorBuilder.IConditionalOutputTypeDeriver() {
+            @Override
+            public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
+                try {
+                    IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input[0].getValue()).getRawValue();
+                    if (innerOperator.getRequiredInputLength() == consumeArguments) {
+                        IVariable[] innerVariables = Arrays.copyOfRange(input, consumeArguments, input.length);
+                        L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(ValueHelpers.from(innerVariables));
+                        if (error != null) {
+                            return innerOperator.getOutputType();
+                        }
+                        return innerOperator.getConditionalOutputType(innerVariables);
+                    } else {
+                        return ValueTypes.OPERATOR;
                     }
-                    return innerOperator.getConditionalOutputType(innerVariables);
-                } else {
-                    return ValueTypes.OPERATOR;
+                } catch (EvaluationException e) {
+                    return ValueTypes.CATEGORY_ANY;
                 }
-            } catch (EvaluationException e) {
-                return ValueTypes.CATEGORY_ANY;
             }
-        }
+        };
     };
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> OPERATOR = OperatorBuilder
             .forType(ValueTypes.OPERATOR).appendKind("operator");
@@ -326,6 +332,30 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> OPERATOR_1_PREFIX_LONG = OPERATOR
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.PREFIX_1_LONG);
+
+    // --------------- String builders ---------------
+
+    public static final IterativeFunction.PrePostBuilder<Pair<ResourceLocation, Integer>, IValue> FUNCTION_STRING_TO_RESOURCE_LOCATION = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Pair<ResourceLocation, Integer>>() {
+                @Override
+                public Pair<ResourceLocation, Integer> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueTypeString.ValueString a = input.getValue(0);
+                    String[] split = a.getRawValue().split(" ");
+                    if (split.length > 2) {
+                        throw new EvaluationException("Invalid block name.");
+                    }
+                    ResourceLocation resourceLocation = new ResourceLocation(split[0]);
+                    int meta = 0;
+                    if (split.length > 1) {
+                        try {
+                            meta = Integer.parseInt(split[1]);
+                        } catch (NumberFormatException e) {
+                            throw new EvaluationException(e.getMessage());
+                        }
+                    }
+                    return Pair.of(resourceLocation, meta);
+                }
+            });
 
     // --------------- Operator helpers ---------------
 

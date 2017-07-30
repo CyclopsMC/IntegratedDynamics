@@ -105,7 +105,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
         private final Optional<UUID> value;
 
-        private ValueEntity(@Nullable Entity value) {
+        protected ValueEntity(@Nullable Entity value) {
             super(ValueTypes.OBJECT_ENTITY);
             this.value = value == null ? Optional.<UUID>absent() : Optional.of(value.getUniqueID());
         }
