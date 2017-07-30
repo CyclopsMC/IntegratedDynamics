@@ -24,9 +24,6 @@
         "items": [
           {
             "item": "integrateddynamics:menril_log"
-          },
-          {
-            "item": "integrateddynamics:menril_log_filled"
           }
         ]
       }
