@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -106,6 +107,11 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             itemPredicate = ItemPredicate.deserialize(element.get("value"));
         }
         return new ValueItemStackPredicate(this, value, itemPredicate);
+    }
+
+    @Override
+    public ValueItemStack materialize(ValueItemStack value) throws EvaluationException {
+        return ValueItemStack.of(value.getRawValue().copy());
     }
 
     @ToString
