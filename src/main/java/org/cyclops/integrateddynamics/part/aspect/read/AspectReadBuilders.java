@@ -334,7 +334,7 @@ public class AspectReadBuilders {
                 if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
                     return itemHandler.getStackInSlot(slotId);
                 }
-                return null;
+                return ItemStack.EMPTY;
             }
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
