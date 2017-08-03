@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
@@ -89,6 +90,11 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
                 return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
             }
         });
+    }
+
+    @Override
+    public ValueItemStack materialize(ValueItemStack value) throws EvaluationException {
+        return ValueItemStack.of(value.getRawValue().copy());
     }
 
     @ToString
