@@ -1170,15 +1170,15 @@ public class TestItemStackOperators {
     public void testItemItemByName() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_BY_NAME.evaluate(new IVariable[]{sApple});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is a block");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getItem(),
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getItem(),
                 new ItemStack(Items.APPLE).getItem(), "itembyname(minecraft:apple) = apple");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().get().getMetadata(),
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getMetadata(),
                 new ItemStack(Items.APPLE).getMetadata(), "itembyname(minecraft:apple) = apple");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_BY_NAME.evaluate(new IVariable[]{sApple1});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().getItem(),
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().getItem(),
                 new ItemStack(Items.APPLE, 1, 1).getItem(), "itembyname(minecraft:apple 1) = apple@1");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().get().getMetadata(),
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().getMetadata(),
                 new ItemStack(Items.APPLE, 1, 1).getMetadata(), "itembyname(minecraft:apple 1) = apple@1");
     }
 
