@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.client.gui;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -11,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
+import org.cyclops.cyclopscore.client.gui.component.input.GuiTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.ScrollingGuiContainer;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -347,7 +347,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
 
         public static final int BUTTON_EDIT = 1;
 
-        private GuiTextField searchField;
+        private GuiTextFieldExtended searchField;
         private GuiButtonText button = null;
 
         public SubGuiOperatorInfo(IGuiInputElement<RenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> element) {
@@ -358,7 +358,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
             }
 
             int searchWidth = 113;
-            this.searchField = new GuiTextField(0, GuiLogicProgrammerBase.this.fontRenderer, 0, 0, searchWidth, 11);
+            this.searchField = new GuiTextFieldExtended(0, GuiLogicProgrammerBase.this.fontRenderer, 0, 0, searchWidth, 11);
             this.searchField.setMaxStringLength(64);
             this.searchField.setEnableBackgroundDrawing(true);
             this.searchField.setVisible(false);

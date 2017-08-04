@@ -2,13 +2,13 @@ package org.cyclops.integrateddynamics.client.gui;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketCustomPayload;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
+import org.cyclops.cyclopscore.client.gui.component.input.GuiTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerConfigurable;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -29,7 +29,7 @@ public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
 
     public static final int BUTTON_WRITE = 1;
 
-    private GuiTextField searchField;
+    private GuiTextFieldExtended searchField;
 
     /**
      * Make a new instance.
@@ -52,7 +52,7 @@ public class GuiLabeller extends GuiContainerConfigurable<ContainerLabeller> {
         int searchWidth = 87;
         int searchX = 36;
         int searchY = 11;
-        this.searchField = new GuiTextField(0, this.fontRenderer, this.guiLeft + searchX, this.guiTop + searchY, searchWidth, this.fontRenderer.FONT_HEIGHT);
+        this.searchField = new GuiTextFieldExtended(0, this.fontRenderer, this.guiLeft + searchX, this.guiTop + searchY, searchWidth, this.fontRenderer.FONT_HEIGHT);
         this.searchField.setMaxStringLength(64);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
