@@ -1286,13 +1286,13 @@ info_book.integrateddynamics.manual.machines.materializer.text2=This can be usef
 info_book.integrateddynamics.manual.machines.materializer.text3=&lVariable Cards&r can be piped in and out the &lMaterializer&r.
 
 info_book.integrateddynamics.manual.machines.proxy=Proxy
-info_book.integrateddynamics.manual.machines.proxy.text1=A &lProxy&r can be used to make a dynamic reference to a certain &lVariable Card&r. It allows you to insert a &lVariable Card&r, and write a new &lVariable Card&r, which will dynamically take the value of the &lVariable Card&r that is present in the proxy.
+info_book.integrateddynamics.manual.machines.proxy.text1=A &lProxy&r can be used to make a dynamic reference to a certain &lVariable Card&r. It allows you to insert a &lVariable Card&r in the top slot, and write a new &lVariable Card&r, which will dynamically take the value of the &lVariable Card&r that is present in the proxy. Note that the referenced (or any other) &lVariable Card&r must remain in the top slot for the proxy to work.
 info_book.integrateddynamics.manual.machines.proxy.text2=This is useful in situations where you have a chain of &lVariable Cards&r, but you still would like to be able to change one value manually. You could then proxy that variable, which will allow it to be swapped with another variable at any time.
 info_book.integrateddynamics.manual.machines.proxy.text3=Just as with the &lMaterializer&r, &lVariable Cards&r can be piped in and out of it.
 
 info_book.integrateddynamics.manual.machines.delay=Delay
 info_book.integrateddynamics.manual.machines.delay.text1=In some situations, you might need to maintain some kind of history of variable values. When you for instance want to take the average or difference over the last values.
-info_book.integrateddynamics.manual.machines.delay.text2=For this, you can use a &lDelay&r, with which you can maintain the history of the values of a given variable. You can do this by inserting a &lVariable Card&r for which you want to maintain the history. You can now create now &lVariable Cards&r that will refer to a list of values, which corresponds to the history.
+info_book.integrateddynamics.manual.machines.delay.text2=For this, you can use a &lDelay&r, with which you can maintain the history of the values of a given variable. You can do this by inserting a &lVariable Card&r in the top slot for which you want to maintain the history. You can now create now &lVariable Cards&r that will refer to a list of values, which corresponds to the history. The referenced (or any other) &lVariable Card&r must remain in the top slot for the delay to work.
 info_book.integrateddynamics.manual.machines.delay.text3=The oldest values correspond to the last elements in the list. You can choose the maximum length of the history from within the gui.
 
 info_book.integrateddynamics.manual.machines.energy_battery=Energy Battery
