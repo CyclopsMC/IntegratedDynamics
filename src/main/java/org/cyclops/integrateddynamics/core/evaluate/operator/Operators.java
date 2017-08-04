@@ -1609,7 +1609,7 @@ public final class Operators {
                         @Override
                         public IValue getOutput(Pair<ResourceLocation, Integer> input) throws EvaluationException {
                             Item item = Item.REGISTRY.getObject(input.getLeft());
-                            ItemStack itemStack = null;
+                            ItemStack itemStack = ItemStack.EMPTY;
                             if (item != null) {
                                 itemStack = new ItemStack(item, 1, input.getRight());
                             }
@@ -1968,7 +1968,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
-                    ItemStack itemStack = null;
+                    ItemStack itemStack = ItemStack.EMPTY;
                     if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
                         itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItemMainhand();
                     }
@@ -1984,7 +1984,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
-                    ItemStack itemStack = null;
+                    ItemStack itemStack = ItemStack.EMPTY;
                     if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
                         itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItemOffhand();
                     }
@@ -2018,7 +2018,7 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
-                    ItemStack itemStack = null;
+                    ItemStack itemStack = ItemStack.EMPTY;
                     if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityItemFrame) {
                         itemStack = ((EntityItemFrame) a.getRawValue().get()).getDisplayedItem();
                     }
