@@ -187,7 +187,7 @@ public class Aspects {
                             .handle(new IAspectValuePropagator<EntityItemFrame, ItemStack>() {
                                 @Override
                                 public ItemStack getOutput(EntityItemFrame itemFrame) {
-                                    return itemFrame != null ? itemFrame.getDisplayedItem() : null;
+                                    return itemFrame != null ? itemFrame.getDisplayedItem() : ItemStack.EMPTY;
                                 }
                             }).handle(AspectReadBuilders.PROP_GET_ITEMSTACK, "itemframecontents").buildRead();
         }
