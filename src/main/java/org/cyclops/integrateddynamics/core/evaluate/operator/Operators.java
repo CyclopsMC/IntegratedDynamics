@@ -1915,8 +1915,8 @@ public final class Operators {
 
                         float size = entity.getCollisionBorderSize();
                         List<Entity> list = entity.world.getEntitiesWithinAABBExcludingEntity(entity,
-                                entity.getEntityBoundingBox().offset(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance)
-                                        .expand((double) size, (double) size, (double) size));
+                                entity.getEntityBoundingBox().expand(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance)
+                                        .grow((double) size, (double) size, (double) size));
                         for (Entity e : list) {
                             if (e.canBeCollidedWith()) {
                                 float f10 = e.getCollisionBorderSize();
