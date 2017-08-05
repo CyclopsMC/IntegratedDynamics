@@ -30,7 +30,7 @@
         "items": [
           {
             "item": "integrateddynamics:variable_transformer",
-            "durability": 0
+            "data": 0
           }
         ]
       }
