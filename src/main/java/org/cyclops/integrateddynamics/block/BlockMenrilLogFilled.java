@@ -4,10 +4,13 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
@@ -65,5 +68,10 @@ public class BlockMenrilLogFilled extends ConfigurableBlockLog {
         drops.add(new ItemStack(getItemDropped(blockStatedata, RANDOM, fortune)));
         drops.add(new ItemStack(ItemCrystalizedMenrilChunkConfig._instance.getItemInstance(), 1 + RANDOM.nextInt(3 + fortune)));
         return drops;
+    }
+
+    @Override
+    public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+        return true;
     }
 }
