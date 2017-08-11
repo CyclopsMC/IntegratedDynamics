@@ -628,6 +628,7 @@ aspect.aspecttypes.integrateddynamics.double.spread_z.name=Z Spread
 aspect.aspecttypes.integrateddynamics.boolean.force_particle.name=Force Spawning
 
 aspect.aspecttypes.integrateddynamics.boolean.strong_power.name=Strong Power
+aspect.aspecttypes.integrateddynamics.boolean.strong_power.info=If a Redstone Torch should be simulated instead of regular Redstone Dust
 
 # Operators
 operator.operators.integrateddynamics.name=Operator

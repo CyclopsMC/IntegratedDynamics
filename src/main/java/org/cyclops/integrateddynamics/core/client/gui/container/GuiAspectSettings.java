@@ -3,9 +3,11 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -174,6 +176,13 @@ public class GuiAspectSettings extends GuiContainerExtended {
             String label = L10NHelpers.localize(activeProperty.getUnlocalizedName());
             RenderHelpers.drawScaledCenteredString(fontRenderer, label, 88, 10, 0,
                     1.0F, 140, Helpers.RGBToInt(10, 10, 10));
+            if (RenderHelpers.isPointInRegion(this.guiLeft + 40, this.guiTop, 110, 20, mouseX, mouseY)) {
+                String unlocalizedInfo = activeProperty.getUnlocalizedName().replaceFirst("\\.name$", ".info");
+                if (I18n.hasKey(unlocalizedInfo)) {
+                    drawTooltip(Lists.newArrayList(TextFormatting.GRAY.toString()
+                            + L10NHelpers.localize(unlocalizedInfo)), mouseX - this.guiLeft, mouseY - this.guiTop + 20);
+                }
+            }
         }
     }
 
