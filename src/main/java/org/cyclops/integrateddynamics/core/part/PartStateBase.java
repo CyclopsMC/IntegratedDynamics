@@ -29,7 +29,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private boolean dirty = false;
     private boolean update = false;
 
-    private int updateInterval = GeneralConfig.defaultPartUpdateFreq;
+    private int updateInterval = getDefaultUpdateInterval();
     private int priority = 0;
     private int id = -1;
     private Map<IAspect, IAspectProperties> aspectProperties = new IdentityHashMap<>();
@@ -209,4 +209,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         volatileCapabilities.remove(capability);
     }
 
+    protected int getDefaultUpdateInterval() {
+        return GeneralConfig.defaultPartUpdateFreq;
+    }
 }
