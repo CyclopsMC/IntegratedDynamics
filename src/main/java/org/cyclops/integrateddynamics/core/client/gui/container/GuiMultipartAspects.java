@@ -140,7 +140,7 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
                         this.guiLeft + offsetX + 26,
                         this.guiTop + offsetY + 25 + aspectBoxHeight * i,
-                        60, Helpers.RGBToInt(40, 40, 40));
+                        getMaxLabelWidth(), Helpers.RGBToInt(40, 40, 40));
 
                 drawAdditionalElementInfo(container, i, aspect);
 
@@ -198,4 +198,7 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
     protected abstract void drawAdditionalElementInfoForeground(ContainerMultipartAspects<P, S, A> container, int index,
                                                                 A aspect, int mouseX, int mouseY);
 
+    public int getMaxLabelWidth() {
+        return 63;
+    }
 }

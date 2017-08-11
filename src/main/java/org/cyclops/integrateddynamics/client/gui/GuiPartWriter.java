@@ -86,4 +86,9 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
     protected int getBaseYSize() {
         return 222;
     }
+
+    @Override
+    public int getMaxLabelWidth() {
+        return 85;
+    }
 }
