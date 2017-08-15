@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -36,6 +35,7 @@ import org.cyclops.integrateddynamics.part.aspect.write.redstone.IWriteRedstoneC
 import org.cyclops.integrateddynamics.part.aspect.write.redstone.WriteRedstoneComponent;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Collection of aspect write builders and value propagators.
@@ -128,12 +128,6 @@ public class AspectWriteBuilders {
                 PROP_FREQUENCY
         ));
         static {
-            Predicate<ValueTypeDouble.ValueDouble> POSITIVE = new Predicate<ValueTypeDouble.ValueDouble>() {
-                @Override
-                public boolean apply(ValueTypeDouble.ValueDouble input) {
-                    return input.getRawValue() >= 0;
-                }
-            };
             PROPERTIES_NOTE.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
             PROPERTIES_SOUND.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
             PROPERTIES_SOUND.setValue(PROP_FREQUENCY, ValueTypeDouble.ValueDouble.of(1D));

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
@@ -42,6 +41,7 @@ import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTy
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 /**
  * Collection of aspect read builders and value propagators.
@@ -125,13 +125,13 @@ public class AspectReadBuilders {
     // --------------- Value type validators ---------------
     public static final Predicate<ValueTypeInteger.ValueInteger> VALIDATOR_INTEGER_POSITIVE = new Predicate<ValueTypeInteger.ValueInteger>() {
         @Override
-        public boolean apply(ValueTypeInteger.ValueInteger input) {
+        public boolean test(ValueTypeInteger.ValueInteger input) {
             return input.getRawValue() >= 0;
         }
     };
     public static final Predicate<ValueTypeDouble.ValueDouble> VALIDATOR_DOUBLE_POSITIVE = new Predicate<ValueTypeDouble.ValueDouble>() {
         @Override
-        public boolean apply(ValueTypeDouble.ValueDouble input) {
+        public boolean test(ValueTypeDouble.ValueDouble input) {
             return input.getRawValue() >= 0;
         }
     };
@@ -478,7 +478,7 @@ public class AspectReadBuilders {
                 return input.getBlockPos();
             }
         };
-        private static final Predicate<net.minecraft.entity.Entity> ENTITY_SELECTOR_ITEMFRAME = new Predicate<net.minecraft.entity.Entity>() {
+        private static final com.google.common.base.Predicate<net.minecraft.entity.Entity> ENTITY_SELECTOR_ITEMFRAME = new com.google.common.base.Predicate<net.minecraft.entity.Entity>() {
             @Override
             public boolean apply(@Nullable net.minecraft.entity.Entity entity) {
                 return entity instanceof EntityItemFrame;

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import lombok.Data;
@@ -31,6 +30,7 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * GUI element for value type that can be read from and written to strings.
@@ -93,7 +93,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
     @Override
     public L10NHelpers.UnlocalizedString validate() {
         L10NHelpers.UnlocalizedString error = getValueType().canDeserialize(inputString);
-        if (error == null && !this.validator.apply(getValueType().deserialize(inputString))) {
+        if (error == null && !this.validator.test(getValueType().deserialize(inputString))) {
             error = new L10NHelpers.UnlocalizedString(L10NValues.VALUE_ERROR);
         }
         return error;
