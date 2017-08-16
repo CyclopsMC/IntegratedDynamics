@@ -86,7 +86,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                 for (EnumFacing side : sides) {
                     IFluidHandler handler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
                     if (!getTank().isEmpty() && handler != null) {
-                        FluidStack fluidStack = new FluidStack(getTank().getFluidType(),
+                        FluidStack fluidStack = new FluidStack(getTank().getFluid(),
                                 Math.min(100, getTank().getFluidAmount()));
                         if (handler.fill(fluidStack, false) > 0) {
                             int filled = handler.fill(fluidStack, true);
