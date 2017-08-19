@@ -46,7 +46,7 @@ public class CollidableComponentParts implements ICollidable.IComponent<EnumFaci
     @Override
     public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
         IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
-        return partContainer.hasPart(position);
+        return partContainer != null && partContainer.hasPart(position);
     }
 
     @Override
