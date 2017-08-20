@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import lombok.ToString;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,7 +29,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
     @Override
     public ValueBlock getDefault() {
-        return ValueBlock.of(null);
+        return ValueBlock.of(Blocks.AIR.getDefaultState());
     }
 
     @Override
@@ -53,7 +54,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
     @Override
     public ValueBlock deserialize(String value) {
-        if(Strings.isNullOrEmpty(value)) return ValueBlock.of(null);
+        if(Strings.isNullOrEmpty(value)) return ValueBlock.of(Blocks.AIR.getDefaultState());
         String[] parts = value.split("\\$");
         try {
             return ValueBlock.of(BlockHelpers.deserializeBlockState(
@@ -85,7 +86,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
             @Override
             public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
-                if(itemStack != null && !(itemStack.getItem() instanceof ItemBlock)) {
+                if(!itemStack.isEmpty() && !(itemStack.getItem() instanceof ItemBlock)) {
                     return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
                 }
                 return null;
@@ -94,7 +95,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             @Override
             public ValueObjectTypeBlock.ValueBlock getValue(ItemStack itemStack) {
                 return ValueObjectTypeBlock.ValueBlock.of(
-                        itemStack == null ? null : BlockHelpers.getBlockStateFromItemStack(itemStack));
+                        itemStack.isEmpty() ? Blocks.AIR.getDefaultState() : BlockHelpers.getBlockStateFromItemStack(itemStack));
             }
         });
     }
