@@ -76,7 +76,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     @Override
     public boolean isNull(ValueItemStack a) {
-        return !a.getRawValue().isEmpty();
+        return a.getRawValue().isEmpty();
     }
 
     @Override
