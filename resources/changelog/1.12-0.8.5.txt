@@ -1,0 +1,20 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.13 or higher.
+
+Changes:
+* Allow air block references to be created inside the LP, Closes #249
+* Increase max width of labels in writer guis
+* Allow aspect property tooltips to be added
+* Allow default update intervals of part states to be changed
+* Make enriched menril logs silk touchable
+* Update Chorus related textures
+
+Fixes:
+* Fix incorrect itemstack valuetype null check
+* Fix parts not being removed from network when alternatively broken. Closes #232 and closes #240
+* Fix collidable components crash when part container is not found, Closes #241
+* Fix squeezer losing fluid NBT tag information
+* Fix some operators returning null itemstacks
+* Fix item frame aspect returning a null itemstack
+* Fix display panel not properly updating when reading inventory slot values
+* Fix crash on empty inventory slot reading
