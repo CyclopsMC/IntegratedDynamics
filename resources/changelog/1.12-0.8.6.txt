@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.14 or higher.
+
+Fixes:
+* Fix part guis not openable after network regaining power, Closes #254
+* Allow swapping of items in writers when clicking with variables, Closes #248
+* Avoid chunk updates when updating redstone writer signal, Closes #247
+  This also reduces the number of neighbours that get triggered to the absolute minimum.
