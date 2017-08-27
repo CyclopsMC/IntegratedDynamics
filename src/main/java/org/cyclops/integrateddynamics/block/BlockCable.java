@@ -217,17 +217,21 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
             if(rayTraceResult != null) {
                 EnumFacing positionHit = rayTraceResult.getPositionHit();
                 if(rayTraceResult.getCollisionType() == FACADE_COMPONENT) {
-                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
-                        FACADE_COMPONENT.destroy(world, pos, side, player);
-                        world.notifyNeighborsOfStateChange(pos, this, true);
+                    if(WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
+                        if (!world.isRemote) {
+                            FACADE_COMPONENT.destroy(world, pos, side, player);
+                            world.notifyNeighborsOfStateChange(pos, this, true);
+                        }
                         return true;
                     }
                     return false;
                 } else if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {
-                    if(!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
+                    if(WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
                         // Remove part from cable
-                        PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
-                        ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
+                        if (!world.isRemote) {
+                            PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
+                            ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
+                        }
                         return true;
                     } else if(CableHelpers.isNoFakeCable(world, pos)) {
                         // Delegate activated call to part
@@ -235,8 +239,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
                         return partContainer.getPart(positionHit).onPartActivated(world, pos,
                                 partContainer.getPartState(positionHit), player, hand, heldItem, positionHit, hitX, hitY, hitZ);
                     }
-                } else if (!world.isRemote
-                        && (rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT
+                } else if ((rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT
                             || rayTraceResult.getCollisionType() == CABLECENTER_COMPONENT)) {
                     if(CableHelpers.onCableActivated(world, pos, state, player, heldItem, side,
                             rayTraceResult.getCollisionType() == CABLECENTER_COMPONENT ? null : rayTraceResult.getPositionHit())) {
