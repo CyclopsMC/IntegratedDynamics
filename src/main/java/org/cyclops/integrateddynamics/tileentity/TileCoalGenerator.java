@@ -58,7 +58,12 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     }
 
     public void updateBlockState() {
-        getWorld().setBlockState(getPos(), getWorld().getBlockState(getPos()).withProperty(BlockCoalGenerator.ON, isBurning()));
+        boolean wasBurning = getWorld().getBlockState(getPos()).getValue(BlockCoalGenerator.ON);
+        boolean isBurning = isBurning();
+        if (isBurning != wasBurning) {
+            getWorld().setBlockState(getPos(),
+                    getWorld().getBlockState(getPos()).withProperty(BlockCoalGenerator.ON, isBurning));
+        }
     }
 
     public int getProgress() {
@@ -101,7 +106,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if((getStackInSlot(SLOT_FUEL) != null || isBurning()) && canAddEnergy(ENERGY_PER_TICK)) {
+        if(!getWorld().isRemote && (getStackInSlot(SLOT_FUEL) != null || isBurning()) && canAddEnergy(ENERGY_PER_TICK)) {
             if (isBurning()) {
                 if (currentlyBurning++ >= currentlyBurningMax) {
                     currentlyBurning = 0;
@@ -121,8 +126,8 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
                     currentlyBurningMax = TileEntityFurnace.getItemBurnTime(fuel);
                     currentlyBurning = 0;
                     sendUpdate();
-                    updateBlockState();
                 }
+                updateBlockState();
             }
         }
     }
