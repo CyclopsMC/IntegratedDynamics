@@ -1,11 +1,15 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.item.ItemBlock;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.client.render.tileentity.RenderTileEntityEnergyBattery;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
+import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
 /**
  * Config for {@link BlockEnergyBattery}.
@@ -57,5 +61,12 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
     @Override
     public Class<? extends ItemBlock> getItemBlockClass() {
         return ItemBlockEnergyContainer.class;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onRegistered() {
+        super.onRegistered();
+        getMod().getProxy().registerRenderer(TileEnergyBattery.class, new RenderTileEntityEnergyBattery());
     }
 }

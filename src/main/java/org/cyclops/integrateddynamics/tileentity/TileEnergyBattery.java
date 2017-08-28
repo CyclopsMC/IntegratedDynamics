@@ -1,13 +1,11 @@
 package org.cyclops.integrateddynamics.tileentity;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
@@ -65,28 +63,19 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         return true;
     }
 
-    public void updateBlockState() {
-        if(!isCreative()) {
-            IBlockState blockState = getWorld().getBlockState(getPos());
-            if (blockState.getBlock() == BlockEnergyBattery.getInstance()) {
-                int fill = Math.max(0, (int) Math.floor(((float) energy * (BlockEnergyBattery.FILL.getAllowedValues().size() - 1)) / (float) getMaxEnergyStored()));
-                if (blockState.getValue(BlockEnergyBattery.FILL) != fill) {
-                    getWorld().setBlockState(getPos(), blockState.withProperty(BlockEnergyBattery.FILL, fill));
-                    sendUpdate();
-                }
-            }
-        }
-    }
-
     protected void setEnergy(int energy) {
         if(!isCreative()) {
             int lastEnergy = this.energy;
             if (lastEnergy != energy) {
                 this.energy = energy;
-                updateBlockState();
-                markDirty();
+                sendUpdate();
             }
         }
+    }
+
+    @Override
+    public void onUpdateReceived() {
+        super.onUpdateReceived();
     }
 
     @Override

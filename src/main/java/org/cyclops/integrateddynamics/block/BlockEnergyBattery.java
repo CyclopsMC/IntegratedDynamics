@@ -2,13 +2,18 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
+import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 
 /**
@@ -18,8 +23,14 @@ import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCap
  */
 public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
+    // TODO: remove in 1.13
+    @Deprecated
     @BlockProperty
     public static final PropertyInteger FILL = PropertyInteger.create("fill", 0, 3);
+
+    @Icon(location = "blocks/energy_battery_overlay_side_2")
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite iconOverlay;
 
     private static BlockEnergyBattery _instance = null;
 
@@ -42,6 +53,10 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
         setHardness(5.0F);
         setSoundType(SoundType.METAL);
+
+        if(MinecraftHelpers.isClientSide()) {
+            eConfig.getMod().getIconProvider().registerIconHolderObject(this);
+        }
     }
 
     @Override

@@ -14,9 +14,9 @@
     }],
     "fill": {
       "0" : {},
-      "1" : { "textures": { "overlay_side": "integrateddynamics:blocks/energy_battery_overlay_side_0" } },
-      "2" : { "textures": { "overlay_side": "integrateddynamics:blocks/energy_battery_overlay_side_1" } },
-      "3" : { "textures": { "overlay_side": "integrateddynamics:blocks/energy_battery_overlay_side_2" } }
+      "1" : {},
+      "2" : {},
+      "3" : {}
     }
   }
 }
