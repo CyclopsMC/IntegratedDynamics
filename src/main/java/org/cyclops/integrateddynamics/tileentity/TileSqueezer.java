@@ -136,5 +136,6 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     public void setItemHeight(int itemHeight) {
         this.itemHeight = itemHeight;
         sendUpdate();
+        updateInventoryHash();
     }
 }
