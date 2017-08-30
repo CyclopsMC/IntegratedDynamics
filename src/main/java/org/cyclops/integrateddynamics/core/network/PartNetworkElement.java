@@ -196,13 +196,13 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public int compareTo(INetworkElement o) {
         if(o instanceof IPartNetworkElement) {
             IPartNetworkElement p = (IPartNetworkElement) o;
-            int compClass = Integer.compare(this.getPart().getClass().hashCode(), p.getPart().getClass().hashCode());
+            int compClass = this.getPart().getClass().getCanonicalName().compareTo(p.getPart().getClass().getCanonicalName());
             if (compClass == 0) {
                 // If this or the other part is not loaded, we IGNORE the priority,
                 // because that depends on tile entity data, which requires loading the part/chunk.
                 int compPriority = !isLoaded() || !p.isLoaded() ? 0 : -Integer.compare(this.getPriority(), p.getPriority());
                 if (compPriority == 0) {
-                    int compPart = Integer.compare(part.hashCode(), p.getPart().hashCode());
+                    int compPart = getPart().getUnlocalizedName().compareTo(p.getPart().getUnlocalizedName());
                     if (compPart == 0) {
                         int compPos = getCenterPos(getTarget()).compareTo(getCenterPos(p.getTarget()));
                         if (compPos == 0) {
@@ -218,6 +218,6 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
                 return compClass;
             }
         }
-        return Integer.compare(hashCode(), o.hashCode());
+        return this.getClass().getCanonicalName().compareTo(o.getClass().getCanonicalName());
     }
 }

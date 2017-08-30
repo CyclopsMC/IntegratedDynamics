@@ -41,7 +41,7 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
         if(o instanceof TileNetworkElement) {
             return getPos().compareTo(((TileNetworkElement) o).getPos());
         }
-        return Integer.compare(hashCode(), o.hashCode());
+        return this.getClass().getCanonicalName().compareTo(o.getClass().getCanonicalName());
     }
 
     @Override

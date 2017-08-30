@@ -77,7 +77,7 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase {
         if(o instanceof CoalGeneratorNetworkElement) {
             return getPos().compareTo(((CoalGeneratorNetworkElement) o).getPos());
         }
-        return Integer.compare(hashCode(), o.hashCode());
+        return this.getClass().getCanonicalName().compareTo(o.getClass().getCanonicalName());
     }
 
 }
