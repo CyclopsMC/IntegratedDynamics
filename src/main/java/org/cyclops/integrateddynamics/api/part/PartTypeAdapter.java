@@ -26,9 +26,11 @@ import java.util.Set;
  */
 public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartType<P, S> {
 
+    private String unlocalizedName = null;
+
     @Override
     public String getUnlocalizedName() {
-        return getUnlocalizedNameBase() + ".name";
+        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedNameBase() + ".name");
     }
 
     @Override

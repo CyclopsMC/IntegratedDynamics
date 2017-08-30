@@ -117,7 +117,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
         @Override
         public int compare(IAspect o1, IAspect o2) {
-            return Integer.compare(o1.hashCode(), o2.hashCode());
+            return o1.getUnlocalizedName().compareTo(o2.getUnlocalizedName());
         }
     }
 

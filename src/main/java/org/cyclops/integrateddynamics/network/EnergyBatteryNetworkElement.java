@@ -106,7 +106,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
         if(o instanceof EnergyBatteryNetworkElement) {
             return getPos().compareTo(((EnergyBatteryNetworkElement) o).getPos());
         }
-        return Integer.compare(hashCode(), o.hashCode());
+        return this.getClass().getCanonicalName().compareTo(o.getClass().getCanonicalName());
     }
 
 }
