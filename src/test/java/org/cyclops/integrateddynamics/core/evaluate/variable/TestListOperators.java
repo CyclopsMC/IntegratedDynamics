@@ -37,6 +37,8 @@ public class TestListOperators {
     private DummyVariableInteger i4;
     private DummyVariableInteger i5;
 
+    private DummyVariableString sx;
+
     private DummyVariableOperator oRelationalEquals;
     private DummyVariableOperator oIntegerIncrement;
 
@@ -54,6 +56,8 @@ public class TestListOperators {
         i3 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3));
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
         i5 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(5));
+
+        sx = new DummyVariableString(ValueTypeString.ValueString.of("x"));
 
         oRelationalEquals = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
         oIntegerIncrement = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
@@ -174,6 +178,11 @@ public class TestListOperators {
     }
 
     @Test(expected = EvaluationException.class)
+    public void testListElementIndexOutOfBounds() throws EvaluationException {
+        Operators.LIST_ELEMENT.evaluate(new IVariable[]{labc, new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3))});
+    }
+
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeElementLarge() throws EvaluationException {
         Operators.LIST_ELEMENT.evaluate(new IVariable[]{labc, labc, labc});
     }
@@ -186,6 +195,50 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeElement() throws EvaluationException {
         Operators.LIST_ELEMENT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- GET_OR_DEFAULT -----------------------------------
+     */
+
+    @Test
+    public void testListElementOrDefault() throws EvaluationException {
+        IValue res1 = Operators.LIST_ELEMENT_DEFAULT.evaluate(new IVariable[]{labc, new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0)), sx});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("getOrDefault(abc, x, 0) = 'a'", ((ValueTypeString.ValueString) res1).getRawValue(), is("a"));
+
+        IValue res2 = Operators.LIST_ELEMENT_DEFAULT.evaluate(new IVariable[]{labc, new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1)), sx});
+        assertThat("result is a string", res2, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("getOrDefault(abc, x, 1) = 'b'", ((ValueTypeString.ValueString) res2).getRawValue(), is("b"));
+
+        IValue res3 = Operators.LIST_ELEMENT_DEFAULT.evaluate(new IVariable[]{labc, new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2)), sx});
+        assertThat("result is a string", res3, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("getOrDefault(abc, x, 2) = 'c'", ((ValueTypeString.ValueString) res3).getRawValue(), is("c"));
+    }
+
+    @Test
+    public void testListElementOrDefaultIndexOutOfBounds() throws EvaluationException {
+        IValue res1 = Operators.LIST_ELEMENT_DEFAULT.evaluate(new IVariable[]{labc, new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3)), sx});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("getOrDefault(abc, x, 3) = 'x'", ((ValueTypeString.ValueString) res1).getRawValue(), is("x"));
+
+        IValue res2 = Operators.LIST_ELEMENT_DEFAULT.evaluate(new IVariable[]{labc, new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-1)), sx});
+        assertThat("getOrDefault(abc, x, -1) = 'x'", ((ValueTypeString.ValueString) res2).getRawValue(), is("x"));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeElementOrDefaultLarge() throws EvaluationException {
+        Operators.LIST_ELEMENT_DEFAULT.evaluate(new IVariable[]{labc, i0, sx, sx});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeElementOrDefaultSmall() throws EvaluationException {
+        Operators.LIST_ELEMENT_DEFAULT.evaluate(new IVariable[]{labc, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeElementOrDefault() throws EvaluationException {
+        Operators.LIST_ELEMENT_DEFAULT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
     /**
