@@ -8,6 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -36,6 +37,8 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
     public static final int COLS = 9;
 
     private final IVariableContainer variableContainer;
+
+    private boolean shouldSendUpdateEvent = false;
 
     public TileVariablestore() {
         super(ROWS * COLS, "variables", 1);
@@ -93,6 +96,26 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
     @Override
     public void onDirty() {
         if(!world.isRemote) {
+            refreshVariables(inventory);
+        }
+    }
+
+    // Make sure that when this TE is loaded, and after the network has been set,
+    // that we trigger a variable update event in the network.
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if(!MinecraftHelpers.isClientSide()) {
+            shouldSendUpdateEvent = true;
+        }
+    }
+
+    @Override
+    protected void updateTileEntity() {
+        super.updateTileEntity();
+        if (shouldSendUpdateEvent && getNetwork() != null) {
+            shouldSendUpdateEvent = false;
             refreshVariables(inventory);
         }
     }
