@@ -609,7 +609,8 @@ public final class Operators {
                         return a.get(b.getRawValue());
                     } else {
                         throw new EvaluationException("Index out of bounds. Tried to get element " + b.getRawValue()
-                                + " of a list of length " + a.getLength());
+                                + " of a list of length " + a.getLength()
+                                + ". Use the getOrDefault operator to provide a default when an index is out of bounds.");
                     }
                 }
             }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
