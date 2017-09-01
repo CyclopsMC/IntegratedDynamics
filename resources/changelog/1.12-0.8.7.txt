@@ -1,0 +1,25 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.16 or higher.
+
+Changes:
+* Make Energy Battery level rendering TESR-based, Closes #258
+  This avoids having to send block updates on energy level changes,
+  which improves FPS, but also improves energy level rendering.
+
+Fixes:
+* Fix variable store contents sometimes not being synced with network, Closes #239
+* Fix format errors on some logic programmer symbols
+* Fix infinite loop when Delayer capacity is set to 0, Closes #263
+* Fix crash when reading entity inventories in the nether, Closes #260
+* Make compareTo implementations safer for clashes
+  Some implementations were done using hashCode, which could result in clashes for non-equal objects.
+  This could lead to non-equal objects being evicted from collections such as sets.
+  This can explain the bug where networks don't revalidate certain parts in the network after reconstruction due to other parts clashing with them.
+  Ignored parts such as writers would not have their `PartTypeWriteBase#updateActivation` method called, which would case their internal selected aspect to remain `null`,
+  which would lead to an inactivated part that shows an error due to it still having an item in its inventory. #259
+* Fix client crash when reconnecting cables using a wrench
+* Fix Squeezer inventory hash not resetting when height is updated
+  Closes CyclopsMC/IntegratedTunnels#52
+  This fixes the problem where IT item transfer was sometimes delayed for insertion into the Squeezer
+* Fix incorrect offhand handling when wrenching, Closes #257
+* Fix generator animation not stopping when finished, Closes #256
