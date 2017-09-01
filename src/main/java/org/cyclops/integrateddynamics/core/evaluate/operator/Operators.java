@@ -605,10 +605,46 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
                     ValueTypeInteger.ValueInteger b = variables.getValue(1);
-                    if (b.getRawValue() < a.getLength()) {
+                    if (b.getRawValue() < a.getLength() && b.getRawValue() >= 0) {
                         return a.get(b.getRawValue());
                     } else {
-                        return a.getValueType().getDefault();
+                        throw new EvaluationException("Index out of bounds. Tried to get element " + b.getRawValue()
+                                + " of a list of length " + a.getLength());
+                    }
+                }
+            }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
+                @Override
+                public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
+                    try {
+                        IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
+                        return a.getValueType();
+                    } catch (EvaluationException e) {
+                        return operator.getConditionalOutputType(input);
+                    }
+                }
+            }).build());
+
+    /**
+     * List operator with one input list, one output integer, and one default value
+     */
+    public static final IOperator LIST_ELEMENT_DEFAULT = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER, ValueTypes.CATEGORY_ANY}).output(ValueTypes.CATEGORY_ANY)
+            .renderPattern(IConfigRenderPattern.INFIX_2).symbol("getOrDefault").operatorName("get_or_default")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
+                    ValueTypeInteger.ValueInteger b = variables.getValue(1);
+                    if (b.getRawValue() < a.getLength() && b.getRawValue() >= 0) {
+                        return a.get(b.getRawValue());
+                    } else {
+                        if (!ValueHelpers.correspondsTo(a.getValueType(), variables.getVariables()[2].getType())) {
+                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                    L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                                    a.getValueType(), variables.getVariables()[2].getType());
+                            throw new EvaluationException(error.localize());
+                        }
+                        return variables.getValue(2);
                     }
                 }
             }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
