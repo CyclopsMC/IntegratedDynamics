@@ -156,7 +156,7 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
                 GlStateManager.color(1, 1, 1);
 
                 // Operator info
-                String aspectName = L10NHelpers.localize(element.getSymbol());
+                String aspectName = element.getSymbol();
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
                         this.guiLeft + offsetX + (hover ? 22 : 21),
                         this.guiTop + offsetY + 26 + boxHeight * i,
