@@ -821,7 +821,9 @@ public final class Operators {
                     if (a.getLength() > 0) {
                         return a.get(0);
                     } else {
-                        return a.getValueType().getDefault();
+                        throw new EvaluationException("Index out of bounds. Tried to get the head of a list of length "
+                                + a.getLength() + ". Use the getOrDefault operator to provide a default when an " +
+                                "index is out of bounds.");
                     }
                 }
             }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
