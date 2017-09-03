@@ -34,7 +34,7 @@ public class VariableFacadeHolderConfig extends CapabilityConfig {
                 "Allows holding of variable facades.",
                 IVariableFacadeHolder.class,
                 new DefaultCapabilityStorage<IVariableFacadeHolder>(),
-                VariableContainerDefault.class
+                VariableFacadeHolderDefault.class
         );
     }
 
