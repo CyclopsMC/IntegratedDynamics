@@ -18,12 +18,12 @@ public abstract class PathElementDefault implements IPathElement {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof IPathElement && compareTo(o) == 0;
+        return o instanceof IPathElement && compareTo((IPathElement)o) == 0;
     }
 
     @Override
-    public int compareTo(Object o) {
-        return getPosition().compareTo(((IPathElement) o).getPosition());
+    public int compareTo(IPathElement o) {
+        return getPosition().compareTo(o.getPosition());
     }
 
     @Override

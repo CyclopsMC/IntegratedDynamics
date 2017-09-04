@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.core.network.EnergyNetwork;
  * @author rubensworks
  *
  */
-public class EnergyNetworkConfig extends CapabilityConfig {
+public class EnergyNetworkConfig extends CapabilityConfig<IEnergyNetwork> {
 
     /**
      * The unique instance.

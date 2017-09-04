@@ -43,8 +43,8 @@ public class GuiPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S exten
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
-        String readValue = ((ContainerPartDisplay) getContainer()).getReadValue();
-        int readValueColor = ((ContainerPartDisplay) getContainer()).getReadValueColor();
+        String readValue = ((ContainerPartDisplay<?, ?>) getContainer()).getReadValue();
+        int readValueColor = ((ContainerPartDisplay<?, ?>) getContainer()).getReadValueColor();
         boolean ok = false;
         if(readValue != null) {
             ok = true;

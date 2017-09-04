@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.block.IVariableContainer;
  * @author rubensworks
  *
  */
-public class VariableContainerConfig extends CapabilityConfig {
+public class VariableContainerConfig extends CapabilityConfig<IVariableContainer> {
 
     /**
      * The unique instance.

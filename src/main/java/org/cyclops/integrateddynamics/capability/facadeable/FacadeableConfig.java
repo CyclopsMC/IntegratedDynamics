@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.block.IFacadeable;
  * @author rubensworks
  *
  */
-public class FacadeableConfig extends CapabilityConfig {
+public class FacadeableConfig extends CapabilityConfig<IFacadeable> {
 
     /**
      * The unique instance.

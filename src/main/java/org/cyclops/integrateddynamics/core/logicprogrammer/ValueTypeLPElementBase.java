@@ -35,11 +35,11 @@ import java.util.List;
 public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgrammerElement<ISubGuiBox, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     @Getter
-    private final IValueType valueType;
+    private final IValueType<?> valueType;
     @Getter
     private GuiElementValueTypeString<GuiLogicProgrammerBase, ContainerLogicProgrammerBase> innerGuiElement;
 
-    public ValueTypeLPElementBase(IValueType valueType) {
+    public ValueTypeLPElementBase(IValueType<?> valueType) {
         this.valueType = valueType;
         this.innerGuiElement = new GuiElementValueTypeString<>(this.valueType, getRenderPattern());
     }
@@ -60,12 +60,12 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public boolean matchesInput(IValueType valueType) {
+    public boolean matchesInput(IValueType<?> valueType) {
         return false;
     }
 
     @Override
-    public boolean matchesOutput(IValueType valueType) {
+    public boolean matchesOutput(IValueType<?> valueType) {
         return ValueHelpers.correspondsTo(valueType, valueType);
     }
 

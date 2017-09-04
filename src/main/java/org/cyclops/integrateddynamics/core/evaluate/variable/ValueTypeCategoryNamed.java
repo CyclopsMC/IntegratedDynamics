@@ -23,7 +23,7 @@ public class ValueTypeCategoryNamed extends ValueTypeCategoryBase<IValue> {
     }
 
     @Override
-    public boolean correspondsTo(IValueType valueType) {
+    public boolean correspondsTo(IValueType<?> valueType) {
         return super.correspondsTo(valueType) && valueType instanceof IValueTypeNamed;
     }
 }

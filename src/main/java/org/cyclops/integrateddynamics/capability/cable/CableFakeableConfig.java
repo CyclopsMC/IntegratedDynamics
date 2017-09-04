@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
  * @author rubensworks
  *
  */
-public class CableFakeableConfig extends CapabilityConfig {
+public class CableFakeableConfig extends CapabilityConfig<ICableFakeable> {
 
     /**
      * The unique instance.

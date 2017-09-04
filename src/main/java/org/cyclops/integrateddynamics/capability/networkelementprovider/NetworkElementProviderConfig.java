@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
  * @author rubensworks
  *
  */
-public class NetworkElementProviderConfig extends CapabilityConfig {
+public class NetworkElementProviderConfig extends CapabilityConfig<INetworkElementProvider> {
 
     /**
      * The unique instance.

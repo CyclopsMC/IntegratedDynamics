@@ -149,7 +149,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                             table = new JTable();
                             model = new DefaultTableModel(data, columnNames) {
                                 @Override
-                                public Class getColumnClass(int column) {
+                                public Class<?> getColumnClass(int column) {
                                     // My eyes are bleeding as I write this...
                                     // I'm terribly sorry, I must be going to hell now.
                                     if (column == 0 || column == 1 || column == 4) {

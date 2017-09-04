@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.core.network.PartNetwork;
  * @author rubensworks
  *
  */
-public class PartNetworkConfig extends CapabilityConfig {
+public class PartNetworkConfig extends CapabilityConfig<IPartNetwork> {
 
     /**
      * The unique instance.

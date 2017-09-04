@@ -76,7 +76,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public boolean correspondsTo(IValueType valueType) {
+    public boolean correspondsTo(IValueType<?> valueType) {
         return this == valueType;
     }
 

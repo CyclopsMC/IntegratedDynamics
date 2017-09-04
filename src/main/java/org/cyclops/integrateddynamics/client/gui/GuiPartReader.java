@@ -47,9 +47,9 @@ public class GuiPartReader<P extends IPartTypeReader<P, S> & IGuiContainerProvid
     }
 
     @Override
-    protected void drawAdditionalElementInfo(ContainerMultipartAspects container, int index, IAspectRead aspect) {
+    protected void drawAdditionalElementInfo(ContainerMultipartAspects<P, S, IAspectRead> container, int index, IAspectRead aspect) {
         // Get current aspect value
-        ContainerPartReader reader = (ContainerPartReader) container;
+        ContainerPartReader<P, S> reader = (ContainerPartReader<P, S>) container;
 
         Pair<String, Integer> readValues = reader.getReadValue(aspect);
         if(readValues != null) {
