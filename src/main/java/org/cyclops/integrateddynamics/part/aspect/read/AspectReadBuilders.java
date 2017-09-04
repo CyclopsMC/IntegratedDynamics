@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -64,6 +65,8 @@ public class AspectReadBuilders {
             BUILDER_ENTITY = AspectBuilder.forReadType(ValueTypes.OBJECT_ENTITY);
     public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, Pair<PartTarget, IAspectProperties>>
             BUILDER_LIST = AspectBuilder.forReadType(ValueTypes.LIST);
+    public static final AspectBuilder<ValueTypeNbt.ValueNbt, ValueTypeNbt, Pair<PartTarget, IAspectProperties>>
+            BUILDER_NBT = AspectBuilder.forReadType(ValueTypes.NBT);
 
     public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
             BUILDER_OBJECT_ITEMSTACK = AspectBuilder.forReadType(ValueTypes.OBJECT_ITEMSTACK);
@@ -119,6 +122,12 @@ public class AspectReadBuilders {
         @Override
         public ValueObjectTypeFluidStack.ValueFluidStack getOutput(FluidStack input) {
             return ValueObjectTypeFluidStack.ValueFluidStack.of(input);
+        }
+    };
+    public static final IAspectValuePropagator<NBTTagCompound, ValueTypeNbt.ValueNbt> PROP_GET_NBT = new IAspectValuePropagator<NBTTagCompound, ValueTypeNbt.ValueNbt>() {
+        @Override
+        public ValueTypeNbt.ValueNbt getOutput(NBTTagCompound input) {
+            return ValueTypeNbt.ValueNbt.of(input);
         }
     };
 
@@ -195,6 +204,8 @@ public class AspectReadBuilders {
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "block");
         public static final AspectBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, DimPos>
                 BUILDER_BLOCK = AspectReadBuilders.BUILDER_OBJECT_BLOCK.handle(PROP_GET, "block");
+        public static final AspectBuilder<ValueTypeNbt.ValueNbt, ValueTypeNbt, DimPos>
+                BUILDER_NBT = AspectReadBuilders.BUILDER_NBT.handle(PROP_GET, "block");
 
     }
 

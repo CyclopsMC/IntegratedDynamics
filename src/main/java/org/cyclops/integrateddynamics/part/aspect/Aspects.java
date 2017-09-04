@@ -9,7 +9,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -126,6 +128,21 @@ public class Aspects {
                             return dimPos.getWorld().getBlockState(dimPos.getBlockPos());
                         }
                     }).handle(AspectReadBuilders.PROP_GET_BLOCK).buildRead();
+            public static final IAspectRead<ValueTypeNbt.ValueNbt, ValueTypeNbt> NBT =
+                    AspectReadBuilders.Block.BUILDER_NBT.handle(new IAspectValuePropagator<DimPos, NBTTagCompound>() {
+                        @Override
+                        public NBTTagCompound getOutput(DimPos dimPos) {
+                            TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
+                            try {
+                                if (tile != null) {
+                                    return tile.writeToNBT(new NBTTagCompound());
+                                }
+                            } catch (Exception e) {
+                                // Catch possible errors
+                            }
+                            return null;
+                        }
+                    }).handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
         }
 
         public static final class Entity {
