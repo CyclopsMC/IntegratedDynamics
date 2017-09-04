@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.path.IPathElement;
  * @author rubensworks
  *
  */
-public class PathElementConfig extends CapabilityConfig {
+public class PathElementConfig extends CapabilityConfig<IPathElement> {
 
     /**
      * The unique instance.

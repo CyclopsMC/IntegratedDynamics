@@ -32,6 +32,7 @@ import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.block.property.UnlistedProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -145,7 +146,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
      * Make a new block instance.
      * @param eConfig Config for this block.
      */
-    public BlockCable(ExtendedConfig eConfig) {
+    public BlockCable(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, BLOCK_MATERIAL, TileMultipartTicking.class);
 
         setHardness(BLOCK_HARDNESS);

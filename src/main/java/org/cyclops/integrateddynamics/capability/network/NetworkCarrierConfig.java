@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
  * @author rubensworks
  *
  */
-public class NetworkCarrierConfig extends CapabilityConfig {
+public class NetworkCarrierConfig extends CapabilityConfig<INetworkCarrier> {
 
     /**
      * The unique instance.

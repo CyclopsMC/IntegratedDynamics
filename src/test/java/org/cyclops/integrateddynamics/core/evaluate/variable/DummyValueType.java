@@ -61,7 +61,7 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public boolean correspondsTo(IValueType valueType) {
+    public boolean correspondsTo(IValueType<?> valueType) {
         return false;
     }
 

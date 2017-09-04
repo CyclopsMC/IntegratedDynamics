@@ -32,8 +32,8 @@ public class AspectPropertyTypeInstance<T extends IValueType<V>, V extends IValu
     @Override
     public boolean equals(Object o) {
         return o instanceof AspectPropertyTypeInstance
-                && ((AspectPropertyTypeInstance) o).type.equals(this.type)
-                && ((AspectPropertyTypeInstance) o).unlocalizedName.equals(this.unlocalizedName);
+                && ((AspectPropertyTypeInstance<?, ?>) o).type.equals(this.type)
+                && ((AspectPropertyTypeInstance<?, ?>) o).unlocalizedName.equals(this.unlocalizedName);
     }
 
     @Override

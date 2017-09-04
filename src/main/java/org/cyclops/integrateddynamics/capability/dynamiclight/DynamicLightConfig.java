@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.block.IDynamicLight;
  * @author rubensworks
  *
  */
-public class DynamicLightConfig extends CapabilityConfig {
+public class DynamicLightConfig extends CapabilityConfig<IDynamicLight> {
 
     /**
      * The unique instance.

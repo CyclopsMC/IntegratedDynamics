@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.capability.variablecontainer.VariableConta
  * @author rubensworks
  *
  */
-public class VariableFacadeHolderConfig extends CapabilityConfig {
+public class VariableFacadeHolderConfig extends CapabilityConfig<IVariableFacadeHolder> {
 
     /**
      * The unique instance.

@@ -35,14 +35,14 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @param valueType The value type to match.
      * @return If it matches
      */
-    public boolean matchesInput(IValueType valueType);
+    public boolean matchesInput(IValueType<?> valueType);
 
     /**
      * If the given value type matches with this element's output.
      * @param valueType The value type to match.
      * @return If it matches
      */
-    public boolean matchesOutput(IValueType valueType);
+    public boolean matchesOutput(IValueType<?> valueType);
 
     /**
      * Called when an input item slot has been updated.

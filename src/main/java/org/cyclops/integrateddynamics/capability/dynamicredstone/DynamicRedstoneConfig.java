@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
  * @author rubensworks
  *
  */
-public class DynamicRedstoneConfig extends CapabilityConfig {
+public class DynamicRedstoneConfig extends CapabilityConfig<IDynamicRedstone> {
 
     /**
      * The unique instance.

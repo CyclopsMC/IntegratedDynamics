@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICable;
  * @author rubensworks
  *
  */
-public class CableConfig extends CapabilityConfig {
+public class CableConfig extends CapabilityConfig<ICable> {
 
     /**
      * The unique instance.

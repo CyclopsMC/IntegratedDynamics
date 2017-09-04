@@ -18,7 +18,7 @@ public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extend
     /**
      * @return The value type of this element.
      */
-    public IValueType getValueType();
+    public IValueType<?> getValueType();
 
     /**
      * @return The current value.

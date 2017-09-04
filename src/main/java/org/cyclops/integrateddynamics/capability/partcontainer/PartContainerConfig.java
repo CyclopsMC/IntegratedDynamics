@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
  * @author rubensworks
  *
  */
-public class PartContainerConfig extends CapabilityConfig {
+public class PartContainerConfig extends CapabilityConfig<IPartContainer> {
 
     /**
      * The unique instance.
