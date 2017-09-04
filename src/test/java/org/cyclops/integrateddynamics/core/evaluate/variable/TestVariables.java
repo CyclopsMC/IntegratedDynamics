@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.hamcrest.CoreMatchers;
@@ -136,6 +137,25 @@ public class TestVariables {
                 l2.getType().deserialize(l2.getType().serialize(l2.getValue())), is(l2.getValue()));
         assertThat("deserializing nested list",
                 l2_2.getType().deserialize(l2_2.getType().serialize(l2_2.getValue())), is(l2_2.getValue()));
+    }
+
+    @Test
+    public void testNbtType() {
+        DummyVariableNbt snull = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(null));
+        assertThat("null value is empty NBT tag", snull.getValue().getRawValue(), is(new NBTTagCompound()));
+
+        NBTTagCompound tag1 = new NBTTagCompound();
+        tag1.setBoolean("abc", true);
+        NBTTagCompound tag2 = new NBTTagCompound();
+        tag2.setBoolean("abc", true);
+        DummyVariableNbt stag = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tag1));
+        assertThat("tag value is tag", stag.getValue().getRawValue(), is(tag2));
+
+        assertThat("serializing null value returns empty NBT tag", snull.getType().serialize(snull.getValue()), is("{}"));
+        assertThat("serializing tag returns tag", stag.getType().serialize(stag.getValue()), is("{abc:1b}"));
+
+        assertThat("deserializing null value returns empty NBT tag", snull.getType().deserialize("{}"), is(snull.getValue()));
+        assertThat("deserializing tag returns tag", stag.getType().deserialize("{abc:1b}"), is(stag.getValue()));
     }
 
 }

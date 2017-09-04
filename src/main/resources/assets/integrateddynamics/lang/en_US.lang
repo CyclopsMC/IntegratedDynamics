@@ -204,6 +204,7 @@ valuetype.valuetypes.integrateddynamics.double.name=Double
 valuetype.valuetypes.integrateddynamics.long.name=Long
 valuetype.valuetypes.integrateddynamics.string.name=String
 valuetype.valuetypes.integrateddynamics.operator.name=Operator
+valuetype.valuetypes.integrateddynamics.nbt.name=NBT
 
 valuetype.valuetypes.integrateddynamics.list.name=List
 valuetype.valuetypes.integrateddynamics.block.name=Block
@@ -852,6 +853,8 @@ operator.operators.integrateddynamics.itemstack.itembyname.name=Item By Name
 operator.operators.integrateddynamics.itemstack.itembyname.info=Get the item corresponding to the given name, add space+number for indicating the metadata.
 operator.operators.integrateddynamics.itemstack.itemlistcount.name=Item List Count
 operator.operators.integrateddynamics.itemstack.itemlistcount.info=Get the total item count of exactly the given item in a list.
+operator.operators.integrateddynamics.itemstack.nbt.name=Item NBT
+operator.operators.integrateddynamics.itemstack.nbt.info=Get the NBT tag of the given item.
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s
@@ -917,6 +920,8 @@ operator.operators.integrateddynamics.entity.canbreedwith.name=Entity Can Breed 
 operator.operators.integrateddynamics.entity.canbreedwith.info=If the given entity can be breed using the given item.
 operator.operators.integrateddynamics.entity.isshearable.name=Entity Is Shearable
 operator.operators.integrateddynamics.entity.isshearable.info=If the given entity is shearable
+operator.operators.integrateddynamics.entity.nbt.name=Entity NBT
+operator.operators.integrateddynamics.entity.nbt.info=Get the given entity as NBT.
 
 operator.operators.integrateddynamics.itemstack.isfecontainer.name=Is FE Container
 operator.operators.integrateddynamics.itemstack.isfecontainer.info=If the given item can hold FE
@@ -945,6 +950,8 @@ operator.operators.integrateddynamics.fluidstack.israwfluidequal.name=Raw fluid 
 operator.operators.integrateddynamics.fluidstack.israwfluidequal.info=If the raw fluids are equal
 operator.operators.integrateddynamics.fluidstack.mod.name=Mod
 operator.operators.integrateddynamics.fluidstack.mod.info=The name of the mod owning the given fluid
+operator.operators.integrateddynamics.fluidstack.nbt.name=Fluid NBT
+operator.operators.integrateddynamics.fluidstack.nbt.info=Get the NBT tag of the given fluid.
 
 operator.operators.integrateddynamics.operator.name=Operator
 operator.operators.integrateddynamics.operator.basename=Operator %s
