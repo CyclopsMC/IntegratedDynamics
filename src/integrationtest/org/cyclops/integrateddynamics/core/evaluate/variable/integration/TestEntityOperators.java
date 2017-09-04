@@ -12,6 +12,7 @@ import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.http.util.Asserts;
@@ -917,6 +918,32 @@ public class TestEntityOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeIsShearable() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- NBT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockNbt() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{eZombie});
+        Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
+        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new NBTTagCompound(), "isnbt(zombie) is not null");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeNbtLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{eZombie, eZombie});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeNbtSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbt() throws EvaluationException {
+        Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

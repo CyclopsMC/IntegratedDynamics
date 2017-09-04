@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -1697,6 +1698,19 @@ public final class Operators {
             }).build());
 
     /**
+     * Item Stack size operator with one input itemstack and one output NBT tag.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_NBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0);
+                    return ValueTypeNbt.ValueNbt.of(itemStack.getRawValue().getTagCompound());
+                }
+            }).build());
+
+    /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
      */
 
@@ -2219,6 +2233,26 @@ public final class Operators {
             }).build());
 
     /**
+     * The entity serialized to NBT.
+     */
+    public static final IOperator OBJECT_ENTITY_NBT = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity entity = input.getValue(0);
+                    try {
+                        if (entity.getRawValue().isPresent()) {
+                            return ValueTypeNbt.ValueNbt.of(entity.getRawValue().get().writeToNBT(new NBTTagCompound()));
+                        }
+                    } catch (Exception e) {
+                        // Catch possible errors during NBT writing
+                    }
+                    return ValueTypes.NBT.getDefault();
+                }
+            }).build());
+
+    /**
      * ----------------------------------- FLUID STACK OBJECT OPERATORS -----------------------------------
      */
 
@@ -2355,6 +2389,22 @@ public final class Operators {
                         }
                     }
                     return ValueTypeString.ValueString.of(modName);
+                }
+            }).build());
+
+    /**
+     * The tag of the given fluidstack.
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_NBT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueObjectTypeFluidStack.ValueFluidStack fluidStack = input.getValue(0);
+                    if (fluidStack.getRawValue().isPresent()) {
+                        return ValueTypeNbt.ValueNbt.of(fluidStack.getRawValue().get().tag);
+                    }
+                    return ValueTypes.NBT.getDefault();
                 }
             }).build());
 

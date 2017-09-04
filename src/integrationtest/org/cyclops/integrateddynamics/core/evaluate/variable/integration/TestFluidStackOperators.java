@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,12 +30,16 @@ public class TestFluidStackOperators {
     private DummyVariableFluidStack eBucketLava;
     private DummyVariableFluidStack eBucketWater;
     private DummyVariableFluidStack eWater100;
+    private DummyVariableFluidStack eWater100Tag;
 
     @IntegrationBefore
     public void before() {
         eBucketLava = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME)));
         eBucketWater = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME)));
         eWater100 = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 100)));
+        eWater100Tag = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 100)));
+        eWater100Tag.getValue().getRawValue().get().tag = new NBTTagCompound();
+        eWater100Tag.getValue().getRawValue().get().tag.setTag("a", new NBTTagString("abc"));
     }
 
     /**
@@ -298,6 +304,37 @@ public class TestFluidStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeModName() throws EvaluationException {
         Operators.OBJECT_FLUIDSTACK_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- NBT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testFluidNbt() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{eBucketLava});
+        Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new NBTTagCompound(), "nbt(lava) = null");
+
+        IValue res2 = Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{eWater100Tag});
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("a", "abc");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue(), tag, "nbt(watertag) != null");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeNbtLarge() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{eBucketLava, eBucketLava});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeNbtSmall() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbt() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

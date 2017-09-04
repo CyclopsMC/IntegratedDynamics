@@ -5,6 +5,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
@@ -1224,6 +1225,35 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeListCount() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_LIST_COUNT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- NBT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackNbt() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new NBTTagCompound(), "nbt(apple:1) is null");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iEnergyBatteryFull});
+        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue(), new NBTTagCompound(), "nbt(battery) is non null");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputNbtNbtLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputNbtNbtSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbt() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }
