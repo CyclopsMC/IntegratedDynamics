@@ -17,8 +17,11 @@ public abstract class CableFakeableDefault implements ICableFakeable {
 
     @Override
     public void setRealCable(boolean real) {
+        boolean oldReal = this.real;
         this.real = real;
-        sendUpdate();
+        if (oldReal != this.real) {
+            sendUpdate();
+        }
     }
 
     protected abstract void sendUpdate();
