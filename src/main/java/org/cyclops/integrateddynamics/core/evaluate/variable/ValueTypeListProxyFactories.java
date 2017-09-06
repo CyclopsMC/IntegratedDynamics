@@ -32,6 +32,10 @@ public class ValueTypeListProxyFactories {
     public static ValueTypeListProxyLazyBuilt.Factory LAZY_BUILT;
     public static ValueTypeListProxyTail.Factory TAIL;
     public static ValueTypeListProxySlice.Factory SLICE;
+    public static ValueTypeListProxyNbtKeys.Factory NBT_KEYS;
+    public static ValueTypeListProxyNbtValueListTag.Factory NBT_VALUE_LIST_TAG;
+    public static ValueTypeListProxyNbtValueListByte.Factory NBT_VALUE_LIST_BYTE;
+    public static ValueTypeListProxyNbtValueListInt.Factory NBT_VALUE_LIST_INT;
 
     public static void load() {
         if(MATERIALIZED == null) {
@@ -46,6 +50,10 @@ public class ValueTypeListProxyFactories {
             LAZY_BUILT = REGISTRY.register(new ValueTypeListProxyLazyBuilt.Factory());
             TAIL = REGISTRY.register(new ValueTypeListProxyTail.Factory());
             SLICE = REGISTRY.register(new ValueTypeListProxySlice.Factory());
+            NBT_KEYS = REGISTRY.register(new ValueTypeListProxyNbtKeys.Factory());
+            NBT_VALUE_LIST_TAG = REGISTRY.register(new ValueTypeListProxyNbtValueListTag.Factory());
+            NBT_VALUE_LIST_BYTE = REGISTRY.register(new ValueTypeListProxyNbtValueListByte.Factory());
+            NBT_VALUE_LIST_INT = REGISTRY.register(new ValueTypeListProxyNbtValueListInt.Factory());
         }
     }
 

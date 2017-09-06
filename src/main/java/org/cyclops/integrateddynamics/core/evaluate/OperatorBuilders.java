@@ -4,6 +4,8 @@ import com.google.common.base.Optional;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -70,6 +72,12 @@ public class OperatorBuilders {
         @Override
         public IValue getOutput(String input) throws EvaluationException {
             return ValueTypeString.ValueString.of(input);
+        }
+    };
+    public static final IOperatorValuePropagator<NBTTagCompound, IValue> PROPAGATOR_NBT_VALUE = new IOperatorValuePropagator<NBTTagCompound, IValue>() {
+        @Override
+        public IValue getOutput(NBTTagCompound input) throws EvaluationException {
+            return ValueTypeNbt.ValueNbt.of(input);
         }
     };
     public static final IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString> PROPAGATOR_RESOURCELOCATION_MODNAME = new IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString>() {
@@ -417,6 +425,42 @@ public class OperatorBuilders {
             }
         };
     }
+
+    // --------------- NBT builders ---------------
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT = OperatorBuilder.forType(ValueTypes.NBT).appendKind("nbt");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_1_SUFFIX_LONG = NBT.inputTypes(ValueTypes.NBT).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX);
+    public static final IterativeFunction.PrePostBuilder<NBTTagCompound, IValue> FUNCTION_NBT = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    return ((ValueTypeNbt.ValueNbt) input.getValue(0)).getRawValue();
+                }
+            });
+    public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, IValue> FUNCTION_NBT_ENTRY = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Optional<NBTBase>>() {
+                @Override
+                public Optional<NBTBase> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    return Optional.fromNullable(((ValueTypeNbt.ValueNbt) input.getValue(0)).getRawValue()
+                            .getTag(((ValueTypeString.ValueString) input.getValue(1)).getRawValue()));
+                }
+            });
+    public static final IterativeFunction.PrePostBuilder<NBTTagCompound, Integer> FUNCTION_NBT_TO_INT =
+            FUNCTION_NBT.appendPost(PROPAGATOR_INTEGER_VALUE);
+    public static final IterativeFunction.PrePostBuilder<NBTTagCompound, Boolean> FUNCTION_NBT_TO_BOOLEAN =
+            FUNCTION_NBT.appendPost(PROPAGATOR_BOOLEAN_VALUE);
+    public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, Integer> FUNCTION_NBT_ENTRY_TO_INT =
+            FUNCTION_NBT_ENTRY.appendPost(PROPAGATOR_INTEGER_VALUE);
+    public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, Long> FUNCTION_NBT_ENTRY_TO_LONG =
+            FUNCTION_NBT_ENTRY.appendPost(PROPAGATOR_LONG_VALUE);
+    public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, Double> FUNCTION_NBT_ENTRY_TO_DOUBLE =
+            FUNCTION_NBT_ENTRY.appendPost(PROPAGATOR_DOUBLE_VALUE);
+    public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, Boolean> FUNCTION_NBT_ENTRY_TO_BOOLEAN =
+            FUNCTION_NBT_ENTRY.appendPost(PROPAGATOR_BOOLEAN_VALUE);
+    public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, String> FUNCTION_NBT_ENTRY_TO_STRING =
+            FUNCTION_NBT_ENTRY.appendPost(PROPAGATOR_STRING_VALUE);
+    public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, NBTTagCompound> FUNCTION_NBT_ENTRY_TO_NBT =
+            FUNCTION_NBT_ENTRY.appendPost(PROPAGATOR_NBT_VALUE);
 
     // --------------- Capability helpers ---------------
 

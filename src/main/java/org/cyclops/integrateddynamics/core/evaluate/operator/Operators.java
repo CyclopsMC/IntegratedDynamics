@@ -23,7 +23,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -2631,6 +2634,198 @@ public final class Operators {
                                 new Variable<>(listValue.getType(), listValue)});
                     }
                     return accumulator;
+                }
+            }).build());
+
+    /**
+     * ----------------------------------- NBT OPERATORS -----------------------------------
+     */
+
+    /**
+     * The number of entries in an NBT tag
+     */
+    public static final IOperator NBT_SIZE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).operatorName("size").symbol("NBT.size")
+            .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(new IOperatorValuePropagator<NBTTagCompound, Integer>() {
+                @Override
+                public Integer getOutput(NBTTagCompound tag) throws EvaluationException {
+                    return tag.getSize();
+                }
+            })).build());
+
+    /**
+     * The list of keys in an NBT tag
+     */
+    public static final IOperator NBT_KEYS = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).operatorName("keys").symbol("NBT.keys")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtKeys(value.getRawValue()));
+                }
+            }).build());
+
+    /**
+     * If an NBT tag has the given key
+     */
+    public static final IOperator NBT_HASKEY = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.INTEGER).operatorName("haskey").symbol("NBT.hasKey")
+            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(new IOperatorValuePropagator<Optional<NBTBase>, Boolean>() {
+                @Override
+                public Boolean getOutput(Optional<NBTBase> tag) throws EvaluationException {
+                    return tag.isPresent();
+                }
+            })).build());
+
+    /**
+     * The NBT value type of an entry
+     */
+    public static final IOperator NBT_VALUE_TYPE = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.INTEGER).operatorName("type").symbol("NBT.type")
+            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(new IOperatorValuePropagator<Optional<NBTBase>, String>() {
+                @Override
+                public String getOutput(Optional<NBTBase> tag) throws EvaluationException {
+                    if (tag.isPresent()) {
+                        try {
+                            return NBTBase.NBT_TYPES[tag.get().getId()];
+                        } catch (IndexOutOfBoundsException e) {
+
+                        }
+                    }
+                    return "null";
+                }
+            })).build());
+
+    /**
+     * The NBT boolean value
+     */
+    public static final IOperator NBT_VALUE_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.INTEGER).operatorName("valueBoolean").symbol("NBT.boolean()")
+            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(new IOperatorValuePropagator<Optional<NBTBase>, Boolean>() {
+                @Override
+                public Boolean getOutput(Optional<NBTBase> tag) throws EvaluationException {
+                    if (tag.isPresent() && tag.get() instanceof NBTPrimitive) {
+                        return ((NBTPrimitive) tag.get()).getByte() != 0;
+                    }
+                    return false;
+                }
+            })).build());
+
+    /**
+     * The NBT integer value
+     */
+    public static final IOperator NBT_VALUE_INTEGER = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.INTEGER).operatorName("valueInteger").symbol("NBT.integer()")
+            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_INT.build(new IOperatorValuePropagator<Optional<NBTBase>, Integer>() {
+                @Override
+                public Integer getOutput(Optional<NBTBase> tag) throws EvaluationException {
+                    if (tag.isPresent() && tag.get() instanceof NBTPrimitive) {
+                        return ((NBTPrimitive) tag.get()).getInt();
+                    }
+                    return 0;
+                }
+            })).build());
+
+    /**
+     * The NBT long value
+     */
+    public static final IOperator NBT_VALUE_LONG = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LONG).operatorName("valueLong").symbol("NBT.long()")
+            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_LONG.build(new IOperatorValuePropagator<Optional<NBTBase>, Long>() {
+                @Override
+                public Long getOutput(Optional<NBTBase> tag) throws EvaluationException {
+                    if (tag.isPresent() && tag.get() instanceof NBTPrimitive) {
+                        return ((NBTPrimitive) tag.get()).getLong();
+                    }
+                    return 0L;
+                }
+            })).build());
+
+    /**
+     * The NBT double value
+     */
+    public static final IOperator NBT_VALUE_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LONG).operatorName("valueDouble").symbol("NBT.double()")
+            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_DOUBLE.build(new IOperatorValuePropagator<Optional<NBTBase>, Double>() {
+                @Override
+                public Double getOutput(Optional<NBTBase> tag) throws EvaluationException {
+                    if (tag.isPresent() && tag.get() instanceof NBTPrimitive) {
+                        return ((NBTPrimitive) tag.get()).getDouble();
+                    }
+                    return 0D;
+                }
+            })).build());
+
+    /**
+     * The NBT string value
+     */
+    public static final IOperator NBT_VALUE_STRING = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LONG).operatorName("valueString").symbol("NBT.string()")
+            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(new IOperatorValuePropagator<Optional<NBTBase>, String>() {
+                @Override
+                public String getOutput(Optional<NBTBase> tag) throws EvaluationException {
+                    if (tag.isPresent() && tag.get() instanceof NBTTagString) {
+                        return ((NBTTagString) tag.get()).getString();
+                    }
+                    return "";
+                }
+            })).build());
+
+    /**
+     * The NBT tag value
+     */
+    public static final IOperator NBT_VALUE_TAG = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LONG).operatorName("valueTag").symbol("NBT.tag()")
+            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_NBT.build(new IOperatorValuePropagator<Optional<NBTBase>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Optional<NBTBase> tag) throws EvaluationException {
+                    if (tag.isPresent() && tag.get() instanceof NBTTagCompound) {
+                        return ((NBTTagCompound) tag.get());
+                    }
+                    return new NBTTagCompound();
+                }
+            })).build());
+
+    /**
+     * The NBT tag list value
+     */
+    public static final IOperator NBT_VALUE_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LIST).operatorName("valueListTag").symbol("NBT.listTag()")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                    ValueTypeString.ValueString key = variables.getValue(1);
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtValueListTag(key.getRawValue(), value.getRawValue()));
+                }
+            }).build());
+
+    /**
+     * The NBT int byte value
+     */
+    public static final IOperator NBT_VALUE_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LIST).operatorName("valueListByte").symbol("NBT.listByte()")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                    ValueTypeString.ValueString key = variables.getValue(1);
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtValueListByte(key.getRawValue(), value.getRawValue()));
+                }
+            }).build());
+
+    /**
+     * The NBT int list value
+     */
+    public static final IOperator NBT_VALUE_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LIST).operatorName("valueListInt").symbol("NBT.listInt()")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                    ValueTypeString.ValueString key = variables.getValue(1);
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtValueListInt(key.getRawValue(), value.getRawValue()));
                 }
             }).build());
 
