@@ -2830,6 +2830,25 @@ public final class Operators {
             }).build());
 
     /**
+     * Remove an entry from an NBT tag
+     */
+    public static final IOperator NBT_WITHOUT = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.NBT).operatorName("without").symbol("NBT.without")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    NBTTagCompound tag = ((ValueTypeNbt.ValueNbt) variables.getValue(0)).getRawValue();
+                    String key = ((ValueTypeString.ValueString) variables.getValue(1)).getRawValue();
+                    if (tag.hasKey(key)) {
+                        // Copy the tag to ensure immutability
+                        tag = tag.copy();
+                        tag.removeTag(key);
+                    }
+                    return ValueTypeNbt.ValueNbt.of(tag);
+                }
+            }).build());
+
+    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 

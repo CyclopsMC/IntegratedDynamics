@@ -533,4 +533,35 @@ public class TestNbtOperators {
         Operators.NBT_VALUE_LIST_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- WITHOUT -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithout() throws EvaluationException {
+        IValue res1 = Operators.NBT_WITHOUT.evaluate(new IVariable[]{nsasa, sa});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        assertThat("without({a:a}, a) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(new NBTTagCompound()));
+
+        IValue res2 = Operators.NBT_WITHOUT.evaluate(new IVariable[]{nsasasbsc, sa});
+        NBTTagCompound tsbc = new NBTTagCompound();
+        tsbc.setString("b", "c");
+        assertThat("without({a:a;b:c}, a) = {b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(tsbc));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithoutSizeLarge() throws EvaluationException {
+        Operators.NBT_WITHOUT.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithoutSizeSmall() throws EvaluationException {
+        Operators.NBT_WITHOUT.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithout() throws EvaluationException {
+        Operators.NBT_WITHOUT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
 }
