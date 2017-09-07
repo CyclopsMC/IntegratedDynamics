@@ -2657,7 +2657,7 @@ public final class Operators {
      * The list of keys in an NBT tag
      */
     public static final IOperator NBT_KEYS = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("keys").symbol("NBT.keys")
+            .output(ValueTypes.LIST).operatorName("keys").symbol("NBT.keys")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -2670,7 +2670,7 @@ public final class Operators {
      * If an NBT tag has the given key
      */
     public static final IOperator NBT_HASKEY = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.INTEGER).operatorName("haskey").symbol("NBT.hasKey")
+            .output(ValueTypes.BOOLEAN).operatorName("haskey").symbol("NBT.hasKey")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(new IOperatorValuePropagator<Optional<NBTBase>, Boolean>() {
                 @Override
                 public Boolean getOutput(Optional<NBTBase> tag) throws EvaluationException {
@@ -2682,7 +2682,7 @@ public final class Operators {
      * The NBT value type of an entry
      */
     public static final IOperator NBT_VALUE_TYPE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.INTEGER).operatorName("type").symbol("NBT.type")
+            .output(ValueTypes.STRING).operatorName("type").symbol("NBT.type")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(new IOperatorValuePropagator<Optional<NBTBase>, String>() {
                 @Override
                 public String getOutput(Optional<NBTBase> tag) throws EvaluationException {
@@ -2701,7 +2701,7 @@ public final class Operators {
      * The NBT boolean value
      */
     public static final IOperator NBT_VALUE_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.INTEGER).operatorName("valueBoolean").symbol("NBT.boolean()")
+            .output(ValueTypes.BOOLEAN).operatorName("valueBoolean").symbol("NBT.boolean()")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(new IOperatorValuePropagator<Optional<NBTBase>, Boolean>() {
                 @Override
                 public Boolean getOutput(Optional<NBTBase> tag) throws EvaluationException {
@@ -2746,7 +2746,7 @@ public final class Operators {
      * The NBT double value
      */
     public static final IOperator NBT_VALUE_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LONG).operatorName("valueDouble").symbol("NBT.double()")
+            .output(ValueTypes.DOUBLE).operatorName("valueDouble").symbol("NBT.double()")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_DOUBLE.build(new IOperatorValuePropagator<Optional<NBTBase>, Double>() {
                 @Override
                 public Double getOutput(Optional<NBTBase> tag) throws EvaluationException {
@@ -2761,7 +2761,7 @@ public final class Operators {
      * The NBT string value
      */
     public static final IOperator NBT_VALUE_STRING = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LONG).operatorName("valueString").symbol("NBT.string()")
+            .output(ValueTypes.STRING).operatorName("valueString").symbol("NBT.string()")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(new IOperatorValuePropagator<Optional<NBTBase>, String>() {
                 @Override
                 public String getOutput(Optional<NBTBase> tag) throws EvaluationException {
@@ -2776,7 +2776,7 @@ public final class Operators {
      * The NBT tag value
      */
     public static final IOperator NBT_VALUE_TAG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LONG).operatorName("valueTag").symbol("NBT.tag()")
+            .output(ValueTypes.NBT).operatorName("valueTag").symbol("NBT.tag()")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_NBT.build(new IOperatorValuePropagator<Optional<NBTBase>, NBTTagCompound>() {
                 @Override
                 public NBTTagCompound getOutput(Optional<NBTBase> tag) throws EvaluationException {
