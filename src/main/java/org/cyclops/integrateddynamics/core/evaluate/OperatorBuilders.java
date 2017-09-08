@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -430,6 +431,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT = OperatorBuilder.forType(ValueTypes.NBT).appendKind("nbt");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_1_SUFFIX_LONG = NBT.inputTypes(ValueTypes.NBT).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_3 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING).output(ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX_2);
     public static final IterativeFunction.PrePostBuilder<NBTTagCompound, IValue> FUNCTION_NBT = IterativeFunction.PrePostBuilder.begin()
             .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, NBTTagCompound>() {
                 @Override
@@ -443,6 +445,15 @@ public class OperatorBuilders {
                 public Optional<NBTBase> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
                     return Optional.fromNullable(((ValueTypeNbt.ValueNbt) input.getValue(0)).getRawValue()
                             .getTag(((ValueTypeString.ValueString) input.getValue(1)).getRawValue()));
+                }
+            });
+    public static final IterativeFunction.PrePostBuilder<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_NBT_COPY_FOR_VALUE = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(new IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>>() {
+                @Override
+                public Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> getOutput(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    return Triple.of(((ValueTypeNbt.ValueNbt) input.getValue(0)).getRawValue().copy(),
+                            ((ValueTypeString.ValueString) input.getValue(1)).getRawValue(),
+                            new OperatorBase.SafeVariablesGetter.Shifted(2, input.getVariables()));
                 }
             });
     public static final IterativeFunction.PrePostBuilder<NBTTagCompound, Integer> FUNCTION_NBT_TO_INT =
@@ -461,6 +472,8 @@ public class OperatorBuilders {
             FUNCTION_NBT_ENTRY.appendPost(PROPAGATOR_STRING_VALUE);
     public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, NBTTagCompound> FUNCTION_NBT_ENTRY_TO_NBT =
             FUNCTION_NBT_ENTRY.appendPost(PROPAGATOR_NBT_VALUE);
+    public static final IterativeFunction.PrePostBuilder<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>
+            FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT = FUNCTION_NBT_COPY_FOR_VALUE.appendPost(PROPAGATOR_NBT_VALUE);
 
     // --------------- Capability helpers ---------------
 

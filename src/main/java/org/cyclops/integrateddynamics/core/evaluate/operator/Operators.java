@@ -23,10 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTPrimitive;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -45,6 +42,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -2802,7 +2800,7 @@ public final class Operators {
             }).build());
 
     /**
-     * The NBT int byte value
+     * The NBT boolean list value
      */
     public static final IOperator NBT_VALUE_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.LIST).operatorName("valueListByte").symbol("NBT.listByte()")
@@ -2847,6 +2845,244 @@ public final class Operators {
                     return ValueTypeNbt.ValueNbt.of(tag);
                 }
             }).build());
+
+
+
+    /**
+     * Set an NBT boolean value
+     */
+    public static final IOperator NBT_WITH_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.BOOLEAN)
+            .operatorName("withBoolean").symbol("NBT.withBoolean()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeBoolean.ValueBoolean value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    tag.setBoolean(input.getMiddle(), value.getRawValue());
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT short value
+     */
+    public static final IOperator NBT_WITH_SHORT = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.INTEGER)
+            .operatorName("withShort").symbol("NBT.withShort()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    tag.setShort(input.getMiddle(), (short) value.getRawValue());
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT integer value
+     */
+    public static final IOperator NBT_WITH_INTEGER = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.INTEGER)
+            .operatorName("withInteger").symbol("NBT.withInteger()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeInteger.ValueInteger value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    tag.setInteger(input.getMiddle(), value.getRawValue());
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT long value
+     */
+    public static final IOperator NBT_WITH_LONG = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LONG)
+            .operatorName("withLong").symbol("NBT.withLong()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeLong.ValueLong value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    tag.setLong(input.getMiddle(), value.getRawValue());
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT double value
+     */
+    public static final IOperator NBT_WITH_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.DOUBLE)
+            .operatorName("withDouble").symbol("NBT.withDouble()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeDouble.ValueDouble value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    tag.setDouble(input.getMiddle(), value.getRawValue());
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT float value
+     */
+    public static final IOperator NBT_WITH_FLOAT = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.DOUBLE)
+            .operatorName("withFloat").symbol("NBT.withFloat()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeDouble.ValueDouble value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    tag.setFloat(input.getMiddle(), (float) value.getRawValue());
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT string value
+     */
+    public static final IOperator NBT_WITH_STRING = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING)
+            .operatorName("withString").symbol("NBT.withString()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeString.ValueString value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    tag.setString(input.getMiddle(), value.getRawValue());
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT tag value
+     */
+    public static final IOperator NBT_WITH_TAG = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.NBT)
+            .operatorName("withTag").symbol("NBT.withTag()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeNbt.ValueNbt value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    tag.setTag(input.getMiddle(), value.getRawValue());
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT tag list value
+     */
+    public static final IOperator NBT_WITH_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
+            .operatorName("withListTag").symbol("NBT.withTagList()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    NBTTagList list = new NBTTagList();
+                    for (IValue valueNbt : value.getRawValue()) {
+                        if (value.getRawValue().getValueType() != ValueTypes.NBT) {
+                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                    L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                    NBT_WITH_LIST_TAG.getLocalizedNameFull(),
+                                    value.getType(), 1, ValueTypes.NBT);
+                            throw new EvaluationException(error.localize());
+                        }
+                        list.appendTag(((ValueTypeNbt.ValueNbt) valueNbt).getRawValue());
+                    }
+                    tag.setTag(input.getMiddle(), list);
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT byte list value
+     */
+    public static final IOperator NBT_WITH_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
+            .operatorName("withListByte").symbol("NBT.withByteList()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    NBTTagList list = new NBTTagList();
+                    for (IValue valueNbt : value.getRawValue()) {
+                        if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
+                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                    L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                    NBT_WITH_LIST_TAG.getLocalizedNameFull(),
+                                    value.getType(), 1, ValueTypes.INTEGER);
+                            throw new EvaluationException(error.localize());
+                        }
+                        list.appendTag(new NBTTagByte((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
+                    }
+                    tag.setTag(input.getMiddle(), list);
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT int list value
+     */
+    public static final IOperator NBT_WITH_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
+            .operatorName("withListInt").symbol("NBT.withIntList()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    NBTTagList list = new NBTTagList();
+                    for (IValue valueNbt : value.getRawValue()) {
+                        if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
+                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                    L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                    NBT_WITH_LIST_TAG.getLocalizedNameFull(),
+                                    value.getType(), 1, ValueTypes.INTEGER);
+                            throw new EvaluationException(error.localize());
+                        }
+                        list.appendTag(new NBTTagInt(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
+                    }
+                    tag.setTag(input.getMiddle(), list);
+                    return tag;
+                }
+            })).build());
+
+    /**
+     * Set an NBT long list value
+     */
+    public static final IOperator NBT_WITH_LIST_LONG = REGISTRY.register(OperatorBuilders.NBT_3
+            .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
+            .operatorName("withListLong").symbol("NBT.withByteLong()")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+                @Override
+                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                    ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
+                    NBTTagCompound tag = input.getLeft();
+                    NBTTagList list = new NBTTagList();
+                    for (IValue valueNbt : value.getRawValue()) {
+                        if (value.getRawValue().getValueType() != ValueTypes.LONG) {
+                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                    L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                    NBT_WITH_LIST_TAG.getLocalizedNameFull(),
+                                    value.getType(), 1, ValueTypes.LONG);
+                            throw new EvaluationException(error.localize());
+                        }
+                        list.appendTag(new NBTTagLong(((ValueTypeLong.ValueLong) valueNbt).getRawValue()));
+                    }
+                    tag.setTag(input.getMiddle(), list);
+                    return tag;
+                }
+            })).build());
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

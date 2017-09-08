@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.*;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -40,7 +39,12 @@ public class TestNbtOperators {
     private DummyVariableString stag;
     private DummyVariableString slist;
     private DummyVariableInteger i1;
+    private DummyVariable<ValueTypeLong.ValueLong> l1;
     private DummyVariableDouble d1_5;
+    private DummyVariableBoolean btrue;
+    private DummyVariableList ltags;
+    private DummyVariableList lints;
+    private DummyVariableList llongs;
 
     private DummyVariableNbt nempty;
     private DummyVariableNbt nsasa;
@@ -71,7 +75,9 @@ public class TestNbtOperators {
         slist = new DummyVariableString(ValueTypeString.ValueString.of("list"));
 
         i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
+        l1 = new DummyVariable<ValueTypeLong.ValueLong>(ValueTypes.LONG, ValueTypeLong.ValueLong.of(1));
         d1_5 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(1.5D));
+        btrue = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
 
         nempty = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new NBTTagCompound()));
 
@@ -102,6 +108,22 @@ public class TestNbtOperators {
         subList.appendTag(subTag);
         tall.setTag("list", subList);
         nall = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tall));
+
+        ltags = new DummyVariableList(ValueTypeList.ValueList.ofAll(
+                ValueTypeNbt.ValueNbt.of(new NBTTagCompound()),
+                ValueTypeNbt.ValueNbt.of(tsasa),
+                ValueTypeNbt.ValueNbt.of(new NBTTagCompound())
+        ));
+        lints = new DummyVariableList(ValueTypeList.ValueList.ofAll(
+                ValueTypeInteger.ValueInteger.of(5),
+                ValueTypeInteger.ValueInteger.of(4),
+                ValueTypeInteger.ValueInteger.of(3)
+        ));
+        llongs = new DummyVariableList(ValueTypeList.ValueList.ofAll(
+                ValueTypeLong.ValueLong.of(5),
+                ValueTypeLong.ValueLong.of(4),
+                ValueTypeLong.ValueLong.of(3)
+        ));
     }
 
     /**
@@ -562,6 +584,457 @@ public class TestNbtOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeNbtWithout() throws EvaluationException {
         Operators.NBT_WITHOUT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_BOOLEAN -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithBoolean() throws EvaluationException {
+        IValue res1 = Operators.NBT_WITH_BOOLEAN.evaluate(new IVariable[]{nsasa, sc, btrue});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setBoolean("c", true);
+        assertThat("withboolean({a:a}, c, true) = {a:a,c:true}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_BOOLEAN.evaluate(new IVariable[]{nsasasbsc, sa, btrue});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setBoolean("a", true);
+        t2.setString("b", "c");
+        assertThat("withboolean({a:a;b:c}, a, true) = {a:true;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithBooleanSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_BOOLEAN.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithBooleanSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_BOOLEAN.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithBoolean() throws EvaluationException {
+        Operators.NBT_WITH_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_SHORT -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithShort() throws EvaluationException {
+        IValue res1 = Operators.NBT_WITH_SHORT.evaluate(new IVariable[]{nsasa, sc, i1});
+        assertThat("result is a short", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setShort("c", (short) 1);
+        assertThat("withshort({a:a}, c, 1) = {a:a,c:1}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_SHORT.evaluate(new IVariable[]{nsasasbsc, sa, i1});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setShort("a", (short) 1);
+        t2.setString("b", "c");
+        assertThat("withshort({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithShortSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_SHORT.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithShortSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_SHORT.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithShort() throws EvaluationException {
+        Operators.NBT_WITH_SHORT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_INTEGER -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithInteger() throws EvaluationException {
+        IValue res1 = Operators.NBT_WITH_INTEGER.evaluate(new IVariable[]{nsasa, sc, i1});
+        assertThat("result is a integer", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setInteger("c", 1);
+        assertThat("withinteger({a:a}, c, 1) = {a:a,c:1}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_INTEGER.evaluate(new IVariable[]{nsasasbsc, sa, i1});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setInteger("a", 1);
+        t2.setString("b", "c");
+        assertThat("withinteger({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithIntegerSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_INTEGER.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithIntegerSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_INTEGER.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithInteger() throws EvaluationException {
+        Operators.NBT_WITH_INTEGER.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_LONG -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithLong() throws EvaluationException {
+        IValue res1 = Operators.NBT_WITH_LONG.evaluate(new IVariable[]{nsasa, sc, l1});
+        assertThat("result is a long", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setLong("c", 1L);
+        assertThat("withlong({a:a}, c, 1) = {a:a,c:1}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_LONG.evaluate(new IVariable[]{nsasasbsc, sa, l1});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setLong("a", 1L);
+        t2.setString("b", "c");
+        assertThat("withlong({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithLongSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_LONG.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithLongSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_LONG.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithLong() throws EvaluationException {
+        Operators.NBT_WITH_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_DOUBLE -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithDouble() throws EvaluationException {
+        IValue res1 = Operators.NBT_WITH_DOUBLE.evaluate(new IVariable[]{nsasa, sc, d1_5});
+        assertThat("result is a double", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setDouble("c", 1.5D);
+        assertThat("withdouble({a:a}, c, 1.5) = {a:a,c:1.5}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_DOUBLE.evaluate(new IVariable[]{nsasasbsc, sa, d1_5});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setDouble("a", 1.5D);
+        t2.setString("b", "c");
+        assertThat("withdouble({a:a;b:c}, a, 1.5) = {a:1.5;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithDoubleSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_DOUBLE.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithDoubleSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_DOUBLE.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithDouble() throws EvaluationException {
+        Operators.NBT_WITH_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_FLOAT -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithFloat() throws EvaluationException {
+        IValue res1 = Operators.NBT_WITH_FLOAT.evaluate(new IVariable[]{nsasa, sc, d1_5});
+        assertThat("result is a float", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setFloat("c", 1.5F);
+        assertThat("withfloat({a:a}, c, 1.5) = {a:a,c:1.5}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_FLOAT.evaluate(new IVariable[]{nsasasbsc, sa, d1_5});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setFloat("a", 1.5F);
+        t2.setString("b", "c");
+        assertThat("withfloat({a:a;b:c}, a, 1.5) = {a:1.5;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithFloatSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_FLOAT.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithFloatSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_FLOAT.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithFloat() throws EvaluationException {
+        Operators.NBT_WITH_FLOAT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_STRING -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithString() throws EvaluationException {
+        IValue res1 = Operators.NBT_WITH_STRING.evaluate(new IVariable[]{nsasa, sc, sc});
+        assertThat("result is a string", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setString("c", "c");
+        assertThat("withstring({a:a}, c, c) = {a:a,c:c}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_STRING.evaluate(new IVariable[]{nsasasbsc, sa, sc});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setString("a", "c");
+        t2.setString("b", "c");
+        assertThat("withstring({a:a;b:c}, a, c) = {a:c;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithStringSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_STRING.evaluate(new IVariable[]{nempty, sa, i1});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithStringSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_STRING.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithString() throws EvaluationException {
+        Operators.NBT_WITH_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_TAG -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithTag() throws EvaluationException {
+        NBTTagCompound tsasa = new NBTTagCompound();
+        tsasa.setString("a", "a");
+
+        IValue res1 = Operators.NBT_WITH_TAG.evaluate(new IVariable[]{nsasa, sc, nsasa});
+        assertThat("result is a tag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setTag("c", tsasa);
+        assertThat("withtag({a:a}, c, tag) = {a:a,c:tag}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_TAG.evaluate(new IVariable[]{nsasasbsc, sa, nsasa});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setTag("a", tsasa);
+        t2.setString("b", "c");
+        assertThat("withtag({a:a;b:c}, a, tag) = {a:tag;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithTagSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_TAG.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithTagSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_TAG.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithTag() throws EvaluationException {
+        Operators.NBT_WITH_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_LIST_TAG -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithListTag() throws EvaluationException {
+        NBTTagCompound tsasa = new NBTTagCompound();
+        tsasa.setString("a", "a");
+        NBTTagList tlist = new NBTTagList();
+        tlist.appendTag(new NBTTagCompound());
+        tlist.appendTag(tsasa);
+        tlist.appendTag(new NBTTagCompound());
+
+        IValue res1 = Operators.NBT_WITH_LIST_TAG.evaluate(new IVariable[]{nsasa, sc, ltags});
+        assertThat("result is a listtag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setTag("c", tlist);
+        assertThat("withlisttag({a:a}, c, listtag) = {a:a,c:listtag}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_LIST_TAG.evaluate(new IVariable[]{nsasasbsc, sa, ltags});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setTag("a", tlist);
+        t2.setString("b", "c");
+        assertThat("withlisttag({a:a;b:c}, a, listtag) = {a:listtag;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithListTagSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_LIST_TAG.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithListTagSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_LIST_TAG.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithListTag() throws EvaluationException {
+        Operators.NBT_WITH_LIST_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_LIST_BYTE -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithListByte() throws EvaluationException {
+        NBTTagCompound tsasa = new NBTTagCompound();
+        tsasa.setString("a", "a");
+        NBTTagList tlist = new NBTTagList();
+        tlist.appendTag(new NBTTagByte((byte) 5));
+        tlist.appendTag(new NBTTagByte((byte) 4));
+        tlist.appendTag(new NBTTagByte((byte) 3));
+
+        IValue res1 = Operators.NBT_WITH_LIST_BYTE.evaluate(new IVariable[]{nsasa, sc, lints});
+        assertThat("result is a listbyte", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setTag("c", tlist);
+        assertThat("withlistbyte({a:a}, c, listbyte) = {a:a,c:listbyte}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_LIST_BYTE.evaluate(new IVariable[]{nsasasbsc, sa, lints});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setTag("a", tlist);
+        t2.setString("b", "c");
+        assertThat("withlistbyte({a:a;b:c}, a, listbyte) = {a:listbyte;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithListByteSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_LIST_BYTE.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithListByteSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_LIST_BYTE.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithListByte() throws EvaluationException {
+        Operators.NBT_WITH_LIST_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_LIST_INT -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithListInt() throws EvaluationException {
+        NBTTagCompound tsasa = new NBTTagCompound();
+        tsasa.setString("a", "a");
+        NBTTagList tlist = new NBTTagList();
+        tlist.appendTag(new NBTTagInt(5));
+        tlist.appendTag(new NBTTagInt(4));
+        tlist.appendTag(new NBTTagInt(3));
+
+        IValue res1 = Operators.NBT_WITH_LIST_INT.evaluate(new IVariable[]{nsasa, sc, lints});
+        assertThat("result is a listint", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setTag("c", tlist);
+        assertThat("withlistint({a:a}, c, listint) = {a:a,c:listint}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_LIST_INT.evaluate(new IVariable[]{nsasasbsc, sa, lints});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setTag("a", tlist);
+        t2.setString("b", "c");
+        assertThat("withlistint({a:a;b:c}, a, listint) = {a:listint;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithListIntSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_LIST_INT.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithListIntSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_LIST_INT.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithListInt() throws EvaluationException {
+        Operators.NBT_WITH_LIST_INT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_LIST_LONG -----------------------------------
+     */
+
+    @Test
+    public void testNbtWithListLong() throws EvaluationException {
+        NBTTagCompound tsasa = new NBTTagCompound();
+        tsasa.setString("a", "a");
+        NBTTagList tlist = new NBTTagList();
+        tlist.appendTag(new NBTTagLong(5));
+        tlist.appendTag(new NBTTagLong(4));
+        tlist.appendTag(new NBTTagLong(3));
+
+        IValue res1 = Operators.NBT_WITH_LIST_LONG.evaluate(new IVariable[]{nsasa, sc, llongs});
+        assertThat("result is a listlong", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        NBTTagCompound t1 = new NBTTagCompound();
+        t1.setString("a", "a");
+        t1.setTag("c", tlist);
+        assertThat("withlistlong({a:a}, c, listlong) = {a:a,c:listlong}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(t1));
+
+        IValue res2 = Operators.NBT_WITH_LIST_LONG.evaluate(new IVariable[]{nsasasbsc, sa, llongs});
+        NBTTagCompound t2 = new NBTTagCompound();
+        t2.setTag("a", tlist);
+        t2.setString("b", "c");
+        assertThat("withlistlong({a:a;b:c}, a, listlong) = {a:listlong;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(t2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithListLongSizeLarge() throws EvaluationException {
+        Operators.NBT_WITH_LIST_LONG.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtWithListLongSizeSmall() throws EvaluationException {
+        Operators.NBT_WITH_LIST_LONG.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtWithListLong() throws EvaluationException {
+        Operators.NBT_WITH_LIST_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }
