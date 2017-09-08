@@ -303,6 +303,11 @@
                     <paragraph>info_book.integrateddynamics.manual.logic.value_types.operator.text2</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.value_types.operator.text3</paragraph>
                 </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.nbt">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.nbt.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.nbt.text2</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.nbt.text3</paragraph>
+                </section>
                 <section name="info_book.integrateddynamics.manual.logic.value_types.block">
                     <paragraph>info_book.integrateddynamics.manual.logic.value_types.block.text1</paragraph>
                 </section>
