@@ -1,0 +1,16 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.16 or higher.
+
+Additions:
+* Add NBT value type
+* Add NBT operators
+* Add block reader aspect to get the NBT tag of a tile entity
+
+Changes:
+* Make list get operator throw out-of-bounds error and add safe variant, Closes #265
+Previously, the 'get' operator would simply return the default value of the value type if the index was out of bounds.
+This caused to many issues, in cases where the list type was 'any' for example.
+
+Fixes:
+* Fix display panels causing unnecessary chunk rerenders
+* Fix some type-safety issues
