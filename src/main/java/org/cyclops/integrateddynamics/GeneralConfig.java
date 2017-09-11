@@ -5,6 +5,7 @@ import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.DummyConfig;
 import org.cyclops.cyclopscore.tracking.Analytics;
 import org.cyclops.cyclopscore.tracking.Versions;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
 
 /**
  * A config with general options for this mod.
@@ -73,6 +74,14 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The maximum offset in blocks a directional connector can look for its target.", minimalValue = 1)
     public static int maxDirectionalConnectorOffset = 512;
+
+    /**
+     * The NBT tags that are not allowed to be read by displaying NBT tags or performing operations on them.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The NBT tags that are not allowed to be read by displaying NBT tags or performing operations on them.", changedCallback = ValueTypeNbt.BlacklistChangedCallback.class)
+    public static String[] nbtTagBlacklist = {
+            // Tag names that have to be ignored
+    };
     
     /**
      * Create a new instance.

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +43,11 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                 lines.add("...");
                 break;
             } else {
-                String string = "  " + key + ": " + StringUtils.abbreviate(tag.getTag(key).toString(), 40) + "";
+                NBTBase subTag = tag.getTag(key);
+                if (subTag instanceof NBTTagCompound) {
+                    subTag = ValueTypes.NBT.filterBlacklistedTags((NBTTagCompound) subTag);
+                }
+                String string = "  " + key + ": " + StringUtils.abbreviate(subTag.toString(), 40) + "";
                 float width = fontRenderer.getStringWidth(string) - 1;
                 lines.add(string);
                 maxWidth = Math.max(maxWidth, width);
