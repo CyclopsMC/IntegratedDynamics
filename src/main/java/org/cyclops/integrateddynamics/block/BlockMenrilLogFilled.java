@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Menril log block that is filled.
+ * Menril wood block that is filled.
  * @author rubensworks
  */
 public class BlockMenrilLogFilled extends ConfigurableBlockLog {

@@ -7,7 +7,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.GeneralConfig;
 
 /**
- * Menril log block.
+ * Menril wood block.
  * @author rubensworks
  */
 public class BlockMenrilLog extends ConfigurableBlockLog {

@@ -9,7 +9,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 
 /**
- * Config for the Menril Planks Stairs.
+ * Config for the Menril Wood Stairs.
  * @author rubensworks
  *
  */
