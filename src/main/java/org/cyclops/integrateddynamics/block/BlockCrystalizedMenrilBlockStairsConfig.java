@@ -7,7 +7,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
- * Config for the Menril Planks Stairs.
+ * Config for the Crystallized Menril Block Stairs.
  * @author rubensworks
  *
  */

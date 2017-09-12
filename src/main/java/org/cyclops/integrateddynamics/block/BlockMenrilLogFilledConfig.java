@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 
 /**
- * Config for the Menril Log.
+ * Config for the Menril Wood.
  * @author rubensworks
  *
  */
@@ -20,9 +20,9 @@ public class BlockMenrilLogFilledConfig extends BlockConfig {
     public static BlockMenrilLogFilledConfig _instance;
 
     /**
-     * The 1/x chance at which a Menril Log will be filled with Menril Resin when generated, the higher this value, the lower the chance.
+     * The 1/x chance at which Menril Wood will be filled with Menril Resin when generated, the higher this value, the lower the chance.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The 1/x chance at which a Menril Log will be filled with Menril Resin when generated, the higher this value, the lower the chance.", isCommandable = true, minimalValue = 0)
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The 1/x chance at which Menril Wood will be filled with Menril Resin when generated, the higher this value, the lower the chance.", isCommandable = true, minimalValue = 0)
     public static int filledMenrilLogChance = 10;
 
     /**

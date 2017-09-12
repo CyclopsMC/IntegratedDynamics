@@ -10,7 +10,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 
 /**
- * Config for the Menril Planks.
+ * Config for the Menril Wood Planks.
  * @author rubensworks
  *
  */
