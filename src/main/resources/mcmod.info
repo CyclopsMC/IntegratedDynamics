@@ -12,6 +12,7 @@
   "credits": "kroeserr, Yulife (textures)",
   "parent": "",
   "screenshots": [],
-  "dependencies": []
+  "dependencies": [],
+  "requiredMods": [ "forge", "cyclopscore", "commoncapabilities" ]
 }
 ]
