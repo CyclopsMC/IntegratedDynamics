@@ -124,6 +124,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         return new ExtendedRecipeHandler(this,
                 "shaped.xml",
                 "shapeless.xml",
+                "smelting.xml",
                 "dryingbasin.xml",
                 "dryingbasin_convenience.xml",
                 "squeezer.xml",
