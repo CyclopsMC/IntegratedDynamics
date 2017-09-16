@@ -54,7 +54,7 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
+    protected ConfigurableBlockLeaves initSubInstance() {
         return (ConfigurableBlockLeaves) new ConfigurableBlockLeaves(this) {
             @Override
             public Item getItemDropped(IBlockState iBlockState, Random random, int i) {

@@ -42,7 +42,7 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
+    protected ConfigurableItemFood initSubInstance() {
         ConfigurableItemFood food = new ConfigurableItemFood(this, 4, 0.3F, false) {
             @Override
             public int getMaxItemUseDuration(ItemStack stack) {

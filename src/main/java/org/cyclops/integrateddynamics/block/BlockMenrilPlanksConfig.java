@@ -35,7 +35,7 @@ public class BlockMenrilPlanksConfig extends BlockConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
+    protected ConfigurableBlock initSubInstance() {
         return (ConfigurableBlock) new ConfigurableBlock(this, Material.WOOD) {
             @SuppressWarnings("deprecation")
             @Override

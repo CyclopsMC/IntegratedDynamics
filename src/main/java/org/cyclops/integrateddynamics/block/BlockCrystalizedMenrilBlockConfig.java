@@ -33,7 +33,7 @@ public class BlockCrystalizedMenrilBlockConfig extends BlockConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
+    protected ConfigurableBlock initSubInstance() {
         ConfigurableBlock block = (ConfigurableBlock) new ConfigurableBlock(this, Material.CLAY) {
             @SuppressWarnings("deprecation")
             @Override
