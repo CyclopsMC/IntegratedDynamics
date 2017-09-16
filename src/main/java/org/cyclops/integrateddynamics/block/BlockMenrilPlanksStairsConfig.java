@@ -34,7 +34,7 @@ public class BlockMenrilPlanksStairsConfig extends BlockConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
+    protected ConfigurableBlockStairs initSubInstance() {
         return (ConfigurableBlockStairs) new ConfigurableBlockStairs(this, BlockMenrilLog.getInstance().getDefaultState()) {
             @SuppressWarnings("deprecation")
             @Override

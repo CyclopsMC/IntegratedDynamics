@@ -35,8 +35,8 @@ public class ItemVariableTransformerConfig extends ItemConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
-        return (IConfigurable) new ConfigurableItem(this) {
+    protected ConfigurableItem initSubInstance() {
+        return (ConfigurableItem) new ConfigurableItem(this) {
             @Override
             public String getUnlocalizedName(ItemStack itemStack) {
                 return super.getUnlocalizedName(itemStack) + (itemStack.getMetadata() == 0 ? ".output" : ".input");

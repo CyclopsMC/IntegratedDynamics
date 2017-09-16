@@ -32,7 +32,7 @@ public class BlockCrystalizedMenrilBlockStairsConfig extends BlockConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
+    protected ConfigurableBlockStairs initSubInstance() {
         ConfigurableBlockStairs block = (ConfigurableBlockStairs) new ConfigurableBlockStairs(this, BlockMenrilLog.getInstance().getDefaultState()) {
             @SuppressWarnings("deprecation")
             @Override

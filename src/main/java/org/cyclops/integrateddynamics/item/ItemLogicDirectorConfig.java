@@ -31,7 +31,7 @@ public class ItemLogicDirectorConfig extends ItemConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
+    protected ConfigurableItem initSubInstance() {
         return new ConfigurableItem(this);
     }
     

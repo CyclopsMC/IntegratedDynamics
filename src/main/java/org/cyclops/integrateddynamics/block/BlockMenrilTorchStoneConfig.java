@@ -39,7 +39,7 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
     }
 
     @Override
-    protected IConfigurable initSubInstance() {
+    protected ConfigurableBlockTorch initSubInstance() {
         return new ConfigurableBlockTorch(this) {
             @Override
             public void randomDisplayTick(IBlockState state, World worldIn, BlockPos pos, Random rand) {
