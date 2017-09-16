@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
@@ -51,7 +52,7 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
      *
      * @param eConfig Config for this block.
      */
-    public BlockDryingBasin(ExtendedConfig eConfig) {
+    public BlockDryingBasin(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, Material.WOOD, TileDryingBasin.class);
     }
 

@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 
@@ -32,7 +34,7 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
      *
      * @param eConfig Config for this block.
      */
-    public BlockCreativeEnergyBattery(ExtendedConfig eConfig) {
+    public BlockCreativeEnergyBattery(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig);
 
         setHardness(5.0F);

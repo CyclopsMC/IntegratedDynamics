@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.GeneralConfig;
 
@@ -28,7 +29,7 @@ public class BlockMenrilLog extends ConfigurableBlockLog {
      *
      * @param eConfig Config for this block.
      */
-    public BlockMenrilLog(ExtendedConfig eConfig) {
+    public BlockMenrilLog(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig);
         this.setHardness(2.0F);
     }

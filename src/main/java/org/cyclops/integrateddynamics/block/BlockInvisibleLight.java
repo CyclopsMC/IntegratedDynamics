@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlock;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 
 import java.util.Random;
@@ -47,7 +48,7 @@ public class BlockInvisibleLight extends ConfigurableBlock {
      *
      * @param eConfig Config for this block.
      */
-    public BlockInvisibleLight(ExtendedConfig eConfig) {
+    public BlockInvisibleLight(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, Material.AIR);
 
         setHardness(3.0F);

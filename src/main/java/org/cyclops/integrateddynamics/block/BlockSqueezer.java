@@ -20,6 +20,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -61,7 +62,7 @@ public class BlockSqueezer extends ConfigurableBlockContainer implements IMachin
      *
      * @param eConfig Config for this block.
      */
-    public BlockSqueezer(ExtendedConfig eConfig) {
+    public BlockSqueezer(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, Material.IRON, TileSqueezer.class);
     }
 

@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -50,7 +51,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
      * @param eConfig Config for this blockState.
      * @param part    The part this item will place.
      */
-    public ItemPart(ExtendedConfig eConfig, IPartType<P, S> part) {
+    public ItemPart(ExtendedConfig<ItemConfig> eConfig, IPartType<P, S> part) {
         super(eConfig);
         this.part = part;
     }

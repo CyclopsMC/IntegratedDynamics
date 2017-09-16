@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.util.BlockRenderLayer;
+
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.core.block.BlockContainerCabled;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
@@ -17,7 +19,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
      *
      * @param eConfig Config for this block.
      */
-    public BlockEnergyBatteryBase(ExtendedConfig eConfig) {
+    public BlockEnergyBatteryBase(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, TileEnergyBattery.class);
     }
 

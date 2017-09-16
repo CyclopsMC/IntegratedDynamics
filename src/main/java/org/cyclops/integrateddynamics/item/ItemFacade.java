@@ -20,6 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -51,7 +52,7 @@ public class ItemFacade extends ConfigurableItem {
      *
      * @param eConfig Config for this blockState.
      */
-    public ItemFacade(ExtendedConfig eConfig) {
+    public ItemFacade(ExtendedConfig<ItemConfig> eConfig) {
         super(eConfig);
     }
 

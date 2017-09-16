@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.item.ItemCrystalizedMenrilChunkConfig;
 
@@ -45,7 +46,7 @@ public class BlockMenrilLogFilled extends ConfigurableBlockLog {
      *
      * @param eConfig Config for this block.
      */
-    public BlockMenrilLogFilled(ExtendedConfig eConfig) {
+    public BlockMenrilLogFilled(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig);
         this.setHardness(2.5F);
     }

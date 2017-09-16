@@ -12,6 +12,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
@@ -30,7 +31,7 @@ public abstract class BlockContainerCabled extends ConfigurableBlockContainer {
      * @param eConfig Config for this block.
      * @param tileEntity The part class
      */
-    public BlockContainerCabled(ExtendedConfig eConfig, Class<? extends CyclopsTileEntity> tileEntity) {
+    public BlockContainerCabled(ExtendedConfig<BlockConfig> eConfig, Class<? extends CyclopsTileEntity> tileEntity) {
         super(eConfig, Material.ANVIL, tileEntity);
 
         setHardness(5.0F);

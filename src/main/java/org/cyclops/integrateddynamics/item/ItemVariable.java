@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
@@ -39,7 +40,7 @@ public class ItemVariable extends ConfigurableItem {
      *
      * @param eConfig Config for this blockState.
      */
-    public ItemVariable(ExtendedConfig eConfig) {
+    public ItemVariable(ExtendedConfig<ItemConfig> eConfig) {
         super(eConfig);
     }
 
