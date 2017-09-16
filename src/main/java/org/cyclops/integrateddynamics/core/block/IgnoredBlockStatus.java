@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import net.minecraft.block.properties.PropertyHelper;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class IgnoredBlockStatus extends IgnoredBlock {
      *
      * @param eConfig  Config for this blockState.
      */
-    public IgnoredBlockStatus(ExtendedConfig eConfig) {
+    public IgnoredBlockStatus(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig);
     }
 

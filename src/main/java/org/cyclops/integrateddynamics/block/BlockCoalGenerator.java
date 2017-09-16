@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.client.gui.GuiCoalGenerator;
@@ -45,7 +46,7 @@ public class BlockCoalGenerator extends BlockContainerGuiCabled {
      *
      * @param eConfig Config for this block.
      */
-    public BlockCoalGenerator(ExtendedConfig eConfig) {
+    public BlockCoalGenerator(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, TileCoalGenerator.class);
     }
 

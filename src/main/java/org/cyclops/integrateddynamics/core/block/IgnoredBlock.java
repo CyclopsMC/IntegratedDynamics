@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlock;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 
 /**
@@ -26,7 +27,7 @@ public class IgnoredBlock extends ConfigurableBlock {
      *
      * @param eConfig  Config for this blockState.
      */
-    public IgnoredBlock(ExtendedConfig eConfig) {
+    public IgnoredBlock(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, Material.GLASS);
     }
 

@@ -14,6 +14,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.cyclops.commoncapabilities.api.capability.wrench.DefaultWrench;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.Capabilities;
 
@@ -38,7 +39,7 @@ public class ItemWrench extends ConfigurableItem {
      *
      * @param eConfig Config for this blockState.
      */
-    public ItemWrench(ExtendedConfig eConfig) {
+    public ItemWrench(ExtendedConfig<ItemConfig> eConfig) {
         super(eConfig);
     }
 

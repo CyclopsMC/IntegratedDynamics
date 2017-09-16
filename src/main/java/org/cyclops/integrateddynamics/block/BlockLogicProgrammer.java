@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockGui;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
@@ -44,7 +45,7 @@ public class BlockLogicProgrammer extends ConfigurableBlockGui {
      *
      * @param eConfig Config for this block.
      */
-    public BlockLogicProgrammer(ExtendedConfig eConfig) {
+    public BlockLogicProgrammer(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, Material.GLASS);
 
         setHardness(3.0F);

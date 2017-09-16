@@ -5,6 +5,7 @@ import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.item.ItemGui;
 import org.cyclops.integrateddynamics.client.gui.GuiLabeller;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
@@ -30,7 +31,7 @@ public class ItemLabeller extends ItemGui {
      *
      * @param eConfig Config for this blockState.
      */
-    public ItemLabeller(ExtendedConfig eConfig) {
+    public ItemLabeller(ExtendedConfig<ItemConfig> eConfig) {
         super(eConfig);
     }
 

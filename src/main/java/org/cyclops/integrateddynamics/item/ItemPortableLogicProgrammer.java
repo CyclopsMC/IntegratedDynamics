@@ -5,6 +5,7 @@ import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.item.ItemGui;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerPortable;
@@ -30,7 +31,7 @@ public class ItemPortableLogicProgrammer extends ItemGui {
      *
      * @param eConfig Config for this blockState.
      */
-    public ItemPortableLogicProgrammer(ExtendedConfig eConfig) {
+    public ItemPortableLogicProgrammer(ExtendedConfig<ItemConfig> eConfig) {
         super(eConfig);
     }
 

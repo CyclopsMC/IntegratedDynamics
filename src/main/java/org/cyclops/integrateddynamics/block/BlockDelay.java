@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.client.gui.GuiDelay;
 import org.cyclops.integrateddynamics.core.block.BlockContainerGuiCabled;
@@ -36,7 +37,7 @@ public class BlockDelay extends BlockContainerGuiCabled {
      *
      * @param eConfig Config for this block.
      */
-    public BlockDelay(ExtendedConfig eConfig) {
+    public BlockDelay(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, TileDelay.class);
     }
 

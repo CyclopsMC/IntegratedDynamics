@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.client.gui.GuiVariablestore;
 import org.cyclops.integrateddynamics.core.block.BlockContainerGuiCabled;
@@ -37,7 +38,7 @@ public class BlockVariablestore extends BlockContainerGuiCabled {
      *
      * @param eConfig Config for this block.
      */
-    public BlockVariablestore(ExtendedConfig eConfig) {
+    public BlockVariablestore(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig, TileVariablestore.class);
     }
 

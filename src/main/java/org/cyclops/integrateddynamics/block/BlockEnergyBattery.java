@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -48,7 +49,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
      *
      * @param eConfig Config for this block.
      */
-    public BlockEnergyBattery(ExtendedConfig eConfig) {
+    public BlockEnergyBattery(ExtendedConfig<BlockConfig> eConfig) {
         super(eConfig);
 
         setHardness(5.0F);
