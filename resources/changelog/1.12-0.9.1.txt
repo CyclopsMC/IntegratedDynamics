@@ -1,0 +1,20 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.18 or higher.
+
+Additions:
+* Restore CraftTweaker integration
+* Restore TCon integration
+
+Changes:
+* Make menril wood smelt into charcoal
+* Rename some blocks/items per #272
+  * Rename "Menril Log" to "Menril Wood"
+  * Rename "Enriched Menril Log" to "Enriched Menril Wood"
+  * Rename "Menril Plank" to "Menril Wood Planks"
+  * Rename "Menril Plank Stairs" to "Menril Wood Stairs"
+* Allow NBT keys to be blacklisted from reading, Closes #271
+
+Fixes:
+* Localize sound event subtitles, Closes #277
+* Fix network crash when uninitialized part is initialized later, Closes #282
+* Fix certain aspects producing null ItemStacks, Closes CyclopsMC/IntegratedTunnels#56
