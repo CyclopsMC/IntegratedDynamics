@@ -369,7 +369,7 @@ public class Network implements INetwork {
                         if (isBeingDiagnozed) {
                             startTime = System.nanoTime();
                         }
-                        int lastElementTick = updateableElementsTicks.get(element);
+                        int lastElementTick = updateableElementsTicks.getOrDefault(element, 0);
                         if (canUpdate(element)) {
                             if (lastElementTick <= 0) {
                                 updateableElementsTicks.put(element, element.getUpdateInterval() - 1);
