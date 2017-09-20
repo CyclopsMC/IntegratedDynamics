@@ -94,7 +94,6 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
         ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), property.getType().serialize(value));
     }
 
-    @SuppressWarnings("unchecked")
     public IPartState getPartState() {
         return partContainer.getPartState(getTarget().getCenter().getSide());
     }

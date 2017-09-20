@@ -133,7 +133,6 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         return super.onItemUse(playerIn, world, pos, hand, side, hitX, hitY, hitZ);
     }
 
-    @SuppressWarnings("rawtypes")
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag) {

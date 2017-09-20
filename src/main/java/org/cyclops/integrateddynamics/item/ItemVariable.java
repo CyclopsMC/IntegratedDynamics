@@ -44,7 +44,6 @@ public class ItemVariable extends ConfigurableItem {
         super(eConfig);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag) {

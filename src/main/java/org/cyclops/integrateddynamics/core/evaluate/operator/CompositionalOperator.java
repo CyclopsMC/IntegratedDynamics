@@ -95,7 +95,6 @@ public class CompositionalOperator extends OperatorBase {
             return inputTypes;
         }
 
-        @SuppressWarnings("unchecked")
         protected IValue evaluate(final IVariable... variables) throws EvaluationException {
             if(this.builders == null) {
                 return this.base.evaluate(variables);

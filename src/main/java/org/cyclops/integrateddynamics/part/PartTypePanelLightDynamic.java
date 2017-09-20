@@ -49,7 +49,6 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         return new PartTypePanelLightDynamic.State();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void onValueChanged(INetwork network, IPartNetwork partNetwork, PartTarget target, State state, IValue lastValue, IValue newValue) {
         super.onValueChanged(network, partNetwork, target, state, lastValue, newValue);

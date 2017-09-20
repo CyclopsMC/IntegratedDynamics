@@ -138,7 +138,6 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
             return value;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object o) {
             if(o instanceof ValueEntity) {

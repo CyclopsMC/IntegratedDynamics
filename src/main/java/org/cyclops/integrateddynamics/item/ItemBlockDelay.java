@@ -28,7 +28,6 @@ public class ItemBlockDelay extends ItemBlockNBT {
         this.setMaxStackSize(64);
     }
 
-    @SuppressWarnings("rawtypes")
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag) {

@@ -28,7 +28,6 @@ public interface IAspectProperties extends INBTSerializable {
      * @param <V> The value type.
      * @return The value.
      */
-    @SuppressWarnings("unchecked")
     public <T extends IValueType<V>, V extends IValue> V getValue(IAspectPropertyTypeInstance<T, V> type);
 
     /**

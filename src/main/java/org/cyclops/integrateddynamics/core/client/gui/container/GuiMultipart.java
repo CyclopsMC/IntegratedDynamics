@@ -83,7 +83,6 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         return 1F - ((1F - color) / 4F);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);

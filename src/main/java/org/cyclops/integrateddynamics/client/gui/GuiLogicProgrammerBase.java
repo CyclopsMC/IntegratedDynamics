@@ -116,7 +116,6 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
         return 1F - ((1F - color) / (hover ? 2F : 4F));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);

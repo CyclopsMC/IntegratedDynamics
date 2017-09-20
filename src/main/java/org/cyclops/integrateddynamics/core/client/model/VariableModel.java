@@ -46,7 +46,6 @@ public class VariableModel implements IModel {
         return builder.build();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Collection<ResourceLocation> getTextures() {
         Collection<ResourceLocation> textures = Sets.newHashSet();

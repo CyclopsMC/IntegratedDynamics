@@ -6,7 +6,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -14,7 +13,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +24,7 @@ import java.util.List;
  * @param <B> The type of block this component is part of.
  */
 @Data
-public class CollidableComponent<P, B extends Block & ICollidableParent> implements ICollidable {
+public class CollidableComponent<P, B extends Block & ICollidableParent> implements ICollidable<P> {
 
     private final B block;
     private final List<IComponent<P, B>> components;
@@ -36,17 +36,17 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         this.block = block;
         this.components = components;
         int count = 0;
-        for(IComponent component : components) {
-            for(Object position : component.getPossiblePositions()) {
+        for(IComponent<P, B> component : components) {
+            for(P position : component.getPossiblePositions()) {
                 count += component.getBoundsCount(position);
             }
         }
         this.totalComponents = count;
     }
 
-    private void addComponentCollisionBoxesToList(IComponent<EnumFacing, B> component, IBlockState state, World world, BlockPos pos,
+    private void addComponentCollisionBoxesToList(IComponent<P, B> component, IBlockState state, World world, BlockPos pos,
                          AxisAlignedBB axisalignedbb, List<AxisAlignedBB> list, Entity collidingEntity) {
-        for(EnumFacing position : component.getPossiblePositions()) {
+        for(P position : component.getPossiblePositions()) {
             if(component.isActive(getBlock(), world, pos, position)) {
                 for(AxisAlignedBB bb : component.getBounds(getBlock(), world, pos, position)) {
                     BlockHelpers.addCollisionBoxToList(pos, axisalignedbb, list, bb);
@@ -55,19 +55,19 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         }
     }
 
-    @SuppressWarnings({"unchecked", "deprecation"})
+    @SuppressWarnings({"deprecation"})
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB axisalignedbb,
-                                      List list, Entity collidingEntity, boolean useProvidedState) {
+                                      List<AxisAlignedBB> list, Entity collidingEntity, boolean useProvidedState) {
         // Add bounding boxes for all active components.
-        for(IComponent component : components) {
+        for(IComponent<P, B> component : components) {
             addComponentCollisionBoxesToList(component, state, world, pos, axisalignedbb, list, collidingEntity);
         }
     }
 
     @Override
     public net.minecraft.util.math.RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d origin, Vec3d direction) {
-        RayTraceResult raytraceResult = doRayTrace(world, pos, origin, direction);
+        RayTraceResult<P> raytraceResult = doRayTrace(world, pos, origin, direction);
         if (raytraceResult == null) {
             return null;
         } else {
@@ -95,7 +95,7 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
      * @param player The player.
      * @return A holder object with information on the ray tracing.
      */
-    public RayTraceResult doRayTrace(World world, BlockPos pos, EntityPlayer player) {
+    public RayTraceResult<P> doRayTrace(World world, BlockPos pos, EntityPlayer player) {
         if(player == null) {
             return null;
         }
@@ -116,8 +116,8 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
 
     private int doRayTraceComponent(IComponent<P, B> component, int countStart,
                                         World world, BlockPos pos, Vec3d origin, Vec3d direction,
-                                        net.minecraft.util.math.RayTraceResult[] hits, AxisAlignedBB[] boxes, P[] sideHit,
-                                        IComponent<P, B>[] components) {
+                                        net.minecraft.util.math.RayTraceResult[] hits, AxisAlignedBB[] boxes, List<P> sideHit,
+                                        List<IComponent<P, B>> components) {
         int i = countStart;
         for(P position : component.getPossiblePositions()) {
             if(component.isActive(getBlock(), world, pos, position)) {
@@ -125,8 +125,8 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
                 for(AxisAlignedBB bb : component.getBounds(getBlock(), world, pos, position)) {
                     boxes[i + offset] = bb;
                     hits[i + offset] = getBlock().rayTraceParent(pos, origin, direction, bb);
-                    sideHit[i + offset] = position;
-                    components[i + offset] = component;
+                    sideHit.set(i + offset, position);
+                    components.set(i + offset, component);
                     offset++;
                 }
             }
@@ -135,15 +135,12 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         return i;
     }
 
-    private RayTraceResult doRayTrace(World world, BlockPos pos, Vec3d origin, Vec3d direction) {
+    private RayTraceResult<P> doRayTrace(World world, BlockPos pos, Vec3d origin, Vec3d direction) {
         // Perform a ray trace for all six sides.
         net.minecraft.util.math.RayTraceResult[] hits = new net.minecraft.util.math.RayTraceResult[totalComponents];
         AxisAlignedBB[] boxes = new AxisAlignedBB[totalComponents];
-        @SuppressWarnings("unchecked")
-        P[] sideHit = (P[]) new Object[totalComponents];
-        @SuppressWarnings("unchecked")
-        IComponent<P, B>[] componentsOutput = new IComponent[totalComponents];
-        Arrays.fill(sideHit, null);
+        List<P> sideHit = new ArrayList<>(Collections.nCopies(totalComponents, null));
+        List<IComponent<P, B>> componentsOutput = new ArrayList<>(Collections.nCopies(totalComponents, null));
 
         // Ray trace for all active components.
         int count = 0;
@@ -165,7 +162,7 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         }
 
         if (minIndex != -1) {
-            return new RayTraceResult<P>(hits[minIndex], boxes[minIndex], sideHit[minIndex], componentsOutput[minIndex]);
+            return new RayTraceResult<P>(hits[minIndex], boxes[minIndex], sideHit.get(minIndex), componentsOutput.get(minIndex));
         }
         return null;
     }

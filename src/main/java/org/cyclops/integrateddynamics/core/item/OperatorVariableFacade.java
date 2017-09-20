@@ -189,7 +189,6 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
         super.addInformation(list, world);
     }
 
-    @SuppressWarnings("unchecked")
     @SideOnly(Side.CLIENT)
     @Override
     public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads) {

@@ -180,7 +180,6 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     protected abstract IBakedModel getPartModel(EnumFacing side);
     protected abstract IRenderState getRenderState();
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<BakedQuad> getGeneralQuads() {
         Triple<IRenderState, EnumFacing, BlockRenderLayer> cacheKey = null;

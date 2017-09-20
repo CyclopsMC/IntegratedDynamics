@@ -51,7 +51,6 @@ public class DelayVariableFacade extends ProxyVariableFacade implements IDelayVa
         return L10NHelpers.localize(L10NValues.DELAY_TOOLTIP_DELAYID, getProxyId());
     }
 
-    @SuppressWarnings("unchecked")
     @SideOnly(Side.CLIENT)
     @Override
     public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads) {

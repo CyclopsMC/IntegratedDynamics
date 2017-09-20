@@ -115,7 +115,6 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
