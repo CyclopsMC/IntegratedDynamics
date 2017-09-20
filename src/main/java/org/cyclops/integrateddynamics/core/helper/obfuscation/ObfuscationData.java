@@ -19,5 +19,10 @@ public class ObfuscationData {
      * Field from {@link net.minecraft.entity.EntityLivingBase}.
      */
     public static final String[] ENTITYLIVINGBASE_DEATHSOUND = new String[] { "getDeathSound", "func_70673_aS", "aS" };
+
+    /**
+     * Field from {@link net.minecraft.util.SoundEvent}.
+     */
+    public static final String[] SOUNDEVENT_SOUNDNAME = new String[] { "soundName", "field_149219_a" };
 	
 }
