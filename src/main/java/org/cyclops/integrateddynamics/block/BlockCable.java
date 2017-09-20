@@ -122,7 +122,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     }
     @SuppressWarnings("deprecation")
     @Delegate
-    private ICollidable collidableComponent = new CollidableComponent<>(this, COLLIDABLE_COMPONENTS);
+    private ICollidable<EnumFacing> collidableComponent = new CollidableComponent<>(this, COLLIDABLE_COMPONENTS);
 
     private static BlockCable _instance = null;
 

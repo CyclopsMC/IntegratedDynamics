@@ -44,7 +44,7 @@ public interface ICollidable<P> {
      */
     @SuppressWarnings("deprecation")
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB mask,
-                                      List list, Entity collidingEntity, boolean useProvidedState);
+                                      List<AxisAlignedBB> list, Entity collidingEntity, boolean useProvidedState);
 
     /**
      * The selected bounding box.

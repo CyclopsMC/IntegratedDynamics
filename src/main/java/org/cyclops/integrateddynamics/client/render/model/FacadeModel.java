@@ -39,7 +39,6 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
         super(baseModel, itemStack, world, entity);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<BakedQuad> getGeneralQuads() {
         try {

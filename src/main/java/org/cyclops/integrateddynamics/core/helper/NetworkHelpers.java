@@ -29,7 +29,6 @@ public class NetworkHelpers {
      * @param pos The position.
      * @return The network carrier capability, or null if not present.
      */
-    @SuppressWarnings("unchecked")
     public static INetworkCarrier getNetworkCarrier(IBlockAccess world, BlockPos pos) {
         return TileHelpers.getCapability(world, pos, NetworkCarrierConfig.CAPABILITY);
     }
@@ -40,7 +39,6 @@ public class NetworkHelpers {
      * @param pos The position.
      * @return The network element provider capability, or null if not present.
      */
-    @SuppressWarnings("unchecked")
     public static INetworkElementProvider getNetworkElementProvider(IBlockAccess world, BlockPos pos) {
         return TileHelpers.getCapability(world, pos, NetworkElementProviderConfig.CAPABILITY);
     }
@@ -51,7 +49,6 @@ public class NetworkHelpers {
      * @param pos The position.
      * @return The network, or null if no network or network carrier present.
      */
-    @SuppressWarnings("unchecked")
     public static INetwork getNetwork(IBlockAccess world, BlockPos pos) {
         INetworkCarrier networkCarrier = getNetworkCarrier(world, pos);
         if (networkCarrier != null) {

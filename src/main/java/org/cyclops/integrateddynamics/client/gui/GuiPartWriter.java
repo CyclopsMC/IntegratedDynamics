@@ -68,7 +68,6 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
                 this.guiLeft, this.guiTop, getPartState().getActiveAspect() == aspect);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);

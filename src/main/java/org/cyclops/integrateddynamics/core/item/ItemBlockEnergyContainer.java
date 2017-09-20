@@ -54,7 +54,6 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         return itemStack.getCapability(CapabilityEnergy.ENERGY, null);
     }
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag) {

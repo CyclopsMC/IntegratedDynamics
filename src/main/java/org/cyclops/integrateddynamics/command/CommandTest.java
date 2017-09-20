@@ -39,7 +39,7 @@ public class CommandTest extends CommandMod {
     }
 
     @Override
-    public List getTabCompletions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
         return null;
     }
 

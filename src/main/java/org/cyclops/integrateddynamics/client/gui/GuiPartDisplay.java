@@ -38,7 +38,6 @@ public class GuiPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S exten
         return "part_display";
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);

@@ -56,7 +56,6 @@ public final class ModelHelpers {
      * @param transformation The rotation of the model.
      * @return The baked model.
      */
-    @SuppressWarnings("unchecked")
     public static IBakedModel bakeModel(ModelBlock model, TextureAtlasSprite icon,
                                                 ITransformation transformation) {
         ModelBlock itemModel = MODEL_GENERATOR.makeItemModel(Minecraft.getMinecraft().getTextureMapBlocks(), model);

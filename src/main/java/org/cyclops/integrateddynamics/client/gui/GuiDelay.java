@@ -105,7 +105,6 @@ public class GuiDelay extends GuiActiveVariableBase<ContainerDelay, TileDelay> {
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);

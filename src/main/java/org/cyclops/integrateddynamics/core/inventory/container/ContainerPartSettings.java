@@ -99,7 +99,6 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         return ValueNotifierHelpers.getValueInt(this, lastPriorityValueId);
     }
 
-    @SuppressWarnings("unchecked")
     public IPartState getPartState() {
         return partContainer.getPartState(getTarget().getCenter().getSide());
     }
