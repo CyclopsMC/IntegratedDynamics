@@ -984,7 +984,7 @@ public final class Operators {
                         @Override
                         public String getOutput(Optional<SoundType> sound) throws EvaluationException {
                             if (sound.isPresent()) {
-                                return sound.get().getBreakSound().getSoundName().toString();
+                                return ObfuscationHelpers.getSoundEventName(sound.get().getBreakSound()).toString();
                             }
                             return "";
                         }
@@ -1001,7 +1001,7 @@ public final class Operators {
                         @Override
                         public String getOutput(Optional<SoundType> sound) throws EvaluationException {
                             if (sound.isPresent()) {
-                                return sound.get().getPlaceSound().getSoundName().toString();
+                                return ObfuscationHelpers.getSoundEventName(sound.get().getPlaceSound()).toString();
                             }
                             return "";
                         }
@@ -1018,7 +1018,7 @@ public final class Operators {
                         @Override
                         public String getOutput(Optional<SoundType> sound) throws EvaluationException {
                             if (sound.isPresent()) {
-                                return sound.get().getStepSound().getSoundName().toString();
+                                return ObfuscationHelpers.getSoundEventName(sound.get().getStepSound()).toString();
                             }
                             return "";
                         }
@@ -2107,7 +2107,7 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     String hurtSound = "";
                     if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                        String sound = ObfuscationHelpers.getEntityLivingBaseHurtSound((EntityLivingBase) a.getRawValue().get(), DamageSource.GENERIC).getSoundName().toString();
+                        String sound = ObfuscationHelpers.getSoundEventName(ObfuscationHelpers.getEntityLivingBaseHurtSound((EntityLivingBase) a.getRawValue().get(), DamageSource.GENERIC)).toString();
                         if (sound != null) {
                             hurtSound = sound;
                         }
@@ -2126,7 +2126,7 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     String hurtSound = "";
                     if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                        String sound = ObfuscationHelpers.getEntityLivingBaseDeathSound((EntityLivingBase) a.getRawValue().get()).getSoundName().toString();
+                        String sound = ObfuscationHelpers.getSoundEventName(ObfuscationHelpers.getEntityLivingBaseDeathSound((EntityLivingBase) a.getRawValue().get())).toString();
                         if (sound != null) {
                             hurtSound = sound;
                         }

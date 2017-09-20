@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.helper.obfuscation;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
@@ -44,6 +45,15 @@ public class ObfuscationHelpers {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Get the {@link SoundEvent#soundName}} value.
+     * @param soundEvent The sound event.
+     * @return The sound event name.
+     */
+    public static ResourceLocation getSoundEventName(SoundEvent soundEvent) {
+        return ReflectionHelper.getPrivateValue(SoundEvent.class, soundEvent, ObfuscationData.SOUNDEVENT_SOUNDNAME);
     }
 	
 }
