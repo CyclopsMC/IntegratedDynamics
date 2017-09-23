@@ -105,7 +105,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {this.markDirty();
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag = super.writeToNBT(tag);
         tag.setTag("partContainer", partContainer.serializeNBT());
         tag.setBoolean("realCable", cableFakeable.isRealCable());
