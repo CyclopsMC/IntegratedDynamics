@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,6 +27,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -1473,7 +1475,15 @@ public final class Operators {
                     ImmutableList.Builder<ValueObjectTypeItemStack.ValueItemStack> builder = ImmutableList.builder();
                     if (!StringUtils.isNullOrEmpty(a.getRawValue())) {
                         for (ItemStack itemStack : OreDictionary.getOres(a.getRawValue())) {
-                            builder.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                            if (itemStack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+                                NonNullList<ItemStack> subItems = NonNullList.create();
+                                itemStack.getItem().getSubItems(CreativeTabs.SEARCH, subItems);
+                                for (ItemStack subItem : subItems) {
+                                    builder.add(ValueObjectTypeItemStack.ValueItemStack.of(subItem));
+                                }
+                            } else {
+                                builder.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                            }
                         }
                     }
                     return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, builder.build());
