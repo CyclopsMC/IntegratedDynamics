@@ -46,6 +46,8 @@ public class TestOperatorOperators {
     private DummyVariableList lintegers;
     private DummyVariableList lbooleans;
 
+    private DummyVariableString sAnd;
+
     @Before
     public void before() {
         ValueTypeListProxyFactories.load();
@@ -71,6 +73,8 @@ public class TestOperatorOperators {
 
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
+
+        sAnd = new DummyVariableString(ValueTypeString.ValueString.of("operator.operators.integrateddynamics.logical.and.name"));
     }
 
     /**
@@ -766,6 +770,32 @@ public class TestOperatorOperators {
     public void testConditionalOutputTypesReduce() throws EvaluationException {
         assertThat(Operators.OPERATOR_REDUCE.getConditionalOutputType(new IVariable[]{oArithmeticAddition, lintegers, i0}),
                 CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
+    }
+
+    /**
+     * ----------------------------------- BY_NAME -----------------------------------
+     */
+
+    @Test
+    public void testByName() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{sAnd});
+        assertThat("result is a list", res1, instanceOf(ValueTypeOperator.ValueOperator.class));
+        assertThat("operator_by_name(and) == and", ((ValueTypeOperator.ValueOperator) res1).getRawValue(), is(Operators.LOGICAL_AND));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeByNameLarge() throws EvaluationException {
+        Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{sAnd, sAnd});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeByNameSmall() throws EvaluationException {
+        Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypeByName() throws EvaluationException {
+        Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{oIntegerIncrement});
     }
 
 }

@@ -2636,6 +2636,23 @@ public final class Operators {
             }).build());
 
     /**
+     * Apply for a given operator a given value.
+     */
+    public static final IOperator OPERATOR_BY_NAME = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
+            .inputType(ValueTypes.STRING).output(ValueTypes.OPERATOR).symbol("opbyname").operatorName("byName")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueTypeString.ValueString name = input.getValue(0);
+                    IOperator operator = Operators.REGISTRY.getOperator(name.getRawValue());
+                    if (operator == null) {
+                        throw new EvaluationException("Could not find the operator with name " + name.getRawValue());
+                    }
+                    return ValueTypeOperator.ValueOperator.of(operator);
+                }
+            }).build());
+
+    /**
      * ----------------------------------- NBT OPERATORS -----------------------------------
      */
 

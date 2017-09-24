@@ -1043,6 +1043,8 @@ operator.operators.integrateddynamics.operator.flip.info=Flip the input paramete
 operator.operators.integrateddynamics.virtual.flipped.name=Flipped
 operator.operators.integrateddynamics.operator.reduce.name=Reduce
 operator.operators.integrateddynamics.operator.reduce.info=Apply the given operator on all elements of a list to reduce the list to one value.
+operator.operators.integrateddynamics.operator.byName.name=Operator By Name
+operator.operators.integrateddynamics.operator.byName.info=Get the operator that has the given name.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
