@@ -1468,7 +1468,15 @@ public final class Operators {
                     ImmutableList.Builder<ValueObjectTypeItemStack.ValueItemStack> builder = ImmutableList.builder();
                     if (!StringUtils.isNullOrEmpty(a.getRawValue())) {
                         for (ItemStack itemStack : OreDictionary.getOres(a.getRawValue())) {
-                            builder.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                            if (itemStack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+                                // Unfortunately, we can not get all sub items server-side in 1.10
+                                // This is not the case anymore in 1.12
+                                ItemStack itemStackCopy = itemStack.copy();
+                                itemStackCopy.setItemDamage(0);
+                                builder.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStackCopy));
+                            } else {
+                                builder.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
+                            }
                         }
                     }
                     return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, builder.build());
