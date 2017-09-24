@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.19 or higher.
+
+Additions:
+* Add operator to get an operator by name, Closes #287
+* Allow name to be retrieved from operator values, #287
+
+Changes:
+
+Fixes:
+* Fix incorrect markDirty() call when writing tiles to NBT, Closes #286
+  This could be the cause of rare CMEs during chunk saving.
+* Fix sound operator-related crashes in SMP, Closes #285
