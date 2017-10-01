@@ -57,8 +57,15 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> {
         }
     }
 
-    protected IValueTypeNumber getType(IVariable v) {
-        return ((IValueTypeNumber) v.getType());
+    protected IValueTypeNumber getType(IVariable v) throws EvaluationException {
+        IValueType valueType = v.getType();
+        // Special case if the type is ANY.
+        if (!(valueType instanceof IValueTypeNumber)) {
+            // Don't evaluate the var if not needed,
+            // as this may be expensive.
+            valueType = v.getValue().getType();
+        }
+        return ((IValueTypeNumber) valueType);
     }
 
     public IValue add(IVariable a, IVariable b) throws EvaluationException {
