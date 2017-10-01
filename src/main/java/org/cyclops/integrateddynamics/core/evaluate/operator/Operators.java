@@ -655,12 +655,7 @@ public final class Operators {
             }).conditionalOutputTypeDeriver(new OperatorBuilder.IConditionalOutputTypeDeriver() {
                 @Override
                 public IValueType getConditionalOutputType(OperatorBase operator, IVariable[] input) {
-                    try {
-                        IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
-                        return a.getValueType();
-                    } catch (EvaluationException e) {
-                        return operator.getConditionalOutputType(input);
-                    }
+                    return input[2].getType();
                 }
             }).build());
 
