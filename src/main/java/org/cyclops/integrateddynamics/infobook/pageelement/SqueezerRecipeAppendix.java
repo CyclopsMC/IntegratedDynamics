@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.infobook.AdvancedButton;
@@ -9,26 +10,34 @@ import org.cyclops.cyclopscore.infobook.InfoSection;
 import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Squeezer recipes.
  * @author rubensworks
  */
-public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>> {
+public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>> {
 
     private static final int SLOT_INPUT_OFFSET_X = 16;
     private static final int SLOT_OFFSET_Y = 23;
     private static final int SLOT_OUTPUT_OFFSET_X = 68;
 
     private static final AdvancedButton.Enum INPUT_ITEM = AdvancedButton.Enum.create();
-    private static final AdvancedButton.Enum RESULT_ITEM = AdvancedButton.Enum.create();
     private static final AdvancedButton.Enum RESULT_FLUID = AdvancedButton.Enum.create();
 
-    public SqueezerRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) {
+    private final List<AdvancedButton.Enum> resultItems;
+
+    public SqueezerRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) {
         super(infoBook, recipe);
+        resultItems = Lists.newArrayList();
+        for (int i = 0; i < recipe.getOutput().getIngredients().size(); i++) {
+            resultItems.add(AdvancedButton.Enum.create());
+        }
     }
 
     @Override
@@ -38,7 +47,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
 
     @Override
     protected int getHeightInner() {
-        return 42;
+        return 19 + resultItems.size() * SLOT_OFFSET_Y;
     }
 
     @Override
@@ -49,7 +58,9 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
     @Override
     public void bakeElement(InfoSection infoSection) {
         renderItemHolders.put(INPUT_ITEM, new ItemButton(getInfoBook()));
-        renderItemHolders.put(RESULT_ITEM, new ItemButton(getInfoBook()));
+        for (AdvancedButton.Enum resultItem : resultItems) {
+            renderItemHolders.put(resultItem, new ItemButton(getInfoBook()));
+        }
         renderItemHolders.put(RESULT_FLUID, new FluidButton(getInfoBook()));
         super.bakeElement(infoSection);
     }
@@ -62,13 +73,20 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
         // Prepare items
         int tick = getTick(gui);
         ItemStack inputItem = recipe.getInput().getIngredient() == null ? null : prepareItemStacks(recipe.getInput().getItemStacks(), tick);
-        ItemStack resultItem = recipe.getOutput().getIngredient() == null ? null : prepareItemStacks(recipe.getOutput().getItemStacks(), tick);
-        FluidStack resultFluid = recipe.getOutput().getFluidStack();
+        List<ItemStack> outputItems = recipe.getOutput().getSubIngredientComponents().stream()
+                .map(component -> component.getIngredient() == null ? null : prepareItemStacks(component.getItemStacks(), tick))
+                .collect(Collectors.toList());
+        FluidStack outputFluid = recipe.getOutput().getFluidStack();
 
         // Items
         renderItem(gui, x + SLOT_INPUT_OFFSET_X, y, inputItem, mx, my, INPUT_ITEM);
-        renderItem(gui, x + SLOT_OUTPUT_OFFSET_X, y, resultItem, mx, my, RESULT_ITEM);
-        renderFluid(gui, x + SLOT_OUTPUT_OFFSET_X, y + SLOT_OFFSET_Y, resultFluid, mx, my, RESULT_FLUID);
+        int slotOffset = 0;
+        for (int i = 0; i < outputItems.size(); i++) {
+            renderItem(gui, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputItems.get(i), mx, my, resultItems.get(i),
+                    recipe.getOutput().getSubIngredientComponents().get(i).getChance());
+            slotOffset += SLOT_OFFSET_Y;
+        }
+        renderFluid(gui, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputFluid, mx, my, RESULT_FLUID);
 
         renderItem(gui, x + middle, y, new ItemStack(BlockSqueezer.getInstance()), mx, my, false, null);
     }
