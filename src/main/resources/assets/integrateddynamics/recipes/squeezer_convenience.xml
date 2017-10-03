@@ -59,6 +59,17 @@
 
     <recipe type="integrateddynamics:squeezer">
         <tag>convenience</tag>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:cactus</item>
+        </input>
+        <output>
+            <fluid amount="500">water</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">minefactoryreloaded</condition>
         <condition type="config">squeezer</condition>
         <input>
@@ -90,6 +101,7 @@
         </input>
         <output>
             <item amount="2">evilcraft:dark_gem</item>
+            <item chance="0.5">evilcraft:dark_gem_crushed</item>
         </output>
     </recipe>
 
@@ -126,7 +138,7 @@
         </input>
         <output>
             <fluid amount="50">evilcraftblood</fluid>
-            <item>evilcraft:hardened_blood_shard</item>
+            <item chance="0.25">evilcraft:hardened_blood_shard</item>
         </output>
     </recipe>
 
@@ -139,7 +151,7 @@
         </input>
         <output>
             <fluid amount="50">seed.oil</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.05">forestry:mulch</item>
         </output>
     </recipe>
 
@@ -152,7 +164,7 @@
         </input>
         <output>
             <fluid amount="180">seed.oil</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.05">forestry:mulch</item>
         </output>
     </recipe>
 
@@ -165,7 +177,55 @@
         </input>
         <output>
             <fluid amount="220">seed.oil</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.02">forestry:mulch</item>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:wheat_seeds</item>
+        </input>
+        <output>
+            <fluid amount="10">seed.oil</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:pumpkin_seeds</item>
+        </input>
+        <output>
+            <fluid amount="10">seed.oil</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:melon_seeds</item>
+        </input>
+        <output>
+            <fluid amount="10">seed.oil</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item>minecraft:beetroot_seeds</item>
+        </input>
+        <output>
+            <fluid amount="10">seed.oil</fluid>
         </output>
     </recipe>
 
@@ -178,7 +238,7 @@
         </input>
         <output>
             <fluid amount="400">juice</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.1">forestry:mulch</item>
         </output>
     </recipe>
 
@@ -191,7 +251,7 @@
         </input>
         <output>
             <fluid amount="100">juice</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.6">forestry:mulch</item>
         </output>
     </recipe>
 
@@ -204,7 +264,7 @@
         </input>
         <output>
             <fluid amount="50">juice</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.2">forestry:mulch</item>
         </output>
     </recipe>
 
@@ -217,7 +277,7 @@
         </input>
         <output>
             <fluid amount="600">juice</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.1">forestry:mulch</item>
         </output>
     </recipe>
 
@@ -230,7 +290,7 @@
         </input>
         <output>
             <fluid amount="180">for.honey</fluid>
-            <item>forestry:propolis</item>
+            <item chance="0.05">forestry:propolis</item>
         </output>
     </recipe>
 
@@ -243,7 +303,7 @@
         </input>
         <output>
             <fluid amount="200">juice</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.2">forestry:mulch</item>
         </output>
     </recipe>
 
@@ -256,7 +316,7 @@
         </input>
         <output>
             <fluid amount="200">juice</fluid>
-            <item>forestry:mulch</item>
+            <item chance="0.2">forestry:mulch</item>
         </output>
     </recipe>
 
