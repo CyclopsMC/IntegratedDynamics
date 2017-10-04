@@ -51,14 +51,13 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     NonNullList<Ingredient> ingredients = NonNullList.create();
                     String unlocalizedItems = "";
                     for (int i = 0; i < node.getElementsByTagName("item").getLength(); i++) {
-                        ItemStack itemStack;
                         try {
-                            itemStack = InfoBookParser.createStack((Element) node.getElementsByTagName("item").item(i), infoBook.getMod().getRecipeHandler());
+                            ItemStack itemStack = InfoBookParser.createStack((Element) node.getElementsByTagName("item").item(i), infoBook.getMod().getRecipeHandler());
                             unlocalizedItems += itemStack.getUnlocalizedName();
+                            ingredients.add(Ingredient.fromStacks(itemStack));
                         } catch (InfoBookParser.InvalidAppendixException e) {
-                            itemStack = ItemStack.EMPTY;
+
                         }
-                        ingredients.add(Ingredient.fromStacks(itemStack));
                     }
                     FluidStack fluidStack;
                     try {
