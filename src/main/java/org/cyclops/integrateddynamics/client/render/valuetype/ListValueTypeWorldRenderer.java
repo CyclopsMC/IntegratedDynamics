@@ -23,7 +23,6 @@ import java.util.List;
  */
 public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
-    private static final int MAX_LINES = 20;
     private static final float MAX = 12.5F;
     private static final float MARGIN_FACTOR = 1.1F;
 
@@ -37,7 +36,7 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         List<Pair<String, Integer>> lines = Lists.newLinkedList();
         IValueType listType = ((ValueTypeList.ValueList<?, ?>) value).getRawValue().getValueType();
         for(IValue element : ((ValueTypeList.ValueList<?, ?>) value).getRawValue()) {
-            if(lines.size() >= MAX_LINES) {
+            if(lines.size() >= ValueTypeList.MAX_RENDER_LINES) {
                 lines.add(Pair.of("...", listType.getDisplayColor()));
                 break;
             } else {

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.panel;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
@@ -23,6 +24,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -34,6 +36,7 @@ import org.cyclops.integrateddynamics.client.gui.GuiPartDisplay;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -276,7 +279,19 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.writeToNBT(tag);
             IValue value = getDisplayValue();
             if(value != null) {
-                tag.setString("displayValueType", value.getType().getUnlocalizedName());;
+                tag.setString("displayValueType", value.getType().getUnlocalizedName());
+                if (value.getType() == ValueTypes.LIST) {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> original = ((ValueTypeList.ValueList) value).getRawValue();
+                    try {
+                        if (original.getLength() > ValueTypeList.MAX_RENDER_LINES) {
+                            List<IValue> list = Lists.newArrayList();
+                            for (int i = 0; i < ValueTypeList.MAX_RENDER_LINES; i++) {
+                                list.add(original.get(i));
+                            }
+                            value = ValueTypeList.ValueList.ofList(original.getValueType(), list);
+                        }
+                    } catch (EvaluationException e) {}
+                }
                 tag.setString("displayValue", ValueHelpers.serializeRaw(value));
             }
             tag.setInteger("facingRotation", facingRotation.ordinal());

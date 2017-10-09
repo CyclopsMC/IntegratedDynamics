@@ -29,6 +29,8 @@ import java.util.List;
  */
 public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> {
 
+    public static final int MAX_RENDER_LINES = 20;
+
     public ValueTypeList() {
         super("list", Helpers.RGBToInt(175, 3, 1), TextFormatting.DARK_RED.toString());
     }
