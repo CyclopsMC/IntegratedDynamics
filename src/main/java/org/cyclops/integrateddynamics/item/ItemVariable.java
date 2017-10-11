@@ -63,7 +63,7 @@ public class ItemVariable extends ConfigurableItem {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new DefaultCapabilityProvider<>(VariableFacadeHolderConfig.CAPABILITY, new VariableFacadeHolderDefault(stack));
+        return new DefaultCapabilityProvider<>(() -> VariableFacadeHolderConfig.CAPABILITY, new VariableFacadeHolderDefault(stack));
     }
 
     public IVariableFacade getVariableFacade(ItemStack itemStack) {

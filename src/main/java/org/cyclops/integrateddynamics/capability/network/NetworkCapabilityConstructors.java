@@ -22,11 +22,11 @@ public class NetworkCapabilityConstructors {
         PartNetwork partNetwork = new PartNetwork();
         EnergyNetwork energyNetwork = new EnergyNetwork();
         event.addCapability(new ResourceLocation(Reference.MOD_ID, "partNetwork"),
-                new DefaultCapabilityProvider<>(PartNetworkConfig.CAPABILITY, partNetwork));
+                new DefaultCapabilityProvider<>(() -> PartNetworkConfig.CAPABILITY, partNetwork));
         event.addCapability(new ResourceLocation(Reference.MOD_ID, "energyNetwork"),
-                new DefaultCapabilityProvider<>(EnergyNetworkConfig.CAPABILITY, energyNetwork));
+                new DefaultCapabilityProvider<>(() -> EnergyNetworkConfig.CAPABILITY, energyNetwork));
         event.addCapability(new ResourceLocation(Reference.MOD_ID, "energyStorageNetwork"),
-                new DefaultCapabilityProvider<>(CapabilityEnergy.ENERGY, energyNetwork));
+                new DefaultCapabilityProvider<>(() -> CapabilityEnergy.ENERGY, energyNetwork));
         event.addFullNetworkListener(partNetwork);
         event.addFullNetworkListener(energyNetwork);
     }

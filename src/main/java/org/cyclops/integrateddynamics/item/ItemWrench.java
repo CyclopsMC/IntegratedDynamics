@@ -63,6 +63,6 @@ public class ItemWrench extends ConfigurableItem {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new DefaultCapabilityProvider<>(Capabilities.WRENCH, new DefaultWrench());
+        return new DefaultCapabilityProvider<>(() -> Capabilities.WRENCH, new DefaultWrench());
     }
 }
