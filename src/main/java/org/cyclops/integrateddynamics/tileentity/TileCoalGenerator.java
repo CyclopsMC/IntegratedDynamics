@@ -106,7 +106,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if(!getWorld().isRemote && (getStackInSlot(SLOT_FUEL) != null || isBurning()) && canAddEnergy(ENERGY_PER_TICK)) {
+        if(!getWorld().isRemote && (!getStackInSlot(SLOT_FUEL).isEmpty() || isBurning()) && canAddEnergy(ENERGY_PER_TICK)) {
             if (isBurning()) {
                 if (currentlyBurning++ >= currentlyBurningMax) {
                     currentlyBurning = 0;
@@ -119,8 +119,8 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
             }
             if (!isBurning()) {
                 ItemStack fuel;
-                if ((fuel = decrStackSize(SLOT_FUEL, 1)) != null && TileEntityFurnace.isItemFuel(fuel)) {
-                    if(getStackInSlot(SLOT_FUEL) == null) {
+                if (!(fuel = decrStackSize(SLOT_FUEL, 1)).isEmpty() && TileEntityFurnace.isItemFuel(fuel)) {
+                    if(getStackInSlot(SLOT_FUEL).isEmpty()) {
                         setInventorySlotContents(SLOT_FUEL, fuel.getItem().getContainerItem(fuel));
                     }
                     currentlyBurningMax = TileEntityFurnace.getItemBurnTime(fuel);
