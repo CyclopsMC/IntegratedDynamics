@@ -269,7 +269,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             valueTypeSelector = new GuiArrowedListField<>(0, Minecraft.getMinecraft().fontRenderer,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes());
             valueTypeSelector.setListener(this);
-            onChanged();
+            //onChanged();
             int x = guiLeft + getX();
             int y = guiTop + getY();
             buttonList.add(arrowAdd = new GuiButtonText(1, x + getWidth() - 13, y + getHeight() - 13, 12, 12, "+", true));
