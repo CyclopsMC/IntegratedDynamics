@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonArrow;
@@ -159,6 +160,13 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
+        return (slotId == 0 && super.isItemValidForSlot(slotId, itemStack)) ||
+                (activeElement >= 0 && subElements.containsKey(activeElement)
+                        && subElements.get(activeElement).isItemValidForSlot(slotId, itemStack));
     }
 
     @Override
