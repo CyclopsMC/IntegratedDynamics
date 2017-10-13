@@ -45,7 +45,7 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
         BlockPos pos = partContainer.getPosition().getBlockPos();
         if(!shouldRender(pos)) return;
 
-        if (rand.nextInt(20) == 0) {
+        if (rand.nextInt(20) == 0 && !Minecraft.getMinecraft().isGamePaused()) {
             PartTypeConnectorOmniDirectional.State partState = (PartTypeConnectorOmniDirectional.State) partContainer.getPartState(direction);
             if (partState.hasConnectorId()) {
                 double tx = pos.getX() + 0.5F + direction.getFrontOffsetX() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
