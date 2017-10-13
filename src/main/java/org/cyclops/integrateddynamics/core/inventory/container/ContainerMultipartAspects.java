@@ -34,6 +34,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -74,7 +75,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
             public boolean apply(A item, Pattern pattern) {
                 // We could cache this if this would prove to be a bottleneck.
                 // But we have a small amount of aspects, so this shouldn't be a problem.
-                return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName()).toLowerCase()).matches();
+                return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName()).toLowerCase(Locale.ENGLISH)).matches();
             }
         });
         this.target = target;
