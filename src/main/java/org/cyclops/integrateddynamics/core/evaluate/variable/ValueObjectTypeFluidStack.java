@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
@@ -20,7 +21,9 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBas
  * @author rubensworks
  */
 public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTypeFluidStack.ValueFluidStack> implements
-        IValueTypeNamed<ValueObjectTypeFluidStack.ValueFluidStack>, IValueTypeNullable<ValueObjectTypeFluidStack.ValueFluidStack> {
+        IValueTypeNamed<ValueObjectTypeFluidStack.ValueFluidStack>,
+        IValueTypeUniquelyNamed<ValueObjectTypeFluidStack.ValueFluidStack>,
+        IValueTypeNullable<ValueObjectTypeFluidStack.ValueFluidStack> {
 
     public ValueObjectTypeFluidStack() {
         super("fluidstack");
@@ -84,6 +87,13 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
                 return ValueObjectTypeFluidStack.ValueFluidStack.of(Helpers.getFluidStack(itemStack));
             }
         });
+    }
+
+    @Override
+    public String getUniqueName(ValueFluidStack value) {
+        Optional<FluidStack> fluidStack = value.getRawValue();
+        return fluidStack.isPresent() ?
+                String.format("%s %s", fluidStack.get().getFluid().getName(), fluidStack.get().amount) : "";
     }
 
     @ToString

@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -22,7 +23,8 @@ import java.util.List;
  * Value type with operator values.
  * @author rubensworks
  */
-public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOperator> implements IValueTypeNamed<ValueTypeOperator.ValueOperator> {
+public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOperator> implements
+        IValueTypeNamed<ValueTypeOperator.ValueOperator>, IValueTypeUniquelyNamed<ValueTypeOperator.ValueOperator> {
 
     private static final String SIGNATURE_LINK = "->";
 
@@ -148,6 +150,11 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     @Override
     public String getName(ValueTypeOperator.ValueOperator a) {
         return a.getRawValue().getLocalizedNameFull();
+    }
+
+    @Override
+    public String getUniqueName(ValueOperator a) {
+        return a.getRawValue().getUniqueName();
     }
 
     @ToString
