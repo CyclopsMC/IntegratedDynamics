@@ -147,7 +147,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
 
     @Override
     public String getName(ValueTypeOperator.ValueOperator a) {
-        return a.getRawValue().getUniqueName();
+        return a.getRawValue().getLocalizedNameFull();
     }
 
     @ToString
