@@ -292,7 +292,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         @Override
         public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-            valueTypeSelector.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
+            valueTypeSelector.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
         }
 
         @Override
