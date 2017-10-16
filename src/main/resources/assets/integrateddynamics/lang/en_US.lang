@@ -1197,7 +1197,7 @@ info_book.integrateddynamics.tutorials.basicNetworkComponents.text1=One of the m
 info_book.integrateddynamics.tutorials.aspects=Aspects
 info_book.integrateddynamics.tutorials.aspects.text1=As a simple example, let’s try reading in a redstone value and displaying it.
 info_book.integrateddynamics.tutorials.aspects.text2=Do this by attaching a &lRedstone Reader&r to a &lLogic Cable&r in the world. Make sure that the reading is targeting something with a redstone value, like a &lRedstone Torch&r.
-info_book.integrateddynamics.tutorials.aspects.text3=After that, right-click on the &lRedstone Reader&r to to open the gui, after which you have to insert a &lVariable Card&r into the &6Integer&0 &lRedstone Value&r aspect, to bind the target’s redstone value to that &lVariable Card&r.
+info_book.integrateddynamics.tutorials.aspects.text3=After that, right-click on the &lRedstone Reader&r to open the gui, after which you have to insert a &lVariable Card&r into the &6Integer&0 &lRedstone Value&r aspect, to bind the target’s redstone value to that &lVariable Card&r.
 info_book.integrateddynamics.tutorials.aspects.text4=Next, place a &lDisplay Panel&r in the same network as the &lRedstone Reader&r, and insert your bound &lVariable Card&r to display it value.
 info_book.integrateddynamics.tutorials.aspects.text5=As a next step, craft a &lRedstone Writer&r and let it write a maximal integer redstone value.
 
