@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -83,6 +84,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Collection of available operators.
@@ -2998,6 +3000,252 @@ public final class Operators {
                 NBTTagCompound a = ((ValueTypeNbt.ValueNbt) variables.getValue(0)).getRawValue();
                 NBTTagCompound b = ((ValueTypeNbt.ValueNbt) variables.getValue(1)).getRawValue();
                 return ValueTypeNbt.ValueNbt.of(NbtHelpers.minus(a, b));
+            }).build());
+    /**
+     * ----------------------------------- INGREDIENTS OPERATORS -----------------------------------
+     */
+
+    /**
+     * The number of ingredients of the item type
+     */
+    public static final IOperator INGREDIENTS_ITEM_SIZE = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).operatorName("item.size").symbol("Ingr.#items")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    int count = 0;
+                    if (value.getRawValue().isPresent()) {
+                        count = value.getRawValue().get().getItemStackIngredients();
+                    }
+                    return ValueTypeInteger.ValueInteger.of(count);
+                }
+            }).build());
+
+    /**
+     * The list of possible items at the given position
+     */
+    public static final IOperator INGREDIENTS_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
+            .output(ValueTypes.LIST).operatorName("items").symbol("Ingr.items")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    List<ValueObjectTypeItemStack.ValueItemStack> list = Lists.newArrayList();
+                    if (value.getRawValue().isPresent()) {
+                        if (index.getRawValue() < 0
+                                || index.getRawValue() >= value.getRawValue().get().getItemStackIngredients()) {
+                            throw new EvaluationException("Index " + index.getRawValue() + " out of bounds, " +
+                                    "must be between 0 and " + value.getRawValue().get().getItemStackIngredients());
+                        }
+                        list = value.getRawValue().get().getItemStacks(index.getRawValue());
+                    }
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, list);
+                }
+            }).build());
+
+    /**
+     * The item predicate at the given position
+     */
+    public static final IOperator INGREDIENTS_ITEM_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
+            .output(ValueTypes.OPERATOR).operatorName("item_p").symbol("Ingr.item_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+
+                    if (value.getRawValue().isPresent()) {
+                        if (index.getRawValue() < 0
+                                || index.getRawValue() >= value.getRawValue().get().getItemStackIngredients()) {
+                            throw new EvaluationException("Index " + index.getRawValue() + " out of bounds, " +
+                                    "must be between 0 and " + value.getRawValue().get().getItemStackIngredients());
+                        }
+                        Predicate<ValueObjectTypeItemStack.ValueItemStack> predicate = value.getRawValue().get()
+                                .getItemStackPredicate(index.getRawValue());
+                        return ValueTypeOperator.ValueOperator.of(
+                                new PredicateOperator(predicate, ValueTypes.OBJECT_ITEMSTACK, value.getRawValue().get()
+                                        .getItemStacks(index.getRawValue())));
+                    }
+                    return ValueTypeOperator.ValueOperator.of(new PredicateOperator(
+                            Predicates.alwaysFalse(), ValueTypes.OBJECT_ITEMSTACK, Collections.emptyList()));
+                }
+            }).build());
+    static {
+        REGISTRY.registerSerializer(new PredicateOperator.Serializer());
+    }
+
+    /**
+     * The number of ingredients of the fluid type
+     */
+    public static final IOperator INGREDIENTS_FLUID_SIZE = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).operatorName("fluid.size").symbol("Ingr.#fluids")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    int count = 0;
+                    if (value.getRawValue().isPresent()) {
+                        count = value.getRawValue().get().getFluidStackIngredients();
+                    }
+                    return ValueTypeInteger.ValueInteger.of(count);
+                }
+            }).build());
+
+    /**
+     * The list of possible fluids at the given position
+     */
+    public static final IOperator INGREDIENTS_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
+            .output(ValueTypes.LIST).operatorName("fluids").symbol("Ingr.fluids")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    List<ValueObjectTypeFluidStack.ValueFluidStack> list = Lists.newArrayList();
+                    if (value.getRawValue().isPresent()) {
+                        if (index.getRawValue() < 0
+                                || index.getRawValue() >= value.getRawValue().get().getFluidStackIngredients()) {
+                            throw new EvaluationException("Index " + index.getRawValue() + " out of bounds, " +
+                                    "must be between 0 and " + value.getRawValue().get().getFluidStackIngredients());
+                        }
+                        list = value.getRawValue().get().getFluidStacks(index.getRawValue());
+                    }
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_FLUIDSTACK, list);
+                }
+            }).build());
+
+    /**
+     * The fluid predicate at the given position
+     */
+    public static final IOperator INGREDIENTS_FLUID_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
+            .output(ValueTypes.OPERATOR).operatorName("fluid_p").symbol("Ingr.fluid_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+
+                    if (value.getRawValue().isPresent()) {
+                        if (index.getRawValue() < 0
+                                || index.getRawValue() >= value.getRawValue().get().getFluidStackIngredients()) {
+                            throw new EvaluationException("Index " + index.getRawValue() + " out of bounds, " +
+                                    "must be between 0 and " + value.getRawValue().get().getFluidStackIngredients());
+                        }
+                        Predicate<ValueObjectTypeFluidStack.ValueFluidStack> predicate = value.getRawValue().get()
+                                .getFluidStackPredicate(index.getRawValue());
+                        return ValueTypeOperator.ValueOperator.of(
+                                new PredicateOperator(predicate, ValueTypes.OBJECT_FLUIDSTACK, value.getRawValue().get()
+                                        .getFluidStacks(index.getRawValue())));
+                    }
+                    return ValueTypeOperator.ValueOperator.of(new PredicateOperator(
+                            Predicates.alwaysFalse(), ValueTypes.OBJECT_FLUIDSTACK, Collections.emptyList()));
+                }
+            }).build());
+
+    /**
+     * The number of ingredients of the energy type
+     */
+    public static final IOperator INGREDIENTS_ENERGY_SIZE = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).operatorName("energy.size").symbol("Ingr.#energies")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    int count = 0;
+                    if (value.getRawValue().isPresent()) {
+                        count = value.getRawValue().get().getEnergyIngredients();
+                    }
+                    return ValueTypeInteger.ValueInteger.of(count);
+                }
+            }).build());
+
+    /**
+     * The list of possible energy elements at the given position
+     */
+    public static final IOperator INGREDIENTS_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
+            .output(ValueTypes.LIST).operatorName("energies").symbol("Ingr.energies")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    List<ValueTypeInteger.ValueInteger> list = Lists.newArrayList();
+                    if (value.getRawValue().isPresent()) {
+                        if (index.getRawValue() < 0
+                                || index.getRawValue() >= value.getRawValue().get().getEnergyIngredients()) {
+                            throw new EvaluationException("Index " + index.getRawValue() + " out of bounds, " +
+                                    "must be between 0 and " + value.getRawValue().get().getEnergyIngredients());
+                        }
+                        list = value.getRawValue().get().getEnergies(index.getRawValue());
+                    }
+                    return ValueTypeList.ValueList.ofList(ValueTypes.INTEGER, list);
+                }
+            }).build());
+
+    /**
+     * The energy predicate at the given position
+     */
+    public static final IOperator INGREDIENTS_ENERGY_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
+            .output(ValueTypes.OPERATOR).operatorName("energy_p").symbol("Ingr.energy_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+
+                    if (value.getRawValue().isPresent()) {
+                        if (index.getRawValue() < 0
+                                || index.getRawValue() >= value.getRawValue().get().getEnergyIngredients()) {
+                            throw new EvaluationException("Index " + index.getRawValue() + " out of bounds, " +
+                                    "must be between 0 and " + value.getRawValue().get().getEnergyIngredients());
+                        }
+                        Predicate<ValueTypeInteger.ValueInteger> predicate = value.getRawValue().get()
+                                .getEnergiesPredicate(index.getRawValue());
+                        return ValueTypeOperator.ValueOperator.of(
+                                new PredicateOperator(predicate, ValueTypes.INTEGER, value.getRawValue().get()
+                                        .getEnergies(index.getRawValue())));
+                    }
+                    return ValueTypeOperator.ValueOperator.of(new PredicateOperator(
+                            Predicates.alwaysFalse(), ValueTypes.INTEGER, Collections.emptyList()));
+                }
+            }).build());
+
+    /**
+     * ----------------------------------- RECIPE OPERATORS -----------------------------------
+     */
+
+    /**
+     * The input ingredients of a recipe
+     */
+    public static final IOperator RECIPE_INPUT = REGISTRY.register(OperatorBuilders.RECIPE_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_INGREDIENTS).operatorName("input").symbol("recipe in")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
+                    if (value.getRawValue().isPresent()) {
+                        return value.getRawValue().get().getInput();
+                    }
+                    return ValueObjectTypeIngredients.ValueIngredients.of(null);
+                }
+            }).build());
+
+    /**
+     * The output ingredients of a recipe
+     */
+    public static final IOperator RECIPE_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_INGREDIENTS).operatorName("output").symbol("recipe out")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
+                    if (value.getRawValue().isPresent()) {
+                        return value.getRawValue().get().getOutput();
+                    }
+                    return ValueObjectTypeIngredients.ValueIngredients.of(null);
+                }
             }).build());
 
     /**

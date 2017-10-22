@@ -412,6 +412,18 @@ public class OperatorBuilders {
     public static final IterativeFunction.PrePostBuilder<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>
             FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT = FUNCTION_NBT_COPY_FOR_VALUE.appendPost(PROPAGATOR_NBT_VALUE);
 
+    // --------------- Ingredients builders ---------------
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS = OperatorBuilder.forType(ValueTypes.OBJECT_INGREDIENTS).appendKind("ingredients");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_1_SUFFIX_LONG = INGREDIENTS
+            .inputTypes(ValueTypes.OBJECT_INGREDIENTS).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_2_INFIX_LONG = INGREDIENTS
+            .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.INFIX);
+
+    // --------------- Recipe builders ---------------
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE = OperatorBuilder.forType(ValueTypes.OBJECT_RECIPE).appendKind("recipe");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE_1_SUFFIX_LONG = RECIPE
+            .inputTypes(ValueTypes.OBJECT_RECIPE).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+
     // --------------- Capability helpers ---------------
 
     /**

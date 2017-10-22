@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 @SideOnly(Side.CLIENT)
 public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
 
+    public static final float MAX = 12.5F;
     protected static final float pixel = 0.0625F;  // 0.0625 == 1/16
 
     @Override

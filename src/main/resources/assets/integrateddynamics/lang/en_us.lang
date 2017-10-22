@@ -33,6 +33,8 @@ gui.integrateddynamics.input=Input: %s
 gui.integrateddynamics.output=Output: %s
 gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject=Auto-eject Fluid: %s
 gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject.info=Push to adjacent tanks.
+gui.integrateddynamics.input_short=Input
+gui.integrateddynamics.output_short=Output
 
 # Diagnostics
 gui.integrateddynamics.diagnostics.parts=Parts
@@ -235,6 +237,8 @@ valuetype.valuetypes.integrateddynamics.block.name=Block
 valuetype.valuetypes.integrateddynamics.itemstack.name=Item
 valuetype.valuetypes.integrateddynamics.entity.name=Entity
 valuetype.valuetypes.integrateddynamics.fluidstack.name=Fluid
+valuetype.valuetypes.integrateddynamics.ingredients.name=Ingredients
+valuetype.valuetypes.integrateddynamics.recipe.name=Recipe
 
 # Part types
 parttype.parttypes.integrateddynamics.error.low_energy=Not enough energy
@@ -539,6 +543,10 @@ aspect.aspects.integrateddynamics.read.double.temperature.mintemperature.name=Mi
 aspect.aspects.integrateddynamics.read.double.temperature.mintemperature.info=The minimum temperature of the target in degrees Kelvin
 aspect.aspects.integrateddynamics.read.double.temperature.defaulttemperature.name=Default Temperature
 aspect.aspects.integrateddynamics.read.double.temperature.defaulttemperature.info=The default temperature of the target in degrees Kelvin
+aspect.aspects.integrateddynamics.read.boolean.recipehandler.applicable.name=Is Recipe Handler
+aspect.aspects.integrateddynamics.read.boolean.recipehandler.applicable.info=If the target can handle recipes
+aspect.aspects.integrateddynamics.read.list.recipehandler.recipes.name=Recipes
+aspect.aspects.integrateddynamics.read.list.recipehandler.recipes.info=Recipes that can be handled by the target
 aspect.aspects.integrateddynamics.read.boolean.fe.applicable.name=Is FE Handler
 aspect.aspects.integrateddynamics.read.boolean.fe.applicable.info=If the target in some way handles FE
 aspect.aspects.integrateddynamics.read.boolean.fe.isreceiver.name=Is FE Receiver
@@ -1146,6 +1154,34 @@ operator.operators.integrateddynamics.operator.reduce1.name=Reduce 1
 operator.operators.integrateddynamics.operator.reduce1.info=Apply the given operator on all elements of a list to reduce the list to one value. reduce1(op, list) is equivalent to reduce(op, tail(list), head(list)).
 operator.operators.integrateddynamics.operator.byName.name=Operator By Name
 operator.operators.integrateddynamics.operator.byName.info=Get the operator that has the given unique name.
+
+operator.operators.integrateddynamics.ingredients.name=Ingredients
+operator.operators.integrateddynamics.ingredients.basename=Ingredients %s
+operator.operators.integrateddynamics.ingredients.item.size.name=Item ingredient count
+operator.operators.integrateddynamics.ingredients.item.size.info=The number of ingredients of the item type
+operator.operators.integrateddynamics.ingredients.items.name=Ingredient items
+operator.operators.integrateddynamics.ingredients.items.info=The list of possible items at the given ingredient position
+operator.operators.integrateddynamics.ingredients.item_p.name=Ingredient item predicate
+operator.operators.integrateddynamics.ingredients.item_p.info=The item predicate at the given ingredient position
+operator.operators.integrateddynamics.ingredients.fluid.size.name=Fluid ingredient count
+operator.operators.integrateddynamics.ingredients.fluid.size.info=The number of ingredients of the fluid type
+operator.operators.integrateddynamics.ingredients.fluids.name=Ingredient fluids
+operator.operators.integrateddynamics.ingredients.fluids.info=The list of possible fluids at the given ingredient position
+operator.operators.integrateddynamics.ingredients.fluid_p.name=Ingredient fluid predicate
+operator.operators.integrateddynamics.ingredients.fluid_p.info=The fluid predicate at the given ingredient position
+operator.operators.integrateddynamics.ingredients.energy.size.name=Fluid ingredient count
+operator.operators.integrateddynamics.ingredients.energy.size.info=The number of ingredients of the fluid type
+operator.operators.integrateddynamics.ingredients.energies.name=Ingredient energy elements
+operator.operators.integrateddynamics.ingredients.energies.info=The list of possible energy elements at the given ingredient position
+operator.operators.integrateddynamics.ingredients.energy_p.name=Ingredient energy predicate
+operator.operators.integrateddynamics.ingredients.energy_p.info=The energy predicate at the given ingredient position
+
+operator.operators.integrateddynamics.recipe.name=Recipe
+operator.operators.integrateddynamics.recipe.basename=Recipe %s
+operator.operators.integrateddynamics.recipe.input.name=Recipe Input Ingredients
+operator.operators.integrateddynamics.recipe.input.info=The input ingredients of the given recipe
+operator.operators.integrateddynamics.recipe.output.name=Recipe Output Ingredients
+operator.operators.integrateddynamics.recipe.output.info=The output ingredients of the given recipe
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
