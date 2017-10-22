@@ -5,11 +5,13 @@ import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.FluidHandlerRecipeTarget;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeIngredient;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.ItemHandlerRecipeTarget;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredients;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
@@ -36,6 +38,19 @@ public class IngredientsRecipeIngredientsWrapper implements IIngredients {
     }
 
     protected List<ValueObjectTypeItemStack.ValueItemStack> recipeIngredientItemStackToList(IRecipeIngredient<ItemStack, ItemHandlerRecipeTarget> input) {
+        // If any item has a wildcard element, don't do a lazy list transformation, as the final size might not match.
+        boolean wildcard = input.getMatchingInstances().stream()
+                .anyMatch(stack -> stack.getMetadata() == OreDictionary.WILDCARD_VALUE);
+        if (wildcard) {
+            List<ValueObjectTypeItemStack.ValueItemStack> instances = Lists.newArrayListWithExpectedSize(
+                    input.getMatchingInstances().size());
+            for (ItemStack matchingStack : input.getMatchingInstances()) {
+                for (ItemStack actualStack : ItemStackHelpers.getSubItemsIfWildcardMeta(matchingStack)) {
+                    instances.add(ValueObjectTypeItemStack.ValueItemStack.of(actualStack));
+                }
+            }
+        }
+
         return Lists.transform(input.getMatchingInstances(), new Function<ItemStack, ValueObjectTypeItemStack.ValueItemStack>() {
             @Nullable
             @Override
@@ -155,5 +170,9 @@ public class IngredientsRecipeIngredientsWrapper implements IIngredients {
     @Override
     public String toString() {
         return ingredients.toString();
+    }
+
+    public RecipeIngredients getRecipeIngredients() {
+        return ingredients;
     }
 }

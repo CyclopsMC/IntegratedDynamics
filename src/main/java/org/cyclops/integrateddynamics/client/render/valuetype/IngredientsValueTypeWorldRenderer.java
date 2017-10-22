@@ -5,12 +5,11 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -71,11 +70,14 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
                         if (renderValue instanceof ValueObjectTypeItemStack.ValueItemStack
                                 && ((ValueObjectTypeItemStack.ValueItemStack) renderValue).getRawValue().getMetadata()
                                 == OreDictionary.WILDCARD_VALUE) {
-                            Item item = ((ValueObjectTypeItemStack.ValueItemStack) renderValue).getRawValue().getItem();
-                            NonNullList<ItemStack> subItems = NonNullList.create();
-                            item.getSubItems(CreativeTabs.SEARCH, subItems);
+                            NonNullList<ItemStack> subItems = ItemStackHelpers.getSubItems(
+                                    ((ValueObjectTypeItemStack.ValueItemStack) renderValue).getRawValue());
                             int subtick = ((int) Minecraft.getMinecraft().world.getWorldTime()) / 10;
-                            renderValue = ValueObjectTypeItemStack.ValueItemStack.of(prepareElementForTick(subItems, subtick));
+                            ItemStack itemStack = prepareElementForTick(subItems, subtick);
+                            if (itemStack == null) {
+                                itemStack = ItemStack.EMPTY;
+                            }
+                            renderValue = ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
                         }
 
                         // Call value renderer for each value

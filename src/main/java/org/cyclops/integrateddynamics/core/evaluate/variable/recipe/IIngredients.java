@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.recipe;
 
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
@@ -27,5 +28,13 @@ public interface IIngredients {
     public List<ValueTypeInteger.ValueInteger> getEnergies(int index);
     public Predicate<ValueTypeInteger.ValueInteger> getEnergiesPredicate(int index);
     public List<List<ValueTypeInteger.ValueInteger>> getEnergiesRaw();
+
+    public static RecipeIngredients toRecipeIngredients(IIngredients ingredients) {
+        if (ingredients instanceof IngredientsRecipeIngredientsWrapper) {
+            return ((IngredientsRecipeIngredientsWrapper) ingredients).getRecipeIngredients();
+        } else {
+            return new RecipeIngredientsIngredientsWrapper(ingredients);
+        }
+    }
 
 }
