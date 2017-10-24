@@ -12,7 +12,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.world.gen.WorldGeneratorTree;
-import org.cyclops.integrateddynamics.block.*;
+import org.cyclops.integrateddynamics.block.BlockMenrilLeavesConfig;
+import org.cyclops.integrateddynamics.block.BlockMenrilLogConfig;
+import org.cyclops.integrateddynamics.block.BlockMenrilLogFilled;
+import org.cyclops.integrateddynamics.block.BlockMenrilLogFilledConfig;
+import org.cyclops.integrateddynamics.block.BlockMenrilSaplingConfig;
 
 import java.util.List;
 import java.util.Random;
@@ -166,6 +170,7 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                     for(Pair<Boolean, BlockPos> pair : logLocations) {
                         BlockPos loopPos = pair.getRight();
                         IBlockState loopBlockState = world.getBlockState(loopPos);
+                        block = loopBlockState.getBlock();
                         if (block == null || block == Blocks.AIR ||
                                 block.isLeaves(loopBlockState, world, loopPos) ||
                                 block.isReplaceable(world, loopPos)) {
