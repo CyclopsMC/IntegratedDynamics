@@ -26,9 +26,9 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float maxWidth = 0;
 
-        String[] lines = value.getType().toCompactString(value).split("\\\\n");
+        String[] lines = value.getType().toCompactString(value).split("(?<=[^\\\\])\\\\n");
         for (String line : lines) {
-            float width = fontRenderer.getStringWidth(line) - 1;
+            float width = fontRenderer.getStringWidth(polishLine(line)) - 1;
             maxWidth = Math.max(maxWidth, width);
         }
 
@@ -49,11 +49,15 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         int offset = 0;
         for(String line : lines) {
             int color = Helpers.addAlphaToColor(value.getType().getDisplayColor(), distanceAlpha);
-            rendererDispatcher.getFontRenderer().drawString(line, 0, offset, color);
+            rendererDispatcher.getFontRenderer().drawString(polishLine(line), 0, offset, color);
             offset += singleHeight;
         }
 
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
+    }
+
+    protected String polishLine(String line) {
+        return line.replaceAll("\\\\\\\\n", "\\\\n");
     }
 }
