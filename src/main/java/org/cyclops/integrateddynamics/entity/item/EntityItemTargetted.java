@@ -107,7 +107,7 @@ public class EntityItemTargetted extends EntityItem {
 			this.motionX = dx * strength;
 			this.motionY = dy * strength;
 			this.motionZ = dz * strength;
-			if(this.isCollidedHorizontally) {
+			if(this.collidedHorizontally) {
 				this.motionY = 0.3;
 			}
 		}

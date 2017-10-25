@@ -1281,7 +1281,7 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
-                    return ValueTypeDouble.ValueDouble.of(!a.getRawValue().isEmpty() && b.getRawValue().isPresent() ? a.getRawValue().getStrVsBlock(b.getRawValue().get()) : 0);
+                    return ValueTypeDouble.ValueDouble.of(!a.getRawValue().isEmpty() && b.getRawValue().isPresent() ? a.getRawValue().getDestroySpeed(b.getRawValue().get()) : 0);
                 }
             }).build());
 
