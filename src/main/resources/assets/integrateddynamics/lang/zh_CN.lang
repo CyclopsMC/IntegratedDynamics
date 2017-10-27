@@ -1,15 +1,3 @@
-# ---------- Update note ----------
-#
-# 2017/10/6
-# Flithor(飞羽流星)
-# Fixed and optimized a lot of wrong translation before
-#
-# =====================================
-#
-# (Next update note)
-#
-# ---------- Update note ----------
-
 # General
 itemGroup.integrateddynamics=集成动力
 general.integrateddynamics.description=充分自动化控制您的机器。
