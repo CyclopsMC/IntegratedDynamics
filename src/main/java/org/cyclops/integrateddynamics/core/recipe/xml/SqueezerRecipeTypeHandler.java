@@ -1,24 +1,28 @@
 package org.cyclops.integrateddynamics.core.recipe.xml;
 
+import com.google.common.collect.Lists;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.init.RecipeHandler;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.xml.SuperRecipeTypeHandler;
 import org.cyclops.cyclopscore.recipe.xml.XmlRecipeLoader;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import java.util.List;
 
 /**
  * Handler for squeezer recipes.
  * @author rubensworks
  *
  */
-public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> {
+public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> {
 
     @Override
     public String getCategoryId() {
@@ -26,10 +30,10 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<Ingredient
     }
 
 	@Override
-	protected IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
+	protected IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> handleRecipe(RecipeHandler recipeHandler, Element input, Element output, Element properties)
 			throws XmlRecipeLoader.XmlRecipeException {
         Ingredient inputItem = Ingredient.EMPTY;
-        Ingredient outputItem = Ingredient.EMPTY;
+        List<IngredientRecipeComponent> outputItems = Lists.newArrayList();
         FluidStack outputFluid = null;
 
         if(input.getElementsByTagName("item").getLength() > 0) {
@@ -37,7 +41,14 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<Ingredient
         }
 
         if(output.getElementsByTagName("item").getLength() > 0) {
-            outputItem = getIngredient(recipeHandler, output.getElementsByTagName("item").item(0));
+            for (int i = 0; i < output.getElementsByTagName("item").getLength(); i++) {
+                Node outputItemNode = output.getElementsByTagName("item").item(i);
+                Ingredient outputItemIngredient = getIngredient(recipeHandler, outputItemNode);
+                float outputItemChance = getChance(recipeHandler, outputItemNode);
+                IngredientRecipeComponent outputItem = new IngredientRecipeComponent(outputItemIngredient);
+                outputItem.setChance(outputItemChance);
+                outputItems.add(outputItem);
+            }
         }
         if(output.getElementsByTagName("fluid").getLength() > 0) {
             outputFluid = getFluid(recipeHandler, output.getElementsByTagName("fluid").item(0));
@@ -49,7 +60,7 @@ public class SqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<Ingredient
 
         IngredientRecipeComponent inputRecipeComponent = new IngredientRecipeComponent(inputItem);
 
-        IngredientAndFluidStackRecipeComponent outputRecipeComponent = new IngredientAndFluidStackRecipeComponent(outputItem, outputFluid);
+        IngredientsAndFluidStackRecipeComponent outputRecipeComponent = new IngredientsAndFluidStackRecipeComponent(outputItems, outputFluid);
 
 		return BlockSqueezer.getInstance().getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,

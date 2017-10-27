@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.infobook;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
@@ -10,10 +12,7 @@ import org.cyclops.cyclopscore.infobook.InfoBook;
 import org.cyclops.cyclopscore.infobook.InfoBookParser;
 import org.cyclops.cyclopscore.infobook.pageelement.SectionAppendix;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.*;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -49,11 +48,17 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
 
                 @Override
                 public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
-                    ItemStack itemStack;
-                    try {
-                        itemStack = InfoBookParser.createStack((Element) node.getElementsByTagName("item").item(0), infoBook.getMod().getRecipeHandler());
-                    } catch (InfoBookParser.InvalidAppendixException e) {
-                        itemStack = ItemStack.EMPTY;
+                    NonNullList<Ingredient> ingredients = NonNullList.create();
+                    String unlocalizedItems = "";
+                    for (int i = 0; i < node.getElementsByTagName("item").getLength(); i++) {
+                        ItemStack itemStack;
+                        try {
+                            itemStack = InfoBookParser.createStack((Element) node.getElementsByTagName("item").item(i), infoBook.getMod().getRecipeHandler());
+                            unlocalizedItems += itemStack.getUnlocalizedName();
+                        } catch (InfoBookParser.InvalidAppendixException e) {
+                            itemStack = ItemStack.EMPTY;
+                        }
+                        ingredients.add(Ingredient.fromStacks(itemStack));
                     }
                     FluidStack fluidStack;
                     try {
@@ -62,13 +67,13 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                         fluidStack = null;
                     }
 
-                    List<IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>>
+                    List<IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>>
                             recipes = BlockSqueezer.getInstance().getRecipeRegistry().
-                            findRecipesByOutput(new IngredientAndFluidStackRecipeComponent(itemStack, fluidStack));
+                            findRecipesByOutput(new IngredientsAndFluidStackRecipeComponent(ingredients, fluidStack));
                     int index = InfoBookParser.getIndex(node);
                     if(index >= recipes.size()) {
                         throw new InfoBookParser.InvalidAppendixException("Could not find Squeezer recipe for "
-                                + itemStack.getItem().getUnlocalizedName() + " and "
+                                + unlocalizedItems + " and "
                                 + (fluidStack != null ? fluidStack.getFluid().getName() : "null")
                                 + " with index " + index);
                     }
@@ -76,10 +81,10 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                 }
             });
 
-            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezer_recipe", new InfoBookParser.IAppendixItemFactory<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>() {
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezer_recipe", new InfoBookParser.IAppendixItemFactory<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>() {
 
                 @Override
-                public SectionAppendix create(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) throws InfoBookParser.InvalidAppendixException {
+                public SectionAppendix create(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) throws InfoBookParser.InvalidAppendixException {
                     return new SqueezerRecipeAppendix(infoBook, recipe);
                 }
 

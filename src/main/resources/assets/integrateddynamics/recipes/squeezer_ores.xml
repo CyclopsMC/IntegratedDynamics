@@ -31,6 +31,7 @@
         </input>
         <output>
             <item>minecraft:flint</item>
+            <item chance="0.5">minecraft:flint</item>
         </output>
     </recipe>
 
@@ -86,6 +87,8 @@
         </input>
         <output>
             <item meta="4" amount="8">minecraft:dye</item>
+            <item meta="4" amount="2" chance="0.5">minecraft:dye</item>
+            <item meta="4" amount="2" chance="0.5">minecraft:dye</item>
         </output>
     </recipe>
 
@@ -97,6 +100,8 @@
         </input>
         <output>
             <item amount="8">minecraft:redstone</item>
+            <item amount="2" chance="0.5">minecraft:redstone</item>
+            <item amount="2" chance="0.5">minecraft:redstone</item>
         </output>
     </recipe>
 
@@ -108,6 +113,7 @@
         </input>
         <output>
             <item amount="2">minecraft:sugar</item>
+            <item chance="0.5">minecraft:sugar</item>
         </output>
     </recipe>
 
@@ -130,6 +136,7 @@
         </input>
         <output>
             <item amount="4">minecraft:blaze_powder</item>
+            <item chance="0.5">minecraft:blaze_powder</item>
         </output>
     </recipe>
 
@@ -142,7 +149,8 @@
             <item type="oredict">oreGold</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustGold</item>
+            <item type="oredict">dustGold</item>
+            <item type="oredict" chance="0.75">dustGold</item>
         </output>
     </recipe>
 
@@ -155,7 +163,8 @@
             <item type="oredict">oreIron</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustIron</item>
+            <item type="oredict">dustIron</item>
+            <item type="oredict" chance="0.75">dustIron</item>
         </output>
     </recipe>
 
@@ -168,7 +177,8 @@
             <item type="oredict">oreCopper</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustCopper</item>
+            <item type="oredict">dustCopper</item>
+            <item type="oredict" chance="0.75">dustCopper</item>
         </output>
     </recipe>
 
@@ -181,7 +191,8 @@
             <item type="oredict">oreTin</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustTin</item>
+            <item type="oredict">dustTin</item>
+            <item type="oredict" chance="0.75">dustTin</item>
         </output>
     </recipe>
 
@@ -194,7 +205,8 @@
             <item type="oredict">oreSilver</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustSilver</item>
+            <item type="oredict">dustSilver</item>
+            <item type="oredict" chance="0.75">dustSilver</item>
         </output>
     </recipe>
 
@@ -207,7 +219,8 @@
             <item type="oredict">oreLead</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustLead</item>
+            <item type="oredict">dustLead</item>
+            <item type="oredict" chance="0.75">dustLead</item>
         </output>
     </recipe>
 
@@ -220,7 +233,8 @@
             <item type="oredict">oreNickel</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustNickel</item>
+            <item type="oredict">dustNickel</item>
+            <item type="oredict" chance="0.75">dustNickel</item>
         </output>
     </recipe>
 
@@ -233,7 +247,8 @@
             <item type="oredict">orePlatinum</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustPlatinum</item>
+            <item type="oredict">dustPlatinum</item>
+            <item type="oredict" chance="0.75">dustPlatinum</item>
         </output>
     </recipe>
 
@@ -246,7 +261,8 @@
             <item type="oredict">oreMithril</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustMithril</item>
+            <item type="oredict">dustMithril</item>
+            <item type="oredict" chance="0.75">dustMithril</item>
         </output>
     </recipe>
 
@@ -259,7 +275,8 @@
             <item type="oredict">oreCobalt</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustCobalt</item>
+            <item type="oredict">dustCobalt</item>
+            <item type="oredict" chance="0.75">dustCobalt</item>
         </output>
     </recipe>
 
@@ -272,7 +289,8 @@
             <item type="oredict">oreArdite</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustArdite</item>
+            <item type="oredict">dustArdite</item>
+            <item type="oredict" chance="0.75">dustArdite</item>
         </output>
     </recipe>
 
@@ -307,7 +325,8 @@
             <item>minecraft:diamond_ore</item>
         </input>
         <output>
-            <item amount="2">minecraft:diamond</item>
+            <item>minecraft:diamond</item>
+            <item chance="0.75">minecraft:diamond</item>
         </output>
     </recipe>
 
@@ -318,7 +337,8 @@
             <item>minecraft:emerald_ore</item>
         </input>
         <output>
-            <item amount="2">minecraft:emerald</item>
+            <item>minecraft:emerald</item>
+            <item chance="0.75">minecraft:emerald</item>
         </output>
     </recipe>
 
@@ -330,6 +350,8 @@
         </input>
         <output>
             <item amount="4">minecraft:coal</item>
+            <item chance="0.5">minecraft:coal</item>
+            <item chance="0.5">minecraft:coal</item>
         </output>
     </recipe>
 
