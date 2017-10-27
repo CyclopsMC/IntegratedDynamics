@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonArrow;
@@ -162,6 +163,13 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
+    public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
+        return (slotId == 0 && super.isItemValidForSlot(slotId, itemStack)) ||
+                (activeElement >= 0 && subElements.containsKey(activeElement)
+                        && subElements.get(activeElement).isItemValidForSlot(slotId, itemStack));
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -261,7 +269,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             valueTypeSelector = new GuiArrowedListField<>(0, Minecraft.getMinecraft().fontRenderer,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes());
             valueTypeSelector.setListener(this);
-            onChanged();
+            //onChanged();
             int x = guiLeft + getX();
             int y = guiTop + getY();
             buttonList.add(arrowAdd = new GuiButtonText(1, x + getWidth() - 13, y + getHeight() - 13, 12, 12, "+", true));
@@ -284,7 +292,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         @Override
         public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-            valueTypeSelector.drawTextBox(Minecraft.getMinecraft(), mouseX - guiLeft, mouseY - guiTop);
+            valueTypeSelector.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
         }
 
         @Override

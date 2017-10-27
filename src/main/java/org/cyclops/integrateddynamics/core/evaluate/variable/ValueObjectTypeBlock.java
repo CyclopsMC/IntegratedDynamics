@@ -12,6 +12,7 @@ import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -21,7 +22,8 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBas
  * @author rubensworks
  */
 public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlock.ValueBlock> implements
-        IValueTypeNamed<ValueObjectTypeBlock.ValueBlock>, IValueTypeNullable<ValueObjectTypeBlock.ValueBlock> {
+        IValueTypeNamed<ValueObjectTypeBlock.ValueBlock>, IValueTypeUniquelyNamed<ValueObjectTypeBlock.ValueBlock>,
+        IValueTypeNullable<ValueObjectTypeBlock.ValueBlock> {
 
     public ValueObjectTypeBlock() {
         super("block");
@@ -98,6 +100,16 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
                         itemStack.isEmpty() ? Blocks.AIR.getDefaultState() : BlockHelpers.getBlockStateFromItemStack(itemStack));
             }
         });
+    }
+
+    @Override
+    public String getUniqueName(ValueBlock value) {
+        if (value.getRawValue().isPresent()) {
+            IBlockState blockState = value.getRawValue().get();
+            int meta = blockState.getBlock().getMetaFromState(blockState);
+            return blockState.getBlock().getRegistryName() + (meta > 0 ? " " + meta : "");
+        }
+        return "";
     }
 
     @ToString

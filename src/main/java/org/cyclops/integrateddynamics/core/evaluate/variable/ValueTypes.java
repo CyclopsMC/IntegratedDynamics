@@ -29,10 +29,11 @@ public class ValueTypes {
     public static ValueObjectTypeFluidStack OBJECT_FLUIDSTACK = REGISTRY.register(new ValueObjectTypeFluidStack());
 
     // Categories
-    public static ValueTypeCategoryAny       CATEGORY_ANY       = REGISTRY.registerCategory(new ValueTypeCategoryAny());
-    public static ValueTypeCategoryNumber    CATEGORY_NUMBER    = REGISTRY.registerCategory(new ValueTypeCategoryNumber());
-    public static ValueTypeCategoryNamed     CATEGORY_NAMED     = REGISTRY.registerCategory(new ValueTypeCategoryNamed());
-    public static ValueTypeCategoryNullable  CATEGORY_NULLABLE  = REGISTRY.registerCategory(new ValueTypeCategoryNullable());
+    public static ValueTypeCategoryAny           CATEGORY_ANY            = REGISTRY.registerCategory(new ValueTypeCategoryAny());
+    public static ValueTypeCategoryNumber        CATEGORY_NUMBER         = REGISTRY.registerCategory(new ValueTypeCategoryNumber());
+    public static ValueTypeCategoryNamed         CATEGORY_NAMED          = REGISTRY.registerCategory(new ValueTypeCategoryNamed());
+    public static ValueTypeCategoryUniquelyNamed CATEGORY_UNIQUELY_NAMED = REGISTRY.registerCategory(new ValueTypeCategoryUniquelyNamed());
+    public static ValueTypeCategoryNullable      CATEGORY_NULLABLE       = REGISTRY.registerCategory(new ValueTypeCategoryNullable());
 
     private static IValueTypeRegistry constructRegistry() {
         // This also allows this registry to be used outside of a minecraft environment.

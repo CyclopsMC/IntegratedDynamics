@@ -94,6 +94,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
                                                                      IValueType containingValueType,
                                                                      IValueType actualType) {
         return new L10NHelpers.UnlocalizedString(L10NValues.PROXY_ERROR_PROXYINVALIDTYPE,
+                Integer.toString(proxyId),
                 new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
                 new L10NHelpers.UnlocalizedString(actualType.getUnlocalizedName()));
     }

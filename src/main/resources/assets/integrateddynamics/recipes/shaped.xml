@@ -242,17 +242,17 @@
 			<grid>
 				<gridrow>
 					<item />
-					<item>minecraft:slime_ball</item>
+					<item type="oredict">slimeball</item>
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:slime_ball</item>
+					<item type="oredict">slimeball</item>
 					<item>integrateddynamics:crystalized_menril_block</item>
-					<item>minecraft:slime_ball</item>
+					<item type="oredict">slimeball</item>
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>minecraft:slime_ball</item>
+					<item type="oredict">slimeball</item>
 					<item />
 				</gridrow>
 			</grid>

@@ -201,6 +201,8 @@ valuetype.valuetypes.integrateddynamics.number.name=Number
 valuetype.valuetypes.integrateddynamics.number.info=Accepts all number types.
 valuetype.valuetypes.integrateddynamics.named.name=To String
 valuetype.valuetypes.integrateddynamics.named.info=Converts a value to a String representation
+valuetype.valuetypes.integrateddynamics.uniquely_named.name=To Unique Name
+valuetype.valuetypes.integrateddynamics.uniquely_named.info=Converts a value to its unique name
 
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
@@ -621,6 +623,7 @@ aspect.aspecttypes.integrateddynamics.integer.range.name=Range
 
 aspect.aspecttypes.integrateddynamics.integer.interval.name=Pulse Interval
 aspect.aspecttypes.integrateddynamics.integer.length.name=Pulse Length
+aspect.aspecttypes.integrateddynamics.integer.length.info=Can be at most half of Pulse Interval
 
 aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
 aspect.aspecttypes.integrateddynamics.double.frequency.name=Frequency
@@ -711,6 +714,8 @@ operator.operators.integrateddynamics.string.concat.name=Concat
 operator.operators.integrateddynamics.string.concat.info=Concatenate the two given Strings to one
 operator.operators.integrateddynamics.string.name.name=Name
 operator.operators.integrateddynamics.string.name.info=Get the name of a named object or converts it to a string
+operator.operators.integrateddynamics.string.unique_name.name=Unique Name
+operator.operators.integrateddynamics.string.unique_name.info=Get the unique name of an object
 
 operator.operators.integrateddynamics.double.name=Double
 operator.operators.integrateddynamics.double.basename=Double %s
@@ -787,7 +792,7 @@ operator.operators.integrateddynamics.block.cansustainplantitem.info=If the give
 operator.operators.integrateddynamics.block.plantage.name=Block Plant Age
 operator.operators.integrateddynamics.block.plantage.info=The age of the given plant block
 operator.operators.integrateddynamics.block.blockbyname.name=Block By Name
-operator.operators.integrateddynamics.block.blockbyname.info=Get the block corresponding to the given name, add space+number for indicating the metadata.
+operator.operators.integrateddynamics.block.blockbyname.info=Get the block corresponding to the given unique name, add space+number for indicating the metadata.
 
 operator.operators.integrateddynamics.itemstack.name=Item
 operator.operators.integrateddynamics.itemstack.basename=Item %s
@@ -856,7 +861,7 @@ operator.operators.integrateddynamics.itemstack.planttype.info=The plant type of
 operator.operators.integrateddynamics.itemstack.plant.name=Item Plant
 operator.operators.integrateddynamics.itemstack.plant.info=The resulting block when this item is planted
 operator.operators.integrateddynamics.itemstack.itembyname.name=Item By Name
-operator.operators.integrateddynamics.itemstack.itembyname.info=Get the item corresponding to the given name, add space+number for indicating the metadata.
+operator.operators.integrateddynamics.itemstack.itembyname.info=Get the item corresponding to the given unique name, add space+number for indicating the metadata.
 operator.operators.integrateddynamics.itemstack.itemlistcount.name=Item List Count
 operator.operators.integrateddynamics.itemstack.itemlistcount.info=Get the total item count of exactly the given item in a list.
 operator.operators.integrateddynamics.itemstack.nbt.name=Item NBT
@@ -1044,7 +1049,7 @@ operator.operators.integrateddynamics.virtual.flipped.name=Flipped
 operator.operators.integrateddynamics.operator.reduce.name=Reduce
 operator.operators.integrateddynamics.operator.reduce.info=Apply the given operator on all elements of a list to reduce the list to one value.
 operator.operators.integrateddynamics.operator.byName.name=Operator By Name
-operator.operators.integrateddynamics.operator.byName.info=Get the operator that has the given name.
+operator.operators.integrateddynamics.operator.byName.info=Get the operator that has the given unique name.
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
@@ -1193,7 +1198,7 @@ info_book.integrateddynamics.tutorials.basicNetworkComponents.text1=One of the m
 info_book.integrateddynamics.tutorials.aspects=Aspects
 info_book.integrateddynamics.tutorials.aspects.text1=As a simple example, let’s try reading in a redstone value and displaying it.
 info_book.integrateddynamics.tutorials.aspects.text2=Do this by attaching a &lRedstone Reader&r to a &lLogic Cable&r in the world. Make sure that the reading is targeting something with a redstone value, like a &lRedstone Torch&r.
-info_book.integrateddynamics.tutorials.aspects.text3=After that, right-click on the &lRedstone Reader&r to to open the gui, after which you have to insert a &lVariable Card&r into the &6Integer&0 &lRedstone Value&r aspect, to bind the target’s redstone value to that &lVariable Card&r.
+info_book.integrateddynamics.tutorials.aspects.text3=After that, right-click on the &lRedstone Reader&r to open the gui, after which you have to insert a &lVariable Card&r into the &6Integer&0 &lRedstone Value&r aspect, to bind the target’s redstone value to that &lVariable Card&r.
 info_book.integrateddynamics.tutorials.aspects.text4=Next, place a &lDisplay Panel&r in the same network as the &lRedstone Reader&r, and insert your bound &lVariable Card&r to display it value.
 info_book.integrateddynamics.tutorials.aspects.text5=As a next step, craft a &lRedstone Writer&r and let it write a maximal integer redstone value.
 

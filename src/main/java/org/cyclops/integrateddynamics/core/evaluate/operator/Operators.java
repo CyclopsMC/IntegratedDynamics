@@ -24,7 +24,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTPrimitive;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
@@ -52,7 +59,11 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.*;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
@@ -496,6 +507,18 @@ public final class Operators {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     return ValueTypeString.ValueString.of(ValueTypes.CATEGORY_NAMED.getName(variables.getVariables()[0]));
+                }
+            }).build());
+
+    /**
+     * Get a unique name value type name.
+     */
+    public static final IOperator UNIQUELYNAMED_UNIQUENAME = REGISTRY.register(OperatorBuilders.STRING_2.symbol("uname").operatorName("unique_name")
+            .inputType(ValueTypes.CATEGORY_UNIQUELY_NAMED).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    return ValueTypeString.ValueString.of(ValueTypes.CATEGORY_UNIQUELY_NAMED.getUniqueName(variables.getVariables()[0]));
                 }
             }).build());
 
@@ -1258,7 +1281,7 @@ public final class Operators {
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
                     ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                     ValueObjectTypeBlock.ValueBlock b = variables.getValue(1);
-                    return ValueTypeDouble.ValueDouble.of(!a.getRawValue().isEmpty() && b.getRawValue().isPresent() ? a.getRawValue().getStrVsBlock(b.getRawValue().get()) : 0);
+                    return ValueTypeDouble.ValueDouble.of(!a.getRawValue().isEmpty() && b.getRawValue().isPresent() ? a.getRawValue().getDestroySpeed(b.getRawValue().get()) : 0);
                 }
             }).build());
 

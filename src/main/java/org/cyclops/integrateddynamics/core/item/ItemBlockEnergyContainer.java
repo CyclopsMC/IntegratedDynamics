@@ -85,6 +85,6 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new DefaultCapabilityProvider<>(CapabilityEnergy.ENERGY, new EnergyStorageItemBlockEnergyContainer(this, stack));
+        return new DefaultCapabilityProvider<>(() -> CapabilityEnergy.ENERGY, new EnergyStorageItemBlockEnergyContainer(this, stack));
     }
 }

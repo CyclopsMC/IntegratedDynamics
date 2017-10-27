@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
@@ -27,7 +28,9 @@ import java.util.Objects;
  * @author rubensworks
  */
 public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTypeItemStack.ValueItemStack> implements
-        IValueTypeNamed<ValueObjectTypeItemStack.ValueItemStack>, IValueTypeNullable<ValueObjectTypeItemStack.ValueItemStack> {
+        IValueTypeNamed<ValueObjectTypeItemStack.ValueItemStack>,
+        IValueTypeUniquelyNamed<ValueObjectTypeItemStack.ValueItemStack>,
+        IValueTypeNullable<ValueObjectTypeItemStack.ValueItemStack> {
 
     public ValueObjectTypeItemStack() {
         super("itemstack");
@@ -112,6 +115,13 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     @Override
     public ValueItemStack materialize(ValueItemStack value) throws EvaluationException {
         return ValueItemStack.of(value.getRawValue().copy());
+    }
+
+    @Override
+    public String getUniqueName(ValueItemStack value) {
+        ItemStack itemStack = value.getRawValue();
+        return !itemStack.isEmpty() ? itemStack.getItem().getRegistryName()
+                + (itemStack.getMetadata() > 0 ? " " + itemStack.getMetadata() : "") : "";
     }
 
     @ToString

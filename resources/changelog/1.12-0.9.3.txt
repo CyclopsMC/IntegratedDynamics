@@ -1,0 +1,26 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.21 or higher.
+
+Additions:
+* Add operator to get unique names of certain values, Closes #293
+  This includes items, blocks, entities, fluids and operators.
+* Display '\n' as line breaks in Display Panel, Closes #296
+
+Changes:
+* Use Slimeball oredict entry for facade recipe, Closes #306
+
+Fixes:
+* Fix parts losing information if placed without a cable, Closes #303
+* Fix name of operator values being unlocalized, Closes #304
+* Fix incorrect button hover effect in LP on lists
+* Don't generate omnidirectional particles when game is paused, Closes #302
+* Fix invalid localization of invalid containing proxy type error, Closes #298
+* Fix readers and writers being empty in some languages, Closes #294
+* Fix LP list screen becoming empty when screen size is changed
+* Fix items, blocks and fluids not being insertable into Lists in the LP from JEI, Closes #292
+* Fix coal generator consuming empty buckets after draining lava, Closes #305
+* Use reference-based DefaultCapabilityProvider, this resolves some crashes when other mods use items early during init, Closes CyclopsMC/CyclopsCore#80
+* Fix neighbour cables not always rerendering after placing new cable
+* Fix crash when casting delay default value to a number, Closes #289
+* Concretize conditional output type of list get operator with default, this resolves some crashes with lists
+* Fix oredict operator not handling wildcard meta values, Closes #288

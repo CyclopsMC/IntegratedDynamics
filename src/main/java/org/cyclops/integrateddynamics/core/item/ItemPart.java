@@ -90,6 +90,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             BlockPos target = pos.offset(side);
             if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
+                itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
                 if (itemBlockCable.onItemUse(playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
                     IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
                     if (partContainer != null) {
@@ -104,9 +105,11 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                                 IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable at %s", target));
                             }
                         }
+                        itemStack.shrink(1);
                         return EnumActionResult.SUCCESS;
                     }
                 }
+                itemStack.shrink(1); // Shrink manually if failed
             } else {
                 IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
                 if(partContainer != null) {

@@ -351,7 +351,7 @@ public class OperatorBuilders {
                     ValueTypeString.ValueString a = input.getValue(0);
                     String[] split = a.getRawValue().split(" ");
                     if (split.length > 2) {
-                        throw new EvaluationException("Invalid block name.");
+                        throw new EvaluationException("Invalid name.");
                     }
                     ResourceLocation resourceLocation = new ResourceLocation(split[0]);
                     int meta = 0;

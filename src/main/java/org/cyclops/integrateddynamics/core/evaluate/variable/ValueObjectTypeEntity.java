@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import lombok.ToString;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -15,6 +16,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import javax.annotation.Nullable;
@@ -25,7 +27,8 @@ import java.util.UUID;
  * @author rubensworks
  */
 public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEntity.ValueEntity> implements
-        IValueTypeNamed<ValueObjectTypeEntity.ValueEntity>, IValueTypeNullable<ValueObjectTypeEntity.ValueEntity> {
+        IValueTypeNamed<ValueObjectTypeEntity.ValueEntity>, IValueTypeUniquelyNamed<ValueObjectTypeEntity.ValueEntity>,
+        IValueTypeNullable<ValueObjectTypeEntity.ValueEntity> {
 
     public ValueObjectTypeEntity() {
         super("entity");
@@ -98,6 +101,16 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
             }
         }
         return new ValueEntityPredicate(this, value, (Class<? extends Entity>) clazz);
+    }
+
+    @Override
+    public String getUniqueName(ValueEntity value) {
+        Optional<Entity> entity = value.getRawValue();
+        if(entity.isPresent()) {
+            Entity e = entity.get();
+            return EntityList.getEntityString(e) + " " + e.getUniqueID();
+        }
+        return "";
     }
 
     @ToString
