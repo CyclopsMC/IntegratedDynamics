@@ -127,6 +127,19 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public int getPriority(S state);
 
     /**
+     * Set the channel for this part.
+     * @param state The state
+     * @param channel The new channel
+     */
+    public void setChannel(S state, int channel);
+
+    /**
+     * @param state The state
+     * @return This part's channel.
+     */
+    public int getChannel(S state);
+
+    /**
      * @param state The state
      * @return If this element should be updated. This method is only called once during network initialization.
      */

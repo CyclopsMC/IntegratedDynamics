@@ -66,6 +66,17 @@ public interface IPartState<P extends IPartType> {
     public int getPriority();
 
     /**
+     * Set the channel for this state.
+     * @param channel The new channel
+     */
+    public void setChannel(int channel);
+
+    /**
+     * @return This part's channel.
+     */
+    public int getChannel();
+
+    /**
      * Check if dirty and reset the dirty state.
      * @return If this state has changed since the last time and needs to be persisted to NBT eventually.
      */

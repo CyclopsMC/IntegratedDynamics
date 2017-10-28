@@ -80,6 +80,16 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
+    public void setChannel(S state, int channel) {
+        state.setChannel(channel);
+    }
+
+    @Override
+    public int getChannel(S state) {
+        return state.getChannel();
+    }
+
+    @Override
     public boolean isUpdate(S state) {
         return false;
     }

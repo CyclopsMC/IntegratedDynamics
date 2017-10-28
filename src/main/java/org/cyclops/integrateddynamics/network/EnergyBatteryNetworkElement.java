@@ -62,7 +62,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     @Override
     public boolean onNetworkAddition(INetwork network) {
-        return NetworkHelpers.getEnergyNetwork(network).addPosition(PartPos.of(getPos(), null), 0);
+        return NetworkHelpers.getEnergyNetwork(network).addPosition(PartPos.of(getPos(), null), 0, 0);
     }
 
     @Override

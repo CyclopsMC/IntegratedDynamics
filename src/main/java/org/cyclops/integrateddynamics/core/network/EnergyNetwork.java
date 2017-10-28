@@ -162,9 +162,9 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     }
 
     @Override
-    public boolean addPosition(PartPos pos, int priority) {
+    public boolean addPosition(PartPos pos, int priority, int channel) {
         IEnergyStorage energyStorage = EnergyHelpers.getEnergyStorage(pos);
-        return energyStorage != null && super.addPosition(pos, priority);
+        return energyStorage != null && super.addPosition(pos, priority, channel);
     }
 
     @Override

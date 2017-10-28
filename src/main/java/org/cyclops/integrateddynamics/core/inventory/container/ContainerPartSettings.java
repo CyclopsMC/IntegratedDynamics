@@ -44,6 +44,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
 
     private final int lastUpdateValueId;
     private final int lastPriorityValueId;
+    private final int lastChannelValueId;
 
     /**
      * Make a new instance.
@@ -60,10 +61,11 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         this.world = player.getEntityWorld();
         this.pos = player.getPosition();
 
-        addPlayerInventory(player.inventory, 8, 57);
+        addPlayerInventory(player.inventory, 8, 82);
 
         lastUpdateValueId = getNextValueId();
         lastPriorityValueId = getNextValueId();
+        lastChannelValueId = getNextValueId();
 
         putButtonAction(GuiPartSettings.BUTTON_SAVE, new IButtonActionServer<InventoryContainer>() {
             @Override
@@ -81,14 +83,11 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         });
     }
 
-    public int getLastUpdateValueId() {
-        return lastUpdateValueId;
-    }
-
     @Override
     protected void initializeValues() {
         ValueNotifierHelpers.setValue(this, lastUpdateValueId, getPartType().getUpdateInterval(getPartState()));
         ValueNotifierHelpers.setValue(this, lastPriorityValueId, getPartType().getPriority(getPartState()));
+        ValueNotifierHelpers.setValue(this, lastChannelValueId, getPartType().getChannel(getPartState()));
     }
 
     public int getLastUpdateValue() {
@@ -97,6 +96,10 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
 
     public int getLastPriorityValue() {
         return ValueNotifierHelpers.getValueInt(this, lastPriorityValueId);
+    }
+
+    public int getLastChannelValue() {
+        return ValueNotifierHelpers.getValueInt(this, lastChannelValueId);
     }
 
     public IPartState getPartState() {
@@ -123,6 +126,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
                 INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
                 PartNetworkElement networkElement = new PartNetworkElement(getPartType(), getTarget());
                 network.setPriority(networkElement, getLastPriorityValue());
+                getPartType().setChannel(getPartState(), getLastChannelValue());
             }
         } catch (PartStateException e) {
             player.closeScreen();

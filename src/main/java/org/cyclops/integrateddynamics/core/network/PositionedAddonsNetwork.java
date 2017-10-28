@@ -30,8 +30,8 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     }
 
     @Override
-    public boolean addPosition(PartPos pos, int priority) {
-        return positions.add(PrioritizedPartPos.of(pos, priority));
+    public boolean addPosition(PartPos pos, int priority, int channel) {
+        return positions.add(PrioritizedPartPos.of(pos, priority, channel));
     }
 
     @Override
