@@ -12,7 +12,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -335,7 +340,7 @@ public class Aspects {
                             }
                             return capacity;
                         }
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "totalamount").buildRead();
+                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "totalcapacity").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TANKS =
                     AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(new IAspectValuePropagator<IFluidTankProperties[], Integer>() {
                         @Override
