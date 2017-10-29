@@ -3,9 +3,6 @@ package org.cyclops.integrateddynamics.api.network;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Set;
 
 /**
@@ -52,10 +49,15 @@ public interface IPositionedAddonsNetwork {
      */
     public void enablePosition(PartPos pos);
 
-    @RequiredArgsConstructor(staticName="of")
     public static class PrioritizedPartPos implements Comparable<PrioritizedPartPos> {
-        @Getter private final PartPos partPos;
-        @Getter private final int priority, channel;
+        private final PartPos partPos;
+        private final int priority, channel;
+
+        private PrioritizedPartPos(PartPos partPos, int priority, int channel) {
+            this.partPos = partPos;
+            this.priority = priority;
+            this.channel = channel;
+        }
 
         @Override
         public int compareTo(PrioritizedPartPos o) {
@@ -70,6 +72,22 @@ public interface IPositionedAddonsNetwork {
                 return compPos;
             }
             return compPriority;
+        }
+
+        public static PrioritizedPartPos of(PartPos pos, int priority, int channel) {
+            return new PrioritizedPartPos(pos, priority, channel);
+        }
+
+        public PartPos getPartPos() {
+            return partPos;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public int getChannel() {
+            return channel;
         }
     }
 
