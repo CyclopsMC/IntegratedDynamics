@@ -268,7 +268,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public synchronized void setPriority(INetworkElement element, int priority) {
+    public synchronized void setPriorityAndChannel(INetworkElement element, int priority, int channel) {
         elements.remove(element);
         Integer oldTickValue = null;
         if (element.isUpdate()) {
@@ -278,6 +278,9 @@ public class Network implements INetwork {
 
         //noinspection deprecation
         element.setPriority(this, priority);
+        //noinspection deprecation
+        element.setChannel(this, channel);
+
         elements.add(element);
         if (element.isUpdate()) {
             updateableElements.add(element);

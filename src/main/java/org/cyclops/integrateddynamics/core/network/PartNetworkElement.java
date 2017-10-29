@@ -64,6 +64,17 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
+    public void setChannel(INetwork network, int channel) {
+        //noinspection deprecation
+        part.setChannel(getPartState(), channel);
+    }
+
+    @Override
+    public int getChannel() {
+        return hasPartState() ? part.getChannel(getPartState()) : 0;
+    }
+
+    @Override
     public boolean canRevalidate(INetwork network) {
         return canRevalidatePositioned(network, getCenterPos(getTarget()));
     }

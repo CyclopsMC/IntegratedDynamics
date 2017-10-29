@@ -38,4 +38,14 @@ public class MaterializerNetworkElement extends TileNetworkElement<TileMateriali
     public int getPriority() {
         return 0;
     }
+
+    @Override
+    public void setChannel(INetwork network, int channel) {
+
+    }
+
+    @Override
+    public int getChannel() {
+        return 0;
+    }
 }

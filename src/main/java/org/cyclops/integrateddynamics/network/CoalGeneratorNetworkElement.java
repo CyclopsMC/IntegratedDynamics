@@ -62,6 +62,16 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase {
     }
 
     @Override
+    public void setChannel(INetwork network, int channel) {
+
+    }
+
+    @Override
+    public int getChannel() {
+        return 0;
+    }
+
+    @Override
     public boolean canRevalidate(INetwork network) {
         return canRevalidatePositioned(network, pos);
     }

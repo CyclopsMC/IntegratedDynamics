@@ -65,7 +65,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
         int multiplier = GeneralConfig.energyConsumptionMultiplier;
         if(multiplier == 0) return true;
         int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
-        return extractEnergy(consumptionRate, true) == consumptionRate;
+        return getChannel(element.getChannel()).extractEnergy(consumptionRate, true) == consumptionRate;
     }
 
     @Override
@@ -81,13 +81,13 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
             int multiplier = GeneralConfig.energyConsumptionMultiplier;
             if (multiplier > 0) {
                 int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
-                extractEnergy(consumptionRate, false);
+                getChannel(element.getChannel()).extractEnergy(consumptionRate, false);
             }
             ((IEnergyConsumingNetworkElement) element).postUpdate(getNetwork(), true);
         }
     }
 
-    protected int addSafe(int a, int b) {
+    protected static int addSafe(int a, int b) {
         int add = a + b;
         if(add < a || add < b) return Integer.MAX_VALUE;
         return add;
@@ -121,45 +121,6 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
         return maxEnergy;
     }
 
-    @Override
-    public boolean canExtract() {
-        return true;
-    }
-
-    @Override
-    public boolean canReceive() {
-        return true;
-    }
-
-    @Override
-    public int receiveEnergy(int energy, boolean simulate) {
-        energy = Math.min(energy, GeneralConfig.energyRateLimit);
-        int toAdd = energy;
-        for(PrioritizedPartPos partPos : getPositions()) {
-            IEnergyStorage energyStorage = getEnergyStorage(partPos);
-            if (energyStorage != null) {
-                disablePosition(partPos.getPartPos());
-                toAdd -= energyStorage.receiveEnergy(toAdd, simulate);
-                enablePosition(partPos.getPartPos());
-            }
-        }
-        return energy - toAdd;
-    }
-
-    @Override
-    public int extractEnergy(int energy, boolean simulate) {
-        energy = Math.min(energy, GeneralConfig.energyRateLimit);
-        int toConsume = energy;
-        for(PrioritizedPartPos partPos : getPositions()) {
-            IEnergyStorage energyStorage = getEnergyStorage(partPos);
-            if (energyStorage != null) {
-                disablePosition(partPos.getPartPos());
-                toConsume -= energyStorage.extractEnergy(toConsume, simulate);
-                enablePosition(partPos.getPartPos());
-            }
-        }
-        return energy - toConsume;
-    }
 
     @Override
     public boolean addPosition(PartPos pos, int priority, int channel) {
@@ -180,5 +141,10 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
 
     protected IEnergyStorage getEnergyStorage(PrioritizedPartPos pos) {
         return isPositionDisabled(pos.getPartPos()) ? null : EnergyHelpers.getEnergyStorage(pos.getPartPos());
+    }
+
+    @Override
+    public IEnergyStorage getChannel(int channel) {
+        return new EnergyChannel(this, channel);
     }
 }

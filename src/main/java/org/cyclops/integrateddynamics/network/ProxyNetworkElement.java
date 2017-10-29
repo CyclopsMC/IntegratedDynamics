@@ -64,6 +64,16 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
     }
 
     @Override
+    public void setChannel(INetwork network, int channel) {
+
+    }
+
+    @Override
+    public int getChannel() {
+        return 0;
+    }
+
+    @Override
     public int getConsumptionRate() {
         return 2;
     }

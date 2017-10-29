@@ -81,7 +81,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
 
     public boolean canAddEnergy(int energy) {
         IEnergyNetwork network = getEnergyNetwork();
-        if(network != null && network.receiveEnergy(energy, true) == energy) {
+        if(network != null && network.getChannel(IEnergyNetwork.DEFAULT_CHANNEL).receiveEnergy(energy, true) == energy) {
             return true;
         }
         return addEnergyFe(energy, true) == energy;
@@ -91,7 +91,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
         IEnergyNetwork network = getEnergyNetwork();
         int toFill = energy;
         if(network != null) {
-            toFill -= network.receiveEnergy(toFill, false);
+            toFill -= network.getChannel(IEnergyNetwork.DEFAULT_CHANNEL).receiveEnergy(toFill, false);
         }
         if(toFill > 0) {
             toFill -= addEnergyFe(toFill, false);

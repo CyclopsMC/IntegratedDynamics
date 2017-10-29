@@ -125,8 +125,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
                 DimPos dimPos = getTarget().getCenter().getPos();
                 INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
                 PartNetworkElement networkElement = new PartNetworkElement(getPartType(), getTarget());
-                network.setPriority(networkElement, getLastPriorityValue());
-                getPartType().setChannel(getPartState(), getLastChannelValue());
+                network.setPriorityAndChannel(networkElement, getLastPriorityValue(), getLastChannelValue());
             }
         } catch (PartStateException e) {
             player.closeScreen();
