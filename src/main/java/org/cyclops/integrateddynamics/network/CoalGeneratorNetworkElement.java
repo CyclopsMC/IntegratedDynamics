@@ -6,6 +6,7 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -68,7 +69,7 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase {
 
     @Override
     public int getChannel() {
-        return 0;
+        return IChanneledNetwork.DEFAULT_CHANNEL;
     }
 
     @Override

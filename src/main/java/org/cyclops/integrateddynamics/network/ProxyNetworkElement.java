@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.network;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -70,7 +71,7 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
 
     @Override
     public int getChannel() {
-        return 0;
+        return IChanneledNetwork.DEFAULT_CHANNEL;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.network;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
@@ -43,7 +44,7 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
 
     @Override
     public int getChannel() {
-        return 0;
+        return IChanneledNetwork.DEFAULT_CHANNEL;
     }
 
     @Override
