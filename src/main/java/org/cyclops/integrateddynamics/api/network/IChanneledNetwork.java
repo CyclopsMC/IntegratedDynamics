@@ -14,6 +14,9 @@ public interface IChanneledNetwork<T> {
      */
     public static final int WILDCARD_CHANNEL = -1;
 
+    /**
+     * Whether two parts on the given channels may interact.
+     */
     public static boolean channelsMatch(int first, int second) {
         return first == second || first == WILDCARD_CHANNEL || second == WILDCARD_CHANNEL;
     }
