@@ -217,6 +217,7 @@ public class CableHelpers {
     /**
      * This should be called when a cable is added.
      * This method automatically notifies the neighbours and (re-)initializes the network if this cable carries one.
+     * This should in most cases only be called server-side.
      * @param world The world.
      * @param pos The position.
      * @param placer The entity who placed the cable.

@@ -78,9 +78,11 @@ public class ItemBlockCable extends ItemBlockMetadata {
         if(!block.isAir(blockState, world, pos)) {
             ICableFakeable cable = CableHelpers.getCableFakeable(world, pos);
             if (cable != null && !cable.isRealCable()) {
-                cable.setRealCable(true);
-                CableHelpers.updateConnections(world, pos);
-                CableHelpers.onCableAdded(world, pos, placer);
+                if (!world.isRemote) {
+                    cable.setRealCable(true);
+                    CableHelpers.updateConnections(world, pos);
+                    CableHelpers.onCableAdded(world, pos, placer);
+                }
                 return true;
             }
             if(!offsetAdded){
