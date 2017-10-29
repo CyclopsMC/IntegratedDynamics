@@ -7,6 +7,8 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
+import java.util.Iterator;
+
 /**
  * A list proxy for an inventory at a certain position.
  */
@@ -32,5 +34,38 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
     @Override
     public ValueObjectTypeItemStack.ValueItemStack get(int index) {
         return ValueObjectTypeItemStack.ValueItemStack.of(getInventory().getStackInSlot(index));
+    }
+
+    @Override
+    public Iterator<ValueObjectTypeItemStack.ValueItemStack> iterator() {
+        // We use a custom iterator that retrieves the itemhandler capability only once.
+        // Because for large inventories, the capability would have to be retrieved for every single slot,
+        // which could result in a major performance problem.
+        return new ValueTypeListProxyPositionedInventory.ListFactoryIterator(getInventory());
+    }
+
+    public static class ListFactoryIterator implements Iterator<ValueObjectTypeItemStack.ValueItemStack> {
+
+        private final IItemHandler itemHandler;
+        private int index = 0;
+
+        public ListFactoryIterator(IItemHandler itemHandler) {
+            this.itemHandler = itemHandler;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return itemHandler != null && index < itemHandler.getSlots();
+        }
+
+        @Override
+        public ValueObjectTypeItemStack.ValueItemStack next() {
+            return ValueObjectTypeItemStack.ValueItemStack.of(this.itemHandler.getStackInSlot(index++));
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove");
+        }
     }
 }
