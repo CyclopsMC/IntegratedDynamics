@@ -485,12 +485,12 @@ public class Aspects {
                         network -> network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getPositions().size() : 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("batterycount").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_STORED =
-                    AspectReadBuilders.Network.BUILDER_INTEGER.handle(
-                        network -> network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getEnergyStored() : 0
+                    AspectReadBuilders.Network.ENERGY_BUILDER.handle(
+                        storage -> storage != null ? storage.getEnergyStored() : 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("stored").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_MAX =
-                    AspectReadBuilders.Network.BUILDER_INTEGER.handle(
-                        network -> network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getMaxEnergyStored() : 0
+                    AspectReadBuilders.Network.ENERGY_BUILDER.handle(
+                        storage -> storage != null ? storage.getMaxEnergyStored() : 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("max").buildRead();
 
         }

@@ -94,35 +94,6 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     }
 
     @Override
-    public int getEnergyStored() {
-        int energy = 0;
-        for(PrioritizedPartPos partPos : getPositions()) {
-            IEnergyStorage energyStorage = getEnergyStorage(partPos);
-            if (energyStorage != null) {
-                disablePosition(partPos.getPartPos());
-                energy = addSafe(energy, energyStorage.getEnergyStored());
-                enablePosition(partPos.getPartPos());
-            }
-        }
-        return energy;
-    }
-
-    @Override
-    public int getMaxEnergyStored() {
-        int maxEnergy = 0;
-        for(PrioritizedPartPos partPos : getPositions()) {
-            IEnergyStorage energyStorage = getEnergyStorage(partPos);
-            if (energyStorage != null) {
-                disablePosition(partPos.getPartPos());
-                maxEnergy = addSafe(maxEnergy, energyStorage.getMaxEnergyStored());
-                enablePosition(partPos.getPartPos());
-            }
-        }
-        return maxEnergy;
-    }
-
-
-    @Override
     public boolean addPosition(PartPos pos, int priority, int channel) {
         IEnergyStorage energyStorage = EnergyHelpers.getEnergyStorage(pos);
         return energyStorage != null && super.addPosition(pos, priority, channel);

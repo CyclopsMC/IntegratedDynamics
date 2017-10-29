@@ -622,6 +622,8 @@ aspect.aspecttypes.integrateddynamics.integer.slotid.name=Slot ID
 aspect.aspecttypes.integrateddynamics.integer.listindex.name=List Element
 aspect.aspecttypes.integrateddynamics.integer.range.name=Range
 
+aspect.aspecttypes.integrateddynamics.integer.channel.name=Channel
+
 aspect.aspecttypes.integrateddynamics.integer.interval.name=Pulse Interval
 aspect.aspecttypes.integrateddynamics.integer.length.name=Pulse Length
 
