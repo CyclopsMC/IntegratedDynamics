@@ -52,7 +52,9 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        CableHelpers.onCableAdded(world, pos, placer);
+        if (!world.isRemote) {
+            CableHelpers.onCableAdded(world, pos, placer);
+        }
     }
 
     @Override
