@@ -54,7 +54,7 @@ public interface IPartState<P extends IPartType> {
 
     /**
      * Set the priority of this part in the network.
-     * @deprecated Should only be called from {@link org.cyclops.integrateddynamics.api.network.INetwork#setPriority(INetworkElement, int)}}!
+     * @deprecated Should only be called from {@link org.cyclops.integrateddynamics.api.network.INetwork#setPriorityAndChannel(INetworkElement, int, int)}}!
      * @param priority The new priority
      */
     @Deprecated
@@ -67,8 +67,10 @@ public interface IPartState<P extends IPartType> {
 
     /**
      * Set the channel for this state.
+     * @deprecated Should only be called from {@link org.cyclops.integrateddynamics.api.network.INetwork#setPriorityAndChannel(INetworkElement, int, int)}}!
      * @param channel The new channel
      */
+    @Deprecated
     public void setChannel(int channel);
 
     /**

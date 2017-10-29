@@ -53,20 +53,14 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void setPriority(INetwork network, int priority) {
+    public void setPriorityAndChannel(INetwork network, int priority, int channel) {
         //noinspection deprecation
-        part.setPriority(network, NetworkHelpers.getPartNetwork(network), getTarget(), getPartState(), priority);
+        part.setPriorityAndChannel(network, NetworkHelpers.getPartNetwork(network), getTarget(), getPartState(), priority, channel);
     }
 
     @Override
     public int getPriority() {
         return hasPartState() ? part.getPriority(getPartState()) : 0;
-    }
-
-    @Override
-    public void setChannel(INetwork network, int channel) {
-        //noinspection deprecation
-        part.setChannel(getPartState(), channel);
     }
 
     @Override

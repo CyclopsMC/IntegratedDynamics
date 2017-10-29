@@ -98,27 +98,19 @@ public interface INetworkElement extends Comparable<INetworkElement> {
     public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighborBlock);
 
     /**
-     * Set the priority of this element in the network.
+     * Set the priority and channel of this element in the network.
      * @deprecated Should only be called from {@link INetwork#setPriorityAndChannel(INetworkElement, int, int)}!
      * @param network The network this element is present in.
      * @param priority The new priority
+     * @param channel The new channel
      */
     @Deprecated
-    public void setPriority(INetwork network, int priority);
+    public void setPriorityAndChannel(INetwork network, int priority, int channel);
 
     /**
      * @return The priority of this element in the network.
      */
     public int getPriority();
-
-    /**
-     * Set the channel of this element in the network.
-     * @deprecated Should only be called from {@link INetwork#setPriorityAndChannel(INetworkElement, int, int)}!
-     * @param network The network this element is present in.
-     * @param channel The new channel
-     */
-    @Deprecated
-    public void setChannel(INetwork network, int channel);
 
     /**
      * @return The channel of this element in the network.

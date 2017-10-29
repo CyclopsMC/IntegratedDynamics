@@ -109,31 +109,23 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public int getUpdateInterval(S state);
 
     /**
-     * Set the priority of this part in the network.
-     * @deprecated Should only be called from {@link INetwork#setPriority(INetworkElement, int)}!
+     * Set the priority and channel of this part in the network.
+     * @deprecated Should only be called from {@link INetwork#setPriorityAndChanel(INetworkElement, int, int)}!
      * @param network The network to update in.
      * @param partNetwork The part network to update in.
      * @param target The target block.
      * @param state The state
      * @param priority The new priority
+     * @param channel The new channel
      */
     @Deprecated
-    public void setPriority(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, int priority);
+    public void setPriorityAndChannel(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, int priority, int channel);
 
     /**
      * @param state The state
      * @return The priority of this part in the network.
      */
     public int getPriority(S state);
-
-    /**
-     * Set the channel for this part in the network.
-     * @deprecated Should only be called from {@link INetwork#setChannel(INetworkElement, int)}!
-     * @param state The state
-     * @param channel The new channel
-     */
-    @Deprecated
-    public void setChannel(S state, int channel);
 
     /**
      * @param state The state
