@@ -39,7 +39,7 @@ public interface INetwork extends IFullNetworkListener, INBTSerializable {
      * Set the priority and channel of the given network element.
      * @param element The network element.
      * @param priority The new priority
-     * @param priority The new channel
+     * @param channel The new channel
      */
     public void setPriorityAndChannel(INetworkElement element, int priority, int channel);
 
