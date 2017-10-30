@@ -49,7 +49,8 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
     @Override
     protected void drawAdditionalElementInfoForeground(ContainerMultipartAspects<P, S, IAspectWrite> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
         // Render error tooltip
-        displayErrors.drawForeground(getPartState().getErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.guiLeft, this.guiTop);
+        if(getPartState().isEnabled())
+            displayErrors.drawForeground(getPartState().getErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.guiLeft, this.guiTop);
     }
 
     @Override
@@ -64,8 +65,9 @@ public class GuiPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvid
         itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
 
         // Render error symbol
-        displayErrors.drawBackground(getPartState().getErrors(aspect), ERROR_X, ERROR_Y + aspectBoxHeight * index, OK_X, OK_Y + aspectBoxHeight * index, this,
-                this.guiLeft, this.guiTop, getPartState().getActiveAspect() == aspect);
+        if(getPartState().isEnabled())
+            displayErrors.drawBackground(getPartState().getErrors(aspect), ERROR_X, ERROR_Y + aspectBoxHeight * index, OK_X, OK_Y + aspectBoxHeight * index, this,
+                    this.guiLeft, this.guiTop, getPartState().getActiveAspect() == aspect);
     }
 
     @Override

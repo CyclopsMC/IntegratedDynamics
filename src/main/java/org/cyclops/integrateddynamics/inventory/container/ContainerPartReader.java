@@ -161,16 +161,20 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
                 for (IAspectRead aspectRead : getUnfilteredItems()) {
                     String readValue = "";
                     int readValueColor = 0;
-                    IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
-                    if (variable != null) {
-                        try {
-                            IValue value = variable.getValue();
-                            readValue = value.getType().toCompactString(value);
-                            readValueColor = variable.getType().getDisplayColor();
-                        } catch (EvaluationException | NullPointerException e) {
-                            readValue = "ERROR";
-                            readValueColor = Helpers.RGBToInt(255, 0, 0);
+                    if(getPartState().isEnabled()) {
+                        IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
+                        if (variable != null) {
+                            try {
+                                IValue value = variable.getValue();
+                                readValue = value.getType().toCompactString(value);
+                                readValueColor = variable.getType().getDisplayColor();
+                            } catch (EvaluationException | NullPointerException e) {
+                                readValue = "ERROR";
+                                readValueColor = Helpers.RGBToInt(255, 0, 0);
+                            }
                         }
+                    } else {
+                        readValue = "NO POWER";
                     }
 
                     setReadValue(aspectRead, Pair.of(readValue, readValueColor));
