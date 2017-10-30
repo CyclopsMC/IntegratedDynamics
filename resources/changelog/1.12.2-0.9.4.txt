@@ -1,0 +1,21 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.22 or higher.
+
+Additions:
+* Allow \n to be escaped in display panels, Closes #311
+
+Changes:
+* Improve performance of inventory list proxy iteration
+* Losslessly compress all of the PNGs
+* Clarify redstone clock pulse length range, Closes #318
+
+Fixes:
+* Fix total fluid capacity aspect functioning incorrectly, Closes #328
+* Fix briefly cable rendering when only placing a part
+* Fix cables being invisible after being replaced on a part, Closes #325
+* Fix neighbour cables not always rerendering on machine place, #325
+* Fix startup warning because of missing model, Closes #313
+* Fix Menril Tree growth replacing all blocks, Closes #316
+* Fix some edge cases where additional Menril Tree drops are not collected, Closes #319
+* Fix #319: override the non-deprecated version of getDrops
+* Fixed typo in book
