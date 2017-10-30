@@ -186,7 +186,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player, EnumHand hand,
                                    ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         // Drop through if the player is sneaking
-        if(player.isSneaking() || !partState.isEnabled()) {
+        if(player.isSneaking()) {
             return false;
         }
 
