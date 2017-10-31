@@ -7,7 +7,6 @@ import com.google.gson.JsonSyntaxException;
 import lombok.ToString;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -41,14 +40,16 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
     @Override
     public String toCompactString(ValueEntity value) {
-        Optional<Entity> entity = value.getRawValue();
-        if(entity.isPresent()) {
-            Entity e = entity.get();
-            if(e instanceof EntityItem) {
-                return ((EntityItem) e).getItem().getDisplayName();
-            } else {
-                return e.getName();
+        Optional<UUID> uuid = value.getUuid();
+        if (uuid.isPresent()) {
+            UUID id = uuid.get();
+            Optional<Entity> entity = value.getRawValue();
+            String entityName = "unknown";
+            if(entity.isPresent()) {
+                Entity e = entity.get();
+                entityName = EntityList.getEntityString(e);
             }
+            return entityName + " (" + id.toString().substring(0, 8) + "...)";
         }
         return "";
     }
@@ -105,10 +106,16 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
     @Override
     public String getUniqueName(ValueEntity value) {
-        Optional<Entity> entity = value.getRawValue();
-        if(entity.isPresent()) {
-            Entity e = entity.get();
-            return EntityList.getEntityString(e) + " " + e.getUniqueID();
+        Optional<UUID> uuid = value.getUuid();
+        if (uuid.isPresent()) {
+            UUID id = uuid.get();
+            Optional<Entity> entity = value.getRawValue();
+            String entityName = "unknown";
+            if(entity.isPresent()) {
+                Entity e = entity.get();
+                entityName = EntityList.getEntityString(e);
+            }
+            return id.toString() + " (" + entityName + ")";
         }
         return "";
     }
