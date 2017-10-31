@@ -52,6 +52,8 @@ public final class Reference {
     public static final String MOD_REFINEDSTORAGE = "refinedstorage";
     public static final String MOD_IMMERSIVEENGINEERING = "immersiveengineering";
     public static final String MOD_MINETWEAKER = "MineTweaker3";
+    public static final String MOD_RFTOOLS = "rftools";
+    public static final String MOD_RFTOOLSCONTROL = "rftoolscontrol";
 
     public static final String MOD_DEPENDENCIES =
             "required-after:" + MOD_FORGE       + "@[" + MOD_FORGE_VERSION_MIN       + ",);" +
