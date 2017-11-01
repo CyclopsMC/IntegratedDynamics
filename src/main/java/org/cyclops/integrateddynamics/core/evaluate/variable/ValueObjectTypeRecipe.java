@@ -28,7 +28,10 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     @Override
     public String toCompactString(ValueRecipe value) {
         if (value.getRawValue().isPresent()) {
-            return value.getRawValue().get().toString();
+            ValueObjectTypeIngredients.ValueIngredients input = value.getRawValue().get().getInput();
+            ValueObjectTypeIngredients.ValueIngredients output = value.getRawValue().get().getOutput();
+            return ValueTypes.OBJECT_INGREDIENTS.toCompactString(output)
+                    + " <- " + ValueTypes.OBJECT_INGREDIENTS.toCompactString(input);
         }
         return "";
     }

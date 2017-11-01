@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import lombok.ToString;
 import net.minecraft.nbt.JsonToNBT;
@@ -38,7 +39,27 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     @Override
     public String toCompactString(ValueIngredients value) {
         if (value.getRawValue().isPresent()) {
-            return value.getRawValue().get().toString();
+            StringBuilder sb = new StringBuilder();
+            for (List<ValueObjectTypeItemStack.ValueItemStack> valueItemStacks : value.getRawValue().get().getItemStacksRaw()) {
+                sb.append(ValueTypes.OBJECT_ITEMSTACK.toCompactString(
+                        Iterables.getFirst(valueItemStacks, ValueTypes.OBJECT_ITEMSTACK.getDefault())));
+                if (valueItemStacks.size() > 1) sb.append("+");
+                sb.append(", ");
+            }
+            for (List<ValueObjectTypeFluidStack.ValueFluidStack> valueFluidStacks : value.getRawValue().get().getFluidStacksRaw()) {
+                sb.append(ValueTypes.OBJECT_FLUIDSTACK.toCompactString(
+                        Iterables.getFirst(valueFluidStacks, ValueTypes.OBJECT_FLUIDSTACK.getDefault())));
+                if (valueFluidStacks.size() > 1) sb.append("+");
+                sb.append(", ");
+            }
+            for (List<ValueTypeInteger.ValueInteger> valueEnergy : value.getRawValue().get().getEnergiesRaw()) {
+                sb.append(ValueTypes.INTEGER.toCompactString(
+                        Iterables.getFirst(valueEnergy, ValueTypes.INTEGER.getDefault())));
+                if (valueEnergy.size() > 1) sb.append("+");
+                sb.append(", ");
+            }
+            String str = sb.toString();
+            return str.substring(0, str.length() - 2);
         }
         return "";
     }
