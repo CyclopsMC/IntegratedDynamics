@@ -82,20 +82,20 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.initGui();
         Keyboard.enableRepeatEvents(true);
 
-        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 68, guiTop + 9, 70, 14, true, true);
+        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + 9, 70, 14, true, true);
         numberFieldUpdateInterval.setMaxStringLength(15);
         numberFieldUpdateInterval.setVisible(true);
         numberFieldUpdateInterval.setTextColor(16777215);
         numberFieldUpdateInterval.setCanLoseFocus(true);
 
-        numberFieldPriority = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 68, guiTop + 34, 70, 14, true, true);
+        numberFieldPriority = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + 34, 70, 14, true, true);
         numberFieldPriority.setPositiveOnly(false);
         numberFieldPriority.setMaxStringLength(15);
         numberFieldPriority.setVisible(true);
         numberFieldPriority.setTextColor(16777215);
         numberFieldPriority.setCanLoseFocus(true);
 
-        numberFieldChannel = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 68, guiTop + 59, 70, 14, true, true);
+        numberFieldChannel = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + 59, 70, 14, true, true);
         numberFieldChannel.setPositiveOnly(false);
         numberFieldChannel.setMaxStringLength(15);
         numberFieldChannel.setVisible(true);
@@ -103,7 +103,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         numberFieldChannel.setCanLoseFocus(true);
 
         String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
-        buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 140, this.guiTop + 8, fontRenderer.getStringWidth(save) + 6, 16, save, true));
+        buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 178, this.guiTop + 8, fontRenderer.getStringWidth(save) + 6, 16, save, true));
     }
 
     @Override
@@ -138,6 +138,11 @@ public class GuiPartSettings extends GuiContainerExtended {
 
     protected String getChannelText() {
         return L10NHelpers.localize("gui.integrateddynamics.partsettings.channel");
+    }
+
+    @Override
+    protected int getBaseXSize() {
+        return 214;
     }
 
     @Override

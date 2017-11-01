@@ -61,7 +61,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         this.world = player.getEntityWorld();
         this.pos = player.getPosition();
 
-        addPlayerInventory(player.inventory, 8, 82);
+        addPlayerInventory(player.inventory, 27, 82);
 
         lastUpdateValueId = getNextValueId();
         lastPriorityValueId = getNextValueId();
