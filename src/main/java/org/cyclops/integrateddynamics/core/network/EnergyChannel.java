@@ -10,7 +10,7 @@ public class EnergyChannel implements IEnergyStorage {
     private final EnergyNetwork network;
     private final int channel;
 
-    EnergyChannel(EnergyNetwork network, int channel) {
+    public EnergyChannel(EnergyNetwork network, int channel) {
         this.network = network;
         this.channel = channel;
     }
