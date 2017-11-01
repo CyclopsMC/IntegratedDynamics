@@ -7,8 +7,8 @@ import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork.Prior
 import net.minecraftforge.energy.IEnergyStorage;
 
 public class EnergyChannel implements IEnergyStorage {
-    final EnergyNetwork network;
-    final int channel;
+    private final EnergyNetwork network;
+    private final int channel;
 
     EnergyChannel(EnergyNetwork network, int channel) {
         this.network = network;

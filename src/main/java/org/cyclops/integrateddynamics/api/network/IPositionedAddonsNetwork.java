@@ -67,7 +67,7 @@ public interface IPositionedAddonsNetwork {
                 if (compPos == 0) {
                     EnumFacing thisSide = this.getPartPos().getSide();
                     EnumFacing otherSide = o.getPartPos().getSide();
-                    return thisSide == otherSide ? 0 : (thisSide == null ? -1 : (otherSide == null ? 1 : thisSide.compareTo(otherSide)));
+                    return thisSide == otherSide ? Integer.compare(this.getChannel(), o.getChannel()) : (thisSide == null ? -1 : (otherSide == null ? 1 : thisSide.compareTo(otherSide)));
                 }
                 return compPos;
             }

@@ -65,7 +65,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public int getChannel() {
-        return hasPartState() ? part.getChannel(getPartState()) : 0;
+        return hasPartState() ? part.getChannel(getPartState()) : IChanneledNetwork.DEFAULT_CHANNEL;
     }
 
     @Override
