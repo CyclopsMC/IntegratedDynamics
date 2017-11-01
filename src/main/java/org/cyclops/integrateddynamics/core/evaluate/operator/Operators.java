@@ -75,6 +75,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.ExtendedIngredients;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
@@ -3211,6 +3212,105 @@ public final class Operators {
                     }
                     return ValueTypeOperator.ValueOperator.of(new PredicateOperator(
                             Predicates.alwaysFalse(), ValueTypes.INTEGER, Collections.emptyList()));
+                }
+            }).build());
+
+    /**
+     * Set an ingredient item list
+     */
+    public static final IOperator INGREDIENTS_WITH_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
+            .operatorName("withItems").symbol("Ingr.withItems")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> list =
+                            variables.getValue(2);
+                    return ValueObjectTypeIngredients.ValueIngredients.of(
+                            ExtendedIngredients.forItems(value, index.getRawValue(), list));
+                }
+            }).build());
+
+    /**
+     * Set an ingredient item predicate
+     */
+    public static final IOperator INGREDIENTS_WITH_ITEM_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
+            .operatorName("withItem_p").symbol("Ingr.withItem_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    ValueTypeOperator.ValueOperator operator = variables.getValue(2);
+                    return ValueObjectTypeIngredients.ValueIngredients.of(
+                            ExtendedIngredients.forItemPredicate(value, index.getRawValue(), operator));
+                }
+            }).build());
+
+    /**
+     * Set an ingredient fluid list
+     */
+    public static final IOperator INGREDIENTS_WITH_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
+            .operatorName("withFluids").symbol("Ingr.withFluids")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    ValueTypeList.ValueList<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> list =
+                            variables.getValue(2);
+                    return ValueObjectTypeIngredients.ValueIngredients.of(
+                            ExtendedIngredients.forFluids(value, index.getRawValue(), list));
+                }
+            }).build());
+
+    /**
+     * Set an ingredient fluid predicate
+     */
+    public static final IOperator INGREDIENTS_WITH_FLUID_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
+            .operatorName("withFluid_p").symbol("Ingr.withFluid_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    ValueTypeOperator.ValueOperator operator = variables.getValue(2);
+                    return ValueObjectTypeIngredients.ValueIngredients.of(
+                            ExtendedIngredients.forFluidPredicate(value, index.getRawValue(), operator));
+                }
+            }).build());
+
+    /**
+     * Set an ingredient energy list
+     */
+    public static final IOperator INGREDIENTS_WITH_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
+            .operatorName("withEnergy").symbol("Ingr.withEnergy")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger> list =
+                            variables.getValue(2);
+                    return ValueObjectTypeIngredients.ValueIngredients.of(
+                            ExtendedIngredients.forEnergies(value, index.getRawValue(), list));
+                }
+            }).build());
+
+    /**
+     * Set an ingredient energy predicate
+     */
+    public static final IOperator INGREDIENTS_WITH_ENERGY_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
+            .operatorName("withEnergy_p").symbol("Ingr.withEnergy_p")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                    ValueTypeOperator.ValueOperator operator = variables.getValue(2);
+                    return ValueObjectTypeIngredients.ValueIngredients.of(
+                            ExtendedIngredients.forEnergyPredicate(value, index.getRawValue(), operator));
                 }
             }).build());
 

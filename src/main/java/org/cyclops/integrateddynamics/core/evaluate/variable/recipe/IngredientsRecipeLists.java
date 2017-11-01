@@ -9,6 +9,10 @@ import java.util.function.Predicate;
 
 /**
  * An implementation of {@link IIngredients} by storing lists of lists for each ingredient type.
+ *
+ * The goal of this interface is only to provide a list-based basis for ingredients.
+ * No custom predicates are supported as the implementation only checks for containment in lists.
+ *
  * @author rubensworks
  */
 public class IngredientsRecipeLists implements IIngredients {

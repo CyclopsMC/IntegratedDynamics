@@ -418,6 +418,12 @@ public class OperatorBuilders {
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_2_INFIX_LONG = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER).renderPattern(IConfigRenderPattern.INFIX);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_LIST = INGREDIENTS
+            .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.LIST)
+            .renderPattern(IConfigRenderPattern.INFIX_2).output(ValueTypes.OBJECT_INGREDIENTS);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_PREDICATE = INGREDIENTS
+            .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.OPERATOR)
+            .renderPattern(IConfigRenderPattern.INFIX_2).output(ValueTypes.OBJECT_INGREDIENTS);
 
     // --------------- Recipe builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE = OperatorBuilder.forType(ValueTypes.OBJECT_RECIPE).appendKind("recipe");

@@ -69,7 +69,7 @@ public class TestRecipeOperators {
     public void testInput() throws EvaluationException {
         IValue res1 = Operators.RECIPE_INPUT.evaluate(new IVariable[]{rMain});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredients");
-        TestHelpers.assertEqual(res1, iMainIn, "input is correct");
+        TestHelpers.assertEqual(res1, iMainIn.getValue(), "input is correct");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -95,7 +95,7 @@ public class TestRecipeOperators {
     public void testOutput() throws EvaluationException {
         IValue res1 = Operators.RECIPE_OUTPUT.evaluate(new IVariable[]{rMain});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredients");
-        TestHelpers.assertEqual(res1, iMainOut, "output is correct");
+        TestHelpers.assertEqual(res1, iMainOut.getValue(), "output is correct");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
