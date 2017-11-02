@@ -39,6 +39,7 @@ public class CommonProxy extends CommonProxyComponent {
         packetHandler.register(LogicProgrammerValueTypeSlottedValueChangedPacket.class);
         packetHandler.register(LogicProgrammerSetElementInventory.class);
         packetHandler.register(LogicProgrammerValueTypeIngredientsValueChangedPacket.class);
+        packetHandler.register(LogicProgrammerValueTypeRecipeValueChangedPacket.class);
 
         IntegratedDynamics.clog("Registered packet handler.");
     }

@@ -86,6 +86,11 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack);
 
     /**
+     * @return The max stacksize.
+     */
+    public int getItemStackSizeLimit();
+
+    /**
      * @param subGui The corresponding sub gui of this element.
      * @return If this element has the active focus. For typing and things like that.
      */

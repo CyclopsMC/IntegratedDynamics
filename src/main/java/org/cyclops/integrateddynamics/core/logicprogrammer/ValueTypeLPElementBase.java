@@ -138,6 +138,11 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
+    public int getItemStackSizeLimit() {
+        return 1;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public boolean isFocused(ISubGuiBox subGui) {
         if (subGui instanceof ValueTypeLPElementRenderPattern) {

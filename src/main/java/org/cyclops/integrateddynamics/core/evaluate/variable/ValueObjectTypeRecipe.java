@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeRecipeLPElement;
 
 /**
  * Value type with values that are recipes.
@@ -76,7 +77,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
 
     @Override
     public ValueTypeLPElementBase createLogicProgrammerElement() {
-        return null; // TODO
+        return new ValueTypeRecipeLPElement();
     }
 
     @ToString

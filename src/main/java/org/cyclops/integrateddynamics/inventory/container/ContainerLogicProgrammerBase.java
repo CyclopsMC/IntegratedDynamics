@@ -174,7 +174,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         inventorySlots = Lists.newArrayList();
         initializeSlotsPre();
         this.temporaryInputSlots.removeDirtyMarkListener(this);
-        this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, "temporaryInput", 1);
+        this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, "temporaryInput", element.getItemStackSizeLimit());
         temporaryInputSlots.addDirtyMarkListener(this);
         this.temporarySlotsElement = element;
         if(element != null) {

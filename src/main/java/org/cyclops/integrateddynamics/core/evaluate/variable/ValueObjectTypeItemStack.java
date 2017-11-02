@@ -37,7 +37,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     public static String getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
-        return !itemStack.isEmpty() ? itemStack.getDisplayName() : "";
+        return !itemStack.isEmpty() ? (itemStack.getDisplayName() + (itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")) : "";
     }
 
     public static String getItemStackDisplayNameSafe(ItemStack itemStack) {

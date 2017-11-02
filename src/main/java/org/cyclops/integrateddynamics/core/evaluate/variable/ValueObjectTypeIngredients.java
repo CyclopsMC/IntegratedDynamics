@@ -10,11 +10,13 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeLists;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeIngredientsLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
@@ -55,11 +57,12 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
             for (List<ValueTypeInteger.ValueInteger> valueEnergy : value.getRawValue().get().getEnergiesRaw()) {
                 sb.append(ValueTypes.INTEGER.toCompactString(
                         Iterables.getFirst(valueEnergy, ValueTypes.INTEGER.getDefault())));
+                sb.append(" " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT));
                 if (valueEnergy.size() > 1) sb.append("+");
                 sb.append(", ");
             }
             String str = sb.toString();
-            return str.substring(0, str.length() - 2);
+            return str.length() >= 2 ? str.substring(0, str.length() - 2) : "";
         }
         return "";
     }
