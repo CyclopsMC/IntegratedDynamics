@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     @SideOnly(Side.CLIENT)
-    private SubGuiRenderPattern lastGui = null;
+    private SubGuiRenderPattern lastGui;
 
     private NonNullList<ItemStack> inputStacks;
     private ItemStack inputFluid;

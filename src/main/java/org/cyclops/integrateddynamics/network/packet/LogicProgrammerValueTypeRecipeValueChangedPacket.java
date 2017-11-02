@@ -52,12 +52,16 @@ public class LogicProgrammerValueTypeRecipeValueChangedPacket extends PacketCode
 				switch (type) {
 					case INPUT_FLUID:
 						((ValueTypeRecipeLPElement) element).setInputFluidAmount(value);
+						break;
 					case INPUT_ENERGY:
 						((ValueTypeRecipeLPElement) element).setInputEnergy(value);
+						break;
 					case OUTPUT_FLUID:
 						((ValueTypeRecipeLPElement) element).setOutputFluidAmount(value);
+						break;
 					case OUTPUT_ENERGY:
 						((ValueTypeRecipeLPElement) element).setOutputEnergy(value);
+						break;
 				}
                 ((ContainerLogicProgrammerBase) player.openContainer).onDirty();
 			}
