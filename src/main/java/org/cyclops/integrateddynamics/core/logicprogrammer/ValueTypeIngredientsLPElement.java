@@ -26,12 +26,10 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeLists;
+import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeIngredientsValueChangedPacket;
@@ -45,13 +43,6 @@ import java.util.Map;
  * @author rubensworks
  */
 public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
-
-    private static final Map<RecipeComponent, IValueType<?>> RECIPE_COMPONENT_TYPES = Maps.newHashMap();
-    static {
-        RECIPE_COMPONENT_TYPES.put(RecipeComponent.ITEMSTACK, ValueTypes.OBJECT_ITEMSTACK);
-        RECIPE_COMPONENT_TYPES.put(RecipeComponent.FLUIDSTACK, ValueTypes.OBJECT_FLUIDSTACK);
-        RECIPE_COMPONENT_TYPES.put(RecipeComponent.ENERGY, ValueTypes.INTEGER);
-    }
 
     private RecipeComponent currentType = RecipeComponent.ITEMSTACK;
     private Map<RecipeComponent, Integer> lengths = Maps.newHashMap();
@@ -87,23 +78,20 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
     }
 
     protected IngredientsRecipeLists constructValues() {
-        List<List<ValueObjectTypeItemStack.ValueItemStack>> itemStacks = Lists.newArrayListWithExpectedSize(lengths.get(RecipeComponent.ITEMSTACK));
-        List<List<ValueObjectTypeFluidStack.ValueFluidStack>> fluidStacks = Lists.newArrayListWithExpectedSize(lengths.get(RecipeComponent.FLUIDSTACK));
-        List<List<ValueTypeInteger.ValueInteger>> energies = Lists.newArrayListWithExpectedSize(lengths.get(RecipeComponent.ENERGY));
-
-        subElements.get(RecipeComponent.ITEMSTACK).entrySet().forEach(entry -> itemStacks
-                .add(Lists.newArrayList((ValueObjectTypeItemStack.ValueItemStack) entry.getValue().getValue())));
-        subElements.get(RecipeComponent.FLUIDSTACK).entrySet().forEach(entry -> fluidStacks
-                .add(Lists.newArrayList((ValueObjectTypeFluidStack.ValueFluidStack) entry.getValue().getValue())));
-        subElements.get(RecipeComponent.ENERGY).entrySet().forEach(entry -> {
-            ValueTypeInteger.ValueInteger value = ValueTypeInteger.ValueInteger.of(0);
-            try {
-                value = (ValueTypeInteger.ValueInteger) entry.getValue().getValue();
-            } catch (Exception e) {}
-            energies.add(Lists.newArrayList(value));
-        });
-
-        return new IngredientsRecipeLists(itemStacks, fluidStacks, energies);
+        Map<RecipeComponent<?, ?>, List<List<? extends IValue>>> lists = Maps.newIdentityHashMap();
+        for (RecipeComponent<?, ?> component : RecipeComponentHandlers.REGISTRY.getComponents()) {
+            List<List<? extends IValue>> values = Lists.newArrayListWithExpectedSize(lengths.get(component));
+            subElements.get(component).entrySet().forEach(entry -> {
+                try {
+                    values.add(Lists.newArrayList(entry.getValue().getValue()));
+                } catch (Exception e) {
+                    values.add(Lists.newArrayList(RecipeComponentHandlers.REGISTRY.getComponentHandler(component)
+                            .getValueType().getDefault()));
+                }
+            });
+            lists.put(component, values);
+        }
+        return new IngredientsRecipeLists(lists);
     }
 
     @Override
@@ -129,7 +117,8 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
     public void setActiveElement(int index) {
         activeElement = index;
         if(index >= 0 && !subElements.get(currentType).containsKey(index)) {
-            subElements.get(currentType).put(index, RECIPE_COMPONENT_TYPES.get(currentType).createLogicProgrammerElement());
+            subElements.get(currentType).put(index, RecipeComponentHandlers.REGISTRY.getComponentHandler(currentType)
+                    .getValueType().createLogicProgrammerElement());
         }
         masterGui.setActiveElement(activeElement);
         masterGui.container.onDirty();
@@ -155,7 +144,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     @Override
     public void activate() {
-        for (RecipeComponent recipeComponent : RECIPE_COMPONENT_TYPES.keySet()) {
+        for (RecipeComponent recipeComponent : RecipeComponentHandlers.REGISTRY.getComponents()) {
             subElements.put(recipeComponent, Maps.newHashMap());
             subElementGuis.put(recipeComponent, Maps.newHashMap());
             lengths.put(recipeComponent, 0);
@@ -284,7 +273,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         }
 
         protected static List<RecipeComponent> getValueTypes() {
-            return Lists.newArrayList(RecipeComponent.ITEMSTACK, RecipeComponent.FLUIDSTACK, RecipeComponent.ENERGY);
+            return Lists.newArrayList(RecipeComponentHandlers.REGISTRY.getComponents());
         }
 
         @Override
@@ -294,7 +283,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes()) {
                 @Override
                 protected String activeElementToString(RecipeComponent element) {
-                    return RECIPE_COMPONENT_TYPES.get(element).toString();
+                    return L10NHelpers.localize(element.getUnlocalizedName());
                 }
             };
             valueTypeSelector.setListener(this);

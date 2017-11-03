@@ -6,14 +6,12 @@ import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
@@ -32,45 +30,22 @@ public class ExtendedIngredients extends WrappedIngredients {
 
     private final int targetIndex;
 
-    private final ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> items;
-    private final ValueTypeOperator.ValueOperator itemPredicate;
-
-    private final ValueTypeList.ValueList<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> fluids;
-    private final ValueTypeOperator.ValueOperator fluidPredicate;
-
-    private final ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger> energies;
-    private final ValueTypeOperator.ValueOperator energypredicate;
+    private final RecipeComponent component;
+    private final ValueTypeList.ValueList list;
+    private final ValueTypeOperator.ValueOperator predicate;
 
     public ExtendedIngredients(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
-                               ValueTypeList.ValueList<ValueObjectTypeItemStack,
-                                       ValueObjectTypeItemStack.ValueItemStack> items,
-                               ValueTypeOperator.ValueOperator itemPredicate,
-                               ValueTypeList.ValueList<ValueObjectTypeFluidStack,
-                                       ValueObjectTypeFluidStack.ValueFluidStack> fluids,
-                               ValueTypeOperator.ValueOperator fluidPredicate,
-                               ValueTypeList.ValueList<ValueTypeInteger,
-                                       ValueTypeInteger.ValueInteger> energies,
-                               ValueTypeOperator.ValueOperator energypredicate) {
+                               RecipeComponent component, ValueTypeList.ValueList list,
+                               ValueTypeOperator.ValueOperator predicate) {
         super(IIngredients.orEmpty(base.getRawValue()));
         this.targetIndex = targetIndex;
-        this.items = items;
-        this.itemPredicate = itemPredicate;
-        this.fluids = fluids;
-        this.fluidPredicate = fluidPredicate;
-        this.energies = energies;
-        this.energypredicate = energypredicate;
+        this.component = component;
+        this.list = list;
+        this.predicate = predicate;
     }
 
-    protected boolean forItems() {
-        return this.items != null || this.itemPredicate != null;
-    }
-
-    protected boolean forFluids() {
-        return this.fluids != null || this.fluidPredicate != null;
-    }
-
-    protected boolean forEnergy() {
-        return this.energies != null || this.energypredicate != null;
+    protected boolean forComponent(RecipeComponent component) {
+        return component == this.component;
     }
 
     protected int getTargetSize(int parentSize) {
@@ -138,118 +113,43 @@ public class ExtendedIngredients extends WrappedIngredients {
     }
 
     @Override
-    public int getItemStackIngredients() {
-        return forItems() ? getTargetSize(super.getItemStackIngredients()) : super.getItemStackIngredients();
+    public int getIngredients(RecipeComponent<?, ?> component) {
+        return forComponent(component) ? getTargetSize(super.getIngredients(component)) : super.getIngredients(component);
     }
 
     @Override
-    public Predicate<ValueObjectTypeItemStack.ValueItemStack> getItemStackPredicate(int index) {
-        return getTargetPredicate(index, getItemStackIngredients(), items, itemPredicate)
-                .orElseGet(() -> super.getItemStackPredicate(index));
+    public <V extends IValue, T, R> Predicate<V> getPredicate(RecipeComponent<T, R> component, int index) {
+        if (forComponent(component)) {
+            return getTargetPredicate(index, super.getIngredients(component), (ValueTypeList.ValueList<?, V>) list,
+                    predicate).orElseGet(() -> super.getPredicate(component, index));
+        }
+        return super.getPredicate(component, index);
     }
 
     @Override
-    public List<ValueObjectTypeItemStack.ValueItemStack> getItemStacks(int index) {
-        return getTargetList(index, super.getItemStackIngredients(), items, itemPredicate)
-                .orElseGet(() -> super.getItemStacks(index));
+    public <V extends IValue, T, R> List<V> getList(RecipeComponent<T, R> component, int index) {
+        if (forComponent(component)) {
+            return getTargetList(index, super.getIngredients(component), (ValueTypeList.ValueList<?, V>) list,
+                    predicate).orElseGet(() -> super.getList(component, index));
+        }
+        return super.getList(component, index);
     }
 
     @Override
-    public List<List<ValueObjectTypeItemStack.ValueItemStack>> getItemStacksRaw() {
-        return forItems() ? getTargetListRaw(this.getItemStackIngredients(), this::getItemStacks) : super.getItemStacksRaw();
+    public <V extends IValue, T, R> List<List<V>> getRaw(RecipeComponent<T, R> component) {
+        return forComponent(component) ? getTargetListRaw(this.getIngredients(component),
+                (index) -> this.getList(component, index)) : super.getRaw(component);
     }
 
-    @Override
-    public int getFluidStackIngredients() {
-        return forFluids() ? getTargetSize(super.getFluidStackIngredients()) : super.getFluidStackIngredients();
+    public static ExtendedIngredients forList(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
+                                               RecipeComponent<?, ?> component, ValueTypeList.ValueList<?, ?> list) {
+        return new ExtendedIngredients(base, targetIndex, component,
+                list, null);
     }
 
-    @Override
-    public Predicate<ValueObjectTypeFluidStack.ValueFluidStack> getFluidStackPredicate(int index) {
-        return getTargetPredicate(index, super.getFluidStackIngredients(), fluids, fluidPredicate)
-                .orElseGet(() -> super.getFluidStackPredicate(index));
-    }
-
-    @Override
-    public List<ValueObjectTypeFluidStack.ValueFluidStack> getFluidStacks(int index) {
-        return getTargetList(index, super.getFluidStackIngredients(), fluids, fluidPredicate)
-                .orElseGet(() -> super.getFluidStacks(index));
-    }
-    @Override
-    public List<List<ValueObjectTypeFluidStack.ValueFluidStack>> getFluidStacksRaw() {
-        return forFluids() ? getTargetListRaw(this.getFluidStackIngredients(), this::getFluidStacks) : super.getFluidStacksRaw();
-    }
-
-    @Override
-    public int getEnergyIngredients() {
-        return forEnergy() ? getTargetSize(super.getEnergyIngredients()) : super.getEnergyIngredients();
-    }
-
-    @Override
-    public Predicate<ValueTypeInteger.ValueInteger> getEnergiesPredicate(int index) {
-        return getTargetPredicate(index, super.getEnergyIngredients(), energies, energypredicate)
-                .orElseGet(() -> super.getEnergiesPredicate(index));
-    }
-
-    @Override
-    public List<ValueTypeInteger.ValueInteger> getEnergies(int index) {
-        return getTargetList(index, super.getEnergyIngredients(), energies, energypredicate)
-                .orElseGet(() -> super.getEnergies(index));
-    }
-
-    @Override
-    public List<List<ValueTypeInteger.ValueInteger>> getEnergiesRaw() {
-        return forEnergy() ? getTargetListRaw(this.getEnergyIngredients(), this::getEnergies) : super.getEnergiesRaw();
-    }
-
-    public static ExtendedIngredients forItems(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
-                                               ValueTypeList.ValueList<ValueObjectTypeItemStack,
-                                                       ValueObjectTypeItemStack.ValueItemStack> items) {
+    public static ExtendedIngredients forPredicate(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
+                                                   RecipeComponent<?, ?> component, ValueTypeOperator.ValueOperator itemPredicate) {
         return new ExtendedIngredients(base, targetIndex,
-                items, null, 
-                null, null, 
-                null, null);
-    }
-
-    public static ExtendedIngredients forItemPredicate(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
-                                                       ValueTypeOperator.ValueOperator itemPredicate) {
-        return new ExtendedIngredients(base, targetIndex,
-                null, itemPredicate,
-                null, null,
-                null, null);
-    }
-
-    public static ExtendedIngredients forFluids(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
-                                               ValueTypeList.ValueList<ValueObjectTypeFluidStack,
-                                                       ValueObjectTypeFluidStack.ValueFluidStack> fluids) {
-        return new ExtendedIngredients(base, targetIndex,
-                null, null,
-                fluids, null,
-                null, null);
-    }
-
-    public static ExtendedIngredients forFluidPredicate(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
-                                                       ValueTypeOperator.ValueOperator fluidPredicate) {
-        return new ExtendedIngredients(base, targetIndex,
-                null, null,
-                null, fluidPredicate,
-                null, null);
-    }
-
-    public static ExtendedIngredients forEnergies(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
-                                                ValueTypeList.ValueList<ValueTypeInteger,
-                                                        ValueTypeInteger.ValueInteger> energies) {
-        return new ExtendedIngredients(base, targetIndex,
-                null, null,
-                null, null,
-                energies, null);
-    }
-
-    public static ExtendedIngredients forEnergyPredicate(ValueObjectTypeIngredients.ValueIngredients base, int targetIndex,
-                                                        ValueTypeOperator.ValueOperator energyPredicate) {
-        return new ExtendedIngredients(base, targetIndex,
-                null, null,
-                null, null,
-                null, energyPredicate);
+                component, null, itemPredicate);
     }
 }

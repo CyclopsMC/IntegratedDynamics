@@ -35,8 +35,8 @@ public class TestVariables {
                 .of(ingredients1));
         TestHelpers.assertEqual(i0.getValue().getRawValue().get(), ingredients1, "ingredient value is ingredient");
 
-        TestHelpers.assertEqual(i0.getType().serialize(i0.getValue()), "{energies:[],items:[[],[\"{id:\\\"minecraft:boat\\\",Count:1,Damage:32767s}\"],[\"{id:\\\"minecraft:stone\\\",Count:1,Damage:32767s}\"],[]],fluids:[]}", "Serialization is correct");
-        TestHelpers.assertEqual(i0.getType().deserialize("{energies:[],items:[[],[\"{id:\\\"minecraft:boat\\\",Count:1,Damage:32767s}\"],[\"{id:\\\"minecraft:stone\\\",Count:1,Damage:32767s}\"],[]],fluids:[]}"), i0.getValue(), "Deserialization is correct");
+        TestHelpers.assertEqual(i0.getType().serialize(i0.getValue()), "{\"listminecraft:itemstack\":[[],[\"{id:\\\"minecraft:boat\\\",Count:1,Damage:32767s}\"],[\"{id:\\\"minecraft:stone\\\",Count:1,Damage:32767s}\"],[]]}", "Serialization is correct");
+        TestHelpers.assertEqual(i0.getType().deserialize("{\"listminecraft:itemstack\":[[],[\"{id:\\\"minecraft:boat\\\",Count:1,Damage:32767s}\"],[\"{id:\\\"minecraft:stone\\\",Count:1,Damage:32767s}\"],[]]}"), i0.getValue(), "Deserialization is correct");
     }
 
     @IntegrationTest
@@ -64,8 +64,8 @@ public class TestVariables {
         DummyVariableRecipe r0 = new DummyVariableRecipe(ValueObjectTypeRecipe.ValueRecipe.of(rawRecipe));
         TestHelpers.assertEqual(r0.getValue().getRawValue().get(), rawRecipe, "recipe value is recipe");
 
-        TestHelpers.assertEqual(r0.getType().serialize(r0.getValue()), "{output:\"{energies:[],items:[[],[\\\"{id:\\\\\\\"minecraft:planks\\\\\\\",Count:1,Damage:32767s}\\\"],[]],fluids:[]}\",input:\"{energies:[],items:[[],[\\\"{id:\\\\\\\"minecraft:boat\\\\\\\",Count:1,Damage:32767s}\\\"],[\\\"{id:\\\\\\\"minecraft:stone\\\\\\\",Count:1,Damage:32767s}\\\"],[]],fluids:[]}\"}", "Serialization is correct");
-        TestHelpers.assertEqual(r0.getType().deserialize("{output:\"{energies:[],items:[[],[\\\"{id:\\\\\\\"minecraft:planks\\\\\\\",Count:1,Damage:32767s}\\\"],[]],fluids:[]}\",input:\"{energies:[],items:[[],[\\\"{id:\\\\\\\"minecraft:boat\\\\\\\",Count:1,Damage:32767s}\\\"],[\\\"{id:\\\\\\\"minecraft:stone\\\\\\\",Count:1,Damage:32767s}\\\"],[]],fluids:[]}\"}"), r0.getValue(), "Deserialization is correct");
+        TestHelpers.assertEqual(r0.getType().serialize(r0.getValue()), "{output:\"{\\\"listminecraft:itemstack\\\":[[],[\\\"{id:\\\\\\\"minecraft:planks\\\\\\\",Count:1,Damage:32767s}\\\"],[]]}\",input:\"{\\\"listminecraft:itemstack\\\":[[],[\\\"{id:\\\\\\\"minecraft:boat\\\\\\\",Count:1,Damage:32767s}\\\"],[\\\"{id:\\\\\\\"minecraft:stone\\\\\\\",Count:1,Damage:32767s}\\\"],[]]}\"}", "Serialization is correct");
+        TestHelpers.assertEqual(r0.getType().deserialize("{output:\"{\\\"listminecraft:itemstack\\\":[[],[\\\"{id:\\\\\\\"minecraft:planks\\\\\\\",Count:1,Damage:32767s}\\\"],[]]}\",input:\"{\\\"listminecraft:itemstack\\\":[[],[\\\"{id:\\\\\\\"minecraft:boat\\\\\\\",Count:1,Damage:32767s}\\\"],[\\\"{id:\\\\\\\"minecraft:stone\\\\\\\",Count:1,Damage:32767s}\\\"],[]]}\"}"), r0.getValue(), "Deserialization is correct");
     }
 
 }

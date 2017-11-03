@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
 import org.cyclops.cyclopscore.client.gui.component.input.GuiTextFieldExtended;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -37,10 +39,12 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRec
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Element for recipes.
+ * This is hardcoded to only support items, fluids and energy
  * @author rubensworks
  */
 public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
@@ -196,14 +200,15 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStack.amount = fluidAmount;
         }
 
-        return ValueObjectTypeIngredients.ValueIngredients.of(
-                new IngredientsRecipeLists(
-                        itemStacks.stream().map(stack -> Collections.singletonList(ValueObjectTypeItemStack
-                                .ValueItemStack.of(stack))).collect(Collectors.toList()),
-                        fluidStack != null ? Collections.singletonList(Collections.singletonList(ValueObjectTypeFluidStack
-                                .ValueFluidStack.of(fluidStack))) : Collections.emptyList(),
-                        energy > 0 ? Collections.singletonList(Collections.singletonList(ValueTypeInteger
-                                .ValueInteger.of(energy))) : Collections.emptyList()));
+        Map<RecipeComponent<?, ?>, List<List<? extends IValue>>> lists = Maps.newIdentityHashMap();
+        lists.put(RecipeComponent.ITEMSTACK, itemStacks.stream().map(stack -> Collections.singletonList(ValueObjectTypeItemStack
+                .ValueItemStack.of(stack))).collect(Collectors.toList()));
+        lists.put(RecipeComponent.FLUIDSTACK, fluidStack != null ? Collections.singletonList(
+                Collections.singletonList(ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack))) : Collections.emptyList());
+        lists.put(RecipeComponent.ENERGY, energy > 0 ? Collections.singletonList(Collections.singletonList(ValueTypeInteger
+                .ValueInteger.of(energy))) : Collections.emptyList());
+
+        return ValueObjectTypeIngredients.ValueIngredients.of(new IngredientsRecipeLists(lists));
     }
 
     @Override

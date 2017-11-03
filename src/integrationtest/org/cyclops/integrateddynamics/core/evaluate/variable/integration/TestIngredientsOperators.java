@@ -8,6 +8,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.http.util.Asserts;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredientItemStack;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredients;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -497,36 +498,36 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_WITH_ITEMS.evaluate(new IVariable[]{iMix, i0, lItems});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
         IIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
-        List<ValueObjectTypeItemStack.ValueItemStack> outputList1 = outputIngredients1.getItemStacks(0);
+        List<ValueObjectTypeItemStack.ValueItemStack> outputList1 = outputIngredients1.getList(RecipeComponent.ITEMSTACK, 0);
         TestHelpers.assertEqual(outputList1.size(), 2, "with_items(mix, 0, items)[0]size = 2");
         TestHelpers.assertEqual(outputList1.get(0), ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)),
                 "with_items(mix, 0, items)[0][0] = items[0]");
         TestHelpers.assertEqual(outputList1.get(1), ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 1, 1)),
                 "with_items(mix, 0, items)[0][0] = items[0]");
 
-        TestHelpers.assertEqual(outputIngredients1.getItemStacksRaw().size(), inputIngredients.getItemStacksRaw().size(), "Items size remains the same");
-        TestHelpers.assertNonEqual(outputIngredients1.getItemStacksRaw().get(0), inputIngredients.getItemStacksRaw().get(0), "Items 0 changes");
-        TestHelpers.assertEqual(outputIngredients1.getItemStacksRaw().get(1), inputIngredients.getItemStacksRaw().get(1), "Items 1 remains the same");
-        TestHelpers.assertEqual(outputIngredients1.getFluidStacksRaw(), inputIngredients.getFluidStacksRaw(), "Fluid remains the same");
-        TestHelpers.assertEqual(outputIngredients1.getEnergiesRaw(), inputIngredients.getEnergiesRaw(), "Energy remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK).size(), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).size(), "Items size remains the same");
+        TestHelpers.assertNonEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK).get(0), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).get(0), "Items 0 changes");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK).get(1), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).get(1), "Items 1 remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.FLUIDSTACK), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK), "Fluid remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ENERGY), inputIngredients.getRaw(RecipeComponent.ENERGY), "Energy remains the same");
 
 
         IValue res2 = Operators.INGREDIENTS_WITH_ITEMS.evaluate(new IVariable[]{iMix, i3, lItems});
         IIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
-        List<ValueObjectTypeItemStack.ValueItemStack> outputList2 = outputIngredients2.getItemStacks(3);
+        List<ValueObjectTypeItemStack.ValueItemStack> outputList2 = outputIngredients2.getList(RecipeComponent.ITEMSTACK, 3);
         TestHelpers.assertEqual(outputList2.size(), 2, "with_items(mix, 3, items)[0]size = 2");
         TestHelpers.assertEqual(outputList2.get(0), ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)),
                 "with_items(mix, 3, items)[3][0] = items[0]");
         TestHelpers.assertEqual(outputList2.get(1), ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 1, 1)),
                 "with_items(mix, 3, items)[3][0] = items[0]");
 
-        TestHelpers.assertNonEqual(outputIngredients2.getItemStacksRaw().size(), inputIngredients.getItemStacksRaw().size(), "Items size changes");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw().get(0), inputIngredients.getItemStacksRaw().get(0), "Items 0 remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw().get(1), inputIngredients.getItemStacksRaw().get(1), "Items 1 remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw().get(2), Collections.emptyList(), "Items 2 is empty");
-        TestHelpers.assertNonEqual(outputIngredients2.getItemStacksRaw().get(3), Collections.emptyList(), "Items 3 is not empty");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw(), inputIngredients.getFluidStacksRaw(), "Fluid remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw(), inputIngredients.getEnergiesRaw(), "Energy remains the same");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).size(), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).size(), "Items size changes");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).get(0), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).get(0), "Items 0 remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).get(1), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).get(1), "Items 1 remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).get(2), Collections.emptyList(), "Items 2 is empty");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).get(3), Collections.emptyList(), "Items 3 is not empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK), "Fluid remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY), inputIngredients.getRaw(RecipeComponent.ENERGY), "Energy remains the same");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -553,30 +554,30 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_WITH_ITEM_PREDICATE.evaluate(new IVariable[]{iMix, i0, pItem});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
         IIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
-        Predicate<ValueObjectTypeItemStack.ValueItemStack> outputPredicate1 = outputIngredients1.getItemStackPredicate(0);
+        Predicate<ValueObjectTypeItemStack.ValueItemStack> outputPredicate1 = outputIngredients1.getPredicate(RecipeComponent.ITEMSTACK, 0);
         TestHelpers.assertEqual(outputPredicate1.test(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE))), true, "Predicate is correct");
         TestHelpers.assertEqual(outputPredicate1.test(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 1, 1))), false, "Predicate is incorrect");
 
-        TestHelpers.assertEqual(outputIngredients1.getItemStacksRaw().size(), inputIngredients.getItemStacksRaw().size(), "list size remains the same");
-        TestHelpers.assertNonEqual(outputIngredients1.getItemStacksRaw().get(0), inputIngredients.getItemStacksRaw().get(0), "list 0 changes");
-        TestHelpers.assertEqual(outputIngredients1.getItemStacksRaw().get(1), inputIngredients.getItemStacksRaw().get(1), "list 1 remains the same");
-        TestHelpers.assertEqual(outputIngredients1.getFluidStacksRaw(), inputIngredients.getFluidStacksRaw(), "Fluid remains the same");
-        TestHelpers.assertEqual(outputIngredients1.getEnergiesRaw(), inputIngredients.getEnergiesRaw(), "Energy remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK).size(), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).size(), "list size remains the same");
+        TestHelpers.assertNonEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK).get(0), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).get(0), "list 0 changes");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK).get(1), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).get(1), "list 1 remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.FLUIDSTACK), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK), "Fluid remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ENERGY), inputIngredients.getRaw(RecipeComponent.ENERGY), "Energy remains the same");
 
 
         IValue res2 = Operators.INGREDIENTS_WITH_ITEM_PREDICATE.evaluate(new IVariable[]{iMix, i3, pItem});
         IIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
-        Predicate<ValueObjectTypeItemStack.ValueItemStack> outputPredicate2 = outputIngredients2.getItemStackPredicate(3);
+        Predicate<ValueObjectTypeItemStack.ValueItemStack> outputPredicate2 = outputIngredients2.getPredicate(RecipeComponent.ITEMSTACK, 3);
         TestHelpers.assertEqual(outputPredicate2.test(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE))), true, "Predicate is correct");
         TestHelpers.assertEqual(outputPredicate2.test(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 1, 1))), false, "Predicate is incorrect");
 
-        TestHelpers.assertNonEqual(outputIngredients2.getItemStacksRaw().size(), inputIngredients.getItemStacksRaw().size(), "list size changes");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw().get(0), inputIngredients.getItemStacksRaw().get(0), "list 0 remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw().get(1), inputIngredients.getItemStacksRaw().get(1), "list 1 remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw().get(2), Collections.emptyList(), "list 2 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw().get(3), Collections.emptyList(), "list 3 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw(), inputIngredients.getFluidStacksRaw(), "Fluid remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw(), inputIngredients.getEnergiesRaw(), "Energy remains the same");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).size(), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).size(), "list size changes");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).get(0), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).get(0), "list 0 remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).get(1), inputIngredients.getRaw(RecipeComponent.ITEMSTACK).get(1), "list 1 remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).get(2), Collections.emptyList(), "list 2 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK).get(3), Collections.emptyList(), "list 3 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK), "Fluid remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY), inputIngredients.getRaw(RecipeComponent.ENERGY), "Energy remains the same");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -603,35 +604,35 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_WITH_FLUIDS.evaluate(new IVariable[]{iMix, i0, lFluids});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
         IIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
-        List<ValueObjectTypeFluidStack.ValueFluidStack> outputList1 = outputIngredients1.getFluidStacks(0);
+        List<ValueObjectTypeFluidStack.ValueFluidStack> outputList1 = outputIngredients1.getList(RecipeComponent.FLUIDSTACK, 0);
         TestHelpers.assertEqual(outputList1.size(), 2, "with_fluids(mix, 0, fluids)[0]size = 2");
         TestHelpers.assertEqual(outputList1.get(0), ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 123)),
                 "with_fluids(mix, 0, fluids)[0][0] = fluids[0]");
         TestHelpers.assertEqual(outputList1.get(1), ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 456)),
                 "with_fluids(mix, 0, fluids)[0][0] = fluids[0]");
 
-        TestHelpers.assertEqual(outputIngredients1.getFluidStacksRaw().size(), inputIngredients.getFluidStacksRaw().size(), "Fluids size remains the same");
-        TestHelpers.assertNonEqual(outputIngredients1.getFluidStacksRaw().get(0), inputIngredients.getFluidStacksRaw().get(0), "Fluids 0 changes");
-        TestHelpers.assertEqual(outputIngredients1.getItemStacksRaw(), inputIngredients.getItemStacksRaw(), "Items remains the same");
-        TestHelpers.assertEqual(outputIngredients1.getEnergiesRaw(), inputIngredients.getEnergiesRaw(), "Energy remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.FLUIDSTACK).size(), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK).size(), "Fluids size remains the same");
+        TestHelpers.assertNonEqual(outputIngredients1.getRaw(RecipeComponent.FLUIDSTACK).get(0), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK).get(0), "Fluids 0 changes");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK), inputIngredients.getRaw(RecipeComponent.ITEMSTACK), "Items remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ENERGY), inputIngredients.getRaw(RecipeComponent.ENERGY), "Energy remains the same");
 
 
         IValue res2 = Operators.INGREDIENTS_WITH_FLUIDS.evaluate(new IVariable[]{iMix, i3, lFluids});
         IIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
-        List<ValueObjectTypeFluidStack.ValueFluidStack> outputList2 = outputIngredients2.getFluidStacks(3);
+        List<ValueObjectTypeFluidStack.ValueFluidStack> outputList2 = outputIngredients2.getList(RecipeComponent.FLUIDSTACK, 3);
         TestHelpers.assertEqual(outputList2.size(), 2, "with_fluids(mix, 3, fluids)[0]size = 2");
         TestHelpers.assertEqual(outputList2.get(0), ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 123)),
                 "with_fluids(mix, 3, fluids)[3][0] = fluids[0]");
         TestHelpers.assertEqual(outputList2.get(1), ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 456)),
                 "with_fluids(mix, 3, fluids)[3][0] = fluids[0]");
 
-        TestHelpers.assertNonEqual(outputIngredients2.getFluidStacksRaw().size(), inputIngredients.getFluidStacksRaw().size(), "Fluids size changes");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw().get(0), inputIngredients.getFluidStacksRaw().get(0), "Fluids 0 remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw().get(1), Collections.emptyList(), "Fluids 2 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw().get(2), Collections.emptyList(), "Fluids 2 is empty");
-        TestHelpers.assertNonEqual(outputIngredients2.getFluidStacksRaw().get(3), Collections.emptyList(), "Fluids 3 is not empty");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw(), inputIngredients.getItemStacksRaw(), "Items remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw(), inputIngredients.getEnergiesRaw(), "Energy remains the same");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).size(), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK).size(), "Fluids size changes");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).get(0), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK).get(0), "Fluids 0 remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).get(1), Collections.emptyList(), "Fluids 2 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).get(2), Collections.emptyList(), "Fluids 2 is empty");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).get(3), Collections.emptyList(), "Fluids 3 is not empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK), inputIngredients.getRaw(RecipeComponent.ITEMSTACK), "Items remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY), inputIngredients.getRaw(RecipeComponent.ENERGY), "Energy remains the same");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -658,29 +659,29 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_WITH_FLUID_PREDICATE.evaluate(new IVariable[]{iMix, i0, pFluid});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
         IIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
-        Predicate<ValueObjectTypeFluidStack.ValueFluidStack> outputPredicate1 = outputIngredients1.getFluidStackPredicate(0);
+        Predicate<ValueObjectTypeFluidStack.ValueFluidStack> outputPredicate1 = outputIngredients1.getPredicate(RecipeComponent.FLUIDSTACK, 0);
         TestHelpers.assertEqual(outputPredicate1.test(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 123))), true, "Predicate is correct");
         TestHelpers.assertEqual(outputPredicate1.test(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 124))), false, "Predicate is incorrect");
 
-        TestHelpers.assertEqual(outputIngredients1.getFluidStacksRaw().size(), inputIngredients.getFluidStacksRaw().size(), "list size remains the same");
-        TestHelpers.assertNonEqual(outputIngredients1.getFluidStacksRaw().get(0), inputIngredients.getFluidStacksRaw().get(0), "list 0 changes");
-        TestHelpers.assertEqual(outputIngredients1.getItemStacksRaw(), inputIngredients.getItemStacksRaw(), "Items remains the same");
-        TestHelpers.assertEqual(outputIngredients1.getEnergiesRaw(), inputIngredients.getEnergiesRaw(), "Energy remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.FLUIDSTACK).size(), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK).size(), "list size remains the same");
+        TestHelpers.assertNonEqual(outputIngredients1.getRaw(RecipeComponent.FLUIDSTACK).get(0), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK).get(0), "list 0 changes");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK), inputIngredients.getRaw(RecipeComponent.ITEMSTACK), "Items remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ENERGY), inputIngredients.getRaw(RecipeComponent.ENERGY), "Energy remains the same");
 
 
         IValue res2 = Operators.INGREDIENTS_WITH_FLUID_PREDICATE.evaluate(new IVariable[]{iMix, i3, pFluid});
         IIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
-        Predicate<ValueObjectTypeFluidStack.ValueFluidStack> outputPredicate2 = outputIngredients2.getFluidStackPredicate(3);
+        Predicate<ValueObjectTypeFluidStack.ValueFluidStack> outputPredicate2 = outputIngredients2.getPredicate(RecipeComponent.FLUIDSTACK, 3);
         TestHelpers.assertEqual(outputPredicate2.test(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 123))), true, "Predicate is correct");
         TestHelpers.assertEqual(outputPredicate2.test(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 124))), false, "Predicate is incorrect");
 
-        TestHelpers.assertNonEqual(outputIngredients2.getFluidStacksRaw().size(), inputIngredients.getFluidStacksRaw().size(), "list size changes");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw().get(0), inputIngredients.getFluidStacksRaw().get(0), "list 0 remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw().get(1), Collections.emptyList(), "list 1 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw().get(2), Collections.emptyList(), "list 2 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw().get(3), Collections.emptyList(), "list 3 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw(), inputIngredients.getItemStacksRaw(), "Items remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw(), inputIngredients.getEnergiesRaw(), "Energy remains the same");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).size(), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK).size(), "list size changes");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).get(0), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK).get(0), "list 0 remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).get(1), Collections.emptyList(), "list 1 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).get(2), Collections.emptyList(), "list 2 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK).get(3), Collections.emptyList(), "list 3 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK), inputIngredients.getRaw(RecipeComponent.ITEMSTACK), "Items remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY), inputIngredients.getRaw(RecipeComponent.ENERGY), "Energy remains the same");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -707,35 +708,35 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_WITH_ENERGIES.evaluate(new IVariable[]{iMix, i0, lEnergies});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
         IIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
-        List<ValueTypeInteger.ValueInteger> outputList1 = outputIngredients1.getEnergies(0);
+        List<ValueTypeInteger.ValueInteger> outputList1 = outputIngredients1.getList(RecipeComponent.ENERGY, 0);
         TestHelpers.assertEqual(outputList1.size(), 2, "with_energy(mix, 0, energy)[0]size = 2");
         TestHelpers.assertEqual(outputList1.get(0), ValueTypeInteger.ValueInteger.of(123),
                 "with_energy(mix, 0, energy)[0][0] = energy[0]");
         TestHelpers.assertEqual(outputList1.get(1), ValueTypeInteger.ValueInteger.of(456),
                 "with_energy(mix, 0, energy)[0][0] = energy[0]");
 
-        TestHelpers.assertEqual(outputIngredients1.getEnergiesRaw().size(), inputIngredients.getEnergiesRaw().size(), "Energies size remains the same");
-        TestHelpers.assertNonEqual(outputIngredients1.getEnergiesRaw().get(0), inputIngredients.getEnergiesRaw().get(0), "Energies 0 changes");
-        TestHelpers.assertEqual(outputIngredients1.getItemStacksRaw(), inputIngredients.getItemStacksRaw(), "Items remains the same");
-        TestHelpers.assertEqual(outputIngredients1.getFluidStacksRaw(), inputIngredients.getFluidStacksRaw(), "Fluids remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ENERGY).size(), inputIngredients.getRaw(RecipeComponent.ENERGY).size(), "Energies size remains the same");
+        TestHelpers.assertNonEqual(outputIngredients1.getRaw(RecipeComponent.ENERGY).get(0), inputIngredients.getRaw(RecipeComponent.ENERGY).get(0), "Energies 0 changes");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK), inputIngredients.getRaw(RecipeComponent.ITEMSTACK), "Items remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.FLUIDSTACK), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK), "Fluids remains the same");
 
 
         IValue res2 = Operators.INGREDIENTS_WITH_ENERGIES.evaluate(new IVariable[]{iMix, i3, lEnergies});
         IIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
-        List<ValueTypeInteger.ValueInteger> outputList2 = outputIngredients2.getEnergies(3);
+        List<ValueTypeInteger.ValueInteger> outputList2 = outputIngredients2.getList(RecipeComponent.ENERGY, 3);
         TestHelpers.assertEqual(outputList2.size(), 2, "with_energy(mix, 3, energy)[0]size = 2");
         TestHelpers.assertEqual(outputList2.get(0), ValueTypeInteger.ValueInteger.of(123),
                 "with_energy(mix, 3, energy)[3][0] = energy[0]");
         TestHelpers.assertEqual(outputList2.get(1), ValueTypeInteger.ValueInteger.of(456),
                 "with_energy(mix, 3, energy)[3][0] = energy[0]");
 
-        TestHelpers.assertNonEqual(outputIngredients2.getEnergiesRaw().size(), inputIngredients.getEnergiesRaw().size(), "Energies size changes");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw().get(0), inputIngredients.getEnergiesRaw().get(0), "Energies 0 remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw().get(1), Collections.emptyList(), "Energies 2 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw().get(2), Collections.emptyList(), "Energies 2 is empty");
-        TestHelpers.assertNonEqual(outputIngredients2.getEnergiesRaw().get(3), Collections.emptyList(), "Energies 3 is not empty");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw(), inputIngredients.getItemStacksRaw(), "Items remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw(), inputIngredients.getFluidStacksRaw(), "Fluids remains the same");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).size(), inputIngredients.getRaw(RecipeComponent.ENERGY).size(), "Energies size changes");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).get(0), inputIngredients.getRaw(RecipeComponent.ENERGY).get(0), "Energies 0 remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).get(1), Collections.emptyList(), "Energies 2 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).get(2), Collections.emptyList(), "Energies 2 is empty");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).get(3), Collections.emptyList(), "Energies 3 is not empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK), inputIngredients.getRaw(RecipeComponent.ITEMSTACK), "Items remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK), "Fluids remains the same");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -762,29 +763,29 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_WITH_ENERGY_PREDICATE.evaluate(new IVariable[]{iMix, i0, pEnergy});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
         IIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
-        Predicate<ValueTypeInteger.ValueInteger> outputPredicate1 = outputIngredients1.getEnergiesPredicate(0);
+        Predicate<ValueTypeInteger.ValueInteger> outputPredicate1 = outputIngredients1.getPredicate(RecipeComponent.ENERGY, 0);
         TestHelpers.assertEqual(outputPredicate1.test(ValueTypeInteger.ValueInteger.of(123)), true, "Predicate is correct");
         TestHelpers.assertEqual(outputPredicate1.test(ValueTypeInteger.ValueInteger.of(124)), false, "Predicate is incorrect");
 
-        TestHelpers.assertEqual(outputIngredients1.getEnergiesRaw().size(), inputIngredients.getEnergiesRaw().size(), "list size remains the same");
-        TestHelpers.assertNonEqual(outputIngredients1.getEnergiesRaw().get(0), inputIngredients.getEnergiesRaw().get(0), "list 0 changes");
-        TestHelpers.assertEqual(outputIngredients1.getItemStacksRaw(), inputIngredients.getItemStacksRaw(), "Items remains the same");
-        TestHelpers.assertEqual(outputIngredients1.getFluidStacksRaw(), inputIngredients.getFluidStacksRaw(), "Fluids remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ENERGY).size(), inputIngredients.getRaw(RecipeComponent.ENERGY).size(), "list size remains the same");
+        TestHelpers.assertNonEqual(outputIngredients1.getRaw(RecipeComponent.ENERGY).get(0), inputIngredients.getRaw(RecipeComponent.ENERGY).get(0), "list 0 changes");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.ITEMSTACK), inputIngredients.getRaw(RecipeComponent.ITEMSTACK), "Items remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getRaw(RecipeComponent.FLUIDSTACK), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK), "Fluids remains the same");
 
 
         IValue res2 = Operators.INGREDIENTS_WITH_ENERGY_PREDICATE.evaluate(new IVariable[]{iMix, i3, pEnergy});
         IIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
-        Predicate<ValueTypeInteger.ValueInteger> outputPredicate2 = outputIngredients2.getEnergiesPredicate(3);
+        Predicate<ValueTypeInteger.ValueInteger> outputPredicate2 = outputIngredients2.getPredicate(RecipeComponent.ENERGY, 3);
         TestHelpers.assertEqual(outputPredicate2.test(ValueTypeInteger.ValueInteger.of(123)), true, "Predicate is correct");
         TestHelpers.assertEqual(outputPredicate2.test(ValueTypeInteger.ValueInteger.of(124)), false, "Predicate is incorrect");
 
-        TestHelpers.assertNonEqual(outputIngredients2.getEnergiesRaw().size(), inputIngredients.getEnergiesRaw().size(), "list size changes");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw().get(0), inputIngredients.getEnergiesRaw().get(0), "list 0 remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw().get(1), Collections.emptyList(), "list 1 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw().get(2), Collections.emptyList(), "list 2 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getEnergiesRaw().get(3), Collections.emptyList(), "list 3 is empty");
-        TestHelpers.assertEqual(outputIngredients2.getItemStacksRaw(), inputIngredients.getItemStacksRaw(), "Items remains the same");
-        TestHelpers.assertEqual(outputIngredients2.getFluidStacksRaw(), inputIngredients.getFluidStacksRaw(), "Fluids remains the same");
+        TestHelpers.assertNonEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).size(), inputIngredients.getRaw(RecipeComponent.ENERGY).size(), "list size changes");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).get(0), inputIngredients.getRaw(RecipeComponent.ENERGY).get(0), "list 0 remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).get(1), Collections.emptyList(), "list 1 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).get(2), Collections.emptyList(), "list 2 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ENERGY).get(3), Collections.emptyList(), "list 3 is empty");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.ITEMSTACK), inputIngredients.getRaw(RecipeComponent.ITEMSTACK), "Items remains the same");
+        TestHelpers.assertEqual(outputIngredients2.getRaw(RecipeComponent.FLUIDSTACK), inputIngredients.getRaw(RecipeComponent.FLUIDSTACK), "Fluids remains the same");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

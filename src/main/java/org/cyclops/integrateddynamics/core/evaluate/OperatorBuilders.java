@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -15,6 +17,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -27,11 +30,17 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.operator.IterativeFunction;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PredicateOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 /**
  * Collection of operator builders.
@@ -424,6 +433,83 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_PREDICATE = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.OPERATOR)
             .renderPattern(IConfigRenderPattern.INFIX_2).output(ValueTypes.OBJECT_INGREDIENTS);
+
+    public static OperatorBase.IFunction createFunctionIngredientsSize(Callable<RecipeComponent<?, ?>> componentReference) {
+        return new OperatorBase.IFunction() {
+            @Override
+            public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                RecipeComponent<?, ?> component = null;
+                try {
+                    component = componentReference.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                int count = 0;
+                if (value.getRawValue().isPresent()) {
+                    count = value.getRawValue().get().getIngredients(component);
+                }
+                return ValueTypeInteger.ValueInteger.of(count);
+            }
+        };
+    }
+    public static OperatorBase.IFunction createFunctionIngredientsList(Callable<RecipeComponent<?, ?>> componentReference) {
+        return new OperatorBase.IFunction() {
+            @Override
+            public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                RecipeComponent<?, ?> component = null;
+                try {
+                    component = componentReference.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                IValueType valueType = RecipeComponentHandlers.REGISTRY.getComponentHandler(component).getValueType();
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                List<IValue> list = Lists.newArrayList();
+                if (value.getRawValue().isPresent()) {
+                    if (index.getRawValue() < 0
+                            || index.getRawValue() >= value.getRawValue().get().getIngredients(component)) {
+                        throw new EvaluationException("Index " + index.getRawValue() + " out of bounds, " +
+                                "must be between 0 and " + value.getRawValue().get().getIngredients(component));
+                    }
+                    list = value.getRawValue().get().getList(component, index.getRawValue());
+                }
+                return ValueTypeList.ValueList.ofList(valueType, list);
+            }
+        };
+    }
+    public static OperatorBase.IFunction createFunctionIngredientsPredicate(Callable<RecipeComponent<?, ?>> componentReference) {
+        return new OperatorBase.IFunction() {
+            @Override
+            public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                RecipeComponent<?, ?> component = null;
+                try {
+                    component = componentReference.call();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                IValueType valueType = RecipeComponentHandlers.REGISTRY.getComponentHandler(component).getValueType();
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger index = variables.getValue(1);
+
+                if (value.getRawValue().isPresent()) {
+                    if (index.getRawValue() < 0
+                            || index.getRawValue() >= value.getRawValue().get().getIngredients(component)) {
+                        throw new EvaluationException("Index " + index.getRawValue() + " out of bounds, " +
+                                "must be between 0 and " + value.getRawValue().get().getIngredients(component));
+                    }
+                    Predicate<IValue> predicate = value.getRawValue().get()
+                            .getPredicate(component, index.getRawValue());
+                    return ValueTypeOperator.ValueOperator.of(
+                            new PredicateOperator(predicate, valueType, value.getRawValue().get()
+                                    .getList(component, index.getRawValue())));
+                }
+                return ValueTypeOperator.ValueOperator.of(new PredicateOperator(
+                        Predicates.alwaysFalse(), valueType, Collections.emptyList()));
+            }
+        };
+    }
 
     // --------------- Recipe builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE = OperatorBuilder.forType(ValueTypes.OBJECT_RECIPE).appendKind("recipe");

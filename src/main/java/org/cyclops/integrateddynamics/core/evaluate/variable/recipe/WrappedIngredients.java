@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.recipe;
 
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import com.google.common.base.Predicates;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -20,62 +22,39 @@ public class WrappedIngredients implements IIngredients {
     }
 
     @Override
-    public int getItemStackIngredients() {
-        return ingredients.getItemStackIngredients();
+    public Set<RecipeComponent<?, ?>> getComponents() {
+        return ingredients.getComponents();
     }
 
     @Override
-    public List<ValueObjectTypeItemStack.ValueItemStack> getItemStacks(int index) {
-        return ingredients.getItemStacks(index);
+    public int getIngredients(RecipeComponent<?, ?> component) {
+        return ingredients.getIngredients(component);
     }
 
     @Override
-    public Predicate<ValueObjectTypeItemStack.ValueItemStack> getItemStackPredicate(int index) {
-        return ingredients.getItemStackPredicate(index);
+    public <V extends IValue, T, R> List<V> getList(RecipeComponent<T, R> component, int index) {
+        List<V> list = ingredients.getList(component, index);
+        if (list == null) {
+            return Collections.emptyList();
+        }
+        return list;
     }
 
     @Override
-    public List<List<ValueObjectTypeItemStack.ValueItemStack>> getItemStacksRaw() {
-        return ingredients.getItemStacksRaw();
+    public <V extends IValue, T, R> Predicate<V> getPredicate(RecipeComponent<T, R> component, int index) {
+        Predicate<V> predicate = ingredients.getPredicate(component, index);
+        if (predicate == null) {
+            return Predicates.alwaysFalse();
+        }
+        return predicate;
     }
 
     @Override
-    public int getFluidStackIngredients() {
-        return ingredients.getFluidStackIngredients();
-    }
-
-    @Override
-    public List<ValueObjectTypeFluidStack.ValueFluidStack> getFluidStacks(int index) {
-        return ingredients.getFluidStacks(index);
-    }
-
-    @Override
-    public Predicate<ValueObjectTypeFluidStack.ValueFluidStack> getFluidStackPredicate(int index) {
-        return ingredients.getFluidStackPredicate(index);
-    }
-
-    @Override
-    public List<List<ValueObjectTypeFluidStack.ValueFluidStack>> getFluidStacksRaw() {
-        return ingredients.getFluidStacksRaw();
-    }
-
-    @Override
-    public int getEnergyIngredients() {
-        return ingredients.getEnergyIngredients();
-    }
-
-    @Override
-    public List<ValueTypeInteger.ValueInteger> getEnergies(int index) {
-        return ingredients.getEnergies(index);
-    }
-
-    @Override
-    public Predicate<ValueTypeInteger.ValueInteger> getEnergiesPredicate(int index) {
-        return ingredients.getEnergiesPredicate(index);
-    }
-
-    @Override
-    public List<List<ValueTypeInteger.ValueInteger>> getEnergiesRaw() {
-        return ingredients.getEnergiesRaw();
+    public <V extends IValue, T, R> List<List<V>> getRaw(RecipeComponent<T, R> component) {
+        List<List<V>> list = ingredients.getRaw(component);
+        if (list == null) {
+            return Collections.emptyList();
+        }
+        return list;
     }
 }

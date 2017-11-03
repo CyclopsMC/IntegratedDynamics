@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.ToString;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
@@ -10,17 +10,20 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.recipe.IRecipeComponentHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeLists;
-import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeIngredientsLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Value type with values that are ingredients.
@@ -42,25 +45,16 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     public String toCompactString(ValueIngredients value) {
         if (value.getRawValue().isPresent()) {
             StringBuilder sb = new StringBuilder();
-            for (List<ValueObjectTypeItemStack.ValueItemStack> valueItemStacks : value.getRawValue().get().getItemStacksRaw()) {
-                sb.append(ValueTypes.OBJECT_ITEMSTACK.toCompactString(
-                        Iterables.getFirst(valueItemStacks, ValueTypes.OBJECT_ITEMSTACK.getDefault())));
-                if (valueItemStacks.size() > 1) sb.append("+");
-                sb.append(", ");
+
+            IIngredients ingredients = value.getRawValue().get();
+            for (RecipeComponent<?, ?> component : ingredients.getComponents()) {
+                IRecipeComponentHandler handler = RecipeComponentHandlers.REGISTRY.getComponentHandler(component);
+                for (List<IValue> values : ingredients.getRaw(component)) {
+                    sb.append(handler.toCompactString(values));
+                    sb.append(", ");
+                }
             }
-            for (List<ValueObjectTypeFluidStack.ValueFluidStack> valueFluidStacks : value.getRawValue().get().getFluidStacksRaw()) {
-                sb.append(ValueTypes.OBJECT_FLUIDSTACK.toCompactString(
-                        Iterables.getFirst(valueFluidStacks, ValueTypes.OBJECT_FLUIDSTACK.getDefault())));
-                if (valueFluidStacks.size() > 1) sb.append("+");
-                sb.append(", ");
-            }
-            for (List<ValueTypeInteger.ValueInteger> valueEnergy : value.getRawValue().get().getEnergiesRaw()) {
-                sb.append(ValueTypes.INTEGER.toCompactString(
-                        Iterables.getFirst(valueEnergy, ValueTypes.INTEGER.getDefault())));
-                sb.append(" " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT));
-                if (valueEnergy.size() > 1) sb.append("+");
-                sb.append(", ");
-            }
+
             String str = sb.toString();
             return str.length() >= 2 ? str.substring(0, str.length() - 2) : "";
         }
@@ -73,36 +67,20 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
 
         NBTTagCompound tag = new NBTTagCompound();
         IIngredients ingredients = value.getRawValue().get();
-
-        NBTTagList itemStacks = new NBTTagList();
-        for (List<ValueObjectTypeItemStack.ValueItemStack> valueItemStacks : ingredients.getItemStacksRaw()) {
-            NBTTagList list = new NBTTagList();
-            for (ValueObjectTypeItemStack.ValueItemStack valueItemStack : valueItemStacks) {
-                list.appendTag(new NBTTagString(ValueTypes.OBJECT_ITEMSTACK.serialize(valueItemStack)));
+        for (RecipeComponent<?, ?> component : ingredients.getComponents()) {
+            IRecipeComponentHandler handler = RecipeComponentHandlers.REGISTRY.getComponentHandler(component);
+            if (handler != null) {
+                NBTTagList tagList = new NBTTagList();
+                for (List<IValue> values : ingredients.getRaw(component)) {
+                    NBTTagList list = new NBTTagList();
+                    for (IValue val : values) {
+                        list.appendTag(new NBTTagString(handler.getValueType().serialize(val)));
+                    }
+                    tagList.appendTag(list);
+                }
+                tag.setTag("list" + handler.getComponent().getName(), tagList);
             }
-            itemStacks.appendTag(list);
         }
-        tag.setTag("items", itemStacks);
-
-        NBTTagList fluidStacks = new NBTTagList();
-        for (List<ValueObjectTypeFluidStack.ValueFluidStack> valueFluidStacks : ingredients.getFluidStacksRaw()) {
-            NBTTagList list = new NBTTagList();
-            for (ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack : valueFluidStacks) {
-                list.appendTag(new NBTTagString(ValueTypes.OBJECT_FLUIDSTACK.serialize(valueFluidStack)));
-            }
-            fluidStacks.appendTag(list);
-        }
-        tag.setTag("fluids", fluidStacks);
-
-        NBTTagList energies = new NBTTagList();
-        for (List<ValueTypeInteger.ValueInteger> valueEnergies : ingredients.getEnergiesRaw()) {
-            NBTTagList list = new NBTTagList();
-            for (ValueTypeInteger.ValueInteger valueEnergy : valueEnergies) {
-                list.appendTag(new NBTTagString(ValueTypes.INTEGER.serialize(valueEnergy)));
-            }
-            energies.appendTag(list);
-        }
-        tag.setTag("energies", energies);
 
         return tag.toString();
     }
@@ -112,44 +90,26 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         if(Strings.isNullOrEmpty(value)) return ValueIngredients.of(null);
 
         try {
-            List<List<ValueObjectTypeItemStack.ValueItemStack>> itemStacks = Lists.newArrayList();
-            List<List<ValueObjectTypeFluidStack.ValueFluidStack>> fluidStacks = Lists.newArrayList();
-            List<List<ValueTypeInteger.ValueInteger>> energies = Lists.newArrayList();
-
+            Map<RecipeComponent<?, ?>, List<List<? extends IValue>>> lists = Maps.newIdentityHashMap();
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
 
-            for (NBTBase subTag : tag.getTagList("items", MinecraftHelpers.NBTTag_Types.NBTTagList.ordinal())) {
-                NBTTagList listTag = ((NBTTagList) subTag);
-                List<ValueObjectTypeItemStack.ValueItemStack> list = Lists.newArrayList();
-                itemStacks.add(list);
-                for (int i = 0; i < listTag.tagCount(); i++) {
-                    list.add(ValueTypes.OBJECT_ITEMSTACK.deserialize(listTag.getStringTagAt(i)));
+            for (RecipeComponent<?, ?> component : RecipeComponentHandlers.REGISTRY.getComponents()) {
+                IRecipeComponentHandler handler = RecipeComponentHandlers.REGISTRY.getComponentHandler(component);
+                if (handler != null) {
+                    List<List<? extends IValue>> list = Lists.newArrayList();
+                    lists.put(component, list);
+                    for (NBTBase subTag : tag.getTagList("list" + handler.getComponent().getName(), MinecraftHelpers.NBTTag_Types.NBTTagList.ordinal())) {
+                        NBTTagList listTag = ((NBTTagList) subTag);
+                        List<IValue> l = Lists.newArrayList();
+                        list.add(l);
+                        for (int i = 0; i < listTag.tagCount(); i++) {
+                            l.add(handler.getValueType().deserialize(listTag.getStringTagAt(i)));
+                        }
+                    }
                 }
             }
 
-            for (NBTBase subTag : tag.getTagList("fluids", MinecraftHelpers.NBTTag_Types.NBTTagList.ordinal())) {
-                NBTTagList listTag = ((NBTTagList) subTag);
-                List<ValueObjectTypeFluidStack.ValueFluidStack> list = Lists.newArrayList();
-                fluidStacks.add(list);
-                for (int i = 0; i < listTag.tagCount(); i++) {
-                    list.add(ValueTypes.OBJECT_FLUIDSTACK.deserialize(listTag.getStringTagAt(i)));
-                }
-            }
-
-            for (NBTBase subTag : tag.getTagList("energies", MinecraftHelpers.NBTTag_Types.NBTTagList.ordinal())) {
-                NBTTagList listTag = ((NBTTagList) subTag);
-                List<ValueTypeInteger.ValueInteger> list = Lists.newArrayList();
-                energies.add(list);
-                for (int i = 0; i < listTag.tagCount(); i++) {
-                    list.add(ValueTypes.INTEGER.deserialize(listTag.getStringTagAt(i)));
-                }
-            }
-
-            return ValueIngredients.of(new IngredientsRecipeLists(
-                    itemStacks,
-                    fluidStacks,
-                    energies
-            ));
+            return ValueIngredients.of(new IngredientsRecipeLists(lists));
         } catch (NBTException | RuntimeException e) {
             e.printStackTrace();
             throw new RuntimeException(String.format("Something went wrong while deserializing '%s'.", value));

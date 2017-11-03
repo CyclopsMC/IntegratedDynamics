@@ -15,10 +15,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.client.render.part.DisplayPartOverlayRenderer;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IIngredients;
 
 import javax.annotation.Nullable;
@@ -39,17 +37,14 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
             IIngredients ingredients = ingredientsOptional.get();
 
             // Get a list of all values
-            List<List<ValueObjectTypeItemStack.ValueItemStack>> itemStacks = ingredients.getItemStacksRaw();
-            List<List<ValueObjectTypeFluidStack.ValueFluidStack>> fluidStacks = ingredients.getFluidStacksRaw();
-            List<List<ValueTypeInteger.ValueInteger>> energies = ingredients.getEnergiesRaw();
-            int ingredientCount = itemStacks.size() + fluidStacks.size() + energies.size();
+            int ingredientCount = ingredients.getComponents().stream().mapToInt(ingredients::getIngredients).sum();
             List<IValue> values = Lists.newArrayListWithExpectedSize(ingredientCount);
 
             // For ingredients with multiple possibilities, vary them based on the current tick
             int tick = ((int) Minecraft.getMinecraft().world.getWorldTime()) / 30;
-            itemStacks.forEach(itemStack -> values.add(prepareElementForTick(itemStack, tick)));
-            fluidStacks.forEach(fluidStack -> values.add(prepareElementForTick(fluidStack, tick)));
-            energies.forEach(energy -> values.add(prepareElementForTick(energy, tick)));
+            ingredients.getComponents().forEach(
+                    component -> ingredients.getRaw(component).forEach(
+                            element -> values.add(prepareElementForTick(element, tick))));
 
             // Render ingredients in a square matrix
             GlStateManager.pushMatrix();
