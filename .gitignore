@@ -16,6 +16,7 @@ repo/*
 *.ipr
 *.iws
 out/*
+keystore.jks
 
 # Ignore mac-specific file(s)
 .DS_Store

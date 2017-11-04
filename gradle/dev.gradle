@@ -1,3 +1,17 @@
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf {
+        System.getenv().SIGN_KEYSTORE
+    }
+
+    keyStore = System.getenv().SIGN_KEYSTORE
+    alias = System.getenv().SIGN_ALIAS
+    storePass = System.getenv().SIGN_STOREPASS
+    keyPass = System.getenv().SIGN_KEYPASS
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
+}
+sourceJar.dependsOn signJar
+
 task apiJar(type: Jar, dependsOn: 'sourceMainJava') {
     from (sourceSets.main.output) {
         include "**/api/**/*"
