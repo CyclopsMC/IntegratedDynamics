@@ -623,7 +623,6 @@ aspect.aspecttypes.integrateddynamics.integer.range.name=Range
 
 aspect.aspecttypes.integrateddynamics.integer.interval.name=Pulse Interval
 aspect.aspecttypes.integrateddynamics.integer.length.name=Pulse Length
-aspect.aspecttypes.integrateddynamics.integer.length.info=Can be at most half of Pulse Interval
 
 aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
 aspect.aspecttypes.integrateddynamics.double.frequency.name=Frequency
