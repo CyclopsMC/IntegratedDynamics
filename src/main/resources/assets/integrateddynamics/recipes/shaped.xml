@@ -882,6 +882,33 @@
 
 	<recipe type="shaped">
 		<condition type="config">menril_planks</condition>
+		<condition type="config">menril_door</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="3">integrateddynamics:menril_door</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">menril_planks</condition>
 		<condition type="config">menril_planks_stairs</condition>
 		<input>
 			<grid>

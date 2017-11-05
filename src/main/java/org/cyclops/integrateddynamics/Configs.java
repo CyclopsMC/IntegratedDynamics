@@ -68,6 +68,7 @@ public class Configs {
         configHandler.add(new BlockFluidMenrilResinConfig());
         configHandler.add(new BlockDryingBasinConfig());
         configHandler.add(new BlockSqueezerConfig());
+        configHandler.add(new BlockMenrilDoorConfig());
         configHandler.add(new BlockMenrilTorchConfig());
         configHandler.add(new BlockMenrilTorchStoneConfig());
         configHandler.add(new BlockMenrilPlanksStairsConfig());
