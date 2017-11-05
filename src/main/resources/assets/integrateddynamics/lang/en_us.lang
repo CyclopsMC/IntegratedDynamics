@@ -72,6 +72,7 @@ tile.blocks.integrateddynamics.squeezer.info=Squeezes, flattens and crushes by j
 tile.blocks.integrateddynamics.menril_torch.name=Menril Torch
 tile.blocks.integrateddynamics.menril_torch_stone.name=Menril Stone Torch
 tile.blocks.integrateddynamics.invisible_light.name=Invisible Light
+tile.blocks.integrateddynamics.menril_door.name=Menril Door
 tile.blocks.integrateddynamics.menril_planks_stairs.name=Menril Wood Stairs
 tile.blocks.integrateddynamics.crystalized_menril_block_stairs.name=Crystalized Menril Stairs
 tile.blocks.integrateddynamics.crystalized_menril_brick_stairs.name=Crystalized Menril Brick Stairs
