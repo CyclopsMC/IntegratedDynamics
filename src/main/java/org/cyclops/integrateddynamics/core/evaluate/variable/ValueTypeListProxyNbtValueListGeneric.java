@@ -33,14 +33,20 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends NBTBase, T
 
     @Override
     public int getLength() throws EvaluationException {
-        return getLength(Optional.ofNullable((N) tag.getTag(key)).orElse(getDefault()));
+        try {
+            return getLength(Optional.ofNullable((N) tag.getTag(key)).orElse(getDefault()));
+        } catch (ClassCastException e) {
+            return 0;
+        }
     }
 
     @Override
     public V get(int index) throws EvaluationException {
-        if (index < getLength()) {
-            return get(Optional.ofNullable((N) tag.getTag(key)).orElse(getDefault()), index);
-        }
+        try {
+            if (index < getLength()) {
+                return get(Optional.ofNullable((N) tag.getTag(key)).orElse(getDefault()), index);
+            }
+        } catch (ClassCastException e) {}
         return null;
     }
 
