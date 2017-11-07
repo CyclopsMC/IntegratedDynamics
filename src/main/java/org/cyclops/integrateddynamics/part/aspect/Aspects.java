@@ -447,7 +447,7 @@ public class Aspects {
                     AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(new IAspectValuePropagator<IItemHandler, Integer>() {
                         @Override
                         public Integer getOutput(IItemHandler inventory) {
-                            return inventory.getSlots();
+                            return inventory != null ? inventory.getSlots() : 0;
                         }
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "slots").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_SLOTSFILLED =
@@ -480,7 +480,7 @@ public class Aspects {
                                     }
                                 }
                             }
-                            return ((double) count) / (double) inventory.getSlots();
+                            return ((double) count) / (double) (inventory != null ? inventory.getSlots() : 1);
                         }
                     }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "fillratio").buildRead();
 
