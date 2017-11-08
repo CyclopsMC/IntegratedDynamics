@@ -99,10 +99,23 @@ public class RenderTileEntityEnergyBattery extends TileEntitySpecialRenderer<Til
                 double replacedMaxV = icon.getMaxV();
                 double replacedMinV = ((icon.getMinV() - icon.getMaxV()) * height + icon.getMaxV());
 
-                worldRenderer.pos(c[0][0], c[0][1] * height, c[0][2]).tex(icon.getMinU(), replacedMaxV).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-                worldRenderer.pos(c[1][0], c[1][1] * height, c[1][2]).tex(icon.getMinU(), replacedMinV).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-                worldRenderer.pos(c[2][0], c[2][1] * height, c[2][2]).tex(icon.getMaxU(), replacedMinV).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-                worldRenderer.pos(c[3][0], c[3][1] * height, c[3][2]).tex(icon.getMaxU(), replacedMaxV).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+                float r = 1.0F;
+                float g = 1.0F;
+                float b = 1.0F;
+                if (tile.isCreative()) {
+                    float tickFactor = (((float) tile.getWorld().getTotalWorldTime() % 20) / 10);
+                    if (tickFactor > 1) {
+                        tickFactor = -tickFactor + 1;
+                    }
+                    r = 0.8F + 0.2F * tickFactor;
+                    g = 0.42F;
+                    b = 0.60F + 0.40F * tickFactor;
+                }
+
+                worldRenderer.pos(c[0][0], c[0][1] * height, c[0][2]).tex(icon.getMinU(), replacedMaxV).lightmap(l2, i3).color(r, g, b, 1).endVertex();
+                worldRenderer.pos(c[1][0], c[1][1] * height, c[1][2]).tex(icon.getMinU(), replacedMinV).lightmap(l2, i3).color(r, g, b, 1).endVertex();
+                worldRenderer.pos(c[2][0], c[2][1] * height, c[2][2]).tex(icon.getMaxU(), replacedMinV).lightmap(l2, i3).color(r, g, b, 1).endVertex();
+                worldRenderer.pos(c[3][0], c[3][1] * height, c[3][2]).tex(icon.getMaxU(), replacedMaxV).lightmap(l2, i3).color(r, g, b, 1).endVertex();
 
                 t.draw();
             }

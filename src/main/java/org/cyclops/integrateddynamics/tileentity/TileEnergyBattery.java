@@ -38,7 +38,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         addCapabilityInternal(CapabilityEnergy.ENERGY, this);
     }
 
-    protected boolean isCreative() {
+    public boolean isCreative() {
         Block block = getBlock();
         return block instanceof BlockEnergyBatteryBase && ((BlockEnergyBatteryBase) block).isCreative();
     }
