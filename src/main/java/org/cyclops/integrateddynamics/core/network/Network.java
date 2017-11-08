@@ -13,7 +13,14 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.api.network.AttachCapabilitiesEventNetwork;
+import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
+import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -27,7 +34,12 @@ import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A network instance that can hold a set of {@link INetworkElement}s.
@@ -48,6 +60,7 @@ public class Network implements INetwork {
     private final CapabilityDispatcher capabilityDispatcher;
     private IFullNetworkListener[] fullNetworkListeners;
 
+    private NBTTagCompound toRead = null;
     private volatile boolean changed = false;
     private volatile boolean killed = false;
 
@@ -181,6 +194,13 @@ public class Network implements INetwork {
 
     @Override
     public void fromNBT(NBTTagCompound tag) {
+        // NBT reading is postponed until the first network tick, to ensure that the game is properly initialized.
+        // Because other mods may register things such as dimensions at the same time when networks
+        // are being constructed (as was the case in #349)
+        this.toRead = tag;
+    }
+
+    public void fromNBTEffective(NBTTagCompound tag) {
         this.baseCluster.fromNBT(tag.getCompoundTag("baseCluster"));
         this.crashed = tag.getBoolean("crashed");
         if (this.capabilityDispatcher != null && tag.hasKey("ForgeCaps")) {
@@ -350,6 +370,11 @@ public class Network implements INetwork {
 
     @Override
     public final synchronized void update() {
+        if (this.toRead != null) {
+            this.fromNBTEffective(this.toRead);
+            this.toRead = null;
+        }
+
         this.changed = false;
         if(killIfEmpty() || killed) {
             NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
