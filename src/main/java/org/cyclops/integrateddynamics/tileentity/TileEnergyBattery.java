@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.tileentity;
 
+import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -38,7 +39,8 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     }
 
     protected boolean isCreative() {
-        return ((BlockEnergyBatteryBase) getBlock()).isCreative();
+        Block block = getBlock();
+        return block instanceof BlockEnergyBatteryBase && ((BlockEnergyBatteryBase) block).isCreative();
     }
 
     @Override
