@@ -515,7 +515,6 @@ public final class Operators {
                 }
             }).build());
 
-
     /**
      * String match operator which checks whether a string contains a regular expression.
      */
@@ -530,6 +529,40 @@ public final class Operators {
                         return ValueTypeBoolean.ValueBoolean.of(m.find());
                     } catch (PatternSyntaxException e) {
                         throw new EvaluationException("The syntax of the regular expression in contains_regex was incorrect.");
+                    }
+                }
+            }).build());
+
+    /**
+     * String operator which returns the integral index of the first position in the string where the search string appears.
+     */
+    public static final IOperator STRING_INDEX_OF = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("index_of")
+        .output(ValueTypes.INTEGER).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString search = variables.getValue(1);
+                    return ValueTypeInteger.ValueInteger.of(str.getRawValue().indexOf(search.getRawValue()));
+                }
+            }).build());
+
+    /**
+     * String operator which returns the integral index of the first position in the string where the a substring matching the regular expression appears.
+     */
+    public static final IOperator STRING_INDEX_OF_REGEX = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("index_of_regex")
+        .output(ValueTypes.INTEGER).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString pattern = variables.getValue(1);
+                    try {
+                        Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
+                        assert(m.find());
+                        return ValueTypeInteger.ValueInteger.of(m.start());
+                    } catch (AssertionError e) {
+                        return ValueTypeInteger.ValueInteger.of(-1);
+                    } catch (PatternSyntaxException e) {
+                        throw new EvaluationException("The syntax of the regular expression in index_of_regex was incorrect.");
                     }
                 }
             }).build());
@@ -646,7 +679,7 @@ public final class Operators {
                     }
                     try {
                         Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
-                        assert(m.matches());
+                        assert(m.find());
                         String result = m.group(group.getRawValue());
                         return ValueTypeString.ValueString.of(result);
                     } catch (PatternSyntaxException e) {
@@ -655,6 +688,106 @@ public final class Operators {
                         throw new EvaluationException("The regular expression in regex_group must match the given string.");
                     } catch (IndexOutOfBoundsException e) {
                         throw new EvaluationException("The group index specified in the regex_group operator must not be greater than the number of groups matched in the regular expression.");
+                    }
+                }
+        }).build()
+    );
+
+    /**
+     * String operator which matches the input string against a regex and returns a list containing all groups matched (including zero). An empty list is returned if the regex does not match.
+     */
+    public static final IOperator STRING_REGEX_GROUPS = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("regex_groups")
+        .output(ValueTypes.STRING)
+        .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString pattern = variables.getValue(1);
+                    try {
+                        Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
+                        if (m.find()) {
+                            List<ValueTypeString.ValueString> values = Lists.newArrayList();
+                            for (int i = 0; i <= m.groupCount(); i++) {
+                                values.add(ValueTypeString.ValueString.of(m.group(i)));
+                            }
+                            return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
+                        } else {
+                            return ValueTypeList.ValueList.ofList(ValueTypes.STRING, Collections.<ValueTypeString.ValueString>emptyList());
+                        }
+                    } catch (PatternSyntaxException e) {
+                        throw new EvaluationException("The syntax of the regular expression in regex_groups was incorrect.");
+                    }
+                }
+        }).build()
+    );
+
+    /**
+     * String operator which finds all matches of the regular expression in the given string and returns the given group for each match.
+     */
+    public static final IOperator STRING_REGEX_SCAN = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("regex_scan")
+        .renderPattern(IConfigRenderPattern.INFIX_2)
+        .inputTypes(ValueTypes.STRING, ValueTypes.STRING, ValueTypes.INTEGER)
+        .output(ValueTypes.LIST)
+        .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString pattern = variables.getValue(1);
+                    ValueTypeInteger.ValueInteger group = variables.getValue(2);
+                    if (group.getRawValue() < 0) {
+                        throw new EvaluationException("The group index specified in the regex_scan operator must not be negative.");
+                    }
+                    try {
+                        Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
+                        List<ValueTypeString.ValueString> values = Lists.newArrayList();
+                        while (m.find()) {
+                            values.add(ValueTypeString.ValueString.of(m.group(group.getRawValue())));
+                        }
+                        return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
+                    } catch (PatternSyntaxException e) {
+                        throw new EvaluationException("The syntax of the regular expression in regex_scan was incorrect.");
+                    } catch (IndexOutOfBoundsException e) {
+                        throw new EvaluationException("The group index specified in the regex_scan operator must not be greater than the number of groups matched in the regular expression.");
+                    }
+                }
+        }).build()
+    );
+
+    /**
+     * String operator which, in the given string, finds all the matches of the (literal) search and replaces them with the given replacement.
+     */
+    public static final IOperator STRING_REPLACE = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("replace")
+        .renderPattern(IConfigRenderPattern.INFIX_2)
+        .inputTypes(3, ValueTypes.STRING)
+        .output(ValueTypes.STRING)
+        .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString search = variables.getValue(1);
+                    ValueTypeString.ValueString replacement = variables.getValue(2);
+                    return ValueTypeString.ValueString.of(str.getRawValue().replaceAll(Pattern.quote(search.getRawValue()), replacement.getRawValue()));
+                }
+        }).build()
+    );
+
+    /**
+     * String operator which, in the given string, finds all the matches of the regular expression pattern and replaces them with the given replacement.
+     */
+    public static final IOperator STRING_REPLACE_REGEX = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("replace_regex")
+        .renderPattern(IConfigRenderPattern.INFIX_2)
+        .inputTypes(3, ValueTypes.STRING)
+        .output(ValueTypes.STRING)
+        .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString pattern = variables.getValue(1);
+                    ValueTypeString.ValueString replacement = variables.getValue(2);
+                    try {
+                        return ValueTypeString.ValueString.of(str.getRawValue().replaceAll(pattern.getRawValue(), replacement.getRawValue()));
+                    } catch (PatternSyntaxException e) {
+                        throw new EvaluationException("The syntax of the regular expression in replace_regex was incorrect.");
                     }
                 }
         }).build()
