@@ -557,10 +557,11 @@ public final class Operators {
                     ValueTypeString.ValueString pattern = variables.getValue(1);
                     try {
                         Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
-                        assert(m.find());
-                        return ValueTypeInteger.ValueInteger.of(m.start());
-                    } catch (AssertionError e) {
-                        return ValueTypeInteger.ValueInteger.of(-1);
+                        if (m.find()) {
+                            return ValueTypeInteger.ValueInteger.of(m.start());
+                        } else {
+                            return ValueTypeInteger.ValueInteger.of(-1);
+                        }
                     } catch (PatternSyntaxException e) {
                         throw new EvaluationException("The syntax of the regular expression in index_of_regex was incorrect.");
                     }
@@ -679,13 +680,14 @@ public final class Operators {
                     }
                     try {
                         Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
-                        assert(m.find());
-                        String result = m.group(group.getRawValue());
-                        return ValueTypeString.ValueString.of(result);
+                        if (m.find()) {
+                            String result = m.group(group.getRawValue());
+                            return ValueTypeString.ValueString.of(result);
+                        } else {
+                            throw new EvaluationException("The regular expression in regex_group must match the given string.");
+                        }
                     } catch (PatternSyntaxException e) {
                         throw new EvaluationException("The syntax of the regular expression in regex_group was incorrect.");
-                    } catch (AssertionError e) {
-                        throw new EvaluationException("The regular expression in regex_group must match the given string.");
                     } catch (IndexOutOfBoundsException e) {
                         throw new EvaluationException("The group index specified in the regex_group operator must not be greater than the number of groups matched in the regular expression.");
                     }
