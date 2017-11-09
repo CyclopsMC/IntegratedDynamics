@@ -22,7 +22,9 @@ public class TestStringOperators {
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
 
+    private DummyVariableString sempty;
     private DummyVariableString sabc;
+    private DummyVariableString sl;
     private DummyVariableString shello;
     private DummyVariableString sworld;
     private DummyVariableString shelloWorld;
@@ -36,7 +38,9 @@ public class TestStringOperators {
 
     @Before
     public void before() {
+        sempty = new DummyVariableString(ValueTypeString.ValueString.of(""));
         sabc = new DummyVariableString(ValueTypeString.ValueString.of("abc"));
+        sl = new DummyVariableString(ValueTypeString.ValueString.of("l"));
         shello = new DummyVariableString(ValueTypeString.ValueString.of("hello"));
         sworld = new DummyVariableString(ValueTypeString.ValueString.of("world"));
         shelloWorld = new DummyVariableString(ValueTypeString.ValueString.of("hello world"));
@@ -129,6 +133,74 @@ public class TestStringOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeContains() throws EvaluationException {
         Operators.STRING_CONTAINS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- INDEX_OF -----------------------------------
+     */
+
+    @Test
+    public void testStringIndexOf() throws EvaluationException {
+        IValue res1 = Operators.STRING_INDEX_OF.evaluate(new IVariable[]{shelloWorld, shello});
+        IValue res2 = Operators.STRING_INDEX_OF.evaluate(new IVariable[]{shelloWorld, sworld});
+        IValue res3 = Operators.STRING_INDEX_OF.evaluate(new IVariable[]{shelloWorld, sabc});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("hello world index_of hello = 0", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
+        assertThat("hello world index_of world = 6", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(6));
+        assertThat("hello world index_of abc = -1", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(-1));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIndexOfLarge() throws EvaluationException {
+        Operators.STRING_INDEX_OF.evaluate(new IVariable[]{sabc, sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIndexOfSmall() throws EvaluationException {
+        Operators.STRING_INDEX_OF.evaluate(new IVariable[]{sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeIndexOf() throws EvaluationException {
+        Operators.STRING_INDEX_OF.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- INDEX_OF_REGEX -----------------------------------
+     */
+
+    @Test
+    public void testStringIndexOfRegex() throws EvaluationException {
+        DummyVariableString word = new DummyVariableString(ValueTypeString.ValueString.of("worl?d"));
+        IValue res1 = Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{shelloWorld, sregex});
+        IValue res2 = Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{shelloWorld, sworld});
+        IValue res3 = Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{shelloWorld, word});
+        IValue res4 = Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{shelloWorld, sabc});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("hello world index_of_regex complex regex = 0", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
+        assertThat("hello world index_of_regex world = 6", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(6));
+        assertThat("hello world index_of_regex worl?d = 6", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(6));
+        assertThat("hello world index_of_regex abc = -1", ((ValueTypeInteger.ValueInteger) res4).getRawValue(), is(-1));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidPatternIndexOfRegex() throws EvaluationException {
+        Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sabc, sbrokenRegex});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIndexOfRegexLarge() throws EvaluationException {
+        Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sabc, sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeIndexOfRegexSmall() throws EvaluationException {
+        Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeIndexOfRegex() throws EvaluationException {
+        Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
     /**
@@ -382,6 +454,147 @@ public class TestStringOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeRegexGroup() throws EvaluationException {
         Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- REGEX_GROUPS -----------------------------------
+     */
+
+    @Test
+    public void testStringRegexGroups() throws EvaluationException {
+        IValue res1 = Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{shelloWorld, sabc});
+        IValue res2 = Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{shelloWorld, sregex});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list1 = ((ValueTypeList.ValueList) res1).getRawValue();
+        assertThat("(hello_world regex_groups abc).size = 0", list1.getLength(), is(0));
+        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list2 = ((ValueTypeList.ValueList) res2).getRawValue();
+        assertThat("hello world regex_groups ('\\A(.+?)(world)\\z')[0] = hello world", list2.get(0).getRawValue(), is("hello world"));
+        assertThat("hello world regex_groups ('\\A(.+?)(world)\\z')[1] = 'hello '", list2.get(1).getRawValue(), is("hello "));
+        assertThat("hello world regex_groups ('\\A(.+?)(world)\\z')[2] = world", list2.get(2).getRawValue(), is("world"));
+        assertThat("(hello world regex_groups ('\\A(.+?)(world)\\z')).size = 3", list2.getLength(), is(3));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidPatternRegexGroups() throws EvaluationException {
+        Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{sabc, sbrokenRegex});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeRegexGroupsLarge() throws EvaluationException {
+        Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{sabc, sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeRegexGroupsSmall() throws EvaluationException {
+        Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeRegexGroups() throws EvaluationException {
+        Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- REGEX_SCAN -----------------------------------
+     */
+
+    @Test
+    public void testStringRegexScan() throws EvaluationException {
+        DummyVariableString firstLetters = new DummyVariableString(ValueTypeString.ValueString.of("(\\S)\\S*"));
+        IValue res1 = Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{shelloWorld, sabc, i0});
+        IValue res2 = Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{shelloWorld, firstLetters, i1});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list1 = ((ValueTypeList.ValueList) res1).getRawValue();
+        assertThat("(hello_world regex_scan abc).size = 0", list1.getLength(), is(0));
+        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list2 = ((ValueTypeList.ValueList) res2).getRawValue();
+        assertThat("hello world regex_scan ('(\\S)\\S*', 1)[0] = h", list2.get(0).getRawValue(), is("h"));
+        assertThat("hello world regex_scan ('(\\S)\\S*', 1)[1] = w", list2.get(1).getRawValue(), is("w"));
+        assertThat("hello world regex_scan ('(\\S)\\S*', 1).size = 2", list2.getLength(), is(2));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidPatternRegexScan() throws EvaluationException {
+        Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{sabc, sbrokenRegex, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeRegexScanLarge() throws EvaluationException {
+        Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{sabc, sabc, sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeRegexScanSmall() throws EvaluationException {
+        Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeRegexScan() throws EvaluationException {
+        Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- REPLACE -----------------------------------
+     */
+
+    @Test
+    public void testStringReplace() throws EvaluationException {
+        IValue res1 = Operators.STRING_REPLACE.evaluate(new IVariable[]{shelloWorld, sl, sempty});
+        IValue res2 = Operators.STRING_REPLACE.evaluate(new IVariable[]{shelloWorld, shelloWorld, sempty});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("hello world replace (l, '') = heo word", ((ValueTypeString.ValueString)res1).getRawValue(), is("heo word"));
+        assertThat("hello world replace (hello world, '') = ''", ((ValueTypeString.ValueString)res2).getRawValue(), is(""));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeReplaceLarge() throws EvaluationException {
+        Operators.STRING_REPLACE.evaluate(new IVariable[]{sabc, sabc, sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeReplaceSmall() throws EvaluationException {
+        Operators.STRING_REPLACE.evaluate(new IVariable[]{sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeReplace() throws EvaluationException {
+        Operators.STRING_REPLACE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- REPLACE_REGEX -----------------------------------
+     */
+
+    @Test
+    public void testStringReplaceRegex() throws EvaluationException {
+        DummyVariableString szerozero = new DummyVariableString(ValueTypeString.ValueString.of("$0$0"));
+        DummyVariableString sone = new DummyVariableString(ValueTypeString.ValueString.of("$1"));
+        IValue res1 = Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{shelloWorld, sl, szerozero});
+        IValue res2 = Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{shelloWorld, sregex, sone});
+        IValue res3 = Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{shelloWorld, sregex, sempty});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("hello world replace (l, '$0') = 'hellllo worlld'", ((ValueTypeString.ValueString)res1).getRawValue(), is("hellllo worlld"));
+        assertThat("hello world replace (complex regex, $1) = 'hello '", ((ValueTypeString.ValueString)res2).getRawValue(), is("hello "));
+        assertThat("hello world replace (complex regex, '') = ''", ((ValueTypeString.ValueString)res3).getRawValue(), is(""));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidPatternReplaceRegex() throws EvaluationException {
+        Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sabc, sbrokenRegex, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeReplaceRegexLarge() throws EvaluationException {
+        Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sabc, sabc, sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeReplaceRegexSmall() throws EvaluationException {
+        Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeReplaceRegex() throws EvaluationException {
+        Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 
