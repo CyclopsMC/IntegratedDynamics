@@ -1,0 +1,23 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.22 or higher.
+
+Changes:
+* Add distinguishing render effect to Creative Energy Batteries
+* Sign jars
+* Allow opening GUIs without power
+  Once channels become a thing, this will be the only way to fix an incorrect
+  channel. Readers and writers are marked with "NO POWER" instead of displaying
+  any useful information. Fixes half of #324.
+* Add entity id to string value of entity values, #338
+  This makes it clearer that entities are stored by id, and equality checks are done based on this id.
+
+Fixes:
+* Fix rare Energy Battery render crash, Closes #86
+* Postpone network NBT reading until the first server tick, Closes #349
+  Some other mods, such as RFTools dimensions register their dimensions during the FMLServerStartedEvent,
+  which is when networks are being constructed as well.
+  This can cause network corruption due to some parts thinking they are in a dimension that does not exist,
+  due to that dimension not being registered yet.
+* Catch casting exceptions in NBT list operators, Closes #340
+* Fix Inventory Reader aspect crashes on invalid inventory, Closes #346
+* Fix curseforge URL in mcmod.info
