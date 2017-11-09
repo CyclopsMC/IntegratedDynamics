@@ -71,13 +71,17 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
+import java.util.regex.PatternSyntaxException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Collection of available operators.
@@ -423,6 +427,164 @@ public final class Operators {
                 ValueTypeString.ValueString b = variables.getValue(1);
                 return ValueTypeString.ValueString.of(a.getRawValue() + b.getRawValue());
             }).build());
+
+    /**
+     * String contains operator which checks whether a string contains a given (literal) string.
+     */
+    public static final IOperator STRING_CONTAINS = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("contains")
+        .output(ValueTypes.BOOLEAN).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString search = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(str.getRawValue().contains(search.getRawValue()));
+                }
+            }).build());
+
+
+    /**
+     * String match operator which checks whether a string contains a regular expression.
+     */
+    public static final IOperator STRING_CONTAINS_REGEX = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("contains_regex")
+        .output(ValueTypes.BOOLEAN).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString pattern = variables.getValue(1);
+                    try {
+                        Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
+                        return ValueTypeBoolean.ValueBoolean.of(m.find());
+                    } catch (PatternSyntaxException e) {
+                        throw new EvaluationException("The syntax of the regular expression in contains_regex was incorrect.");
+                    }
+                }
+            }).build());
+
+    /**
+     * String match operator which checks whether a value starts with a given string.
+     */
+    public static final IOperator STRING_STARTS_WITH = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("starts_with")
+        .output(ValueTypes.BOOLEAN).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString search = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(str.getRawValue().startsWith(search.getRawValue()));
+                }
+            }).build());
+
+    /**
+     * String match operator which checks whether a value ends with a given string.
+     */
+    public static final IOperator STRING_ENDS_WITH = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("ends_with")
+        .output(ValueTypes.BOOLEAN).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString search = variables.getValue(1);
+                    return ValueTypeBoolean.ValueBoolean.of(str.getRawValue().endsWith(search.getRawValue()));
+                }
+            }).build());
+
+    /**
+     * String operator which splits the input string on the given (literal) delimiter.
+     */
+    public static final IOperator STRING_SPLIT_ON = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("split_on")
+        .output(ValueTypes.LIST).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString search = variables.getValue(1);
+                    List<String> pieces = Arrays.asList(str.getRawValue().split(Pattern.quote(search.getRawValue())));
+                    List<ValueTypeString.ValueString> values = Lists.newArrayList();
+                    for (String piece : pieces) {
+                        values.add(ValueTypeString.ValueString.of(piece));
+                    }
+                    return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
+                }
+            }).build());
+
+    /**
+     * String operator which splits the input string on the given (regular expression) delimiter.
+     */
+    public static final IOperator STRING_SPLIT_ON_REGEX = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("split_on_regex")
+        .output(ValueTypes.LIST).function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString pattern = variables.getValue(1);
+                    try {
+                        List<String> pieces = Arrays.asList(str.getRawValue().split(pattern.getRawValue()));
+                        List<ValueTypeString.ValueString> values = Lists.newArrayList();
+                        for (String piece : pieces) {
+                            values.add(ValueTypeString.ValueString.of(piece));
+                        }
+                        return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
+                    } catch (PatternSyntaxException e) {
+                        throw new EvaluationException("The syntax of the regular expression in split_on_regex was incorrect.");
+                    }
+                }
+            }).build());
+
+    /**
+     * String operator which takes the substring of the given string between the two integer indices.
+     */
+    public static final IOperator STRING_SUBSTRING = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("substring")
+        .renderPattern(IConfigRenderPattern.INFIX_2)
+        .inputTypes(ValueTypes.STRING, ValueTypes.INTEGER, ValueTypes.INTEGER)
+        .output(ValueTypes.STRING)
+        .function(new OperatorBase.IFunction() {
+            @Override
+            public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                ValueTypeString.ValueString str = variables.getValue(0);
+                ValueTypeInteger.ValueInteger from = variables.getValue(1);
+                ValueTypeInteger.ValueInteger to = variables.getValue(2);
+                if (from.getRawValue() > to.getRawValue()) {
+                    throw new EvaluationException("The 'to' value must not be greater than the 'from' value in the substring operator.");
+                }
+                if (from.getRawValue() < 0 || to.getRawValue() < 0) {
+                    throw new EvaluationException("The 'from' and 'to' values in the substring operator must not be negative.");
+                }
+                int stringLength = str.getRawValue().length();
+                if (from.getRawValue() >= stringLength || to.getRawValue() >= stringLength) {
+                    throw new EvaluationException("The 'from' and 'to' values in the substring operator must not exceed the length of the string.");
+                }
+                return ValueTypeString.ValueString.of(str.getRawValue().substring(from.getRawValue(), to.getRawValue()));
+            }
+        }).build());
+
+
+    /**
+     * String operator which matches the input string against a regex and takes the group at the index of the integer given (including zero). It is invalid for the pattern to not match.
+     */
+    public static final IOperator STRING_REGEX_GROUP = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("regex_group")
+        .renderPattern(IConfigRenderPattern.INFIX_2)
+        .inputTypes(ValueTypes.STRING, ValueTypes.STRING, ValueTypes.INTEGER)
+        .output(ValueTypes.STRING)
+        .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeString.ValueString str = variables.getValue(0);
+                    ValueTypeString.ValueString pattern = variables.getValue(1);
+                    ValueTypeInteger.ValueInteger group = variables.getValue(2);
+                    if (group.getRawValue() < 0) {
+                        throw new EvaluationException("The group index specified in the regex_group operator must not be negative.");
+                    }
+                    try {
+                        Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
+                        assert(m.matches());
+                        String result = m.group(group.getRawValue());
+                        return ValueTypeString.ValueString.of(result);
+                    } catch (PatternSyntaxException e) {
+                        throw new EvaluationException("The syntax of the regular expression in regex_group was incorrect.");
+                    } catch (AssertionError e) {
+                        throw new EvaluationException("The regular expression in regex_group must match the given string.");
+                    } catch (IndexOutOfBoundsException e) {
+                        throw new EvaluationException("The group index specified in the regex_group operator must not be greater than the number of groups matched in the regular expression.");
+                    }
+                }
+        }).build()
+    );
 
     /**
      * Get a name value type name.
@@ -789,7 +951,7 @@ public final class Operators {
                 ValueTypeInteger.ValueInteger from = variables.getValue(1);
                 ValueTypeInteger.ValueInteger to = variables.getValue(2);
                 if (from.getRawValue() >= to.getRawValue()) {
-                    throw new EvaluationException("The 'from' value must be stricly smaller than the 'to' value in the slice operator.");
+                    throw new EvaluationException("The 'from' value must be strictly smaller than the 'to' value in the slice operator.");
                 }
                 if (from.getRawValue() < 0 || to.getRawValue() < 0){
                     throw new EvaluationException("The 'from' and 'to' values in the slice operator must not be negative.");
