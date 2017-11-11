@@ -449,11 +449,7 @@ public class AspectReadBuilders {
             public Boolean getOutput(Pair<PartTarget, IAspectProperties> input) {
                 int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());
                 int length = Math.max(1, input.getRight().getValue(PROPERTY_LENGTH).getRawValue());
-                /*if(length * 2 > interval) {
-                    throw new EvaluationException(String.format("A true and false pulse of length %s do not " +
-                            "fit into an interval of %s.", length, interval));
-                }*/
-                return (input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() / length) % Math.max(1, interval / length) == 0;
+                return input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() % interval < length;
             }
         };
 
