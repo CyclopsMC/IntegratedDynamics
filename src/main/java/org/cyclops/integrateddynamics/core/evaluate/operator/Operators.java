@@ -12,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -2278,6 +2279,31 @@ public final class Operators {
                         // Catch possible errors during NBT writing
                     }
                     return ValueTypes.NBT.getDefault();
+                }
+            }).build());
+
+    /**
+     * The entity type.
+     */
+    public static final IOperator OBJECT_ENTITY_TYPE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("entitytype")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter input) throws EvaluationException {
+                    ValueObjectTypeEntity.ValueEntity entity = input.getValue(0);
+                    String entityType = "";
+                    if (entity.getRawValue().isPresent()) {
+                        Entity e = entity.getRawValue().get();
+                        entityType = EntityList.getEntityString(e);
+                        if (entityType == null) {
+                            if (e instanceof EntityPlayer) {
+                                entityType = "Player";
+                            } else {
+                                entityType = e.getClass().getCanonicalName();
+                            }
+                        }
+                    }
+                    return ValueTypeString.ValueString.of(entityType);
                 }
             }).build());
 
