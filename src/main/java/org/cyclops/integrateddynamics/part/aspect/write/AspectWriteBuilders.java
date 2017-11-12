@@ -61,56 +61,29 @@ public class AspectWriteBuilders {
             BUILDER_OPERATOR = getValue(AspectBuilder.forWriteType(ValueTypes.OPERATOR));
 
     // --------------- Value type propagators ---------------
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean>, Triple<PartTarget, IAspectProperties, Boolean>> PROP_GET_BOOLEAN = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean>, Triple<PartTarget, IAspectProperties, Boolean>>() {
-        @Override
-        public Triple<PartTarget, IAspectProperties, Boolean> getOutput(Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean> input) throws EvaluationException {
-            return Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
-        }
-    };
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties,ValueTypeInteger.ValueInteger>, Triple<PartTarget, IAspectProperties, Integer>> PROP_GET_INTEGER = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeInteger.ValueInteger>, Triple<PartTarget, IAspectProperties, Integer>>() {
-        @Override
-        public Triple<PartTarget, IAspectProperties, Integer> getOutput(Triple<PartTarget, IAspectProperties, ValueTypeInteger.ValueInteger> input) throws EvaluationException {
-            return Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
-        }
-    };
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeDouble.ValueDouble>, Triple<PartTarget, IAspectProperties, Double>> PROP_GET_DOUBLE = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeDouble.ValueDouble>, Triple<PartTarget, IAspectProperties, Double>>() {
-        @Override
-        public Triple<PartTarget, IAspectProperties, Double> getOutput(Triple<PartTarget, IAspectProperties, ValueTypeDouble.ValueDouble> input) throws EvaluationException {
-            return Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
-        }
-    };
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeLong.ValueLong>, Triple<PartTarget, IAspectProperties, Long>> PROP_GET_LONG = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeLong.ValueLong>, Triple<PartTarget, IAspectProperties, Long>>() {
-        @Override
-        public Triple<PartTarget, IAspectProperties, Long> getOutput(Triple<PartTarget, IAspectProperties, ValueTypeLong.ValueLong> input) throws EvaluationException {
-            return Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
-        }
-    };
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>, Triple<PartTarget, IAspectProperties, ItemStack>> PROP_GET_ITEMSTACK = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>, Triple<PartTarget, IAspectProperties, ItemStack>>() {
-        @Override
-        public Triple<PartTarget, IAspectProperties, ItemStack> getOutput(Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack> input) throws EvaluationException {
-            return Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
-        }
-    };
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString>, Triple<PartTarget, IAspectProperties, String>> PROP_GET_STRING = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString>, Triple<PartTarget, IAspectProperties, String>>() {
-        @Override
-        public Triple<PartTarget, IAspectProperties, String> getOutput(Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString> input) throws EvaluationException {
-            return Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
-        }
-    };
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeBlock.ValueBlock>, Triple<PartTarget, IAspectProperties, IBlockState>> PROP_GET_BLOCK = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeBlock.ValueBlock>, Triple<PartTarget, IAspectProperties, IBlockState>>() {
-        @Override
-        public Triple<PartTarget, IAspectProperties, IBlockState> getOutput(Triple<PartTarget, IAspectProperties, ValueObjectTypeBlock.ValueBlock> input) throws EvaluationException {
-            Optional<IBlockState> optional = input.getRight().getRawValue();
-            return Triple.of(input.getLeft(), input.getMiddle(), optional.isPresent() ? optional.get() : null);
-        }
-    };
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack>, Triple<PartTarget, IAspectProperties, FluidStack>> PROP_GET_FLUIDSTACK = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack>, Triple<PartTarget, IAspectProperties, FluidStack>>() {
-        @Override
-        public Triple<PartTarget, IAspectProperties, FluidStack> getOutput(Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack> input) throws EvaluationException {
-            Optional<FluidStack> optional = input.getRight().getRawValue();
-            return Triple.of(input.getLeft(), input.getMiddle(), optional.isPresent() ? optional.get() : null);
-        }
-    };
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean>, Triple<PartTarget, IAspectProperties, Boolean>>
+            PROP_GET_BOOLEAN = (input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties,ValueTypeInteger.ValueInteger>, Triple<PartTarget, IAspectProperties, Integer>>
+            PROP_GET_INTEGER = (input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeDouble.ValueDouble>, Triple<PartTarget, IAspectProperties, Double>>
+            PROP_GET_DOUBLE = (input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeLong.ValueLong>, Triple<PartTarget, IAspectProperties, Long>>
+            PROP_GET_LONG = (input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeItemStack.ValueItemStack>, Triple<PartTarget, IAspectProperties, ItemStack>>
+            PROP_GET_ITEMSTACK = (input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString>, Triple<PartTarget, IAspectProperties, String>>
+            PROP_GET_STRING = (input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeBlock.ValueBlock>, Triple<PartTarget, IAspectProperties, IBlockState>>
+            PROP_GET_BLOCK = (input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orNull());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack>, Triple<PartTarget, IAspectProperties, FluidStack>>
+            PROP_GET_FLUIDSTACK = (input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orNull());
 
     public static final class Audio {
 
@@ -139,37 +112,29 @@ public class AspectWriteBuilders {
             return INSTRUMENTS.get(id);
         }
 
-        public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>>, Void> PROP_SET = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>>, Void>() {
-            @Override
-            public Void getOutput(Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>> input) {
-                IAspectProperties properties = input.getMiddle();
-                BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
+        public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>>, Void> PROP_SET = (input) -> {
+            IAspectProperties properties = input.getMiddle();
+            BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
 
-                int eventID = input.getRight().getLeft().ordinal();
-                int eventParam = input.getRight().getRight();
-                if(eventParam >= 0 && eventParam <= 24) {
-                    World world = input.getLeft().getTarget().getPos().getWorld();
-                    NoteBlockEvent.Play e = new NoteBlockEvent.Play(world, pos, world.getBlockState(pos), eventParam, eventID);
-                    if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
-                        float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
-                        float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                        world.playSound(null,
-                                (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                                getInstrument(eventID), SoundCategory.RECORDS, volume, f);
-                    }
+            int eventID = input.getRight().getLeft().ordinal();
+            int eventParam = input.getRight().getRight();
+            if(eventParam >= 0 && eventParam <= 24) {
+                World world = input.getLeft().getTarget().getPos().getWorld();
+                NoteBlockEvent.Play e = new NoteBlockEvent.Play(world, pos, world.getBlockState(pos), eventParam, eventID);
+                if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
+                    float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
+                    float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
+                    world.playSound(null,
+                            (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
+                            getInstrument(eventID), SoundCategory.RECORDS, volume, f);
                 }
-                return null;
             }
+            return null;
         };
 
         public static IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>>>
             propWithInstrument(final NoteBlockEvent.Instrument instrument) {
-            return new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>>>() {
-                @Override
-                public Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>> getOutput(Triple<PartTarget, IAspectProperties, Integer> input) throws EvaluationException {
-                    return Triple.of(input.getLeft(), input.getMiddle(), Pair.of(instrument, input.getRight()));
-                }
-            };
+            return (input) -> Triple.of(input.getLeft(), input.getMiddle(), Pair.of(instrument, input.getRight()));
         }
 
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Triple<PartTarget, IAspectProperties, Integer>>
@@ -232,22 +197,6 @@ public class AspectWriteBuilders {
 
         private static final IWriteRedstoneComponent WRITE_REDSTONE_COMPONENT = new WriteRedstoneComponent();
 
-        public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void> PROP_SET = new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void>() {
-            @Override
-            public Void getOutput(Triple<PartTarget, IAspectProperties, Integer> input) {
-                boolean strongPower = input.getMiddle().getValue(PROP_STRONG_POWER).getRawValue();
-                WRITE_REDSTONE_COMPONENT.setRedstoneLevel(input.getLeft(), input.getRight(), strongPower);
-                return null;
-            }
-        };
-
-        public static final IAspectWriteDeactivator DEACTIVATOR = new IAspectWriteDeactivator() {
-            @Override
-            public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onDeactivate(P partType, PartTarget target, S state) {
-                WRITE_REDSTONE_COMPONENT.deactivate(target);
-            }
-        };
-
         public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROP_STRONG_POWER =
                 new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.strong_power.name");
         public static final IAspectProperties PROPERTIES_REDSTONE = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
@@ -258,6 +207,19 @@ public class AspectWriteBuilders {
             PROPERTIES_REDSTONE.setValue(PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(false));
         }
 
+        public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void> PROP_SET = (input) -> {
+            boolean strongPower = input.getMiddle().getValue(PROP_STRONG_POWER).getRawValue();
+            WRITE_REDSTONE_COMPONENT.setRedstoneLevel(input.getLeft(), input.getRight(), strongPower);
+            return null;
+        };
+
+        public static final IAspectWriteDeactivator DEACTIVATOR = new IAspectWriteDeactivator() {
+            @Override
+            public <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> void onDeactivate(P partType, PartTarget target, S state) {
+                WRITE_REDSTONE_COMPONENT.deactivate(target);
+            }
+        };
+
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Triple<PartTarget, IAspectProperties, Boolean>>
                 BUILDER_BOOLEAN = AspectWriteBuilders.BUILDER_BOOLEAN.appendKind("redstone").handle(PROP_GET_BOOLEAN).appendDeactivator(DEACTIVATOR).withProperties(PROPERTIES_REDSTONE);
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Triple<PartTarget, IAspectProperties, Integer>>
@@ -266,12 +228,7 @@ public class AspectWriteBuilders {
     }
 
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Triple<PartTarget, IAspectProperties, V>> getValue(AspectBuilder<V, T, Triple<PartTarget, IAspectProperties, IVariable<V>>> builder) {
-        return builder.handle(new IAspectValuePropagator<Triple<PartTarget, IAspectProperties, IVariable<V>>, Triple<PartTarget, IAspectProperties, V>>() {
-            @Override
-            public Triple<PartTarget, IAspectProperties, V> getOutput(Triple<PartTarget, IAspectProperties, IVariable<V>> input) throws EvaluationException {
-                return Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getValue());
-            }
-        });
+        return builder.handle((input) -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getValue()));
     }
 
 }
