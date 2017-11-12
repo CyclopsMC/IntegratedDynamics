@@ -76,74 +76,39 @@ public class AspectReadBuilders {
             BUILDER_OBJECT_FLUIDSTACK = AspectBuilder.forReadType(ValueTypes.OBJECT_FLUIDSTACK);
 
     // --------------- Value type propagators ---------------
-    public static final IAspectValuePropagator<Boolean, ValueTypeBoolean.ValueBoolean> PROP_GET_BOOLEAN = new IAspectValuePropagator<Boolean, ValueTypeBoolean.ValueBoolean>() {
-        @Override
-        public ValueTypeBoolean.ValueBoolean getOutput(Boolean input) {
-            return ValueTypeBoolean.ValueBoolean.of(input);
-        }
-    };
-    public static final IAspectValuePropagator<Integer, ValueTypeInteger.ValueInteger> PROP_GET_INTEGER = new IAspectValuePropagator<Integer, ValueTypeInteger.ValueInteger>() {
-        @Override
-        public ValueTypeInteger.ValueInteger getOutput(Integer input) {
-            return ValueTypeInteger.ValueInteger.of(input);
-        }
-    };
-    public static final IAspectValuePropagator<Double, ValueTypeDouble.ValueDouble> PROP_GET_DOUBLE = new IAspectValuePropagator<Double, ValueTypeDouble.ValueDouble>() {
-        @Override
-        public ValueTypeDouble.ValueDouble getOutput(Double input) {
-            return ValueTypeDouble.ValueDouble.of(input);
-        }
-    };
-    public static final IAspectValuePropagator<Long, ValueTypeLong.ValueLong> PROP_GET_LONG = new IAspectValuePropagator<Long, ValueTypeLong.ValueLong>() {
-        @Override
-        public ValueTypeLong.ValueLong getOutput(Long input) {
-            return ValueTypeLong.ValueLong.of(input);
-        }
-    };
-    public static final IAspectValuePropagator<ItemStack, ValueObjectTypeItemStack.ValueItemStack> PROP_GET_ITEMSTACK = new IAspectValuePropagator<ItemStack, ValueObjectTypeItemStack.ValueItemStack>() {
-        @Override
-        public ValueObjectTypeItemStack.ValueItemStack getOutput(ItemStack input) {
-            return ValueObjectTypeItemStack.ValueItemStack.of(input);
-        }
-    };
-    public static final IAspectValuePropagator<String, ValueTypeString.ValueString> PROP_GET_STRING = new IAspectValuePropagator<String, ValueTypeString.ValueString>() {
-        @Override
-        public ValueTypeString.ValueString getOutput(String input) {
-            return ValueTypeString.ValueString.of(input);
-        }
-    };
-    public static final IAspectValuePropagator<IBlockState, ValueObjectTypeBlock.ValueBlock> PROP_GET_BLOCK = new IAspectValuePropagator<IBlockState, ValueObjectTypeBlock.ValueBlock>() {
-        @Override
-        public ValueObjectTypeBlock.ValueBlock getOutput(IBlockState input) {
-            return ValueObjectTypeBlock.ValueBlock.of(input);
-        }
-    };
-    public static final IAspectValuePropagator<FluidStack, ValueObjectTypeFluidStack.ValueFluidStack> PROP_GET_FLUIDSTACK = new IAspectValuePropagator<FluidStack, ValueObjectTypeFluidStack.ValueFluidStack>() {
-        @Override
-        public ValueObjectTypeFluidStack.ValueFluidStack getOutput(FluidStack input) {
-            return ValueObjectTypeFluidStack.ValueFluidStack.of(input);
-        }
-    };
-    public static final IAspectValuePropagator<NBTTagCompound, ValueTypeNbt.ValueNbt> PROP_GET_NBT = new IAspectValuePropagator<NBTTagCompound, ValueTypeNbt.ValueNbt>() {
-        @Override
-        public ValueTypeNbt.ValueNbt getOutput(NBTTagCompound input) {
-            return ValueTypeNbt.ValueNbt.of(input);
-        }
-    };
+    public static final IAspectValuePropagator<Boolean, ValueTypeBoolean.ValueBoolean>
+        PROP_GET_BOOLEAN = (input) -> ValueTypeBoolean.ValueBoolean.of(input);
+
+    public static final IAspectValuePropagator<Integer, ValueTypeInteger.ValueInteger>
+        PROP_GET_INTEGER = (input) -> ValueTypeInteger.ValueInteger.of(input);
+
+    public static final IAspectValuePropagator<Double, ValueTypeDouble.ValueDouble>
+        PROP_GET_DOUBLE = (input) -> ValueTypeDouble.ValueDouble.of(input);
+
+    public static final IAspectValuePropagator<Long, ValueTypeLong.ValueLong>
+        PROP_GET_LONG = (input) -> ValueTypeLong.ValueLong.of(input);
+
+    public static final IAspectValuePropagator<ItemStack, ValueObjectTypeItemStack.ValueItemStack>
+        PROP_GET_ITEMSTACK = (input) -> ValueObjectTypeItemStack.ValueItemStack.of(input);
+
+    public static final IAspectValuePropagator<String, ValueTypeString.ValueString>
+        PROP_GET_STRING = (input) -> ValueTypeString.ValueString.of(input);
+
+    public static final IAspectValuePropagator<IBlockState, ValueObjectTypeBlock.ValueBlock>
+        PROP_GET_BLOCK = (input) -> ValueObjectTypeBlock.ValueBlock.of(input);
+
+    public static final IAspectValuePropagator<FluidStack, ValueObjectTypeFluidStack.ValueFluidStack>
+        PROP_GET_FLUIDSTACK = (input) -> ValueObjectTypeFluidStack.ValueFluidStack.of(input);
+
+    public static final IAspectValuePropagator<NBTTagCompound,ValueTypeNbt.ValueNbt>
+        PROP_GET_NBT = (input) -> ValueTypeNbt.ValueNbt.of(input);
 
     // --------------- Value type validators ---------------
-    public static final Predicate<ValueTypeInteger.ValueInteger> VALIDATOR_INTEGER_POSITIVE = new Predicate<ValueTypeInteger.ValueInteger>() {
-        @Override
-        public boolean test(ValueTypeInteger.ValueInteger input) {
-            return input.getRawValue() >= 0;
-        }
-    };
-    public static final Predicate<ValueTypeDouble.ValueDouble> VALIDATOR_DOUBLE_POSITIVE = new Predicate<ValueTypeDouble.ValueDouble>() {
-        @Override
-        public boolean test(ValueTypeDouble.ValueDouble input) {
-            return input.getRawValue() >= 0;
-        }
-    };
+    public static final Predicate<ValueTypeInteger.ValueInteger>
+        VALIDATOR_INTEGER_POSITIVE = (input) -> input.getRawValue() >= 0;
+
+    public static final Predicate<ValueTypeDouble.ValueDouble>
+        VALIDATOR_DOUBLE_POSITIVE = (input) -> input.getRawValue() >= 0;
 
     // --------------- Generic properties ---------------
     public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_LISTINDEX =
@@ -170,20 +135,17 @@ public class AspectReadBuilders {
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.appendKind("audio");
 
         public static AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer> forInstrument(final NoteBlockEvent.Instrument instrument) {
-            return BUILDER_INTEGER.appendKind("instrument").handle(new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
-                @Override
-                public Integer getOutput(Pair<PartTarget, IAspectProperties> input) throws EvaluationException {
-                    for (NoteBlockEvent.Play event : NoteBlockEventReceiver.getInstance().getEvents().get(instrument)) {
-                        net.minecraft.world.World world = input.getLeft().getTarget().getPos().getWorld();
-                        BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
-                        int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
-                        if (world.provider.getDimension() == event.getWorld().provider.getDimension()
-                                && pos.distanceSq(event.getPos()) <= range * range) {
-                            return event.getVanillaNoteId();
-                        }
+            return BUILDER_INTEGER.appendKind("instrument").handle((input) -> {
+                for (NoteBlockEvent.Play event : NoteBlockEventReceiver.getInstance().getEvents().get(instrument)) {
+                    net.minecraft.world.World world = input.getLeft().getTarget().getPos().getWorld();
+                    BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
+                    int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
+                    if (world.provider.getDimension() == event.getWorld().provider.getDimension()
+                            && pos.distanceSq(event.getPos()) <= range * range) {
+                        return event.getVanillaNoteId();
                     }
-                    return -1;
                 }
+                return -1;
             }, instrument.name().toLowerCase(Locale.ENGLISH)).withProperties(NOTE_PROPERTIES);
         }
 
@@ -191,12 +153,8 @@ public class AspectReadBuilders {
 
     public static final class Block {
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>() {
-            @Override
-            public DimPos getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return input.getLeft().getTarget().getPos();
-            }
-        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>
+                PROP_GET = (input) -> input.getLeft().getTarget().getPos();
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "block");
@@ -211,12 +169,8 @@ public class AspectReadBuilders {
 
     public static final class Entity {
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>() {
-            @Override
-            public DimPos getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return input.getLeft().getTarget().getPos();
-            }
-        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>
+                PROP_GET = (input) -> input.getLeft().getTarget().getPos();
 
         public static final AspectBuilder<ValueObjectTypeEntity.ValueEntity, ValueObjectTypeEntity, Pair<PartTarget, IAspectProperties>>
                 BUILDER_ENTITY = AspectReadBuilders.BUILDER_ENTITY.appendKind("entity");
@@ -231,12 +185,8 @@ public class AspectReadBuilders {
 
     public static final class ExtraDimensional {
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer>() {
-            @Override
-            public MinecraftServer getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return FMLCommonHandler.instance().getMinecraftServerInstance();
-            }
-        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer>
+                PROP_GET = (input) -> FMLCommonHandler.instance().getMinecraftServerInstance();
 
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "extradimensional");
@@ -256,56 +206,39 @@ public class AspectReadBuilders {
             PROPERTIES.setValue(PROP_TANKID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         }
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties[]> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties[]>() {
-            @Override
-            public IFluidTankProperties[] getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                IFluidHandler fluidHandler = TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                        CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-                if(fluidHandler != null) {
-                    return fluidHandler.getTankProperties();
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties[]> PROP_GET = (input) -> {
+            DimPos dimPos = input.getLeft().getTarget().getPos();
+            IFluidHandler fluidHandler = TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
+                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+            if(fluidHandler != null) {
+                return fluidHandler.getTankProperties();
+            }
+            return new IFluidTankProperties[0];
+        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties> PROP_GET_ACTIVATABLE = (input) -> {
+            DimPos dimPos = input.getLeft().getTarget().getPos();
+            IFluidHandler fluidHandler = TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
+                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+            if(fluidHandler != null) {
+                IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
+                int i = input.getRight().getValue(PROP_TANKID).getRawValue();
+                if(tankInfo != null && i < tankInfo.length) {
+                    return tankInfo[i];
                 }
-                return new IFluidTankProperties[0];
             }
+            return null;
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties> PROP_GET_ACTIVATABLE = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties>() {
-            @Override
-            public IFluidTankProperties getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                IFluidHandler fluidHandler = TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                        CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-                if(fluidHandler != null) {
-                    IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
-                    int i = input.getRight().getValue(PROP_TANKID).getRawValue();
-                    if(tankInfo != null && i < tankInfo.length) {
-                        return tankInfo[i];
-                    }
-                }
-                return null;
-            }
-        };
-        public static final IAspectValuePropagator<IFluidTankProperties, FluidStack> PROP_GET_FLUIDSTACK = new IAspectValuePropagator<IFluidTankProperties, FluidStack>() {
-            @Override
-            public FluidStack getOutput(IFluidTankProperties tankInfo) {
-                return tankInfo != null ? tankInfo.getContents() : null;
-            }
-        };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST_FLUIDSTACKS = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
-            @Override
-            public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankFluidStacks(
+        public static final IAspectValuePropagator<IFluidTankProperties, FluidStack>
+                PROP_GET_FLUIDSTACK = (tankInfo) -> tankInfo != null ? tankInfo.getContents() : null;
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>
+                PROP_GET_LIST_FLUIDSTACKS = (input) -> ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankFluidStacks(
                         input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
                 ));
-            }
-        };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST_CAPACITIES = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
-            @Override
-            public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankCapacities(
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>
+                PROP_GET_LIST_CAPACITIES = (input) -> ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankCapacities(
                         input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
                 ));
-            }
-        };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IFluidTankProperties[]>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "fluid");
@@ -329,31 +262,21 @@ public class AspectReadBuilders {
             PROPERTIES.setValue(PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         }
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler>() {
-            @Override
-            public IItemHandler getOutput(Pair<PartTarget, IAspectProperties> input) {
-                PartPos target = input.getLeft().getTarget();
-                return TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-            }
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = (input) -> {
+            PartPos target = input.getLeft().getTarget();
+            return TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack>() {
-            @Override
-            public ItemStack getOutput(Pair<PartTarget, IAspectProperties> input) {
-                PartPos target = input.getLeft().getTarget();
-                IItemHandler itemHandler = TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-                int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
-                if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
-                    return itemHandler.getStackInSlot(slotId);
-                }
-                return ItemStack.EMPTY;
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = (input) -> {
+            PartPos target = input.getLeft().getTarget();
+            IItemHandler itemHandler = TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
+            if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
+                return itemHandler.getStackInSlot(slotId);
             }
+            return ItemStack.EMPTY;
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList> PROP_GET_LIST = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>() {
-            @Override
-            public ValueTypeList.ValueList getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedInventory(input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()));
-            }
-        };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>
+                PROP_GET_LIST = (input) -> ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedInventory(input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()));
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IItemHandler>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "inventory");
@@ -368,19 +291,13 @@ public class AspectReadBuilders {
 
     public static final class Machine {
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IWorker> PROP_GET_WORKER = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IWorker>() {
-            @Override
-            public IWorker getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.WORKER);
-            }
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IWorker> PROP_GET_WORKER = (input) -> {
+            DimPos dimPos = input.getLeft().getTarget().getPos();
+            return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.WORKER);
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ITemperature> PROP_GET_TEMPERATURE = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ITemperature>() {
-            @Override
-            public ITemperature getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.TEMPERATURE);
-            }
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ITemperature> PROP_GET_TEMPERATURE = (input) -> {
+            DimPos dimPos = input.getLeft().getTarget().getPos();
+            return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.TEMPERATURE);
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IWorker>
@@ -394,12 +311,9 @@ public class AspectReadBuilders {
 
     public static final class Network {
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork> PROP_GET_NETWORK = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork>() {
-            @Override
-            public INetwork getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                return NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
-            }
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork> PROP_GET_NETWORK = (input) -> {
+            DimPos dimPos = input.getLeft().getTarget().getPos();
+            return NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, INetwork>
@@ -424,33 +338,24 @@ public class AspectReadBuilders {
             PROPERTIES_CLOCK.setValue(PROPERTY_LENGTH, ValueTypeInteger.ValueInteger.of(1));
         }
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
-            @Override
-            public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                int power = dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
-                if (power == 0) {
-                    IBlockState targetBlockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
-                    power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.getValue(BlockRedstoneWire.POWER) : 0;
-                }
-                return power;
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = (input) -> {
+            DimPos dimPos = input.getLeft().getTarget().getPos();
+            int power = dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
+            if (power == 0) {
+                IBlockState targetBlockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+                power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.getValue(BlockRedstoneWire.POWER) : 0;
             }
+            return power;
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer>() {
-            @Override
-            public Integer getOutput(Pair<PartTarget, IAspectProperties> input) {
-                DimPos dimPos = input.getLeft().getTarget().getPos();
-                IBlockState blockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
-                return blockState.getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
-            }
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = (input) -> {
+            DimPos dimPos = input.getLeft().getTarget().getPos();
+            IBlockState blockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+            return blockState.getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean>() {
-            @Override
-            public Boolean getOutput(Pair<PartTarget, IAspectProperties> input) {
-                int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());
-                int length = Math.max(1, input.getRight().getValue(PROPERTY_LENGTH).getRawValue());
-                return input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() % interval < length;
-            }
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = (input) -> {
+            int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());
+            int length = Math.max(1, input.getRight().getValue(PROPERTY_LENGTH).getRawValue());
+            return input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() % interval < length;
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
@@ -467,44 +372,29 @@ public class AspectReadBuilders {
 
     public static final class World {
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos> PROP_GET = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>() {
-            @Override
-            public DimPos getOutput(Pair<PartTarget, IAspectProperties> input) {
-                return input.getLeft().getTarget().getPos();
-            }
-        };
-        public static final IAspectValuePropagator<DimPos, net.minecraft.world.World> PROP_GET_WORLD = new IAspectValuePropagator<DimPos, net.minecraft.world.World>() {
-            @Override
-            public net.minecraft.world.World getOutput(DimPos input) {
-                return input.getWorld();
-            }
-        };
-        public static final IAspectValuePropagator<DimPos, BlockPos> PROP_GET_POS = new IAspectValuePropagator<DimPos, BlockPos>() {
-            @Override
-            public BlockPos getOutput(DimPos input) {
-                return input.getBlockPos();
-            }
-        };
-        private static final com.google.common.base.Predicate<net.minecraft.entity.Entity> ENTITY_SELECTOR_ITEMFRAME = new com.google.common.base.Predicate<net.minecraft.entity.Entity>() {
-            @Override
-            public boolean apply(@Nullable net.minecraft.entity.Entity entity) {
-                return entity instanceof EntityItemFrame;
-            }
-        };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame> PROP_GET_ITEMFRAME = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame>() {
-            @Override
-            public EntityItemFrame getOutput(Pair<PartTarget, IAspectProperties> pair) {
-                DimPos dimPos = pair.getLeft().getTarget().getPos();
-                EnumFacing facing = pair.getLeft().getTarget().getSide();
-                List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
-                        new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
-                for(net.minecraft.entity.Entity entity : entities) {
-                    if(EnumFacing.fromAngle(((EntityItemFrame) entity).rotationYaw) == facing.getOpposite()) {
-                        return ((EntityItemFrame) entity);
-                    }
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, DimPos>
+                PROP_GET = (input) -> input.getLeft().getTarget().getPos();
+
+        public static final IAspectValuePropagator<DimPos, net.minecraft.world.World>
+                PROP_GET_WORLD = (input) -> input.getWorld();
+
+        public static final IAspectValuePropagator<DimPos, BlockPos>
+                PROP_GET_POS = (input) -> input.getBlockPos();
+
+        private static final com.google.common.base.Predicate<net.minecraft.entity.Entity>
+                ENTITY_SELECTOR_ITEMFRAME = (entity) -> entity instanceof EntityItemFrame;
+
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame> PROP_GET_ITEMFRAME = (pair) -> {
+            DimPos dimPos = pair.getLeft().getTarget().getPos();
+            EnumFacing facing = pair.getLeft().getTarget().getSide();
+            List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
+            for(net.minecraft.entity.Entity entity : entities) {
+                if(EnumFacing.fromAngle(((EntityItemFrame) entity).rotationYaw) == facing.getOpposite()) {
+                    return ((EntityItemFrame) entity);
                 }
-                return null;
             }
+            return null;
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, DimPos>
