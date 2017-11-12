@@ -20,7 +20,14 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeEntity;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeDouble;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -944,6 +951,32 @@ public class TestEntityOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeNbt() throws EvaluationException {
         Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- TYPE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testEntityType() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{eZombie});
+        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
+        TestHelpers.assertNonEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Zombie", "entitytype(zombie) = Zombie");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeTypeLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{eZombie, eZombie});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeTypeSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeType() throws EvaluationException {
+        Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }
