@@ -302,7 +302,7 @@ public final class Operators {
                         if(i == 0) {
                             temporarySecondInputType = inputType;
                         } else if(i == 1) {
-                            if(temporarySecondInputType != inputType) {
+                            if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
                                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
                                         operator.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
                                         Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getUnlocalizedName()));
