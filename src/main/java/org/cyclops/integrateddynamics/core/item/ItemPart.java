@@ -91,7 +91,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
                 itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
-                if (itemBlockCable.onItemUse(playerIn, world, target, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+                if (itemBlockCable.onItemUse(playerIn, world, target, hand, side.getOpposite(), hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
                     IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
                     if (partContainer != null) {
                         ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target);
