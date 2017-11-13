@@ -5,7 +5,11 @@ import com.google.common.collect.Sets;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.*;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -154,6 +158,21 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> {
                 castValue(type, a.getValue()),
                 castValue(type, b.getValue())
         );
+    }
+
+    public ValueTypeInteger.ValueInteger round(IVariable a) throws EvaluationException {
+        IValueTypeNumber type = getType(a);
+        return type.round(castValue(type, a.getValue()));
+    }
+
+    public ValueTypeInteger.ValueInteger ceil(IVariable a) throws EvaluationException {
+        IValueTypeNumber type = getType(a);
+        return type.ceil(castValue(type, a.getValue()));
+    }
+
+    public ValueTypeInteger.ValueInteger floor(IVariable a) throws EvaluationException {
+        IValueTypeNumber type = getType(a);
+        return type.floor(castValue(type, a.getValue()));
     }
 
 }

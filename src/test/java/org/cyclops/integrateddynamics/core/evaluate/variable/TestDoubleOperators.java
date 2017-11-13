@@ -27,6 +27,8 @@ public class TestDoubleOperators {
     private DummyVariableDouble d0P1;
     private DummyVariableDouble d0P9;
 
+    private DummyVariableInteger i10;
+
     @Before
     public void before() {
         d0   = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0  ));
@@ -34,6 +36,8 @@ public class TestDoubleOperators {
         d0P5 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.5));
         d0P1 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.1));
         d0P9 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.9));
+
+        i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
     }
 
     /**
@@ -57,6 +61,9 @@ public class TestDoubleOperators {
 
         IValue res6 = Operators.DOUBLE_ROUND.evaluate(new IVariable[]{d0P9});
         assertThat("||0.9|| = 1", ((ValueTypeInteger.ValueInteger) res6).getRawValue(), is(1));
+
+        IValue res7 = Operators.DOUBLE_ROUND.evaluate(new IVariable[]{i10});
+        assertThat("||10|| = 10", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(10));
     }
 
     @Test(expected = EvaluationException.class)
@@ -95,6 +102,9 @@ public class TestDoubleOperators {
 
         IValue res6 = Operators.DOUBLE_CEIL.evaluate(new IVariable[]{d0P9});
         assertThat("⌈0.9⌉ = 1", ((ValueTypeInteger.ValueInteger) res6).getRawValue(), is(1));
+
+        IValue res7 = Operators.DOUBLE_CEIL.evaluate(new IVariable[]{i10});
+        assertThat("⌈10⌉ = 10", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(10));
     }
 
     @Test(expected = EvaluationException.class)
@@ -133,6 +143,9 @@ public class TestDoubleOperators {
 
         IValue res6 = Operators.DOUBLE_FLOOR.evaluate(new IVariable[]{d0P9});
         assertThat("⌊0.9⌋ = 0", ((ValueTypeInteger.ValueInteger) res6).getRawValue(), is(0));
+
+        IValue res7 = Operators.DOUBLE_FLOOR.evaluate(new IVariable[]{i10});
+        assertThat("⌊10⌋ = 10", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(10));
     }
 
     @Test(expected = EvaluationException.class)

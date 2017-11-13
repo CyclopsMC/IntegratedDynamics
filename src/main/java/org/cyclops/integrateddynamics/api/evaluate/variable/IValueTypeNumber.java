@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+
 /**
  * A numerical value type.
  * To allow for a good functioning, this requires all types to have mappings to each other in the {@link IValueCastRegistry}.
@@ -17,5 +19,8 @@ public interface IValueTypeNumber<V extends IValue> extends IValueType<V>, IValu
     public V min(V a, V b);
     public boolean greaterThan(V a, V b);
     public boolean lessThan(V a, V b);
+    public ValueTypeInteger.ValueInteger round(V a);
+    public ValueTypeInteger.ValueInteger ceil(V a);
+    public ValueTypeInteger.ValueInteger floor(V a);
 
 }

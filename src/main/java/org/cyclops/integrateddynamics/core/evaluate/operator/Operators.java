@@ -527,39 +527,41 @@ public final class Operators {
      * ----------------------------------- DOUBLE OPERATORS -----------------------------------
      */
 
+    // TODO: Move these double operators to number operators (and rename unique id) in the next breaking update (MC 1.13)
+
     /**
      * Double round operator with one input double and one output integers.
      */
-    public static final IOperator DOUBLE_ROUND = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("|| ||").operatorName("round")
+    public static final IOperator DOUBLE_ROUND = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("|| ||").operatorName("round")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
-                    return ValueTypeInteger.ValueInteger.of((int) Math.round(a.getRawValue()));
+                    return ValueTypes.CATEGORY_NUMBER.round(variables.getVariables()[0]);
                 }
             }).build());
 
     /**
      * Double ceil operator with one input double and one output integers.
      */
-    public static final IOperator DOUBLE_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
+    public static final IOperator DOUBLE_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
-                    return ValueTypeInteger.ValueInteger.of((int) Math.ceil(a.getRawValue()));
+                    return ValueTypes.CATEGORY_NUMBER.ceil(variables.getVariables()[0]);
                 }
             }).build());
 
     /**
      * Double floor operator with one input double and one output integers.
      */
-    public static final IOperator DOUBLE_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
+    public static final IOperator DOUBLE_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeDouble.ValueDouble a = variables.getValue(0);
-                    return ValueTypeInteger.ValueInteger.of((int) Math.floor(a.getRawValue()));
+                    return ValueTypes.CATEGORY_NUMBER.floor(variables.getVariables()[0]);
                 }
             }).build());
 

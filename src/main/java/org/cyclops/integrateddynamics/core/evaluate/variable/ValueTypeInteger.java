@@ -87,6 +87,21 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
+    public ValueInteger round(ValueInteger a) {
+        return a;
+    }
+
+    @Override
+    public ValueInteger ceil(ValueInteger a) {
+        return a;
+    }
+
+    @Override
+    public ValueInteger floor(ValueInteger a) {
+        return a;
+    }
+
+    @Override
     public String getName(ValueInteger a) {
         return toCompactString(a);
     }

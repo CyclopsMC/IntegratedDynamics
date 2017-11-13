@@ -86,6 +86,21 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
+    public ValueTypeInteger.ValueInteger round(ValueDouble a) {
+        return ValueTypeInteger.ValueInteger.of((int) Math.round(a.getRawValue()));
+    }
+
+    @Override
+    public ValueTypeInteger.ValueInteger ceil(ValueDouble a) {
+        return ValueTypeInteger.ValueInteger.of((int) Math.ceil(a.getRawValue()));
+    }
+
+    @Override
+    public ValueTypeInteger.ValueInteger floor(ValueDouble a) {
+        return ValueTypeInteger.ValueInteger.of((int) Math.floor(a.getRawValue()));
+    }
+
+    @Override
     public String getName(ValueDouble a) {
         return toCompactString(a);
     }
