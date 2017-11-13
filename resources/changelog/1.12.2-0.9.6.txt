@@ -1,0 +1,16 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.22 or higher.
+
+Additions:
+* Add operator to get the type of an entity, Closes #358
+  This adds a way to get the old entity information that was possible before ee0c2712f508dbfa9a802aaeb6533a894b038bf5.
+
+Changes:
+* Make the input of round, floor and ceil numbers, Closes #341
+* Make equals input type checks less strict, Closes #365
+* Improve compact names of entity values, #358
+  Before this, player names were always null and entity item names were not pretty.
+* Simplify the redstone clock so that duty cycles > 50% work
+
+Fixes:
+* Fix parts being able to transform into cables when placed, Closes #354
