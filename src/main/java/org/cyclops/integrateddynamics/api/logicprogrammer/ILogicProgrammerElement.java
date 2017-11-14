@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.logicprogrammer;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -108,6 +109,16 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @return If it can be inserted.
      */
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack);
+
+    /**
+     * Called when a player clicks on a slot.
+     * @param slot The slot id.
+     * @param mouseButton The mouse buttong id.
+     * @param clickType The click type.
+     * @param player The clicking player.
+     * @return If further processing of the clicking should stop.
+     */
+    boolean slotClick(Slot slot, int mouseButton, ClickType clickType, EntityPlayer player);
 
     /**
      * @return The max stacksize.

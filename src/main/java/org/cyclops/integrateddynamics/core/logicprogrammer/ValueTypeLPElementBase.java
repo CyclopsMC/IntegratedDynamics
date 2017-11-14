@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Getter;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -135,6 +137,11 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     @Override
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
         return itemStack.getItem() == ItemVariable.getInstance();
+    }
+
+    @Override
+    public boolean slotClick(Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
+        return false;
     }
 
     @Override
