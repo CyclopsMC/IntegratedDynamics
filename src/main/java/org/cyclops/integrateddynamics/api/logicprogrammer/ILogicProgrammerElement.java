@@ -3,9 +3,12 @@ package org.cyclops.integrateddynamics.api.logicprogrammer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -43,6 +46,27 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @return If it matches
      */
     public boolean matchesOutput(IValueType<?> valueType);
+
+    /**
+     * Create a temporary input slot for this element.
+     * The number of slots depends on the provided render pattern
+     * return by {@link #getRenderPattern()}.
+     * @param temporaryInputSlots The inventory behind this slot.
+     * @param slotId The slot id.
+     * @param x The X position for this slot.
+     * @param y The Y position for this slot.
+     * @return The created slot.
+     */
+    default Slot createSlot(IInventory temporaryInputSlots, int slotId, int x, int y) {
+        SlotExtended slot = new SlotExtended(temporaryInputSlots, slotId, x, y) {
+            @Override
+            public boolean isItemValid(ItemStack itemStack) {
+                return isItemValidForSlot(slotId, itemStack);
+            }
+        };
+        slot.setPhantom(true);
+        return slot;
+    }
 
     /**
      * Called when an input item slot has been updated.
@@ -104,5 +128,4 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      */
     @SideOnly(Side.CLIENT)
     public void setFocused(S subGui, boolean focused);
-
 }
