@@ -39,6 +39,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeLightLevelRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.recipe.IIngredientsSerializerRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.recipe.IRecipeComponentHandlerRegistry;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementTypeRegistry;
@@ -70,7 +71,12 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyF
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+<<<<<<< HEAD
 import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentCapabilities;
+=======
+import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsSerializerRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsSerializers;
+>>>>>>> Add registry for ingredients serializations
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
@@ -184,6 +190,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getRegistryManager().addRegistry(ISuperRecipeRegistry.class, new SuperRecipeRegistry(this));
 
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
+        getRegistryManager().addRegistry(IIngredientsSerializerRegistry.class, IngredientsSerializerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IValueCastRegistry.class, ValueCastRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeListProxyFactoryTypeRegistry.class, ValueTypeListProxyFactoryTypeRegistry.getInstance());
@@ -205,6 +212,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
         addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
 
+        IngredientsSerializers.load();
         ValueTypes.load();
         IngredientComponentCapabilities.load();
         RecipeComponentHandlers.load();

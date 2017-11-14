@@ -59,9 +59,8 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
             ValueObjectTypeIngredients.ValueIngredients output = ValueTypes.OBJECT_INGREDIENTS
                     .deserialize(tag.getString("output"));
             return ValueRecipe.of(new Recipe(input, output));
-        } catch (NBTException | RuntimeException e) {
-            e.printStackTrace();
-            throw new RuntimeException(String.format("Something went wrong while deserializing '%s'.", value));
+        } catch (NBTException e) {
+            return ValueRecipe.of(null);
         }
     }
 

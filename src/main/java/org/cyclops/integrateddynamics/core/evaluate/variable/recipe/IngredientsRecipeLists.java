@@ -47,7 +47,7 @@ public class IngredientsRecipeLists implements IIngredients {
 
     @Override
     public <V extends IValue, T, R> List<V> getList(RecipeComponent<T, R> component, int index) {
-        List<V> list = (List<V>) lists.get(component).get(index);
+        List<V> list = (List<V>) getRaw(component).get(index);
         if (list == null) {
             return Collections.emptyList();
         }
@@ -56,7 +56,7 @@ public class IngredientsRecipeLists implements IIngredients {
 
     @Override
     public <V extends IValue, T, R> Predicate<V> getPredicate(RecipeComponent<T, R> component, int index) {
-        return lists.get(component)::contains;
+        return getRaw(component).get(index)::contains;
     }
 
     @Override
@@ -66,5 +66,9 @@ public class IngredientsRecipeLists implements IIngredients {
             return Collections.emptyList();
         }
         return list;
+    }
+
+    public Map<RecipeComponent<?, ?>, List<List<? extends IValue>>> getRaw() {
+        return lists;
     }
 }
