@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IIngredients
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * A value type world renderer for blocks.
@@ -43,7 +44,8 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
             // For ingredients with multiple possibilities, vary them based on the current tick
             int tick = ((int) Minecraft.getMinecraft().world.getWorldTime()) / 30;
             ingredients.getComponents().forEach(
-                    component -> ingredients.getRaw(component).forEach(
+                    component -> IntStream.range(0, ingredients.getIngredients(component))
+                            .mapToObj(i -> ingredients.getList(component, i)).forEach(
                             element -> values.add(prepareElementForTick(element, tick))));
 
             // Render ingredients in a square matrix

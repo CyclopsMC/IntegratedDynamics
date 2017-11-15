@@ -23,7 +23,7 @@ public final class IngredientsSerializers {
     }
 
     public static void load() {
-
+        REGISTRY.registerSerializer(new IngredientsRecipeItemMatch.Serializer());
     }
 
 }

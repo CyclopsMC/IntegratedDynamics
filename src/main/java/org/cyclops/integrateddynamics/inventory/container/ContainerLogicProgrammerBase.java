@@ -296,7 +296,8 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public ItemStack slotClick(int slotId, int mouseButton, ClickType clickType, EntityPlayer player) {
         // Handle cases where the client may have more (phantom) slots than the server.
         if (slotId >= this.inventorySlots.size() || (this.activeElement != null
-                && activeElement.slotClick(this.getSlot(slotId), mouseButton, clickType, player))) {
+                && this.inventorySlots.size() > slotId && slotId >= 0
+                && this.activeElement.slotClick(slotId, this.getSlot(slotId), mouseButton, clickType, player))) {
             return ItemStack.EMPTY;
         }
         return super.slotClick(slotId, mouseButton, clickType, player);

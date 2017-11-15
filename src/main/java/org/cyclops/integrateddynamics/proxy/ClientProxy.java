@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.model.VariableLoader;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeItemMatch;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.lwjgl.input.Keyboard;
 
@@ -62,5 +63,8 @@ public class ClientProxy extends ClientProxyComponent {
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         event.getMap().registerSprite(SlotVariable.VARIABLE_EMPTY);
+        for (IngredientsRecipeItemMatch.ItemMatchType itemMatchType : IngredientsRecipeItemMatch.ItemMatchType.values()) {
+            event.getMap().registerSprite(itemMatchType.getSlotSpriteName());
+        }
     }
 }

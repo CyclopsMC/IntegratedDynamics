@@ -140,7 +140,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public boolean slotClick(Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
         return false;
     }
 

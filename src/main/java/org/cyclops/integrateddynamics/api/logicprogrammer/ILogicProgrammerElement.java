@@ -59,10 +59,14 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @return The created slot.
      */
     default Slot createSlot(IInventory temporaryInputSlots, int slotId, int x, int y) {
+        return createSlotDefault(this, temporaryInputSlots, slotId, x, y);
+    }
+
+    public static Slot createSlotDefault(ILogicProgrammerElement logicProgrammerElement, IInventory temporaryInputSlots, int slotId, int x, int y) {
         SlotExtended slot = new SlotExtended(temporaryInputSlots, slotId, x, y) {
             @Override
             public boolean isItemValid(ItemStack itemStack) {
-                return isItemValidForSlot(slotId, itemStack);
+                return logicProgrammerElement.isItemValidForSlot(slotId, itemStack);
             }
         };
         slot.setPhantom(true);
@@ -112,13 +116,14 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
 
     /**
      * Called when a player clicks on a slot.
-     * @param slot The slot id.
+     * @param slotId The slot id.
+     * @param slot The slot.
      * @param mouseButton The mouse buttong id.
      * @param clickType The click type.
      * @param player The clicking player.
      * @return If further processing of the clicking should stop.
      */
-    boolean slotClick(Slot slot, int mouseButton, ClickType clickType, EntityPlayer player);
+    boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player);
 
     /**
      * @return The max stacksize.

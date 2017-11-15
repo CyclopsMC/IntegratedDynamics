@@ -240,6 +240,18 @@ valuetype.valuetypes.integrateddynamics.fluidstack.name=Fluid
 valuetype.valuetypes.integrateddynamics.ingredients.name=Ingredients
 valuetype.valuetypes.integrateddynamics.recipe.name=Recipe
 
+valuetype.valuetypes.integrateddynamics.ingredients.info=Shift click to change.
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemmeta=Item Meta
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemmeta.desc=§cMatch by §nitem type§r§c and §nmeta value§r.
+valuetype.valuetypes.integrateddynamics.ingredients.match.item=Item
+valuetype.valuetypes.integrateddynamics.ingredients.match.item.desc=§cMatch by §nitem type§r§c.
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemmetanbt=Item Meta NBT
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemmetanbt.desc=§cMatch by §nitem type§r§c, §nmeta value§r§c and §nNBT§r§c.
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemnbt=Item NBT
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemnbt.desc=§cMatch by §nitem type§r§c and §nNBT§r§c.
+valuetype.valuetypes.integrateddynamics.ingredients.match.oredict=Oredictionary
+valuetype.valuetypes.integrateddynamics.ingredients.match.oredict.desc=§cMatch by equivalent §nOredictionary§r§c entries.
+
 # Part types
 parttype.parttypes.integrateddynamics.error.low_energy=Not enough energy
 parttype.parttypes.integrateddynamics.tooltip.disabled=Out of Energy
