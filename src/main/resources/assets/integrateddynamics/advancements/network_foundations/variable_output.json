@@ -16,6 +16,8 @@
     "recipes": [
       "integrateddynamics:part_audio_writer_item",
       "integrateddynamics:part_effect_writer_item",
+      "integrateddynamics:part_entity_writer_item",
+      "integrateddynamics:part_machine_writer_item",
       "integrateddynamics:part_inventory_writer_item",
       "integrateddynamics:part_redstone_writer_item",
       "integrateddynamics:part_static_light_panel_item",
