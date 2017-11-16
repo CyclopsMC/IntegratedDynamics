@@ -765,6 +765,58 @@
 			<grid>
 				<gridrow>
 					<item />
+					<item>minecraft:porkchop</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:porkchop</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
+					<item>minecraft:porkchop</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:porkchop</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_entity_writer_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variable_transformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:furnace</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:iron_ingot</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
+					<item>minecraft:iron_ingot</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:crafting_table</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_machine_writer_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variable_transformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
 					<item>minecraft:chest</item>
 					<item />
 				</gridrow>

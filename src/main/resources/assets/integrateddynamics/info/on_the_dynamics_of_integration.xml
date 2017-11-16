@@ -428,6 +428,18 @@
                     <appendix type="crafting_recipe">integrateddynamics:part_effect_writer_item</appendix>
                     <appendix_list factory="integrateddynamics:part_aspects">effect_writer</appendix_list>
                 </section>
+                <section name="info_book.integrateddynamics.manual.parts.writer.entity">
+                    <tag>part_entity_writer_item</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.writer.entity.text1</paragraph>
+                    <appendix type="crafting_recipe">integrateddynamics:part_entity_writer_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">entity_writer</appendix_list>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.writer.machine">
+                    <tag>part_machine_writer_item</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.writer.machine.text1</paragraph>
+                    <appendix type="crafting_recipe">integrateddynamics:part_machine_writer_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">machine_writer</appendix_list>
+                </section>
                 <section name="info_book.integrateddynamics.manual.parts.writer.inventory">
                     <tag>part_inventory_writer_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.writer.inventory.text1</paragraph>
