@@ -327,13 +327,17 @@ public class AspectReadBuilders {
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.interval.name", VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_LENGTH =
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.length.name", VALIDATOR_INTEGER_POSITIVE);
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_OFFSET =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.offset.name", VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectProperties PROPERTIES_CLOCK = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_INTERVAL,
-                PROPERTY_LENGTH
+                PROPERTY_LENGTH,
+                PROPERTY_OFFSET
         ));
         static {
             PROPERTIES_CLOCK.setValue(PROPERTY_INTERVAL, ValueTypeInteger.ValueInteger.of(20));
             PROPERTIES_CLOCK.setValue(PROPERTY_LENGTH, ValueTypeInteger.ValueInteger.of(1));
+            PROPERTIES_CLOCK.setValue(PROPERTY_OFFSET, ValueTypeInteger.ValueInteger.of(0));
         }
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = input -> {
@@ -353,7 +357,8 @@ public class AspectReadBuilders {
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = input -> {
             int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());
             int length = Math.max(1, input.getRight().getValue(PROPERTY_LENGTH).getRawValue());
-            return input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() % interval < length;
+            int offset = input.getRight().getValue(PROPERTY_OFFSET).getRawValue();
+            return (input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() - offset) % interval < length;
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
