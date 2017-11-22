@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.IAnimals;
@@ -1458,6 +1459,15 @@ public final class Operators {
             .output(ValueTypes.BOOLEAN).symbolOperator("isplayer")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity instanceof EntityPlayer
+            )).build());
+
+    /**
+     * If the entity is a minecart
+     */
+    public static final IOperator OBJECT_ENTITY_ISMINECART = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("isminecart")
+            .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
+                entity -> entity instanceof EntityMinecart
             )).build());
 
     /**
