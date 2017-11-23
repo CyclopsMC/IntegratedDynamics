@@ -21,3 +21,8 @@ Run `/sampler export [your file name]` to export this profiling result to an `.n
 
 Download Sampler for Minecraft 1.12: http://files.player.to/sampler-1.73.jar
 
+### Pull Request
+
+Pull requests are more than welcome! Before submitting one, make sure to discuss your plans with the maintainers via an issue.
+When you submit PRs, you have to sign the [Cyclops Contributor License Agreement](https://cla-assistant.io/CyclopsMC/CyclopsCore),
+which makes sure that you give us the appropriate permissions to use your submission, and that your submission is not owned by someone else.
