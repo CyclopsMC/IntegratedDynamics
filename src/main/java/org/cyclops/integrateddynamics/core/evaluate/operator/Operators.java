@@ -1937,13 +1937,9 @@ public final class Operators {
                     ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                     String modName = "";
                     if(a.getRawValue().isPresent()) {
-                        try {
-                            Entity entity = a.getRawValue().get();
-                            EntityRegistry.EntityRegistration entityRegistration = EntityRegistry.instance().lookupModSpawn(entity.getClass(), true);
-                            modName = entityRegistration.getContainer().getName();
-                        } catch (NullPointerException e) {
-                            modName = "Minecraft";
-                        }
+                        Entity entity = a.getRawValue().get();
+                        EntityRegistry.EntityRegistration entityRegistration = EntityRegistry.instance().lookupModSpawn(entity.getClass(), true);
+                        modName = entityRegistration != null ? entityRegistration.getContainer().getName() : "Minecraft";
                     }
                     return ValueTypeString.ValueString.of(modName);
                 }
@@ -2429,21 +2425,17 @@ public final class Operators {
                     ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0);
                     String modName = "";
                     if (a.getRawValue().isPresent()) {
-                        try {
-                            Fluid fluid = a.getRawValue().get().getFluid();
-                            String modDomain = null;
-                            if (fluid.getStill() != null) {
-                                modDomain = fluid.getStill().getResourceDomain();
-                            } else if (fluid.getFlowing() != null) {
-                                modDomain = fluid.getFlowing().getResourceDomain();
-                            } else if (fluid.getBlock() != null) {
-                                modDomain = Block.REGISTRY.getNameForObject(fluid.getBlock()).getResourceDomain();
-                            }
-                            String modId = org.cyclops.cyclopscore.helper.Helpers.getModId(modDomain);
-                            modName = Loader.instance().getIndexedModList().get(modId).getName();
-                        } catch (NullPointerException e) {
-                            modName = "Minecraft";
+                        Fluid fluid = a.getRawValue().get().getFluid();
+                        String modDomain = null;
+                        if (fluid.getStill() != null) {
+                            modDomain = fluid.getStill().getResourceDomain();
+                        } else if (fluid.getFlowing() != null) {
+                            modDomain = fluid.getFlowing().getResourceDomain();
+                        } else if (fluid.getBlock() != null) {
+                            modDomain = Block.REGISTRY.getNameForObject(fluid.getBlock()).getResourceDomain();
                         }
+                        String modId = org.cyclops.cyclopscore.helper.Helpers.getModId(modDomain);
+                        modName = Loader.instance().getIndexedModList().get(modId).getName();
                     }
                     return ValueTypeString.ValueString.of(modName);
                 }
