@@ -25,7 +25,6 @@ import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -39,7 +38,6 @@ import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropaga
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTypeInstance;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -77,31 +75,31 @@ public class AspectReadBuilders {
 
     // --------------- Value type propagators ---------------
     public static final IAspectValuePropagator<Boolean, ValueTypeBoolean.ValueBoolean>
-        PROP_GET_BOOLEAN = (input) -> ValueTypeBoolean.ValueBoolean.of(input);
+        PROP_GET_BOOLEAN = ValueTypeBoolean.ValueBoolean::of;
 
     public static final IAspectValuePropagator<Integer, ValueTypeInteger.ValueInteger>
-        PROP_GET_INTEGER = (input) -> ValueTypeInteger.ValueInteger.of(input);
+        PROP_GET_INTEGER = ValueTypeInteger.ValueInteger::of;
 
     public static final IAspectValuePropagator<Double, ValueTypeDouble.ValueDouble>
-        PROP_GET_DOUBLE = (input) -> ValueTypeDouble.ValueDouble.of(input);
+        PROP_GET_DOUBLE = ValueTypeDouble.ValueDouble::of;
 
     public static final IAspectValuePropagator<Long, ValueTypeLong.ValueLong>
-        PROP_GET_LONG = (input) -> ValueTypeLong.ValueLong.of(input);
+        PROP_GET_LONG = ValueTypeLong.ValueLong::of;
 
     public static final IAspectValuePropagator<ItemStack, ValueObjectTypeItemStack.ValueItemStack>
-        PROP_GET_ITEMSTACK = (input) -> ValueObjectTypeItemStack.ValueItemStack.of(input);
+        PROP_GET_ITEMSTACK = ValueObjectTypeItemStack.ValueItemStack::of;
 
     public static final IAspectValuePropagator<String, ValueTypeString.ValueString>
-        PROP_GET_STRING = (input) -> ValueTypeString.ValueString.of(input);
+        PROP_GET_STRING = ValueTypeString.ValueString::of;
 
     public static final IAspectValuePropagator<IBlockState, ValueObjectTypeBlock.ValueBlock>
-        PROP_GET_BLOCK = (input) -> ValueObjectTypeBlock.ValueBlock.of(input);
+        PROP_GET_BLOCK = ValueObjectTypeBlock.ValueBlock::of;
 
     public static final IAspectValuePropagator<FluidStack, ValueObjectTypeFluidStack.ValueFluidStack>
-        PROP_GET_FLUIDSTACK = (input) -> ValueObjectTypeFluidStack.ValueFluidStack.of(input);
+        PROP_GET_FLUIDSTACK = ValueObjectTypeFluidStack.ValueFluidStack::of;
 
     public static final IAspectValuePropagator<NBTTagCompound,ValueTypeNbt.ValueNbt>
-        PROP_GET_NBT = (input) -> ValueTypeNbt.ValueNbt.of(input);
+        PROP_GET_NBT = ValueTypeNbt.ValueNbt::of;
 
     // --------------- Value type validators ---------------
     public static final Predicate<ValueTypeInteger.ValueInteger>
@@ -376,10 +374,10 @@ public class AspectReadBuilders {
                 PROP_GET = (input) -> input.getLeft().getTarget().getPos();
 
         public static final IAspectValuePropagator<DimPos, net.minecraft.world.World>
-                PROP_GET_WORLD = (input) -> input.getWorld();
+                PROP_GET_WORLD = DimPos::getWorld;
 
         public static final IAspectValuePropagator<DimPos, BlockPos>
-                PROP_GET_POS = (input) -> input.getBlockPos();
+                PROP_GET_POS = DimPos::getBlockPos;
 
         private static final com.google.common.base.Predicate<net.minecraft.entity.Entity>
                 ENTITY_SELECTOR_ITEMFRAME = (entity) -> entity instanceof EntityItemFrame;
