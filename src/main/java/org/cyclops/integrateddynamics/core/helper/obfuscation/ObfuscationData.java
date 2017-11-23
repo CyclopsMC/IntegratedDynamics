@@ -23,6 +23,6 @@ public class ObfuscationData {
     /**
      * Field from {@link net.minecraft.util.SoundEvent}.
      */
-    public static final String[] SOUNDEVENT_SOUNDNAME = new String[] { "soundName", "field_149219_a" };
+    public static final String[] SOUNDEVENT_SOUNDNAME = new String[] { "soundName", "field_187506_b" };
 	
 }
