@@ -6,7 +6,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.client.gui.GuiHandler;
 import org.cyclops.cyclopscore.command.CommandMod;
@@ -57,7 +61,14 @@ import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueCastMappings;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueCastRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevelRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactories;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypeRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
@@ -67,6 +78,7 @@ import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandler;
+import org.cyclops.integrateddynamics.core.recipe.xml.MechanicalSqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
@@ -130,13 +142,17 @@ public class IntegratedDynamics extends ModBaseVersionable {
                 "dryingbasin_convenience.xml",
                 "squeezer.xml",
                 "squeezer_convenience.xml",
-                "squeezer_ores.xml"
+                "squeezer_ores.xml",
+                "mechanical_squeezer.xml",
+                "mechanical_squeezer_convenience.xml",
+                "mechanical_squeezer_ores.xml"
         ) {
             @Override
             protected void registerHandlers(Map<String, IRecipeTypeHandler> recipeTypeHandlers, Map<String, IRecipeConditionHandler> recipeConditionHandlers) {
                 super.registerHandlers(recipeTypeHandlers, recipeConditionHandlers);
                 recipeTypeHandlers.put("integrateddynamics:dryingbasin", new DryingBasinRecipeTypeHandler());
                 recipeTypeHandlers.put("integrateddynamics:squeezer", new SqueezerRecipeTypeHandler());
+                recipeTypeHandlers.put("integrateddynamics:mechanical_squeezer", new MechanicalSqueezerRecipeTypeHandler());
             }
         };
     }

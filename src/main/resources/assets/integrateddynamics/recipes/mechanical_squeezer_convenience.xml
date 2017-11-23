@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="1">minecraft:sponge</item>
+        </input>
+        <output>
+            <item>minecraft:sponge</item>
+            <fluid amount="50">water</fluid>
+        </output>
+        <properties>
+            <duration>15</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:snowball</item>
+        </input>
+        <output>
+            <fluid amount="250">water</fluid>
+        </output>
+        <properties>
+            <duration>10</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:ice</item>
+        </input>
+        <output>
+            <fluid amount="1000">water</fluid>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:snow</item>
+        </input>
+        <output>
+            <fluid amount="1000">water</fluid>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:blaze_powder</item>
+        </input>
+        <output>
+            <fluid amount="250">lava</fluid>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:cactus</item>
+        </input>
+        <output>
+            <fluid amount="500">water</fluid>
+            <item amount="2" chance="0.5" meta="13">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">minefactoryreloaded</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:brown_mushroom</item>
+        </input>
+        <output>
+            <fluid amount="250">mushroomsoup</fluid>
+        </output>
+        <properties>
+            <duration>25</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">minefactoryreloaded</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:red_mushroom</item>
+        </input>
+        <output>
+            <fluid amount="250">mushroomsoup</fluid>
+        </output>
+        <properties>
+            <duration>25</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">evilcraft</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>evilcraft:dark_ore</item>
+        </input>
+        <output>
+            <item amount="3">evilcraft:dark_gem</item>
+            <item chance="0.5">evilcraft:dark_gem_crushed</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">evilcraft</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>evilcraft:dark_gem</item>
+        </input>
+        <output>
+            <item>evilcraft:dark_gem_crushed</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">evilcraft</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>evilcraft:undead_log</item>
+        </input>
+        <output>
+            <fluid amount="100">evilcraftblood</fluid>
+        </output>
+        <properties>
+            <duration>25</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">evilcraft</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>evilcraft:undead_leaves</item>
+        </input>
+        <output>
+            <fluid amount="50">evilcraftblood</fluid>
+            <item>evilcraft:hardened_blood_shard</item>
+        </output>
+        <properties>
+            <duration>25</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="0">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="50">seed.oil</fluid>
+            <item chance="0.75">forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="1">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="180">seed.oil</fluid>
+            <item chance="0.75">forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="2">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="220">seed.oil</fluid>
+            <item chance="0.70">forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:wheat_seeds</item>
+        </input>
+        <output>
+            <fluid amount="10">seed.oil</fluid>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:pumpkin_seeds</item>
+        </input>
+        <output>
+            <fluid amount="10">seed.oil</fluid>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:melon_seeds</item>
+        </input>
+        <output>
+            <fluid amount="10">seed.oil</fluid>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:beetroot_seeds</item>
+        </input>
+        <output>
+            <fluid amount="10">seed.oil</fluid>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="3">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="400">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="4">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="100">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="5">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="50">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="6">forestry:fruits</item>
+        </input>
+        <output>
+            <fluid amount="600">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="0">forestry:honey_drop</item>
+        </input>
+        <output>
+            <fluid amount="180">for.honey</fluid>
+            <item chance="0.75">forestry:propolis</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:carrot</item>
+        </input>
+        <output>
+            <fluid amount="200">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="mod">forestry</condition>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:apple</item>
+        </input>
+        <output>
+            <fluid amount="200">juice</fluid>
+            <item>forestry:mulch</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+</recipes>

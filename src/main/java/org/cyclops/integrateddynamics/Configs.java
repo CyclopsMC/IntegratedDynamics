@@ -79,6 +79,7 @@ public class Configs {
         configHandler.add(new BlockCrystalizedChorusBrickConfig());
         configHandler.add(new BlockCrystalizedChorusBlockStairsConfig());
         configHandler.add(new BlockCrystalizedChorusBrickStairsConfig());
+        configHandler.add(new BlockMechanicalSqueezerConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());

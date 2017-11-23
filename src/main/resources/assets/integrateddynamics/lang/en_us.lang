@@ -4,6 +4,8 @@ general.integrateddynamics.description=Take full and automated control of your a
 general.integrateddynamics.info.none=None
 general.integrateddynamics.energy_unit.name=RF
 general.integrateddynamics.error.no_network=No valid network found
+general.integrateddynamics.true=True
+general.integrateddynamics.false=False
 
 # Gui
 gui.integrateddynamics.button.save=Save
@@ -24,6 +26,8 @@ gui.integrateddynamics.rewards.collected=Collected
 gui.integrateddynamics.rewards.collectFailure=Can't collect rewards, is your inventory full?
 gui.integrateddynamics.input=Input: %s
 gui.integrateddynamics.output=Output: %s
+gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject=Auto-eject Fluid: %s
+gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject.info=Push to adjacent tanks.
 
 # Diagnostics
 gui.integrateddynamics.diagnostics.title=Network Diagnostics
@@ -82,6 +86,8 @@ tile.blocks.integrateddynamics.crystalized_chorus_block.name=Block of Crystalize
 tile.blocks.integrateddynamics.crystalized_chorus_brick.name=Crystalized Chorus Brick
 tile.blocks.integrateddynamics.crystalized_chorus_block_stairs.name=Crystalized Chorus Stairs
 tile.blocks.integrateddynamics.crystalized_chorus_brick_stairs.name=Crystalized Chorus Brick Stairs
+tile.blocks.integrateddynamics.mechanical_squeezer.name=Mechanical Squeezer
+tile.blocks.integrateddynamics.mechanical_squeezer.info=Squeezes, flattens and crushes using energy.
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
