@@ -3092,7 +3092,7 @@ public final class Operators {
                         if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
                             L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
                                     L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    NBT_WITH_LIST_TAG.getLocalizedNameFull(),
+                                    NBT_WITH_LIST_BYTE.getLocalizedNameFull(),
                                     value.getType(), 1, ValueTypes.INTEGER);
                             throw new EvaluationException(error.localize());
                         }
@@ -3119,7 +3119,7 @@ public final class Operators {
                         if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
                             L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
                                     L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    NBT_WITH_LIST_TAG.getLocalizedNameFull(),
+                                    NBT_WITH_LIST_INT.getLocalizedNameFull(),
                                     value.getType(), 1, ValueTypes.INTEGER);
                             throw new EvaluationException(error.localize());
                         }
@@ -3146,7 +3146,7 @@ public final class Operators {
                         if (value.getRawValue().getValueType() != ValueTypes.LONG) {
                             L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
                                     L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    NBT_WITH_LIST_TAG.getLocalizedNameFull(),
+                                    NBT_WITH_LIST_LONG.getLocalizedNameFull(),
                                     value.getType(), 1, ValueTypes.LONG);
                             throw new EvaluationException(error.localize());
                         }
