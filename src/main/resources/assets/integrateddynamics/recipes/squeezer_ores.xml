@@ -108,41 +108,6 @@
     <recipe type="integrateddynamics:squeezer">
         <tag>ores</tag>
         <condition type="config">squeezer</condition>
-        <input>
-            <item>minecraft:reeds</item>
-        </input>
-        <output>
-            <item amount="2">minecraft:sugar</item>
-            <item chance="0.5">minecraft:sugar</item>
-        </output>
-    </recipe>
-
-    <recipe type="integrateddynamics:squeezer">
-        <tag>ores</tag>
-        <condition type="config">squeezer</condition>
-        <input>
-            <item>minecraft:bone</item>
-        </input>
-        <output>
-            <item meta="15" amount="6">minecraft:dye</item>
-        </output>
-    </recipe>
-
-    <recipe type="integrateddynamics:squeezer">
-        <tag>ores</tag>
-        <condition type="config">squeezer</condition>
-        <input>
-            <item>minecraft:blaze_rod</item>
-        </input>
-        <output>
-            <item amount="4">minecraft:blaze_powder</item>
-            <item chance="0.5">minecraft:blaze_powder</item>
-        </output>
-    </recipe>
-
-    <recipe type="integrateddynamics:squeezer">
-        <tag>ores</tag>
-        <condition type="config">squeezer</condition>
         <condition type="oredict">oreGold</condition>
         <condition type="oredict">dustGold</condition>
         <input>

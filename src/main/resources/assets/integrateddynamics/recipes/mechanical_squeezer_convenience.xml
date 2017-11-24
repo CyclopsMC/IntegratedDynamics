@@ -80,6 +80,7 @@
         </input>
         <output>
             <fluid amount="500">water</fluid>
+            <item amount="4" meta="2">minecraft:dye</item>
             <item amount="2" chance="0.5" meta="13">minecraft:dye</item>
         </output>
         <properties>
@@ -396,6 +397,323 @@
         </output>
         <properties>
             <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <condition type="oredict">dustCoal</condition>
+        <input>
+            <item meta="*">minecraft:coal</item>
+        </input>
+        <output>
+            <item type="oredict">dustCoal</item>
+        </output>
+        <properties>
+            <duration>10</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:brick_block</item>
+        </input>
+        <output>
+            <item amount="4">minecraft:brick</item>
+        </output>
+        <properties>
+            <duration>20</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item type="oredict">blockGlass</item>
+        </input>
+        <output>
+            <item>minecraft:sand</item>
+        </output>
+        <properties>
+            <duration>10</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item type="oredict">wool</item>
+        </input>
+        <output>
+            <item>minecraft:string</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="1" amount="4">minecraft:dye</item>
+            <item meta="1" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="8">minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="7" amount="4">minecraft:dye</item>
+            <item meta="7" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="7">minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="9" amount="4">minecraft:dye</item>
+            <item meta="9" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="6">minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="7" amount="4">minecraft:dye</item>
+            <item meta="7" amount="4" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="5">minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="14" amount="4">minecraft:dye</item>
+            <item meta="14" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="4">minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="1" amount="4">minecraft:dye</item>
+            <item meta="1" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="3">minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="7" amount="4">minecraft:dye</item>
+            <item meta="7" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="2">minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="13" amount="4">minecraft:dye</item>
+            <item meta="13" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="1">minecraft:red_flower</item>
+        </input>
+        <output>
+            <item meta="12" amount="4">minecraft:dye</item>
+            <item meta="12" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:yellow_flower</item>
+        </input>
+        <output>
+            <item meta="15" amount="4">minecraft:dye</item>
+            <item meta="15" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="0">minecraft:double_plant</item>
+        </input>
+        <output>
+            <item meta="11" amount="8">minecraft:dye</item>
+            <item meta="11" amount="2" chance="0.5">minecraft:dye</item>
+            <item meta="11" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="1">minecraft:double_plant</item>
+        </input>
+        <output>
+            <item meta="13" amount="8">minecraft:dye</item>
+            <item meta="13" amount="2" chance="0.5">minecraft:dye</item>
+            <item meta="13" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="4">minecraft:double_plant</item>
+        </input>
+        <output>
+            <item meta="1" amount="8">minecraft:dye</item>
+            <item meta="1" amount="2" chance="0.5">minecraft:dye</item>
+            <item meta="1" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item meta="5">minecraft:double_plant</item>
+        </input>
+        <output>
+            <item meta="9" amount="8">minecraft:dye</item>
+            <item meta="9" amount="2" chance="0.5">minecraft:dye</item>
+            <item meta="9" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>5</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>convenience</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:bone</item>
+        </input>
+        <output>
+            <item meta="15" amount="6">minecraft:dye</item>
+            <item meta="15" amount="2" chance="0.5">minecraft:dye</item>
+            <item meta="15" amount="2" chance="0.5">minecraft:dye</item>
+        </output>
+        <properties>
+            <duration>10</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>ores</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:reeds</item>
+        </input>
+        <output>
+            <item amount="4">minecraft:sugar</item>
+            <item chance="0.5">minecraft:sugar</item>
+        </output>
+        <properties>
+            <duration>40</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>ores</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:blaze_rod</item>
+        </input>
+        <output>
+            <item amount="6">minecraft:blaze_powder</item>
+            <item chance="0.5">minecraft:blaze_powder</item>
+        </output>
+        <properties>
+            <duration>40</duration>
         </properties>
     </recipe>
 
