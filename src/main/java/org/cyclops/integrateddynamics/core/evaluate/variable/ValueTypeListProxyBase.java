@@ -82,10 +82,13 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
 
     @Override
     public int hashCode() {
+        if(this.isInfinite()) return System.identityHashCode(this);
         int result = 1;
         result = 37 * result + getName().hashCode();
         result = 37 * result + getValueType().hashCode();
-        result = 37 * result + (!this.isInfinite() ? Arrays.hashCode(Iterables.toArray(this, Object.class)) : 0);
+        for(Object obj : this) {
+            result = 37 * result + (obj != null ? obj.hashCode() : 0);
+        }
         return result;
     }
 
