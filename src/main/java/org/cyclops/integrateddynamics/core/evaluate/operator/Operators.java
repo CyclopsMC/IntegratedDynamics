@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import lombok.Lombok;
 import net.minecraft.block.Block;
@@ -71,11 +72,12 @@ import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Collection of available operators.
@@ -745,19 +747,22 @@ public final class Operators {
             .function(variables -> {
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
                 final IOperator operator = OperatorBuilders.getSafePredictate((ValueTypeOperator.ValueOperator) variables.getValue(1));
-                Set<IValue> values = new TreeSet<>((o1, o2) -> {
-                    try {
-                        ValueTypeBoolean.ValueBoolean value = (ValueTypeBoolean.ValueBoolean) operator
-                                .evaluate(new Variable(o1), new Variable(o2));
-                        return value.getRawValue() ? 0 : o1.hashCode() - o2.hashCode();
-                    } catch (EvaluationException e) {
-                        throw Lombok.sneakyThrow(e);
+                List<IValue> values = new ArrayList<>();
+                outerLoop:
+                for(IValue value : list) {
+                    for(IValue existing : values) {
+                        ValueTypeBoolean.ValueBoolean result;
+                        try {
+                            result = (ValueTypeBoolean.ValueBoolean) operator
+                                    .evaluate(new Variable(value), new Variable(existing));
+                        } catch (EvaluationException e) {
+                            throw Lombok.sneakyThrow(e);
+                        }
+                        if(result.getRawValue()) continue outerLoop;
                     }
-                });
-                for (IValue value : list) {
                     values.add(value);
                 }
-                return ValueTypeList.ValueList.ofList(list.getValueType(), Lists.newArrayList(values));
+                return ValueTypeList.ValueList.ofList(list.getValueType(), values);
             }).build());
 
     /**
@@ -769,13 +774,7 @@ public final class Operators {
             .symbolOperator("uniq")
             .function(variables -> {
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = ((ValueTypeList.ValueList) variables.getValue(0)).getRawValue();
-                Set<IValue> values = new TreeSet<>(
-                    (o1, o2) -> o1.equals(o2) ? 0 : o1.hashCode() - o2.hashCode()
-                );
-                for (IValue value : list) {
-                    values.add(value);
-                }
-                return ValueTypeList.ValueList.ofList(list.getValueType(), Lists.newArrayList(values));
+                return ValueTypeList.ValueList.ofList(list.getValueType(), new ArrayList<>(Sets.newLinkedHashSet(list)));
             }).build());
 
     /**
