@@ -177,7 +177,12 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof ValueOperator && ((ValueOperator) o).value == this.value;
+            return o == this || (o instanceof ValueOperator && value.equals(((ValueOperator) o).value));
+        }
+
+        @Override
+        public int hashCode() {
+            return 37 + value.hashCode();
         }
     }
 
