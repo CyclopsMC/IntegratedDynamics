@@ -28,6 +28,8 @@ public class TestListOperators {
     private DummyVariableList lintegers_012;
     private DummyVariableList lempty;
     private DummyVariableList lintegers_dup;
+    private DummyVariableList lintegers_rev_dup;
+    private DummyVariableList llongs_hash_collision;
 
     private DummyVariableInteger im1;
     private DummyVariableInteger i0;
@@ -72,6 +74,14 @@ public class TestListOperators {
         lempty = new DummyVariableList(ValueTypeList.ValueList.ofAll());
         lintegers_dup = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(),
                 i3.getValue(), i1.getValue(), i2.getValue(), i3.getValue(), i2.getValue(), i3.getValue(), i3.getValue()));
+        lintegers_rev_dup = new DummyVariableList(ValueTypeList.ValueList.ofAll(i3.getValue(), i2.getValue(), i1.getValue(),
+                i0.getValue(), i2.getValue(), i1.getValue(), i0.getValue(), i1.getValue(), i0.getValue(), i0.getValue()));
+        llongs_hash_collision = new DummyVariableList(ValueTypeList.ValueList.ofAll(
+                ValueTypeLong.ValueLong.of(0xAAAAAAAA12345678L),
+                ValueTypeLong.ValueLong.of(0x3333333312345678L),
+                ValueTypeLong.ValueLong.of(0x12345678AAAAAAAAL),
+                ValueTypeLong.ValueLong.of(0x1234567833333333L)
+        ));
     }
 
     /**
@@ -606,6 +616,28 @@ public class TestListOperators {
         assertThat("uniqPredicate([0, 1, 2, 3, 1, 2, 3, 2, 3, 3], ==).size = 4", list.getLength(), is(4));
     }
 
+    @Test
+    public void testListUniqPredicateOrder() throws EvaluationException {
+        IValue res1 = Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{lintegers_rev_dup, oRelationalEquals});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("uniqPredicate([3, 2, 1, 0, 2, 1, 0, 1, 0, 0], ==)[0] = 3", list.get(0).getRawValue(), is(3));
+        assertThat("uniqPredicate([3, 2, 1, 0, 2, 1, 0, 1, 0, 0], ==)[1] = 2", list.get(1).getRawValue(), is(2));
+        assertThat("uniqPredicate([3, 2, 1, 0, 2, 1, 0, 1, 0, 0], ==)[2] = 1", list.get(2).getRawValue(), is(1));
+        assertThat("uniqPredicate([3, 2, 1, 0, 2, 1, 0, 1, 0, 0], ==)[3] = 0", list.get(3).getRawValue(), is(0));
+        assertThat("uniqPredicate([3, 2, 1, 0, 2, 1, 0, 1, 0, 0], ==).size = 4", list.getLength(), is(4));
+    }
+
+    @Test
+    public void testListUniqPredicateHashCollision() throws EvaluationException {
+        IValue res1 = Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{llongs_hash_collision, oRelationalEquals});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeLong, ValueTypeLong.ValueLong> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("uniqPredicate([0xAAAAAAAA12345678L, 0x3333333312345678L, 0x12345678AAAAAAAAL, 0x1234567833333333L], ==).size = 4", list.getLength(), is(4));
+    }
+
     @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeUniqPredicateLarge() throws EvaluationException {
         Operators.LIST_UNIQ_PREDICATE.evaluate(new IVariable[]{lintegers, oRelationalEquals, i2});
@@ -636,6 +668,28 @@ public class TestListOperators {
         assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[2] = 2", list.get(2).getRawValue(), is(2));
         assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3])[3] = 3", list.get(3).getRawValue(), is(3));
         assertThat("uniq([0, 1, 2, 3, 1, 2, 3, 2, 3, 3]).size = 4", list.getLength(), is(4));
+    }
+
+    @Test
+    public void testListUniqOrder() throws EvaluationException {
+        IValue res1 = Operators.LIST_UNIQ.evaluate(new IVariable[]{lintegers_rev_dup});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("uniq([3, 2, 1, 0, 2, 1, 0, 1, 0, 0])[0] = 3", list.get(0).getRawValue(), is(3));
+        assertThat("uniq([3, 2, 1, 0, 2, 1, 0, 1, 0, 0])[1] = 2", list.get(1).getRawValue(), is(2));
+        assertThat("uniq([3, 2, 1, 0, 2, 1, 0, 1, 0, 0])[2] = 1", list.get(2).getRawValue(), is(1));
+        assertThat("uniq([3, 2, 1, 0, 2, 1, 0, 1, 0, 0])[3] = 0", list.get(3).getRawValue(), is(0));
+        assertThat("uniq([3, 2, 1, 0, 2, 1, 0, 1, 0, 0]).size = 4", list.getLength(), is(4));
+    }
+
+    @Test
+    public void testListUniqHashCollision() throws EvaluationException {
+        IValue res1 = Operators.LIST_UNIQ.evaluate(new IVariable[]{llongs_hash_collision});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeLong, ValueTypeLong.ValueLong> list = ((ValueTypeList.ValueList) res1).getRawValue();
+
+        assertThat("uniq([0xAAAAAAAA12345678L, 0x3333333312345678L, 0x12345678AAAAAAAAL, 0x1234567833333333L]).size = 4", list.getLength(), is(4));
     }
 
     @Test(expected = EvaluationException.class)
