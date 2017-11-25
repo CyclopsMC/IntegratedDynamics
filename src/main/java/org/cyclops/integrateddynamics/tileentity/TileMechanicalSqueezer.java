@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.tileentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -14,6 +15,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
+import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -29,7 +31,7 @@ import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezerConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
-import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableTankInventory;
+import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 import org.cyclops.integrateddynamics.network.MechanicalSqueezerNetworkElement;
 
 import java.util.Set;
@@ -38,7 +40,7 @@ import java.util.Set;
  * A part entity for the mechanical squeezer.
  * @author rubensworks
  */
-public class TileMechanicalSqueezer extends TileCableConnectableTankInventory implements IEnergyStorage {
+public class TileMechanicalSqueezer extends TileCableConnectableInventory implements IEnergyStorage, SingleUseTank.IUpdateListener {
 
     public static final int SLOTS = 5;
     public static final int SLOT_INPUT = 0;
@@ -54,11 +56,18 @@ public class TileMechanicalSqueezer extends TileCableConnectableTankInventory im
     @NBTPersist
     private boolean autoEjectFluids = false;
 
+    private final SingleUseTank tank = new SingleUseTank(TANK_SIZE, this);
+
     private SingleCache<ItemStack,
             IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties>> recipeCache;
 
     public TileMechanicalSqueezer() {
-        super(SLOTS, "mechanicalSqueezerSlots", 64, TANK_SIZE, "mechanicalSqueezerTank");
+        super(SLOTS, "mechanicalSqueezerSlots", 64);
+
+        // Add fluid tank capability
+        addCapabilityInternal(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.tank);
+
+        // Add energy capability
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
             @Override
             public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
@@ -67,6 +76,7 @@ public class TileMechanicalSqueezer extends TileCableConnectableTankInventory im
         });
         addCapabilityInternal(CapabilityEnergy.ENERGY, this);
 
+        // Set inventory sides
         Set<Integer> in = Sets.newHashSet(SLOT_INPUT);
         Set<Integer> out = Sets.newHashSet(1, 2, 3, 4);
         addSlotsToSide(EnumFacing.UP, in);
@@ -95,6 +105,28 @@ public class TileMechanicalSqueezer extends TileCableConnectableTankInventory im
 
     public IEnergyNetwork getEnergyNetwork() {
         return NetworkHelpers.getEnergyNetwork(getNetwork());
+    }
+
+    public SingleUseTank getTank() {
+        return tank;
+    }
+
+    @Override
+    public void onTankChanged() {
+        sendUpdate();
+        updateInventoryHash();
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tag) {
+        super.readFromNBT(tag);
+        getTank().readFromNBT(tag.getCompoundTag("tank"));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        tag.setTag("tank", getTank().writeToNBT(new NBTTagCompound()));
+        return super.writeToNBT(tag);
     }
 
     public void updateBlockState() {
@@ -183,7 +215,7 @@ public class TileMechanicalSqueezer extends TileCableConnectableTankInventory im
         // Output fluid
         FluidStack outputFluid = recipe.getOutput().getFluidStack();
         if (outputFluid != null) {
-            if (fill(outputFluid.copy(), !simulate) != outputFluid.amount) {
+            if (getTank().fill(outputFluid.copy(), !simulate) != outputFluid.amount) {
                 return false;
             }
         }
@@ -255,7 +287,7 @@ public class TileMechanicalSqueezer extends TileCableConnectableTankInventory im
                         FluidStack fluidStack = new FluidStack(getTank().getFluid(),
                                 Math.min(BlockMechanicalSqueezerConfig.autoEjectFluidRate, getTank().getFluidAmount()));
                         if (handler.fill(fluidStack, false) > 0) {
-                            drain(handler.fill(fluidStack, true), true);
+                            getTank().drain(handler.fill(fluidStack, true), true);
                             break;
                         }
                     }
