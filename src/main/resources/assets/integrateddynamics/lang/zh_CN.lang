@@ -329,10 +329,10 @@ aspect.aspects.integrateddynamics.write.double.effect.particle.splash.name=效�
 aspect.aspects.integrateddynamics.write.double.effect.particle.splash.info=以特定的速度发出水花
 aspect.aspects.integrateddynamics.write.double.effect.particle.wake.name=效果-水波
 aspect.aspects.integrateddynamics.write.double.effect.particle.wake.info=以特定的速度发出水波
-aspect.aspects.integrateddynamics.write.double.effect.particle.suspended.name=效果-Suspend
-aspect.aspects.integrateddynamics.write.double.effect.particle.suspended.info=以特定的速度发出suspend
-aspect.aspects.integrateddynamics.write.double.effect.particle.depthsuspend.name=效果-Suspend Depth
-aspect.aspects.integrateddynamics.write.double.effect.particle.depthsuspend.info=以特定的速度发出depth suspend
+aspect.aspects.integrateddynamics.write.double.effect.particle.suspended.name=效果-水下颗粒
+aspect.aspects.integrateddynamics.write.double.effect.particle.suspended.info=以特定的速度发出水下颗粒
+aspect.aspects.integrateddynamics.write.double.effect.particle.depthsuspend.name=效果-虚空颗粒
+aspect.aspects.integrateddynamics.write.double.effect.particle.depthsuspend.info=以特定的速度发出虚空颗粒
 aspect.aspects.integrateddynamics.write.double.effect.particle.crit.name=效果-暴击
 aspect.aspects.integrateddynamics.write.double.effect.particle.crit.info=以特定的速度发出暴击效果
 aspect.aspects.integrateddynamics.write.double.effect.particle.magiccrit.name=效果-魔法暴击
@@ -587,9 +587,9 @@ aspect.aspects.integrateddynamics.read.boolean.world.weather.raining.info=当前
 aspect.aspects.integrateddynamics.read.boolean.world.weather.thunder.name=雷雨天
 aspect.aspects.integrateddynamics.read.boolean.world.weather.thunder.info=当前世界是否雷雨天
 aspect.aspects.integrateddynamics.read.boolean.world.isday.name=白天
-aspect.aspects.integrateddynamics.read.boolean.world.isday.info=当前世界是否雷白天
+aspect.aspects.integrateddynamics.read.boolean.world.isday.info=当前世界是否白天
 aspect.aspects.integrateddynamics.read.boolean.world.isnight.name=夜晚
-aspect.aspects.integrateddynamics.read.boolean.world.isnight.info=当前世界是否雷夜晚
+aspect.aspects.integrateddynamics.read.boolean.world.isnight.info=当前世界是否夜晚
 
 aspect.aspects.integrateddynamics.read.integer.world.entity.name=实体数
 aspect.aspects.integrateddynamics.read.integer.world.entity.info=当前空间实体总数
@@ -711,8 +711,10 @@ operator.operators.integrateddynamics.string.length.name=长度
 operator.operators.integrateddynamics.string.length.info=获取指定字符串的长度
 operator.operators.integrateddynamics.string.concat.name=连接
 operator.operators.integrateddynamics.string.concat.info=连接两个字符串
-operator.operators.integrateddynamics.string.name.name=转为字符串
-operator.operators.integrateddynamics.string.name.info=获取指定变量值的字符串形式
+operator.operators.integrateddynamics.string.name.name=变量名
+operator.operators.integrateddynamics.string.name.info=获取指定变量名或变量值的字符串形式
+operator.operators.integrateddynamics.string.unique_name.name=独一名
+operator.operators.integrateddynamics.string.unique_name.info=获取指定变量的独一名
 
 operator.operators.integrateddynamics.double.name=双精度浮点型
 operator.operators.integrateddynamics.double.basename=双精度浮点型%s
@@ -930,6 +932,8 @@ operator.operators.integrateddynamics.entity.isshearable.name=实体可以被使
 operator.operators.integrateddynamics.entity.isshearable.info=如果指定实体可以被使用剪刀
 operator.operators.integrateddynamics.entity.nbt.name=实体NBT标签
 operator.operators.integrateddynamics.entity.nbt.info=获取指定实体的NBT标签.
+operator.operators.integrateddynamics.entity.entitytype.name=实体种类
+operator.operators.integrateddynamics.entity.entitytype.info=实体种类的名称.
 
 operator.operators.integrateddynamics.itemstack.isfecontainer.name=FE容器
 operator.operators.integrateddynamics.itemstack.isfecontainer.info=如果指定的项目可以保存FE
@@ -1142,7 +1146,6 @@ config.integrateddynamics.variable=变量卡
 config.integrateddynamics.variableTransformer=变量转换器
 config.integrateddynamics.menril_berries.nightVision=门瑞欧浆果(夜间版本)
 config.integrateddynamics.on_the_dynamics_of_integration.bookRewards=书籍物品奖励
-config.integrateddynamics.on_the_dynamics_of_integration.obtainOnSpawn=玩家首次进入世界时获得书籍
 
 ## Machine settings
 config.integrateddynamics.energyBattery.capacity=电池容量
