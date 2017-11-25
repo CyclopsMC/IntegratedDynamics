@@ -144,7 +144,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof ValueItemStack && ItemStackHelpers.areItemStacksIdentical(((ValueItemStack) o).itemStack, this.itemStack);
+            return o instanceof ValueItemStack && ItemStack.areItemStacksEqual(((ValueItemStack) o).itemStack, this.itemStack);
         }
     }
 
