@@ -60,11 +60,14 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
 
     @Override
     public boolean equals(Object obj) {
+        if(this == obj)
+            return true;
+
         if(obj == null || !(obj instanceof ValueTypeListProxyBase)) {
             return false;
         }
-        ValueTypeListProxyBase other = (ValueTypeListProxyBase) obj;
-        if(!getName().equals(other.getName()) || !(getValueType() == other.getValueType())) {
+        ValueTypeListProxyBase<?, ?> other = (ValueTypeListProxyBase<?, ?>) obj;
+        if(!getName().equals(other.getName()) || !getValueType().equals(other.getValueType())) {
             return false;
         }
         // Avoid infinite iteration
@@ -75,6 +78,18 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
         Object[] o = Iterables.toArray(this, Object.class);
         Object[] o2 = Iterables.toArray(other, Object.class);
         return Arrays.equals(o, o2);
+    }
+
+    @Override
+    public int hashCode() {
+        if(this.isInfinite()) return System.identityHashCode(this);
+        int result = 1;
+        result = 37 * result + getName().hashCode();
+        result = 37 * result + getValueType().hashCode();
+        for(Object obj : this) {
+            result = 37 * result + (obj != null ? obj.hashCode() : 0);
+        }
+        return result;
     }
 
     @Override
