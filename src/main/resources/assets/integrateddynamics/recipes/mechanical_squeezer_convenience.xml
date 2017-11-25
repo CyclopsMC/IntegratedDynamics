@@ -717,4 +717,32 @@
         </properties>
     </recipe>
 
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>ores</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:netherrack</item>
+        </input>
+        <output>
+            <fluid amount="1000">lava</fluid>
+        </output>
+        <properties>
+            <duration>750</duration>
+        </properties>
+    </recipe>
+
+    <recipe type="integrateddynamics:mechanical_squeezer">
+        <tag>ores</tag>
+        <condition type="config">mechanical_squeezer</condition>
+        <input>
+            <item>minecraft:magma</item>
+        </input>
+        <output>
+            <fluid amount="1000">lava</fluid>
+        </output>
+        <properties>
+            <duration>500</duration>
+        </properties>
+    </recipe>
+
 </recipes>
