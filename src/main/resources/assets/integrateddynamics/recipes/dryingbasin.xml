@@ -13,7 +13,7 @@
 			<item>integrateddynamics:crystalized_menril_block</item>
 		</output>
 		<properties>
-			<duration>100</duration>
+			<duration>150</duration>
 		</properties>
 	</recipe>
 
@@ -29,7 +29,7 @@
 			<item>integrateddynamics:crystalized_chorus_block</item>
 		</output>
 		<properties>
-			<duration>250</duration>
+			<duration>300</duration>
 		</properties>
 	</recipe>
 
