@@ -8,12 +8,17 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 
 /**
  * Base implementation of {@link IVariableFacade}
  * @author rubensworks
  */
+@RequiredArgsConstructor
+@Data
 public abstract class VariableFacadeBase implements IVariableFacade {
 
     private final int id;
@@ -22,20 +27,11 @@ public abstract class VariableFacadeBase implements IVariableFacade {
         this.id = generateId ? generateId() : -1;
     }
 
-    public VariableFacadeBase(int id) {
-        this.id = id;
-    }
-
     /**
      * @return A unique new variable id.
      */
     public static int generateId() {
         return IntegratedDynamics.globalCounters.getNext("variable");
-    }
-
-    @Override
-    public final int getId() {
-        return this.id;
     }
 
     @Override
