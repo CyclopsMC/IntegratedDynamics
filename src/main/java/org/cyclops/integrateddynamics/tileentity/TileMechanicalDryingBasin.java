@@ -16,7 +16,6 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasinConfig;
 import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
@@ -25,7 +24,7 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
  * A part entity for the mechanical drying basin.
  * @author rubensworks
  */
-public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemStack, FluidStack>, BlockDryingBasin,
+public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemStack, FluidStack>, BlockMechanicalDryingBasin,
         IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     private static final int SLOTS = 5;
@@ -123,9 +122,9 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
     }
 
     @Override
-    protected IRecipeRegistry<BlockDryingBasin, IngredientAndFluidStackRecipeComponent,
+    protected IRecipeRegistry<BlockMechanicalDryingBasin, IngredientAndFluidStackRecipeComponent,
             IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
-        return BlockDryingBasin.getInstance().getRecipeRegistry();
+        return BlockMechanicalDryingBasin.getInstance().getRecipeRegistry();
     }
 
     @Override
@@ -140,7 +139,7 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
 
     @Override
     public int getRecipeDuration(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
-        return Math.max(1, recipe.getProperties().getDuration() / 8);
+        return recipe.getProperties().getDuration();
     }
 
     @Override

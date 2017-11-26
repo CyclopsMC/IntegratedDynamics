@@ -78,6 +78,7 @@ import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandler;
+import org.cyclops.integrateddynamics.core.recipe.xml.MechanicalDryingBasinRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.recipe.xml.MechanicalSqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -143,6 +144,8 @@ public class IntegratedDynamics extends ModBaseVersionable {
                 "squeezer.xml",
                 "squeezer_convenience.xml",
                 "squeezer_ores.xml",
+                "mechanical_dryingbasin.xml",
+                "mechanical_dryingbasin_convenience.xml",
                 "mechanical_squeezer.xml",
                 "mechanical_squeezer_convenience.xml",
                 "mechanical_squeezer_ores.xml"
@@ -152,6 +155,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
                 super.registerHandlers(recipeTypeHandlers, recipeConditionHandlers);
                 recipeTypeHandlers.put("integrateddynamics:dryingbasin", new DryingBasinRecipeTypeHandler());
                 recipeTypeHandlers.put("integrateddynamics:squeezer", new SqueezerRecipeTypeHandler());
+                recipeTypeHandlers.put("integrateddynamics:mechanical_dryingbasin", new MechanicalDryingBasinRecipeTypeHandler());
                 recipeTypeHandlers.put("integrateddynamics:mechanical_squeezer", new MechanicalSqueezerRecipeTypeHandler());
             }
         };

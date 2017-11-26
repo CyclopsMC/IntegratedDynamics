@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+	<recipe type="integrateddynamics:mechanical_dryingbasin">
+		<tag>base</tag>
+		<condition type="config">mechanical_drying_basin</condition>
+		<condition type="config">crystalized_menril_block</condition>
+		<condition type="config">menrilresin</condition>
+		<input>
+			<fluid amount="1000">menrilresin</fluid>
+		</input>
+		<output>
+			<item>integrateddynamics:crystalized_menril_block</item>
+		</output>
+		<properties>
+			<duration>15</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:mechanical_dryingbasin">
+		<tag>base</tag>
+		<condition type="config">mechanical_drying_basin</condition>
+		<condition type="config">crystalized_chorus_block</condition>
+		<condition type="config">liquidchorus</condition>
+		<input>
+			<fluid amount="1000">liquidchorus</fluid>
+		</input>
+		<output>
+			<item>integrateddynamics:crystalized_chorus_block</item>
+		</output>
+		<properties>
+			<duration>30</duration>
+		</properties>
+	</recipe>
+
+</recipes>

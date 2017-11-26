@@ -13,6 +13,12 @@ import net.minecraftforge.fluids.FluidUtil;
 import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
+import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
+import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.gui.GuiMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.core.block.BlockContainerGuiCabled;
 import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalDryingBasin;
@@ -22,7 +28,7 @@ import org.cyclops.integrateddynamics.tileentity.TileMechanicalDryingBasin;
  * A block that can expose variables.
  * @author rubensworks
  */
-public class BlockMechanicalDryingBasin extends BlockContainerGuiCabled {
+public class BlockMechanicalDryingBasin extends BlockContainerGuiCabled implements IMachine<BlockMechanicalDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     @BlockProperty
     public static final PropertyBool ON = PropertyBool.create("on");
@@ -68,5 +74,10 @@ public class BlockMechanicalDryingBasin extends BlockContainerGuiCabled {
     @Override
     public Class<? extends GuiScreen> getGui() {
         return GuiMechanicalDryingBasin.class;
+    }
+
+    @Override
+    public IRecipeRegistry<BlockMechanicalDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
+        return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
 }
