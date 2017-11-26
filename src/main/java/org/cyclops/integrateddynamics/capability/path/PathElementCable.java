@@ -26,7 +26,7 @@ public abstract class PathElementCable extends PathElementDefault {
         for (EnumFacing side : EnumFacing.VALUES) {
             if (getCable().isConnected(side)) {
                 BlockPos posOffset = pos.offset(side);
-                IPathElement pathElement = TileHelpers.getCapability(getPosition().getWorld(), posOffset, PathElementConfig.CAPABILITY);
+                IPathElement pathElement = TileHelpers.getCapability(getPosition().getWorld(), posOffset, side.getOpposite(), PathElementConfig.CAPABILITY);
                 if (pathElement == null) {
                     IntegratedDynamics.clog(Level.ERROR, String.format("The position at %s was incorrectly marked " +
                             "as reachable as path element by %s at %s side %s.", posOffset, getCable(), pos, side));

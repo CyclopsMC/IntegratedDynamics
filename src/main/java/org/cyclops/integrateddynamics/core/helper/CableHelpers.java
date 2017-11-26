@@ -60,6 +60,18 @@ public class CableHelpers {
     }
 
     /**
+     * Get the cable capability at the given position with the given side.
+     *
+     * @param world The world.
+     * @param pos The position.
+     * @param side The side to check
+     * @return The cable capability, or null if not present.
+     */
+    public static @Nullable ICable getCable(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return TileHelpers.getCapability(world, pos, side, CableConfig.CAPABILITY);
+    }
+
+    /**
      * Get the fakeable cable capability at the given position.
      * @param world The world.
      * @param pos The position.
@@ -129,7 +141,7 @@ public class CableHelpers {
      */
     public static boolean canCableConnectTo(IBlockAccess world, BlockPos pos, EnumFacing side, ICable originCable) {
         BlockPos neighbourPos = pos.offset(side);
-        ICable neighbourCable = getCable(world, neighbourPos);
+        ICable neighbourCable = getCable(world, neighbourPos, side.getOpposite());
         return neighbourCable != null
                 && originCable.canConnect(neighbourCable, side)
                 && neighbourCable.canConnect(originCable, side.getOpposite());
