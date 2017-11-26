@@ -134,4 +134,18 @@
 		</properties>
 	</recipe>
 
+	<recipe type="integrateddynamics:mechanical_dryingbasin">
+		<tag>convenience</tag>
+		<condition type="config">mechanical_drying_basin</condition>
+		<input>
+			<fluid amount="1000">lava</fluid>
+		</input>
+		<output>
+			<item>minecraft:magma</item>
+		</output>
+		<properties>
+			<duration>100</duration>
+		</properties>
+	</recipe>
+
 </recipes>
