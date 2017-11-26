@@ -88,6 +88,8 @@ tile.blocks.integrateddynamics.crystalized_chorus_block_stairs.name=Crystalized 
 tile.blocks.integrateddynamics.crystalized_chorus_brick_stairs.name=Crystalized Chorus Brick Stairs
 tile.blocks.integrateddynamics.mechanical_squeezer.name=Mechanical Squeezer
 tile.blocks.integrateddynamics.mechanical_squeezer.info=Squeezes, flattens and crushes using energy.
+tile.blocks.integrateddynamics.mechanical_drying_basin.name=Mechanical Drying Basin
+tile.blocks.integrateddynamics.mechanical_drying_basin.info=For drying items and fluids using energy.
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s

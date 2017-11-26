@@ -80,6 +80,7 @@ public class Configs {
         configHandler.add(new BlockCrystalizedChorusBlockStairsConfig());
         configHandler.add(new BlockCrystalizedChorusBrickStairsConfig());
         configHandler.add(new BlockMechanicalSqueezerConfig());
+        configHandler.add(new BlockMechanicalDryingBasinConfig());
 
         // Items
         configHandler.add(new ItemWrenchConfig());

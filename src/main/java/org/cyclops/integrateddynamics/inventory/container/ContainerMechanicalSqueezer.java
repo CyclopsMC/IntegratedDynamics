@@ -1,24 +1,18 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.inventory.container.TileInventoryContainerConfigurable;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerMechanicalMachine;
 import org.cyclops.integrateddynamics.tileentity.TileMechanicalSqueezer;
 
 /**
  * Container for the mechanical squeezer.
  * @author rubensworks
  */
-public class ContainerMechanicalSqueezer extends TileInventoryContainerConfigurable<TileMechanicalSqueezer> {
+public class ContainerMechanicalSqueezer extends ContainerMechanicalMachine<TileMechanicalSqueezer> {
 
     public static final int BUTTON_TOGGLE_FLUID_EJECT = 0;
-
-    private int lastMaxProgress;
-    private int lastProgress;
 
     /**
      * Make a new instance.
@@ -39,39 +33,6 @@ public class ContainerMechanicalSqueezer extends TileInventoryContainerConfigura
 
         putButtonAction(BUTTON_TOGGLE_FLUID_EJECT,
                 (buttonId, container) -> getTile().setAutoEjectFluids(!getTile().isAutoEjectFluids()));
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        for (int i = 0; i < this.listeners.size(); ++i) {
-            IContainerListener crafting = this.listeners.get(i);
-            if(lastMaxProgress != getTile().getMaxProgress()) {
-                crafting.sendWindowProperty(this, 0, getTile().getMaxProgress());
-            }
-            if(lastProgress != getTile().getProgress()) {
-                crafting.sendWindowProperty(this, 1, getTile().getProgress());
-            }
-        }
-        this.lastProgress = getTile().getProgress();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int id, int data) {
-        if(id == 0) {
-            this.lastMaxProgress = data;
-        }
-        if(id == 1) {
-            this.lastProgress = data;
-        }
-    }
-
-    public int getLastMaxProgress() {
-        return this.lastMaxProgress;
-    }
-
-    public int getLastProgress() {
-        return this.lastProgress;
     }
 
 }

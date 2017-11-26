@@ -3,26 +3,21 @@ package org.cyclops.integrateddynamics.client.gui;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonImage;
-import org.cyclops.cyclopscore.client.gui.container.GuiContainerConfigurable;
 import org.cyclops.cyclopscore.client.gui.image.IImage;
 import org.cyclops.cyclopscore.client.gui.image.Image;
-import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.GuiHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.item.DamageIndicatedItemComponent;
+import org.cyclops.integrateddynamics.core.client.gui.GuiMechanicalMachine;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalSqueezer;
 import org.cyclops.integrateddynamics.tileentity.TileMechanicalSqueezer;
-
-import java.util.Optional;
 
 /**
  * Gui for the mechanical squeezer.
  * @author rubensworks
  */
-public class GuiMechanicalSqueezer extends GuiContainerConfigurable<ContainerMechanicalSqueezer> {
+public class GuiMechanicalSqueezer extends GuiMechanicalMachine<ContainerMechanicalSqueezer> {
 
     private final IImage imageArrowDownEnabled;
     private final IImage imageArrowDownDisabled;
@@ -74,29 +69,8 @@ public class GuiMechanicalSqueezer extends GuiContainerConfigurable<ContainerMec
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
-        // Draw energy tooltips
-        GuiHelpers.renderTooltipOptional(this, 8, 16, 18, 60, mouseX, mouseY, () -> {
-            int energyStored = getContainer().getTile().getEnergyStored();
-            int energyMax = getContainer().getTile().getMaxEnergyStored();
-            if (energyMax > 0) {
-                return Optional.of(Lists.newArrayList(
-                        String.format("%,d", energyStored) + " / " + String.format("%,d", energyMax)
-                                + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT)));
-            }
-            return Optional.empty();
-        });
-
-        // Draw tank tooltips
-        GuiHelpers.renderTooltipOptional(this, 150, 10, 18, 60, mouseX, mouseY, () -> {
-            SingleUseTank tank = getContainer().getTile().getTank();
-            FluidStack fluidStack = tank.getFluid();
-            if (fluidStack != null) {
-                String fluidName = fluidStack.getLocalizedName();
-                return Optional.of(Lists.newArrayList(fluidName,
-                        DamageIndicatedItemComponent.getInfo(fluidStack, tank.getFluidAmount(), tank.getCapacity())));
-            }
-            return Optional.empty();
-        });
+        drawEnergyBarTooltip(8, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(getContainer().getTile().getTank(), 150, 10, 18, 60, mouseX, mouseY);
 
         // Draw fluid auto-eject toggle
         GuiHelpers.renderTooltip(this, 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
