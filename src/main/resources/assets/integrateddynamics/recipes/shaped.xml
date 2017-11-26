@@ -1171,4 +1171,60 @@
 		</output>
 	</recipe>
 
+	<recipe type="shaped">
+		<condition type="config">mechanical_squeezer</condition>
+		<condition type="config">squeezer</condition>
+		<condition type="config">energy_battery</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:diamond</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:energy_battery</item>
+					<item>integrateddynamics:squeezer</item>
+					<item>integrateddynamics:energy_battery</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:obsidian</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:mechanical_squeezer</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">mechanical_drying_basin</condition>
+		<condition type="config">drying_basin</condition>
+		<condition type="config">energy_battery</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:obsidian</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:energy_battery</item>
+					<item>integrateddynamics:drying_basin</item>
+					<item>integrateddynamics:energy_battery</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:obsidian</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:mechanical_drying_basin</item>
+		</output>
+	</recipe>
+
 </recipes>
