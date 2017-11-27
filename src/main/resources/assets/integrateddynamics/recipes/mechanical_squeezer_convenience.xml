@@ -447,7 +447,7 @@
         <tag>convenience</tag>
         <condition type="config">mechanical_squeezer</condition>
         <input>
-            <item type="oredict">wool</item>
+            <item meta="*">minecraft:wool</item>
         </input>
         <output>
             <item>minecraft:string</item>
