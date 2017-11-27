@@ -79,7 +79,7 @@
             <item>minecraft:red_sandstone</item>
         </input>
         <output>
-            <item amount="2">minecraft:red_sand</item>
+            <item amount="2" meta="1">minecraft:sand</item>
         </output>
         <properties>
             <duration>30</duration>
