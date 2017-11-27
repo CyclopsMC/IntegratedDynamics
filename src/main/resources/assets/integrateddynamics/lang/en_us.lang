@@ -1198,6 +1198,7 @@ info_book.integrateddynamics.tutorials.menrilBasics=Menril Basics
 info_book.integrateddynamics.tutorials.menrilBasics.text1=To get started with this mod, you will need to find some &lMenril Trees&r which can most easily be found in &lMeneglin Biomes&r.
 info_book.integrateddynamics.tutorials.menrilBasics.text2=After that, you’ll need to craft a &lSqueezer&r and &lDrying Basin&r for processing &lMenril Wood&r. This can be done by placing a block of wood in the &lSqueezer&r and jumping on it until it's flat. Once that has been done, the &lMenril Resin&r will try to go to the two sides of the &lSqueezer&r. Next, place a &lDrying Basin&r next to the &lSqueezer&r to make it fill with the &lMenril Resin&r you just squeezed.
 info_book.integrateddynamics.tutorials.menrilBasics.text3=If you want to repeat the process, you can reset the &lSqueezer&r by applying a redstone pulse.
+info_book.integrateddynamics.tutorials.menrilBasics.text4=In the future, you will also be able to craft upgraded variants of these machines that are more easily automatable, but are more costly: the &lMechanical Squeezer&r and the &lMechanical Drying Basin&r.
 
 info_book.integrateddynamics.tutorials.networkFoundations=Network Foundations
 info_book.integrateddynamics.tutorials.networkFoundations.text1=The main goal of this mod is for building control networks for automation. This is done using &lLogic Cables&r. Try making a network with ten of those cables.
@@ -1396,6 +1397,12 @@ info_book.integrateddynamics.manual.machines.energy_battery.text3=Applying a red
 
 info_book.integrateddynamics.manual.machines.generator=Generator
 info_book.integrateddynamics.manual.machines.generator.text1=When you need &lRF&r or &lTesla&r energy, you can use the &lGenerator&r to create energy from &oburnable&r items.
+
+info_book.integrateddynamics.manual.machines.mechanical_squeezer=Mechanical Squeezer
+info_book.integrateddynamics.manual.machines.mechanical_squeezer.text1=There will come a time, when you will have had enough of all this jumping on &lSqueezers&r. If you haven't automated your &lSqueezers&r by then, perhaps it's time to look into making a &lMechanical Squeezers&r. It does not require any manual effort, but it requires energy to run. This also makes it significantly faster than the regular &lSqueezers&r and allows more things to be squeezed with a higher yield.
+
+info_book.integrateddynamics.manual.machines.mechanical_drying_basin=Mechanical Drying Basin
+info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1=Drying with the &lDrying Basin&r can take a while. If you want things to go faster, or if you want to be able to dry more things, you can use the &lMechanical Drying Basin&r, which requires energy to run.
 
 info_book.integrateddynamics.manual.logic_programming=Logic Programming
 info_book.integrateddynamics.manual.logic_programming.text1=Another method for creating dynamic variable cards, is by applying an &lOperator&r on one or more &lVariable Cards&r to produce a new &lVariable Card&r. An example of an &lOperator&r is the addition of two &lNumbers&r, resulting in a new &lNumber&r.

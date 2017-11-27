@@ -9,7 +9,6 @@ import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoSection;
 import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
  * Squeezer recipes.
  * @author rubensworks
  */
-public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>> {
+public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, ?>> {
 
     private static final int SLOT_INPUT_OFFSET_X = 16;
     private static final int SLOT_OFFSET_Y = 23;
@@ -32,7 +31,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
 
     private final List<AdvancedButton.Enum> resultItems;
 
-    public SqueezerRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) {
+    public SqueezerRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, ?> recipe) {
         super(infoBook, recipe);
         resultItems = Lists.newArrayList();
         for (int i = 0; i < recipe.getOutput().getIngredients().size(); i++) {
@@ -88,7 +87,12 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
         }
         renderFluid(gui, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputFluid, mx, my, RESULT_FLUID);
 
-        renderItem(gui, x + middle, y, new ItemStack(BlockSqueezer.getInstance()), mx, my, false, null);
+        renderItem(gui, x + middle, y, getCrafter(), mx, my, false, null);
     }
+
+    protected ItemStack getCrafter()  {
+        return new ItemStack(BlockSqueezer.getInstance());
+    }
+
 
 }

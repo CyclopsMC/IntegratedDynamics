@@ -81,7 +81,7 @@
         <output>
             <fluid amount="500">water</fluid>
             <item amount="4" meta="2">minecraft:dye</item>
-            <item amount="2" chance="0.5" meta="13">minecraft:dye</item>
+            <item amount="2" chance="0.5" meta="2">minecraft:dye</item>
         </output>
         <properties>
             <duration>20</duration>

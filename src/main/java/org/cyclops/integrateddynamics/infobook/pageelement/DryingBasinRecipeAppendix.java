@@ -73,7 +73,11 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<IRecipe<Ingredient
         renderItem(gui, x + SLOT_OUTPUT_OFFSET_X, y, resultItem, mx, my, RESULT_ITEM);
         renderFluid(gui, x + SLOT_OUTPUT_OFFSET_X, y + SLOT_OFFSET_Y, resultFluid, mx, my, RESULT_FLUID);
 
-        renderItem(gui, x + middle, y, new ItemStack(BlockDryingBasin.getInstance()), mx, my, false, null);
+        renderItem(gui, x + middle, y, getCrafter(), mx, my, false, null);
+    }
+
+    protected ItemStack getCrafter() {
+        return new ItemStack(BlockDryingBasin.getInstance());
     }
 
 }

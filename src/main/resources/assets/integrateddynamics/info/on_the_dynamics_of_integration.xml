@@ -15,6 +15,7 @@
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text1</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text2</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text4</paragraph>
             <appendix type="crafting_recipe">integrateddynamics:squeezer</appendix>
             <appendix type="crafting_recipe">integrateddynamics:drying_basin</appendix>
             <appendix type="integrateddynamics:squeezer_recipe">
@@ -506,6 +507,21 @@
                 <tag>coal_generator</tag>
                 <paragraph>info_book.integrateddynamics.manual.machines.generator.text1</paragraph>
                 <appendix type="crafting_recipe">integrateddynamics:coal_generator</appendix>
+            </section>
+            <section name="info_book.integrateddynamics.manual.machines.mechanical_squeezer">
+                <tag>mechanical_squeezer</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.mechanical_squeezer.text1</paragraph>
+                <appendix type="crafting_recipe">integrateddynamics:mechanical_squeezer</appendix>
+                <appendix_list type="integrateddynamics:mechanical_squeezer_recipe">base</appendix_list>
+                <appendix_list type="integrateddynamics:mechanical_squeezer_recipe">convenience</appendix_list>
+                <appendix_list type="integrateddynamics:mechanical_squeezer_recipe">ores</appendix_list>
+            </section>
+            <section name="info_book.integrateddynamics.manual.machines.mechanical_drying_basin">
+                <tag>mechanical_drying_basin</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1</paragraph>
+                <appendix type="crafting_recipe">integrateddynamics:mechanical_drying_basin</appendix>
+                <appendix_list type="integrateddynamics:mechanical_drying_basin_recipe">base</appendix_list>
+                <appendix_list type="integrateddynamics:mechanical_drying_basin_recipe">convenience</appendix_list>
             </section>
         </section>
 
