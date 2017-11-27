@@ -2,13 +2,13 @@
   "forge_marker": 1,
   "defaults": {
     "transform": "forge:default-block",
-    "model"    : "integrateddynamics:mechanical_squeezer"
+    "model"    : "integrateddynamics:mechanical_drying_basin"
   },
   "variants": {
     "inventory": [{}],
     "on": {
       "false" : {},
-      "true"  : { "textures": { "side": "integrateddynamics:blocks/mechanical_squeezer_x_on" } }
+      "true"  : { "textures": { "texture": "integrateddynamics:blocks/mechanical_drying_basin_on" } }
     }
   }
 }
