@@ -62,20 +62,6 @@
         <tag>ores</tag>
         <condition type="config">mechanical_squeezer</condition>
         <input>
-            <item type="oredict">blockGlass</item>
-        </input>
-        <output>
-            <item>minecraft:sand</item>
-        </output>
-        <properties>
-            <duration>30</duration>
-        </properties>
-    </recipe>
-
-    <recipe type="integrateddynamics:mechanical_squeezer">
-        <tag>ores</tag>
-        <condition type="config">mechanical_squeezer</condition>
-        <input>
             <item>minecraft:sandstone</item>
         </input>
         <output>

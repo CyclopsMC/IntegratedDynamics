@@ -50,17 +50,6 @@
         <tag>ores</tag>
         <condition type="config">squeezer</condition>
         <input>
-            <item type="oredict">blockGlass</item>
-        </input>
-        <output>
-            <item>minecraft:sand</item>
-        </output>
-    </recipe>
-
-    <recipe type="integrateddynamics:squeezer">
-        <tag>ores</tag>
-        <condition type="config">squeezer</condition>
-        <input>
             <item>minecraft:sandstone</item>
         </input>
         <output>
