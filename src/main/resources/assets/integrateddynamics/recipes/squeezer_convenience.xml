@@ -361,7 +361,7 @@
             <item meta="*">minecraft:wool</item>
         </input>
         <output>
-            <item>minecraft:string</item>
+            <item amount="4">minecraft:string</item>
         </output>
     </recipe>
 

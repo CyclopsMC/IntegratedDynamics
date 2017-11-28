@@ -450,7 +450,7 @@
             <item meta="*">minecraft:wool</item>
         </input>
         <output>
-            <item>minecraft:string</item>
+            <item amount="6">minecraft:string</item>
         </output>
         <properties>
             <duration>5</duration>
