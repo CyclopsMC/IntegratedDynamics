@@ -735,13 +735,13 @@
         <tag>ores</tag>
         <condition type="config">mechanical_squeezer</condition>
         <input>
-            <item>minecraft:magma</item>
+            <item>minecraft:magma_cream</item>
         </input>
         <output>
-            <fluid amount="1000">lava</fluid>
+            <fluid amount="250">lava</fluid>
         </output>
         <properties>
-            <duration>500</duration>
+            <duration>100</duration>
         </properties>
     </recipe>
 
