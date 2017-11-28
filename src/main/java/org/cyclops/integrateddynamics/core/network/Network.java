@@ -78,6 +78,9 @@ public class Network implements INetwork {
     }
 
     /**
+     * @param networkA The first network
+     * @param networkB The second network
+     * @return If the networks are equal
      * @deprecated Use {@link Object#equals} instead
      */
     @Deprecated // TODO remove in 1.13
