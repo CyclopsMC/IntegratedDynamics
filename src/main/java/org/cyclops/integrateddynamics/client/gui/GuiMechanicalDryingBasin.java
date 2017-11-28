@@ -25,7 +25,7 @@ public class GuiMechanicalDryingBasin extends GuiMechanicalMachine<ContainerMech
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
         // Render progress
-        GuiHelpers.renderProgressBar(this, getGuiLeft() + 84, getGuiTop() + 31, 10, 27,
+        GuiHelpers.renderProgressBar(this, getGuiLeft() + 84, getGuiTop() + 31, 11, 28,
                 176, 120, GuiHelpers.ProgressDirection.UP,
                 getContainer().getLastProgress(), getContainer().getLastMaxProgress());
 
