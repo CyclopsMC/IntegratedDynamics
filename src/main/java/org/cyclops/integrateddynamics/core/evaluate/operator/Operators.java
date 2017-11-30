@@ -1544,7 +1544,7 @@ public final class Operators {
                     Entity entity = a.get();
                     return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.world, entity));
                 } else {
-                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.<ValueObjectTypeEntity.ValueEntity>emptyList());
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
                 }
             }).build());
 
@@ -1559,7 +1559,7 @@ public final class Operators {
                     Entity entity = a.get();
                     return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.world, entity));
                 } else {
-                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Collections.<ValueObjectTypeEntity.ValueEntity>emptyList());
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
                 }
             }).build());
 
