@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.block.SoundType;
 import net.minecraft.init.Blocks;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockStairs;
-import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -35,7 +34,7 @@ public class BlockMenrilPlanksStairsConfig extends BlockConfig {
 
     @Override
     protected ConfigurableBlockStairs initSubInstance() {
-        return (ConfigurableBlockStairs) new ConfigurableBlockStairs(this, BlockMenrilLog.getInstance().getDefaultState()) {
+        return (ConfigurableBlockStairs) new ConfigurableBlockStairs(this, BlockMenrilPlanksConfig._instance.getBlockInstance().getDefaultState()) {
             @SuppressWarnings("deprecation")
             @Override
             public SoundType getSoundType() {
