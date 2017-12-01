@@ -156,16 +156,22 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     public void onCrafted(PlayerEvent.ItemCraftedEvent event) {
         // When crafting the item, either copy the group id from the existing item or generate a new id.
         if (event.crafting.getItem() == this.getItem()) {
-            int groupId = -1;
+            int groupId = -1, stackCount = 0;
             for (int i = 0; i < event.craftMatrix.getSizeInventory(); i++) {
                 ItemStack slotStack = event.craftMatrix.getStackInSlot(i);
-                if (!slotStack.isEmpty() && slotStack.getItem() == this.getItem() && slotStack.hasTagCompound()) {
-                    NBTTagCompound tag = slotStack.getTagCompound();
-                    if (tag.hasKey(NBT_KEY_ID, MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
-                        groupId = tag.getInteger(NBT_KEY_ID);
-                        break;
+                if (!slotStack.isEmpty()) {
+                    ++stackCount;
+                    if(slotStack.getItem() == this.getItem() && slotStack.hasTagCompound()) {
+                        NBTTagCompound tag = slotStack.getTagCompound();
+                        if (tag.hasKey(NBT_KEY_ID, MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
+                            groupId = tag.getInteger(NBT_KEY_ID);
+                            break;
+                        }
                     }
                 }
+            }
+            if(stackCount == 1) {
+                groupId = -1; // If we're resetting a connector, give it a new ID
             }
 
             if (!MinecraftHelpers.isClientSide()) {
