@@ -168,7 +168,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 }
             }
 
-            if (!MinecraftHelpers.isClientSide()) {
+            if (!event.player.world.isRemote) {
                 if (groupId < 0) {
                     groupId = generateGroupId();
                 }

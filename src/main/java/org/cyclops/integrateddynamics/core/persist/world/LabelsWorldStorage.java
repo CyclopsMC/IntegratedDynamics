@@ -106,7 +106,7 @@ public class LabelsWorldStorage extends WorldStorage {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if(!MinecraftHelpers.isClientSide()) {
+        if(!event.player.world.isRemote) {
             IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (EntityPlayerMP) event.player);
         }
     }

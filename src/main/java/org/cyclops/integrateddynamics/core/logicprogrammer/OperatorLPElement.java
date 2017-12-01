@@ -106,7 +106,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     public ItemStack writeElement(EntityPlayer player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         int[] variableIds = getVariableIds(inputVariables);
-        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, Operators.REGISTRY, new OperatorVariableFacadeFactory(operator, variableIds), player, BlockLogicProgrammer.getInstance());
+        return registry.writeVariableFacadeItem(!player.world.isRemote, itemStack, Operators.REGISTRY, new OperatorVariableFacadeFactory(operator, variableIds), player, BlockLogicProgrammer.getInstance());
     }
 
     @Override
