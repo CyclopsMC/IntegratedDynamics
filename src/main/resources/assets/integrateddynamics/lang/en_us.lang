@@ -1360,6 +1360,7 @@ info_book.integrateddynamics.manual.parts.other.connector_omni_directional=Omni-
 info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text1=While &lMono-Directional&r connectors are useful for long-distance connections in a single direction, in some cases this might be a bit too limited.
 info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text2=You may for example want to connect more than two networks together using a single connector or connect with networks in other dimensions. For these cases, you can use the &lOmni-Directional&r connectors.
 info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text3=These connectors will have a unique group id when first crafted, which identifies the group in which networks can be connected. Each connector group has a unique color of particles when placed in the world, the group id can be seen in the item tooltip or by right-clicking on the connector when placed. Additional connectors can be added to a group by crafting a new one using an existing connector within a group.
+info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text4=You can also change the group of existing connectors in two ways. Crafting one alone in a crafting table will assign it to a new group with no other members, and crafting two together will copy the first one's group to the second one.
 
 info_book.integrateddynamics.manual.machines=Machines
 

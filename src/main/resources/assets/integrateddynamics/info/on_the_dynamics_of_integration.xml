@@ -465,8 +465,10 @@
                     <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text1</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text2</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text3</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text4</paragraph>
                     <appendix type="crafting_recipe" index="0">integrateddynamics:part_connector_omni_directional_item</appendix>
                     <appendix type="crafting_recipe" index="1">integrateddynamics:part_connector_omni_directional_item</appendix>
+                    <appendix type="crafting_recipe" index="2">integrateddynamics:part_connector_omni_directional_item</appendix>
                 </section>
             </section>
         </section>
