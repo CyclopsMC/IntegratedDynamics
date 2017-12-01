@@ -106,7 +106,7 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
     @Override
     public void onLoad() {
         super.onLoad();
-        if(!MinecraftHelpers.isClientSide()) {
+        if(!world.isRemote) {
             shouldSendUpdateEvent = true;
         }
     }

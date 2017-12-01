@@ -78,7 +78,7 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
     @Override
     public void onLoad() {
         super.onLoad();
-        if(!MinecraftHelpers.isClientSide() && this.proxyId == -1) {
+        if(!world.isRemote && this.proxyId == -1) {
             generateNewProxyId();
         }
     }
