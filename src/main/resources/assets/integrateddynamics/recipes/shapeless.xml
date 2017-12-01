@@ -144,4 +144,14 @@
 		</output>
 	</recipe>
 
+       <recipe type="shapeless">
+               <input>
+                       <item>integrateddynamics:part_connector_omni_directional_item</item>
+                       <item>integrateddynamics:part_connector_omni_directional_item</item>
+               </input>
+               <output>
+                       <item amount="2">integrateddynamics:part_connector_omni_directional_item</item>
+               </output>
+       </recipe>
+
 </recipes>
