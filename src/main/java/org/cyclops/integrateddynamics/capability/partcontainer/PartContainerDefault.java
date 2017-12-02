@@ -41,7 +41,7 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public void update() {
-        if(!getWorld().isRemote) {
+        if(!MinecraftHelpers.isClientSide()) {
             // Loop over all part states to check their dirtiness
             for (PartHelpers.PartStateHolder<?, ?> partStateHolder : partData.values()) {
                 if (partStateHolder.getState().isDirtyAndReset()) {

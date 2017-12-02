@@ -186,7 +186,7 @@ public class PartHelpers {
         }
 
         // Trigger block render update if at least one of the parts requires it.
-        if (world != null && world.isRemote) {
+        if (world != null && MinecraftHelpers.isClientSide()) {
             boolean triggerBlockRenderUpdate = false;
             for (EnumFacing side : EnumFacing.VALUES) {
                 PartStateHolder<?, ?> oldData = oldPartData.get(side);

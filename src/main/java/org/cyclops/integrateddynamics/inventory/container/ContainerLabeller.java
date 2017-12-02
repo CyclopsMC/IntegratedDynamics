@@ -40,7 +40,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         addSlotToContainer(new SlotExtended(temporaryInputSlots, 0, 8, 8));
         this.addPlayerInventory(player.inventory, 8, 31);
 
-        if(player.world.isRemote) {
+        if(MinecraftHelpers.isClientSide()) {
             temporaryInputSlots.addDirtyMarkListener(new IDirtyMarkListener() {
                 @Override
                 public void onDirty() {

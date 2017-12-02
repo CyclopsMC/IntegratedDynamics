@@ -35,7 +35,7 @@ public class ContainerActiveVariableBase<T extends TileActiveVariableBase<?>> ex
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        if(!tile.getWorld().isRemote) {
+        if(!MinecraftHelpers.isClientSide()) {
             String readValue = "";
             int readValueColor = 0;
             IVariable variable = getTile().getVariable(NetworkHelpers.getPartNetwork(getTile().getNetwork()));
