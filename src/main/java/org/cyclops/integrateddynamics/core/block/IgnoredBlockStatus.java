@@ -48,7 +48,11 @@ public class IgnoredBlockStatus extends IgnoredBlock {
 
         @Override
         public Optional<Status> parseValue(String value) {
-            return Optional.fromNullable(Status.valueOf(value.toUpperCase(Locale.ENGLISH)));
+            try {
+                return Optional.of(Status.valueOf(value.toUpperCase(Locale.ENGLISH)));
+            } catch (IllegalArgumentException e) {
+                return Optional.absent();
+            }
         }
 
         @Override
