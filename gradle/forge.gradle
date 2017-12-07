@@ -3,7 +3,7 @@ repositories {
     mavenCentral()
     maven {
         name "Cyclops Repo"
-        url "https://dl.bintray.com/cyclopsmc/dev/"
+        url "https://cyclopsmc.jfrog.io/cyclopsmc/libs-release/"
     }
 }
 

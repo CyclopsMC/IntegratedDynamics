@@ -1,10 +1,12 @@
 ## Integrated Dynamics
 
 [![Build Status](https://travis-ci.org/CyclopsMC/IntegratedDynamics.svg?branch=master-1.11)](https://travis-ci.org/CyclopsMC/IntegratedDynamics)
-[![Download](https://api.bintray.com/packages/cyclopsmc/dev/IntegratedDynamics/images/download.svg) ](https://bintray.com/cyclopsmc/dev/IntegratedDynamics/_latestVersion)
+[![Download](https://img.shields.io/maven-metadata/v/http/cyclopsmc.jfrog.io/cyclopsmc/libs-release/org/cyclops/integrateddynamics/IntegratedDynamics/maven-metadata.xml.svg) ](https://cyclopsmc.jfrog.io/cyclopsmc/libs-release/org/cyclops/integrateddynamics/IntegratedDynamics/)
 [![CurseForge](http://cf.way2muchnoise.eu/full_236307_downloads.svg)](https://minecraft.curseforge.com/projects/integrated-dynamics)
 
 All stable releases (including deobfuscated builds) can be found on [CurseForge](http://minecraft.curseforge.com/projects/integrated-dynamics/files).
+
+[Development builds](https://cyclopsmc.jfrog.io/cyclopsmc/libs-release/org/cyclops/integrateddynamics/IntegratedDynamics/) are hosted by [JFrog Artifactory](https://www.jfrog.com/artifactory/).
 
 ### Contributing
 * Before submitting a pull request containing a new feature, please discuss this first with one of the lead developers.
