@@ -68,7 +68,8 @@ public class ItemBlockCable extends ItemBlockMetadata {
         // Then check if the target is covered by an unreal cable at the given side.
         if(checkCableAt(world, target)) return true;
         // Skips client-side entity collision detection for placing cables.
-        return world.getBlockState(target).getBlock().isReplaceable(world, pos);
+        IBlockState blockState = world.getBlockState(target);
+        return blockState.getBlock().isReplaceable(world, pos) || blockState.getMaterial().isLiquid();
     }
 
     protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable,
