@@ -220,12 +220,26 @@ public class CableHelpers {
      * This should in most cases only be called server-side.
      * @param world The world.
      * @param pos The position.
-     * @param placer The entity who placed the cable.
      */
-    public static void onCableAdded(World world, BlockPos pos, @Nullable EntityLivingBase placer) {
+    public static void onCableAdded(World world, BlockPos pos) {
         CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
         if(!world.isRemote) {
             INetwork network = NetworkHelpers.initNetwork(world, pos);
+            MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, null));
+        }
+    }
+
+    /**
+     * This should be called when a cable was added by a player.
+     * This should be called after {@link CableHelpers#onCableAdded(World, BlockPos)}.
+     * It simply emits an player-sensitive init event on the network bus.
+     * @param world The world.
+     * @param pos The position.
+     * @param placer The entity who placed the cable.
+     */
+    public static void onCableAddedByPlayer(World world, BlockPos pos, @Nullable EntityLivingBase placer) {
+        if(!world.isRemote) {
+            INetwork network = NetworkHelpers.getNetwork(world, pos);
             MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer));
         }
     }
