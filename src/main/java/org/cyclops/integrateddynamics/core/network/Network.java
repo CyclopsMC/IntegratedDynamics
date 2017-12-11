@@ -303,6 +303,7 @@ public class Network implements INetwork {
         element.onNetworkRemoval(this);
         elements.remove(element);
         removeNetworkElementUpdateable(element);
+        invalidatedElements.remove(element); // The element may be invalidated (like in an unloaded chunk) when it is being removed.
         getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
         onNetworkChanged();
     }
