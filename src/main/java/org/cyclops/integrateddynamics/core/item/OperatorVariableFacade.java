@@ -40,12 +40,14 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
 
     // Flags to detect infinite recursion
     private final boolean[] validatingVariables;
+    private final boolean[] variables;
 
     public OperatorVariableFacade(boolean generateId, IOperator operator, int[] variableIds) {
         super(generateId);
         this.operator = operator;
         this.variableIds = variableIds;
         this.validatingVariables = this.variableIds != null ? new boolean[this.variableIds.length] : null;
+        this.variables = this.variableIds != null ? new boolean[this.variableIds.length] : null;
     }
 
     public OperatorVariableFacade(int id, IOperator operator, int[] variableIds) {
@@ -53,6 +55,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
         this.operator = operator;
         this.variableIds = variableIds;
         this.validatingVariables = this.variableIds != null ? new boolean[this.variableIds.length] : null;
+        this.variables = this.variableIds != null ? new boolean[this.variableIds.length] : null;
     }
 
     @Override
@@ -71,7 +74,12 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                     if(!variableFacade.isValid() || variableFacade == this) {
                         return null;
                     }
+                    if (this.variables[i]) {
+                        return null;
+                    }
+                    this.variables[i] = true;
                     variables[i] = variableFacade.getVariable(network);
+                    this.variables[i] = false;
                     if(variables[i] == this /* Cyclic reference */ || variables[i] == null) {
                         return null;
                     }
