@@ -20,7 +20,7 @@ public class TestStringOperators {
 
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
-            new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
+            new DummyVariable<>(DUMMY_TYPE, DummyValueType.DummyValue.of());
 
     private DummyVariableString sempty;
     private DummyVariableString sabc;
