@@ -654,7 +654,7 @@ public final class Operators {
             ValueTypeString.ValueString search = variables.getValue(0);
             ValueTypeString.ValueString replacement = variables.getValue(1);
             ValueTypeString.ValueString str = variables.getValue(2);
-            return ValueTypeString.ValueString.of(str.getRawValue().replaceAll(java.util.regex.Pattern.quote(search.getRawValue()), replacement.getRawValue()));
+            return ValueTypeString.ValueString.of(str.getRawValue().replaceAll(java.util.regex.Pattern.quote(search.getRawValue()), java.util.regex.Matcher.quoteReplacement(replacement.getRawValue())));
         }).build()
     );
 
