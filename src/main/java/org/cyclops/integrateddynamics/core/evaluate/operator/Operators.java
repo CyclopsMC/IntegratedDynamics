@@ -4,6 +4,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.re2j.Matcher;
+import com.google.re2j.Pattern;
+import com.google.re2j.PatternSyntaxException;
 
 import lombok.Lombok;
 import net.minecraft.block.Block;
@@ -71,15 +74,12 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
-import java.util.regex.PatternSyntaxException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * Collection of available operators.
@@ -507,7 +507,7 @@ public final class Operators {
         .output(ValueTypes.LIST).function(variables -> {
                 ValueTypeString.ValueString search = variables.getValue(0);
                 ValueTypeString.ValueString str = variables.getValue(1);
-                List<String> pieces = Arrays.asList(str.getRawValue().split(Pattern.quote(search.getRawValue())));
+                List<String> pieces = Arrays.asList(str.getRawValue().split(java.util.regex.Pattern.quote(search.getRawValue())));
                 List<ValueTypeString.ValueString> values = Lists.newArrayList();
                 for (String piece : pieces) {
                     values.add(ValueTypeString.ValueString.of(piece));
@@ -523,7 +523,7 @@ public final class Operators {
                 ValueTypeString.ValueString pattern = variables.getValue(0);
                 ValueTypeString.ValueString str = variables.getValue(1);
                 try {
-                    List<String> pieces = Arrays.asList(str.getRawValue().split(pattern.getRawValue()));
+                    List<String> pieces = Arrays.asList(Pattern.compile(pattern.getRawValue()).split(str.getRawValue()));
                     List<ValueTypeString.ValueString> values = Lists.newArrayList();
                     for (String piece : pieces) {
                         values.add(ValueTypeString.ValueString.of(piece));
@@ -654,7 +654,7 @@ public final class Operators {
             ValueTypeString.ValueString search = variables.getValue(0);
             ValueTypeString.ValueString replacement = variables.getValue(1);
             ValueTypeString.ValueString str = variables.getValue(2);
-            return ValueTypeString.ValueString.of(str.getRawValue().replaceAll(Pattern.quote(search.getRawValue()), replacement.getRawValue()));
+            return ValueTypeString.ValueString.of(str.getRawValue().replaceAll(java.util.regex.Pattern.quote(search.getRawValue()), replacement.getRawValue()));
         }).build()
     );
 
@@ -670,7 +670,7 @@ public final class Operators {
             ValueTypeString.ValueString replacement = variables.getValue(1);
             ValueTypeString.ValueString str = variables.getValue(2);
             try {
-                return ValueTypeString.ValueString.of(str.getRawValue().replaceAll(pattern.getRawValue(), replacement.getRawValue()));
+                return ValueTypeString.ValueString.of(Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue()).replaceAll(replacement.getRawValue()));
             } catch (PatternSyntaxException e) {
                 throw new EvaluationException("The syntax of the regular expression in replace_regex was incorrect.");
             }
