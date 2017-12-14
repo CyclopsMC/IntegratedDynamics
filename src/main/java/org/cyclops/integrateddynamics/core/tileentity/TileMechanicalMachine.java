@@ -48,7 +48,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     @NBTPersist
     private int energy;
     @NBTPersist
-    private int progress = 0;
+    private int progress = -1;
     @NBTPersist
     private int sleep = -1;
 
@@ -117,7 +117,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
      * @return If the machine is currently working.
      */
     public boolean isWorking() {
-        return this.progress > 0 && this.sleep == -1;
+        return this.progress >= 0 && this.sleep == -1;
     }
 
     /**
@@ -149,7 +149,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     @Override
     protected void onInventoryChanged() {
         super.onInventoryChanged();
-        this.sleep = 0;
+        this.sleep = -1;
     }
 
     @Override
@@ -261,7 +261,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
                         }
                     }
                 } else {
-                    this.progress = 0;
+                    this.progress = -1;
                     this.sleep = -1;
                 }
             }
