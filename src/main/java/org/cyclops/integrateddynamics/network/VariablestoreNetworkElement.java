@@ -1,16 +1,20 @@
 package org.cyclops.integrateddynamics.network;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
+import javax.annotation.Nullable;
+
 /**
  * Network element for variable stores.
  * @author rubensworks
  */
-public class VariablestoreNetworkElement extends TileNetworkElement<TileVariablestore> {
+public class VariablestoreNetworkElement extends TileNetworkElement<TileVariablestore>
+        implements IEventListenableNetworkElement<TileVariablestore> {
 
     public VariablestoreNetworkElement(DimPos pos) {
         super(pos);
@@ -44,5 +48,11 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
     @Override
     protected Class<TileVariablestore> getTileClass() {
         return TileVariablestore.class;
+    }
+
+    @Nullable
+    @Override
+    public TileVariablestore getNetworkEventListener() {
+        return getTile();
     }
 }
