@@ -448,7 +448,7 @@ public final class Operators {
                     Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
                     return ValueTypeBoolean.ValueBoolean.of(m.find());
                 } catch (PatternSyntaxException e) {
-                    throw new EvaluationException("The syntax of the regular expression in contains_regex was incorrect.");
+                    throw new EvaluationException(e.getMessage());
                 }
             }).build());
 
@@ -477,7 +477,7 @@ public final class Operators {
                         return ValueTypeInteger.ValueInteger.of(-1);
                     }
                 } catch (PatternSyntaxException e) {
-                    throw new EvaluationException("The syntax of the regular expression in index_of_regex was incorrect.");
+                    throw new EvaluationException(e.getMessage());
                 }
             }).build());
 
@@ -531,7 +531,7 @@ public final class Operators {
                     }
                     return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
                 } catch (PatternSyntaxException e) {
-                    throw new EvaluationException("The syntax of the regular expression in split_on_regex was incorrect.");
+                    throw new EvaluationException(e.getMessage());
                 }
             }).build());
 
@@ -583,7 +583,7 @@ public final class Operators {
                     throw new EvaluationException("The regular expression in regex_group must match the given string.");
                 }
             } catch (PatternSyntaxException e) {
-                throw new EvaluationException("The syntax of the regular expression in regex_group was incorrect.");
+                throw new EvaluationException(e.getMessage());
             } catch (IndexOutOfBoundsException e) {
                 throw new EvaluationException("The group index specified in the regex_group operator must not be greater than the number of groups matched in the regular expression.");
             }
@@ -610,7 +610,7 @@ public final class Operators {
                     return ValueTypeList.ValueList.ofList(ValueTypes.STRING, Collections.<ValueTypeString.ValueString>emptyList());
                 }
             } catch (PatternSyntaxException e) {
-                throw new EvaluationException("The syntax of the regular expression in regex_groups was incorrect.");
+                throw new EvaluationException(e.getMessage());
             }
         }).build()
     );
@@ -637,7 +637,7 @@ public final class Operators {
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
             } catch (PatternSyntaxException e) {
-                throw new EvaluationException("The syntax of the regular expression in regex_scan was incorrect.");
+                throw new EvaluationException(e.getMessage());
             } catch (IndexOutOfBoundsException e) {
                 throw new EvaluationException("The group index specified in the regex_scan operator must not be greater than the number of groups matched in the regular expression.");
             }
@@ -673,7 +673,7 @@ public final class Operators {
             try {
                 return ValueTypeString.ValueString.of(Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue()).replaceAll(replacement.getRawValue()));
             } catch (PatternSyntaxException e) {
-                throw new EvaluationException("The syntax of the regular expression in replace_regex was incorrect.");
+                throw new EvaluationException(e.getMessage());
             }
         }).build()
     );
