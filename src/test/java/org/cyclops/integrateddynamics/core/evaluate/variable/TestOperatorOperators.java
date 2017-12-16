@@ -605,12 +605,14 @@ public class TestOperatorOperators {
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped, i0}));
         DummyVariableOperator choiceFlipped0False = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0, bFalse}));
+        DummyVariableOperator choiceFlipped0True = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0, bTrue}));
 
-        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0False, i0});
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0False, i1});
         assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("flip(false ? 1 : 0) = 0", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
-        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0False, i1});
-        assertThat("flip(false ? 1 : 1) = 0", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(1));
+        assertThat("flip choice 0 false 1 = 1", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0True, i1});
+        assertThat("flip choice 0 true 1 = 0", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(0));
     }
 
     @Test(expected = EvaluationException.class)
