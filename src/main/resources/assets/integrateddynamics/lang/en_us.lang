@@ -464,6 +464,8 @@ aspect.aspects.integrateddynamics.read.list.fluid.capacities.info=The list of ca
 
 aspect.aspects.integrateddynamics.read.fluidstack.fluid.name=Tank Fluid
 aspect.aspects.integrateddynamics.read.fluidstack.fluid.info=The fluid in the target tank
+aspect.aspects.integrateddynamics.read.fluidstack.block.name=Block Fluid
+aspect.aspects.integrateddynamics.read.fluidstack.block.info=The fluid in the target block
 
 ## Inventory aspects
 aspect.aspects.integrateddynamics.read.boolean.inventory.full.name=Inventory Full
