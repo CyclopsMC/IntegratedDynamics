@@ -26,7 +26,7 @@ public class WriteRedstoneComponent implements IWriteRedstoneComponent {
         DimPos dimPos = target.getCenter().getPos();
         IDynamicRedstone block = getDynamicRedstoneBlock(dimPos, target.getCenter().getSide());
         if(block != null && !dimPos.getWorld().isRemote) {
-            block.setRedstoneLevel(-1, false);
+            block.setRedstoneLevel(-1, block.isStrong());
         }
     }
 
