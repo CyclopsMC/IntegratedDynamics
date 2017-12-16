@@ -32,9 +32,7 @@ dependencies {
     }
 
     compile "com.google.re2j:re2j:1.1"
-
-    shadow("com.google.re2j:re2j:1.1") {
-    }
+    shadow "com.google.re2j:re2j:1.1"
 
     // Project lombok
     provided "org.projectlombok:lombok:1.16.8"
