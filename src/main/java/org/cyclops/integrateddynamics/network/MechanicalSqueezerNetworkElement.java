@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.network;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
@@ -18,13 +19,18 @@ public class MechanicalSqueezerNetworkElement extends NetworkElementBase {
     private final DimPos pos;
 
     @Override
-    public void setPriority(INetwork network, int priority) {
+    public void setPriorityAndChannel(INetwork network, int priority, int channel) {
 
     }
 
     @Override
     public int getPriority() {
         return 0;
+    }
+
+    @Override
+    public int getChannel() {
+        return IChanneledNetwork.DEFAULT_CHANNEL;
     }
 
     @Override
