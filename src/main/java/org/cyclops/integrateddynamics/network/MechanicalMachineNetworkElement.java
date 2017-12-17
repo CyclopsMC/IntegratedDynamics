@@ -9,12 +9,12 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 
 /**
- * Network element for mechanical squeezers.
+ * Network element for mechanical machines.
  * @author rubensworks
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class MechanicalSqueezerNetworkElement extends NetworkElementBase {
+public class MechanicalMachineNetworkElement extends NetworkElementBase {
 
     private final DimPos pos;
 
@@ -46,8 +46,8 @@ public class MechanicalSqueezerNetworkElement extends NetworkElementBase {
 
     @Override
     public int compareTo(INetworkElement o) {
-        if(o instanceof MechanicalSqueezerNetworkElement) {
-            return getPos().compareTo(((MechanicalSqueezerNetworkElement) o).getPos());
+        if(o instanceof MechanicalMachineNetworkElement) {
+            return getPos().compareTo(((MechanicalMachineNetworkElement) o).getPos());
         }
         return this.getClass().getCanonicalName().compareTo(o.getClass().getCanonicalName());
     }

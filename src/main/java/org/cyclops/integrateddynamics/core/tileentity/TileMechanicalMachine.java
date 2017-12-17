@@ -25,7 +25,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
-import org.cyclops.integrateddynamics.network.MechanicalSqueezerNetworkElement;
+import org.cyclops.integrateddynamics.network.MechanicalMachineNetworkElement;
 
 import java.util.Set;
 
@@ -62,7 +62,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
             @Override
             public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
-                return new MechanicalSqueezerNetworkElement(DimPos.of(world, blockPos));
+                return new MechanicalMachineNetworkElement(DimPos.of(world, blockPos));
             }
         });
         addCapabilityInternal(CapabilityEnergy.ENERGY, this);
