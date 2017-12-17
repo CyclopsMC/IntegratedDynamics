@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model"    : "integrateddynamics:mechanical_squeezer"
+  },
+  "variants": {
+    "inventory": [{}],
+    "on": {
+      "false" : {},
+      "true"  : { "textures": { "side": "integrateddynamics:blocks/mechanical_squeezer_x_on" } }
+    }
+  }
+}

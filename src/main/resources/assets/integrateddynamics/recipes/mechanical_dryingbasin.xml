@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <recipes>
 
-	<recipe type="integrateddynamics:dryingbasin">
+	<recipe type="integrateddynamics:mechanical_dryingbasin">
 		<tag>base</tag>
-		<condition type="config">drying_basin</condition>
+		<condition type="config">mechanical_drying_basin</condition>
 		<condition type="config">crystalized_menril_block</condition>
 		<condition type="config">menrilresin</condition>
 		<input>
@@ -13,13 +13,13 @@
 			<item>integrateddynamics:crystalized_menril_block</item>
 		</output>
 		<properties>
-			<duration>150</duration>
+			<duration>15</duration>
 		</properties>
 	</recipe>
 
-	<recipe type="integrateddynamics:dryingbasin">
+	<recipe type="integrateddynamics:mechanical_dryingbasin">
 		<tag>base</tag>
-		<condition type="config">drying_basin</condition>
+		<condition type="config">mechanical_drying_basin</condition>
 		<condition type="config">crystalized_chorus_block</condition>
 		<condition type="config">liquidchorus</condition>
 		<input>
@@ -29,7 +29,7 @@
 			<item>integrateddynamics:crystalized_chorus_block</item>
 		</output>
 		<properties>
-			<duration>300</duration>
+			<duration>30</duration>
 		</properties>
 	</recipe>
 

@@ -19,8 +19,8 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.TankInventoryTileEntity;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
@@ -39,7 +39,7 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     private int itemHeight = 1;
 
     private SingleCache<ItemStack,
-            IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>> recipeCache;
+            IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>> recipeCache;
 
     public TileSqueezer() {
         super(1, "squeezerInventory", 1, Fluid.BUCKET_VOLUME, "squeezerTank");
@@ -54,9 +54,9 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(
                 new SingleCache.ICacheUpdater<ItemStack,
-                        IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>>() {
+                        IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>>() {
                     @Override
-                    public IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> getNewValue(ItemStack key) {
+                    public IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> getNewValue(ItemStack key) {
                         IngredientRecipeComponent recipeInput = new IngredientRecipeComponent(key);
                         return getRegistry().findRecipeByInput(recipeInput);
                     }
@@ -69,11 +69,11 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     }
 
     protected IRecipeRegistry<BlockSqueezer, IngredientRecipeComponent,
-            IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> getRegistry() {
+            IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> getRegistry() {
         return BlockSqueezer.getInstance().getRecipeRegistry();
     }
 
-    public IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
+    public IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
         return recipeCache.get(getStackInSlot(0).copy());
     }
 
@@ -96,21 +96,22 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                 }
             } else {
                 if (itemHeight == 7 && getCurrentRecipe() != null) {
-                    IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
+                    IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
                         setInventorySlotContents(0, ItemStack.EMPTY);
-                        ItemStack resultStack = recipe.getOutput().getFirstItemStack();
-                        if(!resultStack.isEmpty()) {
-                            resultStack = resultStack.copy();
-                            for(EnumFacing side : EnumFacing.VALUES) {
-                                if(!resultStack.isEmpty() && side != EnumFacing.UP) {
-                                    IItemHandler itemHandler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-                                    if (itemHandler != null) {
-                                        resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
+                        for (IngredientRecipeComponent recipeComponent : recipe.getOutput().getSubIngredientComponents()) {
+                            if (recipeComponent.getChance() == 1.0F || recipeComponent.getChance() >= getWorld().rand.nextFloat()) {
+                                ItemStack resultStack = recipeComponent.getFirstItemStack().copy();
+                                for (EnumFacing side : EnumFacing.VALUES) {
+                                    if (!resultStack.isEmpty() && side != EnumFacing.UP) {
+                                        IItemHandler itemHandler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                                        if (itemHandler != null) {
+                                            resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
+                                        }
                                     }
                                 }
-                            }
-                            if(!resultStack.isEmpty()) {
-                                ItemStackHelpers.spawnItemStack(getWorld(), getPos(), resultStack);
+                                if (!resultStack.isEmpty()) {
+                                    ItemStackHelpers.spawnItemStack(getWorld(), getPos(), resultStack);
+                                }
                             }
                         }
                         if (recipe.getOutput().getFluidStack() != null) {

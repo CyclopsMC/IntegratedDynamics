@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model"    : "integrateddynamics:mechanical_drying_basin"
+  },
+  "variants": {
+    "inventory": [{}],
+    "on": {
+      "false" : {},
+      "true"  : { "textures": { "texture": "integrateddynamics:blocks/mechanical_drying_basin_on" } }
+    }
+  }
+}
