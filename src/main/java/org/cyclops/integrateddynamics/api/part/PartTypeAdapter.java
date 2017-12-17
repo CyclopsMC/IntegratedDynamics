@@ -224,7 +224,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public boolean shouldTriggerBlockRenderUpdate(@Nullable S oldPartState, @Nullable S newPartState) {
-        return oldPartState == null || newPartState == null;
+        return oldPartState == null || newPartState == null || oldPartState.isForceBlockRenderUpdateAndReset();
     }
 
     @Override

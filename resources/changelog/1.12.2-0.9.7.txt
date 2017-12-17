@@ -1,0 +1,29 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.24 or higher.
+
+Changes:
+* Allow crafting two omni-directional connectors together to link them
+* Handle infinities better and avoid a temporary array
+
+Fixes:
+* Fix crash when creating fluid lists in the LP, Closes #404
+* Fix infinite recursion not always being detected, Closes #369
+* Fix part removal in unloaded chunks, Closes #421
+* Fix cables not connecting when placed without a player, Closes #343
+  This moves network init logic to an earlier phase of block placement,
+  the player-sensitive logic is delayed.
+* Fix LP shift-clicking from output slot going to arg slot, Closes #382
+  This resulted in a loss of variables.
+* Fix cables not being placeable underwater, Closes #373
+* Fix IgnoredBlockStatus only handling valid enums
+  This catches the potential IllegalArgumentException that might get thrown if some-one passes something
+  that isn't a valid enum value in Status, such as "hello" into the function.
+  This now matches the behaviour of vanilla minecraft's PropertyInteger.parseValue, which stores it in an
+  internal map (of whose get function never throws).
+* Fix resetting IDs in connectors not working correctly
+* Fix certain stairs being listed as fuel, Closes #426
+* Fix incorrect empty list type on entity inventory operators
+* Fix #397: stop misusing hash codes in uniq and uniq_p to make them retain the original order
+* Fix #392: obfuscate the right soundName
+* Use the right name when giving type errors from NBT operators
+* Fix #331: don't crash over an aspect model not being found

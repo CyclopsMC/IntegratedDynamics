@@ -13,6 +13,8 @@ public class L10NValues {
     public static final String GENERAL_ENERGY_UNIT = "general." + NS + ".energy_unit.name";
     public static final String GENERAL_ERROR_NONETWORK = "general." + NS + ".error.no_network";
     public static final String GENERAL_ITEM_ID = "item.items." + NS + ".general.id";
+    public static final String GENERAL_TRUE = "general." + NS + ".true";
+    public static final String GENERAL_FALSE = "general." + NS + ".false";
 
     public static final String PART_PANEL_ERROR_INVALIDTYPE = "parttype.parttypes." + NS + ".data_driven_panel.error.invalid_type";
     public static final String PART_ERROR_LOWENERGY = "parttype.parttypes." + NS + ".error.low_energy";
@@ -22,11 +24,14 @@ public class L10NValues {
     public static final String PART_TOOLTIP_WRITER_ACTIVEASPECT = "parttype.parttypes." + NS + ".tooltip.writer.active_aspect";
     public static final String PART_TOOLTIP_DISPLAY_ACTIVEVALUE = "parttype.parttypes." + NS + ".tooltip.display.active_value";
     public static final String PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP = "parttype.parttypes." + NS + ".tooltip.monodirectionalconnector.group";
+    public static final String PART_TOOLTIP_NOASPECTS = "parttype.parttypes." + NS + ".tooltip.noaspects";
 
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
     public static final String GUI_INPUT = "gui." + NS + ".input";
     public static final String GUI_OUTPUT = "gui." + NS + ".output";
+    // 0: value
+    public static final String GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT = "gui." + NS + ".mechanical_squeezer.togglefluidautoeject";
 
     public static final String VALUE_ERROR = "valuetype." + NS + ".error.value";
     public static final String VALUETYPE_VALUETYPE = "valuetype." + NS + ".value_type";

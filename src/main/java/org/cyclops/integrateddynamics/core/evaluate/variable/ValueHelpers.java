@@ -24,7 +24,7 @@ public class ValueHelpers {
      * @param variables The variables.
      * @return The value types array corresponding element-wise to the variables array.
      */
-    public static IValueType[] from(IVariable[] variables) {
+    public static IValueType[] from(IVariable... variables) {
         IValueType[] valueTypes = new IValueType[variables.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IVariable variable = variables[i];
@@ -39,7 +39,7 @@ public class ValueHelpers {
      * @param variableFacades The variables facades.
      * @return The value types array corresponding element-wise to the variables array.
      */
-    public static IValueType[] from(IVariableFacade[] variableFacades) {
+    public static IValueType[] from(IVariableFacade... variableFacades) {
         IValueType[] valueTypes = new IValueType[variableFacades.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IVariableFacade variableFacade = variableFacades[i];
@@ -53,7 +53,7 @@ public class ValueHelpers {
      * @param valueTypes The value types.
      * @return The unlocalized names array corresponding element-wise to the value types array.
      */
-    public static L10NHelpers.UnlocalizedString[] from(IValueType[] valueTypes) {
+    public static L10NHelpers.UnlocalizedString[] from(IValueType... valueTypes) {
         L10NHelpers.UnlocalizedString[] names = new L10NHelpers.UnlocalizedString[valueTypes.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IValueType valueType = valueTypes[i];

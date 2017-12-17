@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.tileentity;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +15,8 @@ import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
+import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
@@ -25,13 +28,15 @@ import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * A part entity used to store variables.
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-public class TileVariablestore extends TileCableConnectableInventory implements IDirtyMarkListener {
+public class TileVariablestore extends TileCableConnectableInventory
+        implements IDirtyMarkListener, INetworkEventListener<VariablestoreNetworkElement> {
 
     public static final int ROWS = 5;
     public static final int COLS = 9;
@@ -72,10 +77,10 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        refreshVariables(inventory);
+        refreshVariables(inventory, true);
     }
 
-    protected void refreshVariables(IInventory inventory) {
+    protected void refreshVariables(IInventory inventory, boolean sendVariablesUpdateEvent) {
         variableContainer.getVariableCache().clear();
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
@@ -87,16 +92,18 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
             }
         }
 
-        INetwork network = getNetwork();
-        if(network != null) {
-            network.getEventBus().post(new VariableContentsUpdatedEvent(network));
+        if (sendVariablesUpdateEvent) {
+            INetwork network = getNetwork();
+            if (network != null) {
+                network.getEventBus().post(new VariableContentsUpdatedEvent(network));
+            }
         }
     }
 
     @Override
     public void onDirty() {
         if(!world.isRemote) {
-            refreshVariables(inventory);
+            refreshVariables(inventory, true);
         }
     }
 
@@ -116,7 +123,24 @@ public class TileVariablestore extends TileCableConnectableInventory implements 
         super.updateTileEntity();
         if (shouldSendUpdateEvent && getNetwork() != null) {
             shouldSendUpdateEvent = false;
-            refreshVariables(inventory);
+            refreshVariables(inventory, true);
+        }
+    }
+
+    @Override
+    public boolean hasEventSubscriptions() {
+        return true;
+    }
+
+    @Override
+    public Set<Class<? extends INetworkEvent>> getSubscribedEvents() {
+        return Sets.<Class<? extends INetworkEvent>>newHashSet(VariableContentsUpdatedEvent.class);
+    }
+
+    @Override
+    public void onEvent(INetworkEvent event, VariablestoreNetworkElement networkElement) {
+        if(event instanceof VariableContentsUpdatedEvent) {
+            refreshVariables(inventory, false);
         }
     }
 }

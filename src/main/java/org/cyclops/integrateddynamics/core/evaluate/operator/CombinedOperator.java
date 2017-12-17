@@ -1,6 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -211,7 +215,8 @@ public class CombinedOperator extends OperatorBase {
             int size = variables.getVariables().length;
             IValue[] values = new IValue[size];
             for (int i = 0; i < size; i++) {
-                values[size - i - 1] = variables.getValue(i);
+                int targetI = i < 2 ? 1 - i : i;
+                values[i] = variables.getValue(targetI);
             }
             return ValueHelpers.evaluateOperator(getOperators()[0], values);
         }
@@ -221,12 +226,13 @@ public class CombinedOperator extends OperatorBase {
             IValueType[] originalInputTypes = operator.getInputTypes();
             IValueType[] flippedInputTypes = new IValueType[originalInputTypes.length];
             for (int i = 0; i < flippedInputTypes.length; i++) {
-                flippedInputTypes[flippedInputTypes.length - i - 1] = originalInputTypes[i];
+                int targetI = i < 2 ? 1 - i : i;
+                flippedInputTypes[i] = originalInputTypes[targetI];
             }
             CombinedOperator combinedOperator;
             try {
                 combinedOperator = new CombinedOperator(":flip:", "flipped", flip, flippedInputTypes,
-                        operator.getOutputType(), IConfigRenderPattern.INFIX);
+                        operator.getOutputType(), operator.getRenderPattern());
             } catch (IllegalArgumentException e) {
                 throw new EvaluationException(e.getMessage());
             }

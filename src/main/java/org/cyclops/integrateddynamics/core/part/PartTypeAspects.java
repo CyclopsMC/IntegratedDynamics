@@ -1,11 +1,16 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,4 +45,11 @@ public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPart
         return 1;
     }
 
+    @Override
+    public void loadTooltip(ItemStack itemStack, List<String> lines) {
+        super.loadTooltip(itemStack, lines);
+        if (getAspects().isEmpty()) {
+            lines.add(TextFormatting.GOLD + L10NHelpers.localize(L10NValues.PART_TOOLTIP_NOASPECTS));
+        }
+    }
 }

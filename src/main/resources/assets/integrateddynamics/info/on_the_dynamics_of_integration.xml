@@ -15,6 +15,7 @@
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text1</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text2</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.menrilBasics.text4</paragraph>
             <appendix type="crafting_recipe">integrateddynamics:squeezer</appendix>
             <appendix type="crafting_recipe">integrateddynamics:drying_basin</appendix>
             <appendix type="integrateddynamics:squeezer_recipe">
@@ -349,6 +350,7 @@
             <section name="info_book.integrateddynamics.manual.parts.introduction">
                 <paragraph>info_book.integrateddynamics.manual.parts.introduction.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.parts.introduction.text2</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.introduction.text3</paragraph>
             </section>
             <section name="info_book.integrateddynamics.manual.parts.reader">
                 <section name="info_book.integrateddynamics.manual.parts.reader.introduction">
@@ -428,6 +430,18 @@
                     <appendix type="crafting_recipe">integrateddynamics:part_effect_writer_item</appendix>
                     <appendix_list factory="integrateddynamics:part_aspects">effect_writer</appendix_list>
                 </section>
+                <section name="info_book.integrateddynamics.manual.parts.writer.entity">
+                    <tag>part_entity_writer_item</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.writer.entity.text1</paragraph>
+                    <appendix type="crafting_recipe">integrateddynamics:part_entity_writer_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">entity_writer</appendix_list>
+                </section>
+                <section name="info_book.integrateddynamics.manual.parts.writer.machine">
+                    <tag>part_machine_writer_item</tag>
+                    <paragraph>info_book.integrateddynamics.manual.parts.writer.machine.text1</paragraph>
+                    <appendix type="crafting_recipe">integrateddynamics:part_machine_writer_item</appendix>
+                    <appendix_list factory="integrateddynamics:part_aspects">machine_writer</appendix_list>
+                </section>
                 <section name="info_book.integrateddynamics.manual.parts.writer.inventory">
                     <tag>part_inventory_writer_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.writer.inventory.text1</paragraph>
@@ -506,6 +520,21 @@
                 <tag>coal_generator</tag>
                 <paragraph>info_book.integrateddynamics.manual.machines.generator.text1</paragraph>
                 <appendix type="crafting_recipe">integrateddynamics:coal_generator</appendix>
+            </section>
+            <section name="info_book.integrateddynamics.manual.machines.mechanical_squeezer">
+                <tag>mechanical_squeezer</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.mechanical_squeezer.text1</paragraph>
+                <appendix type="crafting_recipe">integrateddynamics:mechanical_squeezer</appendix>
+                <appendix_list type="integrateddynamics:mechanical_squeezer_recipe">base</appendix_list>
+                <appendix_list type="integrateddynamics:mechanical_squeezer_recipe">convenience</appendix_list>
+                <appendix_list type="integrateddynamics:mechanical_squeezer_recipe">ores</appendix_list>
+            </section>
+            <section name="info_book.integrateddynamics.manual.machines.mechanical_drying_basin">
+                <tag>mechanical_drying_basin</tag>
+                <paragraph>info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1</paragraph>
+                <appendix type="crafting_recipe">integrateddynamics:mechanical_drying_basin</appendix>
+                <appendix_list type="integrateddynamics:mechanical_drying_basin_recipe">base</appendix_list>
+                <appendix_list type="integrateddynamics:mechanical_drying_basin_recipe">convenience</appendix_list>
             </section>
         </section>
 

@@ -187,9 +187,13 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         partContainer.update();
     }
 
-    public void updateRedstoneInfo(EnumFacing side) {
+    public void updateRedstoneInfo(EnumFacing side, boolean strongPower) {
         if (getWorld().isBlockLoaded(getPos().offset(side))) {
             getWorld().neighborChanged(getPos().offset(side), getBlockType(), getPos());
+            if (strongPower) {
+                // When we are emitting a strong power, also update all neighbours of the target
+                getWorld().notifyNeighborsOfStateChange(getPos().offset(side), getBlockType(), true);
+            }
         }
     }
 

@@ -36,14 +36,4 @@ public class ValueTypeListProxyEntityArmorInventory extends ValueTypeListProxyEn
     public ValueObjectTypeItemStack.ValueItemStack get(int index) {
         return ValueObjectTypeItemStack.ValueItemStack.of(getInventory()[index]);
     }
-
-    @Override
-    public void writeGeneratedFieldsToNBT(NBTTagCompound tag) {
-
-    }
-
-    @Override
-    public void readGeneratedFieldsFromNBT(NBTTagCompound tag) {
-
-    }
 }

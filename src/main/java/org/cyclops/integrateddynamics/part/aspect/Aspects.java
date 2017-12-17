@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.part.aspect;
 
 import com.google.common.collect.Lists;
 import com.google.common.math.DoubleMath;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +21,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -100,7 +104,8 @@ public class Aspects {
                         BlockPos::getZ
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "posz").buildRead();
             public static final IAspectRead<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock> BLOCK =
-                    AspectReadBuilders.Block.BUILDER_BLOCK.handle(
+                    AspectReadBuilders.Block.BUILDER_BLOCK
+                            .handle(
                         dimPos -> dimPos.getWorld().getBlockState(dimPos.getBlockPos())
                     ).handle(AspectReadBuilders.PROP_GET_BLOCK).buildRead();
             public static final IAspectRead<ValueTypeNbt.ValueNbt, ValueTypeNbt> NBT =
@@ -265,6 +270,22 @@ public class Aspects {
                     AspectReadBuilders.BUILDER_OBJECT_FLUIDSTACK
                             .handle(AspectReadBuilders.Fluid.PROP_GET_ACTIVATABLE, "fluid").withProperties(AspectReadBuilders.Fluid.PROPERTIES)
                             .handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(AspectReadBuilders.PROP_GET_FLUIDSTACK).buildRead();
+
+            public static final IAspectRead<ValueObjectTypeFluidStack.ValueFluidStack, ValueObjectTypeFluidStack> BLOCK =
+                    AspectReadBuilders.BUILDER_OBJECT_FLUIDSTACK
+                            .handle(AspectReadBuilders.Block.PROP_GET, "block")
+                            .handle(dimPos -> {
+                                IBlockState blockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+                                net.minecraft.block.Block block = blockState.getBlock();
+                                if (block instanceof IFluidBlock) {
+                                    return ((IFluidBlock) block).drain(dimPos.getWorld(), dimPos.getBlockPos(), false);
+                                }
+                                if (block instanceof BlockLiquid) {
+                                    return new BlockLiquidWrapper((BlockLiquid) block, dimPos.getWorld(), dimPos.getBlockPos()).drain(Integer.MAX_VALUE, false);
+                                }
+                                return null;
+                            })
+                            .handle(AspectReadBuilders.PROP_GET_FLUIDSTACK).buildRead();
 
         }
 

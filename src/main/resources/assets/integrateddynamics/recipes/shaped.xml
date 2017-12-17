@@ -765,6 +765,58 @@
 			<grid>
 				<gridrow>
 					<item />
+					<item>minecraft:porkchop</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:porkchop</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
+					<item>minecraft:porkchop</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:porkchop</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_entity_writer_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variable_transformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:furnace</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>minecraft:iron_ingot</item>
+					<item meta="0">integrateddynamics:variable_transformer</item>
+					<item>minecraft:iron_ingot</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:crafting_table</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:part_machine_writer_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">variable_transformer</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
 					<item>minecraft:chest</item>
 					<item />
 				</gridrow>
@@ -877,6 +929,33 @@
 		</input>
 		<output>
 			<item>integrateddynamics:part_display_panel_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">menril_planks</condition>
+		<condition type="config">menril_door</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:menril_planks</item>
+					<item>integrateddynamics:menril_planks</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item amount="3">integrateddynamics:menril_door</item>
 		</output>
 	</recipe>
 
@@ -1167,7 +1246,63 @@
 			</grid>
 		</input>
 		<output>
-			<item amount="2">integrateddynamics:part_connector_omni_directional_item</item>
+			<item amount="3">integrateddynamics:part_connector_omni_directional_item</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">mechanical_squeezer</condition>
+		<condition type="config">squeezer</condition>
+		<condition type="config">energy_battery</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:diamond</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:energy_battery</item>
+					<item>integrateddynamics:squeezer</item>
+					<item>integrateddynamics:energy_battery</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:obsidian</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:mechanical_squeezer</item>
+		</output>
+	</recipe>
+
+	<recipe type="shaped">
+		<condition type="config">mechanical_drying_basin</condition>
+		<condition type="config">drying_basin</condition>
+		<condition type="config">energy_battery</condition>
+		<input>
+			<grid>
+				<gridrow>
+					<item />
+					<item>minecraft:obsidian</item>
+					<item />
+				</gridrow>
+				<gridrow>
+					<item>integrateddynamics:energy_battery</item>
+					<item>integrateddynamics:drying_basin</item>
+					<item>integrateddynamics:energy_battery</item>
+				</gridrow>
+				<gridrow>
+					<item />
+					<item>minecraft:obsidian</item>
+					<item />
+				</gridrow>
+			</grid>
+		</input>
+		<output>
+			<item>integrateddynamics:mechanical_drying_basin</item>
 		</output>
 	</recipe>
 

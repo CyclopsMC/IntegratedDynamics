@@ -1,0 +1,18 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.24 or higher.
+
+Additions:
+* Add convenience aspect to fluid reader to read fluid blocks, Closes #405
+
+Fixes:
+* Fix crash on comparator reading on certain blocks, Closes #450
+* Fix incorrect LP dropdown rendering order
+  The dropdown of the operators field was sometimes being rendered in front of the LP element type name box.
+* Fix incorrect operator value signatures, Closes #386
+* Fix generator incorrectly internally acting as variable store
+* Fix value updates not being propagated when 1+ steps from a proxy, Closes #374
+* Allow flip operator to be used for operators with 2+ inputs, Closes #387
+* Fix advancement condition logging errors for certain predicate checks
+* Fix strong redstone power not always updating all blocks, #422
+* Fix part states not properly for updating player, Closes #389
+* Fix NBT serialization in ValueTypeListProxyEntityBase not being called, Closes #393

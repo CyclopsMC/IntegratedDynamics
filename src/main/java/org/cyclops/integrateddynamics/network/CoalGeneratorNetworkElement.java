@@ -9,8 +9,6 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 
@@ -35,20 +33,6 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase {
         TileCoalGenerator tile = getTile();
         if(tile != null) {
             InventoryHelper.dropInventoryItems(getPos().getWorld(), getPos().getBlockPos(), tile.getInventory());
-        }
-    }
-
-    @Override
-    public boolean onNetworkAddition(INetwork network) {
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-        return partNetwork != null && partNetwork.addVariableContainer(getPos());
-    }
-
-    @Override
-    public void onNetworkRemoval(INetwork network) {
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-        if (partNetwork != null) {
-            partNetwork.removeVariableContainer(getPos());
         }
     }
 

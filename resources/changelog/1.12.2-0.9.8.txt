@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.10.24 or higher.
+
+Fixes:
+* Revert "Clean up equals and add hashCode to Network"
+  This fixes networks not properly updating after adding parts, or saving
+  This reverts commit 4d5b2c641d655fb079da2006191eeea17f10a061.
+* Fix JEI recipe clicking in LP overwriting last inventory slot, Closes CyclopsMC/IntegratedDynamics#441
+* Fix incorrect JEI LP recipe fill in target
+* Fix TCon compat not being enabled
+* Fix items behaving weirdly when creating lists in the LP, Closes #446

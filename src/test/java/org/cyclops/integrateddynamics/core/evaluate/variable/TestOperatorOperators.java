@@ -42,6 +42,7 @@ public class TestOperatorOperators {
     private DummyVariableOperator oRelationalLessThan;
     private DummyVariableOperator oIntegerModulus;
     private DummyVariableOperator oArithmeticAddition;
+    private DummyVariableOperator oChoice;
 
     private DummyVariableList lintegers;
     private DummyVariableList lbooleans;
@@ -70,6 +71,7 @@ public class TestOperatorOperators {
         oRelationalLessThan    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_LT));
         oIntegerModulus        = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_MODULUS));
         oArithmeticAddition    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
+        oChoice                = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE));
 
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
@@ -593,6 +595,24 @@ public class TestOperatorOperators {
         assertThat("<2(2) == false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(false));
         IValue res4 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{lessThan2, i3});
         assertThat("<2(3) == false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
+    }
+
+    @Test
+    public void testPredicateFlipOperatorWithThreeInputs() throws EvaluationException {
+        DummyVariableOperator choiceFlipped = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_FLIP.evaluate(new IVariable[]{oChoice}));
+        DummyVariableOperator choiceFlipped0 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped, i0}));
+        DummyVariableOperator choiceFlipped0False = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0, bFalse}));
+        DummyVariableOperator choiceFlipped0True = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0, bTrue}));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0False, i1});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("flip choice 0 false 1 = 1", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{choiceFlipped0True, i1});
+        assertThat("flip choice 0 true 1 = 0", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(0));
     }
 
     @Test(expected = EvaluationException.class)

@@ -190,10 +190,10 @@ public class GuiLogicProgrammerBase extends ScrollingGuiContainer {
     }
 
     protected void onActivateElement(ILogicProgrammerElement<RenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> element) {
-        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammerBase) getContainer()));
-        operatorConfigPattern.initGui(guiLeft, guiTop);
         subGuiHolder.addSubGui(operatorInfoPattern = new SubGuiOperatorInfo(element));
         operatorInfoPattern.initGui(guiLeft, guiTop);
+        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammerBase) getContainer()));
+        operatorConfigPattern.initGui(guiLeft, guiTop);
     }
 
     protected void onDeactivateElement(ILogicProgrammerElement element) {

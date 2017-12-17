@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.infobook;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
@@ -14,6 +16,7 @@ import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
+import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -21,12 +24,18 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockDryingBasinConfig;
+import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
+import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasinConfig;
+import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
+import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezerConfig;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.cyclops.integrateddynamics.block.BlockSqueezerConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.infobook.pageelement.AspectAppendix;
 import org.cyclops.integrateddynamics.infobook.pageelement.DryingBasinRecipeAppendix;
+import org.cyclops.integrateddynamics.infobook.pageelement.MechanicalDryingBasinRecipeAppendix;
+import org.cyclops.integrateddynamics.infobook.pageelement.MechanicalSqueezerRecipeAppendix;
 import org.cyclops.integrateddynamics.infobook.pageelement.OperatorAppendix;
 import org.cyclops.integrateddynamics.infobook.pageelement.SqueezerRecipeAppendix;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -49,26 +58,20 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
 
                 @Override
                 public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
-                    ItemStack itemStack;
-                    try {
-                        itemStack = InfoBookParser.createStack((Element) node.getElementsByTagName("item").item(0), infoBook.getMod().getRecipeHandler());
-                    } catch (InfoBookParser.InvalidAppendixException e) {
-                        itemStack = ItemStack.EMPTY;
-                    }
-                    FluidStack fluidStack;
-                    try {
-                        fluidStack = InfoBookParser.createFluidStack((Element) node.getElementsByTagName("fluid").item(0), infoBook.getMod().getRecipeHandler());
-                    } catch (InfoBookParser.InvalidAppendixException e) {
-                        fluidStack = null;
-                    }
+                    NonNullList<Ingredient> ingredients = InfoBookParser.createOptionalIngredientsFromIngredient(node, infoBook.getMod().getRecipeHandler());
+                    FluidStack fluidStack = InfoBookParser.createOptionalFluidStackFromIngredient(node, infoBook.getMod().getRecipeHandler());
 
-                    List<IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>>
+                    List<IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>>
                             recipes = BlockSqueezer.getInstance().getRecipeRegistry().
-                            findRecipesByOutput(new IngredientAndFluidStackRecipeComponent(itemStack, fluidStack));
+                            findRecipesByOutput(new IngredientsAndFluidStackRecipeComponent(ingredients, fluidStack));
                     int index = InfoBookParser.getIndex(node);
                     if(index >= recipes.size()) {
+                        StringBuilder unlocalizedItems = new StringBuilder();
+                        for (Ingredient ingredient : ingredients) {
+                            unlocalizedItems.append(ingredient.getMatchingStacks()[0].getUnlocalizedName());
+                        }
                         throw new InfoBookParser.InvalidAppendixException("Could not find Squeezer recipe for "
-                                + itemStack.getItem().getUnlocalizedName() + " and "
+                                + unlocalizedItems + " and "
                                 + (fluidStack != null ? fluidStack.getFluid().getName() : "null")
                                 + " with index " + index);
                     }
@@ -76,10 +79,10 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                 }
             });
 
-            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezer_recipe", new InfoBookParser.IAppendixItemFactory<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent>() {
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezer_recipe", new InfoBookParser.IAppendixItemFactory<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>() {
 
                 @Override
-                public SectionAppendix create(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) throws InfoBookParser.InvalidAppendixException {
+                public SectionAppendix create(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) throws InfoBookParser.InvalidAppendixException {
                     return new SqueezerRecipeAppendix(infoBook, recipe);
                 }
 
@@ -92,18 +95,8 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
 
                 @Override
                 public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
-                    ItemStack itemStack;
-                    try {
-                        itemStack = InfoBookParser.createStack((Element) node.getElementsByTagName("item").item(0), infoBook.getMod().getRecipeHandler());
-                    } catch (InfoBookParser.InvalidAppendixException e) {
-                        itemStack = ItemStack.EMPTY;
-                    }
-                    FluidStack fluidStack;
-                    try {
-                        fluidStack = InfoBookParser.createFluidStack((Element) node.getElementsByTagName("fluid").item(0), infoBook.getMod().getRecipeHandler());
-                    } catch (InfoBookParser.InvalidAppendixException e) {
-                        fluidStack = null;
-                    }
+                    ItemStack itemStack = InfoBookParser.createOptionalStackFromIngredient(node, infoBook.getMod().getRecipeHandler());
+                    FluidStack fluidStack = InfoBookParser.createOptionalFluidStackFromIngredient(node, infoBook.getMod().getRecipeHandler());
 
                     List<IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties>>
                             recipes = BlockDryingBasin.getInstance().getRecipeRegistry().
@@ -127,6 +120,74 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
             });
         } else {
             InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":drying_basin_recipe");
+        }
+        if (ConfigHandler.isEnabled(BlockMechanicalSqueezerConfig.class)) {
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":mechanical_squeezer_recipe", new InfoBookParser.IAppendixFactory() {
+
+                @Override
+                public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
+                    NonNullList<Ingredient> ingredients = InfoBookParser.createOptionalIngredientsFromIngredient(node, infoBook.getMod().getRecipeHandler());
+                    FluidStack fluidStack = InfoBookParser.createOptionalFluidStackFromIngredient(node, infoBook.getMod().getRecipeHandler());
+
+                    List<IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties>>
+                            recipes = BlockMechanicalSqueezer.getInstance().getRecipeRegistry().
+                            findRecipesByOutput(new IngredientsAndFluidStackRecipeComponent(ingredients, fluidStack));
+                    int index = InfoBookParser.getIndex(node);
+                    if(index >= recipes.size()) {
+                        StringBuilder unlocalizedItems = new StringBuilder();
+                        for (Ingredient ingredient : ingredients) {
+                            unlocalizedItems.append(ingredient.getMatchingStacks()[0].getUnlocalizedName());
+                        }
+                        throw new InfoBookParser.InvalidAppendixException("Could not find MechanicalSqueezer recipe for "
+                                + unlocalizedItems + " and "
+                                + (fluidStack != null ? fluidStack.getFluid().getName() : "null")
+                                + " with index " + index);
+                    }
+                    return new MechanicalSqueezerRecipeAppendix(infoBook, recipes.get(index));
+                }
+            });
+
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":mechanical_squeezer_recipe", new InfoBookParser.IAppendixItemFactory<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>() {
+
+                @Override
+                public SectionAppendix create(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe) throws InfoBookParser.InvalidAppendixException {
+                    return new MechanicalSqueezerRecipeAppendix(infoBook, recipe);
+                }
+
+            });
+        } else {
+            InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":mechanical_squeezer_recipe");
+        }
+        if (ConfigHandler.isEnabled(BlockMechanicalDryingBasinConfig.class)) {
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":mechanical_drying_basin_recipe", new InfoBookParser.IAppendixFactory() {
+
+                @Override
+                public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
+                    ItemStack itemStack = InfoBookParser.createOptionalStackFromIngredient(node, infoBook.getMod().getRecipeHandler());
+                    FluidStack fluidStack = InfoBookParser.createOptionalFluidStackFromIngredient(node, infoBook.getMod().getRecipeHandler());
+
+                    List<IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties>>
+                            recipes = BlockMechanicalDryingBasin.getInstance().getRecipeRegistry().
+                            findRecipesByOutput(new IngredientAndFluidStackRecipeComponent(itemStack, fluidStack));
+                    int index = InfoBookParser.getIndex(node);
+                    if(index >= recipes.size()) {
+                        throw new InfoBookParser.InvalidAppendixException("Could not find Drying Basin recipe for "
+                                + itemStack.getItem().getUnlocalizedName() + "with index " + index);
+                    }
+                    return new MechanicalDryingBasinRecipeAppendix(infoBook, recipes.get(index));
+                }
+            });
+
+            InfoBookParser.registerFactory(Reference.MOD_ID + ":mechanical_drying_basin_recipe", new InfoBookParser.IAppendixItemFactory<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties>() {
+
+                @Override
+                public SectionAppendix create(IInfoBook infoBook, IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) throws InfoBookParser.InvalidAppendixException {
+                    return new MechanicalDryingBasinRecipeAppendix(infoBook, recipe);
+                }
+
+            });
+        } else {
+            InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":mechanical_drying_basin_recipe");
         }
 
         InfoBookParser.registerFactory(Reference.MOD_ID + ":aspect", new InfoBookParser.IAppendixFactory() {

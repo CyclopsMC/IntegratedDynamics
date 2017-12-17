@@ -4,6 +4,8 @@ general.integrateddynamics.description=Take full and automated control of your a
 general.integrateddynamics.info.none=None
 general.integrateddynamics.energy_unit.name=RF
 general.integrateddynamics.error.no_network=No valid network found
+general.integrateddynamics.true=True
+general.integrateddynamics.false=False
 
 # Gui
 gui.integrateddynamics.button.save=Save
@@ -25,6 +27,8 @@ gui.integrateddynamics.rewards.collected=Collected
 gui.integrateddynamics.rewards.collectFailure=Can't collect rewards, is your inventory full?
 gui.integrateddynamics.input=Input: %s
 gui.integrateddynamics.output=Output: %s
+gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject=Auto-eject Fluid: %s
+gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject.info=Push to adjacent tanks.
 
 # Diagnostics
 gui.integrateddynamics.diagnostics.title=Network Diagnostics
@@ -73,6 +77,7 @@ tile.blocks.integrateddynamics.squeezer.info=Squeezes, flattens and crushes by j
 tile.blocks.integrateddynamics.menril_torch.name=Menril Torch
 tile.blocks.integrateddynamics.menril_torch_stone.name=Menril Stone Torch
 tile.blocks.integrateddynamics.invisible_light.name=Invisible Light
+tile.blocks.integrateddynamics.menril_door.name=Menril Door
 tile.blocks.integrateddynamics.menril_planks_stairs.name=Menril Wood Stairs
 tile.blocks.integrateddynamics.crystalized_menril_block_stairs.name=Crystalized Menril Stairs
 tile.blocks.integrateddynamics.crystalized_menril_brick_stairs.name=Crystalized Menril Brick Stairs
@@ -83,6 +88,10 @@ tile.blocks.integrateddynamics.crystalized_chorus_block.name=Block of Crystalize
 tile.blocks.integrateddynamics.crystalized_chorus_brick.name=Crystalized Chorus Brick
 tile.blocks.integrateddynamics.crystalized_chorus_block_stairs.name=Crystalized Chorus Stairs
 tile.blocks.integrateddynamics.crystalized_chorus_brick_stairs.name=Crystalized Chorus Brick Stairs
+tile.blocks.integrateddynamics.mechanical_squeezer.name=Mechanical Squeezer
+tile.blocks.integrateddynamics.mechanical_squeezer.info=Squeezes, flattens and crushes using energy.
+tile.blocks.integrateddynamics.mechanical_drying_basin.name=Mechanical Drying Basin
+tile.blocks.integrateddynamics.mechanical_drying_basin.info=For drying items and fluids using energy.
 
 # Items
 item.items.integrateddynamics.general.id=§e§lID: §r%s
@@ -227,6 +236,7 @@ parttype.parttypes.integrateddynamics.tooltip.errors=Errors:
 parttype.parttypes.integrateddynamics.tooltip.writer.active_aspect=Aspect: %s (%s)
 parttype.parttypes.integrateddynamics.tooltip.display.active_value=Value: %s (%s)
 parttype.parttypes.integrateddynamics.tooltip.monodirectionalconnector.group=Group: %s
+parttype.parttypes.integrateddynamics.tooltip.noaspects=WARNING: No aspects available. This may become usable when other mods are installed.
 
 parttype.parttypes.integrateddynamics.audio_reader.name=Audio Reader
 parttype.parttypes.integrateddynamics.audio_reader.info=Reads audio information
@@ -253,6 +263,10 @@ parttype.parttypes.integrateddynamics.audio_writer.name=Audio Writer
 parttype.parttypes.integrateddynamics.audio_writer.info=Outputs audio and music
 parttype.parttypes.integrateddynamics.effect_writer.name=Effect Writer
 parttype.parttypes.integrateddynamics.effect_writer.info=Outputs particles
+parttype.parttypes.integrateddynamics.entity_writer.name=Entity Writer
+parttype.parttypes.integrateddynamics.entity_writer.info=Writes entity configuration
+parttype.parttypes.integrateddynamics.machine_writer.name=Machine Writer
+parttype.parttypes.integrateddynamics.machine_writer.info=Writes machine configuration
 parttype.parttypes.integrateddynamics.inventory_writer.name=Inventory Writer
 parttype.parttypes.integrateddynamics.inventory_writer.info=Writes to inventories
 parttype.parttypes.integrateddynamics.redstone_writer.name=Redstone Writer
@@ -465,6 +479,8 @@ aspect.aspects.integrateddynamics.read.list.fluid.capacities.info=The list of ca
 
 aspect.aspects.integrateddynamics.read.fluidstack.fluid.name=Tank Fluid
 aspect.aspects.integrateddynamics.read.fluidstack.fluid.info=The fluid in the target tank
+aspect.aspects.integrateddynamics.read.fluidstack.block.name=Block Fluid
+aspect.aspects.integrateddynamics.read.fluidstack.block.info=The fluid in the target block
 
 ## Inventory aspects
 aspect.aspects.integrateddynamics.read.boolean.inventory.full.name=Inventory Full
@@ -626,6 +642,7 @@ aspect.aspecttypes.integrateddynamics.integer.channel.name=Channel
 
 aspect.aspecttypes.integrateddynamics.integer.interval.name=Pulse Interval
 aspect.aspecttypes.integrateddynamics.integer.length.name=Pulse Length
+aspect.aspecttypes.integrateddynamics.integer.offset.name=Pulse Time Offset
 
 aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
 aspect.aspecttypes.integrateddynamics.double.frequency.name=Frequency
@@ -879,6 +896,8 @@ operator.operators.integrateddynamics.entity.isitem.name=Is Item
 operator.operators.integrateddynamics.entity.isitem.info=If the entity is an item
 operator.operators.integrateddynamics.entity.isplayer.name=Is Player
 operator.operators.integrateddynamics.entity.isplayer.info=If the entity is a player
+operator.operators.integrateddynamics.entity.isminecart.name=Is Minecart
+operator.operators.integrateddynamics.entity.isminecart.info=If the entity is a minecart
 operator.operators.integrateddynamics.entity.item.name=Item
 operator.operators.integrateddynamics.entity.item.info=The item from the item entity
 operator.operators.integrateddynamics.entity.health.name=Health
@@ -1048,7 +1067,7 @@ operator.operators.integrateddynamics.operator.pipe.name=Pipe
 operator.operators.integrateddynamics.operator.pipe.info=Create a new operator that pipes the output from the first operator to the second operator.
 operator.operators.integrateddynamics.virtual.piped.name=Piped
 operator.operators.integrateddynamics.operator.flip.name=Flip
-operator.operators.integrateddynamics.operator.flip.info=Flip the input parameters of an operator with two inputs.
+operator.operators.integrateddynamics.operator.flip.info=Flip the two first input parameters of an operator.
 operator.operators.integrateddynamics.virtual.flipped.name=Flipped
 operator.operators.integrateddynamics.operator.reduce.name=Reduce
 operator.operators.integrateddynamics.operator.reduce.info=Apply the given operator on all elements of a list to reduce the list to one value.
@@ -1191,6 +1210,7 @@ info_book.integrateddynamics.tutorials.menrilBasics=Menril Basics
 info_book.integrateddynamics.tutorials.menrilBasics.text1=To get started with this mod, you will need to find some &lMenril Trees&r which can most easily be found in &lMeneglin Biomes&r.
 info_book.integrateddynamics.tutorials.menrilBasics.text2=After that, you’ll need to craft a &lSqueezer&r and &lDrying Basin&r for processing &lMenril Wood&r. This can be done by placing a block of wood in the &lSqueezer&r and jumping on it until it's flat. Once that has been done, the &lMenril Resin&r will try to go to the two sides of the &lSqueezer&r. Next, place a &lDrying Basin&r next to the &lSqueezer&r to make it fill with the &lMenril Resin&r you just squeezed.
 info_book.integrateddynamics.tutorials.menrilBasics.text3=If you want to repeat the process, you can reset the &lSqueezer&r by applying a redstone pulse.
+info_book.integrateddynamics.tutorials.menrilBasics.text4=In the future, you will also be able to craft upgraded variants of these machines that are more easily automatable, but are more costly: the &lMechanical Squeezer&r and the &lMechanical Drying Basin&r.
 
 info_book.integrateddynamics.tutorials.networkFoundations=Network Foundations
 info_book.integrateddynamics.tutorials.networkFoundations.text1=The main goal of this mod is for building control networks for automation. This is done using &lLogic Cables&r. Try making a network with ten of those cables.
@@ -1315,6 +1335,7 @@ info_book.integrateddynamics.manual.parts=Parts
 info_book.integrateddynamics.manual.parts.introduction=Introduction
 info_book.integrateddynamics.manual.parts.introduction.text1=Parts can be placed on each side of a &lLogic Cable&r. This section describes parts that can read &lValues&r and place them available as a &lVariable Card&r, and parts that can perform actions based on the &lValues&r within &lVariable Cards&r.
 info_book.integrateddynamics.manual.parts.introduction.text2=Most parts have configurable settings, which can be accessed using the top-right button in the GUI of a part. This allows you to change the part &lFrequency&r, meaning per how many ticks this part should perform its actions. Secondly, the &lPriority&r of part can be changed, which indicates the order in which this part can act relative to the other parts in the same network in the same tick. If part A has a priority of -1, and part B has a priority of 1, then part B will always perform its actions before part A. If priorities of parts are the same, then the relative order is random.
+info_book.integrateddynamics.manual.parts.introduction.text3=Some reader and writer parts only contain aspects when certain other mods are present. If no aspects are present for a certain part, a warning will be added to the item tooltip whenever you attempt to craft it.
 
 info_book.integrateddynamics.manual.parts.reader=Readers
 info_book.integrateddynamics.manual.parts.reader.introduction=Introduction
@@ -1346,6 +1367,10 @@ info_book.integrateddynamics.manual.parts.writer.audio=Audio
 info_book.integrateddynamics.manual.parts.writer.audio.text1=Play sounds and music.
 info_book.integrateddynamics.manual.parts.writer.effect=Effect
 info_book.integrateddynamics.manual.parts.writer.effect.text1=Emit particles based on certain values and settings.
+info_book.integrateddynamics.manual.parts.writer.entity=Entity
+info_book.integrateddynamics.manual.parts.writer.entity.text1=Configure and control entities.
+info_book.integrateddynamics.manual.parts.writer.machine=Machine
+info_book.integrateddynamics.manual.parts.writer.machine.text1=Configure and control machines.
 info_book.integrateddynamics.manual.parts.writer.inventory=Inventory
 info_book.integrateddynamics.manual.parts.writer.inventory.text1=Perform actions related to inventories and pipes. This will not transfer items itself.
 info_book.integrateddynamics.manual.parts.writer.redstone=Redstone
@@ -1389,6 +1414,12 @@ info_book.integrateddynamics.manual.machines.energy_battery.text3=Applying a red
 
 info_book.integrateddynamics.manual.machines.generator=Generator
 info_book.integrateddynamics.manual.machines.generator.text1=When you need &lRF&r or &lTesla&r energy, you can use the &lGenerator&r to create energy from &oburnable&r items.
+
+info_book.integrateddynamics.manual.machines.mechanical_squeezer=Mechanical Squeezer
+info_book.integrateddynamics.manual.machines.mechanical_squeezer.text1=There will come a time, when you will have had enough of all this jumping on &lSqueezers&r. If you haven't automated your &lSqueezers&r by then, perhaps it's time to look into making a &lMechanical Squeezers&r. It does not require any manual effort, but it requires energy to run. This also makes it significantly faster than the regular &lSqueezers&r and allows more things to be squeezed with a higher yield.
+
+info_book.integrateddynamics.manual.machines.mechanical_drying_basin=Mechanical Drying Basin
+info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1=Drying with the &lDrying Basin&r can take a while. If you want things to go faster, or if you want to be able to dry more things, you can use the &lMechanical Drying Basin&r, which requires energy to run.
 
 info_book.integrateddynamics.manual.logic_programming=Logic Programming
 info_book.integrateddynamics.manual.logic_programming.text1=Another method for creating dynamic variable cards, is by applying an &lOperator&r on one or more &lVariable Cards&r to produce a new &lVariable Card&r. An example of an &lOperator&r is the addition of two &lNumbers&r, resulting in a new &lNumber&r.

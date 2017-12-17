@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+
+	<recipe type="integrateddynamics:mechanical_squeezer">
+		<tag>base</tag>
+		<condition type="config">mechanical_squeezer</condition>
+		<condition type="config">menril_log</condition>
+		<condition type="config">menrilresin</condition>
+		<input>
+			<item>integrateddynamics:menril_log</item>
+		</input>
+		<output>
+			<fluid amount="1000">menrilresin</fluid>
+			<item amount="2">integrateddynamics:crystalized_menril_chunk</item>
+			<item amount="1" chance="0.5">integrateddynamics:crystalized_menril_chunk</item>
+			<item amount="1" chance="0.5">integrateddynamics:crystalized_menril_chunk</item>
+		</output>
+		<properties>
+			<duration>15</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:mechanical_squeezer">
+		<tag>base</tag>
+		<condition type="config">mechanical_squeezer</condition>
+		<condition type="config">liquidchorus</condition>
+		<input>
+			<item>minecraft:chorus_fruit_popped</item>
+		</input>
+		<output>
+			<fluid amount="125">liquidchorus</fluid>
+			<item amount="2">integrateddynamics:crystalized_chorus_chunk</item>
+			<item amount="1" chance="0.5">integrateddynamics:crystalized_chorus_chunk</item>
+			<item amount="1" chance="0.5">integrateddynamics:crystalized_chorus_chunk</item>
+		</output>
+		<properties>
+			<duration>15</duration>
+		</properties>
+	</recipe>
+
+</recipes>
