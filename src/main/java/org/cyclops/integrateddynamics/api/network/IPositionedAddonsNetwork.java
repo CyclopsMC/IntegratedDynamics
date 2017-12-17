@@ -20,6 +20,7 @@ public interface IPositionedAddonsNetwork {
      * Add the given position.
      * @param pos The position.
      * @param priority The priority.
+     * @param channel The channel id.
      * @return If the position was added, otherwise it was already present.
      */
     public boolean addPosition(PartPos pos, int priority, int channel);
