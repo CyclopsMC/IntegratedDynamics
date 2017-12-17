@@ -235,6 +235,7 @@ parttype.parttypes.integrateddynamics.tooltip.errors=Errors:
 parttype.parttypes.integrateddynamics.tooltip.writer.active_aspect=Aspect: %s (%s)
 parttype.parttypes.integrateddynamics.tooltip.display.active_value=Value: %s (%s)
 parttype.parttypes.integrateddynamics.tooltip.monodirectionalconnector.group=Group: %s
+parttype.parttypes.integrateddynamics.tooltip.noaspects=WARNING: No aspects available. This may become usable when other mods are installed.
 
 parttype.parttypes.integrateddynamics.audio_reader.name=Audio Reader
 parttype.parttypes.integrateddynamics.audio_reader.info=Reads audio information
@@ -1331,6 +1332,7 @@ info_book.integrateddynamics.manual.parts=Parts
 info_book.integrateddynamics.manual.parts.introduction=Introduction
 info_book.integrateddynamics.manual.parts.introduction.text1=Parts can be placed on each side of a &lLogic Cable&r. This section describes parts that can read &lValues&r and place them available as a &lVariable Card&r, and parts that can perform actions based on the &lValues&r within &lVariable Cards&r.
 info_book.integrateddynamics.manual.parts.introduction.text2=Most parts have configurable settings, which can be accessed using the top-right button in the GUI of a part. This allows you to change the part &lFrequency&r, meaning per how many ticks this part should perform its actions. Secondly, the &lPriority&r of part can be changed, which indicates the order in which this part can act relative to the other parts in the same network in the same tick. If part A has a priority of -1, and part B has a priority of 1, then part B will always perform its actions before part A. If priorities of parts are the same, then the relative order is random.
+info_book.integrateddynamics.manual.parts.introduction.text3=Some reader and writer parts only contain aspects when certain other mods are present. If no aspects are present for a certain part, a warning will be added to the item tooltip whenever you attempt to craft it.
 
 info_book.integrateddynamics.manual.parts.reader=Readers
 info_book.integrateddynamics.manual.parts.reader.introduction=Introduction
