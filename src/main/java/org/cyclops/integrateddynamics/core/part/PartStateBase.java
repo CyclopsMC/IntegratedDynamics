@@ -37,6 +37,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private int priority = 0;
     private int channel = 0;
     private EnumFacing targetSide = null;
+    private boolean exposeCapabilities = false;
     private int id = -1;
     private Map<IAspect, IAspectProperties> aspectProperties = new IdentityHashMap<>();
     private boolean enabled = true;
@@ -52,6 +53,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         if (this.targetSide != null) {
             tag.setInteger("targetSide", this.targetSide.ordinal());
         }
+        tag.setBoolean("exposeCapabilities", this.exposeCapabilities);
         tag.setInteger("id", this.id);
         writeAspectProperties("aspectProperties", tag);
         tag.setBoolean("enabled", this.enabled);
@@ -68,6 +70,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         if (tag.hasKey("targetSide", Constants.NBT.TAG_INT)) {
             this.targetSide = EnumFacing.VALUES[tag.getInteger("targetSide")];
         }
+        this.exposeCapabilities = tag.hasKey("exposeCapabilities") ? tag.getBoolean("exposeCapabilities") : true; // For BC with savegames before this existed, all previously-placed parts will have this true, even though newly-placed parts default to false.
         this.id = tag.getInteger("id");
         this.aspectProperties.clear();
         readAspectProperties("aspectProperties", tag);
@@ -163,6 +166,16 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
+    public void setExposeCapabilities(boolean exposeCapabilities) {
+        this.exposeCapabilities = exposeCapabilities;
+    }
+
+    @Override
+    public boolean getExposeCapabilities() {
+        return exposeCapabilities;
+    }
+
+    @Override
     public boolean isDirtyAndReset() {
         boolean wasDirty = this.dirty;
         this.dirty = false;
@@ -238,15 +251,17 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
 
     @Override
     public boolean hasCapability(Capability<?> capability) {
-        return volatileCapabilities.containsKey(capability)
+        return (exposeCapabilities && volatileCapabilities.containsKey(capability))
                 || (capabilities != null && capabilities.hasCapability(capability, null));
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability) {
-        Object o = volatileCapabilities.get(capability);
-        if(o != null) {
-            return (T) o;
+        if(exposeCapabilities) {
+            Object o = volatileCapabilities.get(capability);
+            if(o != null) {
+                return (T) o;
+            }
         }
         return capabilities == null ? null : capabilities.getCapability(capability, null);
     }

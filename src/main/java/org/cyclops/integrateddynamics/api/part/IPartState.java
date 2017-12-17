@@ -95,6 +95,17 @@ public interface IPartState<P extends IPartType> {
     public EnumFacing getTargetSideOverride();
 
     /**
+     * Set whether this part should expose network capabilities.
+     * @param exposeCapabilities Whether this part should expose network capabilities.
+     */
+    public void setExposeCapabilities(boolean exposeCapabilities);
+
+    /**
+     * @return Whether this part should expose network capabilities.
+     */
+    public boolean getExposeCapabilities();
+
+    /**
      * Check if dirty and reset the dirty state.
      * @return If this state has changed since the last time and needs to be persisted to NBT eventually.
      */

@@ -47,6 +47,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     private final int lastPriorityValueId;
     private final int lastChannelValueId;
     private final int lastSideValueId;
+    private final int lastExposeCapabilitiesValueId;
 
     /**
      * Make a new instance.
@@ -63,12 +64,13 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         this.world = player.getEntityWorld();
         this.pos = player.getPosition();
 
-        addPlayerInventory(player.inventory, 27, 107);
+        addPlayerInventory(player.inventory, 27, 132);
 
         lastUpdateValueId = getNextValueId();
         lastPriorityValueId = getNextValueId();
         lastChannelValueId = getNextValueId();
         lastSideValueId = getNextValueId();
+        lastExposeCapabilitiesValueId = getNextValueId();
 
         putButtonAction(GuiPartSettings.BUTTON_SAVE, new IButtonActionServer<InventoryContainer>() {
             @Override
@@ -93,6 +95,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         ValueNotifierHelpers.setValue(this, lastChannelValueId, getPartType().getChannel(getPartState()));
         EnumFacing targetSide = getPartType().getTargetSideOverride(getPartState());
         ValueNotifierHelpers.setValue(this, lastSideValueId, targetSide == null ? -1 : targetSide.ordinal());
+        ValueNotifierHelpers.setValue(this, lastExposeCapabilitiesValueId, getPartType().getExposeCapabilities(getPartState()) ? 1 : 0);
     }
 
     public int getLastUpdateValue() {
@@ -109,6 +112,10 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
 
     public int getLastSideValue() {
         return ValueNotifierHelpers.getValueInt(this, lastSideValueId);
+    }
+
+    public boolean getLastExposeCapabilitiesValue() {
+        return ValueNotifierHelpers.getValueInt(this, lastExposeCapabilitiesValueId) != 0;
     }
 
     public IPartState getPartState() {
@@ -141,6 +148,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
                 }
                 PartNetworkElement networkElement = new PartNetworkElement(getPartType(), target);
                 network.setPriorityAndChannel(networkElement, getLastPriorityValue(), getLastChannelValue());
+                getPartType().setExposeCapabilities(getPartState(), getLastExposeCapabilitiesValue());
             }
         } catch (PartStateException e) {
             player.closeScreen();
