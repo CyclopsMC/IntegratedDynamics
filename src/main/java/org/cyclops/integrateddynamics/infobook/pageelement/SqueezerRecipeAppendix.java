@@ -46,7 +46,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
 
     @Override
     protected int getHeightInner() {
-        return 19 + resultItems.size() * SLOT_OFFSET_Y;
+        return (recipe.getOutput().getFluidStack() != null ? SLOT_OFFSET_Y : 0) + resultItems.size() * SLOT_OFFSET_Y - 3;
     }
 
     @Override
@@ -85,7 +85,9 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
                     recipe.getOutput().getSubIngredientComponents().get(i).getChance());
             slotOffset += SLOT_OFFSET_Y;
         }
-        renderFluid(gui, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputFluid, mx, my, RESULT_FLUID);
+        if (outputFluid != null) {
+            renderFluid(gui, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputFluid, mx, my, RESULT_FLUID);
+        }
 
         renderItem(gui, x + middle, y, getCrafter(), mx, my, false, null);
     }
