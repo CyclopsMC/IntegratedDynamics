@@ -144,6 +144,19 @@
 
     <recipe type="integrateddynamics:squeezer">
         <tag>convenience</tag>
+        <condition type="fluid">evilcraftpoison</condition>
+        <condition type="oredict">materialPoisonous</condition>
+        <condition type="config">squeezer</condition>
+        <input>
+            <item type="oredict">materialPoisonous</item>
+        </input>
+        <output>
+            <fluid amount="250">evilcraftpoison</fluid>
+        </output>
+    </recipe>
+
+    <recipe type="integrateddynamics:squeezer">
+        <tag>convenience</tag>
         <condition type="mod">forestry</condition>
         <condition type="config">squeezer</condition>
         <input>
