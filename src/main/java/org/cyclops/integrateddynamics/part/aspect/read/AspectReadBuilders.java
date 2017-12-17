@@ -348,7 +348,8 @@ public class AspectReadBuilders {
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             IBlockState blockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
-            return blockState.getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos());
+            return blockState.hasComparatorInputOverride()
+                    ? blockState.getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos()) : 0;
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = input -> {
             int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());
