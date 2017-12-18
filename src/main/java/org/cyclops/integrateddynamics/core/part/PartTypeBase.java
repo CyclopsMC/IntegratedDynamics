@@ -27,7 +27,13 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
-import org.cyclops.integrateddynamics.api.part.*;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.PartTypeAdapter;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -170,7 +176,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @SuppressWarnings("unchecked")
     @Override
     public INetworkElement createNetworkElement(IPartContainer partContainer, DimPos pos, EnumFacing side) {
-        return new PartNetworkElement(this, PartTarget.fromCenter(pos, side));
+        return new PartNetworkElement(this, getTarget(PartPos.of(pos, side), (S) partContainer.getPartState(side)));
     }
 
     protected boolean hasGui() {

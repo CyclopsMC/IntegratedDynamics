@@ -5,7 +5,6 @@ import lombok.Setter;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -18,7 +17,6 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
@@ -82,7 +80,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     }
 
     @Override
-    public void onSetDropdownPossiblity(IDropdownEntry<?> dropdownEntry) {
+    public void onSetDropdownPossiblity(IDropdownEntry dropdownEntry) {
         OperatorDropdownEntry operatorDropdownEntry = (OperatorDropdownEntry) dropdownEntry;
         selectedOperator = operatorDropdownEntry == null ? null : operatorDropdownEntry.getValue();
         if (MinecraftHelpers.isClientSide()) {

@@ -70,6 +70,15 @@ public class PartTarget {
         this.target = target;
     }
 
+    /**
+     * Create a new instance with the given target side.
+     * @param targetSide The side of the target.
+     * @return A new {@link PartTarget} instance.
+     */
+    public PartTarget forTargetSide(EnumFacing targetSide) {
+        return new PartTarget(center, PartPos.of(target.getPos(), targetSide));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

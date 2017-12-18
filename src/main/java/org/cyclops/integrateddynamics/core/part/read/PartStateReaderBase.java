@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.part.read;
 
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
@@ -31,6 +30,11 @@ public class PartStateReaderBase<P extends IPartTypeReader>
     @Override
     public void setVariable(IAspect aspect, IAspectVariable variable) {
         aspectVariables.put(aspect, variable);
+    }
+
+    @Override
+    public void resetVariables() {
+        this.aspectVariables.clear();
     }
 
 }

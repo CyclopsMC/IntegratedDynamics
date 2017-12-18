@@ -1,10 +1,13 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+
+import javax.annotation.Nullable;
 
 /**
  * A value holder for an {@link IPartType}.
@@ -77,6 +80,19 @@ public interface IPartState<P extends IPartType> {
      * @return This part's channel.
      */
     public int getChannel();
+
+    /**
+     * Indicate that the given part should interact with the given side of the target.
+     * @param side The side of the target block to interact with.
+     *             Null removes the side override.
+     */
+    public void setTargetSideOverride(@Nullable EnumFacing side);
+
+    /**
+     * @return The side of the target block to interact with. Can be null.
+     */
+    @Nullable
+    public EnumFacing getTargetSideOverride();
 
     /**
      * Check if dirty and reset the dirty state.

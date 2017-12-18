@@ -86,6 +86,27 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
+    public void setTargetSideOverride(S state, @Nullable EnumFacing side) {
+        state.setTargetSideOverride(side);
+    }
+
+    @Nullable
+    @Override
+    public EnumFacing getTargetSideOverride(S state) {
+        return state.getTargetSideOverride();
+    }
+
+    @Override
+    public PartTarget getTarget(PartPos pos, S state) {
+        PartTarget target = PartTarget.fromCenter(pos);
+        EnumFacing sideOverride = getTargetSideOverride(state);
+        if (sideOverride != null) {
+            target = target.forTargetSide(sideOverride);
+        }
+        return target;
+    }
+
+    @Override
     public boolean isUpdate(S state) {
         return false;
     }

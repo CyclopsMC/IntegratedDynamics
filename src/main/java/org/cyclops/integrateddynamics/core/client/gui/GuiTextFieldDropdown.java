@@ -17,34 +17,35 @@ import java.util.Set;
 
 /**
  * A text field that can show a dropdown for autocomplete.
+ * @param <T> The dropdown entry type.
  * @author rubensworks
  */
-public class GuiTextFieldDropdown extends GuiTextFieldExtended {
+public class GuiTextFieldDropdown<T> extends GuiTextFieldExtended {
 
-    private final Set<IDropdownEntry<?>> possibilities;
-    private List<IDropdownEntry<?>> visiblePossibilities = Collections.emptyList();
+    private final Set<IDropdownEntry<T>> possibilities;
+    private List<IDropdownEntry<T>> visiblePossibilities = Collections.emptyList();
     private int visiblePossibilitiesIndex = -1;
     @Getter
-    private IDropdownEntry<?> selectedDropdownPossibility = null;
+    private IDropdownEntry<T> selectedDropdownPossibility = null;
     @Getter
     @Setter
     private int dropdownSize = 5;
     @Getter
     @Setter
-    private IDropdownEntryListener dropdownEntryListener;
+    private IDropdownEntryListener<T> dropdownEntryListener;
 
     private int enabledColor = 14737632;
     private int disabledColor = 7368816;
 
     public GuiTextFieldDropdown(int componentId, FontRenderer fontrenderer, int x, int y, int width, int height,
-                                boolean background, Set<IDropdownEntry<?>> possibilities) {
+                                boolean background, Set<IDropdownEntry<T>> possibilities) {
         super(componentId, fontrenderer, x, y, width, height, background);
         this.possibilities = Objects.requireNonNull(possibilities);
     }
 
     public GuiTextFieldDropdown(int componentId, FontRenderer fontrenderer, int x, int y, int width, int height,
                                 boolean background) {
-        this(componentId, fontrenderer, x, y, width, height, background, Collections.<IDropdownEntry<?>>emptySet());
+        this(componentId, fontrenderer, x, y, width, height, background, Collections.emptySet());
     }
 
     @Override
@@ -71,15 +72,19 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
                 case Keyboard.KEY_RIGHT:
                     if (visiblePossibilitiesIndex >= 0
                             && visiblePossibilitiesIndex < visiblePossibilities.size()) {
-                        selectPossibility(visiblePossibilitiesIndex);
+                        selectVisiblePossibility(visiblePossibilitiesIndex);
                         return true;
                     }
             }
         }
         if (super.textboxKeyTyped(typedChar, keyCode)) {
+            // Remove all colors and formatting when changing text
+            if(getText().contains("§")) {
+                setText(getText().replaceAll("§.", ""));
+            }
             if (!possibilities.isEmpty()) {
                 visiblePossibilities = Lists.newArrayList();
-                for (IDropdownEntry<?> possibility : possibilities) {
+                for (IDropdownEntry<T> possibility : possibilities) {
                     if (possibility.getMatchString().toLowerCase().contains(getText().toLowerCase())) {
                         visiblePossibilities.add(possibility);
                     }
@@ -97,9 +102,13 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
         return false;
     }
 
-    protected void selectPossibility(int index) {
+    protected void selectVisiblePossibility(int index) {
         visiblePossibilitiesIndex = index;
-        selectedDropdownPossibility = visiblePossibilities.get(visiblePossibilitiesIndex);
+        selectPossibility(visiblePossibilities.get(visiblePossibilitiesIndex));
+    }
+
+    public void selectPossibility(IDropdownEntry<T> entry) {
+        selectedDropdownPossibility = entry;
         setText(selectedDropdownPossibility.getDisplayString());
         visiblePossibilities = Lists.newArrayList();
         visiblePossibilitiesIndex = -1;
@@ -117,6 +126,7 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
 
             int x = this.x;
             int y = this.y + yOffset;
+            int width = this.getWidth() + 9;
             int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
             int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
             int cy = y;
@@ -124,7 +134,7 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
                 // Initialize entry
                 IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);
                 String possibility = dropdownEntry.getDisplayString();
-                String displayPossibility = fontRenderer.trimStringToWidth(possibility, this.getWidth());
+                String displayPossibility = fontRenderer.trimStringToWidth(possibility, width);
                 boolean active = visiblePossibilitiesIndex == i;
                 int entryHeight = yOffset;
 
@@ -138,8 +148,8 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
                 }
 
                 // Draw background
-                drawRect(x, cy - 1, x + this.getWidth(), cy + entryHeight + 1, -6250336);
-                drawRect(x - 1, cy, x + this.getWidth() - 1, cy + entryHeight, -16777216);
+                drawRect(x, cy - 1, x + width, cy + entryHeight + 1, -6250336);
+                drawRect(x - 1, cy, x + width - 1, cy + entryHeight, -16777216);
 
                 // Draw text
                 fontRenderer.drawStringWithShadow(displayPossibility, (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor);
@@ -177,7 +187,7 @@ public class GuiTextFieldDropdown extends GuiTextFieldExtended {
                 boolean addTooltip = (active && MinecraftHelpers.isShifted())
                         || RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
                 if (RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY)) {
-                    selectPossibility(i);
+                    selectVisiblePossibility(i);
                     return true;
                 }
                 List<String> tooltipLines = null;

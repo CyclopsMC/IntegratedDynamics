@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.part.read;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -20,6 +21,7 @@ import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -78,6 +80,15 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
             partState.setVariable(aspect, variable);
         }
         return variable;
+    }
+
+    @Override
+    public void setTargetSideOverride(S state, @Nullable EnumFacing side) {
+        EnumFacing lastSide = getTargetSideOverride(state);
+        super.setTargetSideOverride(state, side);
+        if (lastSide != side) {
+            state.resetVariables();
+        }
     }
 
     @Override

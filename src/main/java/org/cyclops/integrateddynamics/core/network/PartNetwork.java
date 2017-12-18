@@ -17,7 +17,10 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.FullNetworkListenerAdapter;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.*;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
@@ -97,8 +100,8 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             return false;
         }
         try {
-            return ((IPartTypeReader) getPartType(partId)).getVariable(
-                    PartTarget.fromCenter(partPositions.get(partId)), (IPartStateReader) partState, aspect) != null;
+            return ((IPartTypeReader) partType).getVariable(partType.getTarget(partPositions.get(partId), partState),
+                    (IPartStateReader) partState, aspect) != null;
         } catch (IllegalArgumentException e) {
             return false;
         }

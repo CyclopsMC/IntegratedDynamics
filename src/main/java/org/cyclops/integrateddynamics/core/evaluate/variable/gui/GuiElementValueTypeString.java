@@ -110,7 +110,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
     }
 
     @Override
-    public void onSetDropdownPossiblity(IDropdownEntry<?> dropdownEntry) {
+    public void onSetDropdownPossiblity(IDropdownEntry dropdownEntry) {
         if (dropdownEntryListener != null) {
             dropdownEntryListener.onSetDropdownPossiblity(dropdownEntry);
         }

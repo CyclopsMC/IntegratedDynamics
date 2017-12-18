@@ -34,4 +34,9 @@ public interface IPartStateReader<P extends IPartTypeReader> extends IPartState<
      */
     public void setVariable(IAspect aspect, IAspectVariable variable);
 
+    /**
+     * Reset all cached aspect variables.
+     */
+    public void resetVariables();
+
 }

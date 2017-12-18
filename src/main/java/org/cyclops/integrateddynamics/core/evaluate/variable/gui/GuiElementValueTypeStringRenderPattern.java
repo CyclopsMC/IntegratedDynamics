@@ -96,7 +96,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
     }
 
     @Override
-    public void onSetDropdownPossiblity(IDropdownEntry<?> dropdownEntry) {
+    public void onSetDropdownPossiblity(IDropdownEntry dropdownEntry) {
         element.onSetDropdownPossiblity(dropdownEntry);
     }
 }

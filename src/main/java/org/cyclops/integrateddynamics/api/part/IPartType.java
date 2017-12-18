@@ -15,7 +15,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.init.IInitListener;
-import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -132,6 +136,29 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @return The channel of this part in the network.
      */
     public int getChannel(S state);
+
+    /**
+     * Indicate that the given part should interact with the given side of the target.
+     * @param state The state
+     * @param side The side of the target block to interact with.
+     *             Null removes the side override.
+     */
+    public void setTargetSideOverride(S state, @Nullable EnumFacing side);
+
+    /**
+     * @param state The state
+     * @return The overridden side of the target block to interact with. Can be null.
+     */
+    @Nullable
+    public EnumFacing getTargetSideOverride(S state);
+
+    /**
+     * Get the part target for this part.
+     * @param pos The center position of this part.
+     * @param state The state.
+     * @return The part target.
+     */
+    public PartTarget getTarget(PartPos pos, S state);
 
     /**
      * @param state The state
