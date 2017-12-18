@@ -5,9 +5,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerConfigurable;
 import org.cyclops.cyclopscore.helper.GuiHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.item.DamageIndicatedItemComponent;
-import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMechanicalMachine;
 
 import java.util.Optional;
@@ -32,9 +31,7 @@ public class GuiMechanicalMachine<C extends ContainerMechanicalMachine<?>> exten
             int energyStored = getContainer().getTile().getEnergyStored();
             int energyMax = getContainer().getTile().getMaxEnergyStored();
             if (energyMax > 0) {
-                return Optional.of(Lists.newArrayList(
-                        String.format("%,d", energyStored) + " / " + String.format("%,d", energyMax)
-                                + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT)));
+                return Optional.of(Lists.newArrayList(Helpers.getLocalizedEnergyLevel(energyStored, energyMax)));
             }
             return Optional.empty();
         });

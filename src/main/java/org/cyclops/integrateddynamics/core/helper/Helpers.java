@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 
 import javax.annotation.Nullable;
@@ -137,6 +138,17 @@ public final class Helpers {
     public static <C> C getInterface(DimPos dimPos, Class<C> clazz) {
         World world = dimPos.getWorld();
         return world != null ? getInterface(world, dimPos.getBlockPos(), clazz) : null;
+    }
+
+    /**
+     * Get a localized string showing the ratio of stored energy vs the capacity.
+     * @param stored The stored amount of energy.
+     * @param capacity The capacity of the energy container.
+     * @return The localized string.
+     */
+    public static String getLocalizedEnergyLevel(int stored, int capacity) {
+        return String.format("%,d", stored) + " / " + String.format("%,d", capacity)
+                + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
     }
 
     public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {
