@@ -453,6 +453,21 @@ public final class Operators {
             }).build());
 
     /**
+     * String match operator which checks whether a given regular expression matches a string.
+     */
+    public static final IOperator STRING_MATCHES_REGEX = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("matches_regex")
+            .output(ValueTypes.BOOLEAN).function(variables -> {
+                ValueTypeString.ValueString pattern = variables.getValue(0);
+                ValueTypeString.ValueString str = variables.getValue(1);
+                try {
+                    Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
+                    return ValueTypeBoolean.ValueBoolean.of(m.matches());
+                } catch (PatternSyntaxException e) {
+                    throw new EvaluationException(e.getMessage());
+                }
+            }).build());
+
+    /**
      * String operator which returns the integral index of the first position where the search string appears in the given string.
      */
     public static final IOperator STRING_INDEX_OF = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("index_of")

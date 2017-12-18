@@ -267,6 +267,7 @@ public class TestStringOperators {
     public void testStringContainsRegex() throws EvaluationException {
         DummyVariableString shelloPlus = new DummyVariableString(ValueTypeString.ValueString.of("hello.+"));
         DummyVariableString sstarWorld = new DummyVariableString(ValueTypeString.ValueString.of(".*world"));
+        DummyVariableString sello = new DummyVariableString(ValueTypeString.ValueString.of("e..o"));
         IValue res1 = Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{shelloPlus, shelloWorld});
         assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
         assertThat("hello world contains_regex hello.+", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
@@ -276,6 +277,8 @@ public class TestStringOperators {
         assertThat("hello world contains a complex regex", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
         IValue res4 = Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sabc, shelloWorld});
         assertThat("hello world doesn't match abc", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
+        IValue res5 = Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sello, shelloWorld});
+        assertThat("hello world contains e..o", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(true));
     }
 
     @Test(expected = EvaluationException.class)
@@ -296,6 +299,48 @@ public class TestStringOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeContainsRegex() throws EvaluationException {
         Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MATCHES_REGEX -----------------------------------
+     */
+
+    @Test
+    public void testStringMatchesRegex() throws EvaluationException {
+        DummyVariableString shelloPlus = new DummyVariableString(ValueTypeString.ValueString.of("hello.+"));
+        DummyVariableString sstarWorld = new DummyVariableString(ValueTypeString.ValueString.of(".*world"));
+        DummyVariableString sello = new DummyVariableString(ValueTypeString.ValueString.of("e..o"));
+        IValue res1 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{shelloPlus, shelloWorld});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("hello world matches_regex hello.+", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+        IValue res2 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sstarWorld, shelloWorld});
+        assertThat("hello world matches_regex .*world", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+        IValue res3 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sregex, shelloWorld});
+        assertThat("hello world matches a complex regex", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
+        IValue res4 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sabc, shelloWorld});
+        assertThat("hello world doesn't match abc", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
+        IValue res5 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sello, shelloWorld});
+        assertThat("hello world doesn't match e..o", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidPatternMatchesRegex() throws EvaluationException {
+        Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sbrokenRegex, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeMatchesRegexLarge() throws EvaluationException {
+        Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sabc, sabc, sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeMatchesRegexSmall() throws EvaluationException {
+        Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sabc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeMatchesRegex() throws EvaluationException {
+        Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
     /**
