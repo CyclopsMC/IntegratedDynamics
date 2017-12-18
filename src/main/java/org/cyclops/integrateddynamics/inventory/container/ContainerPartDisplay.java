@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.inventory.container;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraftforge.common.MinecraftForge;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
@@ -17,6 +19,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
+import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
@@ -52,6 +55,11 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
 
         addInventory(getPartState().getInventory(), 0, 80, 14, 1, 1);
         addPlayerInventory(player.inventory, 8, 46);
+    }
+
+    @Override
+    protected Slot createNewSlot(IInventory inventory, int index, int x, int y) {
+        return new SlotVariable(inventory, index, x, y);
     }
 
     @Override

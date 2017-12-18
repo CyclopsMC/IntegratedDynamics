@@ -1,17 +1,20 @@
 package org.cyclops.integrateddynamics.proxy;
 
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.cyclops.cyclopscore.client.key.IKeyRegistry;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.model.VariableLoader;
+import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.lwjgl.input.Keyboard;
 
@@ -34,6 +37,7 @@ public class ClientProxy extends ClientProxyComponent {
 
     public ClientProxy() {
         super(new CommonProxy());
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -53,5 +57,10 @@ public class ClientProxy extends ClientProxyComponent {
         super.registerKeyBindings(keyRegistry);
         ClientRegistry.registerKeyBinding(FOCUS_LP_SEARCH);
         ClientRegistry.registerKeyBinding(FOCUS_LP_RENAME);
+    }
+
+    @SubscribeEvent
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
+        event.getMap().registerSprite(SlotVariable.VARIABLE_EMPTY);
     }
 }
