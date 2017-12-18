@@ -26,3 +26,4 @@ For every major Minecraft version, two branches exist:
 
 ### License
 All code and images are licensed under the [MIT License](https://github.com/CyclopsMC/IntegratedDynamics/blob/master-1.8/LICENSE.txt)
+This mod packages [re2j](https://github.com/google/re2j/) in order to provide linear time regex matching.
