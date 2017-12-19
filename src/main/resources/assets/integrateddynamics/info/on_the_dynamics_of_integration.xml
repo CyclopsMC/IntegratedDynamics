@@ -514,6 +514,7 @@
                 <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text2</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text3</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.energy_battery.text4</paragraph>
                 <appendix type="crafting_recipe">integrateddynamics:energy_battery</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.machines.generator">

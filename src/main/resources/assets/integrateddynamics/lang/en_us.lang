@@ -54,7 +54,8 @@ subtitles.integrateddynamics.effect.page.flipmultiple=Flip Pages
 tile.blocks.integrateddynamics.cable.name=Logic Cable
 tile.blocks.integrateddynamics.variablestore.name=Variable Store
 tile.blocks.integrateddynamics.energy_battery.name=Energy Battery
-tile.blocks.integrateddynamics.energy_battery.info=Place in crafting grid with other Energy Batteries to increase capacity.
+tile.blocks.integrateddynamics.energy_battery.info=Place in crafting grid with other Energy Batteries to increase capacity. Shift + Right click to auto-supply.
+tile.blocks.integrateddynamics.energy_battery.info.auto_supply=Auto-supply: %s
 tile.blocks.integrateddynamics.creative_energy_battery.name=Creative Energy Battery
 tile.blocks.integrateddynamics.logic_programmer.name=Logic Programmer
 tile.blocks.integrateddynamics.coal_generator.name=Generator
@@ -1456,6 +1457,7 @@ info_book.integrateddynamics.manual.machines.energy_battery=Energy Battery
 info_book.integrateddynamics.manual.machines.energy_battery.text1=&lIntegrated Dynamics&r networks can be configured to consume energy. For this, you can attach &lEnergy Batteries&r to the network to add energy storage capacity for it.
 info_book.integrateddynamics.manual.machines.energy_battery.text2=These batteries accept both &lRF&r and &lTesla&r power.
 info_book.integrateddynamics.manual.machines.energy_battery.text3=Applying a redstone signal will enable auto-export mode of energy to all sides.
+info_book.integrateddynamics.manual.machines.energy_battery.text4=When this battery is held in your inventory, &lauto-supply&r mode can be enabled by shift+right clicking. When enabled, this battery will automatically try to fill the items you are holding in your two hands with energy.
 
 info_book.integrateddynamics.manual.machines.generator=Generator
 info_book.integrateddynamics.manual.machines.generator.text1=When you need &lRF&r or &lTesla&r energy, you can use the &lGenerator&r to create energy from &oburnable&r items.

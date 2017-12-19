@@ -14,10 +14,20 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     private final ItemBlockEnergyContainer itemBlockEnergyContainer;
     private final ItemStack itemStack;
+    private final int rate;
 
-    public EnergyStorageItemBlockEnergyContainer(ItemBlockEnergyContainer itemBlockEnergyContainer, ItemStack itemStack) {
+    public EnergyStorageItemBlockEnergyContainer(ItemBlockEnergyContainer itemBlockEnergyContainer, ItemStack itemStack, int rate) {
         this.itemBlockEnergyContainer = itemBlockEnergyContainer;
         this.itemStack = itemStack;
+        this.rate = rate;
+    }
+
+    public EnergyStorageItemBlockEnergyContainer(ItemBlockEnergyContainer itemBlockEnergyContainer, ItemStack itemStack) {
+        this(itemBlockEnergyContainer, itemStack, Integer.MAX_VALUE);
+    }
+
+    public int getRate() {
+        return rate;
     }
 
     @Override
@@ -47,6 +57,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
+        energy = Math.min(energy, getRate());
         int stored = getEnergyStored();
         int newEnergy = Math.min(stored + energy, getMaxEnergyStored());
         if(!simulate) {
@@ -57,6 +68,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     @Override
     public int extractEnergy(int energy, boolean simulate) {
+        energy = Math.min(energy, getRate());
         int stored = getEnergyStored();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {

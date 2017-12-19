@@ -80,8 +80,12 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         super.onUpdateReceived();
     }
 
+    public static int getEnergyPerTick(int capacity) {
+        return Math.max(capacity / BlockEnergyBatteryConfig.energyRateCapacityFraction, BlockEnergyBatteryConfig.minEnergyRate);
+    }
+
     protected int getEnergyPerTick() {
-        return Math.max(getMaxEnergyStored() / BlockEnergyBatteryConfig.energyRateCapacityFraction, BlockEnergyBatteryConfig.minEnergyRate);
+        return getEnergyPerTick(getMaxEnergyStored());
     }
 
     @Override

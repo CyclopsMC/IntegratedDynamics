@@ -1,6 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
@@ -8,7 +12,7 @@ import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.render.tileentity.RenderTileEntityEnergyBattery;
-import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
+import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainerAutoSupply;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
 /**
@@ -66,7 +70,7 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
 
     @Override
     public Class<? extends ItemBlock> getItemBlockClass() {
-        return ItemBlockEnergyContainer.class;
+        return ItemBlockEnergyContainerAutoSupply.class;
     }
 
     @Override
@@ -74,5 +78,22 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
     public void onRegistered() {
         super.onRegistered();
         getMod().getProxy().registerRenderer(TileEnergyBattery.class, new RenderTileEntityEnergyBattery());
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onInit(Step step) {
+        super.onInit(step);
+        if(step == Step.INIT) {
+            // Handle additional type of dark tank item rendering
+            for (int meta = 0; meta < 2; meta++) {
+                Item item = Item.getItemFromBlock(getBlockInstance());
+                String modId = getMod().getModId();
+                String itemName = getModelName(new ItemStack(item, 1, meta));
+                ModelResourceLocation modelResourceLocation = new ModelResourceLocation(modId + ":" + itemName, "inventory");
+                Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(
+                        item, meta, modelResourceLocation);
+            }
+        }
     }
 }

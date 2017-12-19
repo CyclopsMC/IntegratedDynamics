@@ -19,6 +19,7 @@ import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.capability.energystorage.EnergyStorageItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
 import java.util.List;
 
@@ -85,6 +86,11 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new DefaultCapabilityProvider<>(() -> CapabilityEnergy.ENERGY, new EnergyStorageItemBlockEnergyContainer(this, stack));
+        return new DefaultCapabilityProvider<>(() -> CapabilityEnergy.ENERGY, new EnergyStorageItemBlockEnergyContainer(this, stack) {
+            @Override
+            public int getRate() {
+                return TileEnergyBattery.getEnergyPerTick(getMaxEnergyStored());
+            }
+        });
     }
 }
