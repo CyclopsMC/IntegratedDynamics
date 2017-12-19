@@ -993,6 +993,14 @@ operator.operators.integrateddynamics.entity.nbt.name=Entity NBT
 operator.operators.integrateddynamics.entity.nbt.info=Get the given entity as NBT.
 operator.operators.integrateddynamics.entity.entitytype.name=Entity Type
 operator.operators.integrateddynamics.entity.entitytype.info=The entity type name.
+operator.operators.integrateddynamics.entity.entityitems.name=Entity Items
+operator.operators.integrateddynamics.entity.entityitems.info=The items that are contained within this entity.
+operator.operators.integrateddynamics.entity.entityfluids.name=Entity Fluids
+operator.operators.integrateddynamics.entity.entityfluids.info=The fluids that are contained within this entity.
+operator.operators.integrateddynamics.entity.entityenergystored.name=Entity Energy Stored
+operator.operators.integrateddynamics.entity.entityenergystored.info=The amount of energy that is stored in this entity.
+operator.operators.integrateddynamics.entity.entityenergycapacity.name=Entity Energy Capacity
+operator.operators.integrateddynamics.entity.entityenergycapacity.info=The energy capacity of this entity.
 
 operator.operators.integrateddynamics.itemstack.isfecontainer.name=Is FE Container
 operator.operators.integrateddynamics.itemstack.isfecontainer.info=If the given item can hold FE

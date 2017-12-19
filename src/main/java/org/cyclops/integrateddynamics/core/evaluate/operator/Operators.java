@@ -7,7 +7,6 @@ import com.google.common.collect.Sets;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
-
 import lombok.Lombok;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -47,6 +46,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.IShearable;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -2160,6 +2160,68 @@ public final class Operators {
                     }
                 }
                 return ValueTypeString.ValueString.of(entityType);
+            }).build());
+
+    /**
+     * The entity items.
+     */
+    public static final IOperator OBJECT_ENTITY_ITEMS = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("entityitems")
+            .function(input -> {
+                Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) input.getValue(0)).getRawValue();
+                if(a.isPresent()) {
+                    Entity entity = a.get();
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityItems(entity.world, entity, null));
+                } else {
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.emptyList());
+                }
+            }).build());
+
+    /**
+     * The entity fluids.
+     */
+    public static final IOperator OBJECT_ENTITY_FLUIDS = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbolOperator("entityfluids")
+            .function(input -> {
+                Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) input.getValue(0)).getRawValue();
+                if(a.isPresent()) {
+                    Entity entity = a.get();
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityFluids(entity.world, entity, null));
+                } else {
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_FLUIDSTACK, Collections.emptyList());
+                }
+            }).build());
+
+    /**
+     * The entity energy stored.
+     */
+    public static final IOperator OBJECT_ENTITY_ENERGY_STORED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("entityenergystored")
+            .function(input -> {
+                Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) input.getValue(0)).getRawValue();
+                if(a.isPresent()) {
+                    Entity entity = a.get();
+                    if (entity.hasCapability(CapabilityEnergy.ENERGY, null)) {
+                        return ValueTypeInteger.ValueInteger.of(entity.getCapability(CapabilityEnergy.ENERGY, null).getEnergyStored());
+                    }
+                }
+                return ValueTypeInteger.ValueInteger.of(0);
+            }).build());
+
+    /**
+     * The entity energy stored.
+     */
+    public static final IOperator OBJECT_ENTITY_ENERGY_CAPACITY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("entityenergycapacity")
+            .function(input -> {
+                Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) input.getValue(0)).getRawValue();
+                if(a.isPresent()) {
+                    Entity entity = a.get();
+                    if (entity.hasCapability(CapabilityEnergy.ENERGY, null)) {
+                        return ValueTypeInteger.ValueInteger.of(entity.getCapability(CapabilityEnergy.ENERGY, null).getMaxEnergyStored());
+                    }
+                }
+                return ValueTypeInteger.ValueInteger.of(0);
             }).build());
 
     /**
