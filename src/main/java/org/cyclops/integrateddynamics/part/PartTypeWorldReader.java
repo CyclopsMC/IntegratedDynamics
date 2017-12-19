@@ -25,6 +25,7 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
                 Aspects.Read.World.INTEGER_TICKTIME,
                 Aspects.Read.World.INTEGER_DAYTIME,
                 Aspects.Read.World.INTEGER_LIGHTLEVEL,
+                Aspects.Read.World.DOUBLE_TPS,
                 Aspects.Read.World.LONG_TIME,
                 Aspects.Read.World.LONG_TOTALTIME,
                 Aspects.Read.World.STRING_NAME,

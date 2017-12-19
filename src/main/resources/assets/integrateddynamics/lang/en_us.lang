@@ -446,7 +446,9 @@ aspect.aspects.integrateddynamics.read.integer.extradimensional.random.info=A ra
 aspect.aspects.integrateddynamics.read.integer.extradimensional.playercount.name=Player Count
 aspect.aspects.integrateddynamics.read.integer.extradimensional.playercount.info=The amount of players in the server
 aspect.aspects.integrateddynamics.read.integer.extradimensional.ticktime.name=Tick time
-aspect.aspects.integrateddynamics.read.integer.extradimensional.ticktime.info=The average tick time in milliseconds for the server
+aspect.aspects.integrateddynamics.read.integer.extradimensional.ticktime.info=The average tick time in nanoseconds for the server
+aspect.aspects.integrateddynamics.read.double.extradimensional.tps.name=TPS
+aspect.aspects.integrateddynamics.read.double.extradimensional.tps.info=The average number of ticks per second over all worlds
 aspect.aspects.integrateddynamics.read.list.extradimensional.players.name=Players
 aspect.aspects.integrateddynamics.read.list.extradimensional.players.info=The players that are online on this server
 
@@ -626,6 +628,9 @@ aspect.aspects.integrateddynamics.read.integer.world.lightlevel.name=Light Level
 aspect.aspects.integrateddynamics.read.integer.world.lightlevel.info=The light level at the target
 aspect.aspects.integrateddynamics.read.integer.world.players.name=Player Count
 aspect.aspects.integrateddynamics.read.integer.world.players.info=The players that are online in this world
+
+aspect.aspects.integrateddynamics.read.double.world.tps.name=TPS
+aspect.aspects.integrateddynamics.read.double.world.tps.info=The number of ticks per second in this world
 
 aspect.aspects.integrateddynamics.read.long.world.time.name=Time
 aspect.aspects.integrateddynamics.read.long.world.time.info=The world time dependent of the set time command

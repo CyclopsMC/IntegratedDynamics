@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.part.aspect;
 
 import com.google.common.collect.Lists;
 import com.google.common.math.DoubleMath;
+import com.google.common.math.Stats;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -177,6 +178,12 @@ public class Aspects {
                     AspectReadBuilders.ExtraDimensional.BUILDER_INTEGER.handle(
                         minecraft -> (int) DoubleMath.mean(minecraft.tickTimeArray)
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
+
+            public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TPS =
+                    AspectReadBuilders.ExtraDimensional.BUILDER_DOUBLE.handle(
+                            minecraft -> Math.min(20, Stats.meanOf(minecraft.tickTimeArray) / 1000)
+                    ).handle(AspectReadBuilders.PROP_GET_DOUBLE, "tps").buildRead();
+
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
                     AspectReadBuilders.ExtraDimensional.BUILDER_LIST.handle(
                         minecraft -> ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(minecraft.getPlayerList().getPlayers(),
@@ -579,6 +586,11 @@ public class Aspects {
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(
                         dimPos -> dimPos.getWorld().getLight(dimPos.getBlockPos())
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "lightlevel").buildRead();
+
+            public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TPS =
+                    AspectReadBuilders.World.BUILDER_DOUBLE.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
+                            world -> Math.min(20, Stats.meanOf(FMLCommonHandler.instance().getMinecraftServerInstance().worldTickTimes.get(world.provider.getDimension())) / 1000)
+                    ).handle(AspectReadBuilders.PROP_GET_DOUBLE, "tps").buildRead();
 
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
                     AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(

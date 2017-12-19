@@ -191,6 +191,8 @@ public class AspectReadBuilders {
 
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "extradimensional");
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, MinecraftServer>
+                BUILDER_DOUBLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET, "extradimensional");
         public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, MinecraftServer>
                 BUILDER_LIST = AspectReadBuilders.BUILDER_LIST.handle(PROP_GET, "extradimensional");
 
@@ -427,6 +429,8 @@ public class AspectReadBuilders {
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "world");
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "world");
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, DimPos>
+                BUILDER_DOUBLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET, "world");
         public static final AspectBuilder<ValueTypeLong.ValueLong, ValueTypeLong, DimPos>
                 BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET, "world");
         public static final AspectBuilder<ValueTypeString.ValueString, ValueTypeString, DimPos>
