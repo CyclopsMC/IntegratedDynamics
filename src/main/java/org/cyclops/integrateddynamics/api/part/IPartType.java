@@ -171,7 +171,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param state The state
      * @return Whether this part should expose network capabilities.
      */
-    public boolean getExposeCapabilities(S state);
+    public boolean isExposeCapabilities(S state);
 
     /**
      * @param state The state

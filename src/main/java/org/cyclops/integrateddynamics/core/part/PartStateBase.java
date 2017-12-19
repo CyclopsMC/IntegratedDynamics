@@ -171,7 +171,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
-    public boolean getExposeCapabilities() {
+    public boolean isExposeCapabilities() {
         return exposeCapabilities;
     }
 

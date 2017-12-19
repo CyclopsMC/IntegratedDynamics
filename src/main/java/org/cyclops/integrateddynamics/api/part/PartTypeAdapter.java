@@ -112,8 +112,8 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public boolean getExposeCapabilities(S state) {
-        return state.getExposeCapabilities();
+    public boolean isExposeCapabilities(S state) {
+        return state.isExposeCapabilities();
     }
 
     @Override

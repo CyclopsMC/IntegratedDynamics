@@ -95,7 +95,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         ValueNotifierHelpers.setValue(this, lastChannelValueId, getPartType().getChannel(getPartState()));
         EnumFacing targetSide = getPartType().getTargetSideOverride(getPartState());
         ValueNotifierHelpers.setValue(this, lastSideValueId, targetSide == null ? -1 : targetSide.ordinal());
-        ValueNotifierHelpers.setValue(this, lastExposeCapabilitiesValueId, getPartType().getExposeCapabilities(getPartState()) ? 1 : 0);
+        ValueNotifierHelpers.setValue(this, lastExposeCapabilitiesValueId, getPartType().isExposeCapabilities(getPartState()) ? 1 : 0);
     }
 
     public int getLastUpdateValue() {

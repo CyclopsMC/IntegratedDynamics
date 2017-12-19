@@ -103,7 +103,7 @@ public interface IPartState<P extends IPartType> {
     /**
      * @return Whether this part should expose network capabilities.
      */
-    public boolean getExposeCapabilities();
+    public boolean isExposeCapabilities();
 
     /**
      * Check if dirty and reset the dirty state.
