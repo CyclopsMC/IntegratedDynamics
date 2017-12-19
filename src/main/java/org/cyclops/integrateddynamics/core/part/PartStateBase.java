@@ -251,13 +251,13 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
 
     @Override
     public boolean hasCapability(Capability<?> capability) {
-        return (exposeCapabilities && volatileCapabilities.containsKey(capability))
+        return (isExposeCapabilities() && volatileCapabilities.containsKey(capability))
                 || (capabilities != null && capabilities.hasCapability(capability, null));
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability) {
-        if(exposeCapabilities) {
+        if(isExposeCapabilities()) {
             Object o = volatileCapabilities.get(capability);
             if(o != null) {
                 return (T) o;
