@@ -59,7 +59,10 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
 
     @Override
     protected Slot createNewSlot(IInventory inventory, int index, int x, int y) {
-        return new SlotVariable(inventory, index, x, y);
+        if (inventory instanceof SimpleInventory) {
+            return new SlotVariable(inventory, index, x, y);
+        }
+        return super.createNewSlot(inventory, index, x, y);
     }
 
     @Override
