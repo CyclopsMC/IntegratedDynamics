@@ -32,4 +32,14 @@ public class DynamicRedstoneDefault implements IDynamicRedstone {
     public boolean isAllowRedstoneInput() {
         return false;
     }
+
+    @Override
+    public void setLastPulseValue(int value) {
+
+    }
+
+    @Override
+    public int getLastPulseValue() {
+        return 0;
+    }
 }

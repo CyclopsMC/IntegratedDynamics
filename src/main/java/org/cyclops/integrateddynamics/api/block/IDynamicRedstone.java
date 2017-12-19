@@ -36,4 +36,15 @@ public interface IDynamicRedstone {
      */
     public boolean isAllowRedstoneInput();
 
+    /**
+     * Store the last value that was used to trigger a redstone pulse.
+     * @param value A pulse value.
+     */
+    public void setLastPulseValue(int value);
+
+    /**
+     * @return The last pulse value.
+     */
+    public int getLastPulseValue();
+
 }

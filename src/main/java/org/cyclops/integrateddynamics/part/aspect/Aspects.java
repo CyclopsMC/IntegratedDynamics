@@ -695,6 +695,17 @@ public class Aspects {
                     ).handle(AspectWriteBuilders.Redstone.PROP_SET).buildWrite();
             public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER =
                     AspectWriteBuilders.Redstone.BUILDER_INTEGER.handle(AspectWriteBuilders.Redstone.PROP_SET).buildWrite();
+            public static final IAspectWrite<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_PULSE =
+                    AspectWriteBuilders.Redstone.BUILDER_BOOLEAN
+                            .withProperties(AspectWriteBuilders.Redstone.PROPERTIES_REDSTONE_PULSE)
+                            .appendKind("pulse")
+                            .handle(input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight() ? 15 : 0)
+                    ).handle(AspectWriteBuilders.Redstone.PROP_SET_PULSE).buildWrite();
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PULSE =
+                    AspectWriteBuilders.Redstone.BUILDER_INTEGER
+                            .withProperties(AspectWriteBuilders.Redstone.PROPERTIES_REDSTONE_PULSE)
+                            .appendKind("pulse")
+                            .handle(AspectWriteBuilders.Redstone.PROP_SET_PULSE).buildWrite();
 
         }
 

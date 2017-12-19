@@ -66,6 +66,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Getter
     @NBTPersist private EnumFacingMap<Boolean> redstoneStrong = EnumFacingMap.newMap();
     @Getter
+    @NBTPersist private EnumFacingMap<Integer> lastRedstonePulses = EnumFacingMap.newMap();
+    @Getter
     @NBTPersist private EnumFacingMap<Integer> lightLevels = EnumFacingMap.newMap();
     private EnumFacingMap<Integer> previousLightLevels;
     @Getter

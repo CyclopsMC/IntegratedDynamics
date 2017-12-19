@@ -583,9 +583,13 @@ aspect.aspects.integrateddynamics.read.integer.redstone.comparator.info=Get the 
 
 aspect.aspects.integrateddynamics.write.boolean.redstone.name=Redstone
 aspect.aspects.integrateddynamics.write.boolean.redstone.info=Outputs a full redstone signal if true
+aspect.aspects.integrateddynamics.write.boolean.redstone.pulse.name=Redstone Pulse
+aspect.aspects.integrateddynamics.write.boolean.redstone.pulse.info=Outputs a pulse with the configured redstone value if the given value changes.
 
 aspect.aspects.integrateddynamics.write.integer.redstone.name=Redstone
 aspect.aspects.integrateddynamics.write.integer.redstone.info=Outputs the value as exact redstone signal
+aspect.aspects.integrateddynamics.write.integer.redstone.pulse.name=Redstone Pulse
+aspect.aspects.integrateddynamics.write.integer.redstone.pulse.info=Outputs a pulse with the configured redstone value if the given value changes.
 
 ## World aspects
 aspect.aspects.integrateddynamics.read.boolean.world.entity.name=Has Entity
@@ -659,6 +663,8 @@ aspect.aspecttypes.integrateddynamics.boolean.force_particle.name=Force Spawning
 
 aspect.aspecttypes.integrateddynamics.boolean.strong_power.name=Strong Power
 aspect.aspecttypes.integrateddynamics.boolean.strong_power.info=If a Redstone Torch should be simulated instead of regular Redstone Dust
+aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value.name=Pulse Value
+aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value.info=The pulse value that should be emitted.
 
 # Operators
 operator.operators.integrateddynamics.name=Operator

@@ -93,4 +93,19 @@ public class DynamicRedstoneTileMultipartTicking implements IDynamicRedstone {
         }
         return false;
     }
+
+    @Override
+    public void setLastPulseValue(int value) {
+        EnumFacingMap<Integer> pulses = tile.getLastRedstonePulses();
+        pulses.put(side, value);
+    }
+
+    @Override
+    public int getLastPulseValue() {
+        EnumFacingMap<Integer> pulses = tile.getLastRedstonePulses();
+        if (pulses.containsKey(side)) {
+            return pulses.get(side);
+        }
+        return 0;
+    }
 }

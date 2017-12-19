@@ -17,7 +17,9 @@ public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWr
         super(name);
         AspectRegistry.getInstance().register(this, Lists.<IAspect>newArrayList(
                 Aspects.Write.Redstone.BOOLEAN,
-                Aspects.Write.Redstone.INTEGER
+                Aspects.Write.Redstone.INTEGER,
+                Aspects.Write.Redstone.BOOLEAN_PULSE,
+                Aspects.Write.Redstone.INTEGER_PULSE
         ));
     }
 

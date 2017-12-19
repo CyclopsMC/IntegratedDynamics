@@ -197,17 +197,41 @@ public class AspectWriteBuilders {
 
         public static final IAspectPropertyTypeInstance<ValueTypeBoolean, ValueTypeBoolean.ValueBoolean> PROP_STRONG_POWER =
                 new AspectPropertyTypeInstance<>(ValueTypes.BOOLEAN, "aspect.aspecttypes.integrateddynamics.boolean.strong_power.name");
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_PULSE_EMIT_VALUE =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value.name",
+                        (v) -> v.getRawValue() >= 0 && v.getRawValue() <= 15);
         public static final IAspectProperties PROPERTIES_REDSTONE = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROP_STRONG_POWER
+        ));
+        public static final IAspectProperties PROPERTIES_REDSTONE_PULSE = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
+                PROP_STRONG_POWER,
+                PROP_PULSE_EMIT_VALUE
         ));
 
         static {
             PROPERTIES_REDSTONE.setValue(PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(false));
+
+            PROPERTIES_REDSTONE_PULSE.setValue(PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(false));
+            PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_EMIT_VALUE, ValueTypeInteger.ValueInteger.of(15));
         }
 
         public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void> PROP_SET = input -> {
             boolean strongPower = input.getMiddle().getValue(PROP_STRONG_POWER).getRawValue();
             WRITE_REDSTONE_COMPONENT.setRedstoneLevel(input.getLeft(), input.getRight(), strongPower);
+            return null;
+        };
+        public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void> PROP_SET_PULSE = input -> {
+            PartTarget target = input.getLeft();
+            boolean strongPower = input.getMiddle().getValue(PROP_STRONG_POWER).getRawValue();
+            int pulseValue = input.getRight();
+            int emitLevel = input.getMiddle().getValue(PROP_PULSE_EMIT_VALUE).getRawValue();
+            int lastPulseValue = WRITE_REDSTONE_COMPONENT.getLastPulseValue(target);
+            if (lastPulseValue != pulseValue) {
+                WRITE_REDSTONE_COMPONENT.setLastPulseValue(target, pulseValue);
+                WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, emitLevel, strongPower);
+            } else {
+                WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, 0, strongPower);
+            }
             return null;
         };
 
