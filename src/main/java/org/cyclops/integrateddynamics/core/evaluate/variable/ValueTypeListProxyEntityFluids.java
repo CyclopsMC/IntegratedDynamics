@@ -4,7 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
 import javax.annotation.Nullable;
@@ -12,11 +12,11 @@ import javax.annotation.Nullable;
 /**
  * A list proxy for the fluid handler fluids of an entity.
  */
-public class ValueTypeListProxyEntityFluids extends ValueTypeListProxyEntityCapability<IFluidHandlerItem, ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
+public class ValueTypeListProxyEntityFluids extends ValueTypeListProxyEntityCapability<IFluidHandler, ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
 
     public ValueTypeListProxyEntityFluids(World world, Entity entity, @Nullable EnumFacing side) {
         super(ValueTypeListProxyFactories.ENTITY_CAPABILITY_FLUIDS.getName(), ValueTypes.OBJECT_FLUIDSTACK,
-                world, entity, CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, side);
+                world, entity, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
     }
 
     public ValueTypeListProxyEntityFluids() {
