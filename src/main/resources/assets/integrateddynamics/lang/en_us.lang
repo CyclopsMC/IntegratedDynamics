@@ -560,15 +560,15 @@ aspect.aspects.integrateddynamics.read.double.fe.fillratio.info=The amount of FE
 aspect.aspects.integrateddynamics.read.boolean.network.applicable.name=Is Network
 aspect.aspects.integrateddynamics.read.boolean.network.applicable.info=If the target has a network
 aspect.aspects.integrateddynamics.read.integer.network.elementcount.name=Elements
-aspect.aspects.integrateddynamics.read.boolean.network.elementcount.info=The amount of elements in the target network
+aspect.aspects.integrateddynamics.read.integer.network.elementcount.info=The amount of elements in the target network
 aspect.aspects.integrateddynamics.read.integer.network.energy.batterycount.name=Energy Batteries
-aspect.aspects.integrateddynamics.read.boolean.network.energy.batterycount.info=The amount of energy batteries in the target network
+aspect.aspects.integrateddynamics.read.integer.network.energy.batterycount.info=The amount of energy batteries in the target network
 aspect.aspects.integrateddynamics.read.integer.network.energy.stored.name=Energy Stored
-aspect.aspects.integrateddynamics.read.boolean.network.energy.stored.info=The amount of energy available in the target network
+aspect.aspects.integrateddynamics.read.integer.network.energy.stored.info=The amount of energy available in the target network
 aspect.aspects.integrateddynamics.read.integer.network.energy.max.name=Energy Capacity
-aspect.aspects.integrateddynamics.read.boolean.network.energy.max.info=The energy capacity of the network
+aspect.aspects.integrateddynamics.read.integer.network.energy.max.info=The energy capacity of the network
 aspect.aspects.integrateddynamics.read.integer.network.energy.consumptionrate.name=Energy Consumption Rate
-aspect.aspects.integrateddynamics.read.boolean.network.energy.consumptionrate.info=The energy consumption rate of the target network
+aspect.aspects.integrateddynamics.read.integer.network.energy.consumptionrate.info=The current energy consumption rate of the target network per tick
 
 ## Redstone aspects
 aspect.aspects.integrateddynamics.read.boolean.redstone.high.name=Redstone High

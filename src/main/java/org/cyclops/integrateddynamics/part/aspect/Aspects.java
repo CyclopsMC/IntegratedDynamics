@@ -30,7 +30,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
@@ -520,6 +522,14 @@ public class Aspects {
                     AspectReadBuilders.Network.ENERGY_BUILDER.handle(
                         storage -> storage != null ? storage.getMaxEnergyStored() : 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("max").buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_CONSUMPTION_RATE =
+                    AspectReadBuilders.Network.BUILDER_INTEGER.handle(
+                            network -> network != null && GeneralConfig.energyConsumptionMultiplier > 0
+                                    ? network.getElements().stream()
+                                    .mapToInt((e) -> e instanceof IEnergyConsumingNetworkElement
+                                            ? ((IEnergyConsumingNetworkElement) e).getConsumptionRate() : 0).sum()
+                                    * GeneralConfig.energyConsumptionMultiplier : 0
+                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("consumptionrate").buildRead();
 
         }
 
