@@ -80,10 +80,14 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         super.onUpdateReceived();
     }
 
+    protected int getEnergyPerTick() {
+        return Math.max(getMaxEnergyStored() / BlockEnergyBatteryConfig.energyRateCapacityFraction, BlockEnergyBatteryConfig.minEnergyRate);
+    }
+
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         if(!isCreative()) {
-            energy = Math.max(0, Math.min(energy, BlockEnergyBatteryConfig.energyPerTick));
+            energy = Math.max(0, Math.min(energy, getEnergyPerTick()));
             int stored = getEnergyStored();
             int newEnergy = Math.min(stored + energy, getMaxEnergyStored());
             if(!simulate) {
@@ -97,7 +101,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int extractEnergy(int energy, boolean simulate) {
         if(isCreative()) return energy;
-        energy = Math.max(0, Math.min(energy, BlockEnergyBatteryConfig.energyPerTick));
+        energy = Math.max(0, Math.min(energy, getEnergyPerTick()));
         int stored = getEnergyStored();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {
@@ -120,7 +124,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     protected void updateTileEntity() {
         super.updateTileEntity();
         if (!getWorld().isRemote && getEnergyStored() > 0 && getWorld().isBlockPowered(getPos())) {
-            addEnergy(Math.min(BlockEnergyBatteryConfig.energyPerTick, getEnergyStored()));
+            addEnergy(Math.min(getEnergyPerTick(), getEnergyStored()));
         }
     }
 

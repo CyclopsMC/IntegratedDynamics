@@ -29,10 +29,16 @@ public class BlockEnergyBatteryConfig extends BlockContainerConfig {
     public static int capacity = 100000;
 
     /**
-     * How much energy per tick it emits when activated.
+     * The 1/X fraction of the battery capacity that is allowed to be transfered per tick.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "How much energy per tick it emits when activated.", isCommandable = true, minimalValue = 0)
-    public static int energyPerTick = 2000;
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The 1/X fraction of the battery capacity that is allowed to be transfered per tick.", isCommandable = true, minimalValue = 0)
+    public static int energyRateCapacityFraction = 2000;
+
+    /**
+     * The minimum energy transfer rate per tick.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The minimum energy transfer rate per tick.", isCommandable = true, minimalValue = 0)
+    public static int minEnergyRate = 2000;
 
     /**
      * The maximum capacity possible by combining batteries.
