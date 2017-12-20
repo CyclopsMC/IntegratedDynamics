@@ -173,7 +173,11 @@ public class GuiPartSettings extends GuiContainerExtended {
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 62, Helpers.RGBToInt(0, 0, 0));
-        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + 87, Helpers.RGBToInt(0, 0, 0));
+        fontRenderer.drawString(getChannelText(), guiLeft + 8, guiTop + 87, Helpers.RGBToInt(0, 0, 0));
+    }
+
+    protected String getChannelText() {
+        return L10NHelpers.localize("gui.integrateddynamics.partsettings.channel");
     }
 
     @Override
