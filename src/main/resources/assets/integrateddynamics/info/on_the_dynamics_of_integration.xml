@@ -351,6 +351,7 @@
                 <paragraph>info_book.integrateddynamics.manual.parts.introduction.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.parts.introduction.text2</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.parts.introduction.text3</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.introduction.text4</paragraph>
             </section>
             <section name="info_book.integrateddynamics.manual.parts.reader">
                 <section name="info_book.integrateddynamics.manual.parts.reader.introduction">
