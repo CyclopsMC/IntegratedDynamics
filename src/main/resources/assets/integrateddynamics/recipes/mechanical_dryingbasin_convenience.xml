@@ -138,6 +138,20 @@
 		<tag>convenience</tag>
 		<condition type="config">mechanical_drying_basin</condition>
 		<input>
+			<item>minecraft:magma</item>
+		</input>
+		<output>
+			<item>minecraft:netherrack</item>
+		</output>
+		<properties>
+			<duration>10</duration>
+		</properties>
+	</recipe>
+
+	<recipe type="integrateddynamics:mechanical_dryingbasin">
+		<tag>convenience</tag>
+		<condition type="config">mechanical_drying_basin</condition>
+		<input>
 			<fluid amount="1000">lava</fluid>
 		</input>
 		<output>
