@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 public class GuiPartSettings extends GuiContainerExtended {
 
     public static final int BUTTON_SAVE = 0;
+    public static final int BUTTON_EXPOSE_CAPABILITIES = 1;
 
     private final PartTarget target;
     private final IPartContainer partContainer;
@@ -53,6 +54,11 @@ public class GuiPartSettings extends GuiContainerExtended {
     private GuiNumberField numberFieldChannel = null;
     private GuiTextFieldDropdown<EnumFacing> dropdownFieldSide = null;
     private List<SideDropdownEntry> dropdownEntries;
+    private GuiButtonText buttonExposeCapabilities = null;
+    private boolean exposeCapabilities = false;
+
+    private final String trueStr = L10NHelpers.localize("general.integrateddynamics.true");
+    private final String falseStr = L10NHelpers.localize("general.integrateddynamics.false");
 
     /**
      * Make a new instance.
@@ -67,22 +73,24 @@ public class GuiPartSettings extends GuiContainerExtended {
         this.partContainer = partContainer;
         this.partType = partType;
 
-        putButtonAction(BUTTON_SAVE, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
-            @Override
-            public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
-                IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
-                try {
-                    int updateInterval = numberFieldUpdateInterval.getInt();
-                    int priority = numberFieldPriority.getInt();
-                    int channel = numberFieldChannel.getInt();
-                    EnumFacing selectedSide = dropdownFieldSide.getSelectedDropdownPossibility() == null ? null : dropdownFieldSide.getSelectedDropdownPossibility().getValue();
-                    int side = selectedSide != null && selectedSide != getDefaultSide() ? selectedSide.ordinal() : -1;
-                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
-                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastPriorityValueId(), priority);
-                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastChannelValueId(), channel);
-                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastSideValueId(), side);
-                } catch (NumberFormatException e) { }
-            }
+        putButtonAction(BUTTON_SAVE, (buttonId, gui, container) -> {
+            IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
+            try {
+                int updateInterval = numberFieldUpdateInterval.getInt();
+                int priority = numberFieldPriority.getInt();
+                int channel = numberFieldChannel.getInt();
+                EnumFacing selectedSide = dropdownFieldSide.getSelectedDropdownPossibility() == null ? null : dropdownFieldSide.getSelectedDropdownPossibility().getValue();
+                int side = selectedSide != null && selectedSide != getDefaultSide() ? selectedSide.ordinal() : -1;
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastPriorityValueId(), priority);
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastChannelValueId(), channel);
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastSideValueId(), side);
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastExposeCapabilitiesValueId(), exposeCapabilities ? 1 : 0);
+            } catch (NumberFormatException e) { }
+        });
+
+        putButtonAction(BUTTON_EXPOSE_CAPABILITIES, (buttonId, gui, container) -> {
+            updateExposeCapabilities(!exposeCapabilities);
         });
     }
 
@@ -138,6 +146,9 @@ public class GuiPartSettings extends GuiContainerExtended {
         numberFieldChannel.setTextColor(16777215);
         numberFieldChannel.setCanLoseFocus(true);
 
+        buttonExposeCapabilities = new GuiButtonText(BUTTON_EXPOSE_CAPABILITIES, guiLeft + 106, guiTop + 108, 68, 16, "", true);
+        buttonList.add(buttonExposeCapabilities);
+
         String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
         buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 178, this.guiTop + 8, fontRenderer.getStringWidth(save) + 6, 16, save, true));
     }
@@ -174,6 +185,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 62, Helpers.RGBToInt(0, 0, 0));
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + 87, Helpers.RGBToInt(0, 0, 0));
+        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.expose_capabilities"), guiLeft + 8, guiTop + 112, Helpers.RGBToInt(0, 0, 0));
     }
 
     @Override
@@ -183,11 +195,16 @@ public class GuiPartSettings extends GuiContainerExtended {
 
     @Override
     protected int getBaseYSize() {
-        return 191;
+        return 214;
     }
 
     protected void setSideInDropdownField(EnumFacing side) {
         dropdownFieldSide.selectPossibility(dropdownEntries.get(side.ordinal()));
+    }
+
+    protected void updateExposeCapabilities(boolean newValue) {
+        exposeCapabilities = newValue;
+        buttonExposeCapabilities.displayString = newValue ? trueStr : falseStr;
     }
 
     @Override
@@ -204,6 +221,9 @@ public class GuiPartSettings extends GuiContainerExtended {
         if (valueId == ((ContainerPartSettings) getContainer()).getLastSideValueId()) {
             int side = ((ContainerPartSettings) getContainer()).getLastSideValue();
             setSideInDropdownField(side == -1 ? getDefaultSide() : EnumFacing.VALUES[side]);
+        }
+        if (valueId == ((ContainerPartSettings) getContainer()).getLastExposeCapabilitiesValueId()) {
+            updateExposeCapabilities(((ContainerPartSettings) getContainer()).getLastExposeCapabilitiesValue());
         }
     }
 

@@ -161,6 +161,19 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public PartTarget getTarget(PartPos pos, S state);
 
     /**
+     * Set whether this part should expose network capabilities.
+     * @param state The state
+     * @param exposeCapabilities Whether to expose network capabilities.
+     */
+    public void setExposeCapabilities(S state, boolean exposeCapabilities);
+
+    /**
+     * @param state The state
+     * @return Whether this part should expose network capabilities.
+     */
+    public boolean isExposeCapabilities(S state);
+
+    /**
      * @param state The state
      * @return If this element should be updated. This method is only called once during network initialization.
      */

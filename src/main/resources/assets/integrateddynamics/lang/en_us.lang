@@ -14,6 +14,7 @@ gui.integrateddynamics.partsettings.update_interval=Frequency
 gui.integrateddynamics.partsettings.priority=Priority
 gui.integrateddynamics.partsettings.channel=Energy Channel
 gui.integrateddynamics.partsettings.side=Target Side
+gui.integrateddynamics.partsettings.expose_capabilities=Expose Capabilities
 gui.integrateddynamics.delay.capacity=Capacity
 gui.integrateddynamics.part.properties=Properties:
 gui.integrateddynamics.logicprogrammer.filter=Filter
