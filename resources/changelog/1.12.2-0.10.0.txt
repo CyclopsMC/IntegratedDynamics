@@ -1,0 +1,46 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.0 or higher.
+
+Additions:
+* Add Mechanical Squeezer, an advanced and automatable version of the Squeezer
+* Add Mechanical Drying Basin, an advanced and automatable version of the Drying Basin
+* Add channels, this is particularly useful for Integrated Tunnels
+* Add network aspect for reading the network consumption rate
+* Add TPS aspect to world and extradimensional readers
+* Add auto-supply mode to batteries
+  This allows you to automatically fill held energy containers.
+* Add operators to read items, fluids and energy from entities, Closes #403
+* Add redstone pulse writing aspects, Closes #418
+* Add part setting for changing the effective target side, #278
+* Add index_of, index_of_regex, regex_groups, replace, replace_regex, matches_predicate.
+* Add Signals compat
+* Add molten metal convenience recipes to Drying Basin
+* Add an "Is Minecart" operator
+* Add an entity and machine writer
+  Like the inventory writer, these will only be useful with cross-mod compats
+* Add an offset time to the redstone clock
+  This lets you have, for example, 4 redstone clocks, each one on for a different
+  1/4 of each second. Without this, they'd all be on for the same 1/4 of each
+  second. This partially solves #317; it will fully solve it once #197 is solved.
+* Add a recipe to squeeze menril resin out of planks
+* Add menril doors
+* Allow squeezing of poisonous materials
+
+Changes:
+* Balance default energy capacity of batteries
+  This multiplies the default capacity by a factor of 10, in order to have a better balance compared to other RF storage mods.
+* Make battery transfer limit in relation to its capacity, #377
+* Show outline of variables in variable slots
+* Show battery energy level toast when right clicking with an empty hand
+* Add warning about certain parts not having aspects, Closes #214
+* Give 3 omni-directional connectors instead of 2 when consuming one
+* Don't show empty fluid squeezer slots in infobook
+* Modify several Squeezer recipe outputs to be probabilistic
+
+Fixes:
+* Fix missing texture on the bottom of the Materializer
+* Fix part settings button hovering appearing incorrectly, Closes #453
+* Fix crash due to casting ANY to NUMBER
+* Fix JEI recipe clicking in LP overwriting last inventory slot, Closes CyclopsMC/IntegratedDynamics#441
+* Fix incorrect JEI LP recipe fill in target
+* Fix machine deactivation after finishing each recipe
