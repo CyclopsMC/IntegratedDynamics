@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,9 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     private INetwork network;
     private final TIntObjectMap<Set<PrioritizedPartPos>> positions = new TIntObjectHashMap<>();
     private final Set<PartPos> disabledPositions = Sets.newHashSet();
+
+    private final TIntObjectMap<PositionsIterator> positionsIterators = new TIntObjectHashMap<>();
+    private final List<PositionsIterator> createdIterators = Lists.newLinkedList();
 
     @Override
     public Collection<PrioritizedPartPos> getPositions(int channel) {
@@ -52,7 +56,43 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     }
 
     @Override
+    public PositionsIterator getPositionIterator(int channel) {
+        PositionsIterator it = positionsIterators.get(channel);
+        if (it == null) {
+            // If no custom iterator was given, iterate in first-come-first-serve order
+            it = new PositionsIterator(getPositions(channel));
+        } else {
+            it = it.cloneState();
+        }
+        return it;
+    }
+
+    @Override
+    public void setPositionIterator(@Nullable PositionsIterator iterator, int channel) {
+        if (iterator == null) {
+            positionsIterators.remove(channel);
+        } else {
+            positionsIterators.put(channel, iterator);
+        }
+    }
+
+    @Override
+    public PositionsIterator createPositionIterator(int channel) {
+        PositionsIterator it = new PositionsIterator(getPositions(channel));
+        createdIterators.add(it);
+        return it;
+    }
+
+    protected void invalidateIterators() {
+        this.positionsIterators.clear();
+        this.createdIterators.forEach(PositionsIterator::invalidate);
+        this.createdIterators.clear();
+    }
+
+    @Override
     public boolean addPosition(PartPos pos, int priority, int channel) {
+        invalidateIterators();
+
         Set<PrioritizedPartPos> positions = this.positions.get(channel);
         if (positions == null) {
             positions = Sets.newTreeSet();
@@ -63,6 +103,8 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
 
     @Override
     public void removePosition(PartPos pos) {
+        invalidateIterators();
+
         for (Set<PrioritizedPartPos> positions : this.positions.valueCollection()) {
             positions.removeIf(prioritizedPartPos -> prioritizedPartPos.getPartPos().equals(pos));
         }
@@ -82,4 +124,5 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     public void enablePosition(PartPos pos) {
         disabledPositions.remove(pos);
     }
+
 }
