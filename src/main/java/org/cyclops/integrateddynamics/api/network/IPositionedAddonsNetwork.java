@@ -4,7 +4,6 @@ import net.minecraft.util.EnumFacing;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * A network that can hold prioritized positions.
@@ -16,7 +15,7 @@ public interface IPositionedAddonsNetwork {
      * @param channel The channel id.
      * @return The stored positions, sorted by priority.
      */
-    public Set<PrioritizedPartPos> getPositions(int channel);
+    public Collection<PrioritizedPartPos> getPositions(int channel);
 
     /**
      * @return All stored positions, order is undefined.

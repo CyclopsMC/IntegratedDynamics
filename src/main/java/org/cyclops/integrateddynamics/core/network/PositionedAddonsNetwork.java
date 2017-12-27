@@ -7,6 +7,7 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
+import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -29,7 +30,10 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     private final Set<PartPos> disabledPositions = Sets.newHashSet();
 
     @Override
-    public Set<PrioritizedPartPos> getPositions(int channel) {
+    public Collection<PrioritizedPartPos> getPositions(int channel) {
+        if (channel == IChanneledNetwork.WILDCARD_CHANNEL) {
+            return getPositions();
+        }
         Set<PrioritizedPartPos> positions = this.positions.get(channel);
         if (positions == null) {
             return Collections.emptySet();
