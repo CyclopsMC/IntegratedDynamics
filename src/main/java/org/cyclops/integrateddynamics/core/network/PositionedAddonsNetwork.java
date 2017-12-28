@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gnu.trove.map.TIntObjectMap;
@@ -35,10 +36,10 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
             return getPositions();
         }
         Set<PrioritizedPartPos> positions = this.positions.get(channel);
-        if (positions == null) {
-            return Collections.emptySet();
-        }
-        return ImmutableSet.copyOf(positions);
+        Set<PrioritizedPartPos> wildcardPositions = this.positions.get(IChanneledNetwork.WILDCARD_CHANNEL);
+        if (positions == null) positions = Collections.emptySet();
+        if (wildcardPositions == null) wildcardPositions = Collections.emptySet();
+        return ImmutableSet.copyOf(Iterables.concat(positions, wildcardPositions));
     }
 
     @Override
