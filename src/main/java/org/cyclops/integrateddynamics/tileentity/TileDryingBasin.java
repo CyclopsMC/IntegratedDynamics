@@ -128,9 +128,11 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                 }
                 fire = 0;
             } else {
-                progress = 0;
-                fire = 0;
-                sendUpdate();
+                if ((progress > 0) || (fire > 0)) {
+                    progress = 0;
+                    fire = 0;
+                    sendUpdate();
+                }
             }
         } else if(progress > 0 && world.rand.nextInt(5) == 0) {
             if(!getTank().isEmpty()) {

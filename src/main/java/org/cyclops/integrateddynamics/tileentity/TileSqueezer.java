@@ -117,8 +117,6 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                         if (recipe.getOutput().getFluidStack() != null) {
                             fill(recipe.getOutput().getFluidStack(), true);
                         }
-                } else {
-                    sendUpdate();
                 }
             }
         }
