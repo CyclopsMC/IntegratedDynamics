@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.AspectUpdateType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
@@ -47,11 +48,13 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     private final ModBase modGui;
     private final List<IAspectUpdateListener.Before> beforeUpdateListeners;
     private final List<IAspectUpdateListener.After> afterUpdateListeners;
+    private final AspectUpdateType updateType;
 
     private AspectBuilder(boolean read, T valueType, List<String> kinds, IAspectProperties defaultAspectProperties,
                           List<IAspectValuePropagator> valuePropagators, List<IAspectWriteActivator> writeActivators,
                           List<IAspectWriteDeactivator> writeDeactivators, ModBase mod, ModBase modGui,
-                          List<IAspectUpdateListener.Before> beforeUpdateListeners, List<IAspectUpdateListener.After> afterUpdateListeners) {
+                          List<IAspectUpdateListener.Before> beforeUpdateListeners, List<IAspectUpdateListener.After> afterUpdateListeners,
+                          AspectUpdateType updateType) {
         this.read = read;
         this.valueType = valueType;
         this.kinds = kinds;
@@ -63,6 +66,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         this.modGui = Objects.requireNonNull(modGui);
         this.beforeUpdateListeners = beforeUpdateListeners;
         this.afterUpdateListeners = afterUpdateListeners;
+        this.updateType = updateType;
     }
 
     /**
@@ -93,7 +97,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 beforeUpdateListeners,
-                afterUpdateListeners);
+                afterUpdateListeners,
+                updateType);
     }
 
     /**
@@ -112,7 +117,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 beforeUpdateListeners,
-                afterUpdateListeners);
+                afterUpdateListeners,
+                updateType);
     }
 
     /**
@@ -131,7 +137,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 beforeUpdateListeners,
-                afterUpdateListeners);
+                afterUpdateListeners,
+                updateType);
     }
 
     /**
@@ -154,7 +161,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 beforeUpdateListeners,
-                afterUpdateListeners);
+                afterUpdateListeners,
+                updateType);
     }
 
     /**
@@ -177,7 +185,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 beforeUpdateListeners,
-                afterUpdateListeners);
+                afterUpdateListeners,
+                updateType);
     }
 
     /**
@@ -196,7 +205,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 beforeUpdateListeners,
-                afterUpdateListeners);
+                afterUpdateListeners,
+                updateType);
     }
 
     /**
@@ -215,7 +225,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 beforeUpdateListeners,
-                afterUpdateListeners);
+                afterUpdateListeners,
+                updateType);
     }
 
     /**
@@ -234,7 +245,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 Helpers.joinList(beforeUpdateListeners, listener),
-                Helpers.joinList(afterUpdateListeners, null));
+                Helpers.joinList(afterUpdateListeners, null),
+                updateType);
     }
 
     /**
@@ -253,7 +265,30 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 mod,
                 modGui,
                 Helpers.joinList(beforeUpdateListeners, null),
-                Helpers.joinList(afterUpdateListeners, listener));
+                Helpers.joinList(afterUpdateListeners, listener),
+                updateType);
+    }
+
+    /**
+     * Set the update type of the reader aspect.
+     * @return The new builder instance.
+     */
+    public AspectBuilder<V, T, O> withUpdateType(AspectUpdateType updateType) {
+        if(!this.read) {
+            throw new RuntimeException("Custom update types are only applicable to readers.");
+        }
+        return new AspectBuilder<>(
+                this.read, this.valueType,
+                Helpers.joinList(this.kinds, null),
+                this.defaultAspectProperties,
+                Helpers.joinList(this.valuePropagators, null),
+                Helpers.joinList(writeActivators, null),
+                Helpers.joinList(writeDeactivators, null),
+                mod,
+                modGui,
+                beforeUpdateListeners,
+                afterUpdateListeners,
+                updateType);
     }
 
     /**
@@ -286,7 +321,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Pair<PartTarget, IAspectProperties>> forReadType(T valueType) {
         return new AspectBuilder<>(true, valueType, ImmutableList.of(valueType.getTypeName()), null,
                 Collections.<IAspectValuePropagator>emptyList(), Collections.<IAspectWriteActivator>emptyList(),
-                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, IntegratedDynamics._instance, Lists.newArrayList(), Lists.newArrayList());
+                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, IntegratedDynamics._instance, Lists.newArrayList(), Lists.newArrayList(), AspectUpdateType.NETWORK_TICK);
     }
 
     /**
@@ -299,7 +334,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Triple<PartTarget, IAspectProperties, IVariable<V>>> forWriteType(T valueType) {
         return new AspectBuilder<>(false, valueType, ImmutableList.of(valueType.getTypeName()), null,
                 Collections.<IAspectValuePropagator>emptyList(), Collections.<IAspectWriteActivator>emptyList(),
-                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, IntegratedDynamics._instance, Lists.newArrayList(), Lists.newArrayList());
+                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, IntegratedDynamics._instance, Lists.newArrayList(), Lists.newArrayList(), AspectUpdateType.NETWORK_TICK);
     }
 
     private static class BuiltReader<V extends IValue, T extends IValueType<V>> extends AspectReadBase<V, T> {
@@ -311,7 +346,8 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
 
         public BuiltReader(AspectBuilder<V, T, V> aspectBuilder) {
             super(aspectBuilder.mod, aspectBuilder.modGui,
-                    deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties);
+                    deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties,
+                    aspectBuilder.updateType);
             this.valueType = aspectBuilder.valueType;
             this.valuePropagators = aspectBuilder.valuePropagators;
             this.beforeUpdateListeners = aspectBuilder.beforeUpdateListeners;

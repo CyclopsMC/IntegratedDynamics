@@ -35,6 +35,21 @@ public class DummyVariable<V extends IValue> implements IVariable<V> {
         return value;
     }
 
+    @Override
+    public boolean canInvalidate() {
+        return true;
+    }
+
+    @Override
+    public void invalidate() {
+
+    }
+
+    @Override
+    public void addDependent(IVariable<?> dependent) {
+
+    }
+
     public void setValue(V value) {
         this.value = value;
     }

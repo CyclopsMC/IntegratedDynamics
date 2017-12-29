@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -156,7 +157,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
      */
     public static class DummyVariableFacade extends VariableFacadeBase {
 
-        private static final IVariable VARIABLE_TRUE = new IVariable<ValueTypeBoolean.ValueBoolean>() {
+        private static final IVariable VARIABLE_TRUE = new VariableAdapter<ValueTypeBoolean.ValueBoolean>() {
             @Override
             public IValueType<ValueTypeBoolean.ValueBoolean> getType() {
                 return ValueTypes.BOOLEAN;

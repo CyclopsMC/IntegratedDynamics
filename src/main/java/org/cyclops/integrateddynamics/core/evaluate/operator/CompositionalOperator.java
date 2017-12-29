@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -103,7 +104,7 @@ public class CompositionalOperator extends OperatorBase {
                 for(int i = 0; i < builders.length; i++) {
                     final AppliedOperatorBuilder builder = builders[i];
                     // Anonymous class because we want lazy evaluation
-                    subVariablesOut[i] = new IVariable() {
+                    subVariablesOut[i] = new VariableAdapter<IValue>() {
                         @Override
                         public IValueType getType() {
                             return builder.base.getOutputType();

@@ -108,7 +108,8 @@ public class NetworkHelpers {
     /**
      * This MUST be called by blocks having the {@link INetworkElementProvider} capability in
      * when a neighbouring block is updated, more specifically when
-     * {@link net.minecraft.block.Block#neighborChanged(IBlockState, World, BlockPos, Block, BlockPos)} is called.
+     * {@link net.minecraft.block.Block#neighborChanged(IBlockState, World, BlockPos, Block, BlockPos)}
+     * or {@link Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} is called.
      * @param world The world in which the neighbour was updated.
      * @param pos The position of the center block.
      * @param neighborBlock The block type of the neighbour that was updated.

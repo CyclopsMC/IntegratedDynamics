@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.AspectUpdateType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
@@ -29,13 +30,16 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
         implements IAspectRead<V, T> {
 
     private final String unlocalizedTypeSuffix;
+    private final AspectUpdateType updateType;
 
-    public AspectReadBase(ModBase mod, ModBase modGui, String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
+    public AspectReadBase(ModBase mod, ModBase modGui, String unlocalizedTypeSuffix,
+                          IAspectProperties defaultProperties, AspectUpdateType updateType) {
         super(mod, modGui, defaultProperties);
         if(unlocalizedTypeSuffix == null) {
             unlocalizedTypeSuffix = "";
         }
         this.unlocalizedTypeSuffix = unlocalizedTypeSuffix;
+        this.updateType = updateType;
         if(MinecraftHelpers.isClientSide()) {
             registerModelResourceLocation();
         }
@@ -45,8 +49,8 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
     @Override
     public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
         IAspectVariable variable = ((IPartTypeReader) partType).getVariable(target, (IPartStateReader) state, this);
-        if (variable.requiresUpdate()) {
-            variable.update();
+        if (variable.canInvalidate()) {
+            variable.invalidate();
         }
     }
 
@@ -79,4 +83,8 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
         };
     }
 
+    @Override
+    public AspectUpdateType getUpdateType() {
+        return updateType;
+    }
 }

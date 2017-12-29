@@ -16,6 +16,7 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
@@ -56,7 +57,7 @@ public class TileDelay extends TileProxy {
     private EntityPlayer lastPlayer = null;
 
     public TileDelay() {
-        this.variable = new IVariable<ValueTypeList.ValueList>() {
+        this.variable = new VariableAdapter<ValueTypeList.ValueList>() {
 
             @Override
             public ValueTypeList getType() {

@@ -12,16 +12,19 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 import org.cyclops.integrateddynamics.item.ItemVariable;
@@ -81,6 +84,20 @@ public class TileVariablestore extends TileCableConnectableInventory
     }
 
     protected void refreshVariables(IInventory inventory, boolean sendVariablesUpdateEvent) {
+        // Invalidate variables
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(getNetwork());
+        if (partNetwork != null) {
+            for (IVariableFacade variableFacade : variableContainer.getVariableCache().values()) {
+                IVariable<?> variable = variableFacade.getVariable(partNetwork);
+                if (variable != null) {
+                    if (variable.canInvalidate()) {
+                        variable.invalidate();
+                    }
+                }
+            }
+        }
+
+        // Reset variable facades
         variableContainer.getVariableCache().clear();
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
@@ -92,6 +109,7 @@ public class TileVariablestore extends TileCableConnectableInventory
             }
         }
 
+        // Trigger event in network
         if (sendVariablesUpdateEvent) {
             INetwork network = getNetwork();
             if (network != null) {

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -19,7 +20,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties
  * No calculations will be done if the value of this variable is not called.
  * @author rubensworks
  */
-public abstract class LazyAspectVariable<V extends IValue> implements IAspectVariable<V> {
+public abstract class LazyAspectVariable<V extends IValue> extends VariableAdapter<V> implements IAspectVariable<V> {
 
     @Getter private final IValueType<V> type;
     @Getter private final PartTarget target;
@@ -34,12 +35,13 @@ public abstract class LazyAspectVariable<V extends IValue> implements IAspectVar
     }
 
     @Override
-    public boolean requiresUpdate() {
+    public boolean canInvalidate() {
         return value != null;
     }
 
     @Override
-    public void update() {
+    public void invalidate() {
+        super.invalidate();
         value = null;
         cachedProperties = null;
     }

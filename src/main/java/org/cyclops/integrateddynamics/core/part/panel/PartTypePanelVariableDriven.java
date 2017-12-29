@@ -138,9 +138,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             // Since sendUpdate marks a flag for the part to update, this caused a loss of one tick.
             // For example:
             // tick-0: Tile tick
-            // tick-0: Part tick: update a value, and mark part to update
+            // tick-0: Part tick: update a value, and mark part to invalidate
             // tick-0: -- send all block updates to client ---
-            // tick-1: Tile tick: notices and update, marks a block update
+            // tick-1: Tile tick: notices and update, marks a block invalidate
             // tick-1: Part tick: update the value again, the old value has still not been sent here!
             // tick-1: -- send all block updates to client --- This will contain the value that was set in tick-1.
             state.onDirty();

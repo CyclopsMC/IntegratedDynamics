@@ -324,7 +324,8 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     /**
      * Called when a neighbouring block is updated, more specifically when
-     * {@link net.minecraft.block.Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} is called.
+     * {@link net.minecraft.block.Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} or
+     * {@link Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} is called.
      * @param network The network to update in.
      * @param partNetwork The part network to update in.
      * @param target The target block.

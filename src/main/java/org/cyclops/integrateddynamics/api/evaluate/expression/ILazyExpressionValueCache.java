@@ -12,5 +12,6 @@ public interface ILazyExpressionValueCache {
     public void setValue(int id, IValue value);
     public boolean hasValue(int id);
     public IValue getValue(int id);
+    public void removeValue(int id);
 
 }
