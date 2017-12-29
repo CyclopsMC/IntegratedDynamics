@@ -39,6 +39,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.AspectUpdateType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
@@ -94,28 +95,34 @@ public class Aspects {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_BLOCK =
                     AspectReadBuilders.Block.BUILDER_BOOLEAN.handle(
                         dimPos -> dimPos.getWorld().getBlockState(dimPos.getBlockPos()).getBlock() != Blocks.AIR
-                    ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
+                    ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DIMENSION =
                     AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
                         world -> world.provider.getDimension()
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "dimension").buildRead();
+                    ).withUpdateType(AspectUpdateType.NEVER)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER, "dimension").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSX =
                     AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(
                         BlockPos::getX
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "posx").buildRead();
+                    ).withUpdateType(AspectUpdateType.NEVER)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER, "posx").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSY =
                     AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(
                         BlockPos::getY
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "posy").buildRead();
+                    ).withUpdateType(AspectUpdateType.NEVER)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER, "posy").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSZ =
                     AspectReadBuilders.Block.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_POS).handle(
                         BlockPos::getZ
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "posz").buildRead();
+                    ).withUpdateType(AspectUpdateType.NEVER)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER, "posz").buildRead();
             public static final IAspectRead<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock> BLOCK =
                     AspectReadBuilders.Block.BUILDER_BLOCK
                             .handle(
                         dimPos -> dimPos.getWorld().getBlockState(dimPos.getBlockPos())
-                    ).handle(AspectReadBuilders.PROP_GET_BLOCK).buildRead();
+                    ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_BLOCK).buildRead();
             public static final IAspectRead<ValueTypeNbt.ValueNbt, ValueTypeNbt> NBT =
                     AspectReadBuilders.Block.BUILDER_NBT.handle(dimPos -> {
                         TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
@@ -127,7 +134,8 @@ public class Aspects {
                             // Catch possible errors
                         }
                         return null;
-                    }).handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
+                    }).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
         }
 
         public static final class Entity {
@@ -391,7 +399,8 @@ public class Aspects {
                     }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "fillratio").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ITEMSTACKS =
-                    AspectReadBuilders.BUILDER_LIST.appendKind("inventory").handle(AspectReadBuilders.Inventory.PROP_GET_LIST, "itemstacks").buildRead();
+                    AspectReadBuilders.BUILDER_LIST.appendKind("inventory")
+                            .handle(AspectReadBuilders.Inventory.PROP_GET_LIST, "itemstacks").buildRead();
 
             public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> OBJECT_ITEM_STACK_SLOT =
                     AspectReadBuilders.Inventory.BUILDER_ITEMSTACK.handle(AspectReadBuilders.PROP_GET_ITEMSTACK).buildRead();
@@ -556,22 +565,27 @@ public class Aspects {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_LOW =
                     AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(
                         input -> input == 0
-                    ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "low").buildRead();
+                    ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "low").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONLOW =
                     AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(
                         input -> input > 0
-                    ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonlow").buildRead();
+                    ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonlow").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_HIGH =
                     AspectReadBuilders.Redstone.BUILDER_BOOLEAN.handle(
                         input -> input == 15
-                    ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "high").buildRead();
+                    ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "high").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_CLOCK =
                     AspectReadBuilders.Redstone.BUILDER_BOOLEAN_CLOCK.handle(AspectReadBuilders.PROP_GET_BOOLEAN, "clock").buildRead();
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_VALUE =
-                    AspectReadBuilders.Redstone.BUILDER_INTEGER.handle(AspectReadBuilders.PROP_GET_INTEGER, "value").buildRead();
+                    AspectReadBuilders.Redstone.BUILDER_INTEGER.withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER, "value").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_COMPARATOR =
-                    AspectReadBuilders.Redstone.BUILDER_INTEGER_COMPARATOR.handle(AspectReadBuilders.PROP_GET_INTEGER, "comparator").buildRead();
+                    AspectReadBuilders.Redstone.BUILDER_INTEGER_COMPARATOR.withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER, "comparator").buildRead();
 
         }
 

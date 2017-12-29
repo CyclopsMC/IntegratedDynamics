@@ -24,9 +24,4 @@ public abstract class UpdatingAspectVariable<V extends IValue> implements IAspec
         this.value = type.getDefault();
     }
 
-    @Override
-    public boolean requiresUpdate() {
-        return true;
-    }
-
 }

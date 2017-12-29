@@ -157,6 +157,11 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     }
 
     @Override
+    public void removeValue(int id) {
+        lazyExpressionValueCache.remove(id);
+    }
+
+    @Override
     public boolean addVariableContainer(DimPos dimPos) {
         compositeVariableCache = null;
         return variableContainerPositions.add(dimPos);
@@ -198,9 +203,6 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
 
     @Override
     public void update() {
-        // Reset lazy variable cache
-        lazyExpressionValueCache.clear();
-
         // Signal parts of any changes
         if (partsChanged) {
             this.partsChanged = false;

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.expression;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.IExpression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.ILazyExpressionValueCache;
+import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -13,7 +14,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
  * This is evaluated in a lazy manner.
  * @author rubensworks
  */
-public class LazyExpression<V extends IValue> implements IExpression<V> {
+public class LazyExpression<V extends IValue> extends VariableAdapter<V> implements IExpression<V> {
 
     private final int id;
     private final IOperator op;
@@ -34,6 +35,9 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
             return valueCache.getValue(id);
         }
         IValue value = op.evaluate(input);
+        for (IVariable inputVariable : input) {
+            inputVariable.addDependent(this);
+        }
         valueCache.setValue(id, value);
         return value;
     }
@@ -64,6 +68,12 @@ public class LazyExpression<V extends IValue> implements IExpression<V> {
             throw new EvaluationException(String.format("The evaluation for operator %s returned %s instead of " +
                     "the expected %s.", op, value.getType(), op.getOutputType()));
         }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        valueCache.removeValue(id);
     }
 
     public IOperator getOperator() {
