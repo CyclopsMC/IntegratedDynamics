@@ -28,6 +28,7 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartTypeActiveVariable;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.client.gui.GuiPartDisplay;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
@@ -50,7 +51,7 @@ import java.util.Map;
  * A panel part that is driven by a contained variable.
  * @author rubensworks
  */
-public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartTypePanel<P, S> {
+public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartTypePanel<P, S> implements IPartTypeActiveVariable<P, S> {
 
     public PartTypePanelVariableDriven(String name) {
         super(name);
@@ -145,6 +146,16 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             state.onDirty();
             BlockHelpers.markForUpdate(target.getCenter().getPos().getWorld(), target.getCenter().getPos().getBlockPos());
         }
+    }
+
+    @Override
+    public boolean hasActiveVariable(IPartNetwork network, PartTarget target, S partState) {
+        return partState.hasVariable();
+    }
+
+    @Override
+    public <V extends IValue> IVariable<V> getActiveVariable(IPartNetwork network, PartTarget target, S partState) {
+        return partState.getVariable(network);
     }
 
     protected void onValueChanged(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,

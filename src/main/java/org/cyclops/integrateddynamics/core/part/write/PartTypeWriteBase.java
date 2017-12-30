@@ -131,6 +131,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
+    public boolean hasActiveVariable(IPartNetwork network, PartTarget target, S partState) {
+        return partState.hasVariable();
+    }
+
+    @Override
     public <V extends IValue> IVariable<V> getActiveVariable(IPartNetwork network, PartTarget target, S partState) {
         return partState.getVariable(network);
     }
