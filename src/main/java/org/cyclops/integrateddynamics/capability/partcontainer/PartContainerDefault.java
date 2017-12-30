@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -180,17 +181,19 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        IPartNetwork partNetwork = getPartNetwork();
+        DimPos pos = getPosition();
         if(facing == null) {
             for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
                 IPartState partState = entry.getValue().getState();
-                if(partState != null && partState.hasCapability(capability)) {
+                if(partState != null && partState.hasCapability(capability, partNetwork, PartTarget.fromCenter(pos, entry.getKey()))) {
                     return true;
                 }
             }
         } else {
             if(hasPart(facing)) {
                 IPartState partState = getPartState(facing);
-                if (partState != null && partState.hasCapability(capability)) {
+                if (partState != null && partState.hasCapability(capability, partNetwork, PartTarget.fromCenter(pos, facing))) {
                     return true;
                 }
             }
@@ -200,18 +203,22 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        IPartNetwork partNetwork = getPartNetwork();
+        DimPos pos = getPosition();
         if(facing == null) {
             for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
                 IPartState partState = entry.getValue().getState();
-                if(partState != null && partState.hasCapability(capability)) {
-                    return (T) partState.getCapability(capability);
+                PartTarget target = PartTarget.fromCenter(pos, entry.getKey());
+                if(partState != null && partState.hasCapability(capability, partNetwork, target)) {
+                    return (T) partState.getCapability(capability, partNetwork, target);
                 }
             }
         } else {
             if(hasPart(facing)) {
                 IPartState partState = getPartState(facing);
-                if (partState != null && partState.hasCapability(capability)) {
-                    return (T) partState.getCapability(capability);
+                PartTarget partTarget = PartTarget.fromCenter(pos, facing);
+                if (partState != null && partState.hasCapability(capability, partNetwork, partTarget)) {
+                    return (T) partState.getCapability(capability, partNetwork, partTarget);
                 }
             }
         }

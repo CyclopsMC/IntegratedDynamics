@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
+import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
@@ -43,6 +44,7 @@ public class Configs {
         configHandler.add(new VariableFacadeHolderConfig());
         configHandler.add(new PartNetworkConfig());
         configHandler.add(new EnergyNetworkConfig());
+        configHandler.add(new ValueInterfaceConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());

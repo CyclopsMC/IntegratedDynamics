@@ -30,8 +30,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.IValueInterface;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -40,6 +44,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
+import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
@@ -530,6 +535,19 @@ public class Aspects {
                                             ? ((IEnergyConsumingNetworkElement) e).getConsumptionRate() : 0).sum()
                                     * GeneralConfig.energyConsumptionMultiplier : 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("consumptionrate").buildRead();
+            public static final IAspectRead<IValue, ValueTypeCategoryAny> ANY_VALUE =
+                    AspectReadBuilders.BUILDER_ANY.appendKind("network").handle(
+                            data -> {
+                                PartPos target = data.getLeft().getTarget();
+                                IValueInterface valueInterface = TileHelpers.getCapability(
+                                        target.getPos(), target.getSide(), ValueInterfaceConfig.CAPABILITY);
+                                if (valueInterface != null) {
+                                    return valueInterface.getValue().orElseThrow(() ->
+                                            new EvaluationException("No valid value interface value was found."));
+                                }
+                                throw new EvaluationException("No valid value interface was found.");
+                            }
+                    ).appendKind("value").buildRead();
 
         }
 

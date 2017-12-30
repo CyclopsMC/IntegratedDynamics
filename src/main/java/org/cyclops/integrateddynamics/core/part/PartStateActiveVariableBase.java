@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.capabilities.Capability;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -16,16 +17,17 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An abstract part state with a focus on activatable variables.
  * @author rubensworks
  */
-public abstract class PartStateActiveVariableBase<P extends IPartType>
-        extends PartStateBase<P> {
+public abstract class PartStateActiveVariableBase<P extends IPartType> extends PartStateBase<P> {
 
     private boolean checkedForWriteVariable = false;
     protected IVariableFacade currentVariableFacade = null;
@@ -137,6 +139,27 @@ public abstract class PartStateActiveVariableBase<P extends IPartType>
         //noinspection unchecked
         this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag);
         inventory.readFromNBT(tag);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target) {
+        return capability == ValueInterfaceConfig.CAPABILITY || super.hasCapability(capability, network, target);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target) {
+        if (capability == ValueInterfaceConfig.CAPABILITY) {
+            return ValueInterfaceConfig.CAPABILITY.cast(() -> {
+                if (hasVariable()) {
+                    IVariable<IValue> variable = getVariable(network);
+                    if (variable != null) {
+                        return Optional.of(variable.getValue());
+                    }
+                }
+                return Optional.empty();
+            });
+        }
+        return super.getCapability(capability, network, target);
     }
 
     /**

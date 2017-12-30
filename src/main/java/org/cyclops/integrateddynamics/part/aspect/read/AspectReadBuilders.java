@@ -26,6 +26,7 @@ import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -68,6 +69,8 @@ public class AspectReadBuilders {
             BUILDER_LIST = AspectBuilder.forReadType(ValueTypes.LIST);
     public static final AspectBuilder<ValueTypeNbt.ValueNbt, ValueTypeNbt, Pair<PartTarget, IAspectProperties>>
             BUILDER_NBT = AspectBuilder.forReadType(ValueTypes.NBT);
+    public static final AspectBuilder<IValue, ValueTypeCategoryAny, Pair<PartTarget, IAspectProperties>>
+            BUILDER_ANY = AspectBuilder.forReadType(ValueTypes.CATEGORY_ANY);
 
     public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
             BUILDER_OBJECT_ITEMSTACK = AspectBuilder.forReadType(ValueTypes.OBJECT_ITEMSTACK);

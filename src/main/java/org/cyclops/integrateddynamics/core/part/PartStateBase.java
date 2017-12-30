@@ -11,9 +11,11 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.AttachCapabilitiesEventPart;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
@@ -237,18 +239,32 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability) {
-        return volatileCapabilities.containsKey(capability)
+    public boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target) {
+        return hasCapability(capability) || volatileCapabilities.containsKey(capability)
                 || (capabilities != null && capabilities.hasCapability(capability, null));
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability) {
+    public <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target) {
+        T cap = getCapability(capability);
+        if (cap != null) {
+            return cap;
+        }
         Object o = volatileCapabilities.get(capability);
         if(o != null) {
             return (T) o;
         }
         return capabilities == null ? null : capabilities.getCapability(capability, null);
+    }
+
+    @Deprecated // TODO: remove in 1.13
+    public boolean hasCapability(Capability<?> capability) {
+        return false;
+    }
+
+    @Deprecated // TODO: remove in 1.13
+    public <T> T getCapability(Capability<T> capability) {
+        return null;
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
@@ -15,12 +16,14 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
+import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -38,6 +41,20 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
     public TileActiveVariableBase(int inventorySize, String inventoryName) {
         super(inventorySize, inventoryName, 1);
         inventory.addDirtyMarkListener(this);
+        addCapabilityInternal(ValueInterfaceConfig.CAPABILITY, () -> {
+            INetwork network = getNetwork();
+            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+            if (network == null || partNetwork == null) {
+                throw new EvaluationException("No valid network was found");
+            }
+            if (hasVariable()) {
+                IVariable<?> variable = getVariable(partNetwork);
+                if (variable != null) {
+                    return Optional.of(variable.getValue());
+                }
+            }
+            return Optional.empty();
+        });
     }
 
     public abstract int getSlotRead();

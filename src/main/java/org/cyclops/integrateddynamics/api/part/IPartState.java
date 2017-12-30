@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
@@ -164,17 +165,21 @@ public interface IPartState<P extends IPartType> {
     /**
      * If this part state has the given capability.
      * @param capability The capability to check.
+     * @param network The network the part belongs to.
+     * @param target The target.
      * @return If this has the given capability/
      */
-    boolean hasCapability(Capability<?> capability);
+    boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target);
 
     /**
      * Get the given capability.
      * @param capability The capability to get.
+     * @param network The network the part belongs to.
+     * @param target The target.
      * @param <T> The capability type.
      * @return The capability instance.
      */
-    <T> T getCapability(Capability<T> capability);
+    <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target);
 
     /**
      * Add a capability to this state that will not be automatically persisted to NBT.

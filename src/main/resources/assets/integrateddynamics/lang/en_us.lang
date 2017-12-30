@@ -569,6 +569,8 @@ aspect.aspects.integrateddynamics.read.integer.network.energy.max.name=Energy Ca
 aspect.aspects.integrateddynamics.read.integer.network.energy.max.info=The energy capacity of the network
 aspect.aspects.integrateddynamics.read.integer.network.energy.consumptionrate.name=Energy Consumption Rate
 aspect.aspects.integrateddynamics.read.integer.network.energy.consumptionrate.info=The current energy consumption rate of the target network per tick
+aspect.aspects.integrateddynamics.read.any.network.value.name=Value
+aspect.aspects.integrateddynamics.read.any.network.value.info=The value that is being exposed by the target
 
 ## Redstone aspects
 aspect.aspects.integrateddynamics.read.boolean.redstone.high.name=Redstone High
