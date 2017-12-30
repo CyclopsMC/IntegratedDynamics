@@ -328,15 +328,10 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         }
 
         @Override
-        protected V getValue(PartTarget target, IAspectProperties properties) {
+        protected V getValue(PartTarget target, IAspectProperties properties) throws EvaluationException {
             Object output = Pair.of(target, properties);
             for(IAspectValuePropagator valuePropagator : valuePropagators) {
-                try {
-                    output = valuePropagator.getOutput(output);
-                } catch (EvaluationException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("Caught unexpected exception in read aspect, this is probably a programming error.");
-                }
+                output = valuePropagator.getOutput(output);
             }
             return (V) output;
         }

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.part.aspect;
 import lombok.Getter;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -44,7 +45,7 @@ public abstract class LazyAspectVariable<V extends IValue> implements IAspectVar
     }
 
     @Override
-    public V getValue() {
+    public V getValue() throws EvaluationException {
         if(value == null) {
             this.value = getValueLazy();
         }
@@ -66,7 +67,8 @@ public abstract class LazyAspectVariable<V extends IValue> implements IAspectVar
      * Calculate the current value for this variable.
      * It will only be called when required.
      * @return The current value of this variable.
+     * @throws EvaluationException If evaluation has gone wrong.
      */
-    public abstract V getValueLazy();
+    public abstract V getValueLazy() throws EvaluationException;
 
 }
