@@ -7,7 +7,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
+import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -24,7 +29,8 @@ import java.util.Objects;
  * @author rubensworks
  */
 @Data
-public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> extends NetworkElementBase implements IPartNetworkElement<P, S>, IEnergyConsumingNetworkElement {
+public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> extends NetworkElementBase
+        implements IPartNetworkElement<P, S>, IEnergyConsumingNetworkElement {
 
     private final P part;
     private final PartTarget target;
@@ -224,5 +230,15 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
             }
         }
         return this.getClass().getCanonicalName().compareTo(o.getClass().getCanonicalName());
+    }
+
+    @Override
+    public DimPos getPosition() {
+        return getTarget().getCenter().getPos();
+    }
+
+    @Override
+    public EnumFacing getSide() {
+        return getTarget().getCenter().getSide();
     }
 }

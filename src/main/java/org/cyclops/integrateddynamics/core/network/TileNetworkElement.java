@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 
 import java.util.List;
@@ -18,7 +19,8 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public abstract class TileNetworkElement<T extends TileCableConnectableInventory> extends ConsumingNetworkElementBase  {
+public abstract class TileNetworkElement<T extends TileCableConnectableInventory> extends ConsumingNetworkElementBase
+        implements IPositionedNetworkElement {
 
     private final DimPos pos;
 
@@ -59,5 +61,10 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
     public void revalidate(INetwork network) {
         super.revalidate(network);
         revalidatePositioned(network, pos);
+    }
+
+    @Override
+    public DimPos getPosition() {
+        return this.pos;
     }
 }

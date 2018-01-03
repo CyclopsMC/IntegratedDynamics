@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 
@@ -20,7 +21,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class CoalGeneratorNetworkElement extends NetworkElementBase {
+public class CoalGeneratorNetworkElement extends NetworkElementBase implements IPositionedNetworkElement {
 
     private final DimPos pos;
 
@@ -70,4 +71,8 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase {
         return this.getClass().getCanonicalName().compareTo(o.getClass().getCanonicalName());
     }
 
+    @Override
+    public DimPos getPosition() {
+        return this.pos;
+    }
 }
