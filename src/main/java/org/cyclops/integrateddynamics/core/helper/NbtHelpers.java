@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.helper;
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Set;
@@ -14,22 +15,46 @@ public class NbtHelpers {
 
     /**
      * Check if the first tag is a subset of the second tag.
-     * If nested tags are present, this will be checked recursively.
      * @param a An NBT tag.
      * @param b An NBT tag.
+     * @param recursive If tags and list should be checked recursively. (list must be in the same order)
      * @return If tag a is a subset (or equal) of tag b.
      */
-    public static boolean nbtMatchesSubset(NBTTagCompound a, NBTTagCompound b) {
+    public static boolean nbtMatchesSubset(NBTTagCompound a, NBTTagCompound b, boolean recursive) {
         for (String key : a.getKeySet()) {
             NBTBase valueA = a.getTag(key);
-            if (valueA instanceof NBTTagCompound) {
+            if (recursive && (valueA instanceof NBTTagCompound || valueA instanceof NBTTagList)) {
                 NBTBase valueB = b.getTag(key);
-                if (!(valueB instanceof NBTTagCompound)) {
-                    return false;
+                if (valueA instanceof NBTTagCompound) {
+                    if (!(valueB instanceof NBTTagCompound)) {
+                        return false;
+                    }
+                    NBTTagCompound tagA = (NBTTagCompound) valueA;
+                    NBTTagCompound tagB = (NBTTagCompound) valueB;
+                    if (!nbtMatchesSubset(tagA, tagB, recursive)) {
+                        return false;
+                    }
+                } else if (valueA instanceof NBTTagList) {
+                    if (!(valueB instanceof NBTTagList)) {
+                        return false;
+                    }
+                    NBTTagList tagA = (NBTTagList) valueA;
+                    NBTTagList tagB = (NBTTagList) valueB;
+                    for (int i = 0; i < tagA.tagCount(); i++) {
+                        NBTTagCompound subTagA = tagA.getCompoundTagAt(i);
+                        boolean foundA = false;
+                        for (int j = 0; j < tagB.tagCount(); j++) {
+                            NBTTagCompound subTagB = tagB.getCompoundTagAt(j);
+                            if (nbtMatchesSubset(subTagA, subTagB, recursive)) {
+                                foundA = true;
+                                break;
+                            }
+                        }
+                        if (!foundA) {
+                            return false;
+                        }
+                    }
                 }
-                NBTTagCompound tagA = (NBTTagCompound) valueA;
-                NBTTagCompound tagB = (NBTTagCompound) valueB;
-                return nbtMatchesSubset(tagA, tagB);
             } else {
                 if (!valueA.equals(b.getTag(key))) {
                     return false;
