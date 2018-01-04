@@ -134,8 +134,7 @@ public class Aspects {
                             // Catch possible errors
                         }
                         return null;
-                    }).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
-                            .handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
+                    }).handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
         }
 
         public static final class Entity {
