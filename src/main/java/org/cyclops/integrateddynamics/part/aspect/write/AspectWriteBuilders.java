@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -57,6 +58,8 @@ public class AspectWriteBuilders {
             BUILDER_FLUIDSTACK = getValue(AspectBuilder.forWriteType(ValueTypes.OBJECT_FLUIDSTACK));
     public static final AspectBuilder<ValueTypeOperator.ValueOperator, ValueTypeOperator, Triple<PartTarget, IAspectProperties, ValueTypeOperator.ValueOperator>>
             BUILDER_OPERATOR = getValue(AspectBuilder.forWriteType(ValueTypes.OPERATOR));
+    public static final AspectBuilder<ValueTypeNbt.ValueNbt, ValueTypeNbt, Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>>
+            BUILDER_NBT = getValue(AspectBuilder.forWriteType(ValueTypes.NBT));
 
     // --------------- Value type propagators ---------------
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean>, Triple<PartTarget, IAspectProperties, Boolean>>
@@ -82,6 +85,9 @@ public class AspectWriteBuilders {
 
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack>, Triple<PartTarget, IAspectProperties, FluidStack>>
             PROP_GET_FLUIDSTACK = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orNull());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>, Triple<PartTarget, IAspectProperties, NBTTagCompound>>
+            PROP_GET_NBT = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
     public static final class Audio {
 
