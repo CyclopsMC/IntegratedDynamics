@@ -1094,6 +1094,8 @@ operator.operators.integrateddynamics.nbt.withListInt.name=NBT With Int List
 operator.operators.integrateddynamics.nbt.withListInt.info=Get a copy of the given NBT tag with the given NBT Integer list entry
 operator.operators.integrateddynamics.nbt.withListLong.name=NBT With Long List
 operator.operators.integrateddynamics.nbt.withListLong.info=Get a copy of the given NBT tag with the given NBT Long list entry
+operator.operators.integrateddynamics.nbt.subset.name=NBT Subset
+operator.operators.integrateddynamics.nbt.subset.info=If the first NBT tag is a subset of, or equal to the second NBT tag. This will recursively check nested tags.
 
 operator.operators.integrateddynamics.operator.name=Operator
 operator.operators.integrateddynamics.operator.basename=Operator %s
