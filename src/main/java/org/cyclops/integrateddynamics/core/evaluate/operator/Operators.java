@@ -74,6 +74,7 @@ import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
 import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
 
 import java.util.ArrayList;
@@ -2926,6 +2927,17 @@ public final class Operators {
                     return tag;
                 }
             })).build());
+
+    /**
+     * Check if the first NBT tag is a subset of the second NBT tag.
+     */
+    public static final IOperator NBT_SUBSET = REGISTRY.register(OperatorBuilders.NBT_2_NBT
+            .output(ValueTypes.BOOLEAN).operatorName("subset").symbol("NBT.⊆")
+            .function(variables -> {
+                NBTTagCompound a = ((ValueTypeNbt.ValueNbt) variables.getValue(0)).getRawValue();
+                NBTTagCompound b = ((ValueTypeNbt.ValueNbt) variables.getValue(1)).getRawValue();
+                return ValueTypeBoolean.ValueBoolean.of(NbtHelpers.nbtMatchesSubset(a, b));
+            }).build());
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

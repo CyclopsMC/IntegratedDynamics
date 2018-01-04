@@ -50,6 +50,7 @@ public class TestNbtOperators {
     private DummyVariableNbt nsasa;
     private DummyVariableNbt nsasasbsc;
     private DummyVariableNbt nall;
+    private DummyVariableNbt nsome;
 
     @BeforeClass
     public static void beforeClass() {
@@ -106,8 +107,23 @@ public class TestNbtOperators {
         tall.setTag("tag", subTag);
         NBTTagList subList = new NBTTagList();
         subList.appendTag(subTag);
+        subList.appendTag(subTag);
         tall.setTag("list", subList);
         nall = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tall));
+
+        NBTTagCompound tsome = new NBTTagCompound();
+        tsome.setByte("byte", (byte)1);
+        tsome.setInteger("integer", 3);
+        tsome.setFloat("float", 5.5F);
+        tsome.setString("string", "seven");
+        tsome.setBoolean("boolean", true);
+        NBTTagCompound subTagSome = new NBTTagCompound();
+        subTagSome.setString("hello", "world");
+        tsome.setTag("tag", subTagSome);
+        NBTTagList subListSome = new NBTTagList();
+        subListSome.appendTag(subTagSome);
+        tsome.setTag("list", subListSome);
+        nsome = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tsome));
 
         ltags = new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeNbt.ValueNbt.of(new NBTTagCompound()),
@@ -472,8 +488,9 @@ public class TestNbtOperators {
         subTag.setString("hello", "world");
         NBTTagList subList = new NBTTagList();
         subList.appendTag(subTag);
-        assertThat("valuelisttag({...}, listtag).size = 1", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(1));
+        assertThat("valuelisttag({...}, listtag).size = 2", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(2));
         assertThat("valuelisttag({...}, listtag)[0] = ..list..", ((ValueTypeList.ValueList) res2).getRawValue().get(0), is(ValueTypeNbt.ValueNbt.of(subTag)));
+        assertThat("valuelisttag({...}, listtag)[1] = ..list..", ((ValueTypeList.ValueList) res2).getRawValue().get(1), is(ValueTypeNbt.ValueNbt.of(subTag)));
     }
 
     @Test(expected = EvaluationException.class)
@@ -1035,6 +1052,38 @@ public class TestNbtOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeNbtWithListLong() throws EvaluationException {
         Operators.NBT_WITH_LIST_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- SUBSET -----------------------------------
+     */
+
+    @Test
+    public void testNbtSubset() throws EvaluationException {
+        IValue res1 = Operators.NBT_SUBSET.evaluate(new IVariable[]{nempty, nall});
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("subset({}, all) = true", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+
+        IValue res2 = Operators.NBT_SUBSET.evaluate(new IVariable[]{nall, nempty});
+        assertThat("subset(all, {}) = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
+
+        IValue res3 = Operators.NBT_SUBSET.evaluate(new IVariable[]{nsome, nall});
+        assertThat("subset(some, all) = true", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtSubsetSizeLarge() throws EvaluationException {
+        Operators.NBT_SUBSET.evaluate(new IVariable[]{nempty, nempty, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtSubsetSizeSmall() throws EvaluationException {
+        Operators.NBT_SUBSET.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtSubset() throws EvaluationException {
+        Operators.NBT_SUBSET.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }
