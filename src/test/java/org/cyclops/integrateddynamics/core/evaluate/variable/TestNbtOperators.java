@@ -48,6 +48,7 @@ public class TestNbtOperators {
 
     private DummyVariableNbt nempty;
     private DummyVariableNbt nsasa;
+    private DummyVariableNbt nsbsb;
     private DummyVariableNbt nsasasbsc;
     private DummyVariableNbt nall;
     private DummyVariableNbt nsome;
@@ -85,6 +86,10 @@ public class TestNbtOperators {
         NBTTagCompound tsasa = new NBTTagCompound();
         tsasa.setString("a", "a");
         nsasa = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tsasa));
+
+        NBTTagCompound tsbsb = new NBTTagCompound();
+        tsbsb.setString("b", "b");
+        nsbsb = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tsbsb));
 
         NBTTagCompound tsasasbsc = new NBTTagCompound();
         tsasasbsc.setString("a", "a");
@@ -1084,6 +1089,122 @@ public class TestNbtOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeNbtSubset() throws EvaluationException {
         Operators.NBT_SUBSET.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- UNION -----------------------------------
+     */
+
+    @Test
+    public void testNbtUnion() throws EvaluationException {
+        IValue res1 = Operators.NBT_UNION.evaluate(new IVariable[]{nempty, nall});
+        assertThat("result is an nbt tag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        assertThat("union({}, all) = all", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(nall.getValue().getRawValue()));
+
+        IValue res2 = Operators.NBT_UNION.evaluate(new IVariable[]{nall, nempty});
+        assertThat("union(all, {}) = all", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(nall.getValue().getRawValue()));
+
+        IValue res3 = Operators.NBT_UNION.evaluate(new IVariable[]{nsome, nall});
+        assertThat("union(some, all) = all", ((ValueTypeNbt.ValueNbt) res3).getRawValue(), is(nall.getValue().getRawValue()));
+
+        IValue res4 = Operators.NBT_UNION.evaluate(new IVariable[]{nsasa, nsbsb});
+        NBTTagCompound tsasasbsb = new NBTTagCompound();
+        tsasasbsb.setString("a", "a");
+        tsasasbsb.setString("b", "b");
+        assertThat("union(sasa, sbsb) = sasasbsb", ((ValueTypeNbt.ValueNbt) res4).getRawValue(), is(tsasasbsb));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtUnionSizeLarge() throws EvaluationException {
+        Operators.NBT_UNION.evaluate(new IVariable[]{nempty, nempty, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtUnionSizeSmall() throws EvaluationException {
+        Operators.NBT_UNION.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtUnion() throws EvaluationException {
+        Operators.NBT_UNION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- INTERSECTION -----------------------------------
+     */
+
+    @Test
+    public void testNbtIntersection() throws EvaluationException {
+        IValue res1 = Operators.NBT_INTERSECTION.evaluate(new IVariable[]{nempty, nall});
+        assertThat("result is an nbt tag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        assertThat("intersection({}, all) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(new NBTTagCompound()));
+
+        IValue res2 = Operators.NBT_INTERSECTION.evaluate(new IVariable[]{nall, nempty});
+        assertThat("intersection(all, {}) = {}", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(new NBTTagCompound()));
+
+        IValue res3 = Operators.NBT_INTERSECTION.evaluate(new IVariable[]{nsome, nall});
+        assertThat("intersection(some, all) = some", ((ValueTypeNbt.ValueNbt) res3).getRawValue(), is(nsome.getValue().getRawValue()));
+
+        IValue res4 = Operators.NBT_INTERSECTION.evaluate(new IVariable[]{nsasa, nsbsb});
+        assertThat("intersection(sasa, sbsb) = {}", ((ValueTypeNbt.ValueNbt) res4).getRawValue(), is(new NBTTagCompound()));
+
+        IValue res5 = Operators.NBT_INTERSECTION.evaluate(new IVariable[]{nsasa, nsasasbsc});
+        assertThat("intersection(sasa, sasasbsc) = {}", ((ValueTypeNbt.ValueNbt) res5).getRawValue(), is(nsasa.getValue().getRawValue()));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtIntersectionSizeLarge() throws EvaluationException {
+        Operators.NBT_INTERSECTION.evaluate(new IVariable[]{nempty, nempty, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtIntersectionSizeSmall() throws EvaluationException {
+        Operators.NBT_INTERSECTION.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtIntersection() throws EvaluationException {
+        Operators.NBT_INTERSECTION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- MINUS -----------------------------------
+     */
+
+    @Test
+    public void testNbtMinus() throws EvaluationException {
+        IValue res1 = Operators.NBT_MINUS.evaluate(new IVariable[]{nempty, nall});
+        assertThat("result is an nbt tag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        assertThat("minus({}, all) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(new NBTTagCompound()));
+
+        IValue res2 = Operators.NBT_MINUS.evaluate(new IVariable[]{nall, nempty});
+        assertThat("minus(all, {}) = all", ((ValueTypeNbt.ValueNbt) res2).getRawValue(), is(nall.getValue().getRawValue()));
+
+        IValue res3 = Operators.NBT_MINUS.evaluate(new IVariable[]{nsome, nall});
+        assertThat("minus(some, all) = {}", ((ValueTypeNbt.ValueNbt) res3).getRawValue(), is(new NBTTagCompound()));
+
+        IValue res4 = Operators.NBT_MINUS.evaluate(new IVariable[]{nsasa, nsbsb});
+        assertThat("minus(sasa, sbsb) = sasa", ((ValueTypeNbt.ValueNbt) res4).getRawValue(), is(nsasa.getValue().getRawValue()));
+
+        IValue res5 = Operators.NBT_MINUS.evaluate(new IVariable[]{nsasasbsc, nsasa});
+        NBTTagCompound tsbsc = new NBTTagCompound();
+        tsbsc.setString("b", "c");
+        assertThat("minus(sasasbsc, sasa) = {}", ((ValueTypeNbt.ValueNbt) res5).getRawValue(), is(tsbsc));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtMinusSizeLarge() throws EvaluationException {
+        Operators.NBT_MINUS.evaluate(new IVariable[]{nempty, nempty, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtMinusSizeSmall() throws EvaluationException {
+        Operators.NBT_MINUS.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtMinus() throws EvaluationException {
+        Operators.NBT_MINUS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }

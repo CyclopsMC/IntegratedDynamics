@@ -2929,6 +2929,39 @@ public final class Operators {
             }).build());
 
     /**
+     * The union of the given NBT tags. Nested tags will be joined recusively.
+     */
+    public static final IOperator NBT_UNION = REGISTRY.register(OperatorBuilders.NBT_2_NBT
+            .output(ValueTypes.NBT).operatorName("union").symbol("NBT.∪")
+            .function(variables -> {
+                NBTTagCompound a = ((ValueTypeNbt.ValueNbt) variables.getValue(0)).getRawValue();
+                NBTTagCompound b = ((ValueTypeNbt.ValueNbt) variables.getValue(1)).getRawValue();
+                return ValueTypeNbt.ValueNbt.of(NbtHelpers.union(a, b));
+            }).build());
+
+    /**
+     * The intersection of the given NBT tags. Nested tags will be intersected recusively.
+     */
+    public static final IOperator NBT_INTERSECTION = REGISTRY.register(OperatorBuilders.NBT_2_NBT
+            .output(ValueTypes.NBT).operatorName("intersection").symbol("NBT.∩")
+            .function(variables -> {
+                NBTTagCompound a = ((ValueTypeNbt.ValueNbt) variables.getValue(0)).getRawValue();
+                NBTTagCompound b = ((ValueTypeNbt.ValueNbt) variables.getValue(1)).getRawValue();
+                return ValueTypeNbt.ValueNbt.of(NbtHelpers.intersection(a, b));
+            }).build());
+
+    /**
+     * The difference of the given NBT tags. Nested tags will be subtracted recusively.
+     */
+    public static final IOperator NBT_MINUS = REGISTRY.register(OperatorBuilders.NBT_2_NBT
+            .output(ValueTypes.NBT).operatorName("minus").symbol("NBT.∖")
+            .function(variables -> {
+                NBTTagCompound a = ((ValueTypeNbt.ValueNbt) variables.getValue(0)).getRawValue();
+                NBTTagCompound b = ((ValueTypeNbt.ValueNbt) variables.getValue(1)).getRawValue();
+                return ValueTypeNbt.ValueNbt.of(NbtHelpers.minus(a, b));
+            }).build());
+
+    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 
