@@ -45,13 +45,17 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
     private EntityPlayer lastPlayer = null;
 
     public TileProxy() {
-        super(3, "proxy");
+        this(3);
 
         addSlotsToSide(EnumFacing.UP, Sets.newHashSet(SLOT_READ));
         addSlotsToSide(EnumFacing.DOWN, Sets.newHashSet(SLOT_READ));
         addSlotsToSide(EnumFacing.SOUTH, Sets.newHashSet(SLOT_READ));
         addSlotsToSide(EnumFacing.WEST, Sets.newHashSet(SLOT_WRITE_OUT));
         addSlotsToSide(EnumFacing.EAST, Sets.newHashSet(SLOT_WRITE_IN));
+    }
+
+    public TileProxy(int inventorySize) {
+        super(inventorySize, "proxy");
 
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
             @Override
@@ -88,14 +92,22 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
         return SLOT_READ;
     }
 
+    protected int getSlotWriteIn() {
+        return SLOT_WRITE_IN;
+    }
+
+    protected int getSlotWriteOut() {
+        return SLOT_WRITE_OUT;
+    }
+
     @Override
     public void onDirty() {
         super.onDirty();
         if(!world.isRemote) {
-            if (!getStackInSlot(SLOT_WRITE_IN).isEmpty() && getStackInSlot(SLOT_WRITE_OUT).isEmpty()) {
+            if (!getStackInSlot(getSlotWriteIn()).isEmpty() && getStackInSlot(getSlotWriteOut()).isEmpty()) {
                 // Write proxy reference
-                ItemStack outputStack = writeProxyInfo(!getWorld().isRemote, removeStackFromSlot(SLOT_WRITE_IN), proxyId);
-                setInventorySlotContents(SLOT_WRITE_OUT, outputStack);
+                ItemStack outputStack = writeProxyInfo(!getWorld().isRemote, removeStackFromSlot(getSlotWriteIn()), proxyId);
+                setInventorySlotContents(getSlotWriteOut(), outputStack);
             }
         }
     }
