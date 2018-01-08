@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -19,7 +20,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.commons.lang3.tuple.Pair;
@@ -237,7 +237,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                             );
                             i++;
                             ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
-                            ret.add(new BakedQuad(data, -1, realSide, texture, false, Attributes.DEFAULT_BAKED_FORMAT));
+                            ret.add(new BakedQuad(data, -1, realSide, texture, true, DefaultVertexFormats.ITEM));
                         }
                     } else {
                         addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
