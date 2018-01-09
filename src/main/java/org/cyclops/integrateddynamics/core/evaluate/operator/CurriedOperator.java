@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -175,7 +176,7 @@ public class CurriedOperator implements IOperator {
                 NBTTagCompound valueTag = new NBTTagCompound();
                 IValueType valueType = value.getType();
                 valueTag.setString("valueType", valueType.getUnlocalizedName());
-                valueTag.setString("value", valueType.serialize(value));
+                valueTag.setString("value", ValueHelpers.serializeRaw(value));
                 list.appendTag(valueTag);
             }
 

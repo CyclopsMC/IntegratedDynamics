@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiAspectSettings;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 
 /**
  * Container for aspect settings.
@@ -91,7 +92,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
     }
 
     public void setValue(IAspectPropertyTypeInstance property, IValue value) {
-        ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), property.getType().serialize(value));
+        ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), ValueHelpers.serializeRaw(value));
     }
 
     public IPartState getPartState() {

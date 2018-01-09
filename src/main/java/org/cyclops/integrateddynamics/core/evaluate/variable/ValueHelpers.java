@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -115,6 +116,19 @@ public class ValueHelpers {
     }
 
     /**
+     * Serialize the given value to a raw string.
+     * @param value The value.
+     * @return The NBT tag.
+     */
+    public static String serializeRaw(IValue value) {
+        String raw = value.getType().serialize(value);
+        if (raw.length() >= GeneralConfig.maxValueByteSize) {
+            return "TOO LONG";
+        }
+        return raw;
+    }
+
+    /**
      * Serialize the given value to NBT.
      * @param value The value.
      * @return The NBT tag.
@@ -122,7 +136,7 @@ public class ValueHelpers {
     public static NBTTagCompound serialize(IValue value) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setString("valueType", value.getType().getUnlocalizedName());
-        tag.setString("value", value.getType().serialize(value));
+        tag.setString("value", serializeRaw(value));
         return tag;
     }
 

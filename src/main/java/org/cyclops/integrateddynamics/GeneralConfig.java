@@ -34,6 +34,12 @@ public class GeneralConfig extends DummyConfig {
     public static boolean versionChecker = true;
 
     /**
+     * The maximum allowed size of values in bytes to avoid network packet issues.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "The maximum allowed size of values in bytes to avoid network packet issues.", isCommandable = true)
+    public static int maxValueByteSize = 20000;
+
+    /**
      * The default update frequency in ticks to use for new parts.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default update frequency in ticks to use for new parts.", minimalValue = 1)

@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import java.util.Collection;
@@ -70,7 +71,7 @@ public class AspectProperties implements IAspectProperties {
             NBTTagCompound nbtEntry = new NBTTagCompound();
             nbtEntry.setString("key", entry.getKey().getType().getUnlocalizedName());
             nbtEntry.setString("label", entry.getKey().getUnlocalizedName());
-            nbtEntry.setString("value", entry.getKey().getType().serialize(entry.getValue()));
+            nbtEntry.setString("value", ValueHelpers.serializeRaw(entry.getValue()));
             map.appendTag(nbtEntry);
         }
         tag.setTag("map", map);

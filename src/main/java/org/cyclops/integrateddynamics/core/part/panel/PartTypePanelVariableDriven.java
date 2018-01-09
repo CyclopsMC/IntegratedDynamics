@@ -277,7 +277,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             IValue value = getDisplayValue();
             if(value != null) {
                 tag.setString("displayValueType", value.getType().getUnlocalizedName());;
-                tag.setString("displayValue", value.getType().serialize(value));
+                tag.setString("displayValue", ValueHelpers.serializeRaw(value));
             }
             tag.setInteger("facingRotation", facingRotation.ordinal());
         }

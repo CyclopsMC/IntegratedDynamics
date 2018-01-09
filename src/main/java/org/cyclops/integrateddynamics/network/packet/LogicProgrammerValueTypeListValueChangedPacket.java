@@ -8,6 +8,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeListLPElement;
@@ -28,7 +29,7 @@ public class LogicProgrammerValueTypeListValueChangedPacket extends PacketCodec 
     }
 
     public LogicProgrammerValueTypeListValueChangedPacket(ValueTypeList.ValueList value) {
-		this.value = value.getType().serialize(value);
+		this.value = ValueHelpers.serializeRaw(value);
     }
 
 	protected ValueTypeList.ValueList getListValue() {

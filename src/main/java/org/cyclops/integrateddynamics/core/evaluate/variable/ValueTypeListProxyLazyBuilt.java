@@ -66,7 +66,7 @@ public class ValueTypeListProxyLazyBuilt<T extends IValueType<V>, V extends IVal
         @Override
         protected void serializeNbt(ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             tag.setString("valueType", value.value.getType().getUnlocalizedName());
-            tag.setString("value", value.value.getType().serialize(value.value));
+            tag.setString("value", ValueHelpers.serializeRaw(value.value));
             tag.setString("operator", Operators.REGISTRY.serialize(value.operator));
         }
 

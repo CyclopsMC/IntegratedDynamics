@@ -27,7 +27,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
         sb.append(valueType.getUnlocalizedName());
         for (IValue value : values) {
             sb.append(ELEMENT_DELIMITER);
-            sb.append(valueType.serialize(value).replaceAll(ELEMENT_DELIMITER, ELEMENT_DELIMITER_ESCAPED));
+            sb.append(ValueHelpers.serializeRaw(value).replaceAll(ELEMENT_DELIMITER, ELEMENT_DELIMITER_ESCAPED));
         }
         return sb.toString();
     }

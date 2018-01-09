@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeOperatorLPElement;
@@ -30,7 +31,7 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 
     public LogicProgrammerValueTypeOperatorValueChangedPacket(ValueTypeOperator.ValueOperator value) {
 		try {
-			this.operatorValue = value.getType().serialize(value);
+			this.operatorValue = ValueHelpers.serializeRaw(value);
 		} catch (Exception e) {
 			this.operatorValue = "";
 		}

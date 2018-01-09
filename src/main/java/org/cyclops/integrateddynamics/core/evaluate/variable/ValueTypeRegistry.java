@@ -115,7 +115,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     @Override
     public void setVariableFacade(NBTTagCompound tag, IValueTypeVariableFacade variableFacade) {
         tag.setString("typeName", variableFacade.getValueType().getUnlocalizedName());
-        tag.setString("value", variableFacade.getValue().getType().serialize(variableFacade.getValue()));
+        tag.setString("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
     }
 
     @Override
