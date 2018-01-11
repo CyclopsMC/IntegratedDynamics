@@ -140,6 +140,8 @@ public class GuiPartSettings extends GuiContainerExtended {
 
         String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
         buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 178, this.guiTop + 8, fontRenderer.getStringWidth(save) + 6, 16, save, true));
+
+        this.refreshValues();
     }
 
     @Override
