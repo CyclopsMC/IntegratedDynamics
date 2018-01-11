@@ -3,8 +3,10 @@ package org.cyclops.integrateddynamics.core;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
@@ -38,7 +40,7 @@ public final class TickHandler {
         if (shouldCrash) {
             throw new RuntimeException("Forcefully crashed the server.");
         }
-        if(event.type == TickEvent.Type.SERVER && event.phase == TickEvent.Phase.END) {
+        if(event.type == TickEvent.Type.SERVER && event.phase == TickEvent.Phase.END && NetworkHelpers.shouldWork()) {
             boolean isBeingDiagnozed = NetworkDiagnostics.getInstance().isBeingDiagnozed();
             if (isBeingDiagnozed) {
                 tick = (tick + 1) % MinecraftHelpers.SECOND_IN_TICKS;

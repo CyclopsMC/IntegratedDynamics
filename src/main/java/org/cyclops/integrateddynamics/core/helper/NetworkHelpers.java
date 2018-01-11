@@ -6,6 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
@@ -113,6 +114,13 @@ public class NetworkHelpers {
                 networkElement.onNeighborBlockChange(network, world, neighborBlock);
             }
         }
+    }
+
+    /**
+     * @return If networks should work and evaluations should be done.
+     */
+    public static boolean shouldWork() {
+        return !GeneralConfig.safeMode;
     }
 
 }

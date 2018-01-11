@@ -72,10 +72,14 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
         if(!MinecraftHelpers.isClientSide()) {
             String readValue = "";
             int readValueColor = 0;
-            IValue value = getPartState().getDisplayValue();
-            if(value != null) {
-                readValue = value.getType().toCompactString(value);
-                readValueColor = value.getType().getDisplayColor();
+            if (!NetworkHelpers.shouldWork()) {
+                readValue = "SAFE-MODE";
+            } else {
+                IValue value = getPartState().getDisplayValue();
+                if (value != null) {
+                    readValue = value.getType().toCompactString(value);
+                    readValueColor = value.getType().getDisplayColor();
+                }
             }
             ValueNotifierHelpers.setValue(this, readValueId, readValue);
             ValueNotifierHelpers.setValue(this, readColorId, readValueColor);

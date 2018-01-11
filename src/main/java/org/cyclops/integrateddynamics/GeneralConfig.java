@@ -88,6 +88,12 @@ public class GeneralConfig extends DummyConfig {
     public static String[] nbtTagBlacklist = {
             // Tag names that have to be ignored
     };
+
+    /**
+     * When enabled, networks will stop ticking and values will not be shown and evaluated again. This can be used to fix crashing networks by temporarily enabling this option.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "When enabled, networks will stop ticking and values will not be shown and evaluated again. This can be used to fix crashing networks by temporarily enabling this option.", isCommandable = true)
+    public static boolean safeMode = false;
     
     /**
      * Create a new instance.

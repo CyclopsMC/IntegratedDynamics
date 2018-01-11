@@ -163,7 +163,9 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
                     int readValueColor = 0;
                     if(getPartState().isEnabled()) {
                         IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
-                        if (variable != null) {
+                        if (!NetworkHelpers.shouldWork()) {
+                            readValue = "SAFE-MODE";
+                        } else if (variable != null) {
                             try {
                                 IValue value = variable.getValue();
                                 readValue = value.getType().toCompactString(value);

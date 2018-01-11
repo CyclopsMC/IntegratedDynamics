@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 /**
  * Base class for part overlay renderers.
@@ -19,6 +20,9 @@ public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
     }
 
     protected boolean shouldRender(BlockPos pos) {
+        if (!NetworkHelpers.shouldWork()) {
+            return false;
+        }
         Entity renderEntity = FMLClientHandler.instance().getClient().player;
         return renderEntity.getDistance(pos.getX(), pos.getY(), pos.getZ()) < getMaxRenderDistance();
     }

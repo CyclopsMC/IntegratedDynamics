@@ -69,7 +69,7 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
         int lastVariabledId = this.variableStored == null ? -1 : this.variableStored.getId();
         int variableId = -1;
-        if (!getStackInSlot(getSlotRead()).isEmpty()) {
+        if (!getStackInSlot(getSlotRead()).isEmpty() && NetworkHelpers.shouldWork()) {
             // Update proxy input
             ItemStack itemStack = getStackInSlot(getSlotRead());
             IVariableFacadeHandlerRegistry handler = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
