@@ -873,6 +873,7 @@ public final class Operators {
                 IOperator operator = OperatorBuilders.getSafePredictate((ValueTypeOperator.ValueOperator) variables.getValue(1));
                 for (IValue value : list) {
                     IValue result = operator.evaluate(new IVariable[]{new Variable<>(value.getType(), value)});
+                    ValueHelpers.validatePredicateOutput(operator, result);
                     if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                         return ValueTypeBoolean.ValueBoolean.of(true);
                     }
@@ -912,6 +913,7 @@ public final class Operators {
                 int count = 0;
                 for (IValue listValue : list) {
                     IValue result = operator.evaluate(new IVariable[]{new Variable<>(listValue.getType(), listValue)});
+                    ValueHelpers.validatePredicateOutput(operator, result);
                     if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                         count++;
                     }
@@ -1020,14 +1022,14 @@ public final class Operators {
                 outerLoop:
                 for(IValue value : list) {
                     for(IValue existing : values) {
-                        ValueTypeBoolean.ValueBoolean result;
+                        IValue result;
                         try {
-                            result = (ValueTypeBoolean.ValueBoolean) operator
-                                    .evaluate(new Variable(value), new Variable(existing));
+                            result = operator.evaluate(new Variable(value), new Variable(existing));
+                            ValueHelpers.validatePredicateOutput(operator, result);
                         } catch (EvaluationException e) {
                             throw Lombok.sneakyThrow(e);
                         }
-                        if(result.getRawValue()) continue outerLoop;
+                        if(((ValueTypeBoolean.ValueBoolean) result).getRawValue()) continue outerLoop;
                     }
                     values.add(value);
                 }
@@ -2436,13 +2438,8 @@ public final class Operators {
                             List<IValue> filtered = Lists.newArrayList();
                             for (IValue value : inputList.getRawValue()) {
                                 IValue result = ValueHelpers.evaluateOperator(innerOperator, value);
-                                if (result.getType() != ValueTypes.BOOLEAN) {
-                                    L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
-                                            L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
-                                            OPERATOR_FILTER.getLocalizedNameFull(),
-                                            result.getType(), ValueTypes.BOOLEAN);
-                                    throw new EvaluationException(error.localize());
-                                } else if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
+                                ValueHelpers.validatePredicateOutput(innerOperator, result);
+                                if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                                     filtered.add(value);
                                 }
                             }

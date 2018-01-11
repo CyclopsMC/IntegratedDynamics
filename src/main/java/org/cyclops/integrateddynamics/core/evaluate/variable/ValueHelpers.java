@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
 
@@ -151,6 +152,22 @@ public class ValueHelpers {
             return null;
         }
         return valueType.deserialize(tag.getString("value"));
+    }
+
+    /**
+     * Check if the given result (from the given operator) is a boolean.
+     * @param predicate A predicate, used for error logging.
+     * @param result A result from the given predicate
+     * @throws EvaluationException If the value was not a boolean.
+     */
+    public static void validatePredicateOutput(IOperator predicate, IValue result) throws EvaluationException {
+        if (!(result instanceof ValueTypeBoolean.ValueBoolean)) {
+            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                    L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
+                    predicate.getLocalizedNameFull(),
+                    result.getType(), ValueTypes.BOOLEAN);
+            throw new EvaluationException(error.localize());
+        }
     }
 
 }
