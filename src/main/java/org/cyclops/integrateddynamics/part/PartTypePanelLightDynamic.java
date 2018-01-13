@@ -50,6 +50,16 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
+    protected IgnoredBlockStatus.Status getStatus(PartTypePanelVariableDriven.State state) {
+        IgnoredBlockStatus.Status status = super.getStatus(state);
+        if (status == IgnoredBlockStatus.Status.ACTIVE && state.getDisplayValue() != null
+                && getLightLevel((State) state, state.getDisplayValue()) == 0) {
+            return IgnoredBlockStatus.Status.INACTIVE;
+        }
+        return status;
+    }
+
+    @Override
     protected void onValueChanged(INetwork network, IPartNetwork partNetwork, PartTarget target, State state, IValue lastValue, IValue newValue) {
         super.onValueChanged(network, partNetwork, target, state, lastValue, newValue);
         int lightLevel = 0;
