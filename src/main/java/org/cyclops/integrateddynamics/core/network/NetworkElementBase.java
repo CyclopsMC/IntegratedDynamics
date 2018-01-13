@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
@@ -94,6 +95,9 @@ public abstract class NetworkElementBase implements INetworkElement {
     }
 
     protected void revalidatePositioned(INetwork network, DimPos dimPos) {
-        NetworkHelpers.getNetworkCarrier(dimPos.getWorld(), dimPos.getBlockPos()).setNetwork(network);
+        INetworkCarrier networkCarrier = NetworkHelpers.getNetworkCarrier(dimPos.getWorld(), dimPos.getBlockPos());
+        if (networkCarrier != null) {
+            networkCarrier.setNetwork(network);
+        }
     }
 }
