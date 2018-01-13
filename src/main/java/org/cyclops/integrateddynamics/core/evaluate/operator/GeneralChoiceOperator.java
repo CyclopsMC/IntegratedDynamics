@@ -43,7 +43,7 @@ public class GeneralChoiceOperator extends GeneralOperator {
             if(inputType == null) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
-            if(i == 0 && getInputTypes()[i] != inputType) {
+            if(i == 0 && !ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
                         Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
