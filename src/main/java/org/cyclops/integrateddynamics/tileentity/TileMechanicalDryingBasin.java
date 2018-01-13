@@ -145,7 +145,7 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
     @Override
     protected boolean finalizeRecipe(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe, boolean simulate) {
         // Output items
-        ItemStack outputStack = recipe.getOutput().getFirstItemStack();
+        ItemStack outputStack = recipe.getOutput().getFirstItemStack().copy();
         if (!outputStack.isEmpty()) {
             if (!InventoryHelpers.addToInventory(getInventory(), SLOTS_OUTPUT, NonNullList.withSize(1, outputStack), simulate).isEmpty()) {
                 return false;

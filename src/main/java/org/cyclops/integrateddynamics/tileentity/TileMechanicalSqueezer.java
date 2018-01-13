@@ -128,7 +128,7 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Blo
         // Output items
         NonNullList<ItemStack> outputStacks = NonNullList.create();
         for (IngredientRecipeComponent recipeComponent : recipe.getOutput().getSubIngredientComponents()) {
-            ItemStack outputStack = recipeComponent.getFirstItemStack();
+            ItemStack outputStack = recipeComponent.getFirstItemStack().copy();
             if (!outputStack.isEmpty() && (simulate || recipeComponent.getChance() == 1.0F
                     || recipeComponent.getChance() >= getWorld().rand.nextFloat())) {
                 InventoryHelpers.addStackToList(outputStacks, outputStack);
