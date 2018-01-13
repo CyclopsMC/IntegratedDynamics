@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -55,7 +54,7 @@ public final class TickHandler {
                     if (!network.isCrashed()) {
                         network.update();
                     }
-                } catch (RuntimeException e) {
+                } catch (Throwable e) {
                     network.setCrashed(true);
                     throw e;
                 }
