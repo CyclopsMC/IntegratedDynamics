@@ -1,0 +1,34 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.1 or higher.
+
+Additions:
+* Add safe-mode option, Closes #486
+  In cases where a network would become horribly broken because of a bug,
+  servers could get stuck in a repeated server crash loop.
+  This makes it possible to temporarily set the mod in safe-mode,
+  which means that networks won't tick anymore, values are not evaluated and no special rendering is done.
+  In this mode, the offending cables and parts can be removed.
+  When disabling this option again, everything will work again as normal.
+
+Changes:
+* Make network crash disabler safety listen to all types of crashes, Closes #468
+* Rename frequency setting to 'ticks/operation', Closes #462
+* Make channel handling more efficient
+
+Fixes:
+* Fix mechanical machines sometimes not producing nothing, Closes #457
+* Fix dynamic light panels appearing enabled for 0 and false values, Closes #475
+* Fix rare crash when removing while it is being reloaded, Closes #472
+* Fix curried operator result not being usable in choice operator, Closes #484
+* Fix crash when certain mods call client-side code in item localization, Closes #106
+* Validate predicate output type before casting to boolean in filters
+  Static type checking was already being done, but when currying was applied, this issue could sometimes occur.
+  This was the same problem as in CyclopsMC/IntegratedTunnels#99, Closes #487
+* Fix part settings resetting to default values when resizing screen, Closes #455
+* Fix Redstone Writer not always notifying neighbours correctly, Closes #356
+* Add safety to avoid serializing values that are too big for packets
+  This adds the config setting maxValueByteSize that could be adjusted by the player if necessary., Closes #362
+* Fix cable item rendering too dark, Closes #479
+* Fix drying basin and squeezer sending too many updates
+* Fix parts on wildcard channels not including parts from all channels
+* Fix batteries in creative tab not containing a lot of energy
