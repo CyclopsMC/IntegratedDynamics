@@ -29,6 +29,20 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         super("block");
     }
 
+    public static String getBlockDisplayNameUsSafe(IBlockState blockState) throws NoSuchMethodException {
+        return blockState.getBlock().getLocalizedName();
+    }
+
+    public static String getBlockkDisplayNameSafe(IBlockState blockState) {
+        // Certain mods may call client-side only methods,
+        // so call a server-side-safe fallback method if that fails.
+        try {
+            return getBlockDisplayNameUsSafe(blockState);
+        } catch (NoSuchMethodException e) {
+            return L10NHelpers.localize(blockState.getBlock().getUnlocalizedName() + ".name");
+        }
+    }
+
     @Override
     public ValueBlock getDefault() {
         return ValueBlock.of(Blocks.AIR.getDefaultState());
@@ -40,9 +54,9 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             IBlockState blockState = value.getRawValue().get();
             ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockState);
             if (!itemStack.isEmpty()) {
-                return itemStack.getDisplayName();
+                return ValueObjectTypeItemStack.getItemStackDisplayNameSafe(itemStack);
             }
-            return blockState.getBlock().getLocalizedName();
+            return ValueObjectTypeBlock.getBlockkDisplayNameSafe(blockState);
         }
         return "";
     }
