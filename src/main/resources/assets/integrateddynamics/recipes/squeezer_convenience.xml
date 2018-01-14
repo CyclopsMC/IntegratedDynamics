@@ -484,7 +484,7 @@
             <item>minecraft:yellow_flower</item>
         </input>
         <output>
-            <item meta="15" amount="4">minecraft:dye</item>
+            <item meta="11" amount="4">minecraft:dye</item>
         </output>
     </recipe>
 
