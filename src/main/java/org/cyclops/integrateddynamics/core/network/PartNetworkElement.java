@@ -4,6 +4,7 @@ import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
@@ -240,5 +241,18 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     @Override
     public EnumFacing getSide() {
         return getTarget().getCenter().getSide();
+    }
+
+    @Override
+    public int getId() {
+        if (!hasPartState()) {
+            return -1;
+        }
+        return getPartState().getId();
+    }
+
+    @Override
+    public ResourceLocation getGroup() {
+        return IPartNetworkElement.GROUP;
     }
 }

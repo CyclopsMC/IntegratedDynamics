@@ -1,10 +1,13 @@
 package org.cyclops.integrateddynamics.network;
 
+import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
+import org.cyclops.integrateddynamics.api.network.IIdentifiableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -17,14 +20,23 @@ import javax.annotation.Nullable;
  * Network element for coal generators.
  * @author rubensworks
  */
-public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implements IEventListenableNetworkElement<TileProxy> {
+public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implements
+        IEventListenableNetworkElement<TileProxy>, IIdentifiableNetworkElement {
+
+    public static final ResourceLocation GROUP = new ResourceLocation(Reference.MOD_ID, "proxy");
 
     public ProxyNetworkElement(DimPos pos) {
         super(pos);
     }
 
-    protected int getId() {
+    @Override
+    public int getId() {
         return getTile().getProxyId();
+    }
+
+    @Override
+    public ResourceLocation getGroup() {
+        return ProxyNetworkElement.GROUP;
     }
 
     @Override

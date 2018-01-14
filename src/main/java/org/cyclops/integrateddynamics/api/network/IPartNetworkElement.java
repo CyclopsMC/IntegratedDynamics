@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.api.network;
 
+import net.minecraft.util.ResourceLocation;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -11,7 +13,9 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
  * @author rubensworks
  */
 public interface IPartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> extends
-        IEventListenableNetworkElement<P>, IPositionedNetworkElement, ISidedNetworkElement {
+        IEventListenableNetworkElement<P>, IPositionedNetworkElement, ISidedNetworkElement, IIdentifiableNetworkElement {
+
+    public static final ResourceLocation GROUP = new ResourceLocation(Reference.MOD_ID, "part");
 
     /**
      * @return The part.
