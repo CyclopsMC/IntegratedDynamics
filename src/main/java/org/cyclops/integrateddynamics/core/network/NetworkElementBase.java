@@ -51,7 +51,7 @@ public abstract class NetworkElementBase implements INetworkElement {
     }
 
     @Override
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
 
     }
 

@@ -65,7 +65,7 @@ public class CollidableComponentFacade implements ICollidable.IComponent<EnumFac
     }
 
     @Override
-    public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player) {
+    public boolean destroy(World world, BlockPos pos, EnumFacing position, EntityPlayer player, boolean saveState) {
         if(!world.isRemote) {
             IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
             IBlockState blockState = facadeable.getFacade();

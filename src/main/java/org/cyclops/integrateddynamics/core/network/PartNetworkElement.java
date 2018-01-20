@@ -150,8 +150,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
-        part.addDrops(getTarget(), getPartState(), itemStacks, dropMainElement);
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
+        part.addDrops(getTarget(), getPartState(), itemStacks, dropMainElement, saveState);
     }
 
     @Override

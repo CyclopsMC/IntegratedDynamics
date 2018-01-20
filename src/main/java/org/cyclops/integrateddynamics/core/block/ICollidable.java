@@ -122,9 +122,10 @@ public interface ICollidable<P> {
          * @param pos The position
          * @param position The component position
          * @param player The player destroying the component.
+         * @param saveState If the component state should be saved in the dropped item.
          * @return If the complete block was destroyed
          */
-        public boolean destroy(World world, BlockPos pos, P position, EntityPlayer player);
+        public boolean destroy(World world, BlockPos pos, P position, EntityPlayer player, boolean saveState);
 
         /**
          * @param world The world

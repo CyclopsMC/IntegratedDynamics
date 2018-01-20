@@ -58,8 +58,9 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * Add the itemstacks to drop when this element is removed.
      * @param itemStacks The itemstack list to add to.
      * @param dropMainElement If the part itself should also be dropped.
+     * @param saveState If the element state should be saved in the item.
      */
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement);
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState);
 
     /**
      * Called when this element is added to the network.

@@ -168,13 +168,13 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos, EntityPlayer player) {
-        CableHelpers.onCableRemoving(world, pos, true);
+        CableHelpers.onCableRemoving(world, pos, true, false);
         super.onPreBlockDestroyed(world, pos);
     }
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        CableHelpers.onCableRemoving(world, pos, false);
+        CableHelpers.onCableRemoving(world, pos, false, false);
         super.onPreBlockDestroyed(world, pos);
     }
 
@@ -196,7 +196,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     public boolean removedByPlayer(IBlockState blockState, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
         RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
         if (rayTraceResult != null && rayTraceResult.getCollisionType() != null
-                && rayTraceResult.getCollisionType().destroy(world, pos, rayTraceResult.getPositionHit(), player)) {
+                && rayTraceResult.getCollisionType().destroy(world, pos, rayTraceResult.getPositionHit(), player, false)) {
             return true;
         }
         return rayTraceResult != null && super.removedByPlayer(blockState, world, pos, player, willHarvest);
@@ -221,7 +221,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
                 if(rayTraceResult.getCollisionType() == FACADE_COMPONENT) {
                     if(WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
                         if (!world.isRemote) {
-                            FACADE_COMPONENT.destroy(world, pos, side, player);
+                            FACADE_COMPONENT.destroy(world, pos, side, player, true);
                             world.notifyNeighborsOfStateChange(pos, this, true);
                         }
                         return true;
@@ -231,7 +231,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
                     if(WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
                         // Remove part from cable
                         if (!world.isRemote) {
-                            PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player);
+                            PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player, true);
                             ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
                         }
                         return true;

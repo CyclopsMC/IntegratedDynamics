@@ -57,7 +57,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
 
     }
 

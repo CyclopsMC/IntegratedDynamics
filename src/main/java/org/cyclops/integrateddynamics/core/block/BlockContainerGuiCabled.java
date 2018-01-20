@@ -67,7 +67,7 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
 
     @Override
     protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        CableHelpers.onCableRemoving(world, pos, true);
+        CableHelpers.onCableRemoving(world, pos, true, false);
         super.onPreBlockDestroyed(world, pos);
     }
 

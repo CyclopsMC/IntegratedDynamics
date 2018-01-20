@@ -98,7 +98,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement) {
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
         for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
             ItemStack itemStack = state.getInventory().getStackInSlot(i);
             if(!itemStack.isEmpty()) {
@@ -107,7 +107,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         }
         state.getInventory().clear();
         state.triggerAspectInfoUpdate((P) this, target, null);
-        super.addDrops(target, state, itemStacks, dropMainElement);
+        super.addDrops(target, state, itemStacks, dropMainElement, saveState);
     }
 
     @Override

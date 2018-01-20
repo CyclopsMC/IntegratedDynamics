@@ -206,9 +206,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * Get the itemstack from the given state.
      * @param state The state
+     * @param saveState If the part state should be saved in the item.
      * @return The itemstack possibly containing the state information.
      */
-    public ItemStack getItemStack(S state);
+    public ItemStack getItemStack(S state, boolean saveState);
 
     /**
      * Get the itemstack from the given state.
@@ -232,8 +233,9 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param state The state
      * @param itemStacks The itemstack list to add to.
      * @param dropMainElement If the part itself should also be dropped.
+     * @param saveState If the part state should be saved in the item.
      */
-    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement);
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState);
 
     /**
      * Called when this element is added to the network.

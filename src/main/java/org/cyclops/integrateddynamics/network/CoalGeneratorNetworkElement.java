@@ -30,7 +30,7 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase implements I
     }
 
     @Override
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement) {
+    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
         TileCoalGenerator tile = getTile();
         if(tile != null) {
             InventoryHelper.dropInventoryItems(getPos().getWorld(), getPos().getBlockPos(), tile.getInventory());

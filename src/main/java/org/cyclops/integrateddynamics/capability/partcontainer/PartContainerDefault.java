@@ -106,7 +106,7 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public IPartType removePart(EnumFacing side, EntityPlayer player, boolean dropMainElement) {
+    public IPartType removePart(EnumFacing side, EntityPlayer player, boolean dropMainElement, boolean saveState) {
         PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side); // Don't remove the state just yet! We might need it in network removal.
         if(partStateHolder == null) {
             IntegratedDynamics.clog(Level.WARN, "Attempted to remove a part at a side where no part was.");
@@ -122,7 +122,7 @@ public abstract class PartContainerDefault implements IPartContainer {
 
                 // Drop all parts types as item.
                 List<ItemStack> itemStacks = Lists.newLinkedList();
-                networkElement.addDrops(itemStacks, dropMainElement);
+                networkElement.addDrops(itemStacks, dropMainElement, saveState);
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
                         if (!player.capabilities.isCreativeMode) {
@@ -144,12 +144,13 @@ public abstract class PartContainerDefault implements IPartContainer {
                 onPartsChanged();
                 return ret;
             } else if (dropMainElement) {
+                ItemStack itemStack = removed.getItemStack(partStateHolder.getState(), saveState);
                 if(player != null) {
                     if (!player.capabilities.isCreativeMode) {
-                        ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), removed.getItemStack(partStateHolder.getState()), player);
+                        ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
                     }
                 } else {
-                    ItemStackHelpers.spawnItemStack(getWorld(), getPos(), removed.getItemStack(partStateHolder.getState()));
+                    ItemStackHelpers.spawnItemStack(getWorld(), getPos(), itemStack);
                 }
             }
             // Finally remove the part data from this part.
