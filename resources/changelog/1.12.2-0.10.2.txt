@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.1 or higher.
+
+Changes:
+* Don't save part ID when broken with pickaxe, Closes #493
+  This makes network dismantling a bit more convenient if you don't need the IDs anymore.
+
+Fixes:
+* Fix JEI showing chances as 1/100 of their actual value
+* Fix JEI compat breaking when certain blocks/items are disabled
+* Fix crash when disabling mechanical drying basin, Closes #482
+* Fix mech machines not working after chunk reload when network-powered, Closes #489
+* Fix #491: use the right dye metadata for squeezing dandelions
