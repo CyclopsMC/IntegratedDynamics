@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 /**
  * A part entity with inventory whose block can connect with cables.
@@ -63,6 +64,9 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
         if (connected.isEmpty()) {
             cable.updateConnections();
         }
+        if (getWorld() != null && !getWorld().isRemote) {
+            NetworkHelpers.revalidateNetworkElements(getWorld(), getPos());
+        }
     }
 
     /**
@@ -76,4 +80,11 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
         return this.networkCarrier.getNetwork();
     }
 
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        if (getWorld() != null && !getWorld().isRemote) {
+            NetworkHelpers.invalidateNetworkElements(getWorld(), getPos());
+        }
+    }
 }

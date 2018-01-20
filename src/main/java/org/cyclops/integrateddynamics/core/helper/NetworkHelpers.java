@@ -7,7 +7,13 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
-import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
@@ -15,6 +21,7 @@ import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 import javax.annotation.Nullable;
 
@@ -121,6 +128,51 @@ public class NetworkHelpers {
      */
     public static boolean shouldWork() {
         return !GeneralConfig.safeMode;
+    }
+
+    /**
+     * Invalidate all network elements at the given position.
+     * @param world The world.
+     * @param pos The position.
+     */
+    public static void invalidateNetworkElements(World world, BlockPos pos) {
+        INetworkCarrier networkCarrier = TileHelpers.getCapability(world, pos, NetworkCarrierConfig.CAPABILITY);
+        if (networkCarrier != null) {
+            INetwork network = networkCarrier.getNetwork();
+            if (network != null) {
+                INetworkElementProvider networkElementProvider = TileHelpers.getCapability(world, pos, NetworkElementProviderConfig.CAPABILITY);
+                if (networkElementProvider != null) {
+                    for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
+                        networkElement.invalidate(network);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Revalidate all network elements at the given position.
+     * @param world The world.
+     * @param pos The position.
+     */
+    public static void revalidateNetworkElements(World world, BlockPos pos) {
+        INetworkCarrier networkCarrier = TileHelpers.getCapability(world, pos, NetworkCarrierConfig.CAPABILITY);
+        IPathElement pathElement = TileHelpers.getCapability(world, pos, PathElementConfig.CAPABILITY);
+        if (networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null) {
+            INetworkElementProvider networkElementProvider = TileHelpers.getCapability(world, pos, NetworkElementProviderConfig.CAPABILITY);
+            if (networkElementProvider != null) {
+                // Attempt to revalidate the network elements in this provider
+                for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+                    if (network.containsPathElement(pathElement)) {
+                        // Revalidate all network elements
+                        for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
+                            networkElement.revalidate(network);
+                        }
+                        break; // No need to check the other networks anymore
+                    }
+                }
+            }
+        }
     }
 
 }

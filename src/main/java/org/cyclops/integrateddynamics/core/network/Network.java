@@ -552,6 +552,11 @@ public class Network implements INetwork {
         invalidatedElements.remove(element);
     }
 
+    @Override
+    public boolean containsPathElement(IPathElement pathElement) {
+        return baseCluster.contains(pathElement);
+    }
+
     protected boolean isValid(INetworkElement element) {
         if (invalidatedElements.contains(element)) {
             if (element.canRevalidate(this)) {
