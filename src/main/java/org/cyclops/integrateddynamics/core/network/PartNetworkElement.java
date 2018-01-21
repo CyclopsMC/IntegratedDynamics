@@ -56,7 +56,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public IPartContainer getPartContainer() {
-        return PartHelpers.getPartContainer(getCenterPos(getTarget()));
+        return PartHelpers.getPartContainer(getCenterPos(getTarget()), getTarget().getCenter().getSide());
     }
 
     @Override

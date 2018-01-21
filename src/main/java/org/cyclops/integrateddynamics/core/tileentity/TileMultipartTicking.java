@@ -128,11 +128,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         } else {
             partContainer.deserializeNBT(tag.getCompoundTag("partContainer"));
         }
-        boolean wasLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos());
+        boolean wasLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos(), null);
 
         super.readFromNBT(tag);
         cableFakeable.setRealCable(tag.getBoolean("realCable"));
-        boolean isLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos());
+        boolean isLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos(), null);
         if (getWorld() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
                 || !Objects.equals(lastFacadeBlockName, facadeBlockName) || lastFacadeMeta != facadeMeta
                 || lastRealCable != cableFakeable.isRealCable() || wasLightTransparent != isLightTransparent)) {

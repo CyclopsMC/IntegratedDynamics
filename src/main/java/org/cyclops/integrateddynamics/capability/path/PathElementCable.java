@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 
 import java.util.Set;
 
@@ -20,18 +21,19 @@ public abstract class PathElementCable extends PathElementDefault {
     protected abstract ICable getCable();
 
     @Override
-    public Set<IPathElement> getReachableElements() {
-        Set<IPathElement> elements = Sets.newHashSet();
+    public Set<ISidedPathElement> getReachableElements() {
+        Set<ISidedPathElement> elements = Sets.newHashSet();
         BlockPos pos = getPosition().getBlockPos();
         for (EnumFacing side : EnumFacing.VALUES) {
             if (getCable().isConnected(side)) {
                 BlockPos posOffset = pos.offset(side);
-                IPathElement pathElement = TileHelpers.getCapability(getPosition().getWorld(), posOffset, PathElementConfig.CAPABILITY);
+                EnumFacing pathElementSide = side.getOpposite();
+                IPathElement pathElement = TileHelpers.getCapability(getPosition().getWorld(), posOffset, pathElementSide, PathElementConfig.CAPABILITY);
                 if (pathElement == null) {
                     IntegratedDynamics.clog(Level.ERROR, String.format("The position at %s was incorrectly marked " +
                             "as reachable as path element by %s at %s side %s.", posOffset, getCable(), pos, side));
                 } else {
-                    elements.add(pathElement);
+                    elements.add(SidedPathElement.of(pathElement, pathElementSide));
                 }
             }
         }

@@ -5,6 +5,7 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.util.EnumFacing;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -62,13 +63,13 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     @Override
     public IPartState getPartState(int partId) {
         PartPos partPos = partPositions.get(partId);
-        return PartHelpers.getPartContainer(partPos.getPos()).getPartState(partPos.getSide());
+        return PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide()).getPartState(partPos.getSide());
     }
 
     @Override
     public IPartType getPartType(int partId) {
         PartPos partPos = partPositions.get(partId);
-        return PartHelpers.getPartContainer(partPos.getPos()).getPart(partPos.getSide());
+        return PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide()).getPart(partPos.getSide());
     }
 
     @Override
@@ -82,7 +83,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             return false;
         }
         PartPos partPos = partPositions.get(partId);
-        IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos());
+        IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
         return partContainer != null && partContainer.hasPart(partPos.getSide());
     }
 
@@ -209,7 +210,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement) {
+    public boolean removePathElement(IPathElement pathElement, EnumFacing side) {
         notifyPartsChanged();
         return true;
     }

@@ -132,7 +132,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
             if(!world.isRemote) {
                 getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
                 DimPos dimPos = getTarget().getCenter().getPos();
-                INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
+                INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos(), getTarget().getCenter().getSide());
                 PartTarget target = getTarget();
                 EnumFacing targetSide = getLastSideValue() >= 0 ? EnumFacing.VALUES[getLastSideValue()] : null;
                 getPartType().setTargetSideOverride(getPartState(), targetSide);

@@ -4,12 +4,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import org.apache.logging.log4j.Level;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
@@ -24,8 +26,10 @@ import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
+import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
@@ -68,11 +72,11 @@ public class Network implements INetwork {
 
     /**
      * Initiate a full network from the given start position.
-     * @param pathElement The path element to start from.
+     * @param sidedPathElement The sided path element to start from.
      * @return The newly formed network.
      */
-    public static Network initiateNetworkSetup(IPathElement pathElement) {
-        Network network = new Network(PathFinder.getConnectedCluster(pathElement));
+    public static Network initiateNetworkSetup(ISidedPathElement sidedPathElement) {
+        Network network = new Network(PathFinder.getConnectedCluster(sidedPathElement));
         NetworkWorldStorage.getInstance(IntegratedDynamics._instance).addNewNetwork(network);
         return network;
     }
@@ -132,23 +136,24 @@ public class Network implements INetwork {
 
     private void deriveNetworkElements(Cluster pathElements) {
         if(!killIfEmpty()) {
-            for (IPathElement pathElement : pathElements) {
-                World world = pathElement.getPosition().getWorld();
-                BlockPos pos = pathElement.getPosition().getBlockPos();
+            for (ISidedPathElement sidedPathElement : pathElements) {
+                World world = sidedPathElement.getPathElement().getPosition().getWorld();
+                BlockPos pos = sidedPathElement.getPathElement().getPosition().getBlockPos();
+                EnumFacing side = sidedPathElement.getSide();
                 INetworkCarrier networkCarrier = TileHelpers.getCapability(
-                        world, pos, null, NetworkCarrierConfig.CAPABILITY);
+                        world, pos, side, NetworkCarrierConfig.CAPABILITY);
                 if (networkCarrier != null) {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
                     INetwork network = networkCarrier.getNetwork();
                     if (network != null) {
-                        network.removePathElement(pathElement);
+                        network.removePathElement(sidedPathElement.getPathElement(), side);
                     }
                     networkCarrier.setNetwork(null);
                     networkCarrier.setNetwork(this);
                 }
                 INetworkElementProvider networkElementProvider = TileHelpers.getCapability(
-                        pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
+                        world, pos, side, NetworkElementProviderConfig.CAPABILITY);
                 if (networkElementProvider != null) {
                     for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
@@ -436,18 +441,19 @@ public class Network implements INetwork {
     }
 
     @Override
-    public synchronized boolean removePathElement(IPathElement pathElement) {
+    public synchronized boolean removePathElement(IPathElement pathElement, EnumFacing side) {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
-            if (!fullNetworkListener.removePathElement(pathElement)) {
+            if (!fullNetworkListener.removePathElement(pathElement, side)) {
                 return false;
             }
         }
-        if(baseCluster.remove(pathElement)) {
+        if(baseCluster.remove(SidedPathElement.of(pathElement, null))) {
+            DimPos position = pathElement.getPosition();
             INetworkElementProvider networkElementProvider = (INetworkElementProvider) TileHelpers.getCapability(
-                    pathElement.getPosition(), null, NetworkElementProviderConfig.CAPABILITY);
+                    position, side, NetworkElementProviderConfig.CAPABILITY);
             if (networkElementProvider != null) {
                 Collection<INetworkElement> networkElements = networkElementProvider.
-                        createNetworkElements(pathElement.getPosition().getWorld(), pathElement.getPosition().getBlockPos());
+                        createNetworkElements(position.getWorld(), position.getBlockPos());
                 for (INetworkElement networkElement : networkElements) {
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;
@@ -553,7 +559,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public boolean containsPathElement(IPathElement pathElement) {
+    public boolean containsSidedPathElement(ISidedPathElement pathElement) {
         return baseCluster.contains(pathElement);
     }
 

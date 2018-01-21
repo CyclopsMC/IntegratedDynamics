@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Capability that can create instances of an {@link INetworkElement}.
  * Blocks that provide this capability MUST properly call
- * {@link org.cyclops.integrateddynamics.core.helper.NetworkHelpers#onElementProviderBlockNeighborChange(World, BlockPos, Block)}.
+ * {@link org.cyclops.integrateddynamics.core.helper.NetworkHelpers#onElementProviderBlockNeighborChange(World, BlockPos, Block, net.minecraft.util.EnumFacing)}.
  * @author rubensworks
  */
 public interface INetworkElementProvider {

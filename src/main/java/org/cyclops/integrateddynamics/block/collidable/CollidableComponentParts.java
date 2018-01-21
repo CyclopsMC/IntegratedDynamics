@@ -29,7 +29,7 @@ import java.util.List;
 public class CollidableComponentParts implements ICollidable.IComponent<EnumFacing, BlockCable> {
 
     protected AxisAlignedBB getPartBoundingBox(World world, BlockPos pos, EnumFacing side) {
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
         return partContainer != null ? partContainer.getPart(side).getPartRenderPosition().getBoundingBox(side) : BlockCable.NULL_AABB;
     }
 
@@ -45,7 +45,7 @@ public class CollidableComponentParts implements ICollidable.IComponent<EnumFaci
 
     @Override
     public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, position);
         return partContainer != null && partContainer.hasPart(position);
     }
 
@@ -56,7 +56,7 @@ public class CollidableComponentParts implements ICollidable.IComponent<EnumFaci
 
     @Override
     public ItemStack getPickBlock(World world, BlockPos pos, EnumFacing position) {
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, position);
         return partContainer.getPart(position).getPickBlock(world, pos, partContainer.getPartState(position));
     }
 
@@ -72,7 +72,7 @@ public class CollidableComponentParts implements ICollidable.IComponent<EnumFaci
     @Override
     @SideOnly(Side.CLIENT)
     public IBakedModel getBreakingBaseModel(World world, BlockPos pos, EnumFacing position) {
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, position);
         IBlockState cableState = partContainer != null ? partContainer.getPart(position).getBlockState(partContainer, position) : null;
         return RenderHelpers.getBakedModel(cableState);
     }

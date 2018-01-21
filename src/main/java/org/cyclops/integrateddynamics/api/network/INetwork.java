@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.api.network;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
-import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 
 import java.util.Set;
 
@@ -122,9 +122,9 @@ public interface INetwork extends IFullNetworkListener, INBTSerializable {
     public void revalidateElement(INetworkElement element);
 
     /**
-     * @param pathElement A path element.
-     * @return If this network contains the given path element.
+     * @param sidedPathElement A sided path element.
+     * @return If this network contains the given sided path element.
      */
-    public boolean containsPathElement(IPathElement pathElement);
+    public boolean containsSidedPathElement(ISidedPathElement sidedPathElement);
 
 }

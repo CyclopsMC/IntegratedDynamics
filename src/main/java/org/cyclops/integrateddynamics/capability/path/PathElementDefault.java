@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.capability.path;
 
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 
 import java.util.Collections;
 import java.util.Set;
@@ -12,7 +13,7 @@ import java.util.Set;
 public abstract class PathElementDefault implements IPathElement {
 
     @Override
-    public Set<IPathElement> getReachableElements() {
+    public Set<ISidedPathElement> getReachableElements() {
         return Collections.emptySet();
     }
 

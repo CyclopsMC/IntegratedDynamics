@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
+import net.minecraft.util.EnumFacing;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
 /**
@@ -45,9 +46,10 @@ public interface IFullNetworkListener {
      * Remove the given path element from the network.
      * If the path element had any network elements registered in the network, these will be killed and removed as well.
      * @param pathElement The path element.
+     * @param side The side.
      * @return If the path element was removed.
      */
-    public boolean removePathElement(IPathElement pathElement);
+    public boolean removePathElement(IPathElement pathElement, EnumFacing side);
 
     /**
      * Called when the server loaded this network.

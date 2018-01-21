@@ -7,6 +7,7 @@ import net.minecraft.util.EnumFacing;
  * Capability for cables that can form networks.
  * Note that this is an UNSIDED capability, so only one should exist per side.
  * This is because cable sides are too dependent of each other.
+ * TODO: In the future, this should become a sided capability.
  * @author rubensworks
  */
 public interface ICable {

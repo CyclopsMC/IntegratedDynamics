@@ -2,9 +2,14 @@ package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.integrateddynamics.GeneralConfig;
-import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
+import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
+import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
@@ -45,7 +50,7 @@ public class EnergyNetwork extends PositionedAddonsNetwork implements IEnergyNet
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement) {
+    public boolean removePathElement(IPathElement pathElement, EnumFacing side) {
         return true;
     }
 

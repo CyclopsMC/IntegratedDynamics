@@ -68,7 +68,7 @@ public class PartPos implements Comparable<PartPos> {
      * @return A pair of part type and part state or null if not found.
      */
     public static Pair<IPartType, IPartState> getPartData(PartPos pos) {
-        IPartContainer partContainer = PartHelpers.getPartContainer(pos.getPos());
+        IPartContainer partContainer = PartHelpers.getPartContainer(pos.getPos(), pos.getSide());
         if (partContainer != null) {
             IPartType partType = partContainer.getPart(pos.getSide());
             IPartState partState = partContainer.getPartState(pos.getSide());

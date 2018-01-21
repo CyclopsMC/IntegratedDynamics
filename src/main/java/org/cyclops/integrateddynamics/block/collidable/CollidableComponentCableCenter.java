@@ -38,7 +38,7 @@ public class CollidableComponentCableCenter implements ICollidable.IComponent<En
 
     @Override
     public boolean isActive(BlockCable block, World world, BlockPos pos, EnumFacing position) {
-        return CableHelpers.isNoFakeCable(world, pos);
+        return CableHelpers.isNoFakeCable(world, pos, position);
     }
 
     @Override
