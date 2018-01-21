@@ -81,6 +81,6 @@ public abstract class BlockContainerCabled extends ConfigurableBlockContainer {
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, neighborBlock, fromPos);
-        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock);
+        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null);
     }
 }

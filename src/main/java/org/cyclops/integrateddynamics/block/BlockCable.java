@@ -235,9 +235,9 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
                             ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
                         }
                         return true;
-                    } else if(CableHelpers.isNoFakeCable(world, pos)) {
+                    } else if(CableHelpers.isNoFakeCable(world, pos, side)) {
                         // Delegate activated call to part
-                        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+                        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
                         return partContainer.getPart(positionHit).onPartActivated(world, pos,
                                 partContainer.getPartState(positionHit), player, hand, heldItem, positionHit, hitX, hitY, hitZ);
                     }
@@ -276,7 +276,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public boolean isDropBlockItem(IBlockAccess world, BlockPos pos, IBlockState blockState, int fortune) {
-        return CableHelpers.isNoFakeCable(world, pos);
+        return CableHelpers.isNoFakeCable(world, pos, null);
     }
 
     @SuppressWarnings("deprecation")
@@ -294,7 +294,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, neighborBlock, fromPos);
-        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock);
+        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null);
     }
 
     @Override
@@ -340,7 +340,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     @Override
     public int getLightOpacity(IBlockState blockState, IBlockAccess world, BlockPos pos) {
-        return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos) ? 255 : 0;
+        return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos, null) ? 255 : 0;
     }
 
     @Override
@@ -400,7 +400,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
         if(CableHelpers.hasFacade(world, pos)) {
             return true;
         }
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
         if(partContainer != null && partContainer.hasPart(side)) {
             IPartType partType = partContainer.getPart(side);
             return partType.isSolid(partContainer.getPartState(side));

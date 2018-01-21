@@ -328,7 +328,7 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork> PROP_GET_NETWORK = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
+            return NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, INetwork>
@@ -338,7 +338,7 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IEnergyStorage> PROP_GET_ENERGY_CHANNEL = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos());
+            INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
             int channel = input.getRight().getValue(PROPERTY_CHANNEL).getRawValue();
             return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getChannel(channel) : null;
         };

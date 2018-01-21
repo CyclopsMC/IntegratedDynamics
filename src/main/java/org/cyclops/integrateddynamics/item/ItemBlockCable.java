@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -46,8 +47,8 @@ public class ItemBlockCable extends ItemBlockMetadata {
         USE_ACTIONS.add(useAction);
     }
 
-    protected boolean checkCableAt(World world, BlockPos pos) {
-        if (!CableHelpers.isNoFakeCable(world, pos) && CableHelpers.getCable(world, pos) != null) {
+    protected boolean checkCableAt(World world, BlockPos pos, @Nullable EnumFacing side) {
+        if (!CableHelpers.isNoFakeCable(world, pos, side) && CableHelpers.getCable(world, pos, side) != null) {
             return true;
         }
         for (IUseAction useAction : USE_ACTIONS) {
@@ -64,24 +65,24 @@ public class ItemBlockCable extends ItemBlockMetadata {
                                        ItemStack stack) {
         BlockPos target = pos.offset(side);
         // First check if the target is an unreal cable.
-        if(checkCableAt(world, pos)) return true;
+        if(checkCableAt(world, pos, side)) return true;
         // Then check if the target is covered by an unreal cable at the given side.
-        if(checkCableAt(world, target)) return true;
+        if(checkCableAt(world, target, side.getOpposite())) return true;
         // Skips client-side entity collision detection for placing cables.
         IBlockState blockState = world.getBlockState(target);
         return blockState.getBlock().isReplaceable(world, pos) || blockState.getMaterial().isLiquid();
     }
 
-    protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, BlockCable blockCable,
+    protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, EnumFacing side, BlockCable blockCable,
                                           EntityLivingBase placer, boolean offsetAdded) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         if(!block.isAir(blockState, world, pos)) {
-            ICableFakeable cable = CableHelpers.getCableFakeable(world, pos);
+            ICableFakeable cable = CableHelpers.getCableFakeable(world, pos, side);
             if (cable != null && !cable.isRealCable()) {
                 if (!world.isRemote) {
                     cable.setRealCable(true);
-                    CableHelpers.updateConnections(world, pos);
+                    CableHelpers.updateConnections(world, pos, side);
                     CableHelpers.onCableAdded(world, pos);
                     CableHelpers.onCableAddedByPlayer(world, pos, placer);
                 }
@@ -127,14 +128,14 @@ public class ItemBlockCable extends ItemBlockMetadata {
         blockCable.setDisableCollisionBox(true);
 
         // Avoid regular block placement when the target is an unreal cable.
-        if(attempItemUseTarget(itemStack, worldIn, pos, blockCable, playerIn, false)) {
+        if(attempItemUseTarget(itemStack, worldIn, pos, side, blockCable, playerIn, false)) {
             afterItemUse(itemStack, worldIn, pos, blockCable, false);
             return EnumActionResult.SUCCESS;
         }
 
         // Change pos and side when we are targeting a block that is blocked by an unreal cable, so we want to target
         // the unreal cable.
-        if(attempItemUseTarget(itemStack, worldIn, pos.offset(side), blockCable, playerIn, true)) {
+        if(attempItemUseTarget(itemStack, worldIn, pos.offset(side), side.getOpposite(), blockCable, playerIn, true)) {
             afterItemUse(itemStack, worldIn, pos.offset(side), blockCable, false);
             return EnumActionResult.SUCCESS;
         }

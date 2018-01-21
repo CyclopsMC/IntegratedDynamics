@@ -73,7 +73,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     public EnumActionResult onItemUse(EntityPlayer playerIn, World world, BlockPos pos, EnumHand hand,
                                       EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack itemStack = playerIn.getHeldItem(hand);
-        IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos);
+        IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos, side);
         if(partContainerFirst != null) {
             // Add part to existing cable
             if(PartHelpers.addPart(world, pos, side, getPart(), itemStack)) {
@@ -88,13 +88,14 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         } else {
             // Place part at a new position with an unreal cable
             BlockPos target = pos.offset(side);
+            EnumFacing targetSide = side.getOpposite();
             if(world.getBlockState(target).getBlock().isReplaceable(world, target)) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(BlockCable.getInstance());
                 itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
                 if (itemBlockCable.onItemUse(playerIn, world, target, hand, side.getOpposite(), hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                    IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
+                    IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide);
                     if (partContainer != null) {
-                        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target);
+                        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target, targetSide);
                         if(!world.isRemote) {
                             PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack);
                             if (cableFakeable != null) {
@@ -113,7 +114,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 }
                 itemStack.shrink(1); // Shrink manually if failed
             } else {
-                IPartContainer partContainer = PartHelpers.getPartContainer(world, target);
+                IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide);
                 if(partContainer != null) {
                     // Add part to existing cable
                     if(PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack)) {

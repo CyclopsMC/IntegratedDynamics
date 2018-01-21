@@ -18,9 +18,9 @@ public class PartStateException extends IllegalArgumentException {
                 side,
                 DimensionManager.getWorld(dimPos.getDimensionId()) != null,
                 dimPos.isLoaded(),
-                dimPos.isLoaded() ? PartHelpers.getPartContainer(dimPos) : null,
-                dimPos.isLoaded() && PartHelpers.getPartContainer(dimPos) != null
-                        ? PartHelpers.getPartContainer(dimPos).getParts() : null));
+                dimPos.isLoaded() ? PartHelpers.getPartContainer(dimPos, side) : null,
+                dimPos.isLoaded() && PartHelpers.getPartContainer(dimPos, side) != null
+                        ? PartHelpers.getPartContainer(dimPos, side).getParts() : null));
     }
 
 }

@@ -159,7 +159,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         partState.triggerAspectInfoUpdate((P) this, target, aspect);
 
         if (aspect != null) {
-            INetwork network = NetworkHelpers.getNetwork(target.getCenter().getPos().getWorld(), target.getCenter().getPos().getBlockPos());
+            INetwork network = NetworkHelpers.getNetwork(target.getCenter().getPos().getWorld(), target.getCenter().getPos().getBlockPos(), target.getCenter().getSide());
             IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
             MinecraftForge.EVENT_BUS.post(new PartWriterAspectEvent<>(network, partNetwork, target, (P) this, partState, player,
                     aspect, partState.getInventory().getStackInSlot(activeIndex)));

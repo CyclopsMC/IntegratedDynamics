@@ -28,7 +28,9 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
+import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -216,15 +218,15 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         }
 
         @Override
-        public Set<IPathElement> getReachableElements() {
+        public Set<ISidedPathElement> getReachableElements() {
             if (hasConnectorId()) {
-                Set<IPathElement> pathElements = Sets.newTreeSet();
+                Set<ISidedPathElement> pathElements = Sets.newTreeSet();
                 for (PartPos pos : PartTypeConnectorOmniDirectional.LOADED_GROUPS.getPositions(getGroupId())) {
                     if (!pos.equals(this.getPartPos())) {
                         IPathElement pathElement = TileHelpers.getCapability(pos.getPos(), pos.getSide(),
                                 PathElementConfig.CAPABILITY);
                         if (pathElement != null) {
-                            pathElements.add(pathElement);
+                            pathElements.add(SidedPathElement.of(pathElement, pos.getSide()));
                         }
                     }
                 }
@@ -273,7 +275,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         protected void initNetworkGroup(Set<PartPos> positions) {
             for (PartPos position : positions) {
                 if (position.getPos().isLoaded()) {
-                    NetworkHelpers.initNetwork(position.getPos().getWorld(), position.getPos().getBlockPos());
+                    NetworkHelpers.initNetwork(position.getPos().getWorld(), position.getPos().getBlockPos(), position.getSide());
                 }
             }
         }
@@ -303,7 +305,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 modifyingPositions = true;
                 initNetworkGroup(positions);
                 if (pos.getPos().isLoaded()) {
-                    NetworkHelpers.initNetwork(pos.getPos().getWorld(), pos.getPos().getBlockPos());
+                    NetworkHelpers.initNetwork(pos.getPos().getWorld(), pos.getPos().getBlockPos(), pos.getSide());
                 }
                 modifyingPositions = false;
             }

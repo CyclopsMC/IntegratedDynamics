@@ -208,7 +208,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
     public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
         ItemStack resultStack = super.writeAspectInfo(generateId, itemStack, aspect);
         INetwork network = NetworkHelpers.getNetwork(getTarget().getCenter().getPos().getWorld(),
-                getTarget().getCenter().getPos().getBlockPos());
+                getTarget().getCenter().getPos().getBlockPos(), getTarget().getCenter().getSide());
         IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
         PartReaderAspectEvent event = new PartReaderAspectEvent<>(network, partNetwork, getTarget(), getPartType(),
                 getPartState(), getPlayer(), (IAspectRead) aspect, resultStack);

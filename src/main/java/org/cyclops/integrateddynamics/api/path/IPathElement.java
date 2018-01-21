@@ -22,6 +22,6 @@ public interface IPathElement extends Comparable<IPathElement> {
     /**
      * @return The set of all path elements that can be reached from here.
      */
-    public Set<IPathElement> getReachableElements();
+    public Set<ISidedPathElement> getReachableElements();
 
 }

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.capability.path;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.Set;
@@ -18,9 +19,9 @@ public class PathElementTileMultipartTicking extends PathElementTile<TileMultipa
     }
 
     @Override
-    public Set<IPathElement> getReachableElements() {
+    public Set<ISidedPathElement> getReachableElements() {
         // Add the reachable path elements from the parts that provide one.
-        Set<IPathElement> pathElements = super.getReachableElements();
+        Set<ISidedPathElement> pathElements = super.getReachableElements();
         for (EnumFacing side : EnumFacing.VALUES) {
             if (getTile().getPartContainer().hasCapability(PathElementConfig.CAPABILITY, side)) {
                 pathElements.addAll(getTile().getPartContainer()

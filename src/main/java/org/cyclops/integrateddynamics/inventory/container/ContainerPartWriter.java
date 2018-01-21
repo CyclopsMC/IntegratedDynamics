@@ -102,7 +102,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
                 } else if(getPartState().hasVariable()) {
                     IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(
                             NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
-                                    getPartContainer().getPosition().getBlockPos()));
+                                    getPartContainer().getPosition().getBlockPos(), getTarget().getCenter().getSide()));
                     if (partNetwork != null) {
                         IVariable variable = getPartState().getVariable(partNetwork);
                         if (variable != null) {

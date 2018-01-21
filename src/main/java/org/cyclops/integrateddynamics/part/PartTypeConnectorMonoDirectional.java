@@ -17,7 +17,9 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
+import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -66,8 +68,8 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
                 // Re-init network at the two disconnected connectors
                 DimPos originPos = target.getCenter().getPos();
                 DimPos targetPos = PartTypeConnectorMonoDirectional.State.getTargetPos(target.getCenter(), state.getOffset());
-                NetworkHelpers.initNetwork(originPos.getWorld(), originPos.getBlockPos());
-                NetworkHelpers.initNetwork(targetPos.getWorld(), targetPos.getBlockPos());
+                NetworkHelpers.initNetwork(originPos.getWorld(), originPos.getBlockPos(), target.getCenter().getSide());
+                NetworkHelpers.initNetwork(targetPos.getWorld(), targetPos.getBlockPos(), target.getCenter().getSide().getOpposite());
             }
         }
     }
@@ -88,9 +90,9 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
             state.removeTarget();
 
             // Re-init network at the two disconnected connectors
-            NetworkHelpers.initNetwork(originPos.getWorld(), originPos.getBlockPos());
+            NetworkHelpers.initNetwork(originPos.getWorld(), originPos.getBlockPos(),  target.getCenter().getSide());
             if (targetPos != null) {
-                NetworkHelpers.initNetwork(targetPos.getWorld(), targetPos.getBlockPos());
+                NetworkHelpers.initNetwork(targetPos.getWorld(), targetPos.getBlockPos(),  target.getCenter().getSide().getOpposite());
             }
         }
     }
@@ -129,12 +131,13 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         private int offset = 0;
 
         @Override
-        public Set<IPathElement> getReachableElements() {
+        public Set<ISidedPathElement> getReachableElements() {
             if (getPartPos() != null) {
+                EnumFacing targetSide = getPartPos().getSide().getOpposite();
                 IPathElement pathElement = TileHelpers.getCapability(State.getTargetPos(getPartPos(), offset),
-                        PathElementConfig.CAPABILITY);
+                        targetSide, PathElementConfig.CAPABILITY);
                 if (pathElement != null) {
-                    return Sets.newHashSet(pathElement);
+                    return Sets.newHashSet(SidedPathElement.of(pathElement, targetSide));
                 }
             }
             return Collections.emptySet();
