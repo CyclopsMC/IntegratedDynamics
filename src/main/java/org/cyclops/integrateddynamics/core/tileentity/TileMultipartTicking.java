@@ -266,4 +266,10 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             }
         }
     }
+
+    @Override
+    protected EnumFacing transformFacingForRotation(EnumFacing facing) {
+        // Ignore rotations on this tile
+        return facing;
+    }
 }
