@@ -154,7 +154,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         if (cachedState != null) {
             return cachedState;
         }
-        ExtendedBlockStateBuilder builder = ExtendedBlockStateBuilder.builder((IExtendedBlockState) getBlock().getDefaultState());
+        ExtendedBlockStateBuilder builder = ExtendedBlockStateBuilder.builder((IExtendedBlockState) BlockCable.getInstance().getDefaultState());
         if (partContainer.getPartData() != null) { // Can be null in rare cases where rendering happens before data sync
             builder.withProperty(BlockCable.REALCABLE, cableFakeable.isRealCable());
             if (connected.isEmpty()) {
