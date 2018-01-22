@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.1 or higher.
+
+Fixes:
+* Fix redstone writer sometimes not correctly emitting redstone values, Closes #422
+  The problem was that (redstone) capabilities could become rotated so that they would emit redstone at the incorrect side.
