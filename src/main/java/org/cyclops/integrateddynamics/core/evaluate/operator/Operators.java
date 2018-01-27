@@ -2514,6 +2514,19 @@ public final class Operators {
     }
 
     /**
+     * The W combinator from lambda calculus. W(x, y) = x(y, y)
+     */
+    public static final IOperator OPERATOR_DUPLICATE = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
+            .inputTypes(new IValueType[]{ValueTypes.OPERATOR})
+            .output(ValueTypes.OPERATOR).symbol("W").operatorName("duplicate")
+            .function(OperatorBuilders.FUNCTION_ONE_OPERATOR.build(
+                input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Duplicate.asOperator(input))
+            )).build());
+    static {
+        REGISTRY.registerSerializer(new CombinedOperator.Duplicate.Serializer());
+    }
+
+    /**
      * Apply the given operator on all elements of a list to reduce the list to one value.
      */
     public static final IOperator OPERATOR_REDUCE = REGISTRY.register(OperatorBuilders.OPERATOR
