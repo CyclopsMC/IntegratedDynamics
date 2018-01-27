@@ -1122,6 +1122,9 @@ operator.operators.integrateddynamics.virtual.piped.name=Piped
 operator.operators.integrateddynamics.operator.flip.name=Flip
 operator.operators.integrateddynamics.operator.flip.info=Flip the two first input parameters of an operator.
 operator.operators.integrateddynamics.virtual.flipped.name=Flipped
+operator.operators.integrateddynamics.operator.duplicate.name=Duplicate
+operator.operators.integrateddynamics.operator.duplicate.info=The W combinator from lambda calculus. W(x, y) = x(y, y)
+operator.operators.integrateddynamics.virtual.duplicated.name=Duplicated
 operator.operators.integrateddynamics.operator.reduce.name=Reduce
 operator.operators.integrateddynamics.operator.reduce.info=Apply the given operator on all elements of a list to reduce the list to one value.
 operator.operators.integrateddynamics.operator.byName.name=Operator By Name

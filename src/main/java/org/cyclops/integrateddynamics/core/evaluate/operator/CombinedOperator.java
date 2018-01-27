@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator.ValueOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import java.util.Objects;
@@ -248,6 +249,54 @@ public class CombinedOperator extends OperatorBase {
             @Override
             public CombinedOperator newFunction(IOperator... operators) throws EvaluationException {
                 return Flip.asOperator(operators[0]);
+            }
+
+        }
+    }
+
+    public static class Duplicate extends OperatorsFunction {
+
+        public Duplicate(IOperator operator) {
+            super(new IOperator[]{operator});
+        }
+
+        @Override
+        public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
+            IOperator operator = getOperators()[0];
+            if(operator.getRequiredInputLength() == 1) { // TODO ValueHelpers.evaluateOperator should do this uncurrying, instead of having to do it here. issue #352
+                IValue value = variables.getValue(0);
+                IValue operatorValue = ValueHelpers.evaluateOperator(operator, value);
+                if(!ValueHelpers.correspondsTo(operatorValue.getType(), ValueTypes.OPERATOR)) {
+                    throw new EvaluationException(String.format("Intermediate value was of type %s, expected Operator", operatorValue.getType().getTypeName()));
+                }
+                operator = ((ValueOperator)operatorValue).getRawValue();
+                return ValueHelpers.evaluateOperator(operator, value);
+            } else {
+                IValue[] values = { variables.getValue(0), variables.getValue(0) };
+                return ValueHelpers.evaluateOperator(operator, values);
+            }
+        }
+
+        public static CombinedOperator asOperator(IOperator operator) throws EvaluationException {
+            CombinedOperator.Duplicate duplicate = new CombinedOperator.Duplicate(operator);
+            IValueType[] duplicatedInputTypes = new IValueType[] {operator.getInputTypes()[0]};
+            try {
+                return new CombinedOperator("W", "duplicated", duplicate, duplicatedInputTypes,
+                        operator.getOutputType(), IConfigRenderPattern.PREFIX_1);
+            } catch (IllegalArgumentException e) {
+                throw new EvaluationException(e.getMessage());
+            }
+        }
+
+        public static class Serializer extends ListOperatorSerializer<Duplicate> {
+
+            public Serializer() {
+                super("duplicate", Duplicate.class);
+            }
+
+            @Override
+            public CombinedOperator newFunction(IOperator... operators) throws EvaluationException {
+                return Duplicate.asOperator(operators[0]);
             }
 
         }
