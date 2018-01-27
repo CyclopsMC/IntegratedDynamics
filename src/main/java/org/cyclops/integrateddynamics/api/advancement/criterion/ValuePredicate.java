@@ -33,7 +33,7 @@ public class ValuePredicate<V extends IValue> {
 
     public final boolean test(IValue value) {
         return (this.value == null || ValueHelpers.areValuesEqual(this.value, value))
-                && value.getType() == this.valueType && testTyped((V) value);
+                && (this.valueType == null || value.getType() == this.valueType) && testTyped((V) value);
     }
 
     protected boolean testTyped(V value) {
