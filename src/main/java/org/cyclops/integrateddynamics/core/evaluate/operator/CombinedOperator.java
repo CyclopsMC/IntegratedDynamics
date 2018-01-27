@@ -124,7 +124,7 @@ public class CombinedOperator extends OperatorBase {
             return new CombinedOperator(":||:", "p_disjunction", disjunction, ValueTypes.BOOLEAN);
         }
 
-        public static class Serializer extends ListOperatorSerializer<Conjunction> {
+        public static class Serializer extends ListOperatorSerializer<Disjunction> {
 
             public Serializer() {
                 super("disjunction", Disjunction.class);
@@ -156,7 +156,7 @@ public class CombinedOperator extends OperatorBase {
             return new CombinedOperator("!:", "p_negation", negation, ValueTypes.BOOLEAN);
         }
 
-        public static class Serializer extends ListOperatorSerializer<Conjunction> {
+        public static class Serializer extends ListOperatorSerializer<Negation> {
 
             public Serializer() {
                 super("negation", Negation.class);
@@ -190,7 +190,7 @@ public class CombinedOperator extends OperatorBase {
             return new CombinedOperator(":.:", "piped", pipe, operators[operators.length - 1].getOutputType());
         }
 
-        public static class Serializer extends ListOperatorSerializer<Conjunction> {
+        public static class Serializer extends ListOperatorSerializer<Pipe> {
 
             public Serializer() {
                 super("pipe", Pipe.class);
@@ -239,7 +239,7 @@ public class CombinedOperator extends OperatorBase {
             return combinedOperator;
         }
 
-        public static class Serializer extends ListOperatorSerializer<Conjunction> {
+        public static class Serializer extends ListOperatorSerializer<Flip> {
 
             public Serializer() {
                 super("flip", Flip.class);
@@ -256,9 +256,9 @@ public class CombinedOperator extends OperatorBase {
     public static abstract class ListOperatorSerializer<F extends IFunction> implements IOperatorSerializer<CombinedOperator> {
 
         private final String functionName;
-        private final Class<? extends IFunction> functionClass;
+        private final Class<F> functionClass;
 
-        public ListOperatorSerializer(String functionName, Class<? extends IFunction> functionClass) {
+        public ListOperatorSerializer(String functionName, Class<F> functionClass) {
             this.functionName = functionName;
             this.functionClass = functionClass;
         }
