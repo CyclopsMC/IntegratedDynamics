@@ -325,7 +325,7 @@
             <item>minecraft:quartz</item>
         </input>
         <output>
-            <item type="oredict" amount="2">dustNetherQuartz</item>
+            <item type="oredict">dustNetherQuartz</item>
         </output>
         <properties>
             <duration>40</duration>
