@@ -282,7 +282,7 @@ public class CombinedOperator extends OperatorBase {
             IValueType[] duplicatedInputTypes = new IValueType[] {operator.getInputTypes()[0]};
             try {
                 return new CombinedOperator("W", "duplicated", duplicate, duplicatedInputTypes,
-                        operator.getOutputType(), IConfigRenderPattern.PREFIX_1);
+                        operator.getRequiredInputLength() == 1 ? ValueTypes.CATEGORY_ANY : operator.getOutputType(), IConfigRenderPattern.PREFIX_1); // TODO output type could be more specific when uncurrying
             } catch (IllegalArgumentException e) {
                 throw new EvaluationException(e.getMessage());
             }
