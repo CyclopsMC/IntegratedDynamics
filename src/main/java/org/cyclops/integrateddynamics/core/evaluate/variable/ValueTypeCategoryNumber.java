@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 
@@ -18,7 +19,7 @@ import java.util.Map;
  * Value type category with values that are numbers.
  * @author rubensworks
  */
-public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> {
+public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> implements IValueTypeNamed<IValue> {
 
     private static final IValueTypeNumber[] ELEMENTS = new IValueTypeNumber[]{ValueTypes.INTEGER, ValueTypes.DOUBLE, ValueTypes.LONG};
     private static final Map<IValueTypeNumber, Integer> INVERTED_ELEMENTS = Collections.unmodifiableMap(constructInvertedArray(ELEMENTS));
@@ -175,4 +176,8 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> {
         return type.floor(castValue(type, a.getValue()));
     }
 
+    @Override
+    public String getName(IValue a) {
+        return ((IValueTypeNamed) a.getType()).getName(a);
+    }
 }
