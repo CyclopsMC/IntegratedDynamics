@@ -42,6 +42,7 @@ public class TestOperatorOperators {
     private DummyVariableOperator oRelationalLessThan;
     private DummyVariableOperator oIntegerModulus;
     private DummyVariableOperator oArithmeticAddition;
+    private DummyVariableOperator oArithmeticMultiplication;
     private DummyVariableOperator oChoice;
 
     private DummyVariableList lintegers;
@@ -62,16 +63,17 @@ public class TestOperatorOperators {
         i3 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3));
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
 
-        oGeneralIdentity       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
-        oLogicalNot            = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
-        oLogicalAnd            = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_AND));
-        oIntegerIncrement      = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
-        oRelationalEquals      = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
-        oRelationalGreaterThan = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_GT));
-        oRelationalLessThan    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_LT));
-        oIntegerModulus        = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_MODULUS));
-        oArithmeticAddition    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
-        oChoice                = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE));
+        oGeneralIdentity          = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
+        oLogicalNot               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
+        oLogicalAnd               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_AND));
+        oIntegerIncrement         = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
+        oRelationalEquals         = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
+        oRelationalGreaterThan    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_GT));
+        oRelationalLessThan       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_LT));
+        oIntegerModulus           = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_MODULUS));
+        oArithmeticAddition       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
+        oArithmeticMultiplication = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_MULTIPLICATION));
+        oChoice                   = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE));
 
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
@@ -573,6 +575,26 @@ public class TestOperatorOperators {
     public void testConditionalOutputTypesPredicatePipe() throws EvaluationException {
         assertThat(Operators.OPERATOR_PIPE.getConditionalOutputType(new IVariable[]{oIntegerIncrement, oIntegerIncrement}),
                 CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
+    }
+
+    /**
+     * ----------------------------------- PREDICATE PIPE 2 -----------------------------------
+     */
+
+    @Test
+    public void testPredicatePipe2() throws EvaluationException {
+        DummyVariableOperator addOneAndSelfMultiply = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE2.evaluate(new IVariable[]{oGeneralIdentity, oIntegerIncrement, oArithmeticMultiplication}));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{addOneAndSelfMultiply, i0});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat(".2 id ++ * 0 == 0", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{addOneAndSelfMultiply, i1});
+        assertThat(".2 id ++ * 1 == 2", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(2));
+        IValue res3 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{addOneAndSelfMultiply, i2});
+        assertThat(".2 id ++ * 2 == 6", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(6));
+        IValue res4 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{addOneAndSelfMultiply, i3});
+        assertThat(".2 id ++ * 3 == 12", ((ValueTypeInteger.ValueInteger) res4).getRawValue(), is(12));
     }
 
     /**
