@@ -2501,6 +2501,20 @@ public final class Operators {
     }
 
     /**
+     * Create a new operator that gives its input to the first and second operators, and pipes the outputs from both of them to the third operator.
+     */
+    public static final IOperator OPERATOR_PIPE2 = REGISTRY.register(OperatorBuilders.OPERATOR
+            .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR, ValueTypes.OPERATOR})
+            .renderPattern(IConfigRenderPattern.INFIX_2_LATE)
+            .output(ValueTypes.OPERATOR).symbol(".2").operatorName("pipe2")
+            .function(OperatorBuilders.FUNCTION_THREE_OPERATORS.build(
+                input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Pipe2.asOperator(input.getLeft(), input.getMiddle(), input.getRight()))
+            )).build());
+    static {
+        REGISTRY.registerSerializer(new CombinedOperator.Pipe2.Serializer());
+    }
+
+    /**
      * Flip the input parameters of an operator with two inputs.
      */
     public static final IOperator OPERATOR_FLIP = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG

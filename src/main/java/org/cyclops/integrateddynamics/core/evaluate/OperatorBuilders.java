@@ -217,6 +217,25 @@ public class OperatorBuilders {
                 IOperator second = getSafePredictate((ValueTypeOperator.ValueOperator) input.getValue(1));
                 return Pair.of(first, second);
             });
+    public static final IterativeFunction.PrePostBuilder<Triple<IOperator, IOperator, IOperator>, IValue> FUNCTION_THREE_OPERATORS = IterativeFunction.PrePostBuilder.begin()
+            .appendPre(input -> {
+                IOperator third = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(2), ValueTypes.CATEGORY_ANY);
+                IValueType<?>[] types = third.getInputTypes();
+                if(types.length < 2) {
+                    throw new EvaluationException("The operator did not accept enough inputs");
+                }
+                IValueType<?> firstOutputType = types[0];
+                IValueType<?> secondOutputType = types[1];
+                if (ValueHelpers.correspondsTo(firstOutputType, ValueTypes.OPERATOR)) {
+                    firstOutputType = ValueTypes.CATEGORY_ANY;
+                }
+                if (ValueHelpers.correspondsTo(secondOutputType, ValueTypes.OPERATOR)) {
+                    secondOutputType = ValueTypes.CATEGORY_ANY;
+                }
+                IOperator first = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), firstOutputType);
+                IOperator second = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(1), secondOutputType);
+                return Triple.of(first, second, third);
+            });
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR_TAKE_OPERATOR_LIST = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input.getValue(0)).getRawValue();
