@@ -95,6 +95,33 @@ public class TestGeneralOperators {
     }
 
     /**
+     * ----------------------------------- CONSTANT -----------------------------------
+     */
+
+    @Test
+    public void testLogicalConstant() throws EvaluationException {
+        DummyVariableInteger i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
+
+        IValue res1 = Operators.GENERAL_CONSTANT.evaluate(new IVariable[]{i1, bFalse});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("K 1 false = 1", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
+
+        IValue res2 = Operators.GENERAL_CONSTANT.evaluate(new IVariable[]{bFalse, i1});
+        assertThat("result is a boolean", res2, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("K false 1 = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeConstantLarge() throws EvaluationException {
+        Operators.GENERAL_CONSTANT.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeConstantSmall() throws EvaluationException {
+        Operators.GENERAL_CONSTANT.evaluate(new IVariable[]{bTrue});
+    }
+
+    /**
      * ----------------------------------- ISNULL -----------------------------------
      */
 
