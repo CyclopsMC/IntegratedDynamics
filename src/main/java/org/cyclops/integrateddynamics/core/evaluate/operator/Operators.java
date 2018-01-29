@@ -2927,4 +2927,9 @@ public final class Operators {
      */
     public static final GeneralOperator GENERAL_IDENTITY = REGISTRY.register(new GeneralIdentityOperator("id", "identity"));
 
+    /**
+     * Constant operator with two any inputs and one any output
+     */
+    public static final GeneralOperator GENERAL_CONSTANT = REGISTRY.register(new GeneralConstantOperator("K", "constant"));
+
 }
