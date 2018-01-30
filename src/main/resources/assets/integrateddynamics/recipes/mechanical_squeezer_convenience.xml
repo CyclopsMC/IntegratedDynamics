@@ -725,8 +725,7 @@
             <item>minecraft:blaze_rod</item>
         </input>
         <output>
-            <item amount="6">minecraft:blaze_powder</item>
-            <item chance="0.5">minecraft:blaze_powder</item>
+            <item amount="5">minecraft:blaze_powder</item>
         </output>
         <properties>
             <duration>40</duration>

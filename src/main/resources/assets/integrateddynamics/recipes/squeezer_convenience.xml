@@ -562,7 +562,7 @@
             <item>minecraft:blaze_rod</item>
         </input>
         <output>
-            <item amount="4">minecraft:blaze_powder</item>
+            <item amount="3">minecraft:blaze_powder</item>
             <item chance="0.5">minecraft:blaze_powder</item>
         </output>
     </recipe>
