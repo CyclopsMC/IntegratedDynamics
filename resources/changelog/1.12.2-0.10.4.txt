@@ -1,0 +1,19 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.1 or higher.
+
+Changes:
+* Rebalance (mechanical) squeezer recipe for blaze rod to powder
+  This fixes a dupe exploit in combination with TE and IC2.
+* Only output one Nether Quartz Dust in Mechanical Squeezer, Closes #499
+  This fixes a Nether Quartz duplication exploit when combined with other mods.
+
+Fixes:
+* Allow piped ops to take more inputs if the second operator takes +1 args, Closes #514
+* Fix left key not being usable in LP textboxes
+* Fix type parameter of ListOperatorSerializer
+* Fix numbers not being convertable to strings, Closes #504
+* Fix certain advancements failing to unlock, Closes #500
+  Fixed advancements:
+  * Redstone Observement
+  * Constant Definition
+  * Arithmetic Addition
