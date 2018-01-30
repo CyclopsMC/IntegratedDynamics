@@ -43,6 +43,7 @@ public class TestOperatorOperators {
     private DummyVariableOperator oIntegerModulus;
     private DummyVariableOperator oArithmeticAddition;
     private DummyVariableOperator oChoice;
+    private DummyVariableOperator oPipe;
 
     private DummyVariableList lintegers;
     private DummyVariableList lbooleans;
@@ -539,6 +540,21 @@ public class TestOperatorOperators {
         assertThat("++ ++(0) == 2", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(2));
         IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{increment2, i1});
         assertThat("++ ++(1) == 3", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(3));
+    }
+
+    @Test
+    public void testPredicatePipeLargeInputCount() throws EvaluationException {
+        DummyVariableOperator incrementAndAdd = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oIntegerIncrement, oArithmeticAddition}));
+
+        assertThat(incrementAndAdd.getValue().getRawValue().getInputTypes().length, is(2));
+        assertThat(incrementAndAdd.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(incrementAndAdd.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(incrementAndAdd.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
+
+        IValue res1 = Operators.OPERATOR_APPLY_2.evaluate(incrementAndAdd, i1, i2);
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("++|+(1, 2) == 4", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(4));
     }
 
     @Test(expected = EvaluationException.class)

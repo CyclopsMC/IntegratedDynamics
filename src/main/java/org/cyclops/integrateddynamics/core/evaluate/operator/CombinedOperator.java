@@ -5,16 +5,19 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 
 import java.util.Objects;
 
@@ -178,16 +181,54 @@ public class CombinedOperator extends OperatorBase {
 
         @Override
         public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
-            IValue value = variables.getValue(0);
-            for (IOperator operator : getOperators()) {
-                value = ValueHelpers.evaluateOperator(operator, value);
-            }
-            return value;
+            return pipeVariablesToOperators(variables.getVariables(), getOperators())[0].getValue();
         }
 
-        public static CombinedOperator asOperator(IOperator... operators) {
+        protected static IVariable[] pipeVariablesToOperators(IVariable[] allVariables, IOperator[] operators) throws EvaluationException {
+            // When the following operators take more than one input,
+            // then the remaining inputs should also become input of the virtual pipe operator.
+            // This loop takes care of that.
+            for (IOperator operator : operators) {
+                if (allVariables.length < operator.getRequiredInputLength()) {
+                    throw new EvaluationException(String.format("Pipe failure: operator %s expects input of length %s," +
+                                    "but %s was given.", operator.getUniqueName(), operator.getRequiredInputLength(),
+                            allVariables.length));
+                }
+                IVariable[] subVariables = ArrayUtils.subarray(allVariables, 0, operator.getRequiredInputLength());
+                IVariable[] remainingVariables = ArrayUtils.subarray(allVariables, operator.getRequiredInputLength(), allVariables.length);
+                IValue outputValue = ValueHelpers.evaluateOperator(operator, subVariables);
+                allVariables = ArrayUtils.addAll(new IVariable[]{new Variable<>(outputValue)}, remainingVariables);
+            }
+            return allVariables;
+        }
+
+        public static CombinedOperator asOperator(final IOperator... operators) {
             CombinedOperator.Pipe pipe = new CombinedOperator.Pipe(operators);
-            return new CombinedOperator(":.:", "piped", pipe, operators[operators.length - 1].getOutputType());
+            return new CombinedOperator(":.:", "piped", pipe, operators[operators.length - 1].getOutputType()) {
+                @Override
+                public IValueType getConditionalOutputType(IVariable[] allVariables) {
+                    try {
+                        allVariables = pipeVariablesToOperators(allVariables, operators);
+                    } catch (EvaluationException e) {
+                        return ValueTypes.CATEGORY_ANY;
+                    }
+                    return operators[operators.length - 1].getConditionalOutputType(allVariables);
+                }
+
+                @Override
+                public IValueType[] getInputTypes() {
+                    IValueType[] valueTypes = new IValueType[0];
+                    boolean removeOutputType = false;
+                    for (IOperator operator : operators) {
+                        if (removeOutputType) {
+                            valueTypes = ArrayUtils.subarray(valueTypes, 1, valueTypes.length);
+                        }
+                        valueTypes = ArrayUtils.addAll(valueTypes, operator.getInputTypes());
+                        removeOutputType = true;
+                    }
+                    return valueTypes;
+                }
+            };
         }
 
         public static class Serializer extends ListOperatorSerializer<Pipe> {
