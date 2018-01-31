@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.api.evaluate;
 
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * A capability that can expose values.
@@ -10,10 +10,10 @@ import java.util.Optional;
  */
 public interface IValueInterface {
     /**
-     * Get a value.
+     * Get a list of values.
      *
-     * @return A value.
-     * @throws EvaluationException If an error occurs while constructing or evaluating the value.
+     * @return A list of values.
+     * @throws EvaluationException If an error occurs while constructing or evaluating the values.
      */
-    public Optional<IValue> getValue() throws EvaluationException;
+    public List<IValue> getValues() throws EvaluationException;
 }

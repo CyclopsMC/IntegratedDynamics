@@ -319,11 +319,20 @@ public class AspectReadBuilders {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_CHANNEL =
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.channel.name");
-        public static final IAspectProperties PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
+        public static final IAspectProperties PROPERTIES_CHANNEL = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_CHANNEL
         ));
         static {
-            PROPERTIES.setValue(PROPERTY_CHANNEL, ValueTypeInteger.ValueInteger.of(IChanneledNetwork.WILDCARD_CHANNEL));
+            PROPERTIES_CHANNEL.setValue(PROPERTY_CHANNEL, ValueTypeInteger.ValueInteger.of(IChanneledNetwork.WILDCARD_CHANNEL));
+        }
+
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_INDEX =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.index.name");
+        public static final IAspectProperties PROPERTIES_INDEX = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
+                PROPERTY_INDEX
+        ));
+        static {
+            PROPERTIES_INDEX.setValue(PROPERTY_INDEX, ValueTypeInteger.ValueInteger.of(0));
         }
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork> PROP_GET_NETWORK = input -> {
@@ -344,7 +353,7 @@ public class AspectReadBuilders {
         };
 
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IEnergyStorage>
-                ENERGY_BUILDER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ENERGY_CHANNEL, "network").withProperties(PROPERTIES);
+                ENERGY_BUILDER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ENERGY_CHANNEL, "network").withProperties(PROPERTIES_CHANNEL);
 
     }
 

@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -153,10 +154,10 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
                 if (hasVariable()) {
                     IVariable<IValue> variable = getVariable(network);
                     if (variable != null) {
-                        return Optional.of(variable.getValue());
+                        return Collections.singletonList(variable.getValue());
                     }
                 }
-                return Optional.empty();
+                return Collections.emptyList();
             });
         }
         return super.getCapability(capability, network, target);

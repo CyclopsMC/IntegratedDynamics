@@ -22,6 +22,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -50,10 +51,10 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
             if (hasVariable()) {
                 IVariable<?> variable = getVariable(partNetwork);
                 if (variable != null) {
-                    return Optional.of(variable.getValue());
+                    return Collections.singletonList(variable.getValue());
                 }
             }
-            return Optional.empty();
+            return Collections.emptyList();
         });
     }
 

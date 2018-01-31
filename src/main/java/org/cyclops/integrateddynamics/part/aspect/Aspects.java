@@ -536,14 +536,22 @@ public class Aspects {
                                     * GeneralConfig.energyConsumptionMultiplier : 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("consumptionrate").buildRead();
             public static final IAspectRead<IValue, ValueTypeCategoryAny> ANY_VALUE =
-                    AspectReadBuilders.BUILDER_ANY.appendKind("network").handle(
+                    AspectReadBuilders.BUILDER_ANY.withProperties(AspectReadBuilders.Network.PROPERTIES_INDEX).appendKind("network").handle(
                             data -> {
+                                int index = data.getRight().getValue(AspectReadBuilders.Network.PROPERTY_INDEX).getRawValue();
+                                if (index < 0) {
+                                    throw new EvaluationException("index must be non-negative: got " + index);
+                                }
                                 PartPos target = data.getLeft().getTarget();
                                 IValueInterface valueInterface = TileHelpers.getCapability(
                                         target.getPos(), target.getSide(), ValueInterfaceConfig.CAPABILITY);
                                 if (valueInterface != null) {
-                                    return valueInterface.getValue().orElseThrow(() ->
-                                            new EvaluationException("No valid value interface value was found."));
+                                    List<IValue> values = valueInterface.getValues();
+                                    if(index < values.size()) {
+                                        return values.get(index);
+                                    } else {
+                                        throw new EvaluationException("Requested a value at index " + index + " when the value interface was only exposing " + values.size() + " value(s).");
+                                    }
                                 }
                                 throw new EvaluationException("No valid value interface was found.");
                             }
