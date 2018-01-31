@@ -1,0 +1,23 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.2 or higher.
+
+Additions:
+* Add NBT union, intersection and minus operators
+* Add operator to check if an NBT tag is a subset of another NBT tag
+* Add a pipe2 operator
+  This operator lets you use an input multiple times. In lambda calculus,
+  it's `\wxyz.y(wz)(xz)`. An example use of this would be
+  pipe2(Item Max Damage, Item Damage, Arithmetic Subtraction). This creates
+  an operator that tells you the damageability remaining of any given item.
+  Fixes part of #195.
+* Add the K combinator
+
+Changes:
+* Make network-related capability retrieval sided, this enables full compatibility with Compact Machins, Closes #420
+* Make certain aspect only update on block updates
+  Operators that depend on those values will also only update when the value updates.
+  This will result in a major performance improvement for certain networks.
+* Allow custom iteration orders to be passed to positioned addons
+
+Fixes:
+* Fix console spam when previewing cables in compact machines
