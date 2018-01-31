@@ -271,6 +271,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
 
     /**
      * Set the update type of the reader aspect.
+     * @param updateType The update type.
      * @return The new builder instance.
      */
     public AspectBuilder<V, T, O> withUpdateType(AspectUpdateType updateType) {
