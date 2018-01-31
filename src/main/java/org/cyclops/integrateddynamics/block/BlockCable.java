@@ -301,7 +301,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(world, pos, neighbor);
         if (world instanceof World) {
-            NetworkHelpers.onElementProviderBlockNeighborChange((World) world, pos, world.getBlockState(neighbor).getBlock());
+            NetworkHelpers.onElementProviderBlockNeighborChange((World) world, pos, world.getBlockState(neighbor).getBlock(), null);
         }
     }
 
