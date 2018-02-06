@@ -39,7 +39,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     }
 
     public boolean isCreative() {
-        Block block = getBlock();
+        Block block = getBlockType();
         return block instanceof BlockEnergyBatteryBase && ((BlockEnergyBatteryBase) block).isCreative();
     }
 
