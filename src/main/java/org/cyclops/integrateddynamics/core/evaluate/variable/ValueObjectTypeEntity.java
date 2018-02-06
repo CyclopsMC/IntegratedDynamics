@@ -44,7 +44,6 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     public String toCompactString(ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if (uuid.isPresent()) {
-            UUID id = uuid.get();
             Optional<Entity> entity = value.getRawValue();
             String entityName = "unknown";
             if(entity.isPresent()) {
@@ -55,7 +54,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
                     entityName = e.getName();
                 }
             }
-            return entityName + " (" + id.toString().substring(0, 8) + "...)";
+            return entityName;
         }
         return "";
     }
