@@ -8,6 +8,7 @@ import lombok.ToString;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -118,7 +119,11 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
             String entityName = "unknown";
             if(entity.isPresent()) {
                 Entity e = entity.get();
-                entityName = EntityList.getEntityString(e);
+                if (e instanceof EntityPlayer) {
+                    entityName = "Player";
+                } else {
+                    entityName = EntityList.getEntityString(e);
+                }
             }
             return id.toString() + " (" + entityName + ")";
         }
