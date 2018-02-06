@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.2 or higher.
+
+Changes:
+* Remove UUID when converting entities to strings, Closes #530
+  This makes things less complicated to work with.
+  This UUID in the string is not required anymore as unique names (with UUID) can now be retrieved using a separate operator.
+
+Fixes:
+* Fix player unique name including the '(null)' suffix, #530
+* Fix rare crash when rendering Energy Battery, Closes #529
+* Fix pipe operator announcing incorrect types, Closes #523
+  This was a regression because of 396da75c8c84721e37d6d925247e398684690ebe
