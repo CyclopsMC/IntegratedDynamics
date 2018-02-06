@@ -45,6 +45,7 @@ public class TestOperatorOperators {
     private DummyVariableOperator oArithmeticMultiplication;
     private DummyVariableOperator oChoice;
     private DummyVariableOperator oPipe;
+    private DummyVariableOperator oListLength;
 
     private DummyVariableList lintegers;
     private DummyVariableList lbooleans;
@@ -75,6 +76,7 @@ public class TestOperatorOperators {
         oArithmeticAddition       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
         oArithmeticMultiplication = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_MULTIPLICATION));
         oChoice                   = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE));
+        oListLength               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_LENGTH));
 
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
@@ -550,13 +552,58 @@ public class TestOperatorOperators {
                 Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oIntegerIncrement, oArithmeticAddition}));
 
         assertThat(incrementAndAdd.getValue().getRawValue().getInputTypes().length, is(2));
-        assertThat(incrementAndAdd.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(incrementAndAdd.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.INTEGER));
         assertThat(incrementAndAdd.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
         assertThat(incrementAndAdd.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
 
         IValue res1 = Operators.OPERATOR_APPLY_2.evaluate(incrementAndAdd, i1, i2);
         assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
         assertThat("++|+(1, 2) == 4", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(4));
+    }
+
+    @Test
+    public void testPredicatePipeMixed() throws EvaluationException {
+        DummyVariableOperator listLengthIncr = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oListLength, oArithmeticAddition}));
+
+        assertThat(listLengthIncr.getValue().getRawValue().getInputTypes().length, is(2));
+        assertThat(listLengthIncr.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.LIST));
+        assertThat(listLengthIncr.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(listLengthIncr.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
+
+        IValue res1 = Operators.OPERATOR_APPLY_2.evaluate(listLengthIncr, lintegers, i2);
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("len|+([0, 1, 2, 3],2) == 6", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(6));
+    }
+
+    @Test
+    public void testPredicatePipeMixedLarge() throws EvaluationException {
+        DummyVariableOperator listLengthIncr0 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oListLength, new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticAddition, oArithmeticAddition}))}));
+        DummyVariableOperator listLengthIncr1 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oListLength, new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticAddition, oArithmeticAddition}))}));
+
+        assertThat(listLengthIncr0.getValue().getRawValue().getInputTypes().length, is(3));
+        assertThat(listLengthIncr0.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.LIST));
+        assertThat(listLengthIncr0.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(listLengthIncr0.getValue().getRawValue().getInputTypes()[2], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(listLengthIncr0.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
+
+        IValue res1 = Operators.OPERATOR_APPLY_3.evaluate(listLengthIncr0, lintegers, i2, i3);
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("len|+|+([0, 1, 2, 3],2,3) == 9", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(9));
+
+        assertThat(listLengthIncr1.getValue().getRawValue().getInputTypes().length, is(3));
+        assertThat(listLengthIncr1.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.LIST));
+        assertThat(listLengthIncr1.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(listLengthIncr1.getValue().getRawValue().getInputTypes()[2], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(listLengthIncr1.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
+
+        IValue res2 = Operators.OPERATOR_APPLY_3.evaluate(listLengthIncr1, lintegers, i2, i3);
+        assertThat("result is an integer", res2, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("len|+|+([0, 1, 2, 3],2,3) == 9", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(9));
     }
 
     @Test(expected = EvaluationException.class)
