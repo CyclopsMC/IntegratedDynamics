@@ -16,6 +16,7 @@ import org.cyclops.cyclopscore.inventory.container.button.IButtonActionServer;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -26,6 +27,8 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTy
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.gui.container.GuiAspectSettings;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 
 /**
  * Container for aspect settings.
@@ -130,6 +133,12 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
                 IValue trueValue = property.getType().deserialize(value.getString(ValueNotifierHelpers.KEY));
                 aspectProperties.setValue(property, trueValue);
                 getAspect().setProperties(getPartType(), getTarget(), getPartState(), aspectProperties);
+
+                // Changing the properties might cause some erroring variables to become valid again, so trigger an update.
+                INetwork network = NetworkHelpers.getNetwork(getTarget().getCenter().getPos().getWorld(), getTarget().getCenter().getPos().getBlockPos(), getTarget().getCenter().getSide());
+                if (network != null) {
+                    network.getEventBus().post(new VariableContentsUpdatedEvent(network));
+                }
             }
         }
     }
