@@ -1,6 +1,7 @@
 {
     "parent": "cyclopscore:block/cube_double_layer_all",
     "textures": {
+        "particle": "integrateddynamics:blocks/energy_battery_side",
         "all0": "integrateddynamics:blocks/energy_battery_side",
         "all1": "#overlay_side",
         "up0": "integrateddynamics:blocks/energy_battery_up",
