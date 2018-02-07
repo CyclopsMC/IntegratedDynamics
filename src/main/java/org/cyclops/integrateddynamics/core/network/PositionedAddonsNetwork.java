@@ -69,7 +69,7 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
 
     @Override
     public void setPositionIterator(@Nullable PositionsIterator iterator, int channel) {
-        if (iterator == null) {
+        if (iterator == null || !iterator.hasNext()) {
             positionsIterators.remove(channel);
         } else {
             positionsIterators.put(channel, iterator);
