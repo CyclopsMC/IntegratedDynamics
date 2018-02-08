@@ -6,8 +6,21 @@ package org.cyclops.integrateddynamics.api.evaluate;
  */
 public class EvaluationException extends Exception {
 
-    public EvaluationException(String msg) {
+    private final boolean transientError;
+
+    public EvaluationException(String msg, boolean transientError) {
         super(msg);
+        this.transientError = transientError;
     }
 
+    public EvaluationException(String msg) {
+        this(msg, false);
+    }
+
+    /**
+     * @return If this error should not be persistent, i.e., if it should not stop re-evaluation in the next tick.
+     */
+    public boolean isTransientError() {
+        return transientError;
+    }
 }

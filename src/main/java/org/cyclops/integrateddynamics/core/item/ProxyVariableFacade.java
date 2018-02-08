@@ -102,14 +102,14 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if (!isValid()) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM), false);
         } else if (network.getProxy(proxyId) == null) {
-            validator.addError(getProxyNotInNetworkError());
+            validator.addError(getProxyNotInNetworkError(), false);
         } else if (getTargetVariable(network) == null) {
-            validator.addError(getProxyInvalidError());
+            validator.addError(getProxyInvalidError(), false);
         } else if (!ValueHelpers.correspondsTo(containingValueType, getTargetVariable(network).getType())) {
             validator.addError(getProxyInvalidTypeError(network, containingValueType,
-                    getTargetVariable(network).getType()));
+                    getTargetVariable(network).getType()), false);
         }
 
         // Check if we are entering an infinite recursion (e.g. proxies refering to each other)

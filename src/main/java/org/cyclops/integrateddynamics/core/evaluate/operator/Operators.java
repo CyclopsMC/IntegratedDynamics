@@ -809,7 +809,7 @@ public final class Operators {
                 } else {
                     throw new EvaluationException("Index out of bounds. Tried to get element " + b.getRawValue()
                             + " of a list of length " + a.getLength()
-                            + ". Use the getOrDefault operator to provide a default when an index is out of bounds.");
+                            + ". Use the getOrDefault operator to provide a default when an index is out of bounds.", true);
                 }
             }).conditionalOutputTypeDeriver((operator, input) -> {
                 try {
@@ -986,7 +986,7 @@ public final class Operators {
                 } else {
                     throw new EvaluationException("Index out of bounds. Tried to get the head of a list of length "
                             + a.getLength() + ". Use the getOrDefault operator to provide a default when an " +
-                            "index is out of bounds.");
+                            "index is out of bounds.", true);
                 }
             }).conditionalOutputTypeDeriver((operator, input) -> {
                 try {

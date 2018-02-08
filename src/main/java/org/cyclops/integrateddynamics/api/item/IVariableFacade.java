@@ -77,8 +77,9 @@ public interface IVariableFacade {
         /**
          * Set the current error for the given aspect.
          * @param error The error to set, or null to clear.
+         * @param transientError If the error is transient.
          */
-        public void addError(L10NHelpers.UnlocalizedString error);
+        public void addError(L10NHelpers.UnlocalizedString error, boolean transientError);
 
     }
 

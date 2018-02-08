@@ -60,15 +60,15 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if (!isValid()) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM), false);
         } else if (!(getAspect() instanceof IAspectRead
                 && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_PARTNOTINNETWORK,
-                    Integer.toString(getPartId())));
+                    Integer.toString(getPartId())), false);
         } else if (!ValueHelpers.correspondsTo(containingValueType, getAspect().getValueType())) {
             validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
                     new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                    new L10NHelpers.UnlocalizedString(getAspect().getValueType().getUnlocalizedName())));
+                    new L10NHelpers.UnlocalizedString(getAspect().getValueType().getUnlocalizedName())), false);
         }
     }
 

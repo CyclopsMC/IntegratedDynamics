@@ -36,6 +36,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     private boolean deactivated = false;
     private SimpleInventory inventory;
     private List<L10NHelpers.UnlocalizedString> globalErrorMessages = Lists.newLinkedList();
+    private boolean transientError = false;
 
     public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
@@ -100,7 +101,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     public void onVariableContentsUpdated(P partType, PartTarget target) {
         // Resets the errors for this aspect
         this.checkedForWriteVariable = false;
-        addGlobalError(null);
+        addGlobalError(null, false);
         this.currentVariableFacade = null;
         //this.deactivated = false; // This *should* not be required anymore, re-activation is handled in AspectWriteBase#update.
     }
@@ -112,15 +113,22 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         return globalErrorMessages;
     }
 
+    public boolean isTransientError() {
+        return transientError;
+    }
+
     /**
      * Add a global error message.
      * @param error The message to add.
+     * @param transientError If the error is transient.
      */
-    public void addGlobalError(L10NHelpers.UnlocalizedString error) {
+    public void addGlobalError(L10NHelpers.UnlocalizedString error, boolean transientError) {
         if(error == null) {
             globalErrorMessages.clear();
+            this.transientError = false;
         } else {
             globalErrorMessages.add(error);
+            this.transientError = this.transientError || transientError;
         }
         onDirty();
         sendUpdate(); // We want this error messages to be sent to the client(s).
@@ -130,6 +138,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         NBTClassType.writeNbt(List.class, "globalErrorMessages", globalErrorMessages, tag);
+        tag.setBoolean("transientError", transientError);
         inventory.writeToNBT(tag);
     }
 
@@ -138,6 +147,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         super.readFromNBT(tag);
         //noinspection unchecked
         this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag);
+        this.transientError = tag.getBoolean("transientError");
         inventory.readFromNBT(tag);
     }
 
@@ -206,8 +216,8 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         }
 
         @Override
-        public void addError(L10NHelpers.UnlocalizedString error) {
-            this.state.addGlobalError(error);
+        public void addError(L10NHelpers.UnlocalizedString error, boolean transientError) {
+            this.state.addGlobalError(error, transientError);
         }
 
     }

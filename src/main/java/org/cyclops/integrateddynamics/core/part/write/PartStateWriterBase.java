@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -18,6 +19,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A default implementation of the {@link IPartTypeWriter}.
@@ -29,6 +31,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     private IAspectWrite activeAspect = null;
     private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
     private boolean firstTick = true;
+    private Set<String> transientErrors = Sets.newHashSet();
 
     public PartStateWriterBase(int inventorySize) {
         super(inventorySize);
@@ -38,6 +41,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     public void writeToNBT(NBTTagCompound tag) {
         if (this.activeAspect != null) tag.setString("activeAspectName", this.activeAspect.getUnlocalizedName());
         NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, tag);
+        NBTClassType.getType(Set.class, this.transientErrors).writePersistedField("transientErrors", this.transientErrors, tag);
         super.writeToNBT(tag);
     }
 
@@ -48,6 +52,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
             this.activeAspect = (IAspectWrite) aspect;
         }
         this.errorMessages = (Map<String, List<L10NHelpers.UnlocalizedString>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag);
+        this.transientErrors = (Set<String>) NBTClassType.getType(Set.class, this.transientErrors).readPersistedField("transientErrors", tag);
         super.readFromNBT(tag);
     }
 
@@ -90,7 +95,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         super.onVariableContentsUpdated(partType, target);
         IAspectWrite activeAspect = getActiveAspect();
         if(activeAspect != null) {
-            addError(activeAspect, null);
+            addError(activeAspect, null, false);
         }
     }
 
@@ -109,11 +114,22 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error) {
+    public boolean isTransientError(IAspectWrite aspect) {
+        return transientErrors.contains(aspect.getUnlocalizedName());
+    }
+
+    @Override
+    public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error, boolean transientError) {
         if(error == null) {
             errorMessages.remove(aspect.getUnlocalizedName());
+            transientErrors.remove(aspect.getUnlocalizedName());
         } else {
             CollectionHelpers.addToMapList(errorMessages, aspect.getUnlocalizedName(), error);
+            if (transientError) {
+                transientErrors.add(aspect.getUnlocalizedName());
+            } else {
+                transientErrors.remove(aspect.getUnlocalizedName());
+            }
         }
         onDirty();
         sendUpdate(); // We want this error messages to be sent to the client(s).
@@ -144,8 +160,8 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         }
 
         @Override
-        public void addError(L10NHelpers.UnlocalizedString error) {
-            this.state.addError(aspect, error);
+        public void addError(L10NHelpers.UnlocalizedString error, boolean transientError) {
+            this.state.addError(aspect, error, transientError);
         }
 
     }

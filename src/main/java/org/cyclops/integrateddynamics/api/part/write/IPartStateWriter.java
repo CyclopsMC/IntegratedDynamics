@@ -71,8 +71,15 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      * Set the current error for the given aspect.
      * @param aspect The aspect to set the error for.
      * @param error The error to set, or null to clear.
+     * @param transientError If the error is transient.
      */
-    public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error);
+    public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error, boolean transientError);
+
+    /**
+     * @param aspect The error to check the transient error flag for.
+     * @return If an error is transient.
+     */
+    public boolean isTransientError(IAspectWrite aspect);
 
     /**
      * @return If this part has been deactivated.

@@ -6,6 +6,10 @@ package org.cyclops.integrateddynamics.api.evaluate;
  */
 public class InvalidValueTypeException extends EvaluationException {
 
+    public InvalidValueTypeException(String msg, boolean transientError) {
+        super(msg, transientError);
+    }
+
     public InvalidValueTypeException(String msg) {
         super(msg);
     }

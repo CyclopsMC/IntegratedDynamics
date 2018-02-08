@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
@@ -93,7 +94,14 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         super.update(network, partNetwork, target, state);
         IAspect aspect = getActiveAspect(target, state);
         if (aspect != null) {
+            IAspectWrite aspectWrite = ((IAspectWrite) aspect);
+            if (state.isTransientError(aspectWrite)) {
+                state.addError(aspectWrite, null, false);
+            }
             aspect.update(partNetwork, this, target, state);
+            // TODO: When transient errors remain to be thrown, this causes a performance issue.
+            // TODO: The problem is that (re)setting the error causes the part to be marked dirty, which causes a packet to be sent every tick, and therefore introduces significant overhead.
+            // TODO: We should detect these cases and not send an update, OR simply delay the dirty marker.
         }
     }
 

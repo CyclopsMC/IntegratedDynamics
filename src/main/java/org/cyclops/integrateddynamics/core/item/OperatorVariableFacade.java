@@ -99,7 +99,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     @Override
     public void validate(IPartNetwork network, final IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM), false);
         } else {
             IValueType[] valueTypes = new IValueType[variableIds.length];
             IVariable[] variables = new IVariable[variableIds.length];
@@ -108,33 +108,33 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                 int variableId = variableIds[i];
                 // Check valid id
                 if (variableId < 0) {
-                    validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+                    validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM), false);
                     checkFurther = false;
                 } else if (!network.hasVariableFacade(variableId)) { // Check id present in network
                     validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_VARIABLENOTINNETWORK,
-                            Integer.toString(variableId)));
+                            Integer.toString(variableId)), false);
                     checkFurther = false;
                 } else {
                     // Check variable represented by this id is valid.
                     IVariableFacade variableFacade = network.getVariableFacade(variableId);
                     if(variableFacade == this) {
                         validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_CYCLICREFERENCE,
-                                Integer.toString(variableId)));
+                                Integer.toString(variableId)), false);
                         checkFurther = false;
                     } else if (variableFacade != null) {
                         IValueType valueType = getOperator().getInputTypes()[i];
                         final Wrapper<Boolean> isValid = new Wrapper<>(true);
                         if (validatingVariables[i]) {
                             validator.addError(new L10NHelpers.UnlocalizedString(
-                                    L10NValues.OPERATOR_ERROR_CYCLICREFERENCE, getId()));
+                                    L10NValues.OPERATOR_ERROR_CYCLICREFERENCE, getId()), false);
                             checkFurther = false;
                             break;
                         }
                         validatingVariables[i] = true;
                         variableFacade.validate(network, new IValidator() {
                             @Override
-                            public void addError(L10NHelpers.UnlocalizedString error) {
-                                validator.addError(error);
+                            public void addError(L10NHelpers.UnlocalizedString error, boolean transientError) {
+                                validator.addError(error, transientError);
                                 isValid.set(false);
                             }
                         }, valueType);
@@ -156,14 +156,14 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                 IOperator op = getOperator();
                 L10NHelpers.UnlocalizedString error = op.validateTypes(valueTypes);
                 if (error != null) {
-                    validator.addError(error);
+                    validator.addError(error, false);
                 }
                 // Check expected aspect type and operator output type
                 IValueType outputType = op.getConditionalOutputType(variables);
                 if (!ValueHelpers.correspondsTo(outputType, containingValueType)) {
                     validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
                             new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                            new L10NHelpers.UnlocalizedString(outputType.getUnlocalizedName())));
+                            new L10NHelpers.UnlocalizedString(outputType.getUnlocalizedName())), false);
                 }
             }
         }

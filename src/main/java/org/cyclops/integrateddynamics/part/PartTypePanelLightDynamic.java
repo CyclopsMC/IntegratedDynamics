@@ -75,7 +75,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
             return ValueTypeLightLevels.REGISTRY.getLightLevel(value);
         } catch (InvalidValueTypeException e) {
             state.addGlobalError(new L10NHelpers.UnlocalizedString(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
-                    new L10NHelpers.UnlocalizedString(value.getType().getUnlocalizedName())));
+                    new L10NHelpers.UnlocalizedString(value.getType().getUnlocalizedName())), e.isTransientError());
         }
         return 0;
     }

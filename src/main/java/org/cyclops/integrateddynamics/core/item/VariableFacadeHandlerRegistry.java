@@ -189,7 +189,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         @Override
         public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
             if (containingValueType != ValueTypes.BOOLEAN) {
-                validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
+                validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError), false);
             }
         }
 

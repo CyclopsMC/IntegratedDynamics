@@ -83,13 +83,13 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
         this.errors.clear();
         if (partNetwork == null) {
-            addError(new L10NHelpers.UnlocalizedString(L10NValues.GENERAL_ERROR_NONETWORK));
+            addError(new L10NHelpers.UnlocalizedString(L10NValues.GENERAL_ERROR_NONETWORK), false);
         } else if (this.variableStored != null) {
             preValidate(variableStored);
             try {
                 variableStored.validate(partNetwork, this, ValueTypes.CATEGORY_ANY);
             } catch (IllegalArgumentException e) {
-                addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+                addError(new L10NHelpers.UnlocalizedString(e.getMessage()), false);
             }
         }
         if(sendVariablesUpdateEvent && partNetwork != null && lastVariabledId != variableId) {
@@ -114,13 +114,13 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
         try {
             return variableStored.getVariable(network);
         } catch (IllegalArgumentException e) {
-            addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            addError(new L10NHelpers.UnlocalizedString(e.getMessage()), false);
             return null;
         }
     }
 
     @Override
-    public void addError(L10NHelpers.UnlocalizedString error) {
+    public void addError(L10NHelpers.UnlocalizedString error, boolean transientError) {
         errors.add(error);
     }
 

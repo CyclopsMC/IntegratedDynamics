@@ -133,7 +133,7 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
         // Hard check to make sure the variable is not directly referring to this proxy.
         if(variableStored instanceof IProxyVariableFacade) {
             if(((IProxyVariableFacade) variableStored).getProxyId() == getProxyId()) {
-                addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_RECURSION, variableStored.getId()));
+                addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_RECURSION, variableStored.getId()), false);
             }
         }
     }

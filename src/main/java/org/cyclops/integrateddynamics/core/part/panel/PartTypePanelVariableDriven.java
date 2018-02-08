@@ -117,6 +117,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         super.update(network, partNetwork, target, state);
         IValue lastValue = state.getDisplayValue();
         IValue newValue = null;
+        if (state.isTransientError()) {
+            state.addGlobalError(null, false);
+        }
         if(state.hasVariable()) {
             try {
                 IVariable variable = state.getVariable(partNetwork);
@@ -125,7 +128,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
                 }
             } catch (EvaluationException e) {
-                state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
+                state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()), e.isTransientError());
             }
         }
         if(!ValueHelpers.areValuesEqual(lastValue, newValue)) {
@@ -167,7 +170,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             try {
                 materializedValue = newValue.getType().materialize(newValue);
             } catch (EvaluationException e) {
-                state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
+                state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()), e.isTransientError());
             }
             state.setDisplayValue(materializedValue);
         }

@@ -76,13 +76,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM), false);
         } else {
             // Check expected aspect type and operator output type
             if (!ValueHelpers.correspondsTo(getValueType(), containingValueType)) {
                 validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
                         new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                        new L10NHelpers.UnlocalizedString(getValueType().getUnlocalizedName())));
+                        new L10NHelpers.UnlocalizedString(getValueType().getUnlocalizedName())), false);
             }
         }
     }

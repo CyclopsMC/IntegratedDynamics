@@ -104,7 +104,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
                 }
             }, lastPlayer, getBlock());
         } catch (EvaluationException e) {
-            addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            addError(new L10NHelpers.UnlocalizedString(e.getMessage()), e.isTransientError());
         }
         return ItemStack.EMPTY;
     }
