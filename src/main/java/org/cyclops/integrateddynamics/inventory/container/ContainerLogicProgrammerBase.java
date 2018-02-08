@@ -348,10 +348,16 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
         @Override
         public void onDirty() {
+            IValueType filterIn1Prev = filterIn1;
+            IValueType filterIn2Prev = filterIn2;
+            IValueType filterOutPrev = filterOut;
+
             filterIn1 = getValueType(filterSlots, 0);
             filterIn2 = getValueType(filterSlots, 1);
             filterOut = getValueType(filterSlots, 2);
-            refreshFilter();
+            if (filterIn1Prev != filterIn1 || filterIn2Prev != filterIn2 || filterOutPrev != filterOut) {
+                refreshFilter();
+            }
         }
 
     }
