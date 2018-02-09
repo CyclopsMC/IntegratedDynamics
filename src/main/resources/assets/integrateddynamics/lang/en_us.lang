@@ -13,6 +13,7 @@ gui.integrateddynamics.button.rename=Rename
 gui.integrateddynamics.partsettings.update_interval=Ticks/Operation
 gui.integrateddynamics.partsettings.priority=Priority
 gui.integrateddynamics.partsettings.channel=Energy Channel
+gui.integrateddynamics.partsettings.channel.disabledinfo=Network energy consumption is disabled on this server.
 gui.integrateddynamics.partsettings.side=Target Side
 gui.integrateddynamics.delay.capacity=Capacity
 gui.integrateddynamics.part.properties=Properties:

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,12 +12,14 @@ import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.GuiNumberField;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
+import org.cyclops.cyclopscore.helper.GuiHelpers;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.button.IButtonActionClient;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -137,6 +140,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         numberFieldChannel.setVisible(true);
         numberFieldChannel.setTextColor(16777215);
         numberFieldChannel.setCanLoseFocus(true);
+        numberFieldChannel.setEnabled(isChannelEnabled());
 
         String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
         buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 178, this.guiTop + 8, fontRenderer.getStringWidth(save) + 6, 16, save, true));
@@ -175,11 +179,22 @@ public class GuiPartSettings extends GuiContainerExtended {
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 62, Helpers.RGBToInt(0, 0, 0));
-        fontRenderer.drawString(getChannelText(), guiLeft + 8, guiTop + 87, Helpers.RGBToInt(0, 0, 0));
+        fontRenderer.drawString(getChannelText(), guiLeft + 8, guiTop + 87, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        GuiHelpers.renderTooltip(this, 8, 87, 100, 20, mouseX, mouseY,
+                () -> Lists.newArrayList(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel.disabledinfo")));
     }
 
     protected String getChannelText() {
         return L10NHelpers.localize("gui.integrateddynamics.partsettings.channel");
+    }
+
+    protected boolean isChannelEnabled() {
+        return GeneralConfig.energyConsumptionMultiplier > 0;
     }
 
     @Override
