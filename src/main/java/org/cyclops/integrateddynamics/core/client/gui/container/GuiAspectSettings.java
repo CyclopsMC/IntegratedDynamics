@@ -48,10 +48,9 @@ public class GuiAspectSettings extends GuiContainerExtended {
     private static final int OK_WIDTH = 14;
     private static final int OK_HEIGHT = 12;
 
-    private static final int BUTTON_SAVE = 0;
-    private static final int BUTTON_LEFT = 1;
-    private static final int BUTTON_RIGHT = 2;
-    public static final int BUTTON_EXIT = 3;
+    private static final int BUTTON_LEFT = 0;
+    private static final int BUTTON_RIGHT = 1;
+    public static final int BUTTON_EXIT = 2;
 
     private final PartTarget target;
     private final IPartContainer partContainer;
@@ -88,23 +87,10 @@ public class GuiAspectSettings extends GuiContainerExtended {
         //noinspection deprecation
         this.propertyTypes = Lists.newArrayList(aspect.getDefaultProperties().getTypes());
 
-        putButtonAction(BUTTON_SAVE, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
-            @Override
-            public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
-                if(guiElement != null && lastError == null) {
-                    ContainerAspectSettings aspectContainer = (ContainerAspectSettings) container;
-                    aspectContainer.setValue(getActiveProperty(), guiElement.getValueType().deserialize(guiElement.getInputString()));
-                    try {
-                        actionPerformed(buttonExit);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
         putButtonAction(BUTTON_LEFT, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
             @Override
             public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
+                saveSetting();
                 if(getActivePropertyIndex() > 0) {
                     setActiveProperty(getActivePropertyIndex() - 1);
                     refreshButtonEnabled();
@@ -114,6 +100,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
         putButtonAction(BUTTON_RIGHT, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
             @Override
             public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
+                saveSetting();
                 if(getActivePropertyIndex() < propertyTypes.size()) {
                     setActiveProperty(getActivePropertyIndex() + 1);
                     refreshButtonEnabled();
@@ -123,9 +110,23 @@ public class GuiAspectSettings extends GuiContainerExtended {
         putButtonAction(BUTTON_EXIT, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
             @Override
             public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
+                saveSetting();
                 IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
             }
         });
+    }
+
+    protected void saveSetting() {
+        if(guiElement != null && lastError == null) {
+            ContainerAspectSettings aspectContainer = (ContainerAspectSettings) container;
+            aspectContainer.setValue(getActiveProperty(), guiElement.getValueType().deserialize(guiElement.getInputString()));
+        }
+    }
+
+    @Override
+    public void onGuiClosed() {
+        saveSetting();
+        super.onGuiClosed();
     }
 
     protected void refreshButtonEnabled() {
@@ -148,10 +149,6 @@ public class GuiAspectSettings extends GuiContainerExtended {
     public void initGui() {
         super.initGui();
         subGuiHolder.initGui(this.guiLeft, this.guiTop);
-        GuiButtonText buttonSave;
-        buttonList.add(buttonSave = new GuiButtonText(BUTTON_SAVE, this.guiLeft,  this.guiTop + 88,
-                L10NHelpers.localize("item.items.integrateddynamics.labeller.button.write")));
-        buttonSave.x += this.getBaseXSize() - buttonSave.width - 9;
         buttonList.add(buttonExit = new GuiButtonText(BUTTON_EXIT, guiLeft + 7, guiTop + 5, 12, 10, "<<", true));
         buttonList.add(buttonLeft = new GuiButtonText(BUTTON_LEFT, guiLeft + 21, guiTop + 5, 10, 10, "<", true));
         buttonList.add(buttonRight = new GuiButtonText(BUTTON_RIGHT, guiLeft + 159, guiTop + 5, 10, 10, ">", true));
