@@ -179,7 +179,7 @@ public class GuiPartSettings extends GuiContainerExtended {
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
         fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 62, Helpers.RGBToInt(0, 0, 0));
-        fontRenderer.drawString(getChannelText(), guiLeft + 8, guiTop + 87, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
+        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + 87, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
     }
 
     @Override
@@ -187,10 +187,6 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         GuiHelpers.renderTooltip(this, 8, 87, 100, 20, mouseX, mouseY,
                 () -> Lists.newArrayList(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel.disabledinfo")));
-    }
-
-    protected String getChannelText() {
-        return L10NHelpers.localize("gui.integrateddynamics.partsettings.channel");
     }
 
     protected boolean isChannelEnabled() {
