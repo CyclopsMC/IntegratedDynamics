@@ -71,12 +71,9 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyF
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-<<<<<<< HEAD
 import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentCapabilities;
-=======
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsSerializerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsSerializers;
->>>>>>> Add registry for ingredients serializations
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;

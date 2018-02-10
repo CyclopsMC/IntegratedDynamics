@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.google.common.collect.Iterables;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
@@ -34,7 +35,7 @@ public class ValueTypeListProxyPositionedRecipes extends ValueTypeListProxyPosit
 
     @Override
     public ValueObjectTypeRecipe.ValueRecipe get(int index) {
-        RecipeDefinition recipeDefinition = getRecipeHandler().getRecipes().get(index);
+        RecipeDefinition recipeDefinition = Iterables.get(getRecipeHandler().getRecipes(), index);
         return ValueObjectTypeRecipe.ValueRecipe.of(new ValueObjectTypeRecipe.Recipe(
                 ValueObjectTypeIngredients.ValueIngredients.of(new IngredientsRecipeIngredientsWrapper(recipeDefinition.getInput())),
                 ValueObjectTypeIngredients.ValueIngredients.of(new IngredientsRecipeIngredientsWrapper(recipeDefinition.getOutput())
