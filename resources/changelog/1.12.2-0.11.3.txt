@@ -1,0 +1,20 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.4 or higher.
+
+Additions:
+* Add human-readable Display Panel view for Operators, Closes #515
+
+Changes:
+* Remove write button in aspect properties, Closes #379
+  Aspect properties are now saved when the gui is closed,
+  which makes configuring many properties (like in IT) a lot more convenient.
+* Gray out part channel setting if energy is not applicable, CyclopsMC/IntegratedTunnels#109
+
+Fixes:
+* Fix LP scrolling bar resetting when pulling item out of result, Closes #532
+* Fix properties of errored aspects not applying, Closes #519
+* Fix Energy Batteries not having break particles, Closes #520
+* Fix positioned iterators possibly becoming invalid in the same tick
+  This was bug introduced because of the new round-robin iterators.
+  This caused loss of items in some cases when using the
+  IT player simulator, CyclopsMC/IntegratedTunnels#111
