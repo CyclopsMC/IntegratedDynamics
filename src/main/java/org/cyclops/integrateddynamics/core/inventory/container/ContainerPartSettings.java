@@ -63,7 +63,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         this.world = player.getEntityWorld();
         this.pos = player.getPosition();
 
-        addPlayerInventory(player.inventory, 27, 107);
+        addPlayerInventory(player.inventory, 27, getPlayerInventoryOffsetY());
 
         lastUpdateValueId = getNextValueId();
         lastPriorityValueId = getNextValueId();
@@ -84,6 +84,10 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
                 }
             }
         });
+    }
+
+    protected int getPlayerInventoryOffsetY() {
+        return 107;
     }
 
     @Override
@@ -130,14 +134,12 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         super.onUpdate(valueId, value);
         try {
             if(!world.isRemote) {
-                getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
                 DimPos dimPos = getTarget().getCenter().getPos();
                 INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos(), getTarget().getCenter().getSide());
                 PartTarget target = getTarget();
-                EnumFacing targetSide = getLastSideValue() >= 0 ? EnumFacing.VALUES[getLastSideValue()] : null;
-                getPartType().setTargetSideOverride(getPartState(), targetSide);
-                if (targetSide != null) {
-                    target = target.forTargetSide(targetSide);
+                updatePartSettings();
+                if (getPartState().getTargetSideOverride() != null) {
+                    target = target.forTargetSide(getPartState().getTargetSideOverride());
                 }
                 PartNetworkElement networkElement = new PartNetworkElement(getPartType(), target);
                 network.setPriorityAndChannel(networkElement, getLastPriorityValue(), getLastChannelValue());
@@ -145,5 +147,11 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         } catch (PartStateException e) {
             player.closeScreen();
         }
+    }
+
+    protected void updatePartSettings() {
+        getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
+        EnumFacing targetSide = getLastSideValue() >= 0 ? EnumFacing.VALUES[getLastSideValue()] : null;
+        getPartType().setTargetSideOverride(getPartState(), targetSide);
     }
 }

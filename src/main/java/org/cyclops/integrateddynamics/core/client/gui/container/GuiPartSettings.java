@@ -17,8 +17,6 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
-import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
-import org.cyclops.cyclopscore.inventory.container.button.IButtonActionClient;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -65,28 +63,31 @@ public class GuiPartSettings extends GuiContainerExtended {
      * @param partType The part type.
      */
     public GuiPartSettings(EntityPlayer player, PartTarget target, IPartContainer partContainer, IPartType partType) {
-        super(new ContainerPartSettings(player, target, partContainer, partType));
+        this(new ContainerPartSettings(player, target, partContainer, partType), player, target, partContainer, partType);
+    }
+
+    public GuiPartSettings(ContainerPartSettings containerPartSettings, EntityPlayer player, PartTarget target, IPartContainer partContainer, IPartType partType) {
+        super(containerPartSettings);
         this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
 
-        putButtonAction(BUTTON_SAVE, new IButtonActionClient<GuiContainerExtended, ExtendedInventoryContainer>() {
-            @Override
-            public void onAction(int buttonId, GuiContainerExtended gui, ExtendedInventoryContainer container) {
-                IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
-                try {
-                    int updateInterval = numberFieldUpdateInterval.getInt();
-                    int priority = numberFieldPriority.getInt();
-                    int channel = numberFieldChannel.getInt();
-                    EnumFacing selectedSide = dropdownFieldSide.getSelectedDropdownPossibility() == null ? null : dropdownFieldSide.getSelectedDropdownPossibility().getValue();
-                    int side = selectedSide != null && selectedSide != getDefaultSide() ? selectedSide.ordinal() : -1;
-                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
-                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastPriorityValueId(), priority);
-                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastChannelValueId(), channel);
-                    ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastSideValueId(), side);
-                } catch (NumberFormatException e) { }
-            }
-        });
+        putButtonAction(BUTTON_SAVE, (buttonId, gui, container) -> onSave());
+    }
+
+    protected void onSave() {
+        IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
+        try {
+            int updateInterval = numberFieldUpdateInterval.getInt();
+            int priority = numberFieldPriority.getInt();
+            int channel = numberFieldChannel.getInt();
+            EnumFacing selectedSide = dropdownFieldSide.getSelectedDropdownPossibility() == null ? null : dropdownFieldSide.getSelectedDropdownPossibility().getValue();
+            int side = selectedSide != null && selectedSide != getDefaultSide() ? selectedSide.ordinal() : -1;
+            ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
+            ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastPriorityValueId(), priority);
+            ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastChannelValueId(), channel);
+            ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastSideValueId(), side);
+        } catch (NumberFormatException e) { }
     }
 
     @Override
