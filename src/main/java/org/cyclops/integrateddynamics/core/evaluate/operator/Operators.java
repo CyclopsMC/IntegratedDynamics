@@ -3089,16 +3089,13 @@ public final class Operators {
      */
     public static final IOperator INGREDIENTS_WITH_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
             .operatorName("withItems").symbol("Ingr.withItems")
-            .function(new OperatorBase.IFunction() {
-                @Override
-                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                    ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> list =
-                            variables.getValue(2);
-                    return ValueObjectTypeIngredients.ValueIngredients.of(
-                            ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.ITEMSTACK, list));
-                }
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> list =
+                        variables.getValue(2);
+                return ValueObjectTypeIngredients.ValueIngredients.of(
+                        ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.ITEMSTACK, list));
             }).build());
 
     /**
@@ -3106,15 +3103,12 @@ public final class Operators {
      */
     public static final IOperator INGREDIENTS_WITH_ITEM_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
             .operatorName("withItem_p").symbol("Ingr.withItem_p")
-            .function(new OperatorBase.IFunction() {
-                @Override
-                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                    ValueTypeOperator.ValueOperator operator = variables.getValue(2);
-                    return ValueObjectTypeIngredients.ValueIngredients.of(
-                            ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.ITEMSTACK, operator));
-                }
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                ValueTypeOperator.ValueOperator operator = variables.getValue(2);
+                return ValueObjectTypeIngredients.ValueIngredients.of(
+                        ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.ITEMSTACK, operator));
             }).build());
 
     /**
@@ -3122,16 +3116,13 @@ public final class Operators {
      */
     public static final IOperator INGREDIENTS_WITH_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
             .operatorName("withFluids").symbol("Ingr.withFluids")
-            .function(new OperatorBase.IFunction() {
-                @Override
-                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                    ValueTypeList.ValueList<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> list =
-                            variables.getValue(2);
-                    return ValueObjectTypeIngredients.ValueIngredients.of(
-                            ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.FLUIDSTACK, list));
-                }
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                ValueTypeList.ValueList<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> list =
+                        variables.getValue(2);
+                return ValueObjectTypeIngredients.ValueIngredients.of(
+                        ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.FLUIDSTACK, list));
             }).build());
 
     /**
@@ -3139,15 +3130,12 @@ public final class Operators {
      */
     public static final IOperator INGREDIENTS_WITH_FLUID_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
             .operatorName("withFluid_p").symbol("Ingr.withFluid_p")
-            .function(new OperatorBase.IFunction() {
-                @Override
-                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                    ValueTypeOperator.ValueOperator operator = variables.getValue(2);
-                    return ValueObjectTypeIngredients.ValueIngredients.of(
-                            ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.FLUIDSTACK, operator));
-                }
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                ValueTypeOperator.ValueOperator operator = variables.getValue(2);
+                return ValueObjectTypeIngredients.ValueIngredients.of(
+                        ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.FLUIDSTACK, operator));
             }).build());
 
     /**
@@ -3155,16 +3143,13 @@ public final class Operators {
      */
     public static final IOperator INGREDIENTS_WITH_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
             .operatorName("withEnergy").symbol("Ingr.withEnergy")
-            .function(new OperatorBase.IFunction() {
-                @Override
-                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                    ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger> list =
-                            variables.getValue(2);
-                    return ValueObjectTypeIngredients.ValueIngredients.of(
-                            ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.ENERGY, list));
-                }
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger> list =
+                        variables.getValue(2);
+                return ValueObjectTypeIngredients.ValueIngredients.of(
+                        ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.ENERGY, list));
             }).build());
 
     /**
@@ -3172,15 +3157,12 @@ public final class Operators {
      */
     public static final IOperator INGREDIENTS_WITH_ENERGY_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
             .operatorName("withEnergy_p").symbol("Ingr.withEnergy_p")
-            .function(new OperatorBase.IFunction() {
-                @Override
-                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                    ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                    ValueTypeOperator.ValueOperator operator = variables.getValue(2);
-                    return ValueObjectTypeIngredients.ValueIngredients.of(
-                            ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.ENERGY, operator));
-                }
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger index = variables.getValue(1);
+                ValueTypeOperator.ValueOperator operator = variables.getValue(2);
+                return ValueObjectTypeIngredients.ValueIngredients.of(
+                        ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.ENERGY, operator));
             }).build());
 
     /**
@@ -3192,15 +3174,12 @@ public final class Operators {
      */
     public static final IOperator RECIPE_INPUT = REGISTRY.register(OperatorBuilders.RECIPE_1_SUFFIX_LONG
             .output(ValueTypes.OBJECT_INGREDIENTS).operatorName("input").symbol("recipe in")
-            .function(new OperatorBase.IFunction() {
-                @Override
-                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
-                    if (value.getRawValue().isPresent()) {
-                        return value.getRawValue().get().getInput();
-                    }
-                    return ValueObjectTypeIngredients.ValueIngredients.of(null);
+            .function(variables -> {
+                ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
+                if (value.getRawValue().isPresent()) {
+                    return value.getRawValue().get().getInput();
                 }
+                return ValueObjectTypeIngredients.ValueIngredients.of(null);
             }).build());
 
     /**
@@ -3208,15 +3187,12 @@ public final class Operators {
      */
     public static final IOperator RECIPE_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_1_SUFFIX_LONG
             .output(ValueTypes.OBJECT_INGREDIENTS).operatorName("output").symbol("recipe out")
-            .function(new OperatorBase.IFunction() {
-                @Override
-                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
-                    if (value.getRawValue().isPresent()) {
-                        return value.getRawValue().get().getOutput();
-                    }
-                    return ValueObjectTypeIngredients.ValueIngredients.of(null);
+            .function(variables -> {
+                ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
+                if (value.getRawValue().isPresent()) {
+                    return value.getRawValue().get().getOutput();
                 }
+                return ValueObjectTypeIngredients.ValueIngredients.of(null);
             }).build());
 
     /**
