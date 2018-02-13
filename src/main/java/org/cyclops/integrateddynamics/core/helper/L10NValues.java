@@ -81,6 +81,7 @@ public class L10NValues {
     public static final String OPERATOR_ERROR_CYCLICREFERENCE = "operator." + NS + ".error.cyclic_reference";
     public static final String OPERATOR_ERROR_WRONGINPUTLENGTH = "operator." + NS + ".error.wrong_input_length";
     public static final String OPERATOR_ERROR_NULLTYPE = "operator." + NS + ".error.null_type";
+    // 0: operator, 1: given-input, 2: position, 3: expected-input
     public static final String OPERATOR_ERROR_WRONGTYPE = "operator." + NS + ".error.wrong_type";
     public static final String OPERATOR_ERROR_WRONGCURRYINGTYPE = "operator." + NS + ".error.wrong_currying_type";
     // 0: operator, 1: given-output, 2: expected-output

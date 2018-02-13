@@ -2359,7 +2359,7 @@ public final class Operators {
     public static final IOperator OPERATOR_APPLY = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(1))
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply")
-            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST))
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
                     input -> {
                         IOperator innerOperator = input.getLeft();
@@ -2379,7 +2379,7 @@ public final class Operators {
             .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(2))
             .inputTypes(ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY)
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply2")
-            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST, ValueTypes.LIST))
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
                     input -> {
                         IOperator innerOperator = input.getLeft();
@@ -2397,7 +2397,7 @@ public final class Operators {
             .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(3))
             .inputTypes(ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY)
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply3")
-            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST, ValueTypes.LIST, ValueTypes.LIST))
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
                     input -> {
                         IOperator innerOperator = input.getLeft();

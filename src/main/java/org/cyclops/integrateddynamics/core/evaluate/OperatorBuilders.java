@@ -176,7 +176,15 @@ public class OperatorBuilders {
     // --------------- Operator builders ---------------
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR_TAKE_OPERATOR = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input.getValue(0)).getRawValue();
+                IValue value = input.getValue(0);
+                // In some cases, validation can succeed because of parameters being ANY.
+                // In this case, throw an eval exception
+                if (!(value instanceof ValueTypeOperator.ValueOperator)) {
+                    throw new EvaluationException(L10NHelpers.localize(L10NValues.OPERATOR_ERROR_WRONGTYPE, "",
+                            L10NHelpers.localize(value.getType().getUnlocalizedName()), 0,
+                            L10NHelpers.localize(ValueTypes.OPERATOR.getUnlocalizedName())));
+                }
+                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) value).getRawValue();
                 if (innerOperator.getRequiredInputLength() == 1) {
                     IValue applyingValue = input.getValue(1);
                     L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
@@ -260,7 +268,13 @@ public class OperatorBuilders {
     public static OperatorBuilder.IConditionalOutputTypeDeriver newOperatorConditionalOutputDeriver(final int consumeArguments) {
         return (operator, input) -> {
             try {
-                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input[0].getValue()).getRawValue();
+                IValue value = input[0].getValue();
+                // In some cases, validation can succeed because of parameters being ANY.
+                // In this case, return a dummy type.
+                if (!(value instanceof ValueTypeOperator.ValueOperator)) {
+                    return ValueTypes.CATEGORY_ANY;
+                }
+                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) value).getRawValue();
                 if (innerOperator.getRequiredInputLength() == consumeArguments) {
                     IVariable[] innerVariables = Arrays.copyOfRange(input, consumeArguments, input.length);
                     L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(ValueHelpers.from(innerVariables));

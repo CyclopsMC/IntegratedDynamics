@@ -32,6 +32,7 @@ public class TestOperatorOperators {
     private DummyVariableInteger i2;
     private DummyVariableInteger i3;
     private DummyVariableInteger i4;
+    private DummyVariable i4Any;
 
     private DummyVariableOperator oGeneralIdentity;
     private DummyVariableOperator oLogicalNot;
@@ -64,6 +65,7 @@ public class TestOperatorOperators {
         i2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2));
         i3 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3));
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
+        i4Any = new DummyVariable<>(ValueTypes.CATEGORY_ANY, ValueTypeInteger.ValueInteger.of(4));
 
         oGeneralIdentity          = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
         oLogicalNot               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
@@ -162,10 +164,16 @@ public class TestOperatorOperators {
         Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalNot, oGeneralIdentity});
     }
 
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypeAnyApply() throws EvaluationException {
+        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{i4Any, i4Any});
+    }
+
     @Test
     public void testValidateTypesApply() {
         assertThat(Operators.OPERATOR_APPLY.validateTypes(new IValueType[]{}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY.validateTypes(new IValueType[]{ValueTypes.INTEGER}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), nullValue());
     }
 
@@ -180,6 +188,11 @@ public class TestOperatorOperators {
 
         assertThat(Operators.OPERATOR_APPLY.getConditionalOutputType(new IVariable[]{oLogicalNot, bFalse}),
                 CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
+
+        // In some cases, validation can succeed because of parameters being ANY.
+        // In this case, the tested method should be able to handle ANY variables with possibly non-operator values.
+        assertThat(Operators.OPERATOR_APPLY.getConditionalOutputType(new IVariable[]{i4Any, i4Any}),
+                CoreMatchers.<IValueType>is(ValueTypes.CATEGORY_ANY));
     }
 
     @Test
