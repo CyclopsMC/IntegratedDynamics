@@ -467,6 +467,7 @@
                 <section name="info_book.integrateddynamics.manual.parts.other.display">
                     <tag>part_display_panel_item</tag>
                     <paragraph>info_book.integrateddynamics.manual.parts.other.display.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.parts.other.display.text2</paragraph>
                     <appendix type="crafting_recipe">integrateddynamics:part_display_panel_item</appendix>
                 </section>
                 <section name="info_book.integrateddynamics.manual.parts.other.connector_mono_directional">
