@@ -306,6 +306,12 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     }
 
     @Override
+    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
+        super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
+        NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null);
+    }
+
+    @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
         super.updateTick(world, pos, state, rand);
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
