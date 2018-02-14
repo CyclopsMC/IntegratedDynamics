@@ -170,6 +170,7 @@ public class TileDelay extends TileProxy {
                 getValues().clear();
                 this.list = ValueTypes.LIST.getDefault();
             }
+            this.variable.invalidate();
         }
     }
 }
