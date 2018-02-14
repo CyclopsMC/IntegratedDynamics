@@ -54,7 +54,7 @@ public class GuiDelay extends GuiActiveVariableBase<ContainerDelay, TileDelay> {
     public void initGui() {
         super.initGui();
 
-        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 68, guiTop + 102, 103, 14, true, true);
+        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 98, guiTop + 102, 73, 14, true, true);
         numberFieldUpdateInterval.setPositiveOnly(true);
         numberFieldUpdateInterval.setMaxStringLength(64);
         numberFieldUpdateInterval.setMaxStringLength(15);
@@ -62,7 +62,7 @@ public class GuiDelay extends GuiActiveVariableBase<ContainerDelay, TileDelay> {
         numberFieldUpdateInterval.setTextColor(16777215);
         numberFieldUpdateInterval.setCanLoseFocus(true);
 
-        numberFieldCapacity = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 68, guiTop + 126, 103, 14, true, true);
+        numberFieldCapacity = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 98, guiTop + 126, 73, 14, true, true);
         numberFieldCapacity.setMinValue(1);
         numberFieldCapacity.setMaxValue(BlockDelayConfig.maxHistoryCapacity);
         numberFieldCapacity.setMaxStringLength(64);
