@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.4 or higher.
+
+Additions:
+* Add copy functionality to the display panel, Closes #534
+  This introduces a new copy button and hotkey to copy the current contents of the display panel to the clipboard of your operating system.
+
+Fixes:
+* Fix label overlapping with button in delayer gui
+* Fix values depending on delayer results never updating, Closes #539
+* Fix block reader not updating on all types of block updates, Closes #538
+* Fix crash when incorrectly applying with non-ops as first arg, Closes #537
+* Fix part settings tooltip on channel being disabled always shown, Closes #535
