@@ -236,12 +236,12 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
 
         Map<RecipeComponent<?, ?>, List<List<? extends IValue>>> lists = Maps.newIdentityHashMap();
-        lists.put(RecipeComponent.ITEMSTACK, itemStacks.stream().map(stack -> Collections.singletonList(ValueObjectTypeItemStack
-                .ValueItemStack.of(stack.getLeft()))).collect(Collectors.toList()));
+        lists.put(RecipeComponent.ITEMSTACK, itemStacks.stream().map(stack -> Collections.singletonList(
+                ValueObjectTypeItemStack.ValueItemStack.of(stack.getLeft()))).collect(Collectors.toList()));
         lists.put(RecipeComponent.FLUIDSTACK, fluidStack != null ? Collections.singletonList(
                 Collections.singletonList(ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack))) : Collections.emptyList());
-        lists.put(RecipeComponent.ENERGY, energy > 0 ? Collections.singletonList(Collections.singletonList(ValueTypeInteger
-                .ValueInteger.of(energy))) : Collections.emptyList());
+        lists.put(RecipeComponent.ENERGY, energy > 0 ? Collections.singletonList(Collections.singletonList(
+                ValueTypeInteger.ValueInteger.of(energy))) : Collections.emptyList());
 
         return ValueObjectTypeIngredients.ValueIngredients.of(new IngredientsRecipeItemMatch(lists,
                 itemStacks.stream().map(Pair::getRight).collect(Collectors.toList())));
