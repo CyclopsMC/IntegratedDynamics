@@ -6,6 +6,7 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -14,6 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.recipe.IIngredientsSerializerRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.recipe.IRecipeComponentHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IIngredients;
+import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsSerializerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeIngredientsLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -27,8 +29,8 @@ import java.util.List;
 public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectTypeIngredients.ValueIngredients> implements
         IValueTypeNamed<ValueObjectTypeIngredients.ValueIngredients>, IValueTypeNullable<ValueObjectTypeIngredients.ValueIngredients> {
 
-    public static IIngredientsSerializerRegistry SERIALIZERS = IntegratedDynamics._instance.getRegistryManager()
-            .getRegistry(IIngredientsSerializerRegistry.class);
+    public static IIngredientsSerializerRegistry SERIALIZERS = MinecraftHelpers.isModdedEnvironment() ? IntegratedDynamics._instance.getRegistryManager()
+            .getRegistry(IIngredientsSerializerRegistry.class) : IngredientsSerializerRegistry.getInstance();
 
     public ValueObjectTypeIngredients() {
         super("ingredients");
