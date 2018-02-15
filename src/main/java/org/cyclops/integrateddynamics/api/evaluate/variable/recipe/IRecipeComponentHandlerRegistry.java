@@ -16,12 +16,13 @@ public interface IRecipeComponentHandlerRegistry extends IRegistry {
 
     /**
      * Register a new recipe component handler.
+     * @param handler The new handler.
      * @param <VT> The value type.
      * @param <V> The value.
-     * @param <V> The vaue type
      * @param <T> The instance type.
      * @param <R> The recipe target type, may be Void.
      * @param <C> The component type.
+     * @param <H> The handler type.
      * @return The registered handler.
      */
     public <VT extends IValueType<V>, V extends IValue, T, R, C extends RecipeComponent<T, R>,
@@ -30,6 +31,8 @@ public interface IRecipeComponentHandlerRegistry extends IRegistry {
     /**
      * Get a handler by component type.
      * @param component The component type.
+     * @param <VT> The value type.
+     * @param <V> The value.
      * @param <T> The instance type.
      * @param <R> The recipe target type, may be Void.
      * @param <C> The component type.
