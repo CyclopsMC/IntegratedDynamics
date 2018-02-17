@@ -94,6 +94,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         IAspect aspect = getActiveAspect(target, state);
         if (aspect != null) {
             aspect.update(partNetwork, this, target, state);
+            onVariableContentsUpdated(partNetwork, target, state);
         }
     }
 
