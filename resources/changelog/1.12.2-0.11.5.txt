@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.4 or higher.
+
+Additions:
+* Add dimension blacklist options for wild Menril Tree and Meneglin biome, Closes #541
+  This can now be achieved using the `meneglinBiomeDimensionBlacklist` and `wildMenrilTreeDimensionBlacklist` config options.
+
+Changes:
+* Output at most 4 string per wool in (mechanical) squeezer, Closes #542
