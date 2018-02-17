@@ -144,6 +144,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             // tick-1: Part tick: update the value again, the old value has still not been sent here!
             // tick-1: -- send all block updates to client --- This will contain the value that was set in tick-1.
             state.onDirty();
+            onVariableContentsUpdated(partNetwork, target, state);
             BlockHelpers.markForUpdate(target.getCenter().getPos().getWorld(), target.getCenter().getPos().getBlockPos());
         }
     }
