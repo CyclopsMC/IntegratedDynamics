@@ -64,6 +64,12 @@ public class GeneralConfig extends DummyConfig {
     public static int wildMenrilTreeChance = 350;
 
     /**
+     * List of dimension IDs in which wild menril trees should not generate.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "List of dimension IDs in which wild menril trees should not generate.")
+    public static int[] wildMenrilTreeDimensionBlacklist = new int[]{-1, 1};
+
+    /**
      * If cable models should be cached for rendering optimization.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If cable models should be cached for rendering optimization.", isCommandable = true)

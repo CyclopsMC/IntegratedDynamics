@@ -3,9 +3,11 @@ package org.cyclops.integrateddynamics.world.biome;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBiome;
 import org.cyclops.cyclopscore.config.extendedconfig.BiomeConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
@@ -44,7 +46,14 @@ public class BiomeMeneglin extends ConfigurableBiome {
         this.decorator.treesPerChunk = 3;
         this.decorator.flowersPerChunk = 70;
     }
-    
+
+    @Override
+    public void decorate(World worldIn, Random rand, BlockPos pos) {
+        if (!ArrayUtils.contains(BiomeMeneglinConfig.meneglinBiomeDimensionBlacklist, worldIn.provider.getDimension())) {
+            super.decorate(worldIn, rand, pos);
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public int getGrassColorAtPos(BlockPos blockPos) {

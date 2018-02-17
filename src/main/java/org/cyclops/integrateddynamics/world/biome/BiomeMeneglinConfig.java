@@ -27,6 +27,12 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     public static int spawnWeight = 5;
 
     /**
+     * List of dimension IDs in which the meneglin biome should not generate.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "List of dimension IDs in which the meneglin biome should not generate.")
+    public static int[] meneglinBiomeDimensionBlacklist = new int[]{-1, 1};
+
+    /**
      * Make a new instance.
      */
     public BiomeMeneglinConfig() {

@@ -5,8 +5,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockSapling;
-import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -53,7 +53,8 @@ public class BlockMenrilSaplingConfig extends BlockConfig {
     @SubscribeEvent
     public void onDecorate(DecorateBiomeEvent.Decorate decorateBiomeEvent) {
         if(decorateBiomeEvent.getType() == DecorateBiomeEvent.Decorate.EventType.TREE) {
-            if(GeneralConfig.wildMenrilTreeChance > 0 && decorateBiomeEvent.getRand().nextInt(GeneralConfig.wildMenrilTreeChance) == 0) {
+            if(!ArrayUtils.contains(GeneralConfig.wildMenrilTreeDimensionBlacklist, decorateBiomeEvent.getWorld().provider.getDimension())
+                    && GeneralConfig.wildMenrilTreeChance > 0 && decorateBiomeEvent.getRand().nextInt(GeneralConfig.wildMenrilTreeChance) == 0) {
                 int k6 = decorateBiomeEvent.getRand().nextInt(16) + 8;
                 int l = decorateBiomeEvent.getRand().nextInt(16) + 8;
                 MeneglinBiomeDecorator.MENRIL_TREE_GEN.setDecorationDefaults();
