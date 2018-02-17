@@ -10,6 +10,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
+import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -31,7 +32,7 @@ import java.util.Objects;
  */
 @Data
 public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> extends NetworkElementBase
-        implements IPartNetworkElement<P, S>, IEnergyConsumingNetworkElement {
+        implements IPartNetworkElement<P, S>, IEnergyConsumingNetworkElement, IEventListenableNetworkElement<P> {
 
     private final P part;
     private final PartTarget target;

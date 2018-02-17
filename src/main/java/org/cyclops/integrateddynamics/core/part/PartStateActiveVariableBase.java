@@ -11,13 +11,19 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
+import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
+import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
@@ -31,6 +37,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
 
     private boolean checkedForWriteVariable = false;
     protected IVariableFacade currentVariableFacade = null;
+    private final IVariableContainer variableContainer;
     @Getter
     @Setter
     private boolean deactivated = false;
@@ -40,6 +47,8 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
         this.inventory.addDirtyMarkListener(this); // No need to remove myself eventually. If I am removed, inv is also removed.
+        variableContainer = new VariableContainerDefault();
+        addVolatileCapability(VariableContainerConfig.CAPABILITY, variableContainer);
     }
 
     /**
@@ -103,6 +112,12 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         addGlobalError(null);
         this.currentVariableFacade = null;
         //this.deactivated = false; // This *should* not be required anymore, re-activation is handled in AspectWriteBase#update.
+
+        // Refresh any contained variables
+        PartPos center = target.getCenter();
+        INetwork network = NetworkHelpers.getNetwork(center.getPos().getWorld(), center.getPos().getBlockPos(),
+                center.getSide());
+        variableContainer.refreshVariables(network, inventory, false);
     }
 
     /**

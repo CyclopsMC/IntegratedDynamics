@@ -84,38 +84,7 @@ public class TileVariablestore extends TileCableConnectableInventory
     }
 
     protected void refreshVariables(IInventory inventory, boolean sendVariablesUpdateEvent) {
-        // Invalidate variables
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(getNetwork());
-        if (partNetwork != null) {
-            for (IVariableFacade variableFacade : variableContainer.getVariableCache().values()) {
-                IVariable<?> variable = variableFacade.getVariable(partNetwork);
-                if (variable != null) {
-                    if (variable.canInvalidate()) {
-                        variable.invalidate();
-                    }
-                }
-            }
-        }
-
-        // Reset variable facades
-        variableContainer.getVariableCache().clear();
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            ItemStack itemStack = inventory.getStackInSlot(i);
-            if (!itemStack.isEmpty()) {
-                IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-                if (variableFacade != null && variableFacade.isValid()) {
-                    variableContainer.getVariableCache().put(variableFacade.getId(), variableFacade);
-                }
-            }
-        }
-
-        // Trigger event in network
-        if (sendVariablesUpdateEvent) {
-            INetwork network = getNetwork();
-            if (network != null) {
-                network.getEventBus().post(new VariableContentsUpdatedEvent(network));
-            }
-        }
+        variableContainer.refreshVariables(getNetwork(), inventory, sendVariablesUpdateEvent);
     }
 
     @Override
