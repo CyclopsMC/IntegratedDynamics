@@ -80,17 +80,17 @@ public class TileVariablestore extends TileCableConnectableInventory
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        refreshVariables(inventory, true);
+        refreshVariables(true);
     }
 
-    protected void refreshVariables(IInventory inventory, boolean sendVariablesUpdateEvent) {
+    protected void refreshVariables(boolean sendVariablesUpdateEvent) {
         variableContainer.refreshVariables(getNetwork(), inventory, sendVariablesUpdateEvent);
     }
 
     @Override
     public void onDirty() {
         if(!world.isRemote) {
-            refreshVariables(inventory, true);
+            refreshVariables(true);
         }
     }
 
@@ -110,7 +110,7 @@ public class TileVariablestore extends TileCableConnectableInventory
         super.updateTileEntity();
         if (shouldSendUpdateEvent && getNetwork() != null) {
             shouldSendUpdateEvent = false;
-            refreshVariables(inventory, true);
+            refreshVariables(true);
         }
     }
 
@@ -127,7 +127,7 @@ public class TileVariablestore extends TileCableConnectableInventory
     @Override
     public void onEvent(INetworkEvent event, VariablestoreNetworkElement networkElement) {
         if(event instanceof VariableContentsUpdatedEvent) {
-            refreshVariables(inventory, false);
+            refreshVariables(false);
         }
     }
 }
