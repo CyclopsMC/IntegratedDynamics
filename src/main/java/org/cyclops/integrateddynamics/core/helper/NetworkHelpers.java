@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
@@ -68,6 +69,16 @@ public class NetworkHelpers {
             return networkCarrier.getNetwork();
         }
         return null;
+    }
+
+
+    /**
+     * Get the network at the given position.
+     * @param partPos The part position
+     * @return The network, or null if no network or network carrier present.
+     */
+    public static INetwork getNetwork(PartPos partPos) {
+        return NetworkHelpers.getNetwork(partPos.getPos().getWorld(), partPos.getPos().getBlockPos(), partPos.getSide());
     }
 
     /**
