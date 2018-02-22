@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.block.BlockCreativeEnergyBattery;
+import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
@@ -965,10 +966,10 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "fecapacity(apple) == false");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{iEnergyBatteryEmpty});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), 100000, "fecapacity(energyBatteryEmpty) == 100000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), BlockEnergyBatteryConfig.capacity, "fecapacity(energyBatteryEmpty) == BlockEnergyBatteryConfig.capacity");
 
         IValue res3 = Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), 100000, "fecapacity(energyBatteryFull) == 100000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), BlockEnergyBatteryConfig.capacity, "fecapacity(energyBatteryFull) == BlockEnergyBatteryConfig.capacity");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
