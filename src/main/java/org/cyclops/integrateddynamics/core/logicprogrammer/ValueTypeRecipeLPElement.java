@@ -16,11 +16,19 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
+import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
+import org.cyclops.commoncapabilities.api.ingredient.FluidHandlerRecipeTarget;
+import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.commoncapabilities.api.ingredient.ItemHandlerRecipeTarget;
+import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.client.gui.component.input.GuiTextFieldExtended;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -33,15 +41,11 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeRecipe;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeItemMatch;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.ingredient.ItemMatchType;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRecipeValueChangedPacket;
 
@@ -62,7 +66,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     @SideOnly(Side.CLIENT)
     private SubGuiRenderPattern lastGui;
 
-    private NonNullList<Pair<ItemStack, IngredientsRecipeItemMatch.ItemMatchType>> inputStacks;
+    private NonNullList<Pair<ItemStack, ItemMatchType>> inputStacks;
     private ItemStack inputFluid;
     @Getter
     @Setter
@@ -70,7 +74,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     @Getter
     @Setter
     private String inputEnergy = "0";
-    private NonNullList<Pair<ItemStack, IngredientsRecipeItemMatch.ItemMatchType>> outputStacks;
+    private NonNullList<ItemStack> outputStacks;
     private ItemStack outputFluid;
     @Getter
     @Setter
@@ -79,8 +83,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     @Setter
     private String outputEnergy = "0";
 
-    public static IngredientsRecipeItemMatch.ItemMatchType getDefaultItemMatch() {
-        return IngredientsRecipeItemMatch.ItemMatchType.ITEMMETA;
+    public static ItemMatchType getDefaultItemMatch() {
+        return ItemMatchType.ITEMMETA;
     }
 
     public ValueTypeRecipeLPElement() {
@@ -113,7 +117,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             }
         }
         if (slotId > 9 && slotId < 13) {
-            outputStacks.set(slotId - 10, Pair.of(itemStack.copy(), getDefaultItemMatch()));
+            outputStacks.set(slotId - 10, itemStack.copy());
         }
         if (slotId == 13) {
             outputFluid = itemStack.copy();
@@ -132,7 +136,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         boolean inputValid = inputStacks.stream().anyMatch(stack -> !stack.getLeft().isEmpty())
                 || !inputFluid.isEmpty() || !inputFluidAmount.equalsIgnoreCase("0")
                 || !inputEnergy.equalsIgnoreCase("0");
-        boolean outputValid = outputStacks.stream().anyMatch(stack -> !stack.getLeft().isEmpty())
+        boolean outputValid = outputStacks.stream().anyMatch(stack -> !stack.isEmpty())
                 || !outputFluid.isEmpty() || !outputFluidAmount.equalsIgnoreCase("0")
                 || !outputEnergy.equalsIgnoreCase("0");
         return inputValid && outputValid;
@@ -144,7 +148,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         inputFluid = ItemStack.EMPTY;
         inputFluidAmount = "0";
         inputEnergy = "0";
-        outputStacks = NonNullList.withSize(3, Pair.of(ItemStack.EMPTY, getDefaultItemMatch()));
+        outputStacks = NonNullList.withSize(3, ItemStack.EMPTY);
         outputFluid = ItemStack.EMPTY;
         outputFluidAmount = "0";
         outputEnergy = "0";
@@ -202,8 +206,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     @Override
     public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
-        if (slotId >= 40 && slotId < 49 && mouseButton == 0 && clickType == ClickType.QUICK_MOVE) {
-            int id = slotId - 40;
+        if (slotId >= 4 && slotId < 13 && mouseButton == 0 && clickType == ClickType.QUICK_MOVE) {
+            int id = slotId - 4;
             this.inputStacks.set(id, Pair.of(this.inputStacks.get(id).getLeft(), this.inputStacks.get(id).getRight().next()));
             slot.setBackgroundName(this.inputStacks.get(id).getRight().getSlotSpriteName().toString());
             return true;
@@ -217,9 +221,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return 64;
     }
 
-    protected ValueObjectTypeIngredients.ValueIngredients getIngredients(List<Pair<ItemStack, IngredientsRecipeItemMatch.ItemMatchType>> itemStacks,
-                                                                         ItemStack fluid, int fluidAmount,
-                                                                         int energy) {
+    protected Map<IngredientComponent<?, ?, ?>, List<List<IPrototypedIngredient<?, ?, ?>>>> getInputs(List<Pair<ItemStack, ItemMatchType>> itemStacks,
+                                                                                                      ItemStack fluid, int fluidAmount,
+                                                                                                      int energy) {
         // Cut of itemStacks list until last non-empty stack
         int lastNonEmpty = 0;
         for (int i = 0; i < itemStacks.size(); i++) {
@@ -235,25 +239,68 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStack.amount = fluidAmount;
         }
 
-        Map<RecipeComponent<?, ?>, List<List<? extends IValue>>> lists = Maps.newIdentityHashMap();
-        lists.put(RecipeComponent.ITEMSTACK, itemStacks.stream().map(stack -> Collections.singletonList(
-                ValueObjectTypeItemStack.ValueItemStack.of(stack.getLeft()))).collect(Collectors.toList()));
-        lists.put(RecipeComponent.FLUIDSTACK, fluidStack != null ? Collections.singletonList(
-                Collections.singletonList(ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack))) : Collections.emptyList());
-        lists.put(RecipeComponent.ENERGY, energy > 0 ? Collections.singletonList(Collections.singletonList(
-                ValueTypeInteger.ValueInteger.of(energy))) : Collections.emptyList());
+        Map<IngredientComponent<?, ?, ?>, List<List<IPrototypedIngredient<?, ?, ?>>>> inputs = Maps.newIdentityHashMap();
+        List<List<IPrototypedIngredient<ItemStack, ItemHandlerRecipeTarget, Integer>>> items = itemStacks.stream()
+                .map(stack -> stack.getRight().getPrototypeHandler().getPrototypesFor(stack.getLeft()))
+                .collect(Collectors.toList());
+        List<List<IPrototypedIngredient<FluidStack, FluidHandlerRecipeTarget, Integer>>> fluids = fluidStack != null
+                ? Collections.singletonList(Collections.singletonList(new PrototypedIngredient<>(
+                        IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.NBT))) : Collections.emptyList();
+        List<List<IPrototypedIngredient<Integer, IEnergyStorage, Void>>> energies = energy > 0 ?
+                Collections.singletonList(Collections.singletonList(new PrototypedIngredient<>(
+                        IngredientComponent.ENERGY, energy, null))) : Collections.emptyList();
+        if (!items.isEmpty()) {
+            inputs.put(IngredientComponent.ITEMSTACK, (List) items);
+        }
+        if (!fluids.isEmpty()) {
+            inputs.put(IngredientComponent.FLUIDSTACK, (List) fluids);
+        }
+        if (!energies.isEmpty()) {
+            inputs.put(IngredientComponent.ENERGY, (List) energies);
+        }
 
-        return ValueObjectTypeIngredients.ValueIngredients.of(new IngredientsRecipeItemMatch(lists,
-                itemStacks.stream().map(Pair::getRight).collect(Collectors.toList())));
+        return inputs;
+    }
+
+    protected Map<IngredientComponent<?, ?, ?>, List<?>> getOutputs(List<ItemStack> itemStacks,
+                                                                    ItemStack fluid, int fluidAmount,
+                                                                    int energy) {
+        // Cut of itemStacks list until last non-empty stack
+        int lastNonEmpty = 0;
+        for (int i = 0; i < itemStacks.size(); i++) {
+            if (!itemStacks.get(i).isEmpty()) {
+                lastNonEmpty = i + 1;
+            }
+        }
+        itemStacks = itemStacks.subList(0, lastNonEmpty);
+
+        // Override fluid amount
+        FluidStack fluidStack = Helpers.getFluidStack(fluid);
+        if (fluidStack != null) {
+            fluidStack.amount = fluidAmount;
+        }
+
+        Map<IngredientComponent<?, ?, ?>, List<?>> outputs = Maps.newIdentityHashMap();
+        if (!itemStacks.isEmpty()) {
+            outputs.put(IngredientComponent.ITEMSTACK, itemStacks);
+        }
+        if (fluidStack != null) {
+            outputs.put(IngredientComponent.FLUIDSTACK, Collections.singletonList(fluidStack));
+        }
+        if (energy > 0) {
+            outputs.put(IngredientComponent.ENERGY, Collections.singletonList(energy));
+        }
+
+        return outputs;
     }
 
     @Override
     public IValue getValue() {
-        ValueObjectTypeIngredients.ValueIngredients input = getIngredients(this.inputStacks, this.inputFluid,
-                Integer.parseInt(this.inputFluidAmount), Integer.parseInt(this.inputEnergy));
-        ValueObjectTypeIngredients.ValueIngredients output = getIngredients(this.outputStacks, this.outputFluid,
-                Integer.parseInt(this.outputFluidAmount), Integer.parseInt(this.outputEnergy));
-        return ValueObjectTypeRecipe.ValueRecipe.of(new ValueObjectTypeRecipe.Recipe(input, output));
+        return ValueObjectTypeRecipe.ValueRecipe.of(
+                new RecipeDefinition(getInputs(this.inputStacks, this.inputFluid,
+                        Integer.parseInt(this.inputFluidAmount), Integer.parseInt(this.inputEnergy)),
+                new MixedIngredients(getOutputs(this.outputStacks, this.outputFluid,
+                        Integer.parseInt(this.outputFluidAmount), Integer.parseInt(this.outputEnergy)))));
     }
 
     @Override
@@ -269,14 +316,14 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         ValueTypeRecipeLPElement.SubGuiRenderPattern gui = ((ValueTypeRecipeLPElement.SubGuiRenderPattern) subGui);
         IInventory slots = gui.container.getTemporaryInputSlots();
         for (int i = 0; i < this.inputStacks.size(); i++) {
-            Pair<ItemStack, IngredientsRecipeItemMatch.ItemMatchType> entry = this.inputStacks.get(i);
+            Pair<ItemStack, ItemMatchType> entry = this.inputStacks.get(i);
             slots.setInventorySlotContents(i, entry.getLeft());
         }
         slots.setInventorySlotContents(9, this.inputFluid);
         gui.getInputFluidAmountBox().setText(this.inputFluidAmount);
         gui.getInputEnergyBox().setText(this.inputEnergy);
         for (int i = 0; i < this.outputStacks.size(); i++) {
-            slots.setInventorySlotContents(10 + i, this.outputStacks.get(i).getLeft());
+            slots.setInventorySlotContents(10 + i, this.outputStacks.get(i));
             // No need to set slot type, as this can't be changed for output stacks
         }
         slots.setInventorySlotContents(13, this.outputFluid);
@@ -343,7 +390,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             // Render the overlay of the input item slots
             for (int slotId = 0; slotId < this.gui.inventorySlots.inventorySlots.size(); ++slotId) {
                 Slot slot = this.gui.inventorySlots.inventorySlots.get(slotId);
-                if (slotId >= 40 && slotId < 49) {
+                if (slotId >= 4 && slotId < 13) {
                     int slotX = slot.xPos;
                     int slotY = slot.yPos;
                     // Only render if the slot has a stack, otherwise vanilla will already render the overlay.

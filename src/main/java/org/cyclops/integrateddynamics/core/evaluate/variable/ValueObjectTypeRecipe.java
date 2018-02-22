@@ -1,14 +1,23 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import lombok.ToString;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
+import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
+import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeRecipeLPElement;
+
+import java.util.List;
 
 /**
  * Value type with values that are recipes.
@@ -29,10 +38,28 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     @Override
     public String toCompactString(ValueRecipe value) {
         if (value.getRawValue().isPresent()) {
-            ValueObjectTypeIngredients.ValueIngredients input = value.getRawValue().get().getInput();
-            ValueObjectTypeIngredients.ValueIngredients output = value.getRawValue().get().getOutput();
-            return ValueTypes.OBJECT_INGREDIENTS.toCompactString(output)
-                    + " <- " + ValueTypes.OBJECT_INGREDIENTS.toCompactString(input);
+            IRecipeDefinition recipe = value.getRawValue().get();
+            StringBuilder sb = new StringBuilder();
+
+            sb.append(ValueObjectTypeIngredients.ingredientsToString(recipe.getOutput()));
+            sb.append(" <- ");
+
+            for (IngredientComponent<?, ?, ?> component : recipe.getInputComponents()) {
+                IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
+                for (List<? extends IPrototypedIngredient<?, ?, ?>> instances : recipe.getInputs(component)) {
+                    IPrototypedIngredient<?, ?, ?> prototypedIngredient = Iterables.getFirst(instances, null);
+                    IValue v;
+                    if (prototypedIngredient == null) {
+                        v  = handler.getValueType().getDefault();
+                    } else {
+                        v = handler.toValue(prototypedIngredient.getPrototype());
+                    }
+                    sb.append(handler.toCompactString(v));
+                    sb.append(", ");
+                }
+            }
+            String str = sb.toString();
+            return str.length() >= 2 ? str.substring(0, str.length() - 2) : "";
         }
         return "";
     }
@@ -40,13 +67,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     @Override
     public String serialize(ValueRecipe value) {
         if(!value.getRawValue().isPresent()) return "";
-        Recipe recipe = value.getRawValue().get();
-        String input = ValueTypes.OBJECT_INGREDIENTS.serialize(recipe.getInput());
-        String output = ValueTypes.OBJECT_INGREDIENTS.serialize(recipe.getOutput());
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("input", input);
-        tag.setString("output", output);
-        return tag.toString();
+        return IRecipeDefinition.serialize(value.getRawValue().get()).toString();
     }
 
     @Override
@@ -54,11 +75,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
         if(Strings.isNullOrEmpty(value)) return ValueRecipe.of(null);
         try {
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
-            ValueObjectTypeIngredients.ValueIngredients input = ValueTypes.OBJECT_INGREDIENTS
-                    .deserialize(tag.getString("input"));
-            ValueObjectTypeIngredients.ValueIngredients output = ValueTypes.OBJECT_INGREDIENTS
-                    .deserialize(tag.getString("output"));
-            return ValueRecipe.of(new Recipe(input, output));
+            return ValueRecipe.of(IRecipeDefinition.deserialize(tag));
         } catch (NBTException e) {
             return ValueRecipe.of(null);
         }
@@ -80,52 +97,19 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     }
 
     @ToString
-    public static class ValueRecipe extends ValueOptionalBase<Recipe> {
+    public static class ValueRecipe extends ValueOptionalBase<IRecipeDefinition> {
 
-        private ValueRecipe(Recipe recipe) {
+        private ValueRecipe(IRecipeDefinition recipe) {
             super(ValueTypes.OBJECT_RECIPE, recipe);
         }
 
-        public static ValueRecipe of(Recipe recipe) {
+        public static ValueRecipe of(IRecipeDefinition recipe) {
             return new ValueRecipe(recipe);
         }
 
         @Override
-        protected boolean isEqual(Recipe a, Recipe b) {
+        protected boolean isEqual(IRecipeDefinition a, IRecipeDefinition b) {
             return a.equals(b);
-        }
-    }
-
-    public static class Recipe {
-
-        private final ValueObjectTypeIngredients.ValueIngredients input;
-        private final ValueObjectTypeIngredients.ValueIngredients output;
-
-        public Recipe(ValueObjectTypeIngredients.ValueIngredients input,
-                      ValueObjectTypeIngredients.ValueIngredients output) {
-            this.input = input;
-            this.output = output;
-        }
-
-        public ValueObjectTypeIngredients.ValueIngredients getInput() {
-            return input;
-        }
-
-        public ValueObjectTypeIngredients.ValueIngredients getOutput() {
-            return output;
-        }
-
-        @Override
-        public String toString() {
-            return "input: [" + ValueTypes.OBJECT_INGREDIENTS.toCompactString(getInput())
-                    + "]; output: [" + ValueTypes.OBJECT_INGREDIENTS.toCompactString(getOutput()) + "]";
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof Recipe
-                    && this.getInput().equals(((Recipe) obj).getInput())
-                    && this.getOutput().equals(((Recipe) obj).getOutput());
         }
     }
 

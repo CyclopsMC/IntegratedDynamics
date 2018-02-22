@@ -9,7 +9,9 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
+import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonArrow;
 import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.GuiArrowedListField;
@@ -22,16 +24,17 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeLists;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerSetElementInventory;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeIngredientsValueChangedPacket;
 
 import java.io.IOException;
@@ -44,10 +47,10 @@ import java.util.Map;
  */
 public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
-    private RecipeComponent currentType = RecipeComponent.ITEMSTACK;
-    private Map<RecipeComponent, Integer> lengths = Maps.newHashMap();
-    private Map<RecipeComponent, Map<Integer, IValueTypeLogicProgrammerElement>> subElements = Maps.newHashMap();
-    private Map<RecipeComponent, Map<Integer, RenderPattern>> subElementGuis = Maps.newHashMap();
+    private IngredientComponent currentType = IngredientComponent.ITEMSTACK;
+    private Map<IngredientComponent, Integer> lengths = Maps.newHashMap();
+    private Map<IngredientComponent, Map<Integer, IValueTypeLogicProgrammerElement>> subElements = Maps.newHashMap();
+    private Map<IngredientComponent, Map<Integer, RenderPattern>> subElementGuis = Maps.newHashMap();
     private int activeElement = -1;
     @SideOnly(Side.CLIENT)
     private MasterSubGuiRenderPattern masterGui;
@@ -77,21 +80,23 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         return true;
     }
 
-    protected IngredientsRecipeLists constructValues() {
-        Map<RecipeComponent<?, ?>, List<List<? extends IValue>>> lists = Maps.newIdentityHashMap();
-        for (RecipeComponent<?, ?> component : RecipeComponentHandlers.REGISTRY.getComponents()) {
-            List<List<? extends IValue>> values = Lists.newArrayListWithExpectedSize(lengths.get(component));
+    protected IMixedIngredients constructValues() {
+        Map<IngredientComponent<?, ?, ?>, List<?>> lists = Maps.newIdentityHashMap();
+        for (IngredientComponent<?, ?, ?> component : IngredientComponentHandlers.REGISTRY.getComponents()) {
+            List values = Lists.newArrayListWithExpectedSize(lengths.get(component));
             subElements.get(component).entrySet().forEach(entry -> {
+                IIngredientComponentHandler componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
                 try {
-                    values.add(Lists.newArrayList(entry.getValue().getValue()));
+                    values.add(componentHandler.toInstance(entry.getValue().getValue()));
                 } catch (Exception e) {
-                    values.add(Lists.newArrayList(RecipeComponentHandlers.REGISTRY.getComponentHandler(component)
-                            .getValueType().getDefault()));
+                    values.add(component.getEmptyInstance());
                 }
             });
-            lists.put(component, values);
+            if (!values.isEmpty()) {
+                lists.put(component, values);
+            }
         }
-        return new IngredientsRecipeLists(lists);
+        return new MixedIngredients(lists);
     }
 
     @Override
@@ -109,7 +114,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         setActiveElement(getLength() - 1);
     }
 
-    public void setCurrentType(RecipeComponent currentType) {
+    public void setCurrentType(IngredientComponent currentType) {
         this.currentType = currentType;
         setActiveElement(subElements.get(currentType).size() - 1);
     }
@@ -117,7 +122,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
     public void setActiveElement(int index) {
         activeElement = index;
         if(index >= 0 && !subElements.get(currentType).containsKey(index)) {
-            subElements.get(currentType).put(index, RecipeComponentHandlers.REGISTRY.getComponentHandler(currentType)
+            subElements.get(currentType).put(index, IngredientComponentHandlers.REGISTRY.getComponentHandler(currentType)
                     .getValueType().createLogicProgrammerElement());
         }
         masterGui.setActiveElement(activeElement);
@@ -144,7 +149,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     @Override
     public void activate() {
-        for (RecipeComponent recipeComponent : RecipeComponentHandlers.REGISTRY.getComponents()) {
+        for (IngredientComponent recipeComponent : IngredientComponentHandlers.REGISTRY.getComponents()) {
             subElements.put(recipeComponent, Maps.newHashMap());
             subElementGuis.put(recipeComponent, Maps.newHashMap());
             lengths.put(recipeComponent, 0);
@@ -259,7 +264,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
     @SideOnly(Side.CLIENT)
     protected static class SelectionSubGui extends RenderPattern<ValueTypeIngredientsLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> implements IInputListener {
 
-        private GuiArrowedListField<RecipeComponent> valueTypeSelector = null;
+        private GuiArrowedListField<IngredientComponent> valueTypeSelector = null;
         private GuiButton arrowAdd;
 
         public SelectionSubGui(ValueTypeIngredientsLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
@@ -272,17 +277,17 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
             return super.getHeight() / 4;
         }
 
-        protected static List<RecipeComponent> getValueTypes() {
-            return Lists.newArrayList(RecipeComponentHandlers.REGISTRY.getComponents());
+        protected static List<IngredientComponent> getValueTypes() {
+            return Lists.newArrayList(IngredientComponentHandlers.REGISTRY.getComponents());
         }
 
         @Override
         public void initGui(int guiLeft, int guiTop) {
             super.initGui(guiLeft, guiTop);
-            valueTypeSelector = new GuiArrowedListField<RecipeComponent>(0, Minecraft.getMinecraft().fontRenderer,
+            valueTypeSelector = new GuiArrowedListField<IngredientComponent>(0, Minecraft.getMinecraft().fontRenderer,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes()) {
                 @Override
-                protected String activeElementToString(RecipeComponent element) {
+                protected String activeElementToString(IngredientComponent element) {
                     return L10NHelpers.localize(element.getUnlocalizedName());
                 }
             };
@@ -341,9 +346,16 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                         element.activeElement,
                         subGui);
             }
-            gui.getContainer().setElementInventory(subElement, getX() + baseX - 24, getY() + baseY - 23);
+            int x = getX() + baseX - 24;
+            int y = getY() + baseY - 23;
+            gui.getContainer().setElementInventory(subElement, x, y);
             subElement.setValueInGui(subGui);
             subGuiHolder.addSubGui(subGui);
+
+            // Do the same thing server-side
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                    new LogicProgrammerSetElementInventory(
+                            IngredientComponentHandlers.REGISTRY.getComponentHandler(element.currentType).getValueType(), x, y));
         }
 
         @Override

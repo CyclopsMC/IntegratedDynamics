@@ -29,6 +29,7 @@ import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.item.ItemWrench;
+import scala.collection.script.Update;
 
 /**
  * Test the different logical operators.

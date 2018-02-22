@@ -4,8 +4,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.minecraft.util.EnumFacing;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredients;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
+import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -36,7 +37,7 @@ public class PositionedOperatorRecipeHandlerRecipesByInput<T extends IValueType<
 
     public static class Function extends PositionedOperatorRecipeHandlerRecipesByOutput.Function {
 
-        protected boolean validateIngredients(RecipeIngredients actualIngredients, RecipeIngredients givenIngredients) {
+        protected boolean validateIngredients(IMixedIngredients actualIngredients, IMixedIngredients givenIngredients) {
             return validateIngredientsExact(actualIngredients, givenIngredients);
         }
 
@@ -46,8 +47,8 @@ public class PositionedOperatorRecipeHandlerRecipesByInput<T extends IValueType<
         }
 
         @Override
-        protected RecipeIngredients getRecipeIngredients(RecipeDefinition recipeDefinition) {
-            return recipeDefinition.getInput();
+        protected IMixedIngredients getRecipeIngredients(IRecipeDefinition recipeDefinition) {
+            return MixedIngredients.fromRecipeInput(recipeDefinition);
         }
     }
 

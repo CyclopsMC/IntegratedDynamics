@@ -12,7 +12,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityList;
@@ -39,8 +38,6 @@ import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
@@ -57,7 +54,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
+import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -75,11 +74,11 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.ExtendedIngredients;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
 import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
+import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredients;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,8 +86,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.Set;
 
 /**
  * Collection of available operators.
@@ -3010,159 +3007,78 @@ public final class Operators {
      */
 
     /**
-     * The number of ingredients of the item type
+     * The list of items.
      */
-    public static final IOperator INGREDIENTS_ITEM_SIZE = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("item.size").symbol("Ingr.#items")
-            .function(OperatorBuilders.createFunctionIngredientsSize(() -> RecipeComponent.ITEMSTACK))
-            .build());
-
-    /**
-     * The list of possible items at the given position
-     */
-    public static final IOperator INGREDIENTS_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
+    public static final IOperator INGREDIENTS_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_PREFIX_LONG
             .output(ValueTypes.LIST).operatorName("items").symbol("Ingr.items")
-            .function(OperatorBuilders.createFunctionIngredientsList(() -> RecipeComponent.ITEMSTACK))
+            .function(OperatorBuilders.createFunctionIngredientsList(() -> IngredientComponent.ITEMSTACK))
             .build());
 
     /**
-     * The item predicate at the given position
+     * The list of fluids
      */
-    public static final IOperator INGREDIENTS_ITEM_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
-            .output(ValueTypes.OPERATOR).operatorName("item_p").symbol("Ingr.item_p")
-            .function(OperatorBuilders.createFunctionIngredientsPredicate(() -> RecipeComponent.ITEMSTACK))
-            .build());
-    static {
-        REGISTRY.registerSerializer(new PredicateOperator.Serializer());
-    }
-
-    /**
-     * The number of ingredients of the fluid type
-     */
-    public static final IOperator INGREDIENTS_FLUID_SIZE = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("fluid.size").symbol("Ingr.#fluids")
-            .function(OperatorBuilders.createFunctionIngredientsSize(() -> RecipeComponent.FLUIDSTACK))
-            .build());
-
-    /**
-     * The list of possible fluids at the given position
-     */
-    public static final IOperator INGREDIENTS_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
+    public static final IOperator INGREDIENTS_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_PREFIX_LONG
             .output(ValueTypes.LIST).operatorName("fluids").symbol("Ingr.fluids")
-            .function(OperatorBuilders.createFunctionIngredientsList(() -> RecipeComponent.FLUIDSTACK))
+            .function(OperatorBuilders.createFunctionIngredientsList(() -> IngredientComponent.FLUIDSTACK))
             .build());
 
     /**
-     * The fluid predicate at the given position
+     * The list of fluids
      */
-    public static final IOperator INGREDIENTS_FLUID_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
-            .output(ValueTypes.OPERATOR).operatorName("fluid_p").symbol("Ingr.fluid_p")
-            .function(OperatorBuilders.createFunctionIngredientsPredicate(() -> RecipeComponent.FLUIDSTACK))
+    public static final IOperator INGREDIENTS_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_PREFIX_LONG
+            .output(ValueTypes.LIST).operatorName("fluids").symbol("Ingr.energies")
+            .function(OperatorBuilders.createFunctionIngredientsList(() -> IngredientComponent.ENERGY))
             .build());
 
     /**
-     * The number of ingredients of the energy type
+     * Set an ingredient item
      */
-    public static final IOperator INGREDIENTS_ENERGY_SIZE = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("energy.size").symbol("Ingr.#energies")
-            .function(OperatorBuilders.createFunctionIngredientsSize(() -> RecipeComponent.ENERGY))
-            .build());
-
-    /**
-     * The list of possible energy elements at the given position
-     */
-    public static final IOperator INGREDIENTS_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
-            .output(ValueTypes.LIST).operatorName("energies").symbol("Ingr.energies")
-            .function(OperatorBuilders.createFunctionIngredientsList(() -> RecipeComponent.ENERGY))
-            .build());
-
-    /**
-     * The energy predicate at the given position
-     */
-    public static final IOperator INGREDIENTS_ENERGY_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_INFIX_LONG
-            .output(ValueTypes.OPERATOR).operatorName("energy_p").symbol("Ingr.energy_p")
-            .function(OperatorBuilders.createFunctionIngredientsPredicate(() -> RecipeComponent.ENERGY))
-            .build());
-
-    /**
-     * Set an ingredient item list
-     */
-    public static final IOperator INGREDIENTS_WITH_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
-            .operatorName("withItems").symbol("Ingr.withItems")
+    public static final IOperator INGREDIENTS_WITH_ITEM = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_ITEMSTACK
+            .operatorName("withItem").symbol("Ingr.withItem")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> list =
-                        variables.getValue(2);
-                return ValueObjectTypeIngredients.ValueIngredients.of(
-                        ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.ITEMSTACK, list));
+                ValueObjectTypeItemStack.ValueItemStack itemStack = variables.getValue(2);
+                if (!value.getRawValue().isPresent()) {
+                    return value;
+                }
+                IMixedIngredients baseIngredients = value.getRawValue().get();
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredients<>(baseIngredients,
+                        index.getRawValue(), IngredientComponent.ITEMSTACK, itemStack.getRawValue()));
             }).build());
 
     /**
-     * Set an ingredient item predicate
+     * Set an ingredient fluid
      */
-    public static final IOperator INGREDIENTS_WITH_ITEM_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
-            .operatorName("withItem_p").symbol("Ingr.withItem_p")
+    public static final IOperator INGREDIENTS_WITH_FLUID = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_FLUIDSTACK
+            .operatorName("withFluid").symbol("Ingr.withFluid")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                ValueTypeOperator.ValueOperator operator = variables.getValue(2);
-                return ValueObjectTypeIngredients.ValueIngredients.of(
-                        ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.ITEMSTACK, operator));
+                ValueObjectTypeFluidStack.ValueFluidStack fluidStack = variables.getValue(2);
+                if (!value.getRawValue().isPresent()) {
+                    return value;
+                }
+                IMixedIngredients baseIngredients = value.getRawValue().get();
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredients<>(baseIngredients,
+                        index.getRawValue(), IngredientComponent.FLUIDSTACK, fluidStack.getRawValue().orNull()));
             }).build());
 
     /**
-     * Set an ingredient fluid list
+     * Set an ingredient energy
      */
-    public static final IOperator INGREDIENTS_WITH_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
-            .operatorName("withFluids").symbol("Ingr.withFluids")
-            .function(variables -> {
-                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                ValueTypeList.ValueList<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> list =
-                        variables.getValue(2);
-                return ValueObjectTypeIngredients.ValueIngredients.of(
-                        ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.FLUIDSTACK, list));
-            }).build());
-
-    /**
-     * Set an ingredient fluid predicate
-     */
-    public static final IOperator INGREDIENTS_WITH_FLUID_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
-            .operatorName("withFluid_p").symbol("Ingr.withFluid_p")
-            .function(variables -> {
-                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                ValueTypeOperator.ValueOperator operator = variables.getValue(2);
-                return ValueObjectTypeIngredients.ValueIngredients.of(
-                        ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.FLUIDSTACK, operator));
-            }).build());
-
-    /**
-     * Set an ingredient energy list
-     */
-    public static final IOperator INGREDIENTS_WITH_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LIST
+    public static final IOperator INGREDIENTS_WITH_ENERGY = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_INTEGER
             .operatorName("withEnergy").symbol("Ingr.withEnergy")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger> list =
-                        variables.getValue(2);
-                return ValueObjectTypeIngredients.ValueIngredients.of(
-                        ExtendedIngredients.forList(value, index.getRawValue(), RecipeComponent.ENERGY, list));
-            }).build());
-
-    /**
-     * Set an ingredient energy predicate
-     */
-    public static final IOperator INGREDIENTS_WITH_ENERGY_PREDICATE = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_PREDICATE
-            .operatorName("withEnergy_p").symbol("Ingr.withEnergy_p")
-            .function(variables -> {
-                ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
-                ValueTypeInteger.ValueInteger index = variables.getValue(1);
-                ValueTypeOperator.ValueOperator operator = variables.getValue(2);
-                return ValueObjectTypeIngredients.ValueIngredients.of(
-                        ExtendedIngredients.forPredicate(value, index.getRawValue(), RecipeComponent.ENERGY, operator));
+                ValueTypeInteger.ValueInteger energy = variables.getValue(2);
+                if (!value.getRawValue().isPresent()) {
+                    return value;
+                }
+                IMixedIngredients baseIngredients = value.getRawValue().get();
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredients<>(baseIngredients,
+                        index.getRawValue(), IngredientComponent.ENERGY, energy.getRawValue()));
             }).build());
 
     /**
@@ -3177,7 +3093,7 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
                 if (value.getRawValue().isPresent()) {
-                    return value.getRawValue().get().getInput();
+                    return ValueObjectTypeIngredients.ValueIngredients.of(MixedIngredients.fromRecipeInput(value.getRawValue().get()));
                 }
                 return ValueObjectTypeIngredients.ValueIngredients.of(null);
             }).build());
@@ -3190,7 +3106,7 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
                 if (value.getRawValue().isPresent()) {
-                    return value.getRawValue().get().getOutput();
+                    return ValueObjectTypeIngredients.ValueIngredients.of(value.getRawValue().get().getOutput());
                 }
                 return ValueObjectTypeIngredients.ValueIngredients.of(null);
             }).build());

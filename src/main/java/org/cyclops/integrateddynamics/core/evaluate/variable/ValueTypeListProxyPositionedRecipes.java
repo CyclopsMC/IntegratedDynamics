@@ -2,13 +2,12 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
 import net.minecraft.util.EnumFacing;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.integrateddynamics.Capabilities;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeIngredientsWrapper;
 
 /**
  * A list proxy for the recipes of a recipe handler at a certain position.
@@ -35,10 +34,7 @@ public class ValueTypeListProxyPositionedRecipes extends ValueTypeListProxyPosit
 
     @Override
     public ValueObjectTypeRecipe.ValueRecipe get(int index) {
-        RecipeDefinition recipeDefinition = Iterables.get(getRecipeHandler().getRecipes(), index);
-        return ValueObjectTypeRecipe.ValueRecipe.of(new ValueObjectTypeRecipe.Recipe(
-                ValueObjectTypeIngredients.ValueIngredients.of(new IngredientsRecipeIngredientsWrapper(recipeDefinition.getInput())),
-                ValueObjectTypeIngredients.ValueIngredients.of(new IngredientsRecipeIngredientsWrapper(recipeDefinition.getOutput())
-                )));
+        IRecipeDefinition recipeDefinition = Iterables.get(getRecipeHandler().getRecipes(), index);
+        return ValueObjectTypeRecipe.ValueRecipe.of(recipeDefinition);
     }
 }

@@ -1,24 +1,23 @@
-package org.cyclops.integrateddynamics.api.evaluate.variable.recipe;
+package org.cyclops.integrateddynamics.api.ingredient;
 
-import com.google.common.collect.Iterables;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
- * Handles the translation between {@link RecipeComponent} instances and {@link IValue}.
+ * Handles the translation between {@link IngredientComponent} instances and {@link IValue}.
  * @param <VT> The value type.
  * @param <V> The value.
  * @param <T> The instance type.
  * @param <R> The recipe target type, may be Void.
+ * @param <M> The matching condition parameter.
  * @param <C> The component type.
  * @author rubensworks
  */
-public interface IRecipeComponentHandler<VT extends IValueType<V>, V extends IValue,
-        T, R, C extends RecipeComponent<T, R>> {
+public interface IIngredientComponentHandler<VT extends IValueType<V>, V extends IValue,
+        T, R, M, C extends IngredientComponent<T, R, M>> {
 
     /**
      * @return The value type with which the component should be handled.
@@ -51,11 +50,8 @@ public interface IRecipeComponentHandler<VT extends IValueType<V>, V extends IVa
      * @param ingredientValue A list of ingredient values.
      * @return A compact string representation.
      */
-    default public String toCompactString(List<V> ingredientValue) {
-        String value = getValueType().toCompactString(Iterables.getFirst(ingredientValue,
-                getValueType().getDefault()));
-        if (ingredientValue.size() > 1) value += "+";
-        return value;
+    default public String toCompactString(V ingredientValue) {
+        return getValueType().toCompactString(ingredientValue);
     }
 
 }

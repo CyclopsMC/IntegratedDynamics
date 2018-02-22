@@ -5,14 +5,12 @@ import com.google.common.cache.CacheBuilder;
 import net.minecraft.util.EnumFacing;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IIngredients;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeIngredientsWrapper;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -46,10 +44,8 @@ public class PositionedOperatorRecipeHandlerOutput<T extends IValueType<V>, V ex
                         Pair.of(Pair.of(this.getOperator().getPos(), this.getOperator().getSide()), ingredients);
                 try {
                     return CACHE.get(key, () -> {
-                        RecipeIngredients output = recipeHandler.simulate(
-                                IIngredients.toRecipeIngredients(ingredients.getRawValue().get()));
-                        return ValueObjectTypeIngredients.ValueIngredients.of(
-                                new IngredientsRecipeIngredientsWrapper(output));
+                        IMixedIngredients output = recipeHandler.simulate(ingredients.getRawValue().get());
+                        return ValueObjectTypeIngredients.ValueIngredients.of(output);
                     });
                 } catch (ExecutionException e) {
 

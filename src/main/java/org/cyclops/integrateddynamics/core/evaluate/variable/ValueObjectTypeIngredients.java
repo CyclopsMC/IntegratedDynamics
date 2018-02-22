@@ -5,22 +5,14 @@ import lombok.ToString;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.recipe.IIngredientsSerializerRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.recipe.IRecipeComponentHandler;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IIngredients;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsSerializerRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
+import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
+import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeIngredientsLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
-
-import java.util.List;
 
 /**
  * Value type with values that are ingredients.
@@ -28,9 +20,6 @@ import java.util.List;
  */
 public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectTypeIngredients.ValueIngredients> implements
         IValueTypeNamed<ValueObjectTypeIngredients.ValueIngredients>, IValueTypeNullable<ValueObjectTypeIngredients.ValueIngredients> {
-
-    public static IIngredientsSerializerRegistry SERIALIZERS = MinecraftHelpers.isModdedEnvironment() ? IntegratedDynamics._instance.getRegistryManager()
-            .getRegistry(IIngredientsSerializerRegistry.class) : IngredientsSerializerRegistry.getInstance();
 
     public ValueObjectTypeIngredients() {
         super("ingredients");
@@ -41,22 +30,25 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         return ValueIngredients.of(null);
     }
 
+    public static String ingredientsToString(IMixedIngredients ingredients) {
+        StringBuilder sb = new StringBuilder();
+
+        for (IngredientComponent<?, ?, ?> component : ingredients.getComponents()) {
+            IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
+            for (Object instance : ingredients.getInstances(component)) {
+                sb.append(handler.toCompactString(handler.toValue(instance)));
+                sb.append(", ");
+            }
+        }
+
+        String str = sb.toString();
+        return str.length() >= 2 ? str.substring(0, str.length() - 2) : "";
+    }
+
     @Override
     public String toCompactString(ValueIngredients value) {
         if (value.getRawValue().isPresent()) {
-            StringBuilder sb = new StringBuilder();
-
-            IIngredients ingredients = value.getRawValue().get();
-            for (RecipeComponent<?, ?> component : ingredients.getComponents()) {
-                IRecipeComponentHandler handler = RecipeComponentHandlers.REGISTRY.getComponentHandler(component);
-                for (List<IValue> values : ingredients.getRaw(component)) {
-                    sb.append(handler.toCompactString(values));
-                    sb.append(", ");
-                }
-            }
-
-            String str = sb.toString();
-            return str.length() >= 2 ? str.substring(0, str.length() - 2) : "";
+            return ingredientsToString(value.getRawValue().get());
         }
         return "";
     }
@@ -65,7 +57,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     public String serialize(ValueIngredients value) {
         if(!value.getRawValue().isPresent()) return "";
 
-        return SERIALIZERS.serialize(value.getRawValue().get()).toString();
+        return IMixedIngredients.serialize(value.getRawValue().get()).toString();
     }
 
     @Override
@@ -73,8 +65,8 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         if(Strings.isNullOrEmpty(value)) return ValueIngredients.of(null);
         try {
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
-            return ValueIngredients.of(SERIALIZERS.deserialize(tag));
-        } catch (NBTException | EvaluationException e) {
+            return ValueIngredients.of(IMixedIngredients.deserialize(tag));
+        } catch (NBTException | IllegalArgumentException e) {
             return ValueIngredients.of(null);
         }
     }
@@ -95,18 +87,18 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     }
 
     @ToString
-    public static class ValueIngredients extends ValueOptionalBase<IIngredients> {
+    public static class ValueIngredients extends ValueOptionalBase<IMixedIngredients> {
 
-        private ValueIngredients(IIngredients recipe) {
+        private ValueIngredients(IMixedIngredients recipe) {
             super(ValueTypes.OBJECT_INGREDIENTS, recipe);
         }
 
-        public static ValueIngredients of(IIngredients recipe) {
+        public static ValueIngredients of(IMixedIngredients recipe) {
             return new ValueIngredients(recipe);
         }
 
         @Override
-        protected boolean isEqual(IIngredients a, IIngredients b) {
+        protected boolean isEqual(IMixedIngredients a, IMixedIngredients b) {
             return a.equals(b);
         }
     }

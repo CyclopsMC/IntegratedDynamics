@@ -1,26 +1,34 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.http.util.Asserts;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredientItemStack;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredients;
+import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
+import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.commoncapabilities.api.ingredient.ItemHandlerRecipeTarget;
+import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeRecipe;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsRecipeIngredientsWrapper;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeIngredientEnergy;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeIngredientFluidStack;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Test the different ingredients operators.
@@ -33,31 +41,27 @@ public class TestRecipeOperators {
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
 
     private DummyVariableRecipe rMain;
-    
-    private DummyVariableIngredients iMainIn;
+
     private DummyVariableIngredients iMainOut;
 
     @IntegrationBefore
     public void before() {
-        iMainIn = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
-                new IngredientsRecipeIngredientsWrapper(new RecipeIngredients(
-                        new RecipeIngredientItemStack(Ingredient.EMPTY),
-                        new RecipeIngredientItemStack(Ingredient.fromItem(Items.BOAT)),
-                        new RecipeIngredientItemStack(Ingredient.fromItem(Item.getItemFromBlock(Blocks.STONE))),
-                        new RecipeIngredientItemStack(Ingredient.EMPTY)
-                ))));
+        List<List<IPrototypedIngredient<ItemStack, ItemHandlerRecipeTarget, Integer>>> ingredientsIn = Lists.newArrayList();
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Items.BOAT), ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Blocks.STONE), ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
 
+        Map<IngredientComponent<?, ?, ?>, List<?>> ingredientsOut = Maps.newIdentityHashMap();
+        ingredientsOut.put(IngredientComponent.ENERGY, Lists.newArrayList(777));
+        ingredientsOut.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(FluidRegistry.WATER, 123)));
+        ingredientsOut.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));
         iMainOut = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
-                new IngredientsRecipeIngredientsWrapper(new RecipeIngredients(
-                        new RecipeIngredientEnergy(777),
-                        new RecipeIngredientFluidStack(new FluidStack(FluidRegistry.WATER, 123)),
-                        new RecipeIngredientItemStack(Ingredient.fromItem(Items.BOAT)),
-                        new RecipeIngredientItemStack(Ingredient.fromItem(Item.getItemFromBlock(Blocks.STONE)))
-                ))));
+                new MixedIngredients(ingredientsOut)));
 
-        rMain = new DummyVariableRecipe(ValueObjectTypeRecipe.ValueRecipe.of(new ValueObjectTypeRecipe.Recipe(
-                iMainIn.getValue(),
-                iMainOut.getValue()
+        rMain = new DummyVariableRecipe(ValueObjectTypeRecipe.ValueRecipe.of(RecipeDefinition.ofIngredients(IngredientComponent.ITEMSTACK,
+                ingredientsIn,
+                iMainOut.getValue().getRawValue().get()
         )));
     }
     
@@ -69,7 +73,7 @@ public class TestRecipeOperators {
     public void testInput() throws EvaluationException {
         IValue res1 = Operators.RECIPE_INPUT.evaluate(new IVariable[]{rMain});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredients");
-        TestHelpers.assertEqual(res1, iMainIn.getValue(), "input is correct");
+        TestHelpers.assertEqual(res1, ValueObjectTypeIngredients.ValueIngredients.of(MixedIngredients.fromRecipeInput(rMain.getValue().getRawValue().get())), "input is correct");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

@@ -2,11 +2,9 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
 import net.minecraft.util.EnumFacing;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeIngredient;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeComponent;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -18,26 +16,12 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * An operator related to a recipe handler.
  * @author rubensworks
  */
 public class PositionedOperatorRecipeHandler<T extends IValueType<V>, V extends IValue> extends PositionedOperator {
-
-    private static final Predicate<Pair<IRecipeIngredient, IRecipeIngredient>> MATCH_INGREDIENTS = test -> {
-        IRecipeIngredient outputIngredient = test.getLeft();
-        IRecipeIngredient givenIngredient = test.getRight();
-
-        // At least one given instance must match with the ingredient's instances
-        for (Object givenInstance : givenIngredient.getMatchingInstances()) {
-            if (outputIngredient.test(givenInstance)) {
-                return true;
-            }
-        }
-        return false;
-    };
 
     private final String unlocalizedType;
 
@@ -84,10 +68,10 @@ public class PositionedOperatorRecipeHandler<T extends IValueType<V>, V extends 
         }
     }
 
-    public static boolean validateIngredientsExact(RecipeIngredients ingredients, RecipeIngredients givenIngredients) {
-        for (RecipeComponent component : ingredients.getComponents()) {
-            List<IRecipeIngredient> actualComponents = ingredients.getIngredients(component);
-            List<IRecipeIngredient> givenComponents = givenIngredients.getIngredients(component);
+    public static boolean validateIngredientsExact(IMixedIngredients ingredients, IMixedIngredients givenIngredients) {
+        for (IngredientComponent component : ingredients.getComponents()) {
+            List<?> actualComponents = ingredients.getInstances(component);
+            List<?> givenComponents = givenIngredients.getInstances(component);
 
             if (actualComponents.size() != givenComponents.size()) {
                 return false;
@@ -95,9 +79,9 @@ public class PositionedOperatorRecipeHandler<T extends IValueType<V>, V extends 
 
             // All components must be valid
             for (int i = 0; i < actualComponents.size(); i++) {
-                IRecipeIngredient actualIngredient = actualComponents.get(i);
-                IRecipeIngredient givenIngredient = givenComponents.get(i);
-                if (!MATCH_INGREDIENTS.test(Pair.of(actualIngredient, givenIngredient))) {
+                Object actualIngredient = actualComponents.get(i);
+                Object givenIngredient = givenComponents.get(i);
+                if (!component.getMatcher().matchesExactly(givenIngredient, actualIngredient)) {
                     return false;
                 }
             }
@@ -105,10 +89,10 @@ public class PositionedOperatorRecipeHandler<T extends IValueType<V>, V extends 
         return true;
     }
 
-    public static boolean validateIngredientsPartial(RecipeIngredients ingredients, RecipeIngredients givenIngredients) {
-        for (RecipeComponent component : ingredients.getComponents()) {
-            List<IRecipeIngredient> actualComponents = ingredients.getIngredients(component);
-            List<IRecipeIngredient> givenComponents = givenIngredients.getIngredients(component);
+    public static boolean validateIngredientsPartial(IMixedIngredients ingredients, IMixedIngredients givenIngredients) {
+        for (IngredientComponent component : ingredients.getComponents()) {
+            List<?> actualComponents = ingredients.getInstances(component);
+            List<?> givenComponents = givenIngredients.getInstances(component);
 
             // At least all given components must match,
             // the actual component count may be larger.
@@ -119,11 +103,11 @@ public class PositionedOperatorRecipeHandler<T extends IValueType<V>, V extends 
             // All GIVEN ingredients must match,
             // and all actual components may only be matched at most ONCE.
             List<Integer> actualIndexBlacklist = Lists.newLinkedList();
-            for (IRecipeIngredient givenIngredient : givenComponents) {
+            for (Object givenIngredient : givenComponents) {
                 boolean match = false;
                 for (int i = 0; i < actualComponents.size(); i++) {
                     if (!actualIndexBlacklist.contains(i)
-                            && MATCH_INGREDIENTS.test(Pair.of(actualComponents.get(i), givenIngredient))) {
+                            && component.getMatcher().matchesExactly(givenIngredient, actualComponents.get(i))) {
                         match = true;
                         break;
                     }

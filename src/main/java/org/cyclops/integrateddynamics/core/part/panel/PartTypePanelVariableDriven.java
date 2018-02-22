@@ -168,6 +168,16 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         } else {
             IValue materializedValue = null;
             try {
+                if (newValue.getType() == ValueTypes.LIST) {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> original = ((ValueTypeList.ValueList) newValue).getRawValue();
+                    if (original.getLength() > ValueTypeList.MAX_RENDER_LINES) {
+                        List<IValue> list = Lists.newArrayList();
+                        for (int i = 0; i < ValueTypeList.MAX_RENDER_LINES; i++) {
+                            list.add(original.get(i));
+                        }
+                        newValue = ValueTypeList.ValueList.ofList(original.getValueType(), list);
+                    }
+                }
                 materializedValue = newValue.getType().materialize(newValue);
             } catch (EvaluationException e) {
                 state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
@@ -280,18 +290,6 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             IValue value = getDisplayValue();
             if(value != null) {
                 tag.setString("displayValueType", value.getType().getUnlocalizedName());
-                if (value.getType() == ValueTypes.LIST) {
-                    IValueTypeListProxy<IValueType<IValue>, IValue> original = ((ValueTypeList.ValueList) value).getRawValue();
-                    try {
-                        if (original.getLength() > ValueTypeList.MAX_RENDER_LINES) {
-                            List<IValue> list = Lists.newArrayList();
-                            for (int i = 0; i < ValueTypeList.MAX_RENDER_LINES; i++) {
-                                list.add(original.get(i));
-                            }
-                            value = ValueTypeList.ValueList.ofList(original.getValueType(), list);
-                        }
-                    } catch (EvaluationException e) {}
-                }
                 tag.setString("displayValue", ValueHelpers.serializeRaw(value));
             }
             tag.setInteger("facingRotation", facingRotation.ordinal());
