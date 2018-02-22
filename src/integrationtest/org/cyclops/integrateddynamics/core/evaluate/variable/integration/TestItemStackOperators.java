@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.block.BlockCreativeEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -841,10 +842,10 @@ public class TestItemStackOperators {
     public void testItemStackOreDictStacks() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sStickWood});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), OreDictionary.getOres("stickWood").size(), "size(oredict_stacks(stickWood))");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), (int)Helpers.getOresWildcard("stickWood").count(), "size(oredict_stacks(stickWood))");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sPlankWood});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), OreDictionary.getOres("plankWood").size(), "size(oredict_stacks(plankWood))");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), (int)Helpers.getOresWildcard("plankWood").count(), "size(oredict_stacks(plankWood))");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
