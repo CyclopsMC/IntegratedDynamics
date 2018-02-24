@@ -133,8 +133,9 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             for(PartPos partPos : partPositions.valueCollection()){
                 IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
                 IVariableContainer variableContainer = partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide());
-                if (variableContainer != null)
+                if (variableContainer != null) {
                     compositeMap.addElement(variableContainer.getVariableCache());
+                }
             }
             compositeVariableCache = compositeMap;
         }
