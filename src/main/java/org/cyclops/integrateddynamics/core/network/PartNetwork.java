@@ -130,7 +130,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
                 }
             }
             // Also check parts
-            for(PartPos partPos : partPositions.valueCollection()){
+            for(PartPos partPos : partPositions.valueCollection()) {
                 IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
                 IVariableContainer variableContainer = partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide());
                 if (variableContainer != null) {
