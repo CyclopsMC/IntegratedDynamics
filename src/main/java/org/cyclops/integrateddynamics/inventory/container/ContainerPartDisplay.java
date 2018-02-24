@@ -24,7 +24,7 @@ import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariable
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
 /**
- * Container for writer parts.
+ * Container for display parts.
  * @author rubensworks
  */
 @EqualsAndHashCode(callSuper = false)
