@@ -24,7 +24,6 @@ import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceCo
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
-import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -85,12 +84,9 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      */
     public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(!checkedForWriteVariable) {
-            for(int slot = 0; slot < getInventory().getSizeInventory(); slot++) {
-                ItemStack itemStack = getInventory().getStackInSlot(slot);
-                if(!itemStack.isEmpty()) {
-                    this.currentVariableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-                    validate(network);
-                }
+            for (IVariableFacade facade : variableContainer.getVariableCache().values()) {
+                currentVariableFacade = facade;
+                validate(network);
             }
             this.checkedForWriteVariable = true;
         }
