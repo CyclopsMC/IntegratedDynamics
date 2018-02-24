@@ -433,9 +433,9 @@ public class OperatorBuilders {
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.INTEGER)
             .renderPattern(IConfigRenderPattern.INFIX_2).output(ValueTypes.OBJECT_INGREDIENTS);
 
-    public static OperatorBase.IFunction createFunctionIngredientsList(Callable<IngredientComponent<?, ?, ?>> componentReference) {
+    public static OperatorBase.IFunction createFunctionIngredientsList(Callable<IngredientComponent<?, ?>> componentReference) {
         return variables -> {
-            IngredientComponent<?, ?, ?> component = null;
+            IngredientComponent<?, ?> component = null;
             try {
                 component = componentReference.call();
             } catch (Exception e) {

@@ -3,14 +3,11 @@ package org.cyclops.integrateddynamics.core.ingredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.cyclops.commoncapabilities.api.ingredient.FluidHandlerRecipeTarget;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.commoncapabilities.api.ingredient.ItemHandlerRecipeTarget;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -57,15 +54,15 @@ public class IngredientComponentHandlers {
                     new ResourceLocation("minecraft:energy"));
 
             REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeItemStack,
-                                ValueObjectTypeItemStack.ValueItemStack, ItemStack, ItemHandlerRecipeTarget, Integer,
-                    IngredientComponent<ItemStack, ItemHandlerRecipeTarget, Integer>>() {
+                                ValueObjectTypeItemStack.ValueItemStack, ItemStack, Integer,
+                    IngredientComponent<ItemStack, Integer>>() {
                 @Override
                 public ValueObjectTypeItemStack getValueType() {
                     return ValueTypes.OBJECT_ITEMSTACK;
                 }
 
                 @Override
-                public IngredientComponent<ItemStack, ItemHandlerRecipeTarget, Integer> getComponent() {
+                public IngredientComponent<ItemStack, Integer> getComponent() {
                     return componentItem;
                 }
 
@@ -80,8 +77,8 @@ public class IngredientComponentHandlers {
                 }
             });
             REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeFluidStack,
-                                ValueObjectTypeFluidStack.ValueFluidStack, FluidStack, FluidHandlerRecipeTarget, Integer,
-                                IngredientComponent<FluidStack, FluidHandlerRecipeTarget, Integer>>() {
+                                ValueObjectTypeFluidStack.ValueFluidStack, FluidStack, Integer,
+                                IngredientComponent<FluidStack, Integer>>() {
 
                 @Override
                 public ValueObjectTypeFluidStack getValueType() {
@@ -89,7 +86,7 @@ public class IngredientComponentHandlers {
                 }
 
                 @Override
-                public IngredientComponent<FluidStack, FluidHandlerRecipeTarget, Integer> getComponent() {
+                public IngredientComponent<FluidStack, Integer> getComponent() {
                     return componentFluid;
                 }
 
@@ -105,14 +102,14 @@ public class IngredientComponentHandlers {
                 }
             });
             REGISTRY.register(new IIngredientComponentHandler<ValueTypeInteger, ValueTypeInteger.ValueInteger,
-                    Integer, IEnergyStorage, Void, IngredientComponent<Integer, IEnergyStorage, Void>>() {
+                    Integer, Void, IngredientComponent<Integer, Void>>() {
                 @Override
                 public ValueTypeInteger getValueType() {
                     return ValueTypes.INTEGER;
                 }
 
                 @Override
-                public IngredientComponent<Integer, IEnergyStorage, Void> getComponent() {
+                public IngredientComponent<Integer, Void> getComponent() {
                     return componentEnergy;
                 }
 

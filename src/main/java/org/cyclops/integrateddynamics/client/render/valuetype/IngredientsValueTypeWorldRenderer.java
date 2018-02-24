@@ -42,7 +42,7 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
 
             // Get a list of all values
             List<IValue> values = Lists.newArrayList();
-            for (IngredientComponent<?, ?, ?> component : ingredients.getComponents()) {
+            for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
                 IIngredientComponentHandler componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
                 for (Object instance : ingredients.getInstances(component)) {
                     values.add(componentHandler.toValue(instance));

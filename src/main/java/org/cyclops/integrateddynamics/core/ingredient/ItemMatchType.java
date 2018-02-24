@@ -10,7 +10,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.commoncapabilities.api.ingredient.ItemHandlerRecipeTarget;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.integrateddynamics.Reference;
 
@@ -87,7 +86,7 @@ public enum ItemMatchType {
          * @param itemStack An ItemStack to derive prototypes from.
          * @return The list of prototypes.
          */
-        public List<IPrototypedIngredient<ItemStack, ItemHandlerRecipeTarget, Integer>> getPrototypesFor(ItemStack itemStack);
+        public List<IPrototypedIngredient<ItemStack, Integer>> getPrototypesFor(ItemStack itemStack);
     }
 
     public static class FlaggedPrototypeHandler implements ItemMatchType.IPrototypeHandler {
@@ -99,7 +98,7 @@ public enum ItemMatchType {
         }
 
         @Override
-        public List<IPrototypedIngredient<ItemStack, ItemHandlerRecipeTarget, Integer>> getPrototypesFor(ItemStack itemStack) {
+        public List<IPrototypedIngredient<ItemStack, Integer>> getPrototypesFor(ItemStack itemStack) {
             return Lists.newArrayList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, flags));
         }
     }

@@ -13,7 +13,6 @@ import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.commoncapabilities.api.ingredient.ItemHandlerRecipeTarget;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -46,13 +45,13 @@ public class TestRecipeOperators {
 
     @IntegrationBefore
     public void before() {
-        List<List<IPrototypedIngredient<ItemStack, ItemHandlerRecipeTarget, Integer>>> ingredientsIn = Lists.newArrayList();
+        List<List<IPrototypedIngredient<ItemStack, Integer>>> ingredientsIn = Lists.newArrayList();
         ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
         ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Items.BOAT), ItemMatch.EXACT)));
         ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Blocks.STONE), ItemMatch.EXACT)));
         ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
 
-        Map<IngredientComponent<?, ?, ?>, List<?>> ingredientsOut = Maps.newIdentityHashMap();
+        Map<IngredientComponent<?, ?>, List<?>> ingredientsOut = Maps.newIdentityHashMap();
         ingredientsOut.put(IngredientComponent.ENERGY, Lists.newArrayList(777));
         ingredientsOut.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(FluidRegistry.WATER, 123)));
         ingredientsOut.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));

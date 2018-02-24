@@ -16,17 +16,14 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
-import org.cyclops.commoncapabilities.api.ingredient.FluidHandlerRecipeTarget;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.commoncapabilities.api.ingredient.ItemHandlerRecipeTarget;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.client.gui.component.input.GuiTextFieldExtended;
@@ -221,7 +218,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return 64;
     }
 
-    protected Map<IngredientComponent<?, ?, ?>, List<List<IPrototypedIngredient<?, ?, ?>>>> getInputs(List<Pair<ItemStack, ItemMatchType>> itemStacks,
+    protected Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> getInputs(List<Pair<ItemStack, ItemMatchType>> itemStacks,
                                                                                                       ItemStack fluid, int fluidAmount,
                                                                                                       int energy) {
         // Cut of itemStacks list until last non-empty stack
@@ -239,14 +236,14 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStack.amount = fluidAmount;
         }
 
-        Map<IngredientComponent<?, ?, ?>, List<List<IPrototypedIngredient<?, ?, ?>>>> inputs = Maps.newIdentityHashMap();
-        List<List<IPrototypedIngredient<ItemStack, ItemHandlerRecipeTarget, Integer>>> items = itemStacks.stream()
+        Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> inputs = Maps.newIdentityHashMap();
+        List<List<IPrototypedIngredient<ItemStack, Integer>>> items = itemStacks.stream()
                 .map(stack -> stack.getRight().getPrototypeHandler().getPrototypesFor(stack.getLeft()))
                 .collect(Collectors.toList());
-        List<List<IPrototypedIngredient<FluidStack, FluidHandlerRecipeTarget, Integer>>> fluids = fluidStack != null
+        List<List<IPrototypedIngredient<FluidStack, Integer>>> fluids = fluidStack != null
                 ? Collections.singletonList(Collections.singletonList(new PrototypedIngredient<>(
                         IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.NBT))) : Collections.emptyList();
-        List<List<IPrototypedIngredient<Integer, IEnergyStorage, Void>>> energies = energy > 0 ?
+        List<List<IPrototypedIngredient<Integer, Void>>> energies = energy > 0 ?
                 Collections.singletonList(Collections.singletonList(new PrototypedIngredient<>(
                         IngredientComponent.ENERGY, energy, null))) : Collections.emptyList();
         if (!items.isEmpty()) {
@@ -262,7 +259,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return inputs;
     }
 
-    protected Map<IngredientComponent<?, ?, ?>, List<?>> getOutputs(List<ItemStack> itemStacks,
+    protected Map<IngredientComponent<?, ?>, List<?>> getOutputs(List<ItemStack> itemStacks,
                                                                     ItemStack fluid, int fluidAmount,
                                                                     int energy) {
         // Cut of itemStacks list until last non-empty stack
@@ -280,7 +277,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStack.amount = fluidAmount;
         }
 
-        Map<IngredientComponent<?, ?, ?>, List<?>> outputs = Maps.newIdentityHashMap();
+        Map<IngredientComponent<?, ?>, List<?>> outputs = Maps.newIdentityHashMap();
         if (!itemStacks.isEmpty()) {
             outputs.put(IngredientComponent.ITEMSTACK, itemStacks);
         }

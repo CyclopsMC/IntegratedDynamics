@@ -91,7 +91,7 @@ public class TestIngredientsOperators {
                         666, 777, 0)
                 )));
 
-        Map<IngredientComponent<?, ?, ?>, List<?>> ingredients = Maps.newIdentityHashMap();
+        Map<IngredientComponent<?, ?>, List<?>> ingredients = Maps.newIdentityHashMap();
         ingredients.put(IngredientComponent.ENERGY, Lists.newArrayList(777));
         ingredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(FluidRegistry.WATER, 125)));
         ingredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));

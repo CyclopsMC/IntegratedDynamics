@@ -81,8 +81,8 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
     }
 
     protected IMixedIngredients constructValues() {
-        Map<IngredientComponent<?, ?, ?>, List<?>> lists = Maps.newIdentityHashMap();
-        for (IngredientComponent<?, ?, ?> component : IngredientComponentHandlers.REGISTRY.getComponents()) {
+        Map<IngredientComponent<?, ?>, List<?>> lists = Maps.newIdentityHashMap();
+        for (IngredientComponent<?, ?> component : IngredientComponentHandlers.REGISTRY.getComponents()) {
             List values = Lists.newArrayListWithExpectedSize(lengths.get(component));
             subElements.get(component).entrySet().forEach(entry -> {
                 IIngredientComponentHandler componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);

@@ -19,12 +19,12 @@ public class WrappedIngredients implements IMixedIngredients {
     }
 
     @Override
-    public Set<IngredientComponent<?, ?, ?>> getComponents() {
+    public Set<IngredientComponent<?, ?>> getComponents() {
         return ingredients.getComponents();
     }
 
     @Override
-    public <T> List<T> getInstances(IngredientComponent<T, ?, ?> ingredientComponent) {
+    public <T> List<T> getInstances(IngredientComponent<T, ?> ingredientComponent) {
         return ingredients.getInstances(ingredientComponent);
     }
 }

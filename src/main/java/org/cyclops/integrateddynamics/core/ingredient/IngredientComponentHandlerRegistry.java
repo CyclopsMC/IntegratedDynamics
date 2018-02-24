@@ -19,7 +19,7 @@ public class IngredientComponentHandlerRegistry implements IIngredientComponentH
 
     private static IngredientComponentHandlerRegistry INSTANCE = new IngredientComponentHandlerRegistry();
 
-    private final Map<IngredientComponent<?, ?, ?>, IIngredientComponentHandler> componentTypes = Maps.newIdentityHashMap();
+    private final Map<IngredientComponent<?, ?>, IIngredientComponentHandler> componentTypes = Maps.newIdentityHashMap();
 
     private IngredientComponentHandlerRegistry() {
 
@@ -34,7 +34,7 @@ public class IngredientComponentHandlerRegistry implements IIngredientComponentH
 
     @Override
     public <VT extends IValueType<V>, V extends IValue,
-            T, R, M, C extends IngredientComponent<T, R, M>, H extends IIngredientComponentHandler<VT, V, T, R, M, C>> H register(H handler) {
+            T, M, C extends IngredientComponent<T, M>, H extends IIngredientComponentHandler<VT, V, T, M, C>> H register(H handler) {
         this.componentTypes.put(Objects.requireNonNull(handler.getComponent(), "The recipe component of "
                 + handler + " was null, it is probably not initialized yet!"), handler);
         return handler;
@@ -42,13 +42,13 @@ public class IngredientComponentHandlerRegistry implements IIngredientComponentH
 
     @Nullable
     @Override
-    public <VT extends IValueType<V>, V extends IValue, T, R, M, C extends IngredientComponent<T, R, M>>
-    IIngredientComponentHandler<VT, V, T, R, M, C> getComponentHandler(C component) {
+    public <VT extends IValueType<V>, V extends IValue, T, M, C extends IngredientComponent<T, M>>
+    IIngredientComponentHandler<VT, V, T, M, C> getComponentHandler(C component) {
         return this.componentTypes.get(component);
     }
 
     @Override
-    public Set<IngredientComponent<?, ?, ?>> getComponents() {
+    public Set<IngredientComponent<?, ?>> getComponents() {
         return this.componentTypes.keySet();
     }
 }

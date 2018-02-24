@@ -33,7 +33,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     public static String ingredientsToString(IMixedIngredients ingredients) {
         StringBuilder sb = new StringBuilder();
 
-        for (IngredientComponent<?, ?, ?> component : ingredients.getComponents()) {
+        for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
             IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
             for (Object instance : ingredients.getInstances(component)) {
                 sb.append(handler.toCompactString(handler.toValue(instance)));

@@ -44,10 +44,10 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
             sb.append(ValueObjectTypeIngredients.ingredientsToString(recipe.getOutput()));
             sb.append(" <- ");
 
-            for (IngredientComponent<?, ?, ?> component : recipe.getInputComponents()) {
+            for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
                 IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
-                for (List<? extends IPrototypedIngredient<?, ?, ?>> instances : recipe.getInputs(component)) {
-                    IPrototypedIngredient<?, ?, ?> prototypedIngredient = Iterables.getFirst(instances, null);
+                for (List<? extends IPrototypedIngredient<?, ?>> instances : recipe.getInputs(component)) {
+                    IPrototypedIngredient<?, ?> prototypedIngredient = Iterables.getFirst(instances, null);
                     IValue v;
                     if (prototypedIngredient == null) {
                         v  = handler.getValueType().getDefault();

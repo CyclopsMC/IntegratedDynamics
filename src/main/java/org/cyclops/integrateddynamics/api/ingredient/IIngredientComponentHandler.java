@@ -11,13 +11,12 @@ import javax.annotation.Nullable;
  * @param <VT> The value type.
  * @param <V> The value.
  * @param <T> The instance type.
- * @param <R> The recipe target type, may be Void.
  * @param <M> The matching condition parameter.
  * @param <C> The component type.
  * @author rubensworks
  */
 public interface IIngredientComponentHandler<VT extends IValueType<V>, V extends IValue,
-        T, R, M, C extends IngredientComponent<T, R, M>> {
+        T, M, C extends IngredientComponent<T, M>> {
 
     /**
      * @return The value type with which the component should be handled.
