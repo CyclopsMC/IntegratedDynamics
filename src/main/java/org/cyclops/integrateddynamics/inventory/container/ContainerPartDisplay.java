@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
+import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
@@ -90,10 +91,9 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
     public void onDirty() {
         if(!MinecraftHelpers.isClientSide()) {
             getPartState().onVariableContentsUpdated(getPartType(), getTarget());
+            INetwork network = NetworkHelpers.getNetwork(getTarget().getCenter());
             if (!getPartState().getInventory().isEmpty()) {
                 try {
-                    INetwork network = NetworkHelpers.getNetwork(getTarget().getCenter().getPos().getWorld(),
-                            getTarget().getCenter().getPos().getBlockPos(), getTarget().getCenter().getSide());
                     IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
                     IVariable variable = getPartState().getVariable(partNetwork);
                     MinecraftForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network, partNetwork, getTarget(),
@@ -101,6 +101,9 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
                 } catch (EvaluationException e) {
 
                 }
+            }
+            if (network != null) {
+                network.getEventBus().post(new VariableContentsUpdatedEvent(network));
             }
         }
     }
