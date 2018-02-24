@@ -961,7 +961,7 @@ public class TestEntityOperators {
     public void testEntityType() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertNonEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Zombie", "entitytype(zombie) = Zombie");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Zombie", "entitytype(zombie) = Zombie");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

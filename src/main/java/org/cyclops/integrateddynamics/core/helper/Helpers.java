@@ -3,10 +3,12 @@ package org.cyclops.integrateddynamics.core.helper;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -16,12 +18,14 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.oredict.OreDictionary;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Helper methods.
@@ -63,6 +67,29 @@ public final class Helpers {
             }
         }
         return 0;
+    }
+
+    /**
+     * Retrieves a Stream of items that are registered to this ore type
+     * with wildcard meta values expanded out into sub items
+     *
+     * @param name The ore name, directly calls OreDictionary.getOres
+     * @return A Stream containing ItemStacks registered for this ore
+     */
+    public static Stream<ItemStack> getOresWildcard(String name) {
+        Stream.Builder<ItemStack> builder = Stream.builder();
+        for (ItemStack itemStack : OreDictionary.getOres(name)) {
+            if (itemStack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+                NonNullList<ItemStack> subItems = NonNullList.create();
+                itemStack.getItem().getSubItems(CreativeTabs.SEARCH, subItems);
+                for (ItemStack subItem : subItems) {
+                    builder.accept(subItem);
+                }
+            } else {
+                builder.accept(itemStack);
+            }
+        }
+        return builder.build();
     }
 
     /**

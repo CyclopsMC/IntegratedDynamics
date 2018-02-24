@@ -20,8 +20,10 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.block.BlockCreativeEnergyBattery;
+import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -840,10 +842,10 @@ public class TestItemStackOperators {
     public void testItemStackOreDictStacks() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sStickWood});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), OreDictionary.getOres("stickWood").size(), "size(oredict_stacks(stickWood))");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), (int)Helpers.getOresWildcard("stickWood").count(), "size(oredict_stacks(stickWood))");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sPlankWood});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), OreDictionary.getOres("plankWood").size(), "size(oredict_stacks(plankWood))");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), (int)Helpers.getOresWildcard("plankWood").count(), "size(oredict_stacks(plankWood))");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -965,10 +967,10 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "fecapacity(apple) == false");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{iEnergyBatteryEmpty});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), 100000, "fecapacity(energyBatteryEmpty) == 100000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), BlockEnergyBatteryConfig.capacity, "fecapacity(energyBatteryEmpty) == BlockEnergyBatteryConfig.capacity");
 
         IValue res3 = Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), 100000, "fecapacity(energyBatteryFull) == 100000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), BlockEnergyBatteryConfig.capacity, "fecapacity(energyBatteryFull) == BlockEnergyBatteryConfig.capacity");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

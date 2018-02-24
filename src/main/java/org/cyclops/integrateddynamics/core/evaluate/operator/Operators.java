@@ -1485,17 +1485,9 @@ public final class Operators {
                 ValueTypeString.ValueString a = variables.getValue(0);
                 ImmutableList.Builder<ValueObjectTypeItemStack.ValueItemStack> builder = ImmutableList.builder();
                 if (!StringUtils.isNullOrEmpty(a.getRawValue())) {
-                    for (ItemStack itemStack : OreDictionary.getOres(a.getRawValue())) {
-                        if (itemStack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
-                            NonNullList<ItemStack> subItems = NonNullList.create();
-                            itemStack.getItem().getSubItems(CreativeTabs.SEARCH, subItems);
-                            for (ItemStack subItem : subItems) {
-                                builder.add(ValueObjectTypeItemStack.ValueItemStack.of(subItem));
-                            }
-                        } else {
-                            builder.add(ValueObjectTypeItemStack.ValueItemStack.of(itemStack));
-                        }
-                    }
+                    Helpers.getOresWildcard(a.getRawValue())
+                            .map(ValueObjectTypeItemStack.ValueItemStack::of)
+                            .forEach(builder::add);
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, builder.build());
             }).build());

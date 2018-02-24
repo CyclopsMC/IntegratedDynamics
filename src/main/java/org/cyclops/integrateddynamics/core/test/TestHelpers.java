@@ -58,7 +58,7 @@ public class TestHelpers {
                 Asserts.check(!Objects.equals(actual, expected), ifNonEqual);
             }
         } catch (IllegalStateException e) {
-            throw new AssertionError(String.format("Failure: %s. Expected %s, but got %s.", ifNonEqual, expected, actual));
+            throw new AssertionError(String.format("Failure: %s. Expected not %s, but got %s.", ifNonEqual, expected, actual));
         }
     }
 
