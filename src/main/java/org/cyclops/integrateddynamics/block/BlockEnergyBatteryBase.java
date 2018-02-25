@@ -8,6 +8,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -62,5 +63,17 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
             }
         }
         return false;
+    }
+
+    /**
+     * Fill an IEnergyStorage with all the energy it can hold
+     * @param energyStorage IEnergyStorage that is to be filled
+     */
+    public static void fill(IEnergyStorage energyStorage){
+        int max = energyStorage.getMaxEnergyStored();
+        int stored = 1;
+        while (stored > 0) {
+            stored = energyStorage.receiveEnergy(max, false);
+        }
     }
 }

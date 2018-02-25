@@ -46,7 +46,7 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
         if (!BlockHelpers.isValidCreativeTab(this, tab)) return;
         ItemStack full = new ItemStack(this);
         IEnergyStorage energyStorage = full.getCapability(CapabilityEnergy.ENERGY, null);
-        energyStorage.receiveEnergy(energyStorage.getMaxEnergyStored(), false);
+        fill(energyStorage);
         list.add(full);
     }
 
