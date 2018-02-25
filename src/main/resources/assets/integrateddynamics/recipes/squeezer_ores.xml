@@ -253,10 +253,11 @@
         <condition type="config">squeezer</condition>
         <condition type="oredict">dustNetherQuartz</condition>
         <input>
-            <item>minecraft:quartz</item>
+            <item>minecraft:quartz_ore</item>
         </input>
         <output>
-            <item type="oredict">dustNetherQuartz</item>
+            <item amount="2">minecraft:quartz</item>
+            <item chance="0.5">minecraft:quartz</item>
         </output>
     </recipe>
 
