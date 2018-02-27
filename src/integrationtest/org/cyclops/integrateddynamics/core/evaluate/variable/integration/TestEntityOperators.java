@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
@@ -13,7 +14,9 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.http.util.Asserts;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -31,6 +34,8 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
+
+import java.util.UUID;
 
 /**
  * Test the different logical operators.
@@ -73,7 +78,8 @@ public class TestEntityOperators {
 
     @IntegrationBefore
     public void before() {
-        World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
+        MinecraftServer serverInstance = FMLCommonHandler.instance().getMinecraftServerInstance();
+        World world = serverInstance.getEntityWorld();
         eZombie = new DummyVariableEntity(makeEntity(new EntityZombie(world)));
         EntityZombie zombieBurning = new EntityZombie(world);
         zombieBurning.setFire(10);
@@ -99,7 +105,10 @@ public class TestEntityOperators {
         eChicken = new DummyVariableEntity(makeEntity(new EntityChicken(world)));
         eItem = new DummyVariableEntity(makeEntity(new EntityItem(world)));
         eItemFrame = new DummyVariableEntity(makeEntity(new EntityItemFrame(world)));
-        ePlayer = new DummyVariableEntity(makeEntity(world.playerEntities.get(0)));
+        if ( world.playerEntities.size() > 0 )
+            ePlayer = new DummyVariableEntity(makeEntity(world.playerEntities.get(0)));
+        else
+            ePlayer = new DummyVariableEntity(makeEntity(new FakePlayer(serverInstance.getWorld(world.provider.getDimension()), new GameProfile(UUID.randomUUID(), "dummy"))));
         EntityZombie zombieHeldItems = new EntityZombie(world);
         zombieHeldItems.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.APPLE));
         zombieHeldItems.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, new ItemStack(Items.POTATO));
