@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.block.BlockCreativeEnergyBattery;
+import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
@@ -89,7 +90,7 @@ public class TestItemStackOperators {
         iEnergyBatteryEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(BlockCreativeEnergyBattery.getInstance())));
         ItemStack energyBatteryFull = new ItemStack(BlockCreativeEnergyBattery.getInstance());
         IEnergyStorage energyStorage = energyBatteryFull.getCapability(CapabilityEnergy.ENERGY, null);
-        energyStorage.receiveEnergy(energyStorage.getMaxEnergyStored(), false);
+        BlockEnergyBatteryBase.fill(energyStorage);
         iEnergyBatteryFull = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(energyBatteryFull));
         iIronOre = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.IRON_ORE)));
         ItemStack shulkerBox = new ItemStack(Blocks.BLACK_SHULKER_BOX);
@@ -938,7 +939,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), 0, "storedfe(energyBatteryEmpty) == 0");
 
         IValue res3 = Operators.OBJECT_ITEMSTACK_STOREDFE.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), 100000, "storedfe(energyBatteryFull) == 100000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), BlockEnergyBatteryConfig.capacity, "storedfe(energyBatteryFull) == BlockEnergyBatteryConfig.capacity");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

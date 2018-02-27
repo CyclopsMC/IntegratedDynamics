@@ -73,10 +73,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
             IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) currentStack.getCapability(CapabilityEnergy.ENERGY, null);
             energyStorage.setCapacity(capacity);
             list.add(currentStack.copy());
-            int stored = 1;
-            while (stored > 0) {
-                stored = energyStorage.receiveEnergy(capacity, false);
-            }
+            fill(energyStorage);
             list.add(currentStack.copy());
             lastCapacity = capacity;
             capacity = capacity << 2;
