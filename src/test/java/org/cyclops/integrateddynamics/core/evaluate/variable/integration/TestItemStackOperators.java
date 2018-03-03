@@ -13,7 +13,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.http.util.Asserts;
 import org.cyclops.cyclopscore.helper.EnchantmentHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
