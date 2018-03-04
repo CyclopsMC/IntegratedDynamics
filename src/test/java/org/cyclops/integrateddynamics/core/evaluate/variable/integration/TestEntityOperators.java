@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import com.mojang.authlib.GameProfile;
 import com.jjtparadox.barometer.tester.BarometerTester;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
@@ -32,8 +32,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
-import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
-import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +79,7 @@ public class TestEntityOperators {
         return new ValueEntityMock(entity);
     }
 
-    @IntegrationBefore
+    @Before
     public void before() {
         MinecraftServer serverInstance = FMLCommonHandler.instance().getMinecraftServerInstance();
         World world = serverInstance.getEntityWorld();
@@ -168,7 +166,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISMOB -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsMob() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISMOB.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -187,17 +185,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), false, "isismob(player) = false");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsMobLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISMOB.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsMobSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISMOB.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsMob() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISMOB.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -206,7 +204,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISANIMAL -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsAnimal() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISANIMAL.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -225,17 +223,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), false, "isismob(player) = false");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsAnimalLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISANIMAL.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsAnimalSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISANIMAL.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsAnimal() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISANIMAL.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -244,7 +242,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISITEM -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsItem() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISITEM.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -263,17 +261,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), false, "isismob(player) = false");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsItemLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISITEM.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsItemSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISITEM.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsItem() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISITEM.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -282,7 +280,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISPLAYER -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsPlayer() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISPLAYER.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -301,17 +299,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), true, "isisplayer(player) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsPlayerLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISPLAYER.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsPlayerSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISPLAYER.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsPlayer() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISPLAYER.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -320,7 +318,7 @@ public class TestEntityOperators {
      * ----------------------------------- ITEMSTACK -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockItemStack() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an itemstack");
@@ -330,17 +328,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().isEmpty(), true, "itemstack(null) = null");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeItemStackLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeItemStackSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeItemStack() throws EvaluationException {
         Operators.OBJECT_ENTITY_ITEMSTACK.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -349,7 +347,7 @@ public class TestEntityOperators {
      * ----------------------------------- HEALTH -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockHealth() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_HEALTH.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeDouble.ValueDouble, "result is a double");
@@ -359,17 +357,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeDouble.ValueDouble) res2).getRawValue(), 0D, "health(item) = 0");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHealthLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_HEALTH.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHealthSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_HEALTH.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeHealth() throws EvaluationException {
         Operators.OBJECT_ENTITY_HEALTH.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -378,7 +376,7 @@ public class TestEntityOperators {
      * ----------------------------------- WIDTH -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockWidth() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_WIDTH.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeDouble.ValueDouble, "result is a double");
@@ -388,17 +386,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeDouble.ValueDouble) res2).getRawValue(), 0.25D, "width(item) = 0.25");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeWidthLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_WIDTH.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeWidthSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_WIDTH.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeWidth() throws EvaluationException {
         Operators.OBJECT_ENTITY_WIDTH.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -407,7 +405,7 @@ public class TestEntityOperators {
      * ----------------------------------- HEIGHT -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockHeight() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_HEIGHT.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeDouble.ValueDouble, "result is a double");
@@ -417,17 +415,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeDouble.ValueDouble) res2).getRawValue(), 0.25D, "height(item) = 0.25");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHeightLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_HEIGHT.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHeightSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_HEIGHT.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeHeight() throws EvaluationException {
         Operators.OBJECT_ENTITY_HEIGHT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -436,7 +434,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISBURNING -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsBurning() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISBURNING.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -446,17 +444,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isburning(zombie:burning) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsBurningLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISBURNING.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsBurningSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISBURNING.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsBurning() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISBURNING.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -465,7 +463,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISWET -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsWet() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISWET.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -475,17 +473,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "iswet(zombie:wet) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsWetLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISWET.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsWetSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISWET.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsWet() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISWET.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -494,7 +492,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISSNEAKING -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsSneaking() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -504,17 +502,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "issneaking(zombie:sneaking) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsSneakingLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsSneakingSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsSneaking() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -523,7 +521,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISEATING -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsEating() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISEATING.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -533,17 +531,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "iseating(zombie:eating) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsEatingLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISEATING.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsEatingSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISEATING.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsEating() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISEATING.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -552,24 +550,24 @@ public class TestEntityOperators {
      * ----------------------------------- MODNAME -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityModName() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Minecraft", "modname(zombie) = Minecraft");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeModNameLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeModNameSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeModName() throws EvaluationException {
         Operators.OBJECT_ENTITY_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -578,24 +576,24 @@ public class TestEntityOperators {
      * ----------------------------------- HELDITEM_MAIN -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityHeldItemMain() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{eZombieHeldItems});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getItem(), Items.APPLE, "helditemmain(zombie) = apple");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHeldItemMainLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{eZombieHeldItems, eZombieHeldItems});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHeldItemMainSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeHeldItemMain() throws EvaluationException {
         Operators.OBJECT_ENTITY_HELDITEM_MAIN.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -604,24 +602,24 @@ public class TestEntityOperators {
      * ----------------------------------- HELDITEM_OFF -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityHeldItemOff() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{eZombieHeldItems});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getItem(), Items.POTATO, "helditemoff(zombie) = potato");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHeldItemOffLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{eZombieHeldItems, eZombieHeldItems});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHeldItemOffSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeHeldItemOff() throws EvaluationException {
         Operators.OBJECT_ENTITY_HELDITEM_OFF.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -630,7 +628,7 @@ public class TestEntityOperators {
      * ----------------------------------- MOUNTED -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityMounted() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_MOUNTED.evaluate(new IVariable[]{eBoat});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
@@ -639,17 +637,17 @@ public class TestEntityOperators {
         //TestHelpers.assertEqual(((ValueObjectTypeEntity.ValueEntity) ((ValueTypeList.ValueList) res1).getRawValue().get(0)).getRawValue().get(), eZombie.getValue().getRawValue().get(), "mounted(boat)(0) = zombie");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeMountedLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_MOUNTED.evaluate(new IVariable[]{eBoat, eBoat});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeMountedSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_MOUNTED.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeMounted() throws EvaluationException {
         Operators.OBJECT_ENTITY_MOUNTED.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -658,24 +656,24 @@ public class TestEntityOperators {
      * ----------------------------------- ITEMFRAME_CONTENTS -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityItemframeContents() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{eItemframe});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getItem(), Items.POTATO, "itemframecontents(itemframe) = potato");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeItemframeContentsLarge() throws EvaluationException {
         Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{eItemframe, eItemframe});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeItemframeContentsSmall() throws EvaluationException {
         Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeItemframeContents() throws EvaluationException {
         Operators.OBJECT_ITEMFRAME_CONTENTS.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -684,24 +682,24 @@ public class TestEntityOperators {
      * ----------------------------------- ITEMFRAME_ROTATION -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityItemframeRotation() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMFRAME_ROTATION.evaluate(new IVariable[]{eItemframe});
         Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 3, "itemframerotation(itemframe) = 3");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeItemframeRotationLarge() throws EvaluationException {
         Operators.OBJECT_ITEMFRAME_ROTATION.evaluate(new IVariable[]{eItemframe, eItemframe});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeItemframeRotationSmall() throws EvaluationException {
         Operators.OBJECT_ITEMFRAME_ROTATION.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeItemframeRotation() throws EvaluationException {
         Operators.OBJECT_ITEMFRAME_ROTATION.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -710,24 +708,24 @@ public class TestEntityOperators {
      * ----------------------------------- HURTSOUND -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityHurtSound() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_HURTSOUND.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "minecraft:entity.zombie.hurt", "hurtsound(zomie) = minecraft:entity.zombie.hurt");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHurtSoundLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_HURTSOUND.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeHurtSoundSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_HURTSOUND.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeHurtSound() throws EvaluationException {
         Operators.OBJECT_ENTITY_HURTSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -736,24 +734,24 @@ public class TestEntityOperators {
      * ----------------------------------- DEATHSOUND -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityDeathSound() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "minecraft:entity.zombie.death", "deathsound(zomie) = minecraft:entity.zombie.death");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeDeathSoundLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeDeathSoundSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeDeathSound() throws EvaluationException {
         Operators.OBJECT_ENTITY_DEATHSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -762,24 +760,24 @@ public class TestEntityOperators {
      * ----------------------------------- AGE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockAge() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{eZombieAged});
         Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 3, "age(zombie) = 3");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeAgeLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{eZombieAged, eZombieAged});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeAgeSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeAge() throws EvaluationException {
         Operators.OBJECT_ENTITY_AGE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -788,7 +786,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISCHILD -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsChild() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -798,17 +796,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "ischild(zombie) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsChildLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsChildSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsChild() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISCHILD.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -817,7 +815,7 @@ public class TestEntityOperators {
      * ----------------------------------- CANBREED -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockCanBreed() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{eCow});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -830,17 +828,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), false, "canbreed(cowbaby) = false");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeCanBreedLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeCanBreedSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeCanBreed() throws EvaluationException {
         Operators.OBJECT_ENTITY_CANBREED.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -849,7 +847,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISINLOVE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsInLove() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{eCow});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -859,17 +857,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isinlove(cowloving) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsInLoveLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{eCow, eCow});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsInLoveSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsInLove() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISINLOVE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -878,7 +876,7 @@ public class TestEntityOperators {
      * ----------------------------------- CANBREEDWITH -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockCanBreedWith() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{eCow, iCarrot});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -894,17 +892,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), false, "canbreedwith(pig, wheat) = false");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeCanBreedWithLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{eCow, iCarrot, iCarrot});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeCanBreedWithSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{eCow});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeCanBreedWith() throws EvaluationException {
         Operators.OBJECT_ENTITY_CANBREEDWITH.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -913,7 +911,7 @@ public class TestEntityOperators {
      * ----------------------------------- ISSHEARABLE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsShearable() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{eCow});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -926,17 +924,17 @@ public class TestEntityOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), false, "isshearable(sheepsheared) = false");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsShearableLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{eCow, eCow});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsShearableSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsShearable() throws EvaluationException {
         Operators.OBJECT_ENTITY_ISSHEARABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -945,24 +943,24 @@ public class TestEntityOperators {
      * ----------------------------------- NBT -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockNbt() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
         TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new NBTTagCompound(), "isnbt(zombie) is not null");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeNbtLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeNbtSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeNbt() throws EvaluationException {
         Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -971,24 +969,24 @@ public class TestEntityOperators {
      * ----------------------------------- TYPE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testEntityType() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Zombie", "entitytype(zombie) = Zombie");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeTypeLarge() throws EvaluationException {
         Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeTypeSmall() throws EvaluationException {
         Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeType() throws EvaluationException {
         Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }

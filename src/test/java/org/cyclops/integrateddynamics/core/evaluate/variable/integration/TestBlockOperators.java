@@ -14,8 +14,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
-import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
-import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +46,7 @@ public class TestBlockOperators {
     private DummyVariable<ValueTypeString.ValueString> sSponge;
     private DummyVariable<ValueTypeString.ValueString> sSpongeWet;
 
-    @IntegrationBefore
+    @Before
     public void before() {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.getDefaultState()));
         bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.COAL_BLOCK.getDefaultState()));
@@ -71,7 +69,7 @@ public class TestBlockOperators {
      * ----------------------------------- OPAQUE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockOpaque() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_OPAQUE.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -81,17 +79,17 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isopaque(coalblock) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeOpaqueLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_OPAQUE.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeOpaqueSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_OPAQUE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeOpaque() throws EvaluationException {
         Operators.OBJECT_BLOCK_OPAQUE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -100,7 +98,7 @@ public class TestBlockOperators {
      * ----------------------------------- ITEMSTACK -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockItemStack() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an itemstack");
@@ -110,17 +108,17 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().isItemEqual(new ItemStack(Blocks.COAL_BLOCK)), true, "itemstack(coalblock) = coalblock");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeItemStackLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeItemStackSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeItemStack() throws EvaluationException {
         Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -129,7 +127,7 @@ public class TestBlockOperators {
      * ----------------------------------- MODNAME -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockModName() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
@@ -139,17 +137,17 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Integrated Dynamics", "modname(logicprogrammer) = Integrated Dynamics");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeModNameLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeModNameSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeModName() throws EvaluationException {
         Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -158,7 +156,7 @@ public class TestBlockOperators {
      * ----------------------------------- SOUNDS -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockSound() throws EvaluationException {
         // net.minecraft.util.SoundEvent.getSoundName is physical client only
         // TODO There is probably a better way to detect this, but this works!
@@ -185,21 +183,21 @@ public class TestBlockOperators {
             TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), SoundEvents.BLOCK_STONE_STEP.getSoundName().toString(), "stepsound(coal) = minecraft:block.stone.step");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeSoundLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{bAir, bAir});
         Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{bAir, bAir});
         Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeSoundSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{});
         Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{});
         Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeSound() throws EvaluationException {
         Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
         Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
@@ -210,7 +208,7 @@ public class TestBlockOperators {
      * ----------------------------------- ISSHEARABLE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsShearable() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -220,17 +218,17 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isshearable(leaves) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsShearableLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsShearableSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsShearable() throws EvaluationException {
         Operators.OBJECT_BLOCK_ISSHEARABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -239,7 +237,7 @@ public class TestBlockOperators {
      * ----------------------------------- ISPLANTABLE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockIsPlantable() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_ISPLANTABLE.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
@@ -249,17 +247,17 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isplantable(reed) = true");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsPlantableLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_ISPLANTABLE.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeIsPlantableSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_ISPLANTABLE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeIsPlantable() throws EvaluationException {
         Operators.OBJECT_BLOCK_ISPLANTABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -268,7 +266,7 @@ public class TestBlockOperators {
      * ----------------------------------- PLANTTYPE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockPlantType() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_PLANTTYPE.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
@@ -278,17 +276,17 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Beach", "planttype(reed) = Beach");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizePlantTypeLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANTTYPE.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizePlantTypeSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANTTYPE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypePlantType() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANTTYPE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -297,7 +295,7 @@ public class TestBlockOperators {
      * ----------------------------------- PLANT -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockPlant() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_PLANT.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
@@ -307,17 +305,17 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get().getBlock() == Blocks.REEDS, true, "plant(reed) = reed");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizePlantLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANT.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizePlantSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANT.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypePlant() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -326,7 +324,7 @@ public class TestBlockOperators {
      * ----------------------------------- PLANTAGE -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockPlantAge() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_PLANTAGE.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
@@ -339,17 +337,17 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), 1, "plantage(bCarrotGrown) = 1");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizePlantAgeLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANTAGE.evaluate(new IVariable[]{bAir, bAir});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizePlantAgeSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANTAGE.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypePlantAge() throws EvaluationException {
         Operators.OBJECT_BLOCK_PLANTAGE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
@@ -358,7 +356,7 @@ public class TestBlockOperators {
      * ----------------------------------- BLOCKBYNAME -----------------------------------
      */
 
-    @IntegrationTest
+    @Test
     public void testBlockBlockByName() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{sSponge});
         Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
@@ -369,17 +367,17 @@ public class TestBlockOperators {
                 Blocks.SPONGE.getDefaultState().withProperty(BlockSponge.WET, true), "blockbyname(minecraft:sponge 1) = sponge_wet");
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeBlockByNameLarge() throws EvaluationException {
         Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{sSponge, sSponge});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeBlockByNameSmall() throws EvaluationException {
         Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{});
     }
 
-    @IntegrationTest(expected = EvaluationException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeBlockByName() throws EvaluationException {
         Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
