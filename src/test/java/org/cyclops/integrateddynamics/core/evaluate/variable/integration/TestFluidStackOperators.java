@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
+import com.jjtparadox.barometer.tester.BarometerTester;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,11 +17,15 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * Test the different logical operators.
  * @author rubensworks
  */
+@RunWith(BarometerTester.class)
 public class TestFluidStackOperators {
 
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;

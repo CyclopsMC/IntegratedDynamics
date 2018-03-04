@@ -68,3 +68,22 @@ idea {
         sourceDirs += file('src/api/java')
     }
 }
+
+test {
+    // Number of test classes that are run before the server is closed (if this value is wrong things will break!)
+    systemProperty 'barometer.numClasses', 4
+
+    workingDir = {minecraft.runDir + "/test"} // This can be set to whatever you prefer
+
+    mkdir workingDir
+    file("$workingDir/eula.txt").text = "eula=true"
+
+    file("$workingDir/server.properties").text = """
+level-type=FLAT
+generator-settings=3;minecraft:bedrock,3*minecraft:stone,52*minecraft:sandstone;2;
+online-mode=false
+level-name=integrateddynamics.test
+"""
+
+    outputs.upToDateWhen { false }
+}

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
+import com.jjtparadox.barometer.tester.BarometerTester;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -28,11 +29,15 @@ import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.item.ItemWrench;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * Test the different logical operators.
  * @author rubensworks
  */
+@RunWith(BarometerTester.class)
 public class TestItemStackOperators {
 
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;

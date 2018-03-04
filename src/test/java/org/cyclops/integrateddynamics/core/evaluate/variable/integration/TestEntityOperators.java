@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import com.mojang.authlib.GameProfile;
+import com.jjtparadox.barometer.tester.BarometerTester;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
@@ -34,6 +35,9 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.UUID;
 
@@ -41,6 +45,7 @@ import java.util.UUID;
  * Test the different logical operators.
  * @author rubensworks
  */
+@RunWith(BarometerTester.class)
 public class TestEntityOperators {
 
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
