@@ -131,6 +131,9 @@ public interface IPositionedAddonsNetwork {
         private int steps;
         private final List<PositionsIterator> children;
 
+        private PrioritizedPartPos[] toAppend = new PrioritizedPartPos[0];
+        private int toAppendStep = 0;
+
         public PositionsIterator(Collection<PrioritizedPartPos> collection) {
             this.valid = true;
             this.collection = collection;
@@ -146,21 +149,37 @@ public interface IPositionedAddonsNetwork {
 
         @Override
         public boolean hasNext() {
-            return valid && it.hasNext();
+            return valid && (it.hasNext() || toAppendStep < toAppend.length);
         }
 
         @Override
         public PrioritizedPartPos next() {
             steps++;
-            return it.next();
+            if (steps >= this.collection.size()) {
+                // This can occur after looping over the append steps.
+                // This will make sure that cloning will still work properly.
+                steps = steps % this.collection.size();
+            }
+            return it.hasNext() ? it.next() : toAppend[toAppendStep++];
         }
 
+        protected void setToAppend(PrioritizedPartPos[] toAppend) {
+            this.toAppend = toAppend;
+        }
+
+        /**
+         * Clone this iterator.
+         * This will also make sure that the skipped steps are appended in-order at the end of the iterator.
+         * @return A cloned iterator.
+         */
         public PositionsIterator cloneState() {
             PositionsIterator child = new PositionsIterator(this.collection);
             this.children.add(child);
+            PrioritizedPartPos[] toAppend = new PrioritizedPartPos[steps];
             for (int step = 0; step < steps; step++) {
-                child.next();
+                toAppend[step] = child.next();
             }
+            child.setToAppend(toAppend);
             return child;
         }
     }
