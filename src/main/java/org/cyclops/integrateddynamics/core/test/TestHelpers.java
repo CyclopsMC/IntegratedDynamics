@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.test;
 
 import org.apache.http.util.Asserts;
-import org.cyclops.integrateddynamics.command.CommandTest;
 
 import java.util.Objects;
 
@@ -10,15 +9,6 @@ import java.util.Objects;
  * @author rubensworks
  */
 public class TestHelpers {
-
-    public static boolean canRunIntegrationTests() {
-        try {
-            Class.forName(CommandTest.CLASSES.get(0));
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
 
     /**
      * Assertion for equal objects.

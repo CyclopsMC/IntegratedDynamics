@@ -51,7 +51,6 @@ import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRend
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
 import org.cyclops.integrateddynamics.command.CommandCrash;
 import org.cyclops.integrateddynamics.command.CommandNetworkDiagnostics;
-import org.cyclops.integrateddynamics.command.CommandTest;
 import org.cyclops.integrateddynamics.core.NoteBlockEventReceiver;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
@@ -164,9 +163,6 @@ public class IntegratedDynamics extends ModBaseVersionable {
     @Override
     protected ICommand constructBaseCommand() {
         Map<String, ICommand> commands = Maps.newHashMap();
-        if(TestHelpers.canRunIntegrationTests()) {
-            commands.put(CommandTest.NAME, new CommandTest(this));
-        }
         commands.put(CommandNetworkDiagnostics.NAME, new CommandNetworkDiagnostics(this));
         commands.put(CommandCrash.NAME, new CommandCrash(this));
         return new CommandMod(this, commands);
