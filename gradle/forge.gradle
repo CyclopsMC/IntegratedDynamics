@@ -5,6 +5,9 @@ repositories {
         name "Cyclops Repo"
         url "https://oss.jfrog.org/artifactory/simple/libs-release/"
     }
+    maven {
+        url  "https://dl.bintray.com/tdaffin/mcmods"
+    }
 }
 
 dependencies {
@@ -37,10 +40,13 @@ dependencies {
     // Project lombok
     provided "org.projectlombok:lombok:1.16.8"
 
-    testCompile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-5"
-    testCompile "org.jetbrains.kotlin:kotlin-reflect:1.1.2-5"
     testCompile "junit:junit:4.12"
+    testCompile "com.jjtparadox.barometer:barometer:0.0.3-1.12"
     testCompile makeStart.outputs.files
+
+    testRuntime "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-5"
+    testRuntime "org.jetbrains.kotlin:kotlin-reflect:1.1.2-5"
+    testRuntime "io.github.lukehutch:fast-classpath-scanner:2.18.1"
 }
 
 shadowJar {
