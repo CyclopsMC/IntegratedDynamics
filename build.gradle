@@ -70,9 +70,6 @@ idea {
 }
 
 test {
-    // Number of test classes that are run before the server is closed (if this value is wrong things will break!)
-    systemProperty 'barometer.numClasses', 4
-
     workingDir = {minecraft.runDir + "/test"} // This can be set to whatever you prefer
 
     mkdir workingDir
