@@ -80,7 +80,6 @@ import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandl
 import org.cyclops.integrateddynamics.core.recipe.xml.MechanicalDryingBasinRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.recipe.xml.MechanicalSqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
-import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
 import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
