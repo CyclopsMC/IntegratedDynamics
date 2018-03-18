@@ -6,7 +6,7 @@ repositories {
         url "https://oss.jfrog.org/artifactory/simple/libs-release/"
     }
     maven {
-        url  "https://dl.bintray.com/tdaffin/mcmods"
+        url  "https://dl.bintray.com/jjtparadox/MC"
     }
 }
 
