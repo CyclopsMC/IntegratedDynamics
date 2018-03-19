@@ -81,6 +81,4 @@ generator-settings=3;minecraft:bedrock,3*minecraft:stone,52*minecraft:sandstone;
 online-mode=false
 level-name=integrateddynamics.test
 """
-
-    outputs.upToDateWhen { false }
 }
