@@ -6,10 +6,12 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven { url "https://dl.bintray.com/jjtparadox/MC" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'com.jjtparadox.barometer:Barometer:0.0.6'
     }
 }
 
@@ -22,6 +24,7 @@ plugins {
 // For those who want the bleeding edge
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.jjtparadox.barometer' // Must be after the Forge plugin
 
 loadProperties()
 
@@ -67,18 +70,4 @@ idea {
     module {
         sourceDirs += file('src/api/java')
     }
-}
-
-test {
-    workingDir = {minecraft.runDir + "/test"} // This can be set to whatever you prefer
-
-    mkdir workingDir
-    file("$workingDir/eula.txt").text = "eula=true"
-
-    file("$workingDir/server.properties").text = """
-level-type=FLAT
-generator-settings=3;minecraft:bedrock,3*minecraft:stone,52*minecraft:sandstone;2;
-online-mode=false
-level-name=integrateddynamics.test
-"""
 }

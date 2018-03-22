@@ -6,7 +6,7 @@ repositories {
         url "https://oss.jfrog.org/artifactory/simple/libs-release/"
     }
     maven {
-        url  "https://dl.bintray.com/jjtparadox/MC"
+        url "https://dl.bintray.com/jjtparadox/MC"
     }
 }
 
@@ -41,8 +41,7 @@ dependencies {
     provided "org.projectlombok:lombok:1.16.8"
 
     testCompile "junit:junit:4.12"
-    testCompile "com.jjtparadox.barometer:Barometer:0.0.3-1.12"
-    testCompile makeStart.outputs.files
+    testCompile "com.jjtparadox.barometer:Barometer:0.0.6"
 }
 
 shadowJar {
@@ -97,4 +96,9 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+}
+
+barometer {
+    // NOTE: By using the following statement in your code you are indicating your agreement to the Minecraft EULA (https://account.mojang.com/documents/minecraft_eula).
+    acceptEula()
 }
