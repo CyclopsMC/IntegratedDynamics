@@ -41,7 +41,7 @@ dependencies {
     provided "org.projectlombok:lombok:1.16.8"
 
     testCompile "junit:junit:4.12"
-    testCompile "com.jjtparadox.barometer:Barometer:0.0.6"
+    testCompile "com.jjtparadox.barometer:Barometer:0.0.7"
 }
 
 shadowJar {
