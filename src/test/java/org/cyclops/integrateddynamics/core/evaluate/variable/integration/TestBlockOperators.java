@@ -158,28 +158,22 @@ public class TestBlockOperators {
     @Test
     public void testBlockSound() throws EvaluationException {
         // net.minecraft.util.SoundEvent.getSoundName is physical client only
-        // TODO There is probably a better way to detect this, but this works!
-        boolean hasSounds = true;
-        try{
-            SoundEvents.BLOCK_STONE_BREAK.getSoundName();
-        } catch (Throwable e){//ClassNotFoundException
-            hasSounds = false;
-        }
+        // Hard code sound names to allow server only testing:
+        String BLOCK_STONE_BREAK = "minecraft:block.stone.break";
+        String BLOCK_STONE_PLACE = "minecraft:block.stone.place";
+        String BLOCK_STONE_STEP = "minecraft:block.stone.step";
 
         IValue res1 = Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        if ( hasSounds )
-            TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BLOCK_STONE_BREAK.getSoundName().toString(), "breaksound(coal) = minecraft:block.stone.break");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), BLOCK_STONE_BREAK, "breaksound(coal) = " + BLOCK_STONE_BREAK);
 
         IValue res2 = Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res2 instanceof ValueTypeString.ValueString, "result is a string");
-        if ( hasSounds )
-            TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BLOCK_STONE_PLACE.getSoundName().toString(), "placesound(coal) = minecraft:block.stone.place");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), BLOCK_STONE_PLACE, "placesound(coal) = " + BLOCK_STONE_PLACE);
 
         IValue res3 = Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res3 instanceof ValueTypeString.ValueString, "result is a string");
-        if ( hasSounds )
-            TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), SoundEvents.BLOCK_STONE_STEP.getSoundName().toString(), "stepsound(coal) = minecraft:block.stone.step");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), BLOCK_STONE_STEP, "stepsound(coal) = " + BLOCK_STONE_STEP);
     }
 
     @Test(expected = EvaluationException.class)
