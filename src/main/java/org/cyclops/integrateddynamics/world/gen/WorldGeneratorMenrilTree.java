@@ -122,7 +122,7 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
 
                     // Add leaves
                     for (yOffset = y - 5 + treeHeight; yOffset <= y + treeHeight; ++yOffset) {
-                        int center = (yOffset <= treeHeight && yOffset >= treeHeight - 1) ? 4 : 2;
+                        int center = 2;
 
                         for (xOffset = x - center; xOffset <= x + center; ++xOffset) {
                             int xPos = xOffset - x;
