@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.ImmutableList;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
@@ -24,6 +25,13 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
     public String serialize(ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         StringBuilder sb = new StringBuilder();
         IValueType<IValue> valueType = values.getValueType();
+        try {
+            // Hack to avoid issue where categories are sometimes used to serialize/deserialize,
+            // which is not allowed (and will crash during deserialization #570).
+            if (valueType.isCategory() && values.getLength() > 0) {
+                valueType = values.get(0).getType();
+            }
+        } catch (EvaluationException e) {}
         sb.append(valueType.getUnlocalizedName());
         for (IValue value : values) {
             sb.append(ELEMENT_DELIMITER);
