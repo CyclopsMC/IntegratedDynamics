@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import org.apache.commons.lang3.ArrayUtils;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -18,6 +19,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.Objects;
 
@@ -303,6 +305,12 @@ public class CombinedOperator extends OperatorBase {
             CombinedOperator.Flip flip = new CombinedOperator.Flip(operator);
             IValueType[] originalInputTypes = operator.getInputTypes();
             IValueType[] flippedInputTypes = new IValueType[originalInputTypes.length];
+            if (originalInputTypes.length < 2) {
+                throw new EvaluationException(L10NHelpers.localize(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
+                        L10NHelpers.localize(Operators.OPERATOR_FLIP.getUnlocalizedName()),
+                        L10NHelpers.localize(operator.getUnlocalizedName()),
+                        originalInputTypes.length, 2));
+            }
             for (int i = 0; i < flippedInputTypes.length; i++) {
                 int targetI = i < 2 ? 1 - i : i;
                 flippedInputTypes[i] = originalInputTypes[targetI];
