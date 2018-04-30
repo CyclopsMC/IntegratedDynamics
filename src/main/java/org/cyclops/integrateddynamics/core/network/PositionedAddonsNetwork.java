@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * A network that can hold prioritized positions.
@@ -32,7 +33,7 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     private final Set<PartPos> disabledPositions = Sets.newHashSet();
 
     private final TIntObjectMap<PositionsIterator> positionsIterators = new TIntObjectHashMap<>();
-    private final List<PositionsIterator> createdIterators = Lists.newLinkedList();
+    private final Set<PositionsIterator> createdIterators = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Override
     public Collection<PrioritizedPartPos> getPositions(int channel) {
@@ -60,7 +61,7 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
         PositionsIterator it = positionsIterators.get(channel);
         if (it == null) {
             // If no custom iterator was given, iterate in first-come-first-serve order
-            it = new PositionsIterator(getPositions(channel));
+            it = createPositionIterator(channel);
         } else {
             it = it.cloneState();
         }
@@ -78,9 +79,14 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
 
     @Override
     public PositionsIterator createPositionIterator(int channel) {
-        PositionsIterator it = new PositionsIterator(getPositions(channel));
-        createdIterators.add(it);
+        PositionsIterator it = new PositionsIterator(getPositions(channel), this);
+        onPositionIteratorCreated(it);
         return it;
+    }
+
+    @Override
+    public void onPositionIteratorCreated(PositionsIterator positionsIterator) {
+        createdIterators.add(positionsIterator);
     }
 
     protected void invalidateIterators() {
