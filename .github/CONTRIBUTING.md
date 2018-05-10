@@ -1,7 +1,7 @@
 **:tada: Thanks you for taking the time to contribute to this repository! :tada:**
 
 Issues can be created for bugs :bug:, feature suggestions :heavy_plus_sign:, performance issues :snail:, questions :question: or anything else.
-Bug reports should follow the provided template when creating a new issue.
+All issues should follow the provided template when creating a new issue.
 
 Before opening new issues, make sure that the issue does not already exist, so search through all issues (even the closed ones) before opening a new issue.
 
