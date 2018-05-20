@@ -39,6 +39,12 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
+// A fix for the build-time warning (which for some reason only occurs on Travis):
+//   :extractAnnotationsJarError while building FML annotations cache: duplicate entry: META-INF/fml_cache_annotation.json
+//   java.util.zip.ZipException: duplicate entry: META-INF/fml_cache_annotation.json
+// FML has a fallback to derive this annotation information at runtime, so this is not a major problem.
+extractAnnotationsJar.enabled = false;
+
 shadowJar {
     dependencies {
         exclude(dependency {
