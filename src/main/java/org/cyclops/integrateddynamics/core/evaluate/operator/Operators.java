@@ -610,7 +610,7 @@ public final class Operators {
      * String operator which matches against a regex the input string and returns a list containing all groups matched (including zero). An empty list is returned if the regex does not match.
      */
     public static final IOperator STRING_REGEX_GROUPS = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("regex_groups")
-        .output(ValueTypes.STRING)
+        .output(ValueTypes.LIST)
         .function(variables -> {
             ValueTypeString.ValueString pattern = variables.getValue(0);
             ValueTypeString.ValueString str = variables.getValue(1);
