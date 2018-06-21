@@ -7,6 +7,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
+import javax.annotation.Nullable;
+
 /**
  * Object holder to refer to a block side and position.
  * @author rubensworks
@@ -16,15 +18,15 @@ public class PartPos implements Comparable<PartPos> {
     private final DimPos pos;
     private final EnumFacing side;
 
-    public static PartPos of(World world, BlockPos pos, EnumFacing side) {
+    public static PartPos of(World world, BlockPos pos, @Nullable EnumFacing side) {
         return of(DimPos.of(world, pos), side);
     }
 
-    public static PartPos of(DimPos pos, EnumFacing side) {
+    public static PartPos of(DimPos pos, @Nullable EnumFacing side) {
         return new PartPos(pos, side);
     }
 
-    private PartPos(DimPos pos, EnumFacing side) {
+    private PartPos(DimPos pos, @Nullable EnumFacing side) {
         this.pos = pos;
         this.side = side;
     }
@@ -33,6 +35,7 @@ public class PartPos implements Comparable<PartPos> {
         return pos;
     }
 
+    @Nullable
     public EnumFacing getSide() {
         return side;
     }
@@ -83,7 +86,9 @@ public class PartPos implements Comparable<PartPos> {
     public int compareTo(PartPos o) {
         int pos = this.getPos().compareTo(o.getPos());
         if (pos == 0) {
-            return this.getSide().compareTo(o.getSide());
+            EnumFacing thisSide = this.getSide();
+            EnumFacing thatSide = o.getSide();
+            return thisSide == null ? (thatSide == null ? 0 : -1) : (thatSide == null ? 1 : thisSide.compareTo(thatSide));
         }
         return pos;
     }
