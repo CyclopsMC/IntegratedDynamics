@@ -39,7 +39,7 @@ public class GuiMechanicalSqueezer extends GuiMechanicalMachine<ContainerMechani
         super.initGui();
 
         addButton(buttonToggleFluidEject = new GuiButtonImage(ContainerMechanicalSqueezer.BUTTON_TOGGLE_FLUID_EJECT,
-                getGuiLeft() + 149, getGuiTop() + 71, imageArrowDownDisabled));
+                getGuiLeftTotal() + 149, getGuiTopTotal() + 71, imageArrowDownDisabled));
     }
 
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
@@ -50,18 +50,18 @@ public class GuiMechanicalSqueezer extends GuiMechanicalMachine<ContainerMechani
                 ? imageArrowDownEnabled : imageArrowDownDisabled);
 
         // Render progress
-        GuiHelpers.renderProgressBar(this, getGuiLeft() + 73, getGuiTop() + 36, 12, 18,
+        GuiHelpers.renderProgressBar(this, getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
                 176, 120, GuiHelpers.ProgressDirection.DOWN,
                 getContainer().getLastProgress(), getContainer().getLastMaxProgress());
 
         // Render energy level
-        GuiHelpers.renderProgressBar(this, getGuiLeft() + 8, getGuiTop() + 16, 18, 60,
+        GuiHelpers.renderProgressBar(this, getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
                 176, 60, GuiHelpers.ProgressDirection.UP,
                 getContainer().getTile().getEnergyStored(), getContainer().getTile().getMaxEnergyStored());
 
         // Render fluid tank
         GuiHelpers.renderOverlayedFluidTank(this, getContainer().getTile().getTank().getFluid(),
-                getContainer().getTile().getTank().getCapacity(), getGuiLeft() + 150, getGuiTop() + 10,
+                getContainer().getTile().getTank().getCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 10,
                 18, 60, texture, 176, 0);
     }
 

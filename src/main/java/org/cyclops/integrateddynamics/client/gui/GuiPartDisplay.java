@@ -49,7 +49,7 @@ public class GuiPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S exten
     public void initGui() {
         super.initGui();
 
-        addButton(new GuiButtonText(BUTTON_COPY, getGuiLeft() + 128, getGuiTop() + 32, 30, 12, L10NHelpers.localize("gui.integrateddynamics.button.copy"), true));
+        addButton(new GuiButtonText(BUTTON_COPY, getGuiLeftTotal() + 128, getGuiTopTotal() + 32, 30, 12, L10NHelpers.localize("gui.integrateddynamics.button.copy"), true));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class GuiPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S exten
         if(readValue != null) {
             ok = true;
             RenderHelpers.drawScaledCenteredString(fontRenderer, readValue,
-                    getGuiLeft() + 53, getGuiTop() + 38, 70, readValueColor);
+                    getGuiLeftTotal() + 53, getGuiTopTotal() + 38, 70, readValueColor);
         }
 
         GlStateManager.color(1, 1, 1);
