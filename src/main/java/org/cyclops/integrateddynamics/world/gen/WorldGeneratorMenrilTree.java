@@ -174,7 +174,7 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                         if (block == null || block == Blocks.AIR ||
                                 block.isLeaves(loopBlockState, world, loopPos) ||
                                 block.isReplaceable(world, loopPos)) {
-                            boolean filled = BlockMenrilLogFilledConfig.filledMenrilLogChance > 0
+                            boolean filled = BlockMenrilLogFilledConfig._instance != null && BlockMenrilLogFilledConfig.filledMenrilLogChance > 0
                                     && rand.nextInt(BlockMenrilLogFilledConfig.filledMenrilLogChance) == 0;
                             IBlockState logs = filled ? BlockMenrilLogFilled.getInstance().getDefaultState()
                                     .withProperty(BlockMenrilLogFilled.SIDE, rand.nextInt(4)) : getLogs().getDefaultState();
