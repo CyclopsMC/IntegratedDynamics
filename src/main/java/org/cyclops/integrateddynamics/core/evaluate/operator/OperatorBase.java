@@ -192,7 +192,11 @@ public abstract class OperatorBase implements IOperator {
         }
 
         public <V extends IValue> V getValue(int i) throws EvaluationException {
-            return (V) variables[i].getValue();
+            try {
+                return (V) variables[i].getValue();
+            } catch (ClassCastException e) {
+                throw new EvaluationException(e.getMessage());
+            }
         }
 
         public IVariable[] getVariables() {
