@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -32,11 +33,11 @@ public class CombinedOperator extends OperatorBase {
     private final String unlocalizedType;
 
     public CombinedOperator(String symbol, String operatorName, OperatorsFunction function, IValueType outputType) {
-        this(symbol, operatorName, function, new IValueType[]{ValueTypes.CATEGORY_ANY}, outputType, IConfigRenderPattern.PREFIX_1);
+        this(symbol, operatorName, function, new IValueType[]{ValueTypes.CATEGORY_ANY}, outputType, null);
     }
 
     public CombinedOperator(String symbol, String operatorName, OperatorsFunction function, IValueType[] inputTypes,
-                            IValueType outputType, IConfigRenderPattern configRenderPattern) {
+                            IValueType outputType, @Nullable IConfigRenderPattern configRenderPattern) {
         super(symbol, operatorName, inputTypes,
                 outputType, function, configRenderPattern);
         this.unlocalizedType = "virtual";
@@ -318,7 +319,7 @@ public class CombinedOperator extends OperatorBase {
             CombinedOperator combinedOperator;
             try {
                 combinedOperator = new CombinedOperator(":flip:", "flipped", flip, flippedInputTypes,
-                        operator.getOutputType(), operator.getRenderPattern());
+                        operator.getOutputType(), null);
             } catch (IllegalArgumentException e) {
                 throw new EvaluationException(e.getMessage());
             }
