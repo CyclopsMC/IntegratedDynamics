@@ -68,6 +68,16 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                 });
     }
 
+    @Override
+    public boolean isSendUpdateOnInventoryChanged() {
+        return true;
+    }
+
+    @Override
+    public boolean isSendUpdateOnTankChanged() {
+        return true;
+    }
+
     protected IRecipeRegistry<BlockSqueezer, IngredientRecipeComponent,
             IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> getRegistry() {
         return BlockSqueezer.getInstance().getRecipeRegistry();

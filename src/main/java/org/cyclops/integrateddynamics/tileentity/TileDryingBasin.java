@@ -86,6 +86,16 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                 });
     }
 
+    @Override
+    public boolean isSendUpdateOnInventoryChanged() {
+        return true;
+    }
+
+    @Override
+    public boolean isSendUpdateOnTankChanged() {
+        return true;
+    }
+
     protected IRecipeRegistry<BlockDryingBasin, IngredientAndFluidStackRecipeComponent,
             IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRegistry() {
         return BlockDryingBasin.getInstance().getRecipeRegistry();
