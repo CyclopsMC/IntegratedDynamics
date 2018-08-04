@@ -69,6 +69,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyF
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentCapabilities;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypeRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
@@ -201,6 +202,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
 
         ValueTypes.load();
+        IngredientComponentCapabilities.load();
         ValueCastMappings.load();
         ValueTypeLightLevels.load();
         ValueTypeListProxyFactories.load();
