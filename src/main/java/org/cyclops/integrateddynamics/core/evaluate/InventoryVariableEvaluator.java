@@ -71,7 +71,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
             this.variableStored = null;
         }
 
-        this.errors.clear();
+        clearErrors();
         if (partNetwork == null) {
             addError(new L10NHelpers.UnlocalizedString(L10NValues.GENERAL_ERROR_NONETWORK));
         } else if (this.variableStored != null) {
@@ -112,8 +112,14 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
 
     }
 
+    public void clearErrors() {
+        this.errors.clear();
+        onErrorsChanged();
+    }
+
     public void setErrors(List<L10NHelpers.UnlocalizedString> errors) {
         this.errors = errors;
+        onErrorsChanged();
     }
 
     public List<L10NHelpers.UnlocalizedString> getErrors() {
@@ -123,5 +129,9 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
     @Override
     public void addError(L10NHelpers.UnlocalizedString error) {
         errors.add(error);
+    }
+
+    public void onErrorsChanged() {
+
     }
 }
