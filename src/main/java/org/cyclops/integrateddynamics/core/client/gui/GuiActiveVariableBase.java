@@ -48,13 +48,13 @@ public abstract class GuiActiveVariableBase<C extends ContainerActiveVariableBas
         }
 
         GlStateManager.color(1, 1, 1);
-        displayErrors.drawBackground(getContainer().getTile().getErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
+        displayErrors.drawBackground(getContainer().getTile().getEvaluator().getErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
                 this.guiLeft, this.guiTop, ok);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        displayErrors.drawForeground(getContainer().getTile().getErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.guiLeft, this.guiTop);
+        displayErrors.drawForeground(getContainer().getTile().getEvaluator().getErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.guiLeft, this.guiTop);
     }
 }
