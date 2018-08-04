@@ -49,9 +49,7 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
     @Override
     public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
         IAspectVariable variable = ((IPartTypeReader) partType).getVariable(target, (IPartStateReader) state, this);
-        if (variable.canInvalidate()) {
-            variable.invalidate();
-        }
+        variable.invalidate();
     }
 
     protected String getUnlocalizedType() {

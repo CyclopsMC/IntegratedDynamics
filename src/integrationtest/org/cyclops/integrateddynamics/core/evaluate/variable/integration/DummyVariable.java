@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariableInvalidateListener;
 
 /**
  * A dummy boolean variable.
@@ -36,17 +37,12 @@ public class DummyVariable<V extends IValue> implements IVariable<V> {
     }
 
     @Override
-    public boolean canInvalidate() {
-        return true;
-    }
-
-    @Override
     public void invalidate() {
 
     }
 
     @Override
-    public void addDependent(IVariable<?> dependent) {
+    public void addInvalidationListener(IVariableInvalidateListener invalidateListener) {
 
     }
 
