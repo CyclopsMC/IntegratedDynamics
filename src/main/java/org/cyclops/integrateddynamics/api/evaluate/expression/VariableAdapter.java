@@ -17,7 +17,7 @@ public abstract class VariableAdapter<V extends IValue> implements IVariable<V> 
 
     @Override
     public void invalidate() {
-        for (IVariableInvalidateListener invalidateListener : invalidateListeners) {
+        for (IVariableInvalidateListener invalidateListener : Lists.newArrayList(invalidateListeners)) {
             invalidateListener.invalidate();
         }
         invalidateListeners.clear();
