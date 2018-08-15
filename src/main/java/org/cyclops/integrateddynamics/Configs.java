@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentV
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
+import org.cyclops.integrateddynamics.capability.network.PositionedAddonsNetworkIngredientsHandlerConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
@@ -46,6 +47,7 @@ public class Configs {
         configHandler.add(new PartNetworkConfig());
         configHandler.add(new EnergyNetworkConfig());
         configHandler.add(new ValueInterfaceConfig());
+        configHandler.add(new PositionedAddonsNetworkIngredientsHandlerConfig());
         configHandler.add(new IngredientComponentValueHandlerConfig());
 
         // Fluids

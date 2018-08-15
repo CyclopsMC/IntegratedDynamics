@@ -10,9 +10,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
@@ -82,7 +82,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
 
     public boolean canAddEnergy(int energy) {
         IEnergyNetwork network = getEnergyNetwork();
-        if(network != null && network.getChannel(IChanneledNetwork.DEFAULT_CHANNEL).receiveEnergy(energy, true) == energy) {
+        if(network != null && network.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).insert(energy, true) == energy) {
             return true;
         }
         return addEnergyFe(energy, true) == energy;
@@ -92,7 +92,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
         IEnergyNetwork network = getEnergyNetwork();
         int toFill = energy;
         if(network != null) {
-            toFill -= network.getChannel(IChanneledNetwork.DEFAULT_CHANNEL).receiveEnergy(toFill, false);
+            toFill -= network.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).insert(toFill, false);
         }
         if(toFill > 0) {
             toFill -= addEnergyFe(toFill, false);

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.network;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileMaterializer;
 
@@ -42,6 +42,6 @@ public class MaterializerNetworkElement extends TileNetworkElement<TileMateriali
 
     @Override
     public int getChannel() {
-        return IChanneledNetwork.DEFAULT_CHANNEL;
+        return IPositionedAddonsNetwork.DEFAULT_CHANNEL;
     }
 }

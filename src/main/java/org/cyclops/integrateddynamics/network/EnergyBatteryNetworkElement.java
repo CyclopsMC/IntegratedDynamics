@@ -7,9 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
@@ -63,7 +63,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     @Override
     public boolean onNetworkAddition(INetwork network) {
-        return NetworkHelpers.getEnergyNetwork(network).addPosition(PartPos.of(getPos(), null), 0, IChanneledNetwork.DEFAULT_CHANNEL);
+        return NetworkHelpers.getEnergyNetwork(network).addPosition(PartPos.of(getPos(), null), 0, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     @Override
     public int getChannel() {
-        return IChanneledNetwork.DEFAULT_CHANNEL;
+        return IPositionedAddonsNetwork.DEFAULT_CHANNEL;
     }
 
     @Override

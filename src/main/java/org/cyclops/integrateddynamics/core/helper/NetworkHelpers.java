@@ -6,6 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -15,11 +16,13 @@ import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
+import org.cyclops.integrateddynamics.capability.network.PositionedAddonsNetworkIngredientsHandlerConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
@@ -41,6 +44,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The network carrier capability, or null if not present.
      */
+    @Nullable
     public static INetworkCarrier getNetworkCarrier(IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
         return TileHelpers.getCapability(world, pos, side, NetworkCarrierConfig.CAPABILITY);
     }
@@ -52,6 +56,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The network element provider capability, or null if not present.
      */
+    @Nullable
     public static INetworkElementProvider getNetworkElementProvider(IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
         return TileHelpers.getCapability(world, pos, side, NetworkElementProviderConfig.CAPABILITY);
     }
@@ -63,6 +68,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The network, or null if no network or network carrier present.
      */
+    @Nullable
     public static INetwork getNetwork(IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
         INetworkCarrier networkCarrier = getNetworkCarrier(world, pos, side);
         if (networkCarrier != null) {
@@ -71,14 +77,14 @@ public class NetworkHelpers {
         return null;
     }
 
-
     /**
      * Get the network at the given position.
-     * @param partPos The part position
+     * @param pos The position.
      * @return The network, or null if no network or network carrier present.
      */
-    public static INetwork getNetwork(PartPos partPos) {
-        return NetworkHelpers.getNetwork(partPos.getPos().getWorld(), partPos.getPos().getBlockPos(), partPos.getSide());
+    @Nullable
+    public static INetwork getNetwork(PartPos pos) {
+        return getNetwork(pos.getPos().getWorld(), pos.getPos().getBlockPos(), pos.getSide());
     }
 
     /**
@@ -86,6 +92,7 @@ public class NetworkHelpers {
      * @param network The network.
      * @return The part network.
      */
+    @Nullable
     public static IPartNetwork getPartNetwork(@Nullable INetwork network) {
         return network != null && network.hasCapability(PartNetworkConfig.CAPABILITY)
                 ? network.getCapability(PartNetworkConfig.CAPABILITY) : null;
@@ -96,9 +103,26 @@ public class NetworkHelpers {
      * @param network The network.
      * @return The part network.
      */
+    @Nullable
     public static IEnergyNetwork getEnergyNetwork(@Nullable INetwork network) {
         return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY)
                 ? network.getCapability(EnergyNetworkConfig.CAPABILITY) : null;
+    }
+
+    /**
+     * Get the ingredient network within a network.
+     * @param network The network.
+     * @param ingredientComponent The ingredient component type.
+     * @param <T> The instance type.
+     * @param <M> The matching condition parameter.
+     * @return The ingredient network.
+     */
+    @Nullable
+    public static <T, M> IPositionedAddonsNetworkIngredients<T, M> getIngredientNetwork(@Nullable INetwork network,
+                                                                                        IngredientComponent<T, M> ingredientComponent) {
+        return network != null && ingredientComponent.hasCapability(PositionedAddonsNetworkIngredientsHandlerConfig.CAPABILITY)
+                ? ingredientComponent.getCapability(PositionedAddonsNetworkIngredientsHandlerConfig.CAPABILITY)
+                .getStorage(network) : null;
     }
 
     /**

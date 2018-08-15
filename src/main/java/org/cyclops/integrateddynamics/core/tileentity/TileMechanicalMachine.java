@@ -19,9 +19,9 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipeInput;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeOutput;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -304,7 +304,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
             // If we still need energy, ask it from the network.
             IEnergyNetwork energyNetwork = getEnergyNetwork();
             if (energyNetwork != null) {
-                return energyNetwork.getChannel(IChanneledNetwork.DEFAULT_CHANNEL).extractEnergy(toDrain, simulate);
+                return energyNetwork.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).extract(toDrain, simulate);
             }
         }
         return amount - toDrain;

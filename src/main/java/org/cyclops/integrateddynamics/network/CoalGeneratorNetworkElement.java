@@ -6,9 +6,9 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
@@ -49,7 +49,7 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase implements I
 
     @Override
     public int getChannel() {
-        return IChanneledNetwork.DEFAULT_CHANNEL;
+        return IPositionedAddonsNetwork.DEFAULT_CHANNEL;
     }
 
     @Override

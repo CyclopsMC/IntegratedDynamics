@@ -17,15 +17,45 @@ import java.util.WeakHashMap;
 public interface IPositionedAddonsNetwork {
 
     /**
+     * The channel that should be used for anything that doesn't allow the player to select a channel.
+     */
+    public static final int DEFAULT_CHANNEL = 0;
+
+    /**
+     * Specifying this channel will allow interaction with all channels.
+     */
+    public static final int WILDCARD_CHANNEL = -1;
+
+    /**
+     * Whether two parts on the given channels may interact.
+     * @param first The id of the first channel.
+     * @param second The id of the second channel.
+     * @return If the two channels match.
+     */
+    public static boolean channelsMatch(int first, int second) {
+        return first == second || first == WILDCARD_CHANNEL || second == WILDCARD_CHANNEL;
+    }
+
+    /**
+     * @return The channels that have at least one active position.
+     */
+    public int[] getChannels();
+
+    /**
+     * @return If any positioned addons are present in this network.
+     */
+    public boolean hasPositions();
+
+    /**
      * @param channel The channel id.
      * @return The stored positions, sorted by priority.
      */
-    public Collection<PrioritizedPartPos> getPositions(int channel);
+    public Collection<PartPos> getPositions(int channel);
 
     /**
      * @return All stored positions, order is undefined.
      */
-    public Collection<PrioritizedPartPos> getPositions();
+    public Collection<PartPos> getPositions();
 
     /**
      * Get an iterator over the positions in the given channel.
@@ -130,21 +160,26 @@ public interface IPositionedAddonsNetwork {
         public int getPriority() {
             return priority;
         }
+
+        @Override
+        public int hashCode() {
+            return getPartPos().hashCode() + getPriority() << 1;
+        }
     }
 
-    public static class PositionsIterator implements Iterator<PrioritizedPartPos> {
+    public static class PositionsIterator implements Iterator<PartPos> {
 
         private boolean valid;
-        private final Collection<PrioritizedPartPos> collection;
-        private final Iterator<PrioritizedPartPos> it;
+        private final Collection<PartPos> collection;
+        private final Iterator<PartPos> it;
         private int steps;
         private final Set<PositionsIterator> children;
         private final IPositionedAddonsNetwork positionedAddonsNetwork;
 
-        private PrioritizedPartPos[] toAppend = new PrioritizedPartPos[0];
+        private PartPos[] toAppend = new PartPos[0];
         private int toAppendStep = 0;
 
-        public PositionsIterator(Collection<PrioritizedPartPos> collection,
+        public PositionsIterator(Collection<PartPos> collection,
                                  IPositionedAddonsNetwork positionedAddonsNetwork) {
             this.valid = true;
             this.collection = collection;
@@ -165,7 +200,7 @@ public interface IPositionedAddonsNetwork {
         }
 
         @Override
-        public PrioritizedPartPos next() {
+        public PartPos next() {
             steps++;
             if (steps >= this.collection.size()) {
                 // This can occur after looping over the append steps.
@@ -175,7 +210,7 @@ public interface IPositionedAddonsNetwork {
             return it.hasNext() ? it.next() : toAppend[toAppendStep++];
         }
 
-        protected void setToAppend(PrioritizedPartPos[] toAppend) {
+        protected void setToAppend(PartPos[] toAppend) {
             this.toAppend = toAppend;
         }
 
@@ -188,7 +223,7 @@ public interface IPositionedAddonsNetwork {
             PositionsIterator child = new PositionsIterator(this.collection, positionedAddonsNetwork);
             positionedAddonsNetwork.onPositionIteratorCreated(child);
             this.children.add(child);
-            PrioritizedPartPos[] toAppend = new PrioritizedPartPos[steps];
+            PartPos[] toAppend = new PartPos[steps];
             for (int step = 0; step < steps; step++) {
                 toAppend[step] = child.next();
             }

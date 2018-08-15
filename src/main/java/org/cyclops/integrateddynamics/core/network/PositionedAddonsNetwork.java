@@ -1,14 +1,11 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -16,15 +13,18 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 /**
  * A network that can hold prioritized positions.
  * @author rubensworks
  */
-public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
+public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
 
     @Getter
     @Setter
@@ -36,22 +36,37 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     private final Set<PositionsIterator> createdIterators = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Override
-    public Collection<PrioritizedPartPos> getPositions(int channel) {
-        if (channel == IChanneledNetwork.WILDCARD_CHANNEL) {
-            return getPositions();
-        }
-        Set<PrioritizedPartPos> positions = this.positions.get(channel);
-        Set<PrioritizedPartPos> wildcardPositions = this.positions.get(IChanneledNetwork.WILDCARD_CHANNEL);
-        if (positions == null) positions = Collections.emptySet();
-        if (wildcardPositions == null) wildcardPositions = Collections.emptySet();
-        return ImmutableSet.copyOf(Iterables.concat(positions, wildcardPositions));
+    public int[] getChannels() {
+        return positions.keys();
     }
 
     @Override
-    public Collection<PrioritizedPartPos> getPositions() {
-        List<PrioritizedPartPos> allPositions = Lists.newArrayList();
+    public boolean hasPositions() {
+        return !positions.isEmpty();
+    }
+
+    @Override
+    public Collection<PartPos> getPositions(int channel) {
+        if (channel == WILDCARD_CHANNEL) {
+            return getPositions();
+        }
+        Set<PrioritizedPartPos> positions = this.positions.get(channel);
+        Set<PrioritizedPartPos> wildcardPositions = this.positions.get(WILDCARD_CHANNEL);
+        if (positions == null) positions = Collections.emptySet();
+        if (wildcardPositions == null) wildcardPositions = Collections.emptySet();
+        TreeSet<PrioritizedPartPos> merged = Sets.newTreeSet();
+        merged.addAll(positions);
+        merged.addAll(wildcardPositions);
+        return merged.stream().map(PrioritizedPartPos::getPartPos).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<PartPos> getPositions() {
+        List<PartPos> allPositions = Lists.newArrayList();
         for (Set<PrioritizedPartPos> positions : this.positions.valueCollection()) {
-            allPositions.addAll(positions);
+            for (PrioritizedPartPos position : positions) {
+                allPositions.add(position.getPartPos());
+            }
         }
         return allPositions;
     }
@@ -111,8 +126,13 @@ public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
     public void removePosition(PartPos pos) {
         invalidateIterators();
 
-        for (Set<PrioritizedPartPos> positions : this.positions.valueCollection()) {
+        Iterator<Set<PrioritizedPartPos>> it = this.positions.valueCollection().iterator();
+        while (it.hasNext()) {
+            Set<PrioritizedPartPos> positions = it.next();
             positions.removeIf(prioritizedPartPos -> prioritizedPartPos.getPartPos().equals(pos));
+            if (positions.isEmpty()) {
+                it.remove();
+            }
         }
     }
 

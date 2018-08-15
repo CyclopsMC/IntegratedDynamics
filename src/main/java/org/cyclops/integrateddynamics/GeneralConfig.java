@@ -100,6 +100,18 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "When enabled, networks will stop ticking and values will not be shown and evaluated again. This can be used to fix crashing networks by temporarily enabling this option.", isCommandable = true)
     public static boolean safeMode = false;
+
+    /**
+     * The default frequency in ticks at which ingredient network should be observed.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default frequency in ticks at which ingredient network should be observed.", minimalValue = 1)
+    public static int defaultIngredientNetworkObserverFrequency = 1;
+
+    /**
+     * If network change events should be logged. Only enable this when debugging.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If network change events should be logged. Only enable this when debugging.", isCommandable = true)
+    public static boolean logChangeEvents = false;
     
     /**
      * Create a new instance.

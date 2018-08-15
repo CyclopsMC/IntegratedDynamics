@@ -3,9 +3,9 @@ package org.cyclops.integrateddynamics.network;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 
 /**
@@ -30,7 +30,7 @@ public class MechanicalMachineNetworkElement extends NetworkElementBase {
 
     @Override
     public int getChannel() {
-        return IChanneledNetwork.DEFAULT_CHANNEL;
+        return IPositionedAddonsNetwork.DEFAULT_CHANNEL;
     }
 
     @Override
