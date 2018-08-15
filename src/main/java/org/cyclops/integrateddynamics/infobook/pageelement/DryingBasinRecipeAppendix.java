@@ -2,7 +2,10 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.infobook.AdvancedButton;
+import org.cyclops.cyclopscore.infobook.AdvancedButtonEnum;
 import org.cyclops.cyclopscore.infobook.GuiInfoBook;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoSection;
@@ -22,10 +25,10 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<IRecipe<Ingredient
     private static final int SLOT_OFFSET_Y = 23;
     private static final int SLOT_OUTPUT_OFFSET_X = 68;
 
-    private static final AdvancedButton.Enum INPUT_ITEM = AdvancedButton.Enum.create();
-    private static final AdvancedButton.Enum INPUT_FLUID = AdvancedButton.Enum.create();
-    private static final AdvancedButton.Enum RESULT_ITEM = AdvancedButton.Enum.create();
-    private static final AdvancedButton.Enum RESULT_FLUID = AdvancedButton.Enum.create();
+    private static final AdvancedButtonEnum INPUT_ITEM = AdvancedButtonEnum.create();
+    private static final AdvancedButtonEnum INPUT_FLUID = AdvancedButtonEnum.create();
+    private static final AdvancedButtonEnum RESULT_ITEM = AdvancedButtonEnum.create();
+    private static final AdvancedButtonEnum RESULT_FLUID = AdvancedButtonEnum.create();
 
     public DryingBasinRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
         super(infoBook, recipe);
@@ -56,6 +59,7 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<IRecipe<Ingredient
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawElementInner(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         int middle = (width - SLOT_SIZE) / 2;
         gui.drawArrowRight(x + middle - 3, y + 2);

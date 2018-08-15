@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.infobook.GuiInfoBook;
@@ -44,6 +46,7 @@ public class OperatorAppendix extends SectionAppendix {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected void drawElement(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         int yOffset = 5;
         gui.drawOuterBorder(x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
@@ -72,6 +75,7 @@ public class OperatorAppendix extends SectionAppendix {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected void postDrawElement(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         GlStateManager.pushMatrix();
         if(mx >= x && my >= y && mx <= x + getWidth() && my <= y + gui.getFontRenderer().FONT_HEIGHT ) {

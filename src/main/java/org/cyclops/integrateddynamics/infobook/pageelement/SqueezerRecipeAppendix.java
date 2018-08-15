@@ -3,7 +3,10 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.infobook.AdvancedButton;
+import org.cyclops.cyclopscore.infobook.AdvancedButtonEnum;
 import org.cyclops.cyclopscore.infobook.GuiInfoBook;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoSection;
@@ -26,16 +29,16 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
     private static final int SLOT_OFFSET_Y = 23;
     private static final int SLOT_OUTPUT_OFFSET_X = 68;
 
-    private static final AdvancedButton.Enum INPUT_ITEM = AdvancedButton.Enum.create();
-    private static final AdvancedButton.Enum RESULT_FLUID = AdvancedButton.Enum.create();
+    private static final AdvancedButtonEnum INPUT_ITEM = AdvancedButtonEnum.create();
+    private static final AdvancedButtonEnum RESULT_FLUID = AdvancedButtonEnum.create();
 
-    private final List<AdvancedButton.Enum> resultItems;
+    private final List<AdvancedButtonEnum> resultItems;
 
     public SqueezerRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, ?> recipe) {
         super(infoBook, recipe);
         resultItems = Lists.newArrayList();
         for (int i = 0; i < recipe.getOutput().getIngredients().size(); i++) {
-            resultItems.add(AdvancedButton.Enum.create());
+            resultItems.add(AdvancedButtonEnum.create());
         }
     }
 
@@ -57,7 +60,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
     @Override
     public void bakeElement(InfoSection infoSection) {
         renderItemHolders.put(INPUT_ITEM, new ItemButton(getInfoBook()));
-        for (AdvancedButton.Enum resultItem : resultItems) {
+        for (AdvancedButtonEnum resultItem : resultItems) {
             renderItemHolders.put(resultItem, new ItemButton(getInfoBook()));
         }
         renderItemHolders.put(RESULT_FLUID, new FluidButton(getInfoBook()));
@@ -65,6 +68,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawElementInner(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         int middle = (width - SLOT_SIZE) / 2;
         gui.drawArrowRight(x + middle - 3, y + 2);
