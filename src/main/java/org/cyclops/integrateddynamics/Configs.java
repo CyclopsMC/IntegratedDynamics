@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
+import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentValueHandlerConfig;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
@@ -45,6 +46,7 @@ public class Configs {
         configHandler.add(new PartNetworkConfig());
         configHandler.add(new EnergyNetworkConfig());
         configHandler.add(new ValueInterfaceConfig());
+        configHandler.add(new IngredientComponentValueHandlerConfig());
 
         // Fluids
         configHandler.add(new FluidMenrilResinConfig());
