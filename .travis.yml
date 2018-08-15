@@ -46,4 +46,4 @@ deploy:
   on:
     all_branches: true
     repo: CyclopsMC/IntegratedDynamics
-    condition: $TRAVIS_BRANCH =~ ^(master|release).*$
+    condition: $TRAVIS_BRANCH =~ ^(master|release|feature-).*$
