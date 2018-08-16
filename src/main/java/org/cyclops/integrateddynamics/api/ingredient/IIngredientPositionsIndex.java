@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.ingredient;
 
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollection;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 
 import java.util.Iterator;
 
@@ -31,7 +32,7 @@ public interface IIngredientPositionsIndex<T, M> extends IIngredientCollection<T
      * @param instance An instance.
      * @param pos A position.
      */
-    public void addPosition(T instance, PartPos pos);
+    public void addPosition(T instance, PrioritizedPartPos pos);
 
     /**
      * Indicate that the given instance is removed from the given position.
@@ -42,6 +43,6 @@ public interface IIngredientPositionsIndex<T, M> extends IIngredientCollection<T
      * @param instance An instance.
      * @param pos A position.
      */
-    public void removePosition(T instance, PartPos pos);
+    public void removePosition(T instance, PrioritizedPartPos pos);
 
 }

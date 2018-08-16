@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.network;
 import com.google.common.collect.Sets;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.datastructure.DistinctIterator;
-import org.cyclops.cyclopscore.datastructure.MultitransformIterator;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollectionMutable;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientMapMutable;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientCollectionMutableWrapper;
@@ -11,7 +10,9 @@ import org.cyclops.cyclopscore.ingredient.collection.IngredientCollectionPrototy
 import org.cyclops.cyclopscore.ingredient.collection.IngredientHashMap;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientPositionsIndex;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -24,7 +25,7 @@ import java.util.TreeSet;
 public class IngredientPositionsIndex<T, M> extends IngredientCollectionMutableWrapper<T, M, IIngredientCollectionMutable<T, M>>
         implements IIngredientPositionsIndex<T, M> {
 
-    private final IIngredientMapMutable<T, M, TreeSet<PartPos>> positionsMap;
+    private final IIngredientMapMutable<T, M, TreeSet<PrioritizedPartPos>> positionsMap;
 
     public IngredientPositionsIndex(IngredientComponent<T, M> component) {
         super(new IngredientCollectionPrototypeMap<>(component, false));
@@ -42,14 +43,17 @@ public class IngredientPositionsIndex<T, M> extends IngredientCollectionMutableW
 
     @Override
     public Iterator<PartPos> getPositions(T instance, M matchFlags) {
-        return new DistinctIterator<>(MultitransformIterator.flattenIterableIterator(
-                this.positionsMap.getAll(getPrototype(instance), matchFlags).iterator()));
+        return new DistinctIterator<>(this.positionsMap.getAll(getPrototype(instance), matchFlags)
+                .stream()
+                .flatMap(Collection::stream)
+                .map(PrioritizedPartPos::getPartPos)
+                .iterator());
     }
 
     @Override
-    public void addPosition(T instance, PartPos pos) {
+    public void addPosition(T instance, PrioritizedPartPos pos) {
         T prototype = getPrototype(instance);
-        TreeSet<PartPos> set = this.positionsMap.get(prototype);
+        TreeSet<PrioritizedPartPos> set = this.positionsMap.get(prototype);
         if (set == null) {
             set = Sets.newTreeSet();
             this.positionsMap.put(prototype, set);
@@ -58,9 +62,9 @@ public class IngredientPositionsIndex<T, M> extends IngredientCollectionMutableW
     }
 
     @Override
-    public void removePosition(T instance, PartPos pos) {
+    public void removePosition(T instance, PrioritizedPartPos pos) {
         T prototype = getPrototype(instance);
-        TreeSet<PartPos> set = this.positionsMap.get(prototype);
+        TreeSet<PrioritizedPartPos> set = this.positionsMap.get(prototype);
         if (set != null) {
             set.remove(pos);
             if (set.isEmpty()) {

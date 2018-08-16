@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
 import javax.annotation.Nullable;
@@ -67,7 +68,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     protected void applyChangesToChannel(IIngredientComponentStorageObservable.StorageChangeEvent<T, M> event, int channel) {
         IIngredientCollection<T, M> instances = event.getInstances();
-        PartPos pos = event.getPos();
+        PrioritizedPartPos pos = event.getPos();
         IngredientPositionsIndex<T, M> index = getIndexSafe(channel);
         if (event.getChangeType() == IIngredientComponentStorageObservable.Change.DELETION) {
             index.removeAll(instances);
@@ -99,7 +100,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
-    protected void onPositionRemoved(int channel, PartPos pos) {
+    protected void onPositionRemoved(int channel, PrioritizedPartPos pos) {
         super.onPositionRemoved(channel, pos);
         ingredientObserver.onPositionRemoved(channel, pos);
     }

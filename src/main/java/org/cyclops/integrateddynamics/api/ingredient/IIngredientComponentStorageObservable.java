@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.api.ingredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollection;
 import org.cyclops.cyclopscore.ingredient.collection.diff.IngredientCollectionDiff;
-import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 
 /**
  * An observable ingredient component storage.
@@ -53,12 +53,12 @@ public interface IIngredientComponentStorageObservable<T, M> {
      */
     public static class StorageChangeEvent<T, M> {
         private final int channel;
-        private final PartPos pos;
+        private final PrioritizedPartPos pos;
         private final Change changeType;
         private final boolean completeChange;
         private final IIngredientCollection<T, M> instances;
 
-        public StorageChangeEvent(int channel, PartPos pos,
+        public StorageChangeEvent(int channel, PrioritizedPartPos pos,
                                   Change changeType, boolean completeChange, IIngredientCollection<T, M> instances) {
             this.channel = channel;
             this.pos = pos;
@@ -71,7 +71,7 @@ public interface IIngredientComponentStorageObservable<T, M> {
             return channel;
         }
 
-        public PartPos getPos() {
+        public PrioritizedPartPos getPos() {
             return pos;
         }
 
