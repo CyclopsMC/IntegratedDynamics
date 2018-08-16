@@ -6,6 +6,7 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
+import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -13,7 +14,6 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -126,14 +126,25 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
     public void removePosition(PartPos pos) {
         invalidateIterators();
 
-        Iterator<Set<PrioritizedPartPos>> it = this.positions.valueCollection().iterator();
-        while (it.hasNext()) {
-            Set<PrioritizedPartPos> positions = it.next();
-            positions.removeIf(prioritizedPartPos -> prioritizedPartPos.getPartPos().equals(pos));
-            if (positions.isEmpty()) {
-                it.remove();
+        Wrapper<Integer> removedChannel = new Wrapper<>(-2);
+        this.positions.forEachEntry((channel, positions) -> {
+            if (positions.removeIf(prioritizedPartPos -> prioritizedPartPos.getPartPos().equals(pos))) {
+                removedChannel.set(channel);
+                return false;
+            }
+            return true;
+        });
+        int channel = removedChannel.get();
+        if (channel != -2) {
+            this.onPositionRemoved(channel, pos);
+            if (positions.get(channel).isEmpty()) {
+                this.positions.remove(channel);
             }
         }
+    }
+
+    protected void onPositionRemoved(int channel, PartPos pos) {
+
     }
 
     @Override

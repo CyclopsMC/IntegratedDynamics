@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -30,7 +31,7 @@ public class IngredientObserver<T, M> {
     private final TIntObjectMap<Map<PartPos, Integer>> observeTargetTicks;
     private final TIntObjectMap<Map<PartPos, IngredientCollectionDiffManager<T, M>>> channeledDiffManagers;
 
-    private final List<PartPos> lastRemoved;
+    private final TIntObjectMap<List<PartPos>> lastRemoved;
 
     public IngredientObserver(IPositionedAddonsNetworkIngredients<T, M> network) {
         this.network = network;
@@ -38,15 +39,20 @@ public class IngredientObserver<T, M> {
         this.observeTargetTickIntervals = new TIntObjectHashMap<>();
         this.observeTargetTicks = new TIntObjectHashMap<>();
         this.channeledDiffManagers = new TIntObjectHashMap<>();
-        this.lastRemoved = Lists.newLinkedList();
+        this.lastRemoved = new TIntObjectHashMap<>();
     }
 
     public IPositionedAddonsNetworkIngredients<T, M> getNetwork() {
         return network;
     }
 
-    public void onPositionRemoved(PartPos pos) {
-        this.lastRemoved.add(pos);
+    public void onPositionRemoved(int channel, PartPos pos) {
+        List<PartPos> positions = this.lastRemoved.get(channel);
+        if (positions == null) {
+            positions = Lists.newLinkedList();
+            this.lastRemoved.put(channel, positions);
+        }
+        positions.add(pos);
     }
 
     /**
@@ -139,11 +145,8 @@ public class IngredientObserver<T, M> {
             this.channeledDiffManagers.put(channel, diffManagers);
         }
 
-        // Iterate over all current positions, and all positions that were removed since last iteration.
+        // Emit diffs for all current positions
         Set<PartPos> positions = getPositionsCopy(channel);
-        positions.addAll(this.lastRemoved);
-        this.lastRemoved.clear();
-
         for (PartPos partPos : positions) {
             // Check if we should observe this position in this tick
             int tickInterval = GeneralConfig.defaultIngredientNetworkObserverFrequency;
@@ -174,6 +177,24 @@ public class IngredientObserver<T, M> {
                 // which will happen in most of the cases. (efficiency++)
                 channelTargetTicks.put(partPos, lastTick);
             }
+        }
+
+        // Emit deletions for all removed positions
+        List<PartPos> lastRemovedPositions = this.lastRemoved.get(channel);
+        if (lastRemovedPositions != null) {
+            for (PartPos partPos : lastRemovedPositions) {
+                IngredientCollectionDiffManager<T, M> diffManager = diffManagers.get(partPos);
+                if (diffManager != null) {
+                    // Emit event of diff with *empty* iterator
+                    IngredientCollectionDiff<T, M> diff = diffManager.onChange(Iterators.forArray());
+                    // No additions are possible
+                    if (diff.hasDeletions()) {
+                        this.emitEvent(new IIngredientComponentStorageObservable.StorageChangeEvent<>(channel, partPos,
+                                IIngredientComponentStorageObservable.Change.DELETION, diff.isCompletelyEmpty(), diff.getDeletions()));
+                    }
+                }
+            }
+            this.lastRemoved.remove(channel);
         }
 
         // Store our new ticking collections

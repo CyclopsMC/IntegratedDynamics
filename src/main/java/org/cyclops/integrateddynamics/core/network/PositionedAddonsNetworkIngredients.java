@@ -99,9 +99,9 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
-    public void removePosition(PartPos pos) {
-        super.removePosition(pos);
-        ingredientObserver.onPositionRemoved(pos);
+    protected void onPositionRemoved(int channel, PartPos pos) {
+        super.onPositionRemoved(channel, pos);
+        ingredientObserver.onPositionRemoved(channel, pos);
     }
 
     @Override
