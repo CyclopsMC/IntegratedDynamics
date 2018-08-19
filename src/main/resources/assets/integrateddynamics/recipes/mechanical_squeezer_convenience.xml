@@ -421,7 +421,7 @@
         <condition type="config">mechanical_squeezer</condition>
         <condition type="oredict">dustCoal</condition>
         <input>
-            <item meta="*">minecraft:coal</item>
+            <item>minecraft:coal</item>
         </input>
         <output>
             <item type="oredict">dustCoal</item>
