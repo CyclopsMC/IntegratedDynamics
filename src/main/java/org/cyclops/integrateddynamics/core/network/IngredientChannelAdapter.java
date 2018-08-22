@@ -121,8 +121,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
 
         // Limit rate
         long limit = network.getRateLimit();
-        if (matcher.hasCondition(matchFlags, getComponent().getPrimaryQuantifier().getMatchCondition())
-                && matcher.getQuantity(prototype) > limit) {
+        if (matcher.getQuantity(prototype) > limit) {
             prototype = matcher.withQuantity(prototype, limit);
         }
 
