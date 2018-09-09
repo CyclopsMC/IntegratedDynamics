@@ -14,8 +14,8 @@ curseforge {
         releaseType = project.config.release_type
         mainArtifact(jar) {
             relations {
-                requiredLibrary 'cyclops-core'
-                requiredLibrary 'common-capabilities'
+                requiredDependency 'cyclops-core'
+                requiredDependency 'common-capabilities'
             }
         }
 
