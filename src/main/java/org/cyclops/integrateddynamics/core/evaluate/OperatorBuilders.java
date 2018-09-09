@@ -68,9 +68,9 @@ public class OperatorBuilders {
         IValueType[] original = ValueHelpers.from(input);
         IValueTypeNumber[] types = new IValueTypeNumber[original.length];
         for(int i = 0; i < original.length; i++) {
-            if (original[i] == ValueTypes.CATEGORY_ANY) {
+            if (original[i].isCategory()) {
                 // This avoids a class-cast exception in cases where we don't know the exact type.
-                return ValueTypes.CATEGORY_ANY;
+                return original[i];
             }
             types[i] = (IValueTypeNumber) original[i];
         }
