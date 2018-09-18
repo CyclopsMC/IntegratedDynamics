@@ -32,6 +32,28 @@ public interface IIngredientComponentStorageObservable<T, M> {
     public void removeObserver(IIndexChangeObserver<T, M> observer);
 
     /**
+     * Indicate that this network should observe starting in the next tick.
+     *
+     * This should be called when observer diffs are needed in the next tick.
+     *
+     * This should be called each tick that observations are needed,
+     * as this observable will reset the internal flag after each observation.
+     */
+    public void scheduleObservation();
+
+    /**
+     * @return If an observation should happen.
+     */
+    public boolean shouldObserve();
+
+    /**
+     * Get the last indexed storage at the given channel.
+     * @param channel A channel id.
+     * @return A channel index.
+     */
+    public IIngredientPositionsIndex<T, M> getChannelIndex(int channel);
+
+    /**
      * An observer for listening to storage changes.
      * @param <T> The instance type.
      * @param <M> The match condition type.
