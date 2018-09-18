@@ -105,7 +105,31 @@ public class GeneralConfig extends DummyConfig {
      * The default frequency in ticks at which ingredient network should be observed.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default frequency in ticks at which ingredient network should be observed.", minimalValue = 1, isCommandable = true)
-    public static int defaultIngredientNetworkObserverFrequency = 1;
+    public static int ingredientNetworkObserverFrequencyDefault = 10;
+
+    /**
+     * The fastest possible frequency in ticks at which ingredient network should be observed.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The fastest possible frequency in ticks at which ingredient network should be observed.", minimalValue = 1, isCommandable = true)
+    public static int ingredientNetworkObserverFrequencyMin = 5;
+
+    /**
+     * The slowest possible frequency in ticks at which ingredient network should be observed.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The slowest possible frequency in ticks at which ingredient network should be observed.", minimalValue = 1, isCommandable = true)
+    public static int ingredientNetworkObserverFrequencyMax = 40;
+
+    /**
+     * The ingredient network observation frequency slowdown rate in ticks.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The ingredient network observation frequency slowdown rate in ticks.", minimalValue = 1, isCommandable = true)
+    public static int ingredientNetworkObserverFrequencyIncreaseFactor = 1;
+
+    /**
+     * The ingredient network observation frequency speedup rate in ticks.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The ingredient network observation frequency slowdown rate in ticks.", minimalValue = 1, isCommandable = true)
+    public static int ingredientNetworkObserverFrequencyDecreaseFactor = 5;
 
     /**
      * If network change events should be logged. Only enable this when debugging.
