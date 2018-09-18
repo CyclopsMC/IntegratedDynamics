@@ -563,6 +563,11 @@ public class Network implements INetwork {
         return baseCluster.contains(pathElement);
     }
 
+    @Override
+    public IFullNetworkListener[] getFullNetworkListeners() {
+        return this.fullNetworkListeners;
+    }
+
     protected boolean isValid(INetworkElement element) {
         if (invalidatedElements.contains(element)) {
             if (element.canRevalidate(this)) {

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Maps;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.util.EnumFacing;
@@ -17,6 +18,7 @@ import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -34,6 +36,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     private final TIntObjectMap<IngredientPositionsIndex<T, M>> indexes;
 
     private boolean observe;
+    private Map<PartPos, Long> lastSecondDurations = Maps.newHashMap();
 
     public PositionedAddonsNetworkIngredients(IngredientComponent<T, M> component) {
         this.component = component;
@@ -199,4 +202,13 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     }
 
+    @Override
+    public Map<PartPos, Long> getLastSecondDurationIndex() {
+        return lastSecondDurations;
+    }
+
+    @Override
+    public void resetLastSecondDurationsIndex() {
+        lastSecondDurations.clear();
+    }
 }

@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -83,5 +84,16 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
                 .getStorageWrapperHandler(capability);
         return wrapperHandler != null ? wrapperHandler.wrapStorage(getChannel(channel)) : null;
     }
+
+    /**
+     * Get the last tick duration of the index observer.
+     * @return Duration in nanoseconds
+     */
+    public Map<PartPos, Long> getLastSecondDurationIndex();
+
+    /**
+     * Reset the last second duration count.
+     */
+    public void resetLastSecondDurationsIndex();
 
 }

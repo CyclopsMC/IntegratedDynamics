@@ -35,6 +35,8 @@ gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject=Auto-eject Fluid
 gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject.info=Push to adjacent tanks.
 
 # Diagnostics
+gui.integrateddynamics.diagnostics.parts=Parts
+gui.integrateddynamics.diagnostics.observers=Storage Observers
 gui.integrateddynamics.diagnostics.title=Network Diagnostics
 gui.integrateddynamics.diagnostics.table.network=Network
 gui.integrateddynamics.diagnostics.table.cables=Cables

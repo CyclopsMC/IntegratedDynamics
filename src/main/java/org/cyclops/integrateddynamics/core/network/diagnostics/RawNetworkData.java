@@ -18,6 +18,7 @@ public class RawNetworkData implements IRawData {
     private final int id;
     private final int cables;
     private final List<RawPartData> parts;
+    private final List<RawObserverData> observers;
 
     @Override
     public String toString() {
@@ -29,23 +30,39 @@ public class RawNetworkData implements IRawData {
         tag.setBoolean("killed", killed);
         tag.setInteger("id", id);
         tag.setLong("cables", cables);
-        NBTTagList list = new NBTTagList();
+
+        NBTTagList listParts = new NBTTagList();
         for (RawPartData part : parts) {
-            list.appendTag(part.toNbt());
+            listParts.appendTag(part.toNbt());
         }
-        tag.setTag("parts", list);
+        tag.setTag("parts", listParts);
+
+        NBTTagList listObservers = new NBTTagList();
+        for (RawObserverData observer : observers) {
+            listObservers.appendTag(observer.toNbt());
+        }
+        tag.setTag("observers", listObservers);
+
         return tag;
     }
 
     public static RawNetworkData fromNbt(NBTTagCompound tag) {
         List<RawPartData> parts = Lists.newArrayList();
-        NBTTagList list = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-        for (int i = 0; i < list.tagCount(); i++) {
-            NBTTagCompound partTag = list.getCompoundTagAt(i);
+        NBTTagList listParts = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
+        for (int i = 0; i < listParts.tagCount(); i++) {
+            NBTTagCompound partTag = listParts.getCompoundTagAt(i);
             parts.add(RawPartData.fromNbt(partTag));
         }
+
+        List<RawObserverData> observers = Lists.newArrayList();
+        NBTTagList listObservers = tag.getTagList("observers", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
+        for (int i = 0; i < listObservers.tagCount(); i++) {
+            NBTTagCompound observerTag = listObservers.getCompoundTagAt(i);
+            observers.add(RawObserverData.fromNbt(observerTag));
+        }
+
         return new RawNetworkData(tag.getBoolean("killed"), tag.getInteger("id"),
-                tag.getInteger("cables"), parts);
+                tag.getInteger("cables"), parts, observers);
     }
 
 }
