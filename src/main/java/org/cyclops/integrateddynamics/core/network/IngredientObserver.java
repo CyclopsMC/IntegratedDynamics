@@ -12,7 +12,10 @@ import org.cyclops.cyclopscore.ingredient.collection.diff.IngredientCollectionDi
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
+import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
+import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 
 import java.util.List;
 import java.util.Map;
@@ -120,9 +123,23 @@ public class IngredientObserver<T, M> {
             this.channeledDiffManagers.put(channel, diffManagers);
         }
 
+        // Check if we should diagnoze the observer
+        boolean isBeingDiagnozed = NetworkDiagnostics.getInstance().isBeingDiagnozed();
+        Map<PartPos, Long> lastSecondDurations = network.getLastSecondDurationIndex();
+        if (!isBeingDiagnozed && !lastSecondDurations.isEmpty()) {
+            // Make sure we aren't using any unnecessary memory.
+            lastSecondDurations.clear();
+        }
+
         // Emit diffs for all current positions
         Set<PrioritizedPartPos> positions = getPositionsCopy(channel);
         for (PrioritizedPartPos partPos : positions) {
+            // Get current time if diagnostics are enabled
+            long startTime = 0;
+            if (isBeingDiagnozed) {
+                startTime = System.nanoTime();
+            }
+
             // Check if we should observe this position in this tick
             int lastTick = channelTargetTicks.getOrDefault(partPos, currentTick);
             if (lastTick <= currentTick) {
@@ -156,12 +173,12 @@ public class IngredientObserver<T, M> {
                 if (hasChanges) {
                     if (tickInterval > GeneralConfig.ingredientNetworkObserverFrequencyMin) {
                         tickIntervalChanged = true;
-                        tickInterval = tickInterval - GeneralConfig.ingredientNetworkObserverFrequencyDecreaseFactor;
+                        tickInterval = Math.max(GeneralConfig.ingredientNetworkObserverFrequencyMin, tickInterval - GeneralConfig.ingredientNetworkObserverFrequencyDecreaseFactor);
                     }
                 } else {
                     if (tickInterval < GeneralConfig.ingredientNetworkObserverFrequencyMax) {
                         tickIntervalChanged = true;
-                        tickInterval = tickInterval + GeneralConfig.ingredientNetworkObserverFrequencyIncreaseFactor;
+                        tickInterval = Math.min(GeneralConfig.ingredientNetworkObserverFrequencyMax, tickInterval + GeneralConfig.ingredientNetworkObserverFrequencyIncreaseFactor);
                     }
                 }
                 // No need to store the interval if it == 1, as the previous or default value will
@@ -180,6 +197,17 @@ public class IngredientObserver<T, M> {
                         channelIntervals.remove(partPos);
                     }
                 }
+            }
+
+            // Calculate duration if diagnostics are enabled
+            if (isBeingDiagnozed) {
+                long duration = System.nanoTime() - startTime;
+                PartPos interfacePos = PartTarget.fromCenter(partPos.getPartPos()).getTarget();
+                Long lastDuration = lastSecondDurations.get(interfacePos);
+                if (lastDuration != null) {
+                    duration = duration + lastDuration;
+                }
+                lastSecondDurations.put(interfacePos, duration);
             }
         }
 
