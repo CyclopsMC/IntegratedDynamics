@@ -104,7 +104,7 @@ public class GeneralConfig extends DummyConfig {
     /**
      * The default frequency in ticks at which ingredient network should be observed.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default frequency in ticks at which ingredient network should be observed.", minimalValue = 1)
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default frequency in ticks at which ingredient network should be observed.", minimalValue = 1, isCommandable = true)
     public static int defaultIngredientNetworkObserverFrequency = 1;
 
     /**
