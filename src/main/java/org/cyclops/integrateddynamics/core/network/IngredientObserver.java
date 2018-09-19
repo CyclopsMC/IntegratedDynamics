@@ -206,7 +206,7 @@ public class IngredientObserver<T, M> {
                     // definitely also cause this part to tick in next tick.
                     // This makes these cases slightly faster, as no map updates are needed.
                     if (tickInterval != 1) {
-                        channelTargetTicks.put(partPos, lastTick + tickInterval);
+                        channelTargetTicks.put(partPos, currentTick + tickInterval);
 
                     }
                     // Only update when the interval has changed.
