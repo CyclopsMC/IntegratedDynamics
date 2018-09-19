@@ -145,25 +145,25 @@ public class IngredientObserver<T, M> {
                 startTime = System.nanoTime();
             }
 
-            // If an inventory state is exposed, check if it has changed since the last observation call.
-            boolean skipPosition = false;
-            IInventoryState inventoryState = TileHelpers.getCapability(partPos.getPartPos().getPos(),
-                    partPos.getPartPos().getSide(), Capabilities.INVENTORY_STATE);
-            if (inventoryState != null) {
-                Integer lastState = this.lastInventoryStates.get(partPos.getPartPos());
-                int newState = inventoryState.getHash();
-                if (lastState != null && lastState == newState) {
-                    // Skip this position if it hasn't not changed
-                    skipPosition = true;
-                } else {
-                    this.lastInventoryStates.put(partPos.getPartPos(), newState);
+            // Check if we should observe this position in this tick
+            int lastTick = channelTargetTicks.getOrDefault(partPos, currentTick);
+            if (lastTick <= currentTick) {
+                // If an inventory state is exposed, check if it has changed since the last observation call.
+                boolean skipPosition = false;
+                IInventoryState inventoryState = TileHelpers.getCapability(partPos.getPartPos().getPos(),
+                        partPos.getPartPos().getSide(), Capabilities.INVENTORY_STATE);
+                if (inventoryState != null) {
+                    Integer lastState = this.lastInventoryStates.get(partPos.getPartPos());
+                    int newState = inventoryState.getHash();
+                    if (lastState != null && lastState == newState) {
+                        // Skip this position if it hasn't not changed
+                        skipPosition = true;
+                    } else {
+                        this.lastInventoryStates.put(partPos.getPartPos(), newState);
+                    }
                 }
-            }
 
-            if (!skipPosition) {
-                // Check if we should observe this position in this tick
-                int lastTick = channelTargetTicks.getOrDefault(partPos, currentTick);
-                if (lastTick <= currentTick) {
+                if (!skipPosition) {
                     IngredientCollectionDiffManager<T, M> diffManager = diffManagers.get(partPos);
                     if (diffManager == null) {
                         diffManager = new IngredientCollectionDiffManager<>(network.getComponent());
