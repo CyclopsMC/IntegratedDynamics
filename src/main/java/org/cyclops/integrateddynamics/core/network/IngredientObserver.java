@@ -96,8 +96,7 @@ public class IngredientObserver<T, M> {
     }
 
     protected void observe() {
-        List<IIngredientComponentStorageObservable.IIndexChangeObserver<T, M>> observers = this.getObserversCopy();
-        if (observers != null) {
+        if (!this.changeObservers.isEmpty()) {
             for (int channel : getNetwork().getChannels()) {
                 observe(channel);
             }
