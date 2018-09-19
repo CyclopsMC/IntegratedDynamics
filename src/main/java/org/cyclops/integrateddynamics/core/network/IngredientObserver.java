@@ -23,6 +23,8 @@ import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostic
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Instances of this class are able to watch ingredient positions and emit diffs.
@@ -30,6 +32,8 @@ import java.util.Set;
  * @author rubensworks
  */
 public class IngredientObserver<T, M> {
+
+    private static final ExecutorService WORKER_POOL = Executors.newFixedThreadPool(GeneralConfig.ingredientNetworkObserverThreads);
 
     private final IPositionedAddonsNetworkIngredients<T, M> network;
 
@@ -97,6 +101,11 @@ public class IngredientObserver<T, M> {
 
     protected void observe() {
         if (!this.changeObservers.isEmpty()) {
+            if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
+                for (int channel : getNetwork().getChannels()) {
+                    WORKER_POOL.execute(() -> observe(channel));
+                }
+            }
             for (int channel : getNetwork().getChannels()) {
                 observe(channel);
             }

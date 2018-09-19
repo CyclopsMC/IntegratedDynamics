@@ -132,6 +132,18 @@ public class GeneralConfig extends DummyConfig {
     public static int ingredientNetworkObserverFrequencyDecreaseFactor = 5;
 
     /**
+     * The number of threads that the ingredient network observer can use.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The number of threads that the ingredient network observer can use.", minimalValue = 1, requiresMcRestart = true)
+    public static int ingredientNetworkObserverThreads = 4;
+
+    /**
+     * If the ingredient network observer can work on separate thread.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "If the ingredient network observer can work on separate thread.", isCommandable = true)
+    public static boolean ingredientNetworkObserverEnableMultithreading = true;
+
+    /**
      * If network change events should be logged. Only enable this when debugging.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If network change events should be logged. Only enable this when debugging.", isCommandable = true)
