@@ -111,12 +111,15 @@ public class IngredientObserver<T, M> {
     protected void observe() {
         if (!this.changeObservers.isEmpty()) {
             if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
+                WORKER_POOL.execute(() -> {
+                    for (int channel : getNetwork().getChannels()) {
+                        observe(channel);
+                    }
+                });
+            } else {
                 for (int channel : getNetwork().getChannels()) {
-                    WORKER_POOL.execute(() -> observe(channel));
+                    observe(channel);
                 }
-            }
-            for (int channel : getNetwork().getChannels()) {
-                observe(channel);
             }
         }
     }
