@@ -90,8 +90,17 @@ public class IngredientObserver<T, M> {
     }
 
     protected void emitEvent(IIngredientComponentStorageObservable.StorageChangeEvent<T, M> event) {
-        for (IIngredientComponentStorageObservable.IIndexChangeObserver<T, M> observer : getObserversCopy()) {
-            observer.onChange(event);
+        if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
+            // Make sure we are running on the main server thread to avoid concurrency exceptions
+            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
+                for (IIngredientComponentStorageObservable.IIndexChangeObserver<T, M> observer : getObserversCopy()) {
+                    observer.onChange(event);
+                }
+            });
+        } else {
+            for (IIngredientComponentStorageObservable.IIndexChangeObserver<T, M> observer : getObserversCopy()) {
+                observer.onChange(event);
+            }
         }
     }
 
