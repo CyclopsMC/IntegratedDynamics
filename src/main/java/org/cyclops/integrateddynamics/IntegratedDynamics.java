@@ -45,6 +45,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
+import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentCapabilities;
 import org.cyclops.integrateddynamics.capability.network.NetworkCapabilityConstructors;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
@@ -70,11 +71,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyF
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentCapabilities;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsSerializerRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.IngredientsSerializers;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlerRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.recipe.RecipeComponentHandlers;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlerRegistry;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
@@ -94,7 +90,6 @@ import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
 import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
-import scala.collection.script.Update;
 
 import java.util.Map;
 
@@ -212,7 +207,6 @@ public class IntegratedDynamics extends ModBaseVersionable {
 
         ValueTypes.load();
         IngredientComponentCapabilities.load();
-        RecipeComponentHandlers.load();
         IngredientComponentHandlers.load();
         ValueCastMappings.load();
         ValueTypeLightLevels.load();

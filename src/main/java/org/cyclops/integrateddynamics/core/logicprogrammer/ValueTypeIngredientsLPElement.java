@@ -89,7 +89,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                 try {
                     values.add(componentHandler.toInstance(entry.getValue().getValue()));
                 } catch (Exception e) {
-                    values.add(component.getEmptyInstance());
+                    values.add(component.getMatcher().getEmptyInstance());
                 }
             });
             if (!values.isEmpty()) {

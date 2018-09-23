@@ -40,7 +40,7 @@ public class ExtendedIngredients<T, M> extends WrappedIngredients {
                 if (index == targetIndex) {
                     return (T2) instance;
                 } else if (index < targetIndex && index >= superList.size()) {
-                    return (T2) component.getEmptyInstance();
+                    return (T2) component.getMatcher().getEmptyInstance();
                 }
                 return superList.get(index);
             }

@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
+import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -71,10 +72,11 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         // For ingredients with multiple possibilities, vary them based on the current tick
         int tick = ((int) Minecraft.getMinecraft().world.getWorldTime()) / 30;
         for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
+            IIngredientMatcher<?, ?> matcher = component.getMatcher();
             IIngredientComponentHandler componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
             recipe.getInputs(component).stream().forEach(element ->
                     values.add(componentHandler.toValue(IngredientsValueTypeWorldRenderer.prepareElementForTick(
-                            element, tick, () -> new PrototypedIngredient(component, component.getEmptyInstance(), null)).getPrototype())));
+                            element, tick, () -> new PrototypedIngredient(component, matcher.getEmptyInstance(), matcher.getAnyMatchCondition())).getPrototype())));
         }
 
         // Render ingredients in a square matrix
