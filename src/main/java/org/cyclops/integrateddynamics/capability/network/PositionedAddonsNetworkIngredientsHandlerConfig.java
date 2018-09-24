@@ -7,7 +7,6 @@ import org.cyclops.cyclopscore.config.extendedconfig.CapabilityConfig;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityStorage;
 import org.cyclops.integrateddynamics.api.ingredient.capability.DefaultPositionedAddonsNetworkIngredientsHandler;
 import org.cyclops.integrateddynamics.api.ingredient.capability.IPositionedAddonsNetworkIngredientsHandler;
-import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 
 /**
  * Config for the positioned addons network handler capability.
@@ -20,7 +19,7 @@ public class PositionedAddonsNetworkIngredientsHandlerConfig extends CapabilityC
      */
     public static PositionedAddonsNetworkIngredientsHandlerConfig _instance;
 
-    @CapabilityInject(IEnergyNetwork.class)
+    @CapabilityInject(IPositionedAddonsNetworkIngredientsHandler.class)
     public static Capability<IPositionedAddonsNetworkIngredientsHandler> CAPABILITY = null;
 
     /**
