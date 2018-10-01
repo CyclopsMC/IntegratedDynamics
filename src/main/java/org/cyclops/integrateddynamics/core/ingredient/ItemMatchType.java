@@ -27,13 +27,13 @@ import java.util.stream.Collectors;
  */
 public enum ItemMatchType {
 
-    ITEMMETA(new FlaggedPrototypeHandler(ItemMatch.DAMAGE)),
-    ITEM(new FlaggedPrototypeHandler(ItemMatch.ANY)),
-    ITEMMETANBT(new FlaggedPrototypeHandler(ItemMatch.DAMAGE | ItemMatch.NBT)),
-    ITEMNBT(new FlaggedPrototypeHandler(ItemMatch.NBT)),
+    ITEMMETA(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.DAMAGE)),
+    ITEM(new FlaggedPrototypeHandler(ItemMatch.ITEM)),
+    ITEMMETANBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT)),
+    ITEMNBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.NBT)),
     OREDICT(itemStack -> {
         return getOreDictEquivalent(itemStack).stream()
-                .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, ItemMatch.DAMAGE | ItemMatch.NBT))
+                .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT))
                 .collect(Collectors.toList());
     });
 
