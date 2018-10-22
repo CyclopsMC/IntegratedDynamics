@@ -2521,6 +2521,19 @@ public final class Operators {
     }
 
     /**
+     * Rotate the input parameters of an operator with two or more inputs
+     */
+    public static final IOperator OPERATOR_ROTATE = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
+            .inputTypes(new IValueType[]{ValueTypes.OPERATOR})
+            .output(ValueTypes.OPERATOR).symbolOperator("rotate")
+            .function(OperatorBuilders.FUNCTION_ONE_OPERATOR.build(
+                    input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Rotate.asOperator(input))
+            )).build());
+    static {
+        REGISTRY.registerSerializer(new CombinedOperator.Rotate.Serializer());
+    }
+
+    /**
      * Apply the given operator on all elements of a list to reduce the list to one value.
      */
     public static final IOperator OPERATOR_REDUCE = REGISTRY.register(OperatorBuilders.OPERATOR

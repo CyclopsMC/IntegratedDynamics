@@ -340,6 +340,60 @@ public class CombinedOperator extends OperatorBase {
         }
     }
 
+    public static class Rotate extends OperatorsFunction {
+
+        public Rotate(IOperator operator) { super(new IOperator[]{operator});}
+
+        @Override
+        public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
+            // Undo rotate for evaluation
+            int size = variables.getVariables().length;
+            IValue[] values = new IValue[size];
+            values[size - 1] = variables.getValue(0);
+            for (int i = 1; i < size; i++) {
+                values[i - 1] = variables.getValue(i);
+            }
+            return ValueHelpers.evaluateOperator(getOperators()[0], values);
+        }
+
+        public static CombinedOperator asOperator(IOperator operator) throws EvaluationException {
+            CombinedOperator.Rotate rotate = new CombinedOperator.Rotate(operator);
+            IValueType[] originalInputTypes = operator.getInputTypes();
+            IValueType[] rotatedInputTypes = new IValueType[originalInputTypes.length];
+            if (originalInputTypes.length < 2) {
+                throw new EvaluationException(L10NHelpers.localize(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
+                        L10NHelpers.localize(Operators.OPERATOR_ROTATE.getUnlocalizedName()),
+                        L10NHelpers.localize(operator.getUnlocalizedName()),
+                        originalInputTypes.length, 2));
+            }
+            rotatedInputTypes[0] = originalInputTypes[originalInputTypes.length - 1];
+            for (int i = 1; i < rotatedInputTypes.length; i++) {
+                rotatedInputTypes[i] = originalInputTypes[i - 1];
+            }
+            CombinedOperator combinedOperator;
+            try {
+                combinedOperator = new CombinedOperator(":rotate:", "rotated", rotate,
+                        rotatedInputTypes,operator.getOutputType(), null);
+            } catch (IllegalArgumentException e) {
+                throw new EvaluationException(e.getMessage());
+            }
+            return combinedOperator;
+        }
+
+        public static class Serializer extends ListOperatorSerializer<Rotate> {
+
+            public Serializer() {
+                super("rotate", Rotate.class);
+            }
+
+            @Override
+            public CombinedOperator newFunction(IOperator... operators) throws EvaluationException {
+                return Rotate.asOperator(operators[0]);
+            }
+
+        }
+    }
+
     public static abstract class ListOperatorSerializer<F extends IFunction> implements IOperatorSerializer<CombinedOperator> {
 
         private final String functionName;

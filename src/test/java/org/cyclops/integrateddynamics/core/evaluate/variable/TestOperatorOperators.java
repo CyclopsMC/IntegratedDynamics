@@ -745,6 +745,78 @@ public class TestOperatorOperators {
     }
 
     /**
+     * ----------------------------------- PREDICATE ROTATE ---------------------------------
+     */
+
+    @Test
+    public void testPredicateRotate() throws EvaluationException {
+        DummyVariableOperator lessThanRotated = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_ROTATE.evaluate(oRelationalLessThan));
+        DummyVariableOperator appliedLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(lessThanRotated, i2));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(appliedLessThan, i0);
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("<2(0) == true", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(appliedLessThan, i1);
+        assertThat("<2(1) == true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+        IValue res3 = Operators.OPERATOR_APPLY.evaluate(appliedLessThan, i2);
+        assertThat("<2(2) == false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(false));
+        IValue res4 = Operators.OPERATOR_APPLY.evaluate(appliedLessThan, i3);
+        assertThat("<2(3) == false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
+    }
+
+    @Test
+    public void testPredicateRotateOperatorWithThreeInputs() throws EvaluationException {
+        DummyVariableOperator choiceRotated = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_ROTATE.evaluate(oChoice));
+        DummyVariableOperator choiceRotated0 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(choiceRotated, i0));
+        DummyVariableOperator choiceRotated0False = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(choiceRotated0, bFalse));
+        DummyVariableOperator choiceRotated0True = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(choiceRotated0, bTrue));
+
+        /* This is the opposite of the flip test */
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(choiceRotated0False, i1);
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("rotate choice 0 false 1 = 0", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(choiceRotated0True, i1);
+        assertThat("rotate choice 0 true 1 = 1", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(1));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateRotateLarge() throws EvaluationException {
+        Operators.OPERATOR_ROTATE.evaluate(oRelationalLessThan, oRelationalLessThan);
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizePredicateRotateSmall() throws EvaluationException {
+        Operators.OPERATOR_ROTATE.evaluate();
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypePredicateRotate() throws EvaluationException {
+        Operators.OPERATOR_FLIP.evaluate(bFalse);
+    }
+
+    @Test
+    public void testValidateTypesPredicateRotate() {
+        assertThat(Operators.OPERATOR_ROTATE.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_ROTATE.validateTypes(new IValueType[]{ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_ROTATE.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesPredicateRotate() throws EvaluationException {
+        DummyVariableOperator lessThanRotated = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_ROTATE.evaluate(oRelationalLessThan));
+
+        assertThat(Operators.OPERATOR_ROTATE.getConditionalOutputType(new IVariable[]{lessThanRotated}),
+                CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
+    }
+
+    /**
      * ----------------------------------- FILTER -----------------------------------
      */
 
