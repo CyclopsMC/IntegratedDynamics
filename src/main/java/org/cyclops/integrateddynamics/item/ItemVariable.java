@@ -49,8 +49,9 @@ public class ItemVariable extends ConfigurableItem {
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag) {
-        getVariableFacade(itemStack).addInformation(list, world);
-        if (Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative()) {
+        IVariableFacade variableFacade = getVariableFacade(itemStack);
+        variableFacade.addInformation(list, world);
+        if (variableFacade != VariableFacadeHandlerRegistry.DUMMY_FACADE && Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative()) {
             list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.warning"));
         }
         super.addInformation(itemStack, world, list, flag);
