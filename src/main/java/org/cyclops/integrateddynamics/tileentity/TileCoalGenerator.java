@@ -120,7 +120,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
             }
             if (!isBurning()) {
                 ItemStack fuel;
-                if (!(fuel = decrStackSize(SLOT_FUEL, 1)).isEmpty() && TileEntityFurnace.isItemFuel(fuel)) {
+                if (TileEntityFurnace.isItemFuel(getStackInSlot(SLOT_FUEL)) && !(fuel = decrStackSize(SLOT_FUEL, 1)).isEmpty()) {
                     if(getStackInSlot(SLOT_FUEL).isEmpty()) {
                         setInventorySlotContents(SLOT_FUEL, fuel.getItem().getContainerItem(fuel));
                     }
