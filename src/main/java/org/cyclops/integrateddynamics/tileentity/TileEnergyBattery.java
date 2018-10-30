@@ -106,11 +106,11 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         if(isCreative()) return energy;
         energy = Math.max(0, Math.min(energy, getEnergyPerTick()));
         int stored = getEnergyStored();
-        int energyReceived = Math.min(getMaxEnergyStored() - stored, energy);
+        int newEnergy = Math.max(stored - energy, 0);;
         if(!simulate) {
-            setEnergy(stored + energyReceived);
+            setEnergy(newEnergy);
         }
-        return energyReceived;
+        return stored - newEnergy;
     }
 
     protected int addEnergy(int energy) {
