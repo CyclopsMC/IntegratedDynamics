@@ -59,11 +59,11 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     public int receiveEnergy(int energy, boolean simulate) {
         energy = Math.min(energy, getRate());
         int stored = getEnergyStored();
-        int newEnergy = Math.min(stored + energy, getMaxEnergyStored());
+        int energyReceived = Math.min(getMaxEnergyStored() - stored, energy);
         if(!simulate) {
-            setEnergy(itemStack, newEnergy);
+            setEnergy(itemStack, stored + energyReceived);
         }
-        return newEnergy - stored;
+        return energyReceived;
     }
 
     @Override

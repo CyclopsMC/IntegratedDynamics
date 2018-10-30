@@ -313,11 +313,11 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     protected int extractEnergyInternal(int energy, boolean simulate) {
         energy = Math.max(0, energy);
         int stored = getEnergyStored();
-        int newEnergy = Math.max(stored - energy, 0);
+        int energyReceived = Math.min(getMaxEnergyStored() - stored, energy);
         if(!simulate) {
-            setEnergy(newEnergy);
+            setEnergy(stored + energyReceived);
         }
-        return stored - newEnergy;
+        return energyReceived;
     }
 
     protected void setEnergy(int energy) {
