@@ -70,9 +70,15 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
             int lastEnergy = this.energy;
             if (lastEnergy != energy) {
                 this.energy = energy;
+                markDirty();
                 sendUpdate();
             }
         }
+    }
+
+    @Override
+    protected int getUpdateBackoffTicks() {
+        return 20;
     }
 
     @Override
