@@ -124,12 +124,21 @@ public class TestVariables {
         assertThat("nested list has length two", l2_2.getValue().getRawValue().getLength(), is(2));
         assertThat("nestedlist has list type", l2_2.getValue().getRawValue().getValueType(), CoreMatchers.<IValueType>is(ValueTypes.LIST));
 
+        DummyVariableList l2h = new DummyVariableList(ValueTypeList.ValueList.ofAll(ValueTypes.CATEGORY_ANY,
+                ValueTypeInteger.ValueInteger.of(42),
+                ValueTypeString.ValueString.of("hello")
+        ));
+        assertThat("heterogeneous list has length two", l2h.getValue().getRawValue().getLength(), is(2));
+        assertThat("heterogeneous list has any type", l2h.getValue().getRawValue().getValueType(), CoreMatchers.<IValueType>is(ValueTypes.CATEGORY_ANY));
+
         assertThat("serializing empty list",
                 l0.getType().serialize(l0.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.any.name"));
         assertThat("serializing string list",
                 l2.getType().serialize(l2.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.string.name\\;a\\;b"));
         assertThat("serializing nested list",
                 l2.getType().serialize(l2_2.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.list.name\\;materialized\\\\;valuetype.valuetypes.integrateddynamics.string.name\\\\\\;a\\\\\\;b\\;materialized\\\\;valuetype.valuetypes.integrateddynamics.string.name\\\\\\;c\\\\\\;d"));
+        assertThat("serializing heterogeneous list",
+                l2h.getType().serialize(l2h.getValue()), is("materialized;valuetype.valuetypes.integrateddynamics.any.name\\;valuetype.valuetypes.integrateddynamics.integer.name\\;42\\;valuetype.valuetypes.integrateddynamics.string.name\\;hello"));
 
         assertThat("deserializing empty list",
                 l0.getType().deserialize(l0.getType().serialize(l0.getValue())), is(l0.getValue()));
@@ -137,6 +146,8 @@ public class TestVariables {
                 l2.getType().deserialize(l2.getType().serialize(l2.getValue())), is(l2.getValue()));
         assertThat("deserializing nested list",
                 l2_2.getType().deserialize(l2_2.getType().serialize(l2_2.getValue())), is(l2_2.getValue()));
+        assertThat("deserializing heterogeneous list",
+                l2h.getType().deserialize(l2h.getType().serialize(l2h.getValue())), is(l2h.getValue()));
     }
 
     @Test
