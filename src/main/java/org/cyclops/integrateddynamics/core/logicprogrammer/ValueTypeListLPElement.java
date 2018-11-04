@@ -263,6 +263,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         protected static List<IValueType> getValueTypes() {
             List<IValueType> valueTypes = Lists.newArrayList(LogicProgrammerElementTypes.VALUETYPE.getValueTypes());
             valueTypes.remove(ValueTypes.LIST);
+            valueTypes.add(ValueTypes.CATEGORY_ANY);
             return valueTypes;
         }
 
@@ -302,7 +303,11 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
         @Override
         public void onChanged() {
-            element.setListValueType(valueTypeSelector.getActiveElement());
+            IValueType newType = valueTypeSelector.getActiveElement();
+            element.setListValueType(newType);
+            if(arrowAdd != null) {
+                arrowAdd.enabled = newType != ValueTypes.CATEGORY_ANY;
+            }
         }
     }
 
