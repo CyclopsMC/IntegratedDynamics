@@ -123,12 +123,6 @@ public class GuiAspectSettings extends GuiContainerExtended {
         }
     }
 
-    @Override
-    public void onGuiClosed() {
-        saveSetting();
-        super.onGuiClosed();
-    }
-
     protected void refreshButtonEnabled() {
         buttonLeft.enabled = getActivePropertyIndex() > 0;
         buttonRight.enabled = getActivePropertyIndex() < propertyTypes.size() - 1;
@@ -186,7 +180,12 @@ public class GuiAspectSettings extends GuiContainerExtended {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if(!subGuiHolder.keyTyped(this.checkHotbarKeys(keyCode), typedChar, keyCode)) {
-            super.keyTyped(typedChar, keyCode);
+            if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)) {
+                saveSetting();
+                this.mc.player.closeScreen();
+            } else {
+                super.keyTyped(typedChar, keyCode);
+            }
         } else {
             if(guiElement != null) {
                 onValueChanged();

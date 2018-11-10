@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,19 +26,20 @@ public abstract class OperatorBase implements IOperator {
     private final IValueType[] inputTypes;
     private final IValueType outputType;
     private final IFunction function;
+    @Nullable
     private final IConfigRenderPattern renderPattern;
 
     private String unlocalizedName = null;
 
     protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
-                           IFunction function, IConfigRenderPattern renderPattern) {
+                           IFunction function, @Nullable IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
         this.outputType = outputType;
         this.function = function;
         this.renderPattern = renderPattern;
-        if(renderPattern.getSlotPositions().length != inputTypes.length) {
+        if(renderPattern != null && renderPattern.getSlotPositions().length != inputTypes.length) {
             throw new IllegalArgumentException(String.format("The given config render pattern with %s slots is not " +
                     "compatible with the number of input types %s for %s",
                     renderPattern.getSlotPositions().length, inputTypes.length, symbol));
@@ -174,6 +176,7 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
+    @Nullable
     public IConfigRenderPattern getRenderPattern() {
         return renderPattern;
     }
@@ -192,7 +195,11 @@ public abstract class OperatorBase implements IOperator {
         }
 
         public <V extends IValue> V getValue(int i) throws EvaluationException {
-            return (V) variables[i].getValue();
+            try {
+                return (V) variables[i].getValue();
+            } catch (ClassCastException e) {
+                throw new EvaluationException(e.getMessage());
+            }
         }
 
         public IVariable[] getVariables() {

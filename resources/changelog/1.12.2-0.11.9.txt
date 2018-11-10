@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.5 or higher.
+
+Fixes:
+* Fix crashing crafttweaker compat due to non-backwards compatible change, Closes CyclopsMC/IntegratedDynamics#563

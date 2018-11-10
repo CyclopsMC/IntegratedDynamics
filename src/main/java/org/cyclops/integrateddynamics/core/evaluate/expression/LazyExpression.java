@@ -27,6 +27,10 @@ public class LazyExpression<V extends IValue> extends VariableAdapter<V> impleme
         this.op = op;
         this.input = input;
         this.valueCache = valueCache;
+
+        // Make sure that any previous values become un-cached,
+        // so that the first evaluation of this expression is guaranteed to happen.
+        valueCache.removeValue(id);
     }
 
     @Override

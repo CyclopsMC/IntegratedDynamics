@@ -320,7 +320,6 @@
     <recipe type="integrateddynamics:mechanical_squeezer">
         <tag>ores</tag>
         <condition type="config">mechanical_squeezer</condition>
-        <condition type="oredict">dustNetherQuartz</condition>
         <input>
             <item>minecraft:quartz_ore</item>
         </input>

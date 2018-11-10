@@ -1,0 +1,17 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.4 or higher.
+
+Additions:
+
+Changes:
+* Add warning to variable cards regarding copying when in creative-mode
+Middle-click creative-mode copying causes multiple variable cards with the same ID to exist, which can cause many network issues.
+
+Fixes:
+* Fix energy unit tests and creative energy battery appearing not to be full
+* Enhance squeezer recipe JEI display for many outputs
+  This allows either 4 output items to be shown, or 3 items and 1 fluid.
+  CyclopsMC/IntegratedDynamics#548
+* Fix squeezer JEI recipes not always showing chances
+  Closes CyclopsMC/IntegratedDynamics#548
+* Fix Nether Quartz squeezer recipes not working, Closes #550

@@ -1,0 +1,15 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.7 or higher.
+
+Changes:
+* Remove charcoal to coal dust squeezer recipes
+  Other mods don't do this either,
+  so this is removed for balancing reasons.
+  Closes #618
+
+Fixes:
+* Add state-type check to display panel TESR
+  This fixes a rare crash where swapping dimensions could cause
+  conflicting part states.
+  Closes #619
+

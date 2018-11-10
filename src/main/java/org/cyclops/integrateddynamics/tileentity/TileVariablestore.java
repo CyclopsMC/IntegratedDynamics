@@ -80,7 +80,7 @@ public class TileVariablestore extends TileCableConnectableInventory
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        refreshVariables(true);
+        shouldSendUpdateEvent = true;
     }
 
     protected void refreshVariables(boolean sendVariablesUpdateEvent) {

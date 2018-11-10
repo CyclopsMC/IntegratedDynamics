@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.6 or higher.
+
+Changes:
+* Update zh_cn.lang
+
+Fixes:
+* Fix inexact scaling of energy bars on batteries
+* Make energy handlers safe to integer overflows, Closes #587

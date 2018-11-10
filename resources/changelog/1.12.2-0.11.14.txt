@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.7 or higher.
+
+Changes:
+* Add visual indicator in operator dropdown list on next/prev elements, Closes #592
+
+Fixes:
+* Safely throw invalid value type errors as ingame errors, Closes #593
+* Fix worldgen crash if filled menril log is disabled, Closes #598
+* Fix crash on null Thaumcraft AspectLists in logic programmer, Closes CyclopsMC/IntegratedDynamics#602

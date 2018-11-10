@@ -331,11 +331,11 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         int stored = getEnergyStored();
-        int newEnergy = Math.min(stored + maxReceive, getMaxEnergyStored());
+        int energyReceived = Math.min(getMaxEnergyStored() - stored, maxReceive);
         if(!simulate) {
-            setEnergy(newEnergy);
+            setEnergy(stored + energyReceived);
         }
-        return newEnergy - stored;
+        return energyReceived;
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.particle.ParticleBlur;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 
@@ -46,28 +47,31 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
         if(!shouldRender(pos)) return;
 
         if (rand.nextInt(20) == 0 && !Minecraft.getMinecraft().isGamePaused()) {
-            PartTypeConnectorOmniDirectional.State partState = (PartTypeConnectorOmniDirectional.State) partContainer.getPartState(direction);
-            if (partState.hasConnectorId()) {
-                double tx = pos.getX() + 0.5F + direction.getFrontOffsetX() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
-                        + (direction.getAxis() != EnumFacing.Axis.X ? 0.25F - rand.nextFloat() * 0.5F : 0F);
-                double ty = pos.getY() + 0.5F + direction.getFrontOffsetY() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
-                        + (direction.getAxis() != EnumFacing.Axis.Y ? 0.25F - rand.nextFloat() * 0.5F : 0F);
-                double tz = pos.getZ() + 0.5F + direction.getFrontOffsetZ() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
-                        + (direction.getAxis() != EnumFacing.Axis.Z ? 0.25F - rand.nextFloat() * 0.5F : 0F);
+            IPartState partStateUnsafe = partContainer.getPartState(direction);
+            if (partStateUnsafe instanceof PartTypeConnectorOmniDirectional.State) {
+                PartTypeConnectorOmniDirectional.State partState = (PartTypeConnectorOmniDirectional.State) partStateUnsafe;
+                if (partState.hasConnectorId()) {
+                    double tx = pos.getX() + 0.5F + direction.getFrontOffsetX() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                            + (direction.getAxis() != EnumFacing.Axis.X ? 0.25F - rand.nextFloat() * 0.5F : 0F);
+                    double ty = pos.getY() + 0.5F + direction.getFrontOffsetY() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                            + (direction.getAxis() != EnumFacing.Axis.Y ? 0.25F - rand.nextFloat() * 0.5F : 0F);
+                    double tz = pos.getZ() + 0.5F + direction.getFrontOffsetZ() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                            + (direction.getAxis() != EnumFacing.Axis.Z ? 0.25F - rand.nextFloat() * 0.5F : 0F);
 
-                float scale = 0.15F;
-                Triple<Float, Float, Float> colors = Helpers.intToRGB(getGroupColor(partState.getGroupId()));
-                float red = colors.getLeft() + rand.nextFloat() * 0.1F - 0.05F;
-                float green = colors.getMiddle() + rand.nextFloat() * 0.1F - 0.05F;
-                float blue = colors.getRight() + rand.nextFloat() * 0.1F - 0.05F;
-                float ageMultiplier = 17F;
+                    float scale = 0.15F;
+                    Triple<Float, Float, Float> colors = Helpers.intToRGB(getGroupColor(partState.getGroupId()));
+                    float red = colors.getLeft() + rand.nextFloat() * 0.1F - 0.05F;
+                    float green = colors.getMiddle() + rand.nextFloat() * 0.1F - 0.05F;
+                    float blue = colors.getRight() + rand.nextFloat() * 0.1F - 0.05F;
+                    float ageMultiplier = 17F;
 
-                ParticleBlur blur = new ParticleBlur(Minecraft.getMinecraft().world, tx, ty, tz, scale,
-                        -(direction.getFrontOffsetX() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
-                        -(direction.getFrontOffsetY() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
-                        -(direction.getFrontOffsetZ() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
-                        red, green, blue, ageMultiplier);
-                Minecraft.getMinecraft().effectRenderer.addEffect(blur);
+                    ParticleBlur blur = new ParticleBlur(Minecraft.getMinecraft().world, tx, ty, tz, scale,
+                            -(direction.getFrontOffsetX() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
+                            -(direction.getFrontOffsetY() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
+                            -(direction.getFrontOffsetZ() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
+                            red, green, blue, ageMultiplier);
+                    Minecraft.getMinecraft().effectRenderer.addEffect(blur);
+                }
             }
         }
     }

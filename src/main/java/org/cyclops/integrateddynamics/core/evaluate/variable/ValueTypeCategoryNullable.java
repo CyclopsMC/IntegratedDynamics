@@ -19,7 +19,12 @@ public class ValueTypeCategoryNullable extends ValueTypeCategoryBase<IValue> {
     }
 
     public boolean isNull(IVariable a) throws EvaluationException {
-        return ((IValueTypeNullable) a.getType()).isNull(a.getValue());
+        try {
+            return ((IValueTypeNullable) a.getType()).isNull(a.getValue());
+        } catch (ClassCastException e) {
+            // This can happen with 'any' types.
+            return false;
+        }
     }
 
     @Override

@@ -41,6 +41,7 @@ import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementTileMultipartTicking;
 import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.Map;
@@ -187,6 +188,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             cable.updateConnections();
         }
         partContainer.update();
+
+        // Revalidate network if that hasn't happened yet
+        if (getNetwork() == null && getWorld() != null && !getWorld().isRemote) {
+            NetworkHelpers.revalidateNetworkElements(getWorld(), getPos());
+        }
     }
 
     public void updateRedstoneInfo(EnumFacing side, boolean strongPower) {

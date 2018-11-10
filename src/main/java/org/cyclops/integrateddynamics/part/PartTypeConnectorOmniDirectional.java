@@ -163,11 +163,10 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 ItemStack slotStack = event.craftMatrix.getStackInSlot(i);
                 if (!slotStack.isEmpty()) {
                     ++stackCount;
-                    if(slotStack.getItem() == this.getItem() && slotStack.hasTagCompound()) {
+                    if(groupId == -1 && slotStack.getItem() == this.getItem() && slotStack.hasTagCompound()) {
                         NBTTagCompound tag = slotStack.getTagCompound();
                         if (tag.hasKey(NBT_KEY_ID, MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
                             groupId = tag.getInteger(NBT_KEY_ID);
-                            break;
                         }
                     }
                 }

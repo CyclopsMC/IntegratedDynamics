@@ -70,9 +70,15 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
             int lastEnergy = this.energy;
             if (lastEnergy != energy) {
                 this.energy = energy;
+                markDirty();
                 sendUpdate();
             }
         }
+    }
+
+    @Override
+    protected int getUpdateBackoffTicks() {
+        return 20;
     }
 
     @Override
@@ -91,13 +97,12 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         if(!isCreative()) {
-            energy = Math.max(0, Math.min(energy, getEnergyPerTick()));
             int stored = getEnergyStored();
-            int newEnergy = Math.min(stored + energy, getMaxEnergyStored());
+            int energyReceived = Math.min(getMaxEnergyStored() - stored, energy);
             if(!simulate) {
-                setEnergy(newEnergy);
+                setEnergy(stored + energyReceived);
             }
-            return newEnergy - stored;
+            return energyReceived;
         }
         return 0;
     }
@@ -107,7 +112,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         if(isCreative()) return energy;
         energy = Math.max(0, Math.min(energy, getEnergyPerTick()));
         int stored = getEnergyStored();
-        int newEnergy = Math.max(stored - energy, 0);
+        int newEnergy = Math.max(stored - energy, 0);;
         if(!simulate) {
             setEnergy(newEnergy);
         }

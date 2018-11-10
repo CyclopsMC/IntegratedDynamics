@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.5 or higher.
+
+Additions:
+* Restore Thaumcraft integration.
+  This includes aspects and operators to read Thaumcraft aspects from
+  essentia tubes, items and entities.
+  These aspects are available as a separate value type.
+
+Fixes:
+* Fix memory leak and stackoverflow due to cloning of positioned iterators, Closes #568
+* Fix crash when mapping lists using an operator that outputs a category, #570
+* Fix crash when applying Flip on an operator with 1 input, Closes #570
+* Fix odd Menril Tree growth in flat worlds, Closes #571

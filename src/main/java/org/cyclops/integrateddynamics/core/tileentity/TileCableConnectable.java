@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.tileentity;
 
 import lombok.Getter;
 import lombok.experimental.Delegate;
+import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
@@ -50,6 +51,12 @@ public class TileCableConnectable extends CyclopsTileEntity implements CyclopsTi
         addCapabilityInternal(CableConfig.CAPABILITY, cable);
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, new NetworkCarrierDefault());
         addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile<>(this, cable));
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tag) {
+        super.readFromNBT(tag);
+        connected.clear();
     }
 
     @Override

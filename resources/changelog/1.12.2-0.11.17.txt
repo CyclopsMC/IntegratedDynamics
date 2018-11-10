@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.7 or higher.
+
+Fixes:
+* Update Refined Storage compat to 1.6.x, Closes #622
+* Fix crash when applying operations on numbers categories, Closes #621
+* Fix proxies and delays not working anymore after being moved, Closes #626
+* Fix cables and blocks reading connection data from items
+* Fix crash when applying isNull on ANY value types, Closes #625
+* Fix rare crash when looking at display panel, Closes #627
