@@ -27,4 +27,9 @@ public class WrappedIngredients implements IMixedIngredients {
     public <T> List<T> getInstances(IngredientComponent<T, ?> ingredientComponent) {
         return ingredients.getInstances(ingredientComponent);
     }
+
+    @Override
+    public int compareTo(IMixedIngredients o) {
+        return ingredients.compareTo(o);
+    }
 }
