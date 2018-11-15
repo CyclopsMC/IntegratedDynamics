@@ -134,7 +134,7 @@ public class ExtendedGuiHandler extends GuiHandler {
         }
     }
 
-    private static Triple<IPartContainer, PartTypeBase, PartTarget> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
+    public static Triple<IPartContainer, PartTypeBase, PartTarget> getPartConstructionData(World world, BlockPos pos, EnumFacing side) {
         IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
         if(partContainer == null) {
             IntegratedDynamics.clog(Level.WARN, String.format("The tile at %s is not a valid part container.", pos));
