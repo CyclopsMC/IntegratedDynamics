@@ -101,8 +101,13 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         while (it.hasNext()) {
             PartPos pos = it.next();
             this.network.disablePosition(pos);
+            long quantityBefore = matcher.getQuantity(ingredient);
             ingredient = this.network.getPositionedStorage(pos).insert(ingredient, simulate);
+            long quantityAfter = matcher.getQuantity(ingredient);
             this.network.enablePosition(pos);
+            if (!simulate && quantityBefore != quantityAfter) {
+                this.network.scheduleObservationForced(channel, pos); // Mark the position as 'changed'
+            }
             if (matcher.isEmpty(ingredient)) {
                 break;
             }
@@ -138,6 +143,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             this.network.enablePosition(pos);
             if (!matcher.isEmpty(extracted)) {
                 if (!simulate) {
+                    this.network.scheduleObservationForced(channel, pos); // Mark the position as 'changed'
                     savePartPosIteratorHandler(partPosIteratorData.getLeft());
                 }
                 return extracted;
@@ -251,6 +257,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
                 this.network.disablePosition(pos);
                 T extracted = this.network.getPositionedStorage(pos).extract(instancePrototype, matchFlags, false);
                 this.network.enablePosition(pos);
+                this.network.scheduleObservationForced(channel, pos); // Mark the position as 'changed'
                 toExtract -= matcher.getQuantity(extracted);
             }
             // Quick heuristic check to see if 'storage' did not lie during its simulation

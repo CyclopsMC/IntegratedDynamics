@@ -126,6 +126,12 @@ public class GeneralConfig extends DummyConfig {
     public static int ingredientNetworkObserverFrequencyDecreaseFactor = 5;
 
     /**
+     * The frequency in ticks at which ingredient network should be observed after a position's contents are changed.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The frequency in ticks at which ingredient network should be observed after a position's contents are changed.", minimalValue = 1, isCommandable = true)
+    public static int ingredientNetworkObserverFrequencyForced = 1;
+
+    /**
      * The number of threads that the ingredient network observer can use.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The number of threads that the ingredient network observer can use.", minimalValue = 1, requiresMcRestart = true)

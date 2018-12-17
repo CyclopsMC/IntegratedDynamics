@@ -136,6 +136,11 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
+    public void scheduleObservationForced(int channel, PartPos pos) {
+        this.ingredientObserver.resetTickInterval(channel, pos);
+    }
+
+    @Override
     public boolean shouldObserve() {
         return this.observe;
     }

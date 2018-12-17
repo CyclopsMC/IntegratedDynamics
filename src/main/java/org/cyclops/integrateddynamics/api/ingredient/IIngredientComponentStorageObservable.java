@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.api.ingredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollection;
 import org.cyclops.cyclopscore.ingredient.collection.diff.IngredientCollectionDiff;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 
 /**
@@ -32,14 +33,30 @@ public interface IIngredientComponentStorageObservable<T, M> {
     public void removeObserver(IIndexChangeObserver<T, M> observer);
 
     /**
-     * Indicate that this network should observe starting in the next tick.
+     * Indicate that this network should observe starting somewhere in the future.
      *
-     * This should be called when observer diffs are needed in the next tick.
+     * This should be called when observer diffs are needed,
+     * but are not urgent.
      *
-     * This should be called each tick that observations are needed,
+     * This is a more efficient variant of
+     * {@link IIngredientComponentStorageObservable#scheduleObservationForced(int, PartPos)}.
+     *
+     * This should be called each time that observations are needed,
      * as this observable will reset the internal flag after each observation.
      */
     public void scheduleObservation();
+
+    /**
+     * Indicate that this network should observe starting in the next tick.
+     *
+     * This is a stricter variant of {@link IIngredientComponentStorageObservable#scheduleObservation()},
+     * and can only be done for a single position and channel.
+     *
+     * This should be called when observer diffs are needed in the next tick for the given position.
+     * @param channel The channel to force an observation in.
+     * @param pos The position to force an observation for.
+     */
+    public void scheduleObservationForced(int channel, PartPos pos);
 
     /**
      * @return If an observation should happen.
