@@ -102,12 +102,6 @@ public class GeneralConfig extends DummyConfig {
     public static boolean safeMode = false;
 
     /**
-     * The default frequency in ticks at which ingredient network should be observed.
-     */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The default frequency in ticks at which ingredient network should be observed.", minimalValue = 1, isCommandable = true)
-    public static int ingredientNetworkObserverFrequencyDefault = 10;
-
-    /**
      * The fastest possible frequency in ticks at which ingredient network should be observed.
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.MACHINE, comment = "The fastest possible frequency in ticks at which ingredient network should be observed.", minimalValue = 1, isCommandable = true)
