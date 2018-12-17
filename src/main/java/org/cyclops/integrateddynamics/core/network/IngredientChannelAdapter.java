@@ -1,15 +1,21 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
+import org.cyclops.cyclopscore.datastructure.Wrapper;
+import org.cyclops.cyclopscore.ingredient.collection.IIngredientMapMutable;
+import org.cyclops.cyclopscore.ingredient.collection.IngredientHashMap;
 import org.cyclops.integrateddynamics.api.network.IPartPosIteratorHandler;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -146,37 +152,113 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
     }
 
     @Override
-    public T extract(@Nonnull T prototype, final M matchFlags, boolean simulate) {
+    public T extract(@Nonnull T prototype, M matchFlags, boolean simulate) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
+        boolean checkQuantity = matcher.hasCondition(matchFlags, getComponent().getPrimaryQuantifier().getMatchCondition());
 
         // Limit rate
         long limit = network.getRateLimit();
         if (matcher.getQuantity(prototype) > limit) {
+            // Fail immediately if we require more than the limit
+            if (checkQuantity) {
+                return matcher.getEmptyInstance();
+            }
+
+            // Otherwise, we reduce our requested quantity
             prototype = matcher.withQuantity(prototype, limit);
         }
         final T prototypeFinal = prototype;
+        long requiredQuantity = matcher.getQuantity(prototypeFinal);
+
+        // Modify our match condition that will be used to test each separate interface
+        if (checkQuantity) {
+            matchFlags = matcher.withoutCondition(matchFlags, getComponent().getPrimaryQuantifier().getMatchCondition());
+        }
+        M finalMatchFlags = matchFlags;
+
+        // Maintain a temporary mapping of prototype items to their total count over all positions,
+        // plus the list of positions in which they are present.
+        IIngredientMapMutable<T, M, Pair<Wrapper<Long>, List<PartPos>>> validInstancesCollapsed = new IngredientHashMap<>(getComponent());
 
         // Try extracting from all positions that match with the given conditions
         // until one succeeds.
-        Pair<IPartPosIteratorHandler, Iterator<PartPos>> partPosIteratorData = getPartPosIteratorData(() -> this.getMatchingPositions(prototypeFinal, matchFlags), channel);
+        Pair<IPartPosIteratorHandler, Iterator<PartPos>> partPosIteratorData = getPartPosIteratorData(() -> this.getMatchingPositions(prototypeFinal, finalMatchFlags), channel);
         Iterator<PartPos> it = partPosIteratorData.getRight();
         while (it.hasNext()) {
             PartPos pos = it.next();
+
+            // Do a simulated extraction
             this.network.disablePosition(pos);
-            T extracted = this.network.getPositionedStorage(pos).extract(prototypeFinal, matchFlags, simulate);
+            T extractedSimulated = this.network.getPositionedStorage(pos).extract(prototypeFinal, finalMatchFlags, true);
             this.network.enablePosition(pos);
-            if (!matcher.isEmpty(extracted)) {
+            T storagePrototype = getComponent().getMatcher().withQuantity(extractedSimulated, 1);
+
+            // Get existing value from temporary mapping
+            Pair<Wrapper<Long>, List<PartPos>> existingValue = validInstancesCollapsed.get(storagePrototype);
+            if (existingValue == null) {
+                existingValue = Pair.of(new Wrapper<>(0L), Lists.newLinkedList());
+                validInstancesCollapsed.put(storagePrototype, existingValue);
+            }
+
+            // Update the counter and pos-list for our prototype
+            long newCount = existingValue.getLeft().get() + matcher.getQuantity(extractedSimulated);
+            existingValue.getLeft().set(newCount);
+            existingValue.getRight().add(pos);
+
+            // If the count is sufficient for our query, return
+            if (newCount >= requiredQuantity) {
+                // Save the iterator state before returning
                 if (!simulate) {
                     savePartPosIteratorHandler(partPosIteratorData.getLeft());
                 }
-                return extracted;
+                existingValue.getLeft().set(requiredQuantity);
+                return finalizeExtraction(storagePrototype, matchFlags, existingValue, requiredQuantity, simulate);
             }
         }
 
+        // If we reach this point, then our effective count is below requiredQuantity
+
+        // Save the iterator state before returning
         if (!simulate) {
             savePartPosIteratorHandler(partPosIteratorData.getLeft());
         }
 
-        return matcher.getEmptyInstance();
+        // Fail if we required an exact quantity
+        if (checkQuantity) {
+            return matcher.getEmptyInstance();
+        }
+
+        // Extract for the instance that had the most matches if we didn't require an exact quantity
+        Pair<Wrapper<Long>, List<PartPos>> maxValue = Pair.of(new Wrapper<>(0L), Lists.newArrayList());
+        T maxInstance = matcher.getEmptyInstance();
+        for (Map.Entry<T, Pair<Wrapper<Long>, List<PartPos>>> entry : validInstancesCollapsed) {
+            if (entry.getValue().getLeft().get() > maxValue.getLeft().get()) {
+                maxInstance = entry.getKey();
+                maxValue = entry.getValue();
+            }
+        }
+        return finalizeExtraction(maxInstance, matchFlags, maxValue, requiredQuantity, simulate);
     }
+
+    protected T finalizeExtraction(T instancePrototype, M matchFlags, Pair<Wrapper<Long>, List<PartPos>> value,
+                                   long requiredQuantity, boolean simulate) {
+        IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
+        long extractedCount = value.getLeft().get();
+        instancePrototype = matcher.withQuantity(instancePrototype, extractedCount);
+        if (!simulate && extractedCount > 0) {
+            long toExtract = requiredQuantity;
+            for (PartPos pos : value.getRight()) {
+                this.network.disablePosition(pos);
+                T extracted = this.network.getPositionedStorage(pos).extract(instancePrototype, matchFlags, false);
+                this.network.enablePosition(pos);
+                toExtract -= matcher.getQuantity(extracted);
+            }
+            // Quick heuristic check to see if 'storage' did not lie during its simulation
+            if (toExtract != requiredQuantity - extractedCount) {
+                throw new IllegalStateException("A storage resulted in inconsistent simulated and non-simulated output.");
+            }
+        }
+        return getComponent().getMatcher().withQuantity(instancePrototype, extractedCount);
+    }
+
 }
