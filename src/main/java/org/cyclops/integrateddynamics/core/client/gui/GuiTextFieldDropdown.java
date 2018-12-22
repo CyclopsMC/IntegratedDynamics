@@ -69,6 +69,7 @@ public class GuiTextFieldDropdown<T> extends GuiTextFieldExtended {
                     }
                     return true;
                 case Keyboard.KEY_NUMPADENTER:
+                case Keyboard.KEY_RETURN:
                 case Keyboard.KEY_RIGHT:
                     if (visiblePossibilitiesIndex >= 0
                             && visiblePossibilitiesIndex < visiblePossibilities.size()) {
