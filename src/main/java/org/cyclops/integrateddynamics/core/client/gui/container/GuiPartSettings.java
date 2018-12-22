@@ -78,15 +78,23 @@ public class GuiPartSettings extends GuiContainerExtended {
     protected void onSave() {
         IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
         try {
-            int updateInterval = numberFieldUpdateInterval.getInt();
-            int priority = numberFieldPriority.getInt();
-            int channel = numberFieldChannel.getInt();
-            EnumFacing selectedSide = dropdownFieldSide.getSelectedDropdownPossibility() == null ? null : dropdownFieldSide.getSelectedDropdownPossibility().getValue();
-            int side = selectedSide != null && selectedSide != getDefaultSide() ? selectedSide.ordinal() : -1;
-            ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
-            ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastPriorityValueId(), priority);
-            ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastChannelValueId(), channel);
-            ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastSideValueId(), side);
+            if (isFieldSideEnabled()) {
+                EnumFacing selectedSide = dropdownFieldSide.getSelectedDropdownPossibility() == null ? null : dropdownFieldSide.getSelectedDropdownPossibility().getValue();
+                int side = selectedSide != null && selectedSide != getDefaultSide() ? selectedSide.ordinal() : -1;
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastSideValueId(), side);
+            }
+            if (isFieldUpdateIntervalEnabled()) {
+                int updateInterval = numberFieldUpdateInterval.getInt();
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastUpdateValueId(), updateInterval);
+            }
+            if (isFieldPriorityEnabled()) {
+                int priority = numberFieldPriority.getInt();
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastPriorityValueId(), priority);
+            }
+            if (isFieldChannelEnabled()) {
+                int channel = numberFieldChannel.getInt();
+                ValueNotifierHelpers.setValue(getContainer(), ((ContainerPartSettings) getContainer()).getLastChannelValueId(), channel);
+            }
         } catch (NumberFormatException e) { }
     }
 
@@ -113,35 +121,43 @@ public class GuiPartSettings extends GuiContainerExtended {
         super.initGui();
         Keyboard.enableRepeatEvents(true);
 
-        dropdownEntries = Arrays.stream(EnumFacing.VALUES).map(SideDropdownEntry::new).collect(Collectors.toList());
-        dropdownFieldSide = new GuiTextFieldDropdown(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + 9,
-                70, 14, true, Sets.newHashSet(dropdownEntries));
-        setSideInDropdownField(getCurrentSide());
-        dropdownFieldSide.setMaxStringLength(15);
-        dropdownFieldSide.setVisible(true);
-        dropdownFieldSide.setTextColor(16777215);
-        dropdownFieldSide.setCanLoseFocus(true);
+        if (isFieldSideEnabled()) {
+            dropdownEntries = Arrays.stream(EnumFacing.VALUES).map(SideDropdownEntry::new).collect(Collectors.toList());
+            dropdownFieldSide = new GuiTextFieldDropdown(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + getFieldSideY(),
+                    70, 14, true, Sets.newHashSet(dropdownEntries));
+            setSideInDropdownField(getCurrentSide());
+            dropdownFieldSide.setMaxStringLength(15);
+            dropdownFieldSide.setVisible(true);
+            dropdownFieldSide.setTextColor(16777215);
+            dropdownFieldSide.setCanLoseFocus(true);
+        }
 
-        numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + 34, 70, 14, true, true);
-        numberFieldUpdateInterval.setMaxStringLength(15);
-        numberFieldUpdateInterval.setVisible(true);
-        numberFieldUpdateInterval.setTextColor(16777215);
-        numberFieldUpdateInterval.setCanLoseFocus(true);
+        if (isFieldUpdateIntervalEnabled()) {
+            numberFieldUpdateInterval = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + getFieldUpdateIntervalY(), 70, 14, true, true);
+            numberFieldUpdateInterval.setMaxStringLength(15);
+            numberFieldUpdateInterval.setVisible(true);
+            numberFieldUpdateInterval.setTextColor(16777215);
+            numberFieldUpdateInterval.setCanLoseFocus(true);
+        }
 
-        numberFieldPriority = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + 59, 70, 14, true, true);
-        numberFieldPriority.setPositiveOnly(false);
-        numberFieldPriority.setMaxStringLength(15);
-        numberFieldPriority.setVisible(true);
-        numberFieldPriority.setTextColor(16777215);
-        numberFieldPriority.setCanLoseFocus(true);
+        if (isFieldPriorityEnabled()) {
+            numberFieldPriority = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + getFieldPriorityY(), 70, 14, true, true);
+            numberFieldPriority.setPositiveOnly(false);
+            numberFieldPriority.setMaxStringLength(15);
+            numberFieldPriority.setVisible(true);
+            numberFieldPriority.setTextColor(16777215);
+            numberFieldPriority.setCanLoseFocus(true);
+        }
 
-        numberFieldChannel = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + 84, 70, 14, true, true);
-        numberFieldChannel.setPositiveOnly(false);
-        numberFieldChannel.setMaxStringLength(15);
-        numberFieldChannel.setVisible(true);
-        numberFieldChannel.setTextColor(16777215);
-        numberFieldChannel.setCanLoseFocus(true);
-        numberFieldChannel.setEnabled(isChannelEnabled());
+        if (isFieldChannelEnabled()) {
+            numberFieldChannel = new GuiNumberField(0, Minecraft.getMinecraft().fontRenderer, guiLeft + 106, guiTop + getFieldChannelY(), 70, 14, true, true);
+            numberFieldChannel.setPositiveOnly(false);
+            numberFieldChannel.setMaxStringLength(15);
+            numberFieldChannel.setVisible(true);
+            numberFieldChannel.setTextColor(16777215);
+            numberFieldChannel.setCanLoseFocus(true);
+            numberFieldChannel.setEnabled(isChannelEnabled());
+        }
 
         String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
         buttonList.add(new GuiButtonText(BUTTON_SAVE, this.guiLeft + 178, this.guiTop + 8, fontRenderer.getStringWidth(save) + 6, 16, save, true));
@@ -149,13 +165,45 @@ public class GuiPartSettings extends GuiContainerExtended {
         this.refreshValues();
     }
 
+    protected int getFieldSideY() {
+        return 9;
+    }
+
+    protected int getFieldUpdateIntervalY() {
+        return 34;
+    }
+
+    protected int getFieldPriorityY() {
+        return 59;
+    }
+
+    protected int getFieldChannelY() {
+        return 84;
+    }
+
+    protected boolean isFieldSideEnabled() {
+        return true;
+    }
+
+    protected boolean isFieldUpdateIntervalEnabled() {
+        return true;
+    }
+
+    protected boolean isFieldPriorityEnabled() {
+        return true;
+    }
+
+    protected boolean isFieldChannelEnabled() {
+        return true;
+    }
+
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (!this.checkHotbarKeys(keyCode)) {
-            if (!this.numberFieldUpdateInterval.textboxKeyTyped(typedChar, keyCode)
-                    && !this.numberFieldPriority.textboxKeyTyped(typedChar, keyCode)
-                    && !this.numberFieldChannel.textboxKeyTyped(typedChar, keyCode)
-                    && !this.dropdownFieldSide.textboxKeyTyped(typedChar, keyCode)) {
+            if (!(isFieldUpdateIntervalEnabled() && this.numberFieldUpdateInterval.textboxKeyTyped(typedChar, keyCode))
+                    && !(isFieldPriorityEnabled() && this.numberFieldPriority.textboxKeyTyped(typedChar, keyCode))
+                    && !(isFieldChannelEnabled() && this.numberFieldChannel.textboxKeyTyped(typedChar, keyCode))
+                    && !(isFieldSideEnabled() && this.dropdownFieldSide.textboxKeyTyped(typedChar, keyCode))) {
                 super.keyTyped(typedChar, keyCode);
             }
         }
@@ -163,24 +211,40 @@ public class GuiPartSettings extends GuiContainerExtended {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        this.numberFieldUpdateInterval.mouseClicked(mouseX, mouseY, mouseButton);
-        this.numberFieldPriority.mouseClicked(mouseX, mouseY, mouseButton);
-        this.numberFieldChannel.mouseClicked(mouseX, mouseY, mouseButton);
-        this.dropdownFieldSide.mouseClicked(mouseX, mouseY, mouseButton);
+        if (isFieldSideEnabled()) {
+            this.dropdownFieldSide.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+        if (isFieldUpdateIntervalEnabled()) {
+            this.numberFieldUpdateInterval.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+        if (isFieldPriorityEnabled()) {
+            this.numberFieldPriority.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+        if (isFieldChannelEnabled()) {
+            this.numberFieldChannel.mouseClicked(mouseX, mouseY, mouseButton);
+        }
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        numberFieldUpdateInterval.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
-        numberFieldPriority.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
-        numberFieldChannel.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
-        dropdownFieldSide.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
-        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + 12, Helpers.RGBToInt(0, 0, 0));
-        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 37, Helpers.RGBToInt(0, 0, 0));
-        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + 62, Helpers.RGBToInt(0, 0, 0));
-        fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + 87, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
+        if (isFieldSideEnabled()) {
+            fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0));
+            dropdownFieldSide.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+        }
+        if (isFieldUpdateIntervalEnabled()) {
+            fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0));
+            numberFieldUpdateInterval.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+        }
+        if (isFieldPriorityEnabled()) {
+            fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + getFieldPriorityY() + 3, Helpers.RGBToInt(0, 0, 0));
+            numberFieldPriority.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+        }
+        if (isFieldChannelEnabled()) {
+            fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
+            numberFieldChannel.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+        }
     }
 
     @Override
@@ -212,18 +276,18 @@ public class GuiPartSettings extends GuiContainerExtended {
 
     @Override
     public void onUpdate(int valueId, NBTTagCompound value) {
-        if (valueId == ((ContainerPartSettings) getContainer()).getLastUpdateValueId()) {
-            numberFieldUpdateInterval.setText(Integer.toString(((ContainerPartSettings) getContainer()).getLastUpdateValue()));
-        }
-        if (valueId == ((ContainerPartSettings) getContainer()).getLastPriorityValueId()) {
-            numberFieldPriority.setText(Integer.toString(((ContainerPartSettings) getContainer()).getLastPriorityValue()));
-        }
-        if (valueId == ((ContainerPartSettings) getContainer()).getLastChannelValueId()) {
-            numberFieldChannel.setText(Integer.toString(((ContainerPartSettings) getContainer()).getLastChannelValue()));
-        }
-        if (valueId == ((ContainerPartSettings) getContainer()).getLastSideValueId()) {
+        if (isFieldSideEnabled() && valueId == ((ContainerPartSettings) getContainer()).getLastSideValueId()) {
             int side = ((ContainerPartSettings) getContainer()).getLastSideValue();
             setSideInDropdownField(side == -1 ? getDefaultSide() : EnumFacing.VALUES[side]);
+        }
+        if (isFieldUpdateIntervalEnabled() && valueId == ((ContainerPartSettings) getContainer()).getLastUpdateValueId()) {
+            numberFieldUpdateInterval.setText(Integer.toString(((ContainerPartSettings) getContainer()).getLastUpdateValue()));
+        }
+        if (isFieldPriorityEnabled() && valueId == ((ContainerPartSettings) getContainer()).getLastPriorityValueId()) {
+            numberFieldPriority.setText(Integer.toString(((ContainerPartSettings) getContainer()).getLastPriorityValue()));
+        }
+        if (isFieldChannelEnabled() && valueId == ((ContainerPartSettings) getContainer()).getLastChannelValueId()) {
+            numberFieldChannel.setText(Integer.toString(((ContainerPartSettings) getContainer()).getLastChannelValue()));
         }
     }
 
