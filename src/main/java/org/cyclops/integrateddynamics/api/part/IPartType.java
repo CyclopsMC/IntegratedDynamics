@@ -113,6 +113,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public int getUpdateInterval(S state);
 
     /**
+     * @param state The state
+     * @return The minimum allowed tick interval to update this element.
+     */
+    public int getMinimumUpdateInterval(S state);
+
+    /**
      * Set the priority and channel of this part in the network.
      * @deprecated Should only be called from {@link INetwork#setPriorityAndChannel(INetworkElement, int, int)}!
      * @param network The network to update in.

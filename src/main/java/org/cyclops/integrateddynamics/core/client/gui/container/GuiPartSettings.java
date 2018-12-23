@@ -138,6 +138,8 @@ public class GuiPartSettings extends GuiContainerExtended {
             numberFieldUpdateInterval.setVisible(true);
             numberFieldUpdateInterval.setTextColor(16777215);
             numberFieldUpdateInterval.setCanLoseFocus(true);
+            ContainerPartSettings container = (ContainerPartSettings) getContainer();
+            numberFieldUpdateInterval.setMinValue(container.getPartType().getMinimumUpdateInterval(container.getPartState()));
         }
 
         if (isFieldPriorityEnabled()) {

@@ -69,6 +69,11 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
+    public int getMinimumUpdateInterval(S state) {
+        return 1;
+    }
+
+    @Override
     public void setPriorityAndChannel(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, int priority, int channel) {
         //noinspection deprecation
         state.setPriority(priority);
