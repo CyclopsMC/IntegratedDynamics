@@ -42,6 +42,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeRegistry;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandlerRegistry;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementTypeRegistry;
+import org.cyclops.integrateddynamics.api.network.INetworkCraftingHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.block.BlockCableConfig;
@@ -76,6 +77,7 @@ import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandler
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypeRegistry;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
+import org.cyclops.integrateddynamics.core.network.NetworkCraftingHandlerRegistry;
 import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
@@ -202,6 +204,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(DelayVariableFacadeHandler.getInstance());
         getRegistryManager().addRegistry(IInfoBookRegistry.class, new InfoBookRegistry());
         getRegistryManager().addRegistry(IIngredientComponentHandlerRegistry.class, IngredientComponentHandlerRegistry.getInstance());
+        getRegistryManager().addRegistry(INetworkCraftingHandlerRegistry.class, NetworkCraftingHandlerRegistry.getInstance());
 
         addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
 
