@@ -23,8 +23,10 @@ import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostic
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Instances of this class are able to watch ingredient positions and emit diffs.
@@ -45,6 +47,8 @@ public class IngredientObserver<T, M> {
     private final TIntObjectMap<List<PrioritizedPartPos>> lastRemoved;
     private final Map<PartPos, Integer> lastInventoryStates;
 
+    private CountDownLatch lastObserverBarrier;
+
     public IngredientObserver(IPositionedAddonsNetworkIngredients<T, M> network) {
         this.network = network;
         this.changeObservers = Sets.newIdentityHashSet();
@@ -53,6 +57,8 @@ public class IngredientObserver<T, M> {
         this.channeledDiffManagers = new TIntObjectHashMap<>();
         this.lastRemoved = new TIntObjectHashMap<>();
         this.lastInventoryStates = Maps.newHashMap();
+
+        this.lastObserverBarrier = null;
     }
 
     public IPositionedAddonsNetworkIngredients<T, M> getNetwork() {
@@ -111,10 +117,24 @@ public class IngredientObserver<T, M> {
     protected void observe() {
         if (!this.changeObservers.isEmpty()) {
             if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
+                // If we still have an uncompleted job from the previous tick, wait for it to finish first!
+                if (this.lastObserverBarrier != null) {
+                    try {
+                        this.lastObserverBarrier.await(1, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // Schedule the observation job
+                this.lastObserverBarrier = new CountDownLatch(1);
                 WORKER_POOL.execute(() -> {
                     for (int channel : getNetwork().getChannels()) {
                         observe(channel);
                     }
+                    CountDownLatch lastObserverBarrier = this.lastObserverBarrier;
+                    this.lastObserverBarrier = null;
+                    lastObserverBarrier.countDown();
                 });
             } else {
                 for (int channel : getNetwork().getChannels()) {
