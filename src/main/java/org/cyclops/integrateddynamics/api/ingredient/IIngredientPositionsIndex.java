@@ -45,4 +45,11 @@ public interface IIngredientPositionsIndex<T, M> extends IIngredientCollection<T
      */
     public void removePosition(T instance, PrioritizedPartPos pos);
 
+    /**
+     * Get the available quantity for the given instance.
+     * @param instance An instance to match.
+     * @return The indexed quantity.
+     */
+    public long getQuantity(T instance);
+
 }

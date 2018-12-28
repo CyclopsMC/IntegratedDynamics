@@ -51,4 +51,9 @@ public class IngredientChannelIndexed<T, M> extends IngredientChannelAdapter<T, 
     public Iterator<T> iterator(@Nonnull T prototype, M matchFlags) {
         return this.index.iterator(prototype, matchFlags);
     }
+
+    @Override
+    protected boolean canExtract(T extractedSimulated) {
+        return index.getQuantity(extractedSimulated) >= getComponent().getMatcher().getQuantity(extractedSimulated);
+    }
 }

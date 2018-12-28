@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.network;
 import com.google.common.collect.Sets;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.datastructure.DistinctIterator;
-import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollectionMutable;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientMapMutable;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientCollectionMutableWrapper;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientCollectionPrototypeMap;
@@ -22,7 +21,7 @@ import java.util.TreeSet;
  * @param <M> The matching condition parameter.
  * @author rubensworks
  */
-public class IngredientPositionsIndex<T, M> extends IngredientCollectionMutableWrapper<T, M, IIngredientCollectionMutable<T, M>>
+public class IngredientPositionsIndex<T, M> extends IngredientCollectionMutableWrapper<T, M, IngredientCollectionPrototypeMap<T, M>>
         implements IIngredientPositionsIndex<T, M> {
 
     private final IIngredientMapMutable<T, M, TreeSet<PrioritizedPartPos>> positionsMap;
@@ -71,6 +70,11 @@ public class IngredientPositionsIndex<T, M> extends IngredientCollectionMutableW
                 this.positionsMap.remove(prototype);
             }
         }
+    }
+
+    @Override
+    public long getQuantity(T instance) {
+        return getInnerCollection().getQuantity(instance);
     }
 
 }

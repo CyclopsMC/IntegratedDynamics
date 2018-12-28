@@ -140,6 +140,9 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             PartPos pos = it.next();
             this.network.disablePosition(pos);
             T extracted = this.network.getPositionedStorage(pos).extract(maxQuantity, simulate);
+            if (!this.canExtract(extracted)) {
+                extracted = matcher.getEmptyInstance();
+            }
             this.network.enablePosition(pos);
             if (!matcher.isEmpty(extracted)) {
                 if (!simulate) {
@@ -196,6 +199,9 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             // Do a simulated extraction
             this.network.disablePosition(pos);
             T extractedSimulated = this.network.getPositionedStorage(pos).extract(prototypeFinal, finalMatchFlags, true);
+            if (!this.canExtract(extractedSimulated)) {
+                extractedSimulated = matcher.getEmptyInstance();
+            }
             this.network.enablePosition(pos);
             T storagePrototype = getComponent().getMatcher().withQuantity(extractedSimulated, 1);
 
@@ -244,6 +250,21 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             }
         }
         return finalizeExtraction(maxInstance, matchFlags, maxValue, requiredQuantity, simulate);
+    }
+
+    /**
+     * Check if the given instance can be extracted.
+     *
+     * This is needed in cases where you want to block the extraction
+     * if it has not yet been indexed properly.
+     * Otherwise, changes to a storage may not be indexed at all,
+     * and important information may be lost.
+     *
+     * @param extractedSimulated A simulated extraction.
+     * @return If the extraction is allowed.
+     */
+    protected boolean canExtract(T extractedSimulated) {
+        return true;
     }
 
     protected T finalizeExtraction(T instancePrototype, M matchFlags, Pair<Wrapper<Long>, List<PartPos>> value,
