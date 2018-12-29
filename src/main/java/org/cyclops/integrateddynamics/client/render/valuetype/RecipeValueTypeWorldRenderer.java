@@ -70,7 +70,7 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         List<IValue> values = Lists.newArrayListWithExpectedSize(ingredientCount);
 
         // For ingredients with multiple possibilities, vary them based on the current tick
-        int tick = ((int) Minecraft.getMinecraft().world.getWorldTime()) / 30;
+        int tick = ((int) Minecraft.getMinecraft().world.getTotalWorldTime()) / 30;
         for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
             IIngredientMatcher<?, ?> matcher = component.getMatcher();
             IIngredientComponentHandler componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
