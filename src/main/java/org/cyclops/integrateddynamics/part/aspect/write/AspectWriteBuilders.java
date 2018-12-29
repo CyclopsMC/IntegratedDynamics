@@ -15,6 +15,7 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -60,6 +61,8 @@ public class AspectWriteBuilders {
             BUILDER_OPERATOR = getValue(AspectBuilder.forWriteType(ValueTypes.OPERATOR));
     public static final AspectBuilder<ValueTypeNbt.ValueNbt, ValueTypeNbt, Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>>
             BUILDER_NBT = getValue(AspectBuilder.forWriteType(ValueTypes.NBT));
+    public static final AspectBuilder<ValueObjectTypeRecipe.ValueRecipe, ValueObjectTypeRecipe, Triple<PartTarget, IAspectProperties, ValueObjectTypeRecipe.ValueRecipe>>
+            BUILDER_RECIPE = getValue(AspectBuilder.forWriteType(ValueTypes.OBJECT_RECIPE));
 
     // --------------- Value type propagators ---------------
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeBoolean.ValueBoolean>, Triple<PartTarget, IAspectProperties, Boolean>>
@@ -88,6 +91,9 @@ public class AspectWriteBuilders {
 
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>, Triple<PartTarget, IAspectProperties, NBTTagCompound>>
             PROP_GET_NBT = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
+
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeRecipe.ValueRecipe>, Triple<PartTarget, IAspectProperties, IRecipeDefinition>>
+            PROP_GET_RECIPE = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orNull());
 
     public static final class Audio {
 
