@@ -74,6 +74,7 @@ public class IngredientObserver<T, M> {
             this.lastRemoved.put(channel, positions);
         }
         positions.add(pos);
+        this.lastInventoryStates.remove(pos.getPartPos());
     }
 
     /**
