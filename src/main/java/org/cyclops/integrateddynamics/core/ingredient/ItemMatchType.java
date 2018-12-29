@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.ingredient;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
@@ -11,6 +10,7 @@ import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.Reference;
 
 import java.util.Arrays;
@@ -33,6 +33,8 @@ public enum ItemMatchType {
     ITEMNBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.NBT)),
     OREDICT(itemStack -> {
         return getOreDictEquivalent(itemStack).stream()
+                .map(ItemStackHelpers::getVariants)
+                .flatMap(List::stream)
                 .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, stack, ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT))
                 .collect(Collectors.toList());
     });
@@ -99,7 +101,10 @@ public enum ItemMatchType {
 
         @Override
         public List<IPrototypedIngredient<ItemStack, Integer>> getPrototypesFor(ItemStack itemStack) {
-            return Lists.newArrayList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, flags));
+            return ItemStackHelpers.getVariants(itemStack)
+                    .stream()
+                    .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, stack, flags))
+                    .collect(Collectors.toList());
         }
     }
 }
