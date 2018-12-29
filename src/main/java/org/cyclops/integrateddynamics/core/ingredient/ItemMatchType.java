@@ -33,7 +33,7 @@ public enum ItemMatchType {
     ITEMNBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.NBT)),
     OREDICT(itemStack -> {
         return getOreDictEquivalent(itemStack).stream()
-                .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT))
+                .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, stack, ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT))
                 .collect(Collectors.toList());
     });
 
