@@ -6,6 +6,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.cyclops.commoncapabilities.api.capability.inventorystate.IInventoryState;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -114,6 +116,22 @@ public class IngredientObserver<T, M> {
         return Lists.newArrayList(this.changeObservers);
     }
 
+    protected int[] getChannels() {
+        int[] networkChannels = getNetwork().getChannels();
+        int[] lastRemovedChannels = this.lastRemoved.keys();
+        if (lastRemovedChannels.length == 0) {
+            return networkChannels;
+        }
+        IntSet uniqueChannels = new IntArraySet();
+        for (int networkChannel : networkChannels) {
+            uniqueChannels.add(networkChannel);
+        }
+        for (int lastRemovedChannel : lastRemovedChannels) {
+            uniqueChannels.add(lastRemovedChannel);
+        }
+        return uniqueChannels.toIntArray();
+    }
+
     protected void observe() {
         if (!this.changeObservers.isEmpty()) {
             if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
@@ -129,7 +147,7 @@ public class IngredientObserver<T, M> {
                 // Schedule the observation job
                 this.lastObserverBarrier = new CountDownLatch(1);
                 WORKER_POOL.execute(() -> {
-                    for (int channel : getNetwork().getChannels()) {
+                    for (int channel : getChannels()) {
                         observe(channel);
                     }
                     CountDownLatch lastObserverBarrier = this.lastObserverBarrier;
@@ -137,7 +155,7 @@ public class IngredientObserver<T, M> {
                     lastObserverBarrier.countDown();
                 });
             } else {
-                for (int channel : getNetwork().getChannels()) {
+                for (int channel : getChannels()) {
                     observe(channel);
                 }
             }
