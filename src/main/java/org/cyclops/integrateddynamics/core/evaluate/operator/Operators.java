@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
@@ -54,11 +55,15 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
+import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
+import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -85,7 +90,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Collection of available operators.
@@ -3089,7 +3096,8 @@ public final class Operators {
      * The input ingredients of a recipe
      */
     public static final IOperator RECIPE_INPUT = REGISTRY.register(OperatorBuilders.RECIPE_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_INGREDIENTS).operatorName("input").symbol("recipe in")
+            .output(ValueTypes.OBJECT_INGREDIENTS)
+            .operatorName("input").symbol("recipe in")
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
                 if (value.getRawValue().isPresent()) {
@@ -3102,13 +3110,64 @@ public final class Operators {
      * The output ingredients of a recipe
      */
     public static final IOperator RECIPE_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_INGREDIENTS).operatorName("output").symbol("recipe out")
+            .output(ValueTypes.OBJECT_INGREDIENTS)
+            .operatorName("output").symbol("recipe out")
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0);
                 if (value.getRawValue().isPresent()) {
                     return ValueObjectTypeIngredients.ValueIngredients.of(value.getRawValue().get().getOutput());
                 }
                 return ValueObjectTypeIngredients.ValueIngredients.of(null);
+            }).build());
+
+    /**
+     * Set the input ingredients of a recipe
+     */
+    public static final IOperator RECIPE_WITH_INPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_INFIX
+            .output(ValueTypes.OBJECT_RECIPE)
+            .operatorName("withInput").symbol("Recipe.withIn")
+            .function(variables -> {
+                ValueObjectTypeRecipe.ValueRecipe valueRecipe = variables.getValue(0);
+                ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(1);
+                if (valueRecipe.getRawValue().isPresent() && valueIngredients.getRawValue().isPresent()) {
+                    IMixedIngredients ingredients = valueIngredients.getRawValue().get();
+                    Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> inputs = Maps.newIdentityHashMap();
+                    for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
+                        IIngredientMatcher matcher = component.getMatcher();
+                        inputs.put(component, (List) ingredients.getInstances(component)
+                                .stream()
+                                .map(instance -> Collections.singletonList(new PrototypedIngredient(component, instance, matcher.getExactMatchCondition())))
+                                .collect(Collectors.toList()));
+                    }
+                    return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(
+                            inputs,
+                            valueRecipe.getRawValue().get().getOutput()
+                    ));
+                }
+                return ValueObjectTypeRecipe.ValueRecipe.of(null);
+            }).build());
+
+    /**
+     * Set the output ingredients of a recipe
+     */
+    public static final IOperator RECIPE_WITH_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_INFIX
+            .output(ValueTypes.OBJECT_RECIPE)
+            .operatorName("withOutput").symbol("Recipe.withOut")
+            .function(variables -> {
+                ValueObjectTypeRecipe.ValueRecipe valueRecipe = variables.getValue(0);
+                ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(1);
+                if (valueRecipe.getRawValue().isPresent() && valueIngredients.getRawValue().isPresent()) {
+                    IRecipeDefinition recipe = valueRecipe.getRawValue().get();
+                    Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> inputs = Maps.newIdentityHashMap();
+                    for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
+                        inputs.put(component, (List) recipe.getInputs(component));
+                    }
+                    return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(
+                            inputs,
+                            valueIngredients.getRawValue().get()
+                    ));
+                }
+                return ValueObjectTypeRecipe.ValueRecipe.of(null);
             }).build());
 
     /**

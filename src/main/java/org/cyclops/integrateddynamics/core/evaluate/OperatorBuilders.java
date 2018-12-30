@@ -456,6 +456,9 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE = OperatorBuilder.forType(ValueTypes.OBJECT_RECIPE).appendKind("recipe");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE_1_SUFFIX_LONG = RECIPE
             .inputTypes(ValueTypes.OBJECT_RECIPE).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE_2_INFIX = RECIPE
+            .inputTypes(ValueTypes.OBJECT_RECIPE, ValueTypes.OBJECT_INGREDIENTS)
+            .renderPattern(IConfigRenderPattern.INFIX);
 
     // --------------- Capability helpers ---------------
 

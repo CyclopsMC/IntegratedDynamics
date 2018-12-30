@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.http.util.Asserts;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -42,6 +43,7 @@ public class TestRecipeOperators {
     private DummyVariableRecipe rMain;
 
     private DummyVariableIngredients iMainOut;
+    private DummyVariableIngredients iItems;
 
     @IntegrationBefore
     public void before() {
@@ -62,6 +64,11 @@ public class TestRecipeOperators {
                 ingredientsIn,
                 iMainOut.getValue().getRawValue().get()
         )));
+
+        iItems = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
+                MixedIngredients.ofInstances(IngredientComponent.ITEMSTACK, Lists.newArrayList(
+                        new ItemStack(Items.DIAMOND_PICKAXE), new ItemStack(Blocks.OAK_DOOR), ItemStack.EMPTY)
+                )));
     }
     
     /**
@@ -114,5 +121,76 @@ public class TestRecipeOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testOutputSize() throws EvaluationException {
         Operators.RECIPE_OUTPUT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_INPUT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testWithInput() throws EvaluationException {
+        IValue res1 = Operators.RECIPE_WITH_INPUT.evaluate(new IVariable[]{rMain, iItems});
+        Asserts.check(res1 instanceof ValueObjectTypeRecipe.ValueRecipe, "result is a recipe");
+
+        List<List<IPrototypedIngredient<ItemStack, Integer>>> ingredientsIn = Lists.newArrayList();
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Items.DIAMOND_PICKAXE), ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Blocks.OAK_DOOR), ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
+        IRecipeDefinition recipe = RecipeDefinition.ofIngredients(IngredientComponent.ITEMSTACK,
+                ingredientsIn,
+                iMainOut.getValue().getRawValue().get()
+        );
+        TestHelpers.assertEqual(res1, ValueObjectTypeRecipe.ValueRecipe.of(recipe), "input is correct");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithInputSizeLarge() throws EvaluationException {
+        Operators.RECIPE_WITH_INPUT.evaluate(new IVariable[]{rMain, iItems, rMain});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithInputSizeSmall() throws EvaluationException {
+        Operators.RECIPE_WITH_INPUT.evaluate(new IVariable[]{rMain});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithInputSize() throws EvaluationException {
+        Operators.RECIPE_WITH_INPUT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_OUTPUT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testWithOutput() throws EvaluationException {
+        IValue res1 = Operators.RECIPE_WITH_OUTPUT.evaluate(new IVariable[]{rMain, iItems});
+        Asserts.check(res1 instanceof ValueObjectTypeRecipe.ValueRecipe, "result is a recipe");
+
+        List<List<IPrototypedIngredient<ItemStack, Integer>>> ingredientsIn = Lists.newArrayList();
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Items.BOAT), ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Blocks.STONE), ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
+        IRecipeDefinition recipe = RecipeDefinition.ofIngredients(IngredientComponent.ITEMSTACK,
+                ingredientsIn,
+                iItems.getValue().getRawValue().get()
+        );
+        TestHelpers.assertEqual(res1, ValueObjectTypeRecipe.ValueRecipe.of(recipe), "output is correct");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithOutputSizeLarge() throws EvaluationException {
+        Operators.RECIPE_WITH_OUTPUT.evaluate(new IVariable[]{rMain, iItems, rMain});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithOutputSizeSmall() throws EvaluationException {
+        Operators.RECIPE_WITH_OUTPUT.evaluate(new IVariable[]{rMain});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithOutputSize() throws EvaluationException {
+        Operators.RECIPE_WITH_OUTPUT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 }
