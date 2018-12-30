@@ -1193,6 +1193,12 @@ operator.operators.integrateddynamics.ingredients.withFluid.name=Ingredients Wit
 operator.operators.integrateddynamics.ingredients.withFluid.info=Get a copy of the given ingredients with the given fluid at the given ingredient position
 operator.operators.integrateddynamics.ingredients.withEnergy.name=Ingredients With Energy
 operator.operators.integrateddynamics.ingredients.withEnergy.info=Get a copy of the given ingredients with the given energy at the given ingredient position
+operator.operators.integrateddynamics.ingredients.withItems.name=Ingredients With Items
+operator.operators.integrateddynamics.ingredients.withItems.info=Get a copy of the given ingredients with the given list of items at the given ingredient position
+operator.operators.integrateddynamics.ingredients.withFluids.name=Ingredients With Fluids
+operator.operators.integrateddynamics.ingredients.withFluids.info=Get a copy of the given ingredients with the given list of fluids at the given ingredient position
+operator.operators.integrateddynamics.ingredients.withEnergies.name=Ingredients With Energy Elements
+operator.operators.integrateddynamics.ingredients.withEnergies.info=Get a copy of the given ingredients with the given list of energy elements at the given ingredient position
 
 operator.operators.integrateddynamics.recipe.name=Recipe
 operator.operators.integrateddynamics.recipe.basename=Recipe %s

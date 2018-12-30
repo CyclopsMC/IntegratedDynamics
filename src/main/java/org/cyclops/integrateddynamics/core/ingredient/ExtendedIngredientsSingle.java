@@ -9,20 +9,20 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A lazy extension for ingredients.
+ * A lazy extension for ingredients for a single instance.
  * @param <T> The instance type.
  * @param <M> The matching condition parameter, may be Void. Instances MUST properly implement the equals method.
  * @author rubensworks
  */
-public class ExtendedIngredients<T, M> extends WrappedIngredients {
+public class ExtendedIngredientsSingle<T, M> extends WrappedIngredients {
 
     private final int targetIndex;
 
     private final IngredientComponent<T, M> component;
     private final T instance;
 
-    public ExtendedIngredients(IMixedIngredients base, int targetIndex,
-                               IngredientComponent<T, M> component, T instance) {
+    public ExtendedIngredientsSingle(IMixedIngredients base, int targetIndex,
+                                     IngredientComponent<T, M> component, T instance) {
         super(base);
         this.targetIndex = targetIndex;
         this.component = component;

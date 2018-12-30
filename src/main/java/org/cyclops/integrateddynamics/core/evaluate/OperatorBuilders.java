@@ -432,6 +432,9 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_INTEGER = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.INTEGER)
             .renderPattern(IConfigRenderPattern.INFIX_2).output(ValueTypes.OBJECT_INGREDIENTS);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_2_LIST = INGREDIENTS
+            .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.LIST)
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.OBJECT_INGREDIENTS);
 
     public static OperatorBase.IFunction createFunctionIngredientsList(Callable<IngredientComponent<?, ?>> componentReference) {
         return variables -> {
@@ -450,6 +453,23 @@ public class OperatorBuilders {
             return ValueTypeList.ValueList.ofList(componentHandler.getValueType(), list.stream()
                     .map(i -> componentHandler.toValue(i)).collect(Collectors.toList()));
         };
+    }
+
+    public static <VT extends IValueType<V>, V extends IValue, T, M> List<T> unwrapIngredientComponentList(IngredientComponent<T, M> component,
+                                                                                                           ValueTypeList.ValueList<VT, V> list)
+            throws EvaluationException {
+        IIngredientComponentHandler<VT, V, T, M> componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
+        if (list.getRawValue().getValueType() != componentHandler.getValueType()) {
+            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                    L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                    list.getRawValue().getValueType(), componentHandler.getValueType());
+            throw new EvaluationException(error.localize());
+        }
+        List<T> listTransformed = Lists.newArrayListWithExpectedSize(list.getRawValue().getLength());
+        for (V value : list.getRawValue()) {
+            listTransformed.add(componentHandler.toInstance(value));
+        }
+        return listTransformed;
     }
 
     // --------------- Recipe builders ---------------

@@ -83,7 +83,8 @@ import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
 import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
-import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredients;
+import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
+import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3033,7 +3034,7 @@ public final class Operators {
      * The list of fluids
      */
     public static final IOperator INGREDIENTS_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_PREFIX_LONG
-            .output(ValueTypes.LIST).operatorName("fluids").symbol("Ingr.energies")
+            .output(ValueTypes.LIST).operatorName("energies").symbol("Ingr.energies")
             .function(OperatorBuilders.createFunctionIngredientsList(() -> IngredientComponent.ENERGY))
             .build());
 
@@ -3050,7 +3051,7 @@ public final class Operators {
                     return value;
                 }
                 IMixedIngredients baseIngredients = value.getRawValue().get();
-                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredients<>(baseIngredients,
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsSingle<>(baseIngredients,
                         index.getRawValue(), IngredientComponent.ITEMSTACK, itemStack.getRawValue()));
             }).build());
 
@@ -3067,7 +3068,7 @@ public final class Operators {
                     return value;
                 }
                 IMixedIngredients baseIngredients = value.getRawValue().get();
-                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredients<>(baseIngredients,
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsSingle<>(baseIngredients,
                         index.getRawValue(), IngredientComponent.FLUIDSTACK, fluidStack.getRawValue().orNull()));
             }).build());
 
@@ -3084,8 +3085,56 @@ public final class Operators {
                     return value;
                 }
                 IMixedIngredients baseIngredients = value.getRawValue().get();
-                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredients<>(baseIngredients,
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsSingle<>(baseIngredients,
                         index.getRawValue(), IngredientComponent.ENERGY, energy.getRawValue()));
+            }).build());
+
+    /**
+     * Set the list of items
+     */
+    public static final IOperator INGREDIENTS_WITH_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
+            .operatorName("withItems").symbol("Ingr.withItems")
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0);
+                ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> list = variables.getValue(1);
+                if (!valueIngredients.getRawValue().isPresent()) {
+                    return valueIngredients;
+                }
+                IMixedIngredients baseIngredients = valueIngredients.getRawValue().get();
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsList<>(baseIngredients,
+                        IngredientComponent.ITEMSTACK, OperatorBuilders.unwrapIngredientComponentList(IngredientComponent.ITEMSTACK, list)));
+            }).build());
+
+    /**
+     * Set the list of fluids
+     */
+    public static final IOperator INGREDIENTS_WITH_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
+            .operatorName("withFluids").symbol("Ingr.withFluids")
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0);
+                ValueTypeList.ValueList<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> list = variables.getValue(1);
+                if (!valueIngredients.getRawValue().isPresent()) {
+                    return valueIngredients;
+                }
+                IMixedIngredients baseIngredients = valueIngredients.getRawValue().get();
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsList<>(baseIngredients,
+                        IngredientComponent.FLUIDSTACK, OperatorBuilders.unwrapIngredientComponentList(IngredientComponent.FLUIDSTACK, list)));
+            }).build());
+
+    /**
+     * Set the list of energies
+     */
+    public static final IOperator INGREDIENTS_WITH_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
+            .operatorName("withEnergies").symbol("Ingr.withEnergies")
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0);
+                ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = variables.getValue(1);
+                if (!valueIngredients.getRawValue().isPresent()) {
+                    return valueIngredients;
+                }
+                IMixedIngredients baseIngredients = valueIngredients.getRawValue().get();
+                return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsList<>(baseIngredients,
+                        IngredientComponent.ENERGY, OperatorBuilders.unwrapIngredientComponentList(IngredientComponent.ENERGY, list)));
             }).build());
 
     /**

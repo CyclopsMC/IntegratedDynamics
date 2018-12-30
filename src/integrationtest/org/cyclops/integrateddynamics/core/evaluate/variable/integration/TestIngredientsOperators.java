@@ -49,8 +49,11 @@ public class TestIngredientsOperators {
 
     private DummyVariableIngredients iEmpty;
     private DummyVariableIngredients iItems;
+    private DummyVariable<ValueTypeList.ValueList> lItems;
     private DummyVariableIngredients iFluids;
+    private DummyVariable<ValueTypeList.ValueList> lFluids;
     private DummyVariableIngredients iEnergies;
+    private DummyVariable<ValueTypeList.ValueList> lEnergies;
     private IMixedIngredients inputIngredients;
     private DummyVariableIngredients iMix;
 
@@ -80,16 +83,31 @@ public class TestIngredientsOperators {
                 MixedIngredients.ofInstances(IngredientComponent.ITEMSTACK, Lists.newArrayList(
                         ItemStack.EMPTY, new ItemStack(Items.BOAT), new ItemStack(Blocks.STONE), ItemStack.EMPTY)
                 )));
+        lItems = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
+                ValueObjectTypeItemStack.ValueItemStack.of(ItemStack.EMPTY),
+                ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.BOAT)),
+                ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.STONE)),
+                ValueObjectTypeItemStack.ValueItemStack.of(ItemStack.EMPTY)
+        ));
 
         iFluids = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
                 MixedIngredients.ofInstances(IngredientComponent.FLUIDSTACK, Lists.newArrayList(
                         new FluidStack(FluidRegistry.LAVA, 1000), new FluidStack(FluidRegistry.WATER, 125))
                 )));
+        lFluids = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
+                ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.LAVA, 1000)),
+                ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 125))
+        ));
 
         iEnergies = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
                 MixedIngredients.ofInstances(IngredientComponent.ENERGY, Lists.newArrayList(
                         666, 777, 0)
                 )));
+        lEnergies = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
+                ValueTypeInteger.ValueInteger.of(666),
+                ValueTypeInteger.ValueInteger.of(777),
+                ValueTypeInteger.ValueInteger.of(0)
+        ));
 
         Map<IngredientComponent<?, ?>, List<?>> ingredients = Maps.newIdentityHashMap();
         ingredients.put(IngredientComponent.ENERGY, Lists.newArrayList(777));
@@ -351,6 +369,117 @@ public class TestIngredientsOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testWithEnergySize() throws EvaluationException {
         Operators.INGREDIENTS_WITH_ENERGY.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_ITEMS -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testWithItems() throws EvaluationException {
+        IValue res1 = Operators.INGREDIENTS_WITH_ITEMS.evaluate(new IVariable[]{iMix, lItems});
+        Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
+        IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
+        List<ItemStack> outputList1 = outputIngredients1.getInstances(IngredientComponent.ITEMSTACK);
+        TestHelpers.assertEqual(outputList1.size(), 4, "with_items(mix, items)[0]size = 4");
+        TestHelpers.assertEqual(outputList1.get(0).getItem(), Items.AIR,
+                "with_items(mix, items)[0] = items[0]");
+        TestHelpers.assertEqual(outputList1.get(1).getItem(), Items.BOAT,
+                "with_items(mix, items)[1] = items[1]");
+        TestHelpers.assertEqual(outputList1.get(2).getItem(), Item.getItemFromBlock(Blocks.STONE),
+                "with_items(mix, items)[2] = items[2]");
+        TestHelpers.assertEqual(outputList1.get(3).getItem(), Items.AIR,
+                "with_items(mix, items)[3] = items[3]");
+
+        TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK), inputIngredients.getInstances(IngredientComponent.FLUIDSTACK), "Fluid remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ENERGY), inputIngredients.getInstances(IngredientComponent.ENERGY), "Energy remains the same");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithItemsSizeLarge() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_ITEMS.evaluate(new IVariable[]{iMix, lItems});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithItemsSizeSmall() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_ITEMS.evaluate(new IVariable[]{iMix});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithItemsSize() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_ITEMS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_FLUIDS -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testWithFluids() throws EvaluationException {
+        IValue res1 = Operators.INGREDIENTS_WITH_FLUIDS.evaluate(new IVariable[]{iMix, lFluids});
+        Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
+        IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
+        List<FluidStack> outputList1 = outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK);
+        TestHelpers.assertEqual(outputList1.size(), 2, "with_fluids(mix, fluids)[0]size = 2");
+        TestHelpers.assertEqual(outputList1.get(0), new FluidStack(FluidRegistry.LAVA, 1000),
+                "with_fluids(mix, fluids)[0] = fluids[0]");
+        TestHelpers.assertEqual(outputList1.get(1), new FluidStack(FluidRegistry.WATER, 125),
+                "with_fluids(mix, fluids)[1] = fluids[1]");
+
+        TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ITEMSTACK), inputIngredients.getInstances(IngredientComponent.ITEMSTACK), "Item remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ENERGY), inputIngredients.getInstances(IngredientComponent.ENERGY), "Energy remains the same");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithFluidsSizeLarge() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_FLUIDS.evaluate(new IVariable[]{iMix, lFluids});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithFluidsSizeSmall() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_FLUIDS.evaluate(new IVariable[]{iMix});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithFluidsSize() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_FLUIDS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_ENERGIES -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testWithEnergies() throws EvaluationException {
+        IValue res1 = Operators.INGREDIENTS_WITH_ENERGIES.evaluate(new IVariable[]{iMix, lEnergies});
+        Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
+        IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
+        List<Integer> outputList1 = outputIngredients1.getInstances(IngredientComponent.ENERGY);
+        TestHelpers.assertEqual(outputList1.size(), 3, "with_energies(mix, energies)[0]size = 3");
+        TestHelpers.assertEqual(outputList1.get(0), 666,
+                "with_energies(mix, energies)[0] = energies[0]");
+        TestHelpers.assertEqual(outputList1.get(1), 777,
+                "with_energies(mix, energies)[1] = energies[1]");
+        TestHelpers.assertEqual(outputList1.get(2), 0,
+                "with_energies(mix, energies)[2] = energies[2]");
+
+        TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ITEMSTACK), inputIngredients.getInstances(IngredientComponent.ITEMSTACK), "Item remains the same");
+        TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK), inputIngredients.getInstances(IngredientComponent.FLUIDSTACK), "Fluid remains the same");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithEnergiesSizeLarge() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_ENERGIES.evaluate(new IVariable[]{iMix, lEnergies});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithEnergiesSizeSmall() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_ENERGIES.evaluate(new IVariable[]{iMix});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithEnergiesSize() throws EvaluationException {
+        Operators.INGREDIENTS_WITH_ENERGIES.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }
