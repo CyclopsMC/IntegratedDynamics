@@ -34,7 +34,7 @@ public class IngredientComponentHandlerRegistry implements IIngredientComponentH
 
     @Override
     public <VT extends IValueType<V>, V extends IValue,
-            T, M, C extends IngredientComponent<T, M>, H extends IIngredientComponentHandler<VT, V, T, M, C>> H register(H handler) {
+            T, M, H extends IIngredientComponentHandler<VT, V, T, M>> H register(H handler) {
         this.componentTypes.put(Objects.requireNonNull(handler.getComponent(), "The recipe component of "
                 + handler + " was null, it is probably not initialized yet!"), handler);
         return handler;
@@ -42,8 +42,8 @@ public class IngredientComponentHandlerRegistry implements IIngredientComponentH
 
     @Nullable
     @Override
-    public <VT extends IValueType<V>, V extends IValue, T, M, C extends IngredientComponent<T, M>>
-    IIngredientComponentHandler<VT, V, T, M, C> getComponentHandler(C component) {
+    public <VT extends IValueType<V>, V extends IValue, T, M>
+    IIngredientComponentHandler<VT, V, T, M> getComponentHandler(IngredientComponent<T, M> component) {
         return this.componentTypes.get(component);
     }
 

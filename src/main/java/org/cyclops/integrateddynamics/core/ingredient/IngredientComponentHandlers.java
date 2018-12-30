@@ -54,8 +54,7 @@ public class IngredientComponentHandlers {
                     new ResourceLocation("minecraft:energy"));
 
             REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeItemStack,
-                                ValueObjectTypeItemStack.ValueItemStack, ItemStack, Integer,
-                    IngredientComponent<ItemStack, Integer>>() {
+                                ValueObjectTypeItemStack.ValueItemStack, ItemStack, Integer>() {
                 @Override
                 public ValueObjectTypeItemStack getValueType() {
                     return ValueTypes.OBJECT_ITEMSTACK;
@@ -77,8 +76,7 @@ public class IngredientComponentHandlers {
                 }
             });
             REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeFluidStack,
-                                ValueObjectTypeFluidStack.ValueFluidStack, FluidStack, Integer,
-                                IngredientComponent<FluidStack, Integer>>() {
+                                ValueObjectTypeFluidStack.ValueFluidStack, FluidStack, Integer>() {
 
                 @Override
                 public ValueObjectTypeFluidStack getValueType() {
@@ -101,15 +99,14 @@ public class IngredientComponentHandlers {
                     return value.getRawValue().orNull();
                 }
             });
-            REGISTRY.register(new IIngredientComponentHandler<ValueTypeInteger, ValueTypeInteger.ValueInteger,
-                    Integer, Void, IngredientComponent<Integer, Void>>() {
+            REGISTRY.register(new IIngredientComponentHandler<ValueTypeInteger, ValueTypeInteger.ValueInteger, Integer, Boolean>() {
                 @Override
                 public ValueTypeInteger getValueType() {
                     return ValueTypes.INTEGER;
                 }
 
                 @Override
-                public IngredientComponent<Integer, Void> getComponent() {
+                public IngredientComponent<Integer, Boolean> getComponent() {
                     return componentEnergy;
                 }
 

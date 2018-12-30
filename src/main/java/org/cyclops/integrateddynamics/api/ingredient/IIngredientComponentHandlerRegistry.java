@@ -21,12 +21,10 @@ public interface IIngredientComponentHandlerRegistry extends IRegistry {
      * @param <V> The value.
      * @param <T> The instance type.
      * @param <M> The matching condition parameter.
-     * @param <C> The component type.
      * @param <H> The handler type.
      * @return The registered handler.
      */
-    public <VT extends IValueType<V>, V extends IValue, T, M, C extends IngredientComponent<T, M>,
-            H extends IIngredientComponentHandler<VT, V, T, M, C>> H register(H handler);
+    public <VT extends IValueType<V>, V extends IValue, T, M, H extends IIngredientComponentHandler<VT, V, T, M>> H register(H handler);
 
     /**
      * Get a handler by component type.
@@ -35,12 +33,10 @@ public interface IIngredientComponentHandlerRegistry extends IRegistry {
      * @param <V> The value.
      * @param <T> The instance type.
      * @param <M> The matching condition parameter.
-     * @param <C> The component type.
      * @return The handler or null.
      */
     @Nullable
-    public <VT extends IValueType<V>, V extends IValue, T, M, C extends IngredientComponent<T, M>>
-    IIngredientComponentHandler<VT, V, T, M, C> getComponentHandler(C component);
+    public <VT extends IValueType<V>, V extends IValue, T, M> IIngredientComponentHandler<VT, V, T, M> getComponentHandler(IngredientComponent<T, M> component);
 
     /**
      * @return The recipe components that have a handler.
