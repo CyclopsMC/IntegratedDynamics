@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.ingredient;
 
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.commoncapabilities.api.ingredient.MixedIngredientsAdapter;
 
 import java.util.List;
 import java.util.Set;
@@ -10,7 +11,7 @@ import java.util.Set;
  * A wrapper around ingredients.
  * @author rubensworks
  */
-public class WrappedIngredients implements IMixedIngredients {
+public class WrappedIngredients extends MixedIngredientsAdapter {
 
     private final IMixedIngredients ingredients;
 
@@ -28,8 +29,4 @@ public class WrappedIngredients implements IMixedIngredients {
         return ingredients.getInstances(ingredientComponent);
     }
 
-    @Override
-    public int compareTo(IMixedIngredients o) {
-        return ingredients.compareTo(o);
-    }
 }

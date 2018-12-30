@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics.core.ingredient;
 
+import com.google.common.collect.Sets;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 
 import java.util.AbstractList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A lazy extension for ingredients.
@@ -29,6 +31,14 @@ public class ExtendedIngredients<T, M> extends WrappedIngredients {
 
     protected boolean forComponent(IngredientComponent<?, ?> component) {
         return component == this.component;
+    }
+
+    @Override
+    public Set<IngredientComponent<?, ?>> getComponents() {
+        Set<IngredientComponent<?, ?>> components = Sets.newIdentityHashSet();
+        components.addAll(super.getComponents());
+        components.add(component);
+        return components;
     }
 
     @Override
