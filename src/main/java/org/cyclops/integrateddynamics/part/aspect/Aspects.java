@@ -28,9 +28,6 @@ import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
-import org.cyclops.commoncapabilities.api.capability.temperature.ITemperature;
-import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -53,6 +50,8 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerInputs;
 import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerOutput;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipeByInput;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipeByOutput;
 import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipesByInput;
 import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipesByOutput;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
@@ -498,6 +497,24 @@ public class Aspects {
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
                         PositionedOperatorRecipeHandlerRecipesByOutput.class, "positionedRecipeHandlerRecipesByOutput"));
+            }
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYINPUT =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
+                            input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorRecipeHandlerRecipeByInput<>(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                            ))).appendKind("recipebyinput").buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorRecipeHandlerRecipeByInput.class, "positionedRecipeHandlerRecipeByInput"));
+            }
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYOUTPUT =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
+                            input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorRecipeHandlerRecipeByOutput<>(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                            ))).appendKind("recipebyoutput").buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorRecipeHandlerRecipeByOutput.class, "positionedRecipeHandlerRecipeByOutput"));
             }
 
             public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IEnergyStorage>

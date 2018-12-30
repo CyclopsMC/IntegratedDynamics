@@ -567,6 +567,10 @@ aspect.aspects.integrateddynamics.read.operator.recipehandler.recipesbyinput.nam
 aspect.aspects.integrateddynamics.read.operator.recipehandler.recipesbyinput.info=An operator that returns all possible recipes for a given input.
 aspect.aspects.integrateddynamics.read.operator.recipehandler.recipesbyoutput.name=Recipes By Output
 aspect.aspects.integrateddynamics.read.operator.recipehandler.recipesbyoutput.info=An operator that returns all possible recipes for a given output.
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyinput.name=Recipe By Input
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyinput.info=An operator that returns a recipe for a given input.
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyoutput.name=Recipe By Output
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyoutput.info=An operator that returns a recipe for a given output.
 aspect.aspects.integrateddynamics.read.boolean.fe.applicable.name=Is FE Handler
 aspect.aspects.integrateddynamics.read.boolean.fe.applicable.info=If the target in some way handles FE
 aspect.aspects.integrateddynamics.read.boolean.fe.isreceiver.name=Is FE Receiver
