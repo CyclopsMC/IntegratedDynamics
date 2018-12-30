@@ -1210,6 +1210,8 @@ operator.operators.integrateddynamics.recipe.withInput.name=Recipe With Input In
 operator.operators.integrateddynamics.recipe.withInput.info=Get a copy of the given recipe with the given ingredients as input
 operator.operators.integrateddynamics.recipe.withOutput.name=Recipe With Output Ingredients
 operator.operators.integrateddynamics.recipe.withOutput.info=Get a copy of the given recipe with the given ingredients as input
+operator.operators.integrateddynamics.recipe.withInputOutput.name=Recipe With Input and Output Ingredients
+operator.operators.integrateddynamics.recipe.withInputOutput.info=Create a recipe with the first ingredients as input, and the second ingredients as output
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s

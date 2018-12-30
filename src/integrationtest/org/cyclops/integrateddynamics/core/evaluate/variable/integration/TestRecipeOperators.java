@@ -193,4 +193,39 @@ public class TestRecipeOperators {
     public void testWithOutputSize() throws EvaluationException {
         Operators.RECIPE_WITH_OUTPUT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
+
+    /**
+     * ----------------------------------- WITH_INPUT_OUTPUT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testWithInputOutput() throws EvaluationException {
+        IValue res1 = Operators.RECIPE_WITH_INPUT_OUTPUT.evaluate(new IVariable[]{iItems, iMainOut});
+        Asserts.check(res1 instanceof ValueObjectTypeRecipe.ValueRecipe, "result is a recipe");
+
+        List<List<IPrototypedIngredient<ItemStack, Integer>>> ingredientsIn = Lists.newArrayList();
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Items.DIAMOND_PICKAXE), ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, new ItemStack(Blocks.OAK_DOOR), ItemMatch.EXACT)));
+        ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
+        IRecipeDefinition recipe = RecipeDefinition.ofIngredients(IngredientComponent.ITEMSTACK,
+                ingredientsIn,
+                iMainOut.getValue().getRawValue().get()
+        );
+        TestHelpers.assertEqual(res1, ValueObjectTypeRecipe.ValueRecipe.of(recipe), "input is correct");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithInputOutputSizeLarge() throws EvaluationException {
+        Operators.RECIPE_WITH_INPUT_OUTPUT.evaluate(new IVariable[]{iItems, iMainOut, rMain});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithInputOutputSizeSmall() throws EvaluationException {
+        Operators.RECIPE_WITH_INPUT_OUTPUT.evaluate(new IVariable[]{iItems});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testWithInputOutputSize() throws EvaluationException {
+        Operators.RECIPE_WITH_INPUT_OUTPUT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
 }

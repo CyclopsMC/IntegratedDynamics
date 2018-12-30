@@ -479,6 +479,9 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE_2_INFIX = RECIPE
             .inputTypes(ValueTypes.OBJECT_RECIPE, ValueTypes.OBJECT_INGREDIENTS)
             .renderPattern(IConfigRenderPattern.INFIX);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE_2_PREFIX = RECIPE
+            .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.OBJECT_INGREDIENTS)
+            .renderPattern(IConfigRenderPattern.PREFIX_2_LONG);
 
     // --------------- Capability helpers ---------------
 

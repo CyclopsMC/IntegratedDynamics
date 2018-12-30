@@ -3220,6 +3220,33 @@ public final class Operators {
             }).build());
 
     /**
+     * Create a recipe from two the given I/O ingredients
+     */
+    public static final IOperator RECIPE_WITH_INPUT_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_PREFIX
+            .output(ValueTypes.OBJECT_RECIPE)
+            .operatorName("withInputOutput").symbol("Recipe.withIO")
+            .function(variables -> {
+                ValueObjectTypeIngredients.ValueIngredients valueIn = variables.getValue(0);
+                ValueObjectTypeIngredients.ValueIngredients valueOut = variables.getValue(1);
+                if (valueIn.getRawValue().isPresent() && valueOut.getRawValue().isPresent()) {
+                    IMixedIngredients ingredients = valueIn.getRawValue().get();
+                    Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> inputs = Maps.newIdentityHashMap();
+                    for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
+                        IIngredientMatcher matcher = component.getMatcher();
+                        inputs.put(component, (List) ingredients.getInstances(component)
+                                .stream()
+                                .map(instance -> Collections.singletonList(new PrototypedIngredient(component, instance, matcher.getExactMatchCondition())))
+                                .collect(Collectors.toList()));
+                    }
+                    return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(
+                            inputs,
+                            valueOut.getRawValue().get()
+                    ));
+                }
+                return ValueObjectTypeRecipe.ValueRecipe.of(null);
+            }).build());
+
+    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 
