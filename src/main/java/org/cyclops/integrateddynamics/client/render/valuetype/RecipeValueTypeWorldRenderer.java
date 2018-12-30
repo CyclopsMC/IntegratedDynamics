@@ -5,12 +5,16 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
+import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -23,7 +27,10 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeReci
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A value type world renderer for blocks.
@@ -74,12 +81,38 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
             IIngredientMatcher<?, ?> matcher = component.getMatcher();
             IIngredientComponentHandler componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
-            recipe.getInputs(component).stream().forEach(element ->
+            Stream<List<IPrototypedIngredient>> inputs = enhanceRecipeInputs(component, recipe);
+            inputs.forEach(element ->
                     values.add(componentHandler.toValue(IngredientsValueTypeWorldRenderer.prepareElementForTick(
                             element, tick, () -> new PrototypedIngredient(component, matcher.getEmptyInstance(), matcher.getAnyMatchCondition())).getPrototype())));
         }
 
         // Render ingredients in a square matrix
         IngredientsValueTypeWorldRenderer.renderGrid(partContainer, x, y, z, partialTick, destroyStage, direction, partType, values, rendererDispatcher, alpha);
+    }
+
+    protected <T, M> Stream<List<IPrototypedIngredient>> enhanceRecipeInputs(IngredientComponent<T, M> ingredientComponent,
+                                                                             IRecipeDefinition recipe) {
+        Stream<List<IPrototypedIngredient<T, M>>> inputs = recipe.getInputs(ingredientComponent).stream();
+        if (ingredientComponent == IngredientComponent.ITEMSTACK) {
+            IIngredientMatcher<ItemStack, Integer> matcher = (IIngredientMatcher<ItemStack, Integer>) ingredientComponent.getMatcher();
+            return ((Stream<List<IPrototypedIngredient<ItemStack, Integer>>>) (Stream) inputs).map(input -> input
+                    .stream()
+                    .map(prototypedIngredient -> {
+                        if (!matcher.hasCondition(prototypedIngredient.getCondition(), ItemMatch.DAMAGE)) {
+                            return ItemStackHelpers.getSubItems(prototypedIngredient.getPrototype())
+                                    .stream()
+                                    .map(stack -> new PrototypedIngredient(IngredientComponent.ITEMSTACK, stack, prototypedIngredient.getCondition()))
+                                    .collect(Collectors.toList());
+                        } else {
+                            return Collections.singletonList(prototypedIngredient);
+                        }
+                    })
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList())
+            );
+        } else {
+            return (Stream<List<IPrototypedIngredient>>) (Stream) inputs;
+        }
     }
 }
