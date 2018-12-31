@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
@@ -63,12 +64,24 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     @Override
     public boolean onNetworkAddition(INetwork network) {
-        return NetworkHelpers.getEnergyNetwork(network).addPosition(PartPos.of(getPos(), null), 0, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
+        PartPos pos = PartPos.of(getPos(), null);
+        boolean added = NetworkHelpers.getEnergyNetwork(network).addPosition(pos, 0, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
+        scheduleNetworkObservation(network, pos);
+        return added;
     }
 
     @Override
     public void onNetworkRemoval(INetwork network) {
-        NetworkHelpers.getEnergyNetwork(network).removePosition(PartPos.of(getPos(), null));
+        PartPos pos = PartPos.of(getPos(), null);
+        scheduleNetworkObservation(network, pos);
+        NetworkHelpers.getEnergyNetwork(network).removePosition(pos);
+    }
+
+    protected void scheduleNetworkObservation(INetwork network, PartPos pos) {
+        IEnergyNetwork energyNetwork = NetworkHelpers.getEnergyNetwork(network);
+        if (energyNetwork != null) {
+            energyNetwork.scheduleObservationForced(IPositionedAddonsNetwork.DEFAULT_CHANNEL, pos);
+        }
     }
 
     @Override
