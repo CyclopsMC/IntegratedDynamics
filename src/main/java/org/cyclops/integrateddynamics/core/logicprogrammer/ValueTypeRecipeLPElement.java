@@ -113,7 +113,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                 int amount = FluidHelpers.getAmount(Helpers.getFluidStack(inputFluid));
                 inputFluidAmount = Integer.toString(amount);
                 if (MinecraftHelpers.isClientSide() && lastGui != null) {
-                    this.lastGui.getInputFluidAmountBox().setText(inputFluidAmount);
+                    refreshInputFluidAmountBox();
                 }
             }
         }
@@ -126,9 +126,23 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                 int amount = FluidHelpers.getAmount(Helpers.getFluidStack(outputFluid));
                 outputFluidAmount = Integer.toString(amount);
                 if (MinecraftHelpers.isClientSide() && lastGui != null) {
-                    this.lastGui.getOutputFluidAmountBox().setText(outputFluidAmount);
+                    refreshOutputFluidAmountBox();
                 }
             }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void refreshInputFluidAmountBox() {
+        if (this.lastGui != null) {
+            this.lastGui.getInputFluidAmountBox().setText(inputFluidAmount);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void refreshOutputFluidAmountBox() {
+        if (this.lastGui != null) {
+            this.lastGui.getOutputFluidAmountBox().setText(outputFluidAmount);
         }
     }
 
@@ -167,8 +181,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStackInput = fluidInputs.get(0);
         }
         putStackInContainer(container, slot, fluidStackInput == null ? ItemStack.EMPTY : getFluidBucket(fluidStackInput));
-        if (MinecraftHelpers.isClientSide() && lastGui != null) {
-            this.lastGui.getInputFluidAmountBox().setText(String.valueOf(FluidHelpers.getAmount(fluidStackInput)));
+        inputFluidAmount = String.valueOf(FluidHelpers.getAmount(fluidStackInput));
+        if (MinecraftHelpers.isClientSide()) {
+            refreshInputFluidAmountBox();
         }
 
         // Fill input output slots
@@ -189,8 +204,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStackOutput = fluidOutputs.get(0);
         }
         putStackInContainer(container, slot, fluidStackOutput == null ? ItemStack.EMPTY : getFluidBucket(fluidStackOutput));
-        if (MinecraftHelpers.isClientSide() && lastGui != null) {
-            this.lastGui.getOutputFluidAmountBox().setText(String.valueOf(FluidHelpers.getAmount(fluidStackOutput)));
+        outputFluidAmount = String.valueOf(FluidHelpers.getAmount(fluidStackOutput));
+        if (MinecraftHelpers.isClientSide()) {
+            refreshOutputFluidAmountBox();
         }
     }
 
