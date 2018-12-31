@@ -29,6 +29,8 @@ public interface INetworkCraftingHandlerRegistry extends IRegistry {
      * @param network The network to craft in.
      * @param ingredientsNetwork The ingredients network to craft in.
      * @param channel A channel.
+     * @param <T> The instance type.
+     * @param <M> The matching condition parameter, may be Void.
      * @return If we can craft in the given channel.
      */
     public default <T, M> boolean canCraft(INetwork network, IPositionedAddonsNetworkIngredients<T, M> ingredientsNetwork, int channel) {
@@ -50,6 +52,8 @@ public interface INetworkCraftingHandlerRegistry extends IRegistry {
      * @param matchCondition The condition under which the instance should be crafted.
      * @param ignoreExistingJobs If running jobs for the given instance should be ignored,
      *                           and a new job should be started anyways.
+     * @param <T> The instance type.
+     * @param <M> The matching condition parameter, may be Void.
      * @return If a crafting job could be started.
      */
     public default <T, M> boolean craft(INetwork network, IPositionedAddonsNetworkIngredients<T, M> ingredientsNetwork, int channel,
