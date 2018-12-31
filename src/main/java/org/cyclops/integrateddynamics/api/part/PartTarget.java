@@ -5,6 +5,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
+import javax.annotation.Nullable;
+
 /**
  * Object holder to refer to another block side and its origin.
  * @author rubensworks
@@ -20,10 +22,10 @@ public class PartTarget {
      * @param side The side on the central position that points to the target.
      * @return The target referral.
      */
-    public static PartTarget fromCenter(DimPos pos, EnumFacing side) {
+    public static PartTarget fromCenter(DimPos pos, @Nullable EnumFacing side) {
         return PartTarget.of(
                 PartPos.of(pos, side),
-                PartPos.of(DimPos.of(pos.getDimensionId(), pos.getBlockPos().offset(side)), side.getOpposite())
+                PartPos.of(DimPos.of(pos.getDimensionId(), side == null ? pos.getBlockPos() : pos.getBlockPos().offset(side)), side == null ? null : side.getOpposite())
         );
     }
 

@@ -200,7 +200,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                             row.add(observableObserverData.getDimension());
                             BlockPos pos = observableObserverData.getPos();
                             row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
-                            row.add(observableObserverData.getSide().name());
+                            row.add(observableObserverData.getSide() == null ? "null" : observableObserverData.getSide().name());
                             row.add(i++);
                             dataObservers.addElement(row);
                         }
