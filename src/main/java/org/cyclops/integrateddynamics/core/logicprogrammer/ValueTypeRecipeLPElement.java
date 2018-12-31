@@ -10,13 +10,17 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -126,6 +130,75 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                 }
             }
         }
+    }
+
+    // Used by ID-Compat for JEI recipe transfer handler
+    public boolean isValidForRecipeGrid(List<ItemStack> itemInputs, List<FluidStack> fluidInputs,
+                                        List<ItemStack> itemOutputs, List<FluidStack> fluidOutputs) {
+        return itemInputs.size() <= 9 && itemOutputs.size() <= 3
+                && fluidInputs.size() <= 1 && fluidOutputs.size() <= 1;
+    }
+
+    protected void putStackInContainer(ContainerLogicProgrammerBase container, int slot, ItemStack itemStack) {
+        // Offset: Player inventory, recipe grid slots
+        container.putStackInSlot(container.inventorySlots.size() - (36 + 14) + slot, itemStack);
+    }
+
+    // Used by ID-Compat for JEI recipe transfer handler
+    public void setRecipeGrid(ContainerLogicProgrammerBase container,
+                              List<ItemStack> itemInputs, List<FluidStack> fluidInputs,
+                              List<ItemStack> itemOutputs, List<FluidStack> fluidOutputs) {
+        int slot = 0;
+
+        // Fill input item slots
+        for (ItemStack itemInput : itemInputs) {
+            putStackInContainer(container, slot, itemInput);
+            slot++;
+        }
+        while (slot < 9) {
+            putStackInContainer(container, slot, ItemStack.EMPTY);
+            slot++;
+        }
+
+        // Fill input fluid slot
+        slot = 9;
+        FluidStack fluidStackInput = null;
+        if (fluidInputs.size() > 0) {
+            fluidStackInput = fluidInputs.get(0);
+        }
+        putStackInContainer(container, slot, fluidStackInput == null ? ItemStack.EMPTY : getFluidBucket(fluidStackInput));
+        if (MinecraftHelpers.isClientSide() && lastGui != null) {
+            this.lastGui.getInputFluidAmountBox().setText(String.valueOf(FluidHelpers.getAmount(fluidStackInput)));
+        }
+
+        // Fill input output slots
+        slot = 10;
+        for (ItemStack itemOutput : itemOutputs) {
+            putStackInContainer(container, slot, itemOutput);
+            slot++;
+        }
+        while (slot < 13) {
+            putStackInContainer(container, slot, ItemStack.EMPTY);
+            slot++;
+        }
+
+        // Fill output fluid slot
+        slot = 13;
+        FluidStack fluidStackOutput = null;
+        if (fluidOutputs.size() > 0) {
+            fluidStackOutput = fluidOutputs.get(0);
+        }
+        putStackInContainer(container, slot, fluidStackOutput == null ? ItemStack.EMPTY : getFluidBucket(fluidStackOutput));
+        if (MinecraftHelpers.isClientSide() && lastGui != null) {
+            this.lastGui.getOutputFluidAmountBox().setText(String.valueOf(FluidHelpers.getAmount(fluidStackOutput)));
+        }
+    }
+
+    protected ItemStack getFluidBucket(FluidStack fluidStack) {
+        ItemStack itemStack = new ItemStack(Items.BUCKET);
+        IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        fluidHandler.fill(new FluidStack(fluidStack, Fluid.BUCKET_VOLUME), true);
+        return fluidHandler.getContainer();
     }
 
     @Override
