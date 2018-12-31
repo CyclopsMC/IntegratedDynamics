@@ -18,8 +18,10 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezerConfig;
+import org.cyclops.integrateddynamics.core.recipe.custom.RecipeHandlerSqueezer;
 import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
 
 /**
@@ -44,6 +46,9 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Blo
 
         // Add fluid tank capability
         addCapabilityInternal(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.tank);
+
+        // Add recipe handler capability
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, new RecipeHandlerSqueezer<>(BlockMechanicalSqueezer.getInstance()));
     }
 
     @Override

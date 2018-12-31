@@ -16,8 +16,10 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.custom.RecipeHandlerDryingBasin;
 import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
 
 /**
@@ -44,6 +46,9 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
         addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.SOUTH, tankIn);
         addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.WEST, tankIn);
         addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.EAST, tankIn);
+
+        // Add recipe handler capability
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, new RecipeHandlerDryingBasin<>(BlockMechanicalDryingBasin.getInstance()));
     }
 
     @Override
