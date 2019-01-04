@@ -1463,6 +1463,12 @@ info_book.integrateddynamics.manual.logic.value_types.entity=Entity
 info_book.integrateddynamics.manual.logic.value_types.entity.text1=A reference to a certain &lMinecraft&r entity. For example &8Zombie&0, &8Cow&0, &8Player_abc&0 ....
 info_book.integrateddynamics.manual.logic.value_types.fluid=Fluid
 info_book.integrateddynamics.manual.logic.value_types.fluid.text1=A reference to a &lMinecraft&r fluid. For example &8Lava@1000mB&0, &8Water@3mB&0, &8Menril Resin@3030mB&0, ....
+info_book.integrateddynamics.manual.logic.value_types.ingredients=Ingredients
+info_book.integrateddynamics.manual.logic.value_types.ingredients.text1=A collection of &lItems&r, &lFluids&r and &lEnergy amounts&r (&6Integer&0). Its main use is for representing the input and output of &8Recipes&0.
+info_book.integrateddynamics.manual.logic.value_types.recipe=Recipe
+info_book.integrateddynamics.manual.logic.value_types.recipe.text1=An abstract crafting recipe, that takes &8Ingredients&0 as input and outputs another &8Ingredients&0 value.
+info_book.integrateddynamics.manual.logic.value_types.recipe.text2=Recipes can be created visually using the &lLogic Programmer&r, or they can be read from (supported) machines using the &lMachine Reader&r.
+info_book.integrateddynamics.manual.logic.value_types.recipe.text3=These recipes can be used for autocrafting mods such as &lIntegrated Crafting&r.
 
 info_book.integrateddynamics.manual.logic.variables=Variables
 

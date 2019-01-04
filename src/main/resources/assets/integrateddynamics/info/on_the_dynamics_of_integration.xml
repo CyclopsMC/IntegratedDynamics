@@ -321,6 +321,14 @@
                 <section name="info_book.integrateddynamics.manual.logic.value_types.fluid">
                     <paragraph>info_book.integrateddynamics.manual.logic.value_types.fluid.text1</paragraph>
                 </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.ingredients">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.ingredients.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.recipe">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text2</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text3</paragraph>
+                </section>
             </section>
             <section name="info_book.integrateddynamics.manual.logic.variables">
                 <section name="info_book.integrateddynamics.manual.logic.variables.variable_card">
