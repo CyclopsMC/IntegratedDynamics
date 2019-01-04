@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:part_machine_reader_item"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.machine_reading"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.machine_reading.desc"
+    }
+  },
+  "parent": "integrateddynamics:network_foundations/variable_input",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "cyclopscore:item_crafted",
+      "conditions": {
+        "items": [
+          {
+            "item": "integrateddynamics:part_machine_reader_item"
+          }
+        ]
+      }
+    }
+  }
+}

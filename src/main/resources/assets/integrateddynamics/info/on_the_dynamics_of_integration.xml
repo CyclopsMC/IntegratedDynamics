@@ -70,6 +70,7 @@
             <appendix type="crafting_recipe">integrateddynamics:part_redstone_reader_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_block_reader_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_inventory_reader_item</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:part_machine_reader_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_static_light_panel_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_display_panel_item</appendix>
             <appendix type="advancement_rewards" id="integrateddynamics:basic_network_components">
@@ -77,6 +78,7 @@
                     <advancement id="integrateddynamics:basic_network_components/redstone_reading" />
                     <advancement id="integrateddynamics:basic_network_components/block_reading" />
                     <advancement id="integrateddynamics:basic_network_components/inventory_reading" />
+                    <advancement id="integrateddynamics:basic_network_components/machine_reading" />
                     <advancement id="integrateddynamics:basic_network_components/value_displaying" />
                 </advancements>
                 <rewards>
