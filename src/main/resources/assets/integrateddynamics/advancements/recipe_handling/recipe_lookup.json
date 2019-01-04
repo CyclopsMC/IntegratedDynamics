@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable",
+      "nbt": "{\"aspectName\":\"aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyoutput.name\",\"partId\":1,\"_type\":\"aspect\",\"_id\":1}"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.recipe_lookup"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.recipe_lookup.desc"
+    }
+  },
+  "parent": "integrateddynamics:recipe_handling/recipe_creation",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "parttype": "display_panel",
+        "variable": {
+          "type": "operator",
+          "operator": "operator.operators.integrateddynamics.operator.apply.name",
+          "input": {
+            "0": {
+              "type": "aspect",
+              "aspect": "aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyoutput.name"
+            },
+            "1": {
+              "type": "valuetype",
+              "valuetype": "valuetype.valuetypes.integrateddynamics.ingredients.name",
+              "value": "{\"minecraft:itemstack\":[{id:\"minecraft:chest\",Count:1b,Damage:0s}]}"
+            }
+          }
+        }
+      }
+    }
+  }
+}
