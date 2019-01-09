@@ -85,8 +85,10 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
         if(!checkedForWriteVariable) {
             for (IVariableFacade facade : variableContainer.getVariableCache().values()) {
-                currentVariableFacade = facade;
-                validate(network);
+                if (facade != null) {
+                    currentVariableFacade = facade;
+                    validate(network);
+                }
             }
             this.checkedForWriteVariable = true;
         }

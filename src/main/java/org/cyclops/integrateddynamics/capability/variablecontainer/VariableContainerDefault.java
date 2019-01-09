@@ -42,14 +42,25 @@ public class VariableContainerDefault implements IVariableContainer {
 
         // Reset variable facades in inventory
         getVariableCache().clear();
+        IVariableFacade firstInvalidVariableFacade = null;
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
             if (!itemStack.isEmpty()) {
                 IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-                if (variableFacade != null && variableFacade.isValid()) {
-                    getVariableCache().put(variableFacade.getId(), variableFacade);
+                if (variableFacade != null) {
+                    if (variableFacade.isValid()) {
+                        getVariableCache().put(variableFacade.getId(), variableFacade);
+                    } else if (firstInvalidVariableFacade == null) {
+                        firstInvalidVariableFacade = variableFacade;
+                    }
                 }
             }
+        }
+
+        // If no valid variables were present, fallback to the first invalid variable facade.
+        // This is for example to make sure that empty variables are resolved to true.
+        if (getVariableCache().isEmpty() && firstInvalidVariableFacade != null) {
+            getVariableCache().put(firstInvalidVariableFacade.getId(), firstInvalidVariableFacade);
         }
 
         // Trigger event in network
