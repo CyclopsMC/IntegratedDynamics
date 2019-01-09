@@ -585,6 +585,8 @@
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text6</paragraph>
             <appendix type="crafting_recipe">integrateddynamics:logic_programmer</appendix>
             <appendix type="crafting_recipe">integrateddynamics:portable_logic_programmer</appendix>
+            <appendix type="keybinding">key.integrateddynamics.logic_programmer_focus_search</appendix>
+            <appendix type="keybinding">key.integrateddynamics.logic_programmer_open_rename</appendix>
             <appendix_list factory="integrateddynamics:operators_output">*</appendix_list>
         </section>
     </section>
