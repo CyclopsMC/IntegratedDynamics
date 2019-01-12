@@ -92,7 +92,7 @@ tile.blocks.integrateddynamics.crystalized_menril_block_stairs.name=Kristalliser
 tile.blocks.integrateddynamics.crystalized_menril_brick_stairs.name=Kristalliserad menriltegeltrappa
 tile.blocks.integrateddynamics.delay.name=Fördröjare
 tile.blocks.integrateddynamics.delay.info=Exponerar historiken för en variabel som en aspekt. Kan rensas i en tillverkningsruta.
-tile.blocks.integrateddynamics.block_liquchorus.name=Flytande körfrukt
+tile.blocks.integrateddynamics.block_liquid_chorus.name=Flytande körfrukt
 tile.blocks.integrateddynamics.crystalized_chorus_block.name=Kristalliserat körblock
 tile.blocks.integrateddynamics.crystalized_chorus_brick.name=Kristalliserat körtegel
 tile.blocks.integrateddynamics.crystalized_chorus_block_stairs.name=Kristalliserad körtrappa
@@ -214,12 +214,12 @@ valuetype.integrateddynamics.value_type=Värdetyp
 valuetype.integrateddynamics.tooltip.type_name=§eTyp: §r%s
 valuetype.integrateddynamics.tooltip.value=§e§oVärde: §r%s
 valuetype.integrateddynamics.operator.tooltip.signature=§eSignatur: §r%s
-valuetype.integrateddynamics.error.invalinput=Inmatningen "%s" kunde inte tolkas för denna värdetyp.
-valuetype.integrateddynamics.error.invalinput_item=Denna värdetyp kräver ett inmatningsföremål.
-valuetype.integrateddynamics.error.invallist_element=Elementet %s är ogiltigt: %s
-valuetype.integrateddynamics.error.invallist_value_type=Listan förväntar värdetypen %s men %s var angivet.
-valuetype.integrateddynamics.error.invaloperator_operator=En operatorsvärdetyp förväntades vid tecknet %s, men %s var angivet
-valuetype.integrateddynamics.error.invaloperator_signature=Operatorvärdet %s förväntade värdetyper (%s), men (%s) var angivet.
+valuetype.integrateddynamics.error.invalid_input=Inmatningen "%s" kunde inte tolkas för denna värdetyp.
+valuetype.integrateddynamics.error.invalid_input_item=Denna värdetyp kräver ett inmatningsföremål.
+valuetype.integrateddynamics.error.invalid_list_element=Elementet %s är ogiltigt: %s
+valuetype.integrateddynamics.error.invalid_list_value_type=Listan förväntar värdetypen %s men %s var angivet.
+valuetype.integrateddynamics.error.invalid_operator_operator=En operatorsvärdetyp förväntades vid tecknet %s, men %s var angivet
+valuetype.integrateddynamics.error.invalid_operator_signature=Operatorvärdet %s förväntade värdetyper (%s), men (%s) var angivet.
 valuetype.integrateddynamics.error.block.no_block=Det infogade föremålet är inte ett block.
 valuetype.integrateddynamics.error.fluid.no_fluid=Det infogade föremålet innehåller inte någon vätska.
 
@@ -278,8 +278,8 @@ parttype.parttypes.integrateddynamics.entity_reader.name=Entitetsläsare
 parttype.parttypes.integrateddynamics.entity_reader.info=Läser entitetsinformation
 parttype.parttypes.integrateddynamics.extradimensional_reader.name=Extradimensionell läsare
 parttype.parttypes.integrateddynamics.extradimensional_reader.info=Läser information som delas för alla dimensioner
-parttype.parttypes.integrateddynamics.flureader.name=Vätskeläsare
-parttype.parttypes.integrateddynamics.flureader.info=Läser vätsketankar
+parttype.parttypes.integrateddynamics.fluid_reader.name=Vätskeläsare
+parttype.parttypes.integrateddynamics.fluid_reader.info=Läser vätsketankar
 parttype.parttypes.integrateddynamics.inventory_reader.name=Utrustningsläsare
 parttype.parttypes.integrateddynamics.inventory_reader.info=Läser data från utrustningar
 parttype.parttypes.integrateddynamics.network_reader.name=Nätverksläsare
@@ -304,7 +304,7 @@ parttype.parttypes.integrateddynamics.inventory_writer.info=Skriver till utrustn
 parttype.parttypes.integrateddynamics.redstone_writer.name=Redstoneskrivare
 parttype.parttypes.integrateddynamics.redstone_writer.info=Skriver till redstone
 
-parttype.parttypes.integrateddynamics.data_driven_panel.error.invaltype=Denna panel accepterar inte %s.
+parttype.parttypes.integrateddynamics.data_driven_panel.error.invalid_type=Denna panel accepterar inte %s.
 parttype.parttypes.integrateddynamics.static_light_panel.name=Statisk ljuspanel
 parttype.parttypes.integrateddynamics.static_light_panel.info=En enkel ljuspanel som alltid är aktiv
 parttype.parttypes.integrateddynamics.dynamic_light_panel.name=Dynamisk ljuspanel
@@ -318,27 +318,27 @@ parttype.parttypes.integrateddynamics.connector_omni_directional.name=Flerriktad
 parttype.parttypes.integrateddynamics.connector_omni_directional.info=Kan anslutas till andra flerriktade anslutare var som helst, t.o.m. i olika dimensioner.
 
 # Variables facades
-variable.integrateddynamics.error.invalitem=Nuvarande variabel kan inte användas i denna aspekt.
+variable.integrateddynamics.error.invalid_item=Nuvarande variabel kan inte användas i denna aspekt.
 variable.integrateddynamics.error.part_not_in_network=Del med ID %s kunde inte hittas inom nuvarande nätverk.
 variable.integrateddynamics.error.recursion=Variabeln med ID %s hänvisar till sig själv.
 
 # Proxy
 proxy.integrateddynamics.tooltip.proxy_id=§e§oProxy-ID: §r§o%s
 proxy.integrateddynamics.error.proxy_not_in_network=Proxy med ID %s kunde inte hittas inom det nuvarande nätverket.
-proxy.integrateddynamics.error.proxy_invalid=Proxy med ID %s exponerar en variabel.
+proxy.integrateddynamics.error.proxy_invalid_id=Proxy med ID %s exponerar en variabel.
 proxy.integrateddynamics.error.proxy_invaltype=Proxy med ID %s förväntas exponera en variabel av typen %s men %s hittades.
 
 # Delay
 delay.integrateddynamics.tooltip.delay_id=§e§oFördröjnings-ID: §r§o%s
 delay.integrateddynamics.error.delay_not_in_network=Fördröjning med ID %s kunde inte hittas inom det nuvarande nätverket.
 delay.integrateddynamics.error.delay_invalid=Fördröjning med ID %s exponerar inte en variabel.
-delay.integrateddynamics.error.delay_invaltype=Fördröjning med ID %s förväntas exponera en variabel av typen %s, men %s hittades.
+delay.integrateddynamics.error.delay_invalid_type=Fördröjning med ID %s förväntas exponera en variabel av typen %s, men %s hittades.
 
 # Aspects
 aspect.integrateddynamics.tooltip.aspect_name=§eAspekt: §r%s
 aspect.integrateddynamics.tooltip.value_type_name=§eTyp: §r%s
 aspect.integrateddynamics.tooltip.part_id=§e§oDel-ID: §r§o%s
-aspect.integrateddynamics.error.invaltype=Denna aspekt förväntar %s, men %s var angivet.
+aspect.integrateddynamics.error.invalid_type=Denna aspekt förväntar %s, men %s var angivet.
 aspect.aspects.integrateddynamics.name=Aspekt
 
 ## Audio aspects
