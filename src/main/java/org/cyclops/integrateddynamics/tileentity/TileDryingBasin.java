@@ -97,6 +97,11 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
     }
 
     @Override
+    protected boolean isUpdateInventoryHashOnTankContentsChanged() {
+        return true;
+    }
+
+    @Override
     public boolean isSendUpdateOnTankChanged() {
         return true;
     }

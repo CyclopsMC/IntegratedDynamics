@@ -79,6 +79,11 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
     }
 
     @Override
+    protected boolean isUpdateInventoryHashOnTankContentsChanged() {
+        return true;
+    }
+
+    @Override
     public boolean isSendUpdateOnTankChanged() {
         return true;
     }
