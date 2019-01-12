@@ -488,7 +488,7 @@ aspect.aspects.integrateddynamics.read.boolean.fluid.empty.info=Om målvätsketa
 aspect.aspects.integrateddynamics.read.boolean.fluid.full.name=Full tank
 aspect.aspects.integrateddynamics.read.boolean.fluid.full.info=Om målvätsketanken är full
 aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.name=Tank är inte tom
-aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.info=Om målvätsketanken har någonting i den
+aspect.aspects.integrateddynamics.read.boolean.fluid.nonempty.info=Om målvätsketanken har någonting i sig
 aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.name=Är tank
 aspect.aspects.integrateddynamics.read.boolean.fluid.applicable.info=Om målet har en vätsketank
 
