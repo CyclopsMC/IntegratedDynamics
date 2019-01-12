@@ -224,7 +224,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
                     savePartPosIteratorHandler(partPosIteratorData.getLeft());
                 }
                 existingValue.getLeft().set(requiredQuantity);
-                return finalizeExtraction(storagePrototype, matchFlags, existingValue, requiredQuantity, simulate);
+                return finalizeExtraction(storagePrototype, matchFlags, existingValue, simulate);
             }
         }
 
@@ -249,7 +249,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
                 maxValue = entry.getValue();
             }
         }
-        return finalizeExtraction(maxInstance, matchFlags, maxValue, requiredQuantity, simulate);
+        return finalizeExtraction(maxInstance, matchFlags, maxValue, simulate);
     }
 
     /**
@@ -268,21 +268,24 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
     }
 
     protected T finalizeExtraction(T instancePrototype, M matchFlags, Pair<Wrapper<Long>, List<PartPos>> value,
-                                   long requiredQuantity, boolean simulate) {
+                                   boolean simulate) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
         long extractedCount = value.getLeft().get();
-        instancePrototype = matcher.withQuantity(instancePrototype, extractedCount);
         if (!simulate && extractedCount > 0) {
-            long toExtract = requiredQuantity;
+            long toExtract = extractedCount;
             for (PartPos pos : value.getRight()) {
+                // Update the remaining prototype quantity for this iteration
+                instancePrototype = matcher.withQuantity(instancePrototype, toExtract);
+
                 this.network.disablePosition(pos);
                 T extracted = this.network.getPositionedStorage(pos).extract(instancePrototype, matchFlags, false);
                 this.network.enablePosition(pos);
                 this.network.scheduleObservationForced(channel, pos); // Mark the position as 'changed'
-                toExtract -= matcher.getQuantity(extracted);
+                long thisExtractedAmount = matcher.getQuantity(extracted);
+                toExtract -= thisExtractedAmount;
             }
             // Quick heuristic check to see if 'storage' did not lie during its simulation
-            if (toExtract != requiredQuantity - extractedCount) {
+            if (toExtract != 0) {
                 throw new IllegalStateException("A storage resulted in inconsistent simulated and non-simulated output.");
             }
         }
