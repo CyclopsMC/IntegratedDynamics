@@ -75,9 +75,13 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     public ValueItemStack deserialize(String value) {
         try {
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
+            // Forge returns air for tags with negative count,
+            // so we set it to 1 for deserialization and fix it afterwards.
+            int realCount = tag.getInteger("Count");
+            tag.setByte("Count", (byte)1);
             ItemStack itemStack = new ItemStack(tag);
             if (!itemStack.isEmpty()) {
-                itemStack.setCount(tag.getInteger("Count"));
+                itemStack.setCount(realCount);
             }
             return ValueItemStack.of(itemStack);
         } catch (NBTException e) {
