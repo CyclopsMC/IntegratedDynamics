@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.0.0 or higher.
+
+Fixes:
+* Fix generator voiding energy instead of inserting into consumers, #671
+* Fix ItemStack deserialization when stack size is larger than 127, Closes #669
