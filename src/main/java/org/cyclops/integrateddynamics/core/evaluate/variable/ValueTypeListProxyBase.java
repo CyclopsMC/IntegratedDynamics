@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
@@ -72,6 +73,14 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
         }
         // Avoid infinite iteration
         if (this.isInfinite() || other.isInfinite()) {
+            return false;
+        }
+        // Quickly return if the lengths differ.
+        try {
+            if (getLength() != other.getLength()) {
+                return false;
+            }
+        } catch (EvaluationException e) {
             return false;
         }
 
