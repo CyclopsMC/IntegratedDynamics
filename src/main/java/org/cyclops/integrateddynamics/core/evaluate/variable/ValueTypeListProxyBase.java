@@ -67,7 +67,7 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
             return false;
         }
         ValueTypeListProxyBase<?, ?> other = (ValueTypeListProxyBase<?, ?>) obj;
-        if(!getName().equals(other.getName()) || !getValueType().equals(other.getValueType())) {
+        if(!getValueType().equals(other.getValueType())) {
             return false;
         }
         // Avoid infinite iteration
