@@ -108,7 +108,9 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     public void setActiveElement(int index) {
         activeElement = index;
         if(index >= 0 && !subElements.containsKey(index)) {
-            subElements.put(index, listValueType.createLogicProgrammerElement());
+            IValueTypeLogicProgrammerElement subElement = listValueType.createLogicProgrammerElement();
+            subElements.put(index, subElement);
+            subElement.activate();
         }
         if (MinecraftHelpers.isClientSide()) {
             masterGui.setActiveElement(activeElement);

@@ -134,14 +134,14 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     @SideOnly(Side.CLIENT)
     protected void refreshInputFluidAmountBox() {
-        if (this.lastGui != null) {
+        if (this.lastGui != null && this.lastGui.getInputFluidAmountBox() != null) {
             this.lastGui.getInputFluidAmountBox().setText(inputFluidAmount);
         }
     }
 
     @SideOnly(Side.CLIENT)
     protected void refreshOutputFluidAmountBox() {
-        if (this.lastGui != null) {
+        if (this.lastGui != null && this.lastGui.getOutputFluidAmountBox() != null) {
             this.lastGui.getOutputFluidAmountBox().setText(outputFluidAmount);
         }
     }
@@ -406,15 +406,17 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             slots.setInventorySlotContents(i, entry.getLeft());
         }
         slots.setInventorySlotContents(9, this.inputFluid);
-        gui.getInputFluidAmountBox().setText(this.inputFluidAmount);
-        gui.getInputEnergyBox().setText(this.inputEnergy);
-        for (int i = 0; i < this.outputStacks.size(); i++) {
-            slots.setInventorySlotContents(10 + i, this.outputStacks.get(i));
-            // No need to set slot type, as this can't be changed for output stacks
+        if (gui.getInputFluidAmountBox() != null) {
+            gui.getInputFluidAmountBox().setText(this.inputFluidAmount);
+            gui.getInputEnergyBox().setText(this.inputEnergy);
+            for (int i = 0; i < this.outputStacks.size(); i++) {
+                slots.setInventorySlotContents(10 + i, this.outputStacks.get(i));
+                // No need to set slot type, as this can't be changed for output stacks
+            }
+            slots.setInventorySlotContents(13, this.outputFluid);
+            gui.getOutputFluidAmountBox().setText(this.outputFluidAmount);
+            gui.getOutputEnergyBox().setText(this.outputEnergy);
         }
-        slots.setInventorySlotContents(13, this.outputFluid);
-        gui.getOutputFluidAmountBox().setText(this.outputFluidAmount);
-        gui.getOutputEnergyBox().setText(this.outputEnergy);
     }
 
     @SideOnly(Side.CLIENT)
