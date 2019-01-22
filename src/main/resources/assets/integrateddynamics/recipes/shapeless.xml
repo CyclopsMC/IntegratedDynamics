@@ -28,7 +28,7 @@
 		<condition type="config">crystalized_menril_block</condition>
 		<input>
 			<item>integrateddynamics:crystalized_menril_block</item>
-			<item>minecraft:crafting_table</item>
+			<item type="oredict">workbench</item>
 		</input>
 		<output>
 			<item>integrateddynamics:logic_programmer</item>
