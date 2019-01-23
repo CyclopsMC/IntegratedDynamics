@@ -8,6 +8,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeIngredientsLPElement;
@@ -32,7 +33,7 @@ public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends Packe
     }
 
 	protected ValueObjectTypeIngredients.ValueIngredients getValue() {
-		return ValueTypes.OBJECT_INGREDIENTS.deserialize(value);
+		return ValueHelpers.deserializeRaw(ValueTypes.OBJECT_INGREDIENTS, value);
 	}
 
 	@Override

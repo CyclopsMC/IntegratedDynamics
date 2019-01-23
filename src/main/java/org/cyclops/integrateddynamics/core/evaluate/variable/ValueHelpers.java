@@ -151,7 +151,20 @@ public class ValueHelpers {
         if (valueType == null) {
             return null;
         }
-        return valueType.deserialize(tag.getString("value"));
+        return deserializeRaw(valueType, tag.getString("value"));
+    }
+
+    /**
+     * Deserialize the given value string to a value.
+     * @param valueType The value type to deserialize for.
+     * @param valueString The value string.
+     * @return The value.
+     */
+    public static <T extends IValue> T deserializeRaw(IValueType<T> valueType, String valueString) {
+        if ("TOO LONG".equals(valueString)) {
+            return valueType.getDefault();
+        }
+        return valueType.deserialize(valueString);
     }
 
     /**

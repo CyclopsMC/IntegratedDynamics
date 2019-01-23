@@ -305,7 +305,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     String serializedValue = tag.getString("displayValue");
                     L10NHelpers.UnlocalizedString deserializationError = valueType.canDeserialize(serializedValue);
                     if(deserializationError == null) {
-                        setDisplayValue(valueType.deserialize(serializedValue));
+                        setDisplayValue(ValueHelpers.deserializeRaw(valueType, serializedValue));
                     } else {
                         IntegratedDynamics.clog(Level.ERROR, deserializationError.localize());
                     }

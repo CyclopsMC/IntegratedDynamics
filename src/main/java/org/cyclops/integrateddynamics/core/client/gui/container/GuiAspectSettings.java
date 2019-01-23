@@ -27,6 +27,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeStringRenderPattern;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
@@ -119,7 +120,7 @@ public class GuiAspectSettings extends GuiContainerExtended {
     protected void saveSetting() {
         if(guiElement != null && lastError == null) {
             ContainerAspectSettings aspectContainer = (ContainerAspectSettings) container;
-            aspectContainer.setValue(getActiveProperty(), guiElement.getValueType().deserialize(guiElement.getInputString()));
+            aspectContainer.setValue(getActiveProperty(), ValueHelpers.deserializeRaw(guiElement.getValueType(), guiElement.getInputString()));
         }
     }
 

@@ -116,7 +116,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
         if(propertyIds.containsValue(property)) {
             String value = ValueNotifierHelpers.getValueString(this, propertyIds.inverse().get(property));
             if(value != null) {
-                return property.getType().deserialize(value);
+                return ValueHelpers.deserializeRaw(property.getType(), value);
             }
         }
         return null;
@@ -130,7 +130,7 @@ public class ContainerAspectSettings extends ExtendedInventoryContainer {
             if (property != null) {
                 IAspectProperties aspectProperties = getAspect().getProperties(getPartType(), getTarget(), getPartState());
                 aspectProperties = aspectProperties.clone();
-                IValue trueValue = property.getType().deserialize(value.getString(ValueNotifierHelpers.KEY));
+                IValue trueValue = ValueHelpers.deserializeRaw(property.getType(), value.getString(ValueNotifierHelpers.KEY));
                 aspectProperties.setValue(property, trueValue);
                 getAspect().setProperties(getPartType(), getTarget(), getPartState(), aspectProperties);
 

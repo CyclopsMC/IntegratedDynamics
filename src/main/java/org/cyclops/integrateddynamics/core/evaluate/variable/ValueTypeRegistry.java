@@ -108,7 +108,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
         if(type == null) {
             return INVALID_FACADE;
         }
-        IValue value = type.deserialize(tag.getString("value"));
+        IValue value = ValueHelpers.deserializeRaw(type, tag.getString("value"));
         return new ValueTypeVariableFacade(id, type, value);
     }
 

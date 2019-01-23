@@ -1,8 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
-import net.minecraft.nbt.*;
-import net.minecraft.util.JsonUtils;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -10,6 +14,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
@@ -80,7 +85,7 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
                 NBTTagList list = tag.getTagList("values", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal());
                 List<IValue> values = Lists.newArrayList();
                 for (NBTBase subTag : list) {
-                    values.add(valueType.deserialize(((NBTTagString) subTag).getString()));
+                    values.add(ValueHelpers.deserializeRaw(valueType, ((NBTTagString) subTag).getString()));
                 }
                 return new PredicateOperator<>(valueType, values);
             } catch (NBTException e) {

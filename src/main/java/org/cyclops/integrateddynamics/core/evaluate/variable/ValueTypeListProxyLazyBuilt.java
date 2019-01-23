@@ -73,7 +73,7 @@ public class ValueTypeListProxyLazyBuilt<T extends IValueType<V>, V extends IVal
         @Override
         protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
             IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
-            IValue value = valueType.deserialize(tag.getString("value"));
+            IValue value = ValueHelpers.deserializeRaw(valueType, tag.getString("value"));
             IOperator operator = Operators.REGISTRY.deserialize(tag.getString("operator"));
             return new ValueTypeListProxyLazyBuilt<>(value, operator);
         }

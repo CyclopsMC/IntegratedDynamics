@@ -48,13 +48,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     public ValueTypeVariableFacade(boolean generateId, IValueType<V> valueType, String value) {
         super(generateId);
         this.valueType = valueType;
-        this.value = valueType.deserialize(value);
+        this.value = ValueHelpers.deserializeRaw(valueType, value);
     }
 
     public ValueTypeVariableFacade(int id, IValueType<V> valueType, String value) {
         super(id);
         this.valueType = valueType;
-        this.value = valueType.deserialize(value);
+        this.value = ValueHelpers.deserializeRaw(valueType, value);
     }
 
     @Override
