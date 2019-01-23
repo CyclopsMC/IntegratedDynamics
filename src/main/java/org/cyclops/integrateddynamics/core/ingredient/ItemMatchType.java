@@ -51,6 +51,9 @@ public enum ItemMatchType {
             });
 
     protected static List<ItemStack> getOreDictEquivalent(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return Collections.singletonList(itemStack);
+        }
         try {
             List<ItemStack> itemStacks = CACHE_OREDICT.get(itemStack);
             if (itemStacks.isEmpty()) {
