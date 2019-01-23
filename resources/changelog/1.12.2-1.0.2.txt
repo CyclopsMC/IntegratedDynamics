@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.0.0 or higher.
+
+Changes:
+* Use more oredict variants in recipes instead of fixed items, Closes #658
+* Optimize list equality checks by first checking length
+
+Fixes:
+* Fix TOO LONG deserialization errors causing logging spam, Closes #664
+* Fix crash when oredict recipe slot is empty
+* Fix crash when making lists of complex subtypes
+* Fix cast exceptions inside operators not always being caught, Closes #644
+* Fix static and dynamic lists never being equal, Closes #640
+* Fix rare client crash when invalid labels are received, Closes #645
