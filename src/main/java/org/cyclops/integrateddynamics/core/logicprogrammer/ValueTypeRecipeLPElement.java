@@ -104,6 +104,10 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     @Override
     public void onInputSlotUpdated(int slotId, ItemStack itemStack) {
+        if (inputStacks == null) {
+            return;
+        }
+
         if (slotId >= 0 && slotId < 9) {
             inputStacks.set(slotId, Pair.of(itemStack.copy(), inputStacks.get(slotId).getRight()));
         }
