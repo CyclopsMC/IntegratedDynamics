@@ -833,7 +833,7 @@ public final class Operators {
                     IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
                     return a.getValueType();
                 } catch (ClassCastException | EvaluationException e) {
-                    return operator.getConditionalOutputType(input);
+                    return operator.getOutputType();
                 }
             }).build());
 
@@ -2596,7 +2596,7 @@ public final class Operators {
                     IValueTypeListProxy a = ((ValueTypeList.ValueList) input[1].getValue()).getRawValue();
                     return a.getValueType();
                 } catch (EvaluationException e) {
-                    return operator.getConditionalOutputType(input);
+                    return operator.getOutputType();
                 }
             })
             .function(variables -> {
