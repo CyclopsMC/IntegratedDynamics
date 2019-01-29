@@ -709,6 +709,10 @@ public class TestOperatorOperators {
         DummyVariableOperator addOneAndSelfMultiply = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_PIPE2.evaluate(new IVariable[]{oGeneralIdentity, oIntegerIncrement, oArithmeticMultiplication}));
 
+        assertThat(addOneAndSelfMultiply.getValue().getRawValue().getInputTypes().length, is(1));
+        assertThat(addOneAndSelfMultiply.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.INTEGER));
+        assertThat(addOneAndSelfMultiply.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
+
         IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{addOneAndSelfMultiply, i0});
         assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
         assertThat(".2 id ++ * 0 == 0", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
