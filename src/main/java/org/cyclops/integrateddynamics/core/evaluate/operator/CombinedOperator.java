@@ -191,16 +191,21 @@ public class CombinedOperator extends OperatorBase {
             // When the following operators take more than one input,
             // then the remaining inputs should also become input of the virtual pipe operator.
             // This loop takes care of that.
+            int variableScopeLength = 1;
             for (IOperator operator : operators) {
                 if (allVariables.length < operator.getRequiredInputLength()) {
                     throw new EvaluationException(String.format("Pipe failure: operator %s expects input of length %s," +
                                     "but %s was given.", operator.getUniqueName(), operator.getRequiredInputLength(),
                             allVariables.length));
                 }
-                IVariable[] subVariables = ArrayUtils.subarray(allVariables, 0, operator.getRequiredInputLength());
-                IVariable[] remainingVariables = ArrayUtils.subarray(allVariables, operator.getRequiredInputLength(), allVariables.length);
+                IVariable[] subVariables = ArrayUtils.subarray(allVariables, 0, variableScopeLength);
+                IVariable[] remainingVariables = ArrayUtils.subarray(allVariables, variableScopeLength, allVariables.length);
                 IValue outputValue = ValueHelpers.evaluateOperator(operator, subVariables);
                 allVariables = ArrayUtils.addAll(new IVariable[]{new Variable<>(outputValue)}, remainingVariables);
+
+                if (variableScopeLength == 1) {
+                    variableScopeLength = 2;
+                }
             }
             return allVariables;
         }
@@ -224,8 +229,10 @@ public class CombinedOperator extends OperatorBase {
                     boolean removeOutputType = false;
                     for (IOperator operator : operators) {
                         IValueType[] operatorInputTypes = operator.getInputTypes();
-                        if (removeOutputType  && operatorInputTypes.length > 0) {
+                        if (removeOutputType && operatorInputTypes.length > 0) {
                             operatorInputTypes = ArrayUtils.subarray(operatorInputTypes, 1, operatorInputTypes.length);
+                        } else {
+                            operatorInputTypes = new IValueType[]{operatorInputTypes[0]};
                         }
                         valueTypes = ArrayUtils.addAll(valueTypes, operatorInputTypes);
                         removeOutputType = true;
