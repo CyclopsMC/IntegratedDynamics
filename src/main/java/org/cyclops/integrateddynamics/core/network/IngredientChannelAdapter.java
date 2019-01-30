@@ -100,6 +100,10 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         Iterator<PartPos> it = partPosIteratorData.getRight();
         while (it.hasNext()) {
             PartPos pos = it.next();
+            // Skip if the position is not loaded
+            if (!pos.getPos().isLoaded()) {
+                continue;
+            }
             this.network.disablePosition(pos);
             long quantityBefore = matcher.getQuantity(ingredient);
             ingredient = this.network.getPositionedStorage(pos).insert(ingredient, simulate);
@@ -138,6 +142,10 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         Iterator<PartPos> it = partPosIteratorData.getRight();
         while (it.hasNext()) {
             PartPos pos = it.next();
+            // Skip if the position is not loaded
+            if (!pos.getPos().isLoaded()) {
+                continue;
+            }
             this.network.disablePosition(pos);
             T extracted = this.network.getPositionedStorage(pos).extract(maxQuantity, simulate);
             if (!this.canExtract(extracted)) {
@@ -195,6 +203,11 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         Iterator<PartPos> it = partPosIteratorData.getRight();
         while (it.hasNext()) {
             PartPos pos = it.next();
+
+            // Skip if the position is not loaded
+            if (!pos.getPos().isLoaded()) {
+                continue;
+            }
 
             // Do a simulated extraction
             this.network.disablePosition(pos);
