@@ -314,6 +314,22 @@ public class TestOperatorOperators {
         assertThat("map([false, true, false, true], true&&)[2] == false", ((ValueTypeBoolean.ValueBoolean) list3.get(2)).getRawValue(), is(false));
         assertThat("map([false, true, false, true], true&&)[3] == true", ((ValueTypeBoolean.ValueBoolean) list3.get(3)).getRawValue(), is(true));
         assertThat(list3.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
+
+        IValue res4 = Operators.OPERATOR_MAP.evaluate(new IVariable[]{oLogicalAnd, lbooleans});
+        IValueTypeListProxy list4 = ((ValueTypeList.ValueList) res4).getRawValue();
+        assertThat("map([false, true, false, true], &&)[0] is an operator", list4.get(0).getType(), is(ValueTypes.OPERATOR));
+        assertThat("map([false, true, false, true], &&)[1] is an operator", list4.get(1).getType(), is(ValueTypes.OPERATOR));
+        assertThat("map([false, true, false, true], &&)[2] is an operator", list4.get(2).getType(), is(ValueTypes.OPERATOR));
+        assertThat("map([false, true, false, true], &&)[3] is an operator", list4.get(3).getType(), is(ValueTypes.OPERATOR));
+        assertThat("map([false, true, false, true], &&)[0](true) == false",
+                ((ValueTypeBoolean.ValueBoolean) (((ValueTypeOperator.ValueOperator) list4.get(0)).getRawValue().evaluate(bTrue))).getRawValue(), is(false));
+        assertThat("map([false, true, false, true], &&)[1](true) == true",
+                ((ValueTypeBoolean.ValueBoolean) (((ValueTypeOperator.ValueOperator) list4.get(1)).getRawValue().evaluate(bTrue))).getRawValue(), is(true));
+        assertThat("map([false, true, false, true], &&)[2](true) == false",
+                ((ValueTypeBoolean.ValueBoolean) (((ValueTypeOperator.ValueOperator) list4.get(2)).getRawValue().evaluate(bTrue))).getRawValue(), is(false));
+        assertThat("map([false, true, false, true], &&)[3](true) == true",
+                ((ValueTypeBoolean.ValueBoolean) (((ValueTypeOperator.ValueOperator) list4.get(3)).getRawValue().evaluate(bTrue))).getRawValue(), is(true));
+        assertThat(list4.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
     }
 
     @Test(expected = EvaluationException.class)

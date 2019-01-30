@@ -2577,9 +2577,7 @@ public final class Operators {
                         variables.getValue(0), accumulator.getType());
                 ValueTypeList.ValueList<IValueType<IValue>, IValue> inputList = variables.getValue(1);
                 for (IValue listValue : inputList.getRawValue()) {
-                    accumulator = innerOperator.evaluate(new IVariable[]{
-                            new Variable<>(accumulator.getType(), accumulator),
-                            new Variable<>(listValue.getType(), listValue)});
+                    accumulator = ValueHelpers.evaluateOperator(innerOperator, accumulator, listValue);
                 }
                 return accumulator;
             }).build());

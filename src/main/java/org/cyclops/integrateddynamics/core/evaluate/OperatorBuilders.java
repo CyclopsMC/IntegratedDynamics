@@ -264,11 +264,6 @@ public class OperatorBuilders {
                     );
                     throw new EvaluationException(error.localize());
                 }
-                ValueTypeList.ValueList applyingList = (ValueTypeList.ValueList) applyingValue;
-                L10NHelpers.UnlocalizedString error = innerOperator.validateTypes(new IValueType[]{applyingList.getRawValue().getValueType()});
-                if (error != null) {
-                    throw new EvaluationException(error.localize());
-                }
                 return Pair.<IOperator, OperatorBase.SafeVariablesGetter>of(innerOperator,
                         new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
             });
