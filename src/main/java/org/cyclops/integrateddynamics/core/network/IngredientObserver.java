@@ -209,16 +209,24 @@ public class IngredientObserver<T, M> {
             if (lastTick <= currentTick) {
                 // If an inventory state is exposed, check if it has changed since the last observation call.
                 boolean skipPosition = false;
-                IInventoryState inventoryState = TileHelpers.getCapability(partPos.getPartPos().getPos(),
-                        partPos.getPartPos().getSide(), Capabilities.INVENTORY_STATE);
-                if (inventoryState != null) {
-                    Integer lastState = this.lastInventoryStates.get(partPos.getPartPos());
-                    int newState = inventoryState.getHash();
-                    if (lastState != null && lastState == newState) {
-                        // Skip this position if it hasn't not changed
-                        skipPosition = true;
-                    } else {
-                        this.lastInventoryStates.put(partPos.getPartPos(), newState);
+
+                // Skip position forcefully if it is not loaded
+                if (!partPos.getPartPos().getPos().isLoaded()) {
+                    skipPosition = true;
+                }
+
+                if (!skipPosition) {
+                    IInventoryState inventoryState = TileHelpers.getCapability(partPos.getPartPos().getPos(),
+                            partPos.getPartPos().getSide(), Capabilities.INVENTORY_STATE);
+                    if (inventoryState != null) {
+                        Integer lastState = this.lastInventoryStates.get(partPos.getPartPos());
+                        int newState = inventoryState.getHash();
+                        if (lastState != null && lastState == newState) {
+                            // Skip this position if it hasn't not changed
+                            skipPosition = true;
+                        } else {
+                            this.lastInventoryStates.put(partPos.getPartPos(), newState);
+                        }
                     }
                 }
 
