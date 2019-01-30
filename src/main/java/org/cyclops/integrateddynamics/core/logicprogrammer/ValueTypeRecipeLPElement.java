@@ -37,7 +37,6 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
@@ -424,8 +423,12 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @SideOnly(Side.CLIENT)
-    protected static class SubGuiRenderPattern extends RenderPattern<ValueTypeRecipeLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+    protected static class SubGuiRenderPattern extends RenderPattern<ValueTypeRecipeLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase>
+            implements IRenderPatternValueTypeTooltip {
 
+        @Getter
+        @Setter
+        private boolean renderTooltip = true;
         @Getter
         private GuiTextFieldExtended inputFluidAmountBox = null;
         @Getter
@@ -469,15 +472,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         @Override
         public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-            IValueType valueType = element.getValueType();
 
             // Output type tooltip
-            if(!container.hasWriteItemInSlot()) {
-                if(gui.isPointInRegion(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
-                        GuiLogicProgrammerBase.BOX_HEIGHT, GuiLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
-                    gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
-                }
-            }
+            this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
 
             // Render the overlay of the input item slots
             for (int slotId = 0; slotId < this.gui.inventorySlots.inventorySlots.size(); ++slotId) {

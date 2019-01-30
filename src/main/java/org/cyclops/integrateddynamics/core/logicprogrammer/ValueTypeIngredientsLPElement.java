@@ -23,7 +23,6 @@ import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
@@ -200,7 +199,8 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
      * Sub gui that holds the list element value type panel and the panel for browsing through the elements.
      */
     @SideOnly(Side.CLIENT)
-    protected static class MasterSubGuiRenderPattern extends RenderPattern<ValueTypeIngredientsLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+    protected static class MasterSubGuiRenderPattern extends RenderPattern<ValueTypeIngredientsLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase>
+            implements IRenderPatternValueTypeTooltip {
 
         private final int baseX;
         private final int baseY;
@@ -212,6 +212,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         protected ListElementSubGui elementSubGui = null;
         protected int lastGuiLeft;
         protected int lastGuiTop;
+        private boolean renderTooltip = true;
 
         public MasterSubGuiRenderPattern(ValueTypeIngredientsLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                          GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -246,15 +247,19 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         @Override
         public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-            IValueType valueType = element.getValueType();
 
             // Output type tooltip
-            if(!container.hasWriteItemInSlot()) {
-                if(gui.isPointInRegion(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
-                        GuiLogicProgrammerBase.BOX_HEIGHT, GuiLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
-                    gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
-                }
-            }
+            this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
+        }
+
+        @Override
+        public boolean isRenderTooltip() {
+            return this.renderTooltip;
+        }
+
+        @Override
+        public void setRenderTooltip(boolean renderTooltip) {
+            this.renderTooltip = renderTooltip;
         }
     }
 
