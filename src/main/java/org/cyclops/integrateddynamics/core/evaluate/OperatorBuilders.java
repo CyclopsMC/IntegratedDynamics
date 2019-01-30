@@ -134,7 +134,10 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_2 = ITEMSTACK.inputTypes(2, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.INFIX);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_1_INTEGER_1 = ITEMSTACK.inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.INTEGER}).renderPattern(IConfigRenderPattern.INFIX);
     public static final IterativeFunction.PrePostBuilder<ItemStack, IValue> FUNCTION_ITEMSTACK = IterativeFunction.PrePostBuilder.begin()
-            .appendPre(input -> ((ValueObjectTypeItemStack.ValueItemStack) input.getValue(0)).getRawValue());
+            .appendPre(input -> {
+                ValueObjectTypeItemStack.ValueItemStack value = input.getValue(0);
+                return value.getRawValue();
+            });
     public static final IterativeFunction.PrePostBuilder<ItemStack, Integer> FUNCTION_ITEMSTACK_TO_INT =
             FUNCTION_ITEMSTACK.appendPost(PROPAGATOR_INTEGER_VALUE);
     public static final IterativeFunction.PrePostBuilder<ItemStack, Boolean> FUNCTION_ITEMSTACK_TO_BOOLEAN =
@@ -213,28 +216,28 @@ public class OperatorBuilders {
                         new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
             });
     public static final IterativeFunction.PrePostBuilder<IOperator, IValue> FUNCTION_ONE_OPERATOR = IterativeFunction.PrePostBuilder.begin()
-            .appendPre(input -> getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), ValueTypes.CATEGORY_ANY));
+            .appendPre(input -> getSafeOperator(input.getValue(0), ValueTypes.CATEGORY_ANY));
     public static final IterativeFunction.PrePostBuilder<IOperator, IValue> FUNCTION_ONE_PREDICATE = IterativeFunction.PrePostBuilder.begin()
-            .appendPre(input -> getSafePredictate((ValueTypeOperator.ValueOperator) input.getValue(0)));
+            .appendPre(input -> getSafePredictate(input.getValue(0)));
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, IOperator>, IValue> FUNCTION_TWO_OPERATORS = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IOperator second = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(1), ValueTypes.CATEGORY_ANY);
+                IOperator second = getSafeOperator(input.getValue(1), ValueTypes.CATEGORY_ANY);
                 IValueType secondInputType = second.getInputTypes()[0];
                 if (ValueHelpers.correspondsTo(secondInputType, ValueTypes.OPERATOR)) {
                     secondInputType = ValueTypes.CATEGORY_ANY;
                 }
-                IOperator first = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), secondInputType);
+                IOperator first = getSafeOperator(input.getValue(0), secondInputType);
                 return Pair.of(first, second);
             });
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, IOperator>, IValue> FUNCTION_TWO_PREDICATES = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IOperator first = getSafePredictate((ValueTypeOperator.ValueOperator) input.getValue(0));
-                IOperator second = getSafePredictate((ValueTypeOperator.ValueOperator) input.getValue(1));
+                IOperator first = getSafePredictate(input.getValue(0));
+                IOperator second = getSafePredictate(input.getValue(1));
                 return Pair.of(first, second);
             });
     public static final IterativeFunction.PrePostBuilder<Triple<IOperator, IOperator, IOperator>, IValue> FUNCTION_THREE_OPERATORS = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IOperator third = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(2), ValueTypes.CATEGORY_ANY);
+                IOperator third = getSafeOperator(input.getValue(2), ValueTypes.CATEGORY_ANY);
                 IValueType<?>[] types = third.getInputTypes();
                 if(types.length < 2) {
                     throw new EvaluationException("The operator did not accept enough inputs");
@@ -247,13 +250,14 @@ public class OperatorBuilders {
                 if (ValueHelpers.correspondsTo(secondOutputType, ValueTypes.OPERATOR)) {
                     secondOutputType = ValueTypes.CATEGORY_ANY;
                 }
-                IOperator first = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(0), firstOutputType);
-                IOperator second = getSafeOperator((ValueTypeOperator.ValueOperator) input.getValue(1), secondOutputType);
+                IOperator first = getSafeOperator(input.getValue(0), firstOutputType);
+                IOperator second = getSafeOperator(input.getValue(1), secondOutputType);
                 return Triple.of(first, second, third);
             });
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR_TAKE_OPERATOR_LIST = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) input.getValue(0)).getRawValue();
+                ValueTypeOperator.ValueOperator valueOperator = input.getValue(0);
+                IOperator innerOperator = valueOperator.getRawValue();
                 IValue applyingValue = input.getValue(1);
                 if (!(applyingValue instanceof ValueTypeList.ValueList)) {
                     L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
@@ -387,14 +391,23 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2_NBT = NBT.inputTypes(ValueTypes.NBT, ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_3 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING).output(ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX_2);
     public static final IterativeFunction.PrePostBuilder<NBTTagCompound, IValue> FUNCTION_NBT = IterativeFunction.PrePostBuilder.begin()
-            .appendPre(input -> ((ValueTypeNbt.ValueNbt) input.getValue(0)).getRawValue());
+            .appendPre(input -> {
+                ValueTypeNbt.ValueNbt value = input.getValue(0);
+                return value.getRawValue();
+            });
     public static final IterativeFunction.PrePostBuilder<Optional<NBTBase>, IValue> FUNCTION_NBT_ENTRY = IterativeFunction.PrePostBuilder.begin()
-            .appendPre(input -> Optional.fromNullable(((ValueTypeNbt.ValueNbt) input.getValue(0)).getRawValue()
-                   .getTag(((ValueTypeString.ValueString) input.getValue(1)).getRawValue())));
+            .appendPre(input -> {
+                ValueTypeNbt.ValueNbt valueNbt = input.getValue(0);
+                ValueTypeString.ValueString valueString = input.getValue(1);
+                return Optional.fromNullable(valueNbt.getRawValue().getTag(valueString.getRawValue()));
+            });
     public static final IterativeFunction.PrePostBuilder<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_NBT_COPY_FOR_VALUE = IterativeFunction.PrePostBuilder.begin()
-            .appendPre(input -> Triple.of(((ValueTypeNbt.ValueNbt) input.getValue(0)).getRawValue().copy(),
-                ((ValueTypeString.ValueString) input.getValue(1)).getRawValue(),
-                new OperatorBase.SafeVariablesGetter.Shifted(2, input.getVariables())));
+            .appendPre(input -> {
+                ValueTypeNbt.ValueNbt valueNbt = input.getValue(0);
+                ValueTypeString.ValueString valueString = input.getValue(1);
+                return Triple.of(valueNbt.getRawValue().copy(), valueString.getRawValue(),
+                        new OperatorBase.SafeVariablesGetter.Shifted(2, input.getVariables()));
+            });
     public static final IterativeFunction.PrePostBuilder<NBTTagCompound, Integer> FUNCTION_NBT_TO_INT =
             FUNCTION_NBT.appendPost(PROPAGATOR_INTEGER_VALUE);
     public static final IterativeFunction.PrePostBuilder<NBTTagCompound, Boolean> FUNCTION_NBT_TO_BOOLEAN =

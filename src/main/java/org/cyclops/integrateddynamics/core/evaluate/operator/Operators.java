@@ -2202,7 +2202,8 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ITEMS = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.LIST).symbolOperator("entityitems")
             .function(input -> {
-                Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) input.getValue(0)).getRawValue();
+                ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0);
+                Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
                     return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityItems(entity.world, entity, null));
@@ -2217,7 +2218,8 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_FLUIDS = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.LIST).symbolOperator("entityfluids")
             .function(input -> {
-                Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) input.getValue(0)).getRawValue();
+                ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0);
+                Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
                     return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityFluids(entity.world, entity, null));
@@ -2232,7 +2234,8 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ENERGY_STORED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("entityenergystored")
             .function(input -> {
-                Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) input.getValue(0)).getRawValue();
+                ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0);
+                Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
                     if (entity.hasCapability(CapabilityEnergy.ENERGY, null)) {
@@ -2248,7 +2251,8 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ENERGY_CAPACITY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("entityenergycapacity")
             .function(input -> {
-                Optional<Entity> a = ((ValueObjectTypeEntity.ValueEntity) input.getValue(0)).getRawValue();
+                ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0);
+                Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
                     if (entity.hasCapability(CapabilityEnergy.ENERGY, null)) {
@@ -2573,7 +2577,7 @@ public final class Operators {
             .conditionalOutputTypeDeriver((operator, input) -> input[2].getType())
             .function(variables -> {
                 IValue accumulator = variables.getValue(2);
-                final IOperator innerOperator = OperatorBuilders.getSafeOperator((ValueTypeOperator.ValueOperator)
+                final IOperator innerOperator = OperatorBuilders.getSafeOperator(
                         variables.getValue(0), accumulator.getType());
                 ValueTypeList.ValueList<IValueType<IValue>, IValue> inputList = variables.getValue(1);
                 for (IValue listValue : inputList.getRawValue()) {
@@ -2606,7 +2610,7 @@ public final class Operators {
                 }
 
                 IValue accumulator = iter.next();
-                final IOperator innerOperator = OperatorBuilders.getSafeOperator((ValueTypeOperator.ValueOperator)
+                final IOperator innerOperator = OperatorBuilders.getSafeOperator(
                         variables.getValue(0), accumulator.getType());
 
                 while (iter.hasNext()) {
