@@ -893,7 +893,7 @@ public final class Operators {
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
                 IOperator operator = OperatorBuilders.getSafePredictate(variables.getValue(1));
                 for (IValue value : list) {
-                    IValue result = operator.evaluate(new IVariable[]{new Variable<>(value.getType(), value)});
+                    IValue result = ValueHelpers.evaluateOperator(operator, value);
                     ValueHelpers.validatePredicateOutput(operator, result);
                     if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                         return ValueTypeBoolean.ValueBoolean.of(true);
@@ -935,7 +935,7 @@ public final class Operators {
                 IOperator operator = OperatorBuilders.getSafePredictate(variables.getValue(1));
                 int count = 0;
                 for (IValue listValue : list) {
-                    IValue result = operator.evaluate(new IVariable[]{new Variable<>(listValue.getType(), listValue)});
+                    IValue result = ValueHelpers.evaluateOperator(operator, listValue);
                     ValueHelpers.validatePredicateOutput(operator, result);
                     if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                         count++;
@@ -1053,7 +1053,7 @@ public final class Operators {
                     for(IValue existing : values) {
                         IValue result;
                         try {
-                            result = operator.evaluate(new Variable(value), new Variable(existing));
+                            result = ValueHelpers.evaluateOperator(operator, value, existing);
                             ValueHelpers.validatePredicateOutput(operator, result);
                         } catch (EvaluationException e) {
                             throw Lombok.sneakyThrow(e);
@@ -2611,9 +2611,7 @@ public final class Operators {
 
                 while (iter.hasNext()) {
                     IValue listValue = iter.next();
-                    accumulator = innerOperator.evaluate(new IVariable[]{
-                            new Variable<>(accumulator.getType(), accumulator),
-                            new Variable<>(listValue.getType(), listValue)});
+                    accumulator = ValueHelpers.evaluateOperator(innerOperator, accumulator, listValue);
                 }
                 return accumulator;
             }).build());
