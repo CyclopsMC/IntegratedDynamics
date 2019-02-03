@@ -70,7 +70,12 @@ public class IngredientChannelPositioned<T, M> extends IngredientChannelAdapter<
         protected void prepareLastPos() {
             do {
                 if (it.hasNext()) {
-                    this.lastPos = this.network.getPositionedStorage(it.next()).iterator(prototype, matchFlags);
+                    PartPos pos = it.next();
+                    // Skip if the position is not loaded
+                    if (!pos.getPos().isLoaded()) {
+                        continue;
+                    }
+                    this.lastPos = this.network.getPositionedStorage(pos).iterator(prototype, matchFlags);
                 } else {
                     this.lastPos = null;
                 }

@@ -2,14 +2,12 @@ package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
 import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientMapMutable;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientHashMap;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IPartPosIteratorHandler;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -59,7 +57,12 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         long sum = 0;
         Iterator<PartPos> it = getAllPositions();
         while (it.hasNext()) {
-            sum = Math.addExact(sum, this.network.getPositionedStorage(it.next()).getMaxQuantity());
+            PartPos pos = it.next();
+            // Skip if the position is not loaded
+            if (!pos.getPos().isLoaded()) {
+                continue;
+            }
+            sum = Math.addExact(sum, this.network.getPositionedStorage(pos).getMaxQuantity());
         }
         return sum;
     }
