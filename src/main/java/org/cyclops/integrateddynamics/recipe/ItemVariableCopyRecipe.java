@@ -35,7 +35,7 @@ public class ItemVariableCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> im
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 count++;
                 facade = ItemVariable.getInstance().getVariableFacade(element);
-                if(!facade.isValid() && withoutData.isEmpty() && element.getCount() == 1) {
+                if(!facade.isValid() && withoutData.isEmpty()) {
                     withoutData = element;
                 }
                 if(facade.isValid() && withData.isEmpty() && element.getCount() == 1) {
