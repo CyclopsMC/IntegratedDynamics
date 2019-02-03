@@ -80,4 +80,9 @@ public class ItemVariableCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> im
     public NonNullList<Ingredient> getIngredients() {
         return NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()), Ingredient.fromStacks(getRecipeOutput()));
     }
+
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
 }

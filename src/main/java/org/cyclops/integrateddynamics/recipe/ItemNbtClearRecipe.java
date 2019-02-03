@@ -71,4 +71,9 @@ public class ItemNbtClearRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     public NonNullList<Ingredient> getIngredients() {
         return NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()));
     }
+
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
 }
