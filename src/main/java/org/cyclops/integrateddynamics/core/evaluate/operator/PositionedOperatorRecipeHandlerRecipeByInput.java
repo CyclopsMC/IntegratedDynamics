@@ -28,7 +28,7 @@ public class PositionedOperatorRecipeHandlerRecipeByInput<T extends IValueType<V
             .expireAfterAccess(20, TimeUnit.SECONDS).build();
 
     public PositionedOperatorRecipeHandlerRecipeByInput(DimPos pos, EnumFacing side) {
-        super("recipebyinput", new Function(), ValueTypes.LIST, pos, side);
+        super("recipebyinput", new Function(), ValueTypes.OBJECT_RECIPE, pos, side);
     }
 
     public PositionedOperatorRecipeHandlerRecipeByInput() {
