@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.FullNetworkListenerAdapter;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -121,20 +122,24 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             CompositeMap<Integer, IVariableFacade> compositeMap = new CompositeMap<>();
             for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
                 DimPos dimPos = it.next();
-                IVariableContainer variableContainer = TileHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY);
-                if(variableContainer != null) {
-                    compositeMap.addElement(variableContainer.getVariableCache());
-                } else {
-                    IntegratedDynamics.clog(Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
-                    it.remove();
+                if (dimPos.isLoaded()) {
+                    IVariableContainer variableContainer = TileHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY);
+                    if (variableContainer != null) {
+                        compositeMap.addElement(variableContainer.getVariableCache());
+                    } else {
+                        IntegratedDynamics.clog(Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
+                        it.remove();
+                    }
                 }
             }
             // Also check parts
             for(PartPos partPos : partPositions.valueCollection()) {
-                IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
-                IVariableContainer variableContainer = partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide());
-                if (variableContainer != null) {
-                    compositeMap.addElement(variableContainer.getVariableCache());
+                if (partPos.getPos().isLoaded()) {
+                    IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
+                    IVariableContainer variableContainer = partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide());
+                    if (variableContainer != null) {
+                        compositeMap.addElement(variableContainer.getVariableCache());
+                    }
                 }
             }
             compositeVariableCache = compositeMap;
@@ -225,5 +230,17 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     public boolean removePathElement(IPathElement pathElement, EnumFacing side) {
         notifyPartsChanged();
         return true;
+    }
+
+    @Override
+    public void invalidateElement(INetworkElement element) {
+        compositeVariableCache = null;
+        super.invalidateElement(element);
+    }
+
+    @Override
+    public void revalidateElement(INetworkElement element) {
+        compositeVariableCache = null;
+        super.revalidateElement(element);
     }
 }

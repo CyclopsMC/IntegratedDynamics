@@ -550,11 +550,17 @@ public class Network implements INetwork {
 
     @Override
     public void invalidateElement(INetworkElement element) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.invalidateElement(element);
+        }
         invalidatedElements.add(element);
     }
 
     @Override
     public void revalidateElement(INetworkElement element) {
+        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+            fullNetworkListener.revalidateElement(element);
+        }
         invalidatedElements.remove(element);
     }
 

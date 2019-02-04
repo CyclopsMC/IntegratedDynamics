@@ -220,4 +220,14 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     public void resetLastSecondDurationsIndex() {
         lastSecondDurations.clear();
     }
+
+    @Override
+    public void invalidateElement(INetworkElement element) {
+
+    }
+
+    @Override
+    public void revalidateElement(INetworkElement element) {
+
+    }
 }
