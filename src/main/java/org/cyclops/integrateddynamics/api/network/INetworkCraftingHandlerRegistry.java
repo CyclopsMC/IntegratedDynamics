@@ -25,6 +25,28 @@ public interface INetworkCraftingHandlerRegistry extends IRegistry {
     public Collection<INetworkCraftingHandler> getCraftingHandlers();
 
     /**
+     * Check if at least one crafting handler is crafting the given instance.
+     * @param network The network to craft in.
+     * @param ingredientsNetwork The ingredients network to craft in.
+     * @param channel A channel.
+     * @param ingredientComponent The ingredient component.
+     * @param instance The instance to craft.
+     * @param matchCondition The condition under which the instance should be crafted.
+     * @param <T> The instance type.
+     * @param <M> The matching condition parameter, may be Void.
+     * @return If the instance is being crafted.
+     */
+    public default <T, M> boolean isCrafting(INetwork network, IPositionedAddonsNetworkIngredients<T, M> ingredientsNetwork, int channel,
+                                             IngredientComponent<T, M> ingredientComponent, T instance, M matchCondition) {
+        for (INetworkCraftingHandler craftingHandler : getCraftingHandlers()) {
+            if (craftingHandler.isCrafting(network, ingredientsNetwork, channel, ingredientComponent, instance, matchCondition)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check if at least one crafting handler is applicable for the given channel.
      * @param network The network to craft in.
      * @param ingredientsNetwork The ingredients network to craft in.

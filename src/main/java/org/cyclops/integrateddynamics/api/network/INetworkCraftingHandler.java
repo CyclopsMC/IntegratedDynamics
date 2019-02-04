@@ -9,6 +9,21 @@ import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 public interface INetworkCraftingHandler {
 
     /**
+     * Check if the given instance is being crafted.
+     * @param network The network to craft in.
+     * @param ingredientsNetwork The ingredients network to craft in.
+     * @param channel A channel.
+     * @param ingredientComponent The ingredient component.
+     * @param instance The instance to craft.
+     * @param matchCondition The condition under which the instance should be crafted.
+     * @param <T> The instance type.
+     * @param <M> The matching condition parameter, may be Void. Instances MUST properly implement the equals method.
+     * @return If a crafting job exists for the given instance.
+     */
+    public <T, M> boolean isCrafting(INetwork network, IPositionedAddonsNetworkIngredients<T, M> ingredientsNetwork, int channel,
+                                     IngredientComponent<T, M> ingredientComponent, T instance, M matchCondition);
+
+    /**
      * Check if this handler is applicable for the given channel.
      * @param network The network to craft in.
      * @param ingredientsNetwork The ingredients network to craft in.
