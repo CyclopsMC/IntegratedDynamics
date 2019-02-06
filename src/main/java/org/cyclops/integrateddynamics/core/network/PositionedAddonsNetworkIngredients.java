@@ -114,13 +114,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     @Override
     public IIngredientComponentStorage<T, M> getChannel(int channel) {
-        IIngredientPositionsIndex<T, M> index = getInstanceLocationsIndex(channel);
-        if (index == null) {
-            // This can occur when the index is empty,
-            // which can be caused by all attached storages being empty or no storages being available.
-            index = new IngredientPositionsIndexEmpty<>(getComponent());
-        }
-        return new IngredientChannelIndexed<>(this, channel, index);
+        return new IngredientChannelIndexed<>(this, channel, getChannelIndex(channel));
     }
 
     @Override
@@ -151,7 +145,13 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     @Override
     public IIngredientPositionsIndex<T, M> getChannelIndex(int channel) {
-        return this.indexes.get(channel);
+        IIngredientPositionsIndex<T, M> index = getInstanceLocationsIndex(channel);
+        if (index == null) {
+            // This can occur when the index is empty,
+            // which can be caused by all attached storages being empty or no storages being available.
+            index = new IngredientPositionsIndexEmpty<>(getComponent());
+        }
+        return index;
     }
 
     @Override
