@@ -29,9 +29,21 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
     private final IPositionedAddonsNetworkIngredients<T, M> network;
     private final int channel;
 
+    private boolean limitsEnabled;
+
     public IngredientChannelAdapter(PositionedAddonsNetworkIngredients<T, M> network, int channel) {
         this.network = network;
         this.channel = channel;
+
+        this.limitsEnabled = true;
+    }
+
+    public void enableLimits() {
+        this.limitsEnabled = true;
+    }
+
+    public void disableLimits() {
+        this.limitsEnabled = false;
     }
 
     public IPositionedAddonsNetworkIngredients<T, M> getNetwork() {
@@ -91,12 +103,14 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         }
 
         // Limit rate
-        long limit = network.getRateLimit();
-        long currentQuantity = matcher.getQuantity(ingredient);
         long skippedQuantity = 0;
-        if (currentQuantity > limit) {
-            ingredient = matcher.withQuantity(ingredient, limit);
-            skippedQuantity = currentQuantity - limit;
+        if (this.limitsEnabled) {
+            long limit = network.getRateLimit();
+            long currentQuantity = matcher.getQuantity(ingredient);
+            if (currentQuantity > limit) {
+                ingredient = matcher.withQuantity(ingredient, limit);
+                skippedQuantity = currentQuantity - limit;
+            }
         }
 
         // Try inserting the ingredient at all positions that are not full,
@@ -139,7 +153,9 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
 
         // Limit rate
-        maxQuantity = (int) Math.min(maxQuantity, network.getRateLimit());
+        if (this.limitsEnabled) {
+            maxQuantity = (int) Math.min(maxQuantity, network.getRateLimit());
+        }
 
         // Try extracting from all non-empty positions
         // until one succeeds.
@@ -176,16 +192,19 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         boolean checkQuantity = matcher.hasCondition(matchFlags, getComponent().getPrimaryQuantifier().getMatchCondition());
 
         // Limit rate
-        long limit = network.getRateLimit();
-        if (matcher.getQuantity(prototype) > limit) {
-            // Fail immediately if we require more than the limit
-            if (checkQuantity) {
-                return matcher.getEmptyInstance();
-            }
+        if (this.limitsEnabled) {
+            long limit = network.getRateLimit();
+            if (matcher.getQuantity(prototype) > limit) {
+                // Fail immediately if we require more than the limit
+                if (checkQuantity) {
+                    return matcher.getEmptyInstance();
+                }
 
-            // Otherwise, we reduce our requested quantity
-            prototype = matcher.withQuantity(prototype, limit);
+                // Otherwise, we reduce our requested quantity
+                prototype = matcher.withQuantity(prototype, limit);
+            }
         }
+
         final T prototypeFinal = prototype;
         long requiredQuantity = matcher.getQuantity(prototypeFinal);
 
