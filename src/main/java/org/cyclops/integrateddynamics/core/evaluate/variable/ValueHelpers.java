@@ -1,8 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -11,6 +14,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 import javax.annotation.Nullable;
 
@@ -182,6 +186,29 @@ public class ValueHelpers {
                     result.getType(), ValueTypes.BOOLEAN);
             throw new EvaluationException(error.localize());
         }
+    }
+
+    /**
+     * Get the human readable value of the given value in a safe way.
+     * @param variable A nullable variable.
+     * @return A pair of a string and color.
+     */
+    public static Pair<String, Integer> getSafeReadableValue(@Nullable IVariable variable) {
+        String readValue = "";
+        int readValueColor = 0;
+        if (!NetworkHelpers.shouldWork()) {
+            readValue = "SAFE-MODE";
+        } else if(variable != null) {
+            try {
+                IValue value = variable.getValue();
+                readValue = value.getType().toCompactString(value);
+                readValueColor = value.getType().getDisplayColor();
+            } catch (EvaluationException | NullPointerException | PartStateException e) {
+                readValue = "ERROR";
+                readValueColor = Helpers.RGBToInt(255, 0, 0);
+            }
+        }
+        return Pair.of(readValue, readValueColor);
     }
 
 }

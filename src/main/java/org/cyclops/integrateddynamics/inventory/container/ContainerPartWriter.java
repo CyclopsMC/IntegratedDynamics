@@ -3,14 +3,13 @@ package org.cyclops.integrateddynamics.inventory.container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -18,6 +17,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
@@ -93,36 +93,23 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
 
         try {
             if(!MinecraftHelpers.isClientSide()) {
-                String writeValue = "";
-                int writeValueColor = 0;
-                if (!NetworkHelpers.shouldWork()) {
-                    writeValue = "SAFE-MODE";
-                } else if(!getPartState().isEnabled()) {
-                    writeValue = "NO POWER";
-                } else if(getPartState().hasVariable()) {
+                Pair<String, Integer> readValue;
+                if (!getPartState().isEnabled()) {
+                    readValue = Pair.of("NO POWER", 0);
+                } else if (getPartState().hasVariable()) {
                     IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(
                             NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
                                     getPartContainer().getPosition().getBlockPos(), getTarget().getCenter().getSide()));
                     if (partNetwork != null) {
                         IVariable variable = getPartState().getVariable(partNetwork);
-                        if (variable != null) {
-                            try {
-                                IValue value = variable.getValue();
-                                writeValue = value.getType().toCompactString(value);
-                                writeValueColor = variable.getType().getDisplayColor();
-                            } catch (EvaluationException e) {
-                                writeValue = "ERROR";
-                                writeValueColor = Helpers.RGBToInt(255, 0, 0);
-                            }
-                        }
+                        readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        writeValue = "NETWORK CORRUPTED!";
-                        writeValueColor = Helpers.RGBToInt(255, 100, 0);
+                        readValue = Pair.of("NETWORK CORRUPTED!", Helpers.RGBToInt(255, 100, 0));
                     }
                 } else {
-                    writeValue = "";
+                    readValue = Pair.of("", 0);
                 }
-                setWriteValue(writeValue, writeValueColor);
+                setWriteValue(readValue.getLeft(), readValue.getRight());
             }
         } catch (PartStateException e) {
             getPlayer().closeScreen();
