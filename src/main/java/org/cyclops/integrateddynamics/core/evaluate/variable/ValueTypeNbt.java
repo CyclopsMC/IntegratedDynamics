@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.config.IChangedCallback;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 
 import javax.annotation.Nullable;
@@ -17,7 +18,8 @@ import java.util.Set;
  * Value type with values that are NBT tags.
  * @author rubensworks
  */
-public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt> implements IValueTypeNullable<ValueTypeNbt.ValueNbt> {
+public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
+        implements IValueTypeNullable<ValueTypeNbt.ValueNbt>, IValueTypeNamed<ValueTypeNbt.ValueNbt> {
 
     private Set<String> tagBlacklist = Sets.newHashSet();
 
@@ -72,6 +74,11 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt> implement
             }
         }
         return tag;
+    }
+
+    @Override
+    public String getName(ValueNbt value) {
+        return toCompactString(value);
     }
 
     @ToString
