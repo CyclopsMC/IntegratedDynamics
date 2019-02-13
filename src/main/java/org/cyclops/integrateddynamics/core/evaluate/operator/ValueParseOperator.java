@@ -20,7 +20,11 @@ public class ValueParseOperator<T1 extends IValueType<V1>, T2 extends IValueType
     private final IValueParseRegistry.IMapping<T1, T2, V1, V2> mapping;
 
     public ValueParseOperator(final T1 from, final T2 to, final IValueParseRegistry.IMapping<T1, T2, V1, V2> mapping) {
-        super("Parse", from.getUnlocalizedName() + "$" + to.getUnlocalizedName(), constructInputVariables(1, from), to, new IFunction() {
+        super(
+                to.getTypeName().equals("string")
+                        ? from.getTypeName().substring(0, 1).toUpperCase() + from.getTypeName().substring(1) + "_as_String"
+                        : "parse_" + to.getTypeName().substring(0, 1).toUpperCase() + to.getTypeName().substring(1)
+                , "parse" + from.getUnlocalizedName() + "$" + to.getUnlocalizedName(), constructInputVariables(1, from), to, new IFunction() {
             @Override
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 IValue value = variables.getValue(0);
