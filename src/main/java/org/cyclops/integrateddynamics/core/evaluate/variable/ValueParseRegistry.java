@@ -14,7 +14,7 @@ import java.util.Map;
  * Registry for casting {@link IValue}.
  * @author rubensworks / LostOfThought
  */
-public final class ValueParseRegistry implements IValueParseRegistry {
+public final class  ValueParseRegistry implements IValueParseRegistry {
 
     private static ValueParseRegistry INSTANCE = new ValueParseRegistry();
 
@@ -39,10 +39,10 @@ public final class ValueParseRegistry implements IValueParseRegistry {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 parse(T2 target, V1 value) throws StringParseException {
+    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 parse(T2 target, V1 value) throws ValueParseException {
         IMapping mapping = mappings.get(Pair.<IValueType, IValueType>of(value.getType(), target));
         if(mapping == null) {
-            throw new StringParseException(value.getType(), target);
+            throw new ValueParseException(value.getType(), target);
         }
         return ((IMapping<T1, T2, V1, V2>) mapping).parse(value);
     }

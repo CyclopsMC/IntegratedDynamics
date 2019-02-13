@@ -32,9 +32,9 @@ public interface IValueParseRegistry extends IRegistry {
      * @param <V1> The source type.
      * @param <V2> The target type.
      * @return The parse value
-     * @throws StringParseException If parsing failed because the type mapping did not exist.
+     * @throws ValueParseException If parsing failed because the type mapping did not exist.
      */
-    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 parse(T2 target, V1 value) throws StringParseException;
+    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 parse(T2 target, V1 value) throws ValueParseException;
 
     /**
      * Check if the the given value can be parsed to the given type.
@@ -54,9 +54,9 @@ public interface IValueParseRegistry extends IRegistry {
 
     }
 
-    public static class StringParseException extends InvalidValueTypeException {
+    public static class ValueParseException extends InvalidValueTypeException {
 
-        public StringParseException(IValueType from, IValueType to) {
+        public ValueParseException(IValueType from, IValueType to) {
             super(String.format("No string parse mapping exists from %s to %s", from, to));
         }
     }
