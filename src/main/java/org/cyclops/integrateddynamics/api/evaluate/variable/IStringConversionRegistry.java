@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
  * Registry for parsing {@link IValue}.
  * @author rubensworks / LostOfThought
  */
-public interface IValueParseRegistry extends IRegistry {
+public interface IStringConversionRegistry extends IRegistry {
 
     /**
      * Register a mapping between to value types.
@@ -26,20 +26,20 @@ public interface IValueParseRegistry extends IRegistry {
     /**
      * Parse the given value to the given type.
      * @param target The target type.
-     * @param value The value to parse.
+     * @param value The value to convert.
      * @param <T1> The source type type.
      * @param <T2> The target type type.
      * @param <V1> The source type.
      * @param <V2> The target type.
-     * @return The parse value
-     * @throws ValueParseException If parsing failed because the type mapping did not exist.
+     * @return The convert value
+     * @throws StringConversionException If parsing failed because the type mapping did not exist.
      */
-    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 parse(T2 target, V1 value) throws ValueParseException;
+    public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> V2 parse(T2 target, V1 value) throws StringConversionException;
 
     /**
      * Check if the the given value can be parsed to the given type.
      * @param target The target type.
-     * @param value The value to parse.
+     * @param value The value to convert.
      * @param <T1> The source type type.
      * @param <T2> The target type type.
      * @param <V1> The source type.
@@ -50,14 +50,14 @@ public interface IValueParseRegistry extends IRegistry {
 
     public static interface IMapping<T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> {
 
-        public V2 parse(V1 value);
+        public V2 convert(V1 value);
 
     }
 
-    public static class ValueParseException extends InvalidValueTypeException {
+    public static class StringConversionException extends InvalidValueTypeException {
 
-        public ValueParseException(IValueType from, IValueType to) {
-            super(String.format("No string parse mapping exists from %s to %s", from, to));
+        public StringConversionException(IValueType from, IValueType to) {
+            super(String.format("No string convert mapping exists from %s to %s", from, to));
         }
     }
 
