@@ -46,6 +46,12 @@ public class StringConversionMappings {
                 return ValueTypeString.ValueString.of(new ValueTypeNbt().serialize(value));
             }
         });
+        REGISTRY.register(ValueTypes.BOOLEAN, ValueTypes.STRING, new IStringConversionRegistry.IMapping<ValueTypeBoolean, ValueTypeString, ValueTypeBoolean.ValueBoolean, ValueTypeString.ValueString>() {
+            @Override
+            public ValueTypeString.ValueString convert(ValueTypeBoolean.ValueBoolean value) {
+                return ValueTypeString.ValueString.of(String.valueOf(value.getRawValue()));
+            }
+        });
         REGISTRY.register(ValueTypes.STRING, ValueTypes.INTEGER, new IStringConversionRegistry.IMapping<ValueTypeString, ValueTypeInteger, ValueTypeString.ValueString, ValueTypeInteger.ValueInteger>() {
             @Override
             public ValueTypeInteger.ValueInteger convert(ValueTypeString.ValueString value) {
@@ -90,7 +96,16 @@ public class StringConversionMappings {
                 }
             }
         });
-        
+        REGISTRY.register(ValueTypes.STRING, ValueTypes.BOOLEAN, new IStringConversionRegistry.IMapping<ValueTypeString, ValueTypeBoolean, ValueTypeString.ValueString, ValueTypeBoolean.ValueBoolean>() {
+            @Override
+            public ValueTypeBoolean.ValueBoolean convert(ValueTypeString.ValueString value) {
+                try {
+                    return ValueTypeBoolean.ValueBoolean.of(Boolean.valueOf(value.getRawValue()));
+                } catch (NumberFormatException e) {
+                    return ValueTypeBoolean.ValueBoolean.of(false);
+                }
+            }
+        });
     }
 
 }
