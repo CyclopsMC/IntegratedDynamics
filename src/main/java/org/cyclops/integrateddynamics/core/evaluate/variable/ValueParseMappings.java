@@ -28,17 +28,6 @@ public class ValueParseMappings {
                 return ValueTypeInteger.ValueInteger.of(0);
             }
         });
-        REGISTRY.register(ValueTypes.DOUBLE, value -> {
-            try {
-                return ValueTypeDouble.ValueDouble.of(Double.parseDouble(value.getRawValue()));
-            } catch (NumberFormatException e) {
-                try {
-                    return ValueTypeDouble.ValueDouble.of((double) Long.decode(value.getRawValue()));
-                } catch (NumberFormatException e2) {
-                    return ValueTypeDouble.ValueDouble.of(0.0);
-                }
-            }
-        });
         REGISTRY.register(ValueTypes.LONG, value -> {
             try {
                 return ValueTypeLong.ValueLong.of(Long.decode(value.getRawValue()));
@@ -46,8 +35,22 @@ public class ValueParseMappings {
                 return ValueTypeLong.ValueLong.of(0L);
             }
         });
+        REGISTRY.register(ValueTypes.DOUBLE, value -> {
+            // TODO: /[+-]?Inf(inity)?/i
+            // TODO: Floating point Hex/Octal
+            try {
+                return ValueTypeDouble.ValueDouble.of(Double.parseDouble(value.getRawValue()));
+            } catch (NumberFormatException e) {
+                try {
+                    // Try as a long
+                    return ValueTypeDouble.ValueDouble.of((double) Long.decode(value.getRawValue()));
+                } catch (NumberFormatException e2) {
+                    return ValueTypeDouble.ValueDouble.of(0.0);
+                }
+            }
+        });
         REGISTRY.register(ValueTypes.BOOLEAN, value -> {
-            // Should be more robust, ([Tt](rue)?|[Ff](alse)?)
+            // TODO: /(T(rue)?|F(alse)?)/i
             try {
                 return ValueTypeBoolean.ValueBoolean.of(Boolean.valueOf(value.getRawValue()));
             } catch (NumberFormatException e) {
@@ -58,6 +61,7 @@ public class ValueParseMappings {
                 }
             }
         });
+        REGISTRY.register(ValueTypes.STRING, value -> value);
         REGISTRY.register(ValueTypes.NBT, value -> {
             try {
                 return new ValueTypeNbt().deserialize(value.getRawValue());

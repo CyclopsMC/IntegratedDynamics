@@ -2,11 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.junit.Before;
 import org.junit.Test;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -16,660 +13,429 @@ import static org.junit.Assert.assertThat;
  * Test the different integer operators.
  * @author rubensworks
  */
-public class TestStringOperators {
+public class TestParseOperators {
 
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<>(DUMMY_TYPE, DummyValueType.DummyValue.of());
 
-    private DummyVariableString sempty;
-    private DummyVariableString sabc;
-    private DummyVariableString sl;
-    private DummyVariableString shello;
-    private DummyVariableString sworld;
-    private DummyVariableString shelloWorld;
-    private DummyVariableString sregex;
-    private DummyVariableString sbrokenRegex;
-    private DummyVariableInteger i0;
-    private DummyVariableInteger i1;
-    private DummyVariableInteger i2;
-    private DummyVariableInteger i10;
-    private DummyVariableDouble d10_5;
+    private ValueParseRegistry vpr;
+
+    private static <T> ValueTypeString.ValueString s(T v){
+        return ValueTypeString.ValueString.of(String.valueOf(v));
+    }
 
     @Before
     public void before() {
-        sempty = new DummyVariableString(ValueTypeString.ValueString.of(""));
-        sabc = new DummyVariableString(ValueTypeString.ValueString.of("abc"));
-        sl = new DummyVariableString(ValueTypeString.ValueString.of("l"));
-        shello = new DummyVariableString(ValueTypeString.ValueString.of("hello"));
-        sworld = new DummyVariableString(ValueTypeString.ValueString.of("world"));
-        shelloWorld = new DummyVariableString(ValueTypeString.ValueString.of("hello world"));
-        sregex = new DummyVariableString(ValueTypeString.ValueString.of("\\A(.+?)(world)\\z"));
-        sbrokenRegex = new DummyVariableString(ValueTypeString.ValueString.of("[.+"));
-        i0 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
-        i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
-        i2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2));
-        i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
-        d10_5 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(10.5D));
+        vpr = ValueParseRegistry.getInstance();
+        ValueParseMappings.load();
     }
 
     /**
-     * ----------------------------------- LENGTH -----------------------------------
+     * ----------------------------------- INTEGER -----------------------------------
      */
-
     @Test
-    public void testStringLength() throws EvaluationException {
-        IValue res1 = Operators.STRING_LENGTH.evaluate(new IVariable[]{sabc});
+    public void testParseInt_IsInt() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s("garbage"));
         assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("len(abc) = 3", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(3));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeLengthLarge() throws EvaluationException {
-        Operators.STRING_LENGTH.evaluate(new IVariable[]{sabc, sabc});
+    @Test
+    public void testParseIntEmpty() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s(""));
+        assertThat("parse_Integer(\"garbage\")", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeLengthSmall() throws EvaluationException {
-        Operators.STRING_LENGTH.evaluate(new IVariable[]{});
+    @Test
+    public void testParseIntGarbage() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s("garbage"));
+        assertThat("parse_Integer(\"garbage\")", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeLength() throws EvaluationException {
-        Operators.STRING_LENGTH.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    @Test
+    public void testParseInt0() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s(0));
+        assertThat("parse_Integer(0xFF)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
+    }
+    @Test
+    public void testParseInt1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s(1));
+        assertThat("parse_Integer(0xFF)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
+    }
+    @Test
+    public void testParseIntN1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s(-1));
+        assertThat("parse_Integer(0xFF)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(-1));
+    }
+    @Test
+    public void testParseIntHex_x() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s("0xFF"));
+        assertThat("parse_Integer(0xFF)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0xFF));
+    }
+    @Test
+    public void testParseIntHex_X() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s("0XFF"));
+        assertThat("parse_Integer(0XFF)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0xFF));
+    }
+    @Test
+    public void testParseIntHex_H() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s("#FF"));
+        assertThat("parse_Integer(#FF)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0xFF));
+    }
+    @Test
+    public void testParseIntNHex() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s("-0xFF"));
+        assertThat("parse_Integer(0xFF)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(-0xFF));
+    }
+    @Test
+    public void testParseIntOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s("01"));
+        assertThat("parse_Integer(01)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
+    }
+    @Test
+    public void testParseIntNOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s("-01"));
+        assertThat("parse_Integer(-01)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(-1));
+    }
+    @Test
+    public void testParseIntMax() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s(Integer.MAX_VALUE));
+        assertThat("parse_Integer(<Integer.MAX_VALUE>)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(Integer.MAX_VALUE));
+    }
+    @Test
+    public void testParseIntMaxP1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s((long) Integer.MAX_VALUE + 1));
+        assertThat("parse_Integer(<Integer.MAX_VALUE + 1>)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
+    }
+    @Test
+    public void testParseIntMin() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s(Integer.MIN_VALUE));
+        assertThat("parse_Integer(<Integer.MIN_VALUE>)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(Integer.MIN_VALUE));
+    }
+    @Test
+    public void testParseIntMinM1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.INTEGER, s((long) Integer.MIN_VALUE - 1));
+        assertThat("parse_Integer(<Integer.MIN_VALUE - 1>)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
     }
 
     /**
-     * ----------------------------------- CONCAT -----------------------------------
+     * ----------------------------------- LONG -----------------------------------
      */
 
     @Test
-    public void testStringConcat() throws EvaluationException {
-        IValue res1 = Operators.STRING_CONCAT.evaluate(new IVariable[]{sabc, sabc});
-        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
-        assertThat("abc + abc = abcabc", ((ValueTypeString.ValueString) res1).getRawValue(), is("abcabc"));
+    public void testParseLong_IsLong() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("garbage"));
+        assertThat("result is a long", res1, instanceOf(ValueTypeLong.ValueLong.class));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizConcatLarge() throws EvaluationException {
-        Operators.STRING_CONCAT.evaluate(new IVariable[]{sabc, sabc, sabc});
+    @Test
+    public void testParseLongEmpty() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s(""));
+        assertThat("parse_Long(\"garbage\")", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(0L));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeConcatSmall() throws EvaluationException {
-        Operators.STRING_CONCAT.evaluate(new IVariable[]{sabc});
+    @Test
+    public void testParseLongGarbage() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("garbage"));
+        assertThat("parse_Long(\"garbage\")", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(0L));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeConcat() throws EvaluationException {
-        Operators.STRING_CONCAT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    @Test
+    public void testParseLong0() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s(0L));
+        assertThat("parse_Long(0xFF)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(0L));
+    }
+    @Test
+    public void testParseLong1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s(1L));
+        assertThat("parse_Long(0xFF)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(1L));
+    }
+    @Test
+    public void testParseLongN1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s(-1L));
+        assertThat("parse_Long(-1L)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(-1L));
+    }
+    @Test
+    public void testParseLongHex_x() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("0xFF"));
+        assertThat("parse_Long(0xFF)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(0xFFL));
+    }
+    @Test
+    public void testParseLongHex_X() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("0XFF"));
+        assertThat("parse_Long(0XFF)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(0xFFL));
+    }
+    @Test
+    public void testParseLongHex_H() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("#FF"));
+        assertThat("parse_Long(#FF)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(0xFFL));
+    }
+    @Test
+    public void testParseLongNHex() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("-0xFF"));
+        assertThat("parse_Long(0xFF)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(-0xFFL));
+    }
+    @Test
+    public void testParseLongOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("01"));
+        assertThat("parse_Long(01)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(1L));
+    }
+    @Test
+    public void testParseLongNOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("-01"));
+        assertThat("parse_Long(01)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(-1L));
+    }
+    @Test
+    public void testParseLongMax() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s(Long.MAX_VALUE));
+        assertThat("parse_Long(<Long.MAX_VALUE>)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(Long.MAX_VALUE));
+    }
+    @Test
+    public void testParseLongMaxP1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("9223372036854775808"));
+        assertThat("parse_Long(<Long.MAX_VALUE + 1>)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(0L));
+    }
+    @Test
+    public void testParseLongMin() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s(Long.MIN_VALUE));
+        assertThat("parse_Long(<Long.MIN_VALUE>)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(Long.MIN_VALUE));
+    }
+    @Test
+    public void testParseLongMinM1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.LONG, s("-9223372036854775809"));
+        assertThat("parse_Long(<Long.MIN_VALUE - 1>)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(0L));
     }
 
     /**
-     * ----------------------------------- CONTAINS -----------------------------------
+     * ----------------------------------- DOUBLE -----------------------------------
      */
+    // TODO: Floating point Hex/Octal
+    // TODO: No leading 0 as in .1
 
     @Test
-    public void testStringContains() throws EvaluationException {
-        IValue res1 = Operators.STRING_CONTAINS.evaluate(new IVariable[]{shello, shelloWorld});
-        IValue res2 = Operators.STRING_CONTAINS.evaluate(new IVariable[]{sworld, shelloWorld});
-        IValue res3 = Operators.STRING_CONTAINS.evaluate(new IVariable[]{sabc, shelloWorld});
-        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
-        assertThat("hello world contains hello", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
-        assertThat("hello world contains world", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
-        assertThat("hello world doesn't contain abc", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(false));
+    public void testParseDouble_IsDouble() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("garbage"));
+        assertThat("result is a double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeContainsLarge() throws EvaluationException {
-        Operators.STRING_CONTAINS.evaluate(new IVariable[]{sabc, sabc, sabc});
+    @Test
+    public void testParseDoubleEmpty() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s(""));
+        assertThat("parse_Double(\"garbage\")", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(0.0));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeContainsSmall() throws EvaluationException {
-        Operators.STRING_CONTAINS.evaluate(new IVariable[]{sabc});
+    @Test
+    public void testParseDoubleGarbage() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("garbage"));
+        assertThat("parse_Double(\"garbage\")", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(0.0));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeContains() throws EvaluationException {
-        Operators.STRING_CONTAINS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    @Test
+    public void testParseDouble0() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s(0.0));
+        assertThat("parse_Double(0xFF)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(0.0));
+    }
+    @Test
+    public void testParseDouble1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s(1.0));
+        assertThat("parse_Double(0xFF)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(1.0));
+    }
+    @Test
+    public void testParseDoubleN0() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-0.0"));
+        assertThat("parse_Double(-1L)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(-0.0));
+    }
+    @Test
+    public void testParseDoubleN1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s(-1.0));
+        assertThat("parse_Double(-1L)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(-1.0));
+    }
+    @Test
+    public void testParseDoubleHex_x() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("0xFF"));
+        assertThat("parse_Double(0xFF)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(255.0));
+    }
+    @Test
+    public void testParseDoubleHex_X() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("0XFF"));
+        assertThat("parse_Double(0XFF)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(255.0));
+    }
+    @Test
+    public void testParseDoubleHex_H() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("#FF"));
+        assertThat("parse_Double(#FF)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(255.0));
+    }
+    @Test
+    public void testParseDoubleNHex() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-0xFF"));
+        assertThat("parse_Double(-0xFF)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(-255.0));
+    }
+    @Test
+    public void testParseDoubleDHex() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("0xFF.FF"));
+        assertThat("parse_Double(0xFF.FF)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(255.255));
+    }
+    @Test
+    public void testParseDoubleNDHex() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-0xFF.FF"));
+        assertThat("parse_Double(-0xFF.FF)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(-255.255));
+    }
+    @Test
+    public void testParseDoubleOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("01"));
+        assertThat("parse_Double(01)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(1.0));
+    }
+    @Test
+    public void testParseDoubleNOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-01"));
+        assertThat("parse_Double(-01)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(-1.0));
+    }
+    @Test
+    public void testParseDoubleDOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("01.1"));
+        assertThat("parse_Double(01)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(1.1));
+    }
+    @Test
+    public void testParseDoubleNDOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-01.1"));
+        assertThat("parse_Double(-01)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(-1.1));
+    }
+    @Test
+    public void testParseDoubleMax() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s(Double.MAX_VALUE));
+        assertThat("parse_Double(<Double.MAX_VALUE>)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.MAX_VALUE));
+    }
+    @Test
+    public void testParseDoubleMaxP1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("1.7976931348623157e+309"));
+        assertThat("parse_Double(<Double.MAX_VALUE * 10>)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(0.0));
+    }
+    @Test
+    public void testParseDoubleMin() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s(Double.MIN_VALUE));
+        assertThat("parse_Double(<Double.MIN_VALUE>)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.MIN_VALUE));
+    }
+    @Test
+    public void testParseDoubleMinM1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("4.9e-325"));
+        assertThat("parse_Double(<Double.MIN_VALUE * -10>)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(0.0));
+    }
+    @Test
+    public void testParseDoubleInf() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("Inf"));
+        assertThat("parse_Double(Inf)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.POSITIVE_INFINITY));
+    }
+    @Test
+    public void testParseDoubleNInf() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-Inf"));
+        assertThat("parse_Double(-Inf)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.NEGATIVE_INFINITY));
+    }    @Test
+    public void testParseDoubleInfinity() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("Infinity"));
+        assertThat("parse_Double(Infinity)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.POSITIVE_INFINITY));
+    }
+    @Test
+    public void testParseDoubleNInfinity() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-Infinity"));
+        assertThat("parse_Double(-Infinity)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.NEGATIVE_INFINITY));
+    }
+    @Test
+    public void testParseDoubleinf() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("inf"));
+        assertThat("parse_Double(inf)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.POSITIVE_INFINITY));
+    }
+    @Test
+    public void testParseDoubleNinf() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-inf"));
+        assertThat("parse_Double(-inf)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.NEGATIVE_INFINITY));
+    }    @Test
+    public void testParseDoubleinfinity() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("infinity"));
+        assertThat("parse_Double(infinity)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.POSITIVE_INFINITY));
+    }
+    @Test
+    public void testParseDoubleNinfinity() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.DOUBLE, s("-infinity"));
+        assertThat("parse_Double(-infinity)", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(Double.NEGATIVE_INFINITY));
     }
 
     /**
-     * ----------------------------------- INDEX_OF -----------------------------------
+     * ----------------------------------- BOOLEAN -----------------------------------
      */
-
+    // TODO: Need /([Tt](rue)?|[Ff](alse)?)/ cases
     @Test
-    public void testStringIndexOf() throws EvaluationException {
-        IValue res1 = Operators.STRING_INDEX_OF.evaluate(new IVariable[]{shello, shelloWorld});
-        IValue res2 = Operators.STRING_INDEX_OF.evaluate(new IVariable[]{sworld, shelloWorld});
-        IValue res3 = Operators.STRING_INDEX_OF.evaluate(new IVariable[]{sabc, shelloWorld});
-        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("hello world index_of hello = 0", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
-        assertThat("hello world index_of world = 6", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(6));
-        assertThat("hello world index_of abc = -1", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(-1));
+    public void testParseBoolean_IsBoolean() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s("garbage"));
+        assertThat("result is an boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeIndexOfLarge() throws EvaluationException {
-        Operators.STRING_INDEX_OF.evaluate(new IVariable[]{sabc, sabc, sabc});
+    @Test
+    public void testParseBooleanEmpty() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s(""));
+        assertThat("parse_Boolean(\"garbage\")", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeIndexOfSmall() throws EvaluationException {
-        Operators.STRING_INDEX_OF.evaluate(new IVariable[]{sabc});
+    @Test
+    public void testParseBooleanGarbage() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s("garbage"));
+        assertThat("parse_Boolean(\"garbage\")", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeIndexOf() throws EvaluationException {
-        Operators.STRING_INDEX_OF.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    @Test
+    public void testParseBoolean0() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s(0));
+        assertThat("parse_Boolean(0xFF)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+    }
+    @Test
+    public void testParseBoolean1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s(1));
+        assertThat("parse_Boolean(0xFF)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+    }
+    @Test
+    public void testParseBooleanN1() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s(-1));
+        assertThat("parse_Boolean(0xFF)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+    }
+    @Test
+    public void testParseBooleanHex_x() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s("0xFF"));
+        assertThat("parse_Boolean(0xFF)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+    }
+    @Test
+    public void testParseBooleanHex_X() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s("0XFF"));
+        assertThat("parse_Boolean(0XFF)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+    }
+    @Test
+    public void testParseBooleanHex_H() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s("#FF"));
+        assertThat("parse_Boolean(#FF)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+    }
+    @Test
+    public void testParseBooleanNHex() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s("-0xFF"));
+        assertThat("parse_Boolean(0xFF)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+    }
+    @Test
+    public void testParseBooleanOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s("01"));
+        assertThat("parse_Boolean(01)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+    }
+    @Test
+    public void testParseBooleanNOctal() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.BOOLEAN, s("-01"));
+        assertThat("parse_Boolean(-01)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
     }
 
     /**
-     * ----------------------------------- INDEX_OF_REGEX -----------------------------------
+     * ----------------------------------- STRING -----------------------------------
      */
-
     @Test
-    public void testStringIndexOfRegex() throws EvaluationException {
-        DummyVariableString word = new DummyVariableString(ValueTypeString.ValueString.of("worl?d"));
-        IValue res1 = Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sregex, shelloWorld});
-        IValue res2 = Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sworld, shelloWorld});
-        IValue res3 = Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{word, shelloWorld});
-        IValue res4 = Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sabc, shelloWorld});
-        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("hello world index_of_regex complex regex = 0", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(0));
-        assertThat("hello world index_of_regex world = 6", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(6));
-        assertThat("hello world index_of_regex worl?d = 6", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(6));
-        assertThat("hello world index_of_regex abc = -1", ((ValueTypeInteger.ValueInteger) res4).getRawValue(), is(-1));
+    public void testParseString_IsString() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.STRING, s("garbage"));
+        assertThat("result is an string", res1, instanceOf(ValueTypeString.ValueString.class));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidPatternIndexOfRegex() throws EvaluationException {
-        Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sbrokenRegex, sabc});
+    @Test
+    public void testParseStringEmpty() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.STRING, s(""));
+        assertThat("parse_String(\"\")", ((ValueTypeString.ValueString) res1).getRawValue(), is(""));
     }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeIndexOfRegexLarge() throws EvaluationException {
-        Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeIndexOfRegexSmall() throws EvaluationException {
-        Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeIndexOfRegex() throws EvaluationException {
-        Operators.STRING_INDEX_OF_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    @Test
+    public void testParseStringIdentity() throws EvaluationException {
+        IValue res1 = vpr.parse(ValueTypes.STRING, s("♨"));
+        assertThat("parse_String(\"\")", ((ValueTypeString.ValueString) res1).getRawValue(), is("♨"));
     }
 
     /**
-     * ----------------------------------- STARTS_WITH -----------------------------------
+     * ----------------------------------- NBT -----------------------------------
      */
-
-    @Test
-    public void testStringStartsWith() throws EvaluationException {
-        IValue res1 = Operators.STRING_STARTS_WITH.evaluate(new IVariable[]{shello, shelloWorld});
-        IValue res2 = Operators.STRING_STARTS_WITH.evaluate(new IVariable[]{sworld, shelloWorld});
-        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
-        assertThat("hello world starts with hello", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
-        assertThat("hello world doesn't start with world", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeStartsWithLarge() throws EvaluationException {
-        Operators.STRING_STARTS_WITH.evaluate(new IVariable[]{sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeStartsWithSmall() throws EvaluationException {
-        Operators.STRING_STARTS_WITH.evaluate(new IVariable[]{sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeStartsWith() throws EvaluationException {
-        Operators.STRING_STARTS_WITH.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- ENDS_WITH -----------------------------------
-     */
-
-    @Test
-    public void testStringEndsWith() throws EvaluationException {
-        IValue res1 = Operators.STRING_ENDS_WITH.evaluate(new IVariable[]{sworld, shelloWorld});
-        IValue res2 = Operators.STRING_ENDS_WITH.evaluate(new IVariable[]{shello, shelloWorld});
-        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
-        assertThat("hello world ends with world", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
-        assertThat("hello world doesn't end with hello", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeEndsWithLarge() throws EvaluationException {
-        Operators.STRING_ENDS_WITH.evaluate(new IVariable[]{sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeEndsWithSmall() throws EvaluationException {
-        Operators.STRING_ENDS_WITH.evaluate(new IVariable[]{sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeEndsWith() throws EvaluationException {
-        Operators.STRING_ENDS_WITH.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- CONTAINS_REGEX -----------------------------------
-     */
-
-    @Test
-    public void testStringContainsRegex() throws EvaluationException {
-        DummyVariableString shelloPlus = new DummyVariableString(ValueTypeString.ValueString.of("hello.+"));
-        DummyVariableString sstarWorld = new DummyVariableString(ValueTypeString.ValueString.of(".*world"));
-        DummyVariableString sello = new DummyVariableString(ValueTypeString.ValueString.of("e..o"));
-        IValue res1 = Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{shelloPlus, shelloWorld});
-        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
-        assertThat("hello world contains_regex hello.+", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
-        IValue res2 = Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sstarWorld, shelloWorld});
-        assertThat("hello world contains_regex .*world", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
-        IValue res3 = Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sregex, shelloWorld});
-        assertThat("hello world contains a complex regex", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
-        IValue res4 = Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sabc, shelloWorld});
-        assertThat("hello world doesn't match abc", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
-        IValue res5 = Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sello, shelloWorld});
-        assertThat("hello world contains e..o", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(true));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidPatternContainsRegex() throws EvaluationException {
-        Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sbrokenRegex, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeContainsRegexLarge() throws EvaluationException {
-        Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeContainsRegexSmall() throws EvaluationException {
-        Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeContainsRegex() throws EvaluationException {
-        Operators.STRING_CONTAINS_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- MATCHES_REGEX -----------------------------------
-     */
-
-    @Test
-    public void testStringMatchesRegex() throws EvaluationException {
-        DummyVariableString shelloPlus = new DummyVariableString(ValueTypeString.ValueString.of("hello.+"));
-        DummyVariableString sstarWorld = new DummyVariableString(ValueTypeString.ValueString.of(".*world"));
-        DummyVariableString sello = new DummyVariableString(ValueTypeString.ValueString.of("e..o"));
-        IValue res1 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{shelloPlus, shelloWorld});
-        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
-        assertThat("hello world matches_regex hello.+", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
-        IValue res2 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sstarWorld, shelloWorld});
-        assertThat("hello world matches_regex .*world", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
-        IValue res3 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sregex, shelloWorld});
-        assertThat("hello world matches a complex regex", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
-        IValue res4 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sabc, shelloWorld});
-        assertThat("hello world doesn't match abc", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
-        IValue res5 = Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sello, shelloWorld});
-        assertThat("hello world doesn't match e..o", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(false));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidPatternMatchesRegex() throws EvaluationException {
-        Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sbrokenRegex, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeMatchesRegexLarge() throws EvaluationException {
-        Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeMatchesRegexSmall() throws EvaluationException {
-        Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeMatchesRegex() throws EvaluationException {
-        Operators.STRING_MATCHES_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- SPLIT_ON -----------------------------------
-     */
-
-    @Test
-    public void testStringSplitOn() throws EvaluationException {
-        DummyVariableString sspace = new DummyVariableString(ValueTypeString.ValueString.of(" "));
-        IValue res1 = Operators.STRING_SPLIT_ON.evaluate(new IVariable[]{sspace, shelloWorld});
-        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
-        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list = ((ValueTypeList.ValueList) res1).getRawValue();
-        assertThat("split_on('hello world', ' ')[0] = hello", list.get(0).getRawValue(), is("hello"));
-        assertThat("split_on('hello world', ' ')[1] = world", list.get(1).getRawValue(), is("world"));
-        assertThat("split_on('hello world', ' ').size = 2", list.getLength(), is(2));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeSplitOnLarge() throws EvaluationException {
-        Operators.STRING_SPLIT_ON.evaluate(new IVariable[]{sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeSplitOnSmall() throws EvaluationException {
-        Operators.STRING_SPLIT_ON.evaluate(new IVariable[]{sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeSplitOn() throws EvaluationException {
-        Operators.STRING_SPLIT_ON.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- SPLIT_ON_REGEX -----------------------------------
-     */
-
-    @Test
-    public void testStringSplitOnRegex() throws EvaluationException {
-        DummyVariableString swhitespace = new DummyVariableString(ValueTypeString.ValueString.of("\\s"));
-        IValue res1 = Operators.STRING_SPLIT_ON_REGEX.evaluate(new IVariable[]{swhitespace, shelloWorld});
-        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
-        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list = ((ValueTypeList.ValueList) res1).getRawValue();
-        assertThat("split_on_regex('hello world', ' ')[0] = hello", list.get(0).getRawValue(), is("hello"));
-        assertThat("split_on_regex('hello world', ' ')[1] = world", list.get(1).getRawValue(), is("world"));
-        assertThat("split_on_regex('hello world', ' ').size = 2", list.getLength(), is(2));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidPatternSplitOnRegex() throws EvaluationException {
-        DummyVariableString sbroken = new DummyVariableString(ValueTypeString.ValueString.of("[.+"));
-        Operators.STRING_SPLIT_ON_REGEX.evaluate(new IVariable[]{sbroken, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeSplitOnRegexLarge() throws EvaluationException {
-        Operators.STRING_SPLIT_ON_REGEX.evaluate(new IVariable[]{sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeSplitOnRegexSmall() throws EvaluationException {
-        Operators.STRING_SPLIT_ON_REGEX.evaluate(new IVariable[]{sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeSplitOnRegex() throws EvaluationException {
-        Operators.STRING_SPLIT_ON_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- SUBSTRING -----------------------------------
-     */
-
-    @Test
-    public void testStringSubstring() throws EvaluationException {
-        IValue res1 = Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i1, i2, sabc});
-        IValue res2 = Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i1, i10, shelloWorld});
-        IValue res3 = Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i1, i1, sabc});
-        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
-        assertThat("abc substring (1, 2) = b", ((ValueTypeString.ValueString) res1).getRawValue(), is("b"));
-        assertThat("hello world substring (1, 10) = 'ello worl'", ((ValueTypeString.ValueString) res2).getRawValue(), is("ello worl"));
-        assertThat("abc substring (1, 1) = ''", ((ValueTypeString.ValueString) res3).getRawValue(), is(""));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testOutOfBoundsSubstring() throws EvaluationException {
-        Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i10, i10, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testNegativeSubstring() throws EvaluationException {
-        DummyVariableInteger iNeg1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-1));
-        Operators.STRING_SUBSTRING.evaluate(new IVariable[]{iNeg1, i10, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvertedSubstring() throws EvaluationException {
-        Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i10, i1, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeSubstringLarge() throws EvaluationException {
-        Operators.STRING_SUBSTRING.evaluate(new IVariable[]{sabc, sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeSubstringSmall() throws EvaluationException {
-        Operators.STRING_SUBSTRING.evaluate(new IVariable[]{sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeSubstring() throws EvaluationException {
-        Operators.STRING_SUBSTRING.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- REGEX_GROUP -----------------------------------
-     */
-
-    @Test
-    public void testStringRegexGroup() throws EvaluationException {
-        IValue res1 = Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{sregex, i0, shelloWorld});
-        IValue res2 = Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{sregex, i1, shelloWorld});
-        IValue res3 = Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{sregex, i2, shelloWorld});
-        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
-        assertThat("hello world regex_group ('\\A(.+?)(world)\\z', 0) = hello world", ((ValueTypeString.ValueString) res1).getRawValue(), is("hello world"));
-        assertThat("hello world regex_group ('\\A(.+?)(world)\\z', 1) = 'hello '", ((ValueTypeString.ValueString) res2).getRawValue(), is("hello "));
-        assertThat("hello world regex_group ('\\A(.+?)(world)\\z', 2) = world", ((ValueTypeString.ValueString) res3).getRawValue(), is("world"));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testOutOfBoundsRegexGroup() throws EvaluationException {
-        Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{sregex, i10, shelloWorld});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testNegativeRegexGroup() throws EvaluationException {
-        DummyVariableInteger iNeg1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-1));
-        Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{sregex, iNeg1, shelloWorld});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidPatternRegexGroup() throws EvaluationException {
-        Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{sbrokenRegex, i1, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeRegexGroupLarge() throws EvaluationException {
-        Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{sabc, sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeRegexGroupSmall() throws EvaluationException {
-        Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeRegexGroup() throws EvaluationException {
-        Operators.STRING_REGEX_GROUP.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- REGEX_GROUPS -----------------------------------
-     */
-
-    @Test
-    public void testStringRegexGroups() throws EvaluationException {
-        IValue res1 = Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{sabc, shelloWorld});
-        IValue res2 = Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{sregex, shelloWorld});
-        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
-        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list1 = ((ValueTypeList.ValueList) res1).getRawValue();
-        assertThat("(hello_world regex_groups abc).size = 0", list1.getLength(), is(0));
-        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list2 = ((ValueTypeList.ValueList) res2).getRawValue();
-        assertThat("hello world regex_groups ('\\A(.+?)(world)\\z')[0] = hello world", list2.get(0).getRawValue(), is("hello world"));
-        assertThat("hello world regex_groups ('\\A(.+?)(world)\\z')[1] = 'hello '", list2.get(1).getRawValue(), is("hello "));
-        assertThat("hello world regex_groups ('\\A(.+?)(world)\\z')[2] = world", list2.get(2).getRawValue(), is("world"));
-        assertThat("(hello world regex_groups ('\\A(.+?)(world)\\z')).size = 3", list2.getLength(), is(3));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidPatternRegexGroups() throws EvaluationException {
-        Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{sbrokenRegex, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeRegexGroupsLarge() throws EvaluationException {
-        Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeRegexGroupsSmall() throws EvaluationException {
-        Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeRegexGroups() throws EvaluationException {
-        Operators.STRING_REGEX_GROUPS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- REGEX_SCAN -----------------------------------
-     */
-
-    @Test
-    public void testStringRegexScan() throws EvaluationException {
-        DummyVariableString firstLetters = new DummyVariableString(ValueTypeString.ValueString.of("(\\S)\\S*"));
-        IValue res1 = Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{sabc, i0, shelloWorld});
-        IValue res2 = Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{firstLetters, i1, shelloWorld});
-        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
-        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list1 = ((ValueTypeList.ValueList) res1).getRawValue();
-        assertThat("(hello_world regex_scan abc).size = 0", list1.getLength(), is(0));
-        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list2 = ((ValueTypeList.ValueList) res2).getRawValue();
-        assertThat("hello world regex_scan ('(\\S)\\S*', 1)[0] = h", list2.get(0).getRawValue(), is("h"));
-        assertThat("hello world regex_scan ('(\\S)\\S*', 1)[1] = w", list2.get(1).getRawValue(), is("w"));
-        assertThat("hello world regex_scan ('(\\S)\\S*', 1).size = 2", list2.getLength(), is(2));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidPatternRegexScan() throws EvaluationException {
-        Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{sbrokenRegex, i0, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeRegexScanLarge() throws EvaluationException {
-        Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{sabc, sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeRegexScanSmall() throws EvaluationException {
-        Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeRegexScan() throws EvaluationException {
-        Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- REPLACE -----------------------------------
-     */
-
-    @Test
-    public void testStringReplace() throws EvaluationException {
-        IValue res1 = Operators.STRING_REPLACE.evaluate(new IVariable[]{sl, sempty, shelloWorld});
-        IValue res2 = Operators.STRING_REPLACE.evaluate(new IVariable[]{shelloWorld, sempty, shelloWorld});
-        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
-        assertThat("hello world replace (l, '') = heo word", ((ValueTypeString.ValueString)res1).getRawValue(), is("heo word"));
-        assertThat("hello world replace (hello world, '') = ''", ((ValueTypeString.ValueString)res2).getRawValue(), is(""));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeReplaceLarge() throws EvaluationException {
-        Operators.STRING_REPLACE.evaluate(new IVariable[]{sabc, sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeReplaceSmall() throws EvaluationException {
-        Operators.STRING_REPLACE.evaluate(new IVariable[]{sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeReplace() throws EvaluationException {
-        Operators.STRING_REPLACE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- REPLACE_REGEX -----------------------------------
-     */
-
-    @Test
-    public void testStringReplaceRegex() throws EvaluationException {
-        DummyVariableString szerozero = new DummyVariableString(ValueTypeString.ValueString.of("$0$0"));
-        DummyVariableString sone = new DummyVariableString(ValueTypeString.ValueString.of("$1"));
-        IValue res1 = Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sl, szerozero, shelloWorld});
-        IValue res2 = Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sregex, sone, shelloWorld});
-        IValue res3 = Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sregex, sempty, shelloWorld});
-        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
-        assertThat("hello world replace (l, '$0') = 'hellllo worlld'", ((ValueTypeString.ValueString)res1).getRawValue(), is("hellllo worlld"));
-        assertThat("hello world replace (complex regex, $1) = 'hello '", ((ValueTypeString.ValueString)res2).getRawValue(), is("hello "));
-        assertThat("hello world replace (complex regex, '') = ''", ((ValueTypeString.ValueString)res3).getRawValue(), is(""));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidPatternReplaceRegex() throws EvaluationException {
-        Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sbrokenRegex, i0, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeReplaceRegexLarge() throws EvaluationException {
-        Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sabc, sabc, sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeReplaceRegexSmall() throws EvaluationException {
-        Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeReplaceRegex() throws EvaluationException {
-        Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
-    }
-
-
-    /**
-     * ----------------------------------- NAMED_NAME -----------------------------------
-     */
-
-    @Test
-    public void testStringNamedName() throws EvaluationException {
-        IValue res1 = Operators.NAMED_NAME.evaluate(new IVariable[]{i10});
-        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
-        assertThat("name(10) = 10", ((ValueTypeString.ValueString) res1).getRawValue(), is("10"));
-
-        IValue res2 = Operators.NAMED_NAME.evaluate(new IVariable[]{d10_5});
-        assertThat("name(10.5) = 10.5", ((ValueTypeString.ValueString) res2).getRawValue(), is("10.5"));
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizNamedNameLarge() throws EvaluationException {
-        Operators.NAMED_NAME.evaluate(new IVariable[]{sabc, sabc});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeNamedNameSmall() throws EvaluationException {
-        Operators.NAMED_NAME.evaluate(new IVariable[]{});
-    }
-
-    @Test(expected = EvaluationException.class)
-    public void testInvalidInputTypeNamedName() throws EvaluationException {
-        Operators.NAMED_NAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
-    }
-
+    // TODO: Heh
 }
