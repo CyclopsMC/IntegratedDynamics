@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.0.0 or higher.
+
+Fixes:
+* Allow NBT values to be converted to string, Closes #697
+* Fix viewing corrupted variables causing a crash, Closes #691
