@@ -6,20 +6,19 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 
 /**
  * Registry for parseing {@link IValue}.
- * @author rubensworks
+ * @author rubensworks/lostofthought
  */
 public interface IValueParseRegistry extends IRegistry {
 
     /**
      * Register a mapping between to value types.
-     * @param from The source type.
      * @param to The target type.
      * @param mapping The mapping logic.
      * @param <T2> The target type type.
      * @param <V2> The target type.
      */
     public <T2 extends IValueType<V2>, V2 extends IValue> void register(
-            ValueTypeString from, T2 to, IMapping<T2, V2> mapping);
+            T2 to, IMapping<T2, V2> mapping);
 
 
     /**
@@ -36,12 +35,11 @@ public interface IValueParseRegistry extends IRegistry {
     /**
      * Check if the the given value can be parse to the given type.
      * @param target The target type.
-     * @param value The value to parse.
      * @param <T2> The target type type.
      * @param <V2> The target type.
      * @return If the value can be parse to the given type.
      */
-    public <T2 extends IValueType<V2>, V2 extends IValue> boolean canParse(T2 target, ValueTypeString.ValueString value);
+    public <T2 extends IValueType<V2>, V2 extends IValue> boolean canParse(T2 target);
 
     public static interface IMapping<T2 extends IValueType<V2>, V2 extends IValue> {
 

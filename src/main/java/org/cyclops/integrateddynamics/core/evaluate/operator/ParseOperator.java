@@ -7,34 +7,29 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueParseRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import java.util.List;
 
 /**
  * Base class for parse operators.
- * @author rubensworks
+ * @author rubensworks/lostofthought
  */
 public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends OperatorBase {
 
-    private final ValueTypeString from;
     private final T2 to;
     private final IValueParseRegistry.IMapping<T2, V2> mapping;
 
-    public ParseOperator(final ValueTypeString from, final T2 to, final IValueParseRegistry.IMapping<T2, V2> mapping) {
+    public ParseOperator(final T2 to, final IValueParseRegistry.IMapping<T2, V2> mapping) {
         // Horrible thing to do, just to remain consistent with types being capitals
         // Also: under_scores, rantogether, or I.amNBT?
-        super("parse_" + to.getTypeName().substring(0, 1).toUpperCase() + to.getTypeName().substring(1), "parse_" + to.getUnlocalizedName(), constructInputVariables(1, from), to, new IFunction() {
+        super("parse_" + to.getTypeName().substring(0, 1).toUpperCase() + to.getTypeName().substring(1), "parse_" + to.getUnlocalizedName(), constructInputVariables(1, ValueTypes.STRING), to, new IFunction() {
             @Override
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 IValue value = variables.getValue(0);
-                if(value.getType() != from) {
-                    throw new EvaluationException(String.format("The value of type %s does not correspond to the " +
-                            "expected type %s to parse to %s", value.getType(), from, to));
-                }
                 return mapping.parse((ValueTypeString.ValueString) value);
             }
         }, IConfigRenderPattern.PREFIX_1);
-        this.from = from;
         this.to = to;
         this.mapping = mapping;
     }
@@ -56,8 +51,8 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
 
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
-        lines.add(L10NHelpers.localize("operator.operators.integrateddynamics.parse.tooltip",
-                  L10NHelpers.localize(from.getUnlocalizedName()), L10NHelpers.localize(to.getUnlocalizedName()))
+        lines.add(L10NHelpers.localize("operator.operators.integrateddynamics.parse.tooltip"
+                , L10NHelpers.localize(to.getUnlocalizedName()))
         );
         super.loadTooltip(lines, appendOptionalInfo);
     }
