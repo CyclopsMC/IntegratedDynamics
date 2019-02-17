@@ -21,9 +21,12 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
     private final IValueParseRegistry.IMapping<T2, V2> mapping;
 
     public ParseOperator(final T2 to, final IValueParseRegistry.IMapping<T2, V2> mapping) {
-        // Horrible thing to do, just to remain consistent with types being capitals
         // Also: under_scores, rantogether, or I.amNBT?
-        super("parse_" + to.getTypeName().substring(0, 1).toUpperCase() + to.getTypeName().substring(1), "parse_" + to.getUnlocalizedName(), constructInputVariables(1, ValueTypes.STRING), to, new IFunction() {
+        super("parse_" + L10NHelpers.localize(to.getUnlocalizedName())
+                , "parse_" + to.getUnlocalizedName()
+                , constructInputVariables(1, ValueTypes.STRING)
+                , to
+                , new IFunction() {
             @Override
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 IValue value = variables.getValue(0);
@@ -52,6 +55,7 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
         lines.add(L10NHelpers.localize("operator.operators.integrateddynamics.parse.tooltip"
+                , L10NHelpers.localize(ValueTypes.STRING.getUnlocalizedName())
                 , L10NHelpers.localize(to.getUnlocalizedName()))
         );
         super.loadTooltip(lines, appendOptionalInfo);

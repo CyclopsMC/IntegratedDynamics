@@ -42,7 +42,7 @@ public final class ValueParseRegistry implements IValueParseRegistry {
     public <T2 extends IValueType<V2>, V2 extends IValue> V2 parse(T2 target, ValueTypeString.ValueString value) throws ValueParseException {
         IMapping mapping = mappings.get(target);
         if(mapping == null) {
-            throw new ValueParseException(value.getType(), target);
+            throw new ValueParseException(target);
         }
         return ((IMapping<T2, V2>) mapping).parse(value);
     }

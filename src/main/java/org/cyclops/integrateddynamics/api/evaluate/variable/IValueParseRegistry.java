@@ -49,8 +49,8 @@ public interface IValueParseRegistry extends IRegistry {
 
     public static class ValueParseException extends InvalidValueTypeException {
 
-        public ValueParseException(IValueType from, IValueType to) {
-            super(String.format("No parse mapping exists from %s to %s", from, to));
+        public ValueParseException(IValueType to) {
+            super(String.format("No parse mapping exists to %s", to));
         }
     }
 

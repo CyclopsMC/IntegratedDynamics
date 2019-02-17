@@ -1,10 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueParseRegistry;
-
 /**
  * Collection of variable types.
  * @author rubensworks/lostofthought
