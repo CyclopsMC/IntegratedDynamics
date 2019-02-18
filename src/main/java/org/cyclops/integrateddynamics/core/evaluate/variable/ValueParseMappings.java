@@ -3,6 +3,9 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueParseRegistry;
+
+import java.util.regex.Pattern;
+
 /**
  * Collection of variable types.
  * @author rubensworks/lostofthought
@@ -50,15 +53,18 @@ public class ValueParseMappings {
             }
         });
         REGISTRY.register(ValueTypes.BOOLEAN, value -> {
-            // TODO: /(T(rue)?|F(alse)?)/i
             try {
-                return ValueTypeBoolean.ValueBoolean.of(Boolean.valueOf(value.getRawValue()));
-            } catch (NumberFormatException e) {
-                try {
-                    return ValueTypeBoolean.ValueBoolean.of(Long.decode(value.getRawValue()) != 0);
-                } catch (NumberFormatException e2) {
+                Pattern p = Pattern.compile("\\AF(alse)?\\z", Pattern.CASE_INSENSITIVE);
+                if( value.getRawValue().isEmpty()
+                    || p.matcher(value.getRawValue()).matches()
+                    || (Long.decode(value.getRawValue()) == 0))
+                {
                     return ValueTypeBoolean.ValueBoolean.of(false);
+                } else {
+                    return ValueTypeBoolean.ValueBoolean.of(true);
                 }
+            } catch (NumberFormatException e) {
+                return ValueTypeBoolean.ValueBoolean.of(true);
             }
         });
         REGISTRY.register(ValueTypes.STRING, value -> value);
