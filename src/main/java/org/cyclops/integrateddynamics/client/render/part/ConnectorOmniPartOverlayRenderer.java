@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
-import gnu.trove.map.TIntIntMap;
-import gnu.trove.map.hash.TIntIntHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.EnumFacing;
@@ -25,7 +25,7 @@ import java.util.Random;
 @SideOnly(Side.CLIENT)
 public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
 
-    private static final TIntIntMap CACHED_GROUP_COLORS = new TIntIntHashMap();
+    private static final Int2IntMap CACHED_GROUP_COLORS = new Int2IntOpenHashMap();
 
     private final Random rand = new Random();
 

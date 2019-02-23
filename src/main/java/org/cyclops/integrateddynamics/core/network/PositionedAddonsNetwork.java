@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Sets;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.cyclops.cyclopscore.datastructure.Wrapper;
@@ -29,14 +29,14 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
     @Setter
     private INetwork network;
     private final Set<PrioritizedPartPos> allPositions = Sets.newTreeSet();
-    private final TIntObjectMap<Set<PrioritizedPartPos>> positions = new TIntObjectHashMap<>();
+    private final Int2ObjectMap<Set<PrioritizedPartPos>> positions = new Int2ObjectOpenHashMap<>();
     private final Set<PartPos> disabledPositions = Sets.newHashSet();
 
     private IPartPosIteratorHandler partPosIteratorHandler = null;
 
     @Override
     public int[] getChannels() {
-        return positions.keys();
+        return positions.keySet().toIntArray();
     }
 
     @Override
@@ -112,7 +112,9 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
 
         Wrapper<Integer> removedChannel = new Wrapper<>(-2);
         Wrapper<PrioritizedPartPos> removedPos = new Wrapper<>(null);
-        this.positions.forEachEntry((channel, positions) -> {
+        for (Int2ObjectMap.Entry<Set<PrioritizedPartPos>> entry : this.positions.int2ObjectEntrySet()) {
+            int channel = entry.getIntKey();
+            Set<PrioritizedPartPos> positions = entry.getValue();
             Iterator<PrioritizedPartPos> it = positions.iterator();
             while (it.hasNext()) {
                 PrioritizedPartPos prioritizedPartPos = it.next();
@@ -121,11 +123,10 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
                     allPositions.remove(prioritizedPartPos);
                     removedPos.set(prioritizedPartPos);
                     removedChannel.set(channel);
-                    return false;
+                    break;
                 }
             }
-            return true;
-        });
+        }
         int channel = removedChannel.get();
         if (channel != -2) {
             this.onPositionRemoved(channel, removedPos.get());

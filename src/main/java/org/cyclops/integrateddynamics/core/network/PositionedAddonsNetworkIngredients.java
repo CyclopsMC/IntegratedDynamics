@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Maps;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
@@ -33,7 +33,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     private final IngredientComponent<T, M> component;
 
     private final IngredientObserver<T, M> ingredientObserver;
-    private final TIntObjectMap<IngredientPositionsIndex<T, M>> indexes;
+    private final Int2ObjectMap<IngredientPositionsIndex<T, M>> indexes;
 
     private boolean observe;
     private Map<PartPos, Long> lastSecondDurations = Maps.newHashMap();
@@ -43,7 +43,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
         this.ingredientObserver = new IngredientObserver<>(this);
         this.ingredientObserver.addChangeObserver(this);
-        this.indexes = new TIntObjectHashMap<>();
+        this.indexes = new Int2ObjectOpenHashMap<>();
 
         this.observe = false;
     }

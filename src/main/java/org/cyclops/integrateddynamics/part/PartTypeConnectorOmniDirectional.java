@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -258,7 +258,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
 
     public static class LoadedGroups {
 
-        private TIntObjectMap<Set<PartPos>> groupPositions = new TIntObjectHashMap<>();
+        private Int2ObjectMap<Set<PartPos>> groupPositions = new Int2ObjectOpenHashMap<>();
         private boolean modifyingPositions = false;
 
         public void onStartedEvent(FMLServerStartedEvent event) {

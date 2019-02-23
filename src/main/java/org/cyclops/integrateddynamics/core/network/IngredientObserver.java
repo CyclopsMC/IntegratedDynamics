@@ -4,8 +4,8 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -42,11 +42,11 @@ public class IngredientObserver<T, M> {
     private final IPositionedAddonsNetworkIngredients<T, M> network;
 
     private final Set<IIngredientComponentStorageObservable.IIndexChangeObserver<T, M>> changeObservers;
-    private final TIntObjectMap<Map<PartPos, Integer>> observeTargetTickIntervals;
-    private final TIntObjectMap<Map<PrioritizedPartPos, Integer>> observeTargetTicks;
-    private final TIntObjectMap<Map<PrioritizedPartPos, IngredientCollectionDiffManager<T, M>>> channeledDiffManagers;
+    private final Int2ObjectMap<Map<PartPos, Integer>> observeTargetTickIntervals;
+    private final Int2ObjectMap<Map<PrioritizedPartPos, Integer>> observeTargetTicks;
+    private final Int2ObjectMap<Map<PrioritizedPartPos, IngredientCollectionDiffManager<T, M>>> channeledDiffManagers;
 
-    private final TIntObjectMap<List<PrioritizedPartPos>> lastRemoved;
+    private final Int2ObjectMap<List<PrioritizedPartPos>> lastRemoved;
     private final Map<PartPos, Integer> lastInventoryStates;
 
     private CountDownLatch lastObserverBarrier;
@@ -54,10 +54,10 @@ public class IngredientObserver<T, M> {
     public IngredientObserver(IPositionedAddonsNetworkIngredients<T, M> network) {
         this.network = network;
         this.changeObservers = Sets.newIdentityHashSet();
-        this.observeTargetTickIntervals = new TIntObjectHashMap<>();
-        this.observeTargetTicks = new TIntObjectHashMap<>();
-        this.channeledDiffManagers = new TIntObjectHashMap<>();
-        this.lastRemoved = new TIntObjectHashMap<>();
+        this.observeTargetTickIntervals = new Int2ObjectOpenHashMap<>();
+        this.observeTargetTicks = new Int2ObjectOpenHashMap<>();
+        this.channeledDiffManagers = new Int2ObjectOpenHashMap<>();
+        this.lastRemoved = new Int2ObjectOpenHashMap<>();
         this.lastInventoryStates = Maps.newHashMap();
 
         this.lastObserverBarrier = null;
@@ -119,8 +119,8 @@ public class IngredientObserver<T, M> {
 
     protected int[] getChannels() {
         int[] networkChannels = getNetwork().getChannels();
-        int[] lastRemovedChannels = this.lastRemoved.keys();
-        if (lastRemovedChannels.length == 0) {
+        IntSet lastRemovedChannels = this.lastRemoved.keySet();
+        if (lastRemovedChannels.size() == 0) {
             return networkChannels;
         }
         IntSet uniqueChannels = new IntArraySet();

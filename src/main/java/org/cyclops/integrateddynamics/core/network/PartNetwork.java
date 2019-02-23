@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Lists;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.EnumFacing;
@@ -44,11 +44,11 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     @Getter
     @Setter
     private INetwork network;
-    private TIntObjectMap<PartPos> partPositions = new TIntObjectHashMap<>();
+    private Int2ObjectMap<PartPos> partPositions = new Int2ObjectOpenHashMap<>();
     private List<DimPos> variableContainerPositions = Lists.newArrayList();
     private Map<Integer, IVariableFacade> compositeVariableCache = null;
-    private TIntObjectMap<IValue> lazyExpressionValueCache = new TIntObjectHashMap<>();
-    private TIntObjectMap<DimPos> proxyPositions = new TIntObjectHashMap<>();
+    private Int2ObjectMap<IValue> lazyExpressionValueCache = new Int2ObjectOpenHashMap<>();
+    private Int2ObjectMap<DimPos> proxyPositions = new Int2ObjectOpenHashMap<>();
 
     private volatile boolean partsChanged = false;
 
@@ -133,7 +133,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
                 }
             }
             // Also check parts
-            for(PartPos partPos : partPositions.valueCollection()) {
+            for(PartPos partPos : partPositions.values()) {
                 if (partPos.getPos().isLoaded()) {
                     IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
                     IVariableContainer variableContainer = partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide());
