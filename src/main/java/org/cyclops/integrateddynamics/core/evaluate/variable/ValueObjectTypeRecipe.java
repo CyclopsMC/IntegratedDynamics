@@ -6,6 +6,7 @@ import lombok.ToString;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -16,8 +17,6 @@ import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeRecipeLPElement;
-
-import java.util.List;
 
 /**
  * Value type with values that are recipes.
@@ -46,8 +45,8 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
 
             for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
                 IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
-                for (List<? extends IPrototypedIngredient<?, ?>> instances : recipe.getInputs(component)) {
-                    IPrototypedIngredient<?, ?> prototypedIngredient = Iterables.getFirst(instances, null);
+                for (IPrototypedIngredientAlternatives<?, ?> instances : recipe.getInputs(component)) {
+                    IPrototypedIngredient<?, ?> prototypedIngredient = Iterables.getFirst(instances.getAlternatives(), null);
                     IValue v;
                     if (prototypedIngredient == null) {
                         v  = handler.getValueType().getDefault();

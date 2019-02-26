@@ -25,8 +25,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
-import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
@@ -310,7 +311,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return 64;
     }
 
-    protected Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> getInputs(List<Pair<ItemStack, ItemMatchType>> itemStacks,
+    protected Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> getInputs(List<Pair<ItemStack, ItemMatchType>> itemStacks,
                                                                                                       ItemStack fluid, int fluidAmount,
                                                                                                       int energy) {
         // Cut of itemStacks list until last non-empty stack
@@ -328,16 +329,18 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStack.amount = fluidAmount;
         }
 
-        Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> inputs = Maps.newIdentityHashMap();
-        List<List<IPrototypedIngredient<ItemStack, Integer>>> items = itemStacks.stream()
+        Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> inputs = Maps.newIdentityHashMap();
+        List<IPrototypedIngredientAlternatives<ItemStack, Integer>> items = itemStacks.stream()
                 .map(stack -> stack.getRight().getPrototypeHandler().getPrototypesFor(stack.getLeft()))
                 .collect(Collectors.toList());
-        List<List<IPrototypedIngredient<FluidStack, Integer>>> fluids = fluidStack != null
-                ? Collections.singletonList(Collections.singletonList(new PrototypedIngredient<>(
-                        IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.NBT))) : Collections.emptyList();
-        List<List<IPrototypedIngredient<Integer, Boolean>>> energies = energy > 0 ?
-                Collections.singletonList(Collections.singletonList(new PrototypedIngredient<>(
-                        IngredientComponent.ENERGY, energy, false))) : Collections.emptyList();
+        List<IPrototypedIngredientAlternatives<FluidStack, Integer>> fluids = fluidStack != null
+                ? Collections.singletonList(new PrototypedIngredientAlternativesList<>(
+                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.NBT))))
+                : Collections.emptyList();
+        List<IPrototypedIngredientAlternatives<Integer, Boolean>> energies = energy > 0 ?
+                Collections.singletonList(new PrototypedIngredientAlternativesList<>(
+                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ENERGY, energy, false))))
+                : Collections.emptyList();
         if (!items.isEmpty()) {
             inputs.put(IngredientComponent.ITEMSTACK, (List) items);
         }
@@ -352,8 +355,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     protected Map<IngredientComponent<?, ?>, List<?>> getOutputs(List<ItemStack> itemStacks,
-                                                                    ItemStack fluid, int fluidAmount,
-                                                                    int energy) {
+                                                                 ItemStack fluid, int fluidAmount,
+                                                                 int energy) {
         // Cut of itemStacks list until last non-empty stack
         int lastNonEmpty = 0;
         for (int i = 0; i < itemStacks.size(); i++) {

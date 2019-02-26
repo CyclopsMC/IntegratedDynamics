@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
@@ -93,11 +94,11 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     protected <T, M> Stream<List<IPrototypedIngredient>> enhanceRecipeInputs(IngredientComponent<T, M> ingredientComponent,
                                                                              IRecipeDefinition recipe) {
-        Stream<List<IPrototypedIngredient<T, M>>> inputs = recipe.getInputs(ingredientComponent).stream();
+        Stream<IPrototypedIngredientAlternatives<T, M>> inputs = recipe.getInputs(ingredientComponent).stream();
         if (ingredientComponent == IngredientComponent.ITEMSTACK) {
             IIngredientMatcher<ItemStack, Integer> matcher = (IIngredientMatcher<ItemStack, Integer>) ingredientComponent.getMatcher();
-            return ((Stream<List<IPrototypedIngredient<ItemStack, Integer>>>) (Stream) inputs).map(input -> input
-                    .stream()
+            return ((Stream<IPrototypedIngredientAlternatives<ItemStack, Integer>>) (Stream) inputs).map(input -> input
+                    .getAlternatives().stream()
                     .map(prototypedIngredient -> {
                         if (!matcher.hasCondition(prototypedIngredient.getCondition(), ItemMatch.DAMAGE)) {
                             return ItemStackHelpers.getSubItems(prototypedIngredient.getPrototype())

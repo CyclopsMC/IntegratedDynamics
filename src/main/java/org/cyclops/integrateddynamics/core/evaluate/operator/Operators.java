@@ -55,11 +55,12 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
@@ -3222,12 +3223,12 @@ public final class Operators {
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(1);
                 if (valueRecipe.getRawValue().isPresent() && valueIngredients.getRawValue().isPresent()) {
                     IMixedIngredients ingredients = valueIngredients.getRawValue().get();
-                    Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> inputs = Maps.newIdentityHashMap();
+                    Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> inputs = Maps.newIdentityHashMap();
                     for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
                         IIngredientMatcher matcher = component.getMatcher();
                         inputs.put(component, (List) ingredients.getInstances(component)
                                 .stream()
-                                .map(instance -> Collections.singletonList(new PrototypedIngredient(component, instance, matcher.getExactMatchCondition())))
+                                .map(instance -> new PrototypedIngredientAlternativesList(Collections.singletonList(new PrototypedIngredient(component, instance, matcher.getExactMatchCondition()))))
                                 .collect(Collectors.toList()));
                     }
                     return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(
@@ -3249,7 +3250,7 @@ public final class Operators {
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(1);
                 if (valueRecipe.getRawValue().isPresent() && valueIngredients.getRawValue().isPresent()) {
                     IRecipeDefinition recipe = valueRecipe.getRawValue().get();
-                    Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> inputs = Maps.newIdentityHashMap();
+                    Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> inputs = Maps.newIdentityHashMap();
                     for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
                         inputs.put(component, (List) recipe.getInputs(component));
                     }
@@ -3272,12 +3273,12 @@ public final class Operators {
                 ValueObjectTypeIngredients.ValueIngredients valueOut = variables.getValue(1);
                 if (valueIn.getRawValue().isPresent() && valueOut.getRawValue().isPresent()) {
                     IMixedIngredients ingredients = valueIn.getRawValue().get();
-                    Map<IngredientComponent<?, ?>, List<List<IPrototypedIngredient<?, ?>>>> inputs = Maps.newIdentityHashMap();
+                    Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> inputs = Maps.newIdentityHashMap();
                     for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
                         IIngredientMatcher matcher = component.getMatcher();
                         inputs.put(component, (List) ingredients.getInstances(component)
                                 .stream()
-                                .map(instance -> Collections.singletonList(new PrototypedIngredient(component, instance, matcher.getExactMatchCondition())))
+                                .map(instance -> new PrototypedIngredientAlternativesList(Collections.singletonList(new PrototypedIngredient(component, instance, matcher.getExactMatchCondition()))))
                                 .collect(Collectors.toList()));
                     }
                     return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(

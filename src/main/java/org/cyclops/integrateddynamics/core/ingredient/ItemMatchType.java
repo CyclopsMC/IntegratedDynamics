@@ -7,7 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
-import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesItemStackOredictionary;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
@@ -32,36 +34,28 @@ public enum ItemMatchType {
     ITEMMETANBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT)),
     ITEMNBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.NBT)),
     OREDICT(itemStack -> {
-        return getOreDictEquivalent(itemStack).stream()
-                .map(ItemStackHelpers::getVariants)
-                .flatMap(List::stream)
-                .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, stack, ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT))
-                .collect(Collectors.toList());
+        return new PrototypedIngredientAlternativesItemStackOredictionary(getOreDictKeys(itemStack),
+                ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT);
     });
 
-    private static final LoadingCache<ItemStack, List<ItemStack>> CACHE_OREDICT = CacheBuilder.newBuilder()
-            .expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<ItemStack, List<ItemStack>>() {
+    private static final LoadingCache<ItemStack, List<String>> CACHE_OREDICT = CacheBuilder.newBuilder()
+            .expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<ItemStack, List<String>>() {
                 @Override
-                public List<ItemStack> load(ItemStack key) throws Exception {
+                public List<String> load(ItemStack key) {
+                    if (key.isEmpty()) {
+                        return Collections.emptyList();
+                    }
                     return Arrays.stream(OreDictionary.getOreIDs(key))
                             .mapToObj(OreDictionary::getOreName)
-                            .map(OreDictionary::getOres)
-                            .flatMap(List::stream).collect(Collectors.toList());
+                            .collect(Collectors.toList());
                 }
             });
 
-    protected static List<ItemStack> getOreDictEquivalent(ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
-            return Collections.singletonList(itemStack);
-        }
+    protected static List<String> getOreDictKeys(ItemStack itemStack) {
         try {
-            List<ItemStack> itemStacks = CACHE_OREDICT.get(itemStack);
-            if (itemStacks.isEmpty()) {
-                return Collections.singletonList(itemStack);
-            }
-            return itemStacks;
+            return CACHE_OREDICT.get(itemStack);
         } catch (ExecutionException e) {
-            return Collections.singletonList(itemStack);
+            return Collections.emptyList();
         }
     }
 
@@ -91,7 +85,7 @@ public enum ItemMatchType {
          * @param itemStack An ItemStack to derive prototypes from.
          * @return The list of prototypes.
          */
-        public List<IPrototypedIngredient<ItemStack, Integer>> getPrototypesFor(ItemStack itemStack);
+        public IPrototypedIngredientAlternatives<ItemStack, Integer> getPrototypesFor(ItemStack itemStack);
     }
 
     public static class FlaggedPrototypeHandler implements ItemMatchType.IPrototypeHandler {
@@ -103,11 +97,12 @@ public enum ItemMatchType {
         }
 
         @Override
-        public List<IPrototypedIngredient<ItemStack, Integer>> getPrototypesFor(ItemStack itemStack) {
-            return ItemStackHelpers.getVariants(itemStack)
-                    .stream()
-                    .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, stack, flags))
-                    .collect(Collectors.toList());
+        public IPrototypedIngredientAlternatives<ItemStack, Integer> getPrototypesFor(ItemStack itemStack) {
+            return new PrototypedIngredientAlternativesList<>(
+                    ItemStackHelpers.getVariants(itemStack)
+                            .stream()
+                            .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, stack, flags))
+                            .collect(Collectors.toList()));
         }
     }
 }
