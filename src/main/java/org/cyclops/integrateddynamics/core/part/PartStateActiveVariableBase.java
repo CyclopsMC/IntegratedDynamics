@@ -64,7 +64,8 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     protected void onCorruptedState() {
-        IntegratedDynamics.clog(Level.WARN, "A corrupted part state was found at, repairing...");
+        IntegratedDynamics.clog(Level.ERROR, "A corrupted part state was found at, repairing...");
+        Thread.dumpStack();
         this.checkedForWriteVariable = false;
         this.deactivated = true;
     }
