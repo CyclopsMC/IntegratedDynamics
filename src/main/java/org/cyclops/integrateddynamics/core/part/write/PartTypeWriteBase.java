@@ -137,7 +137,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     @Override
     public <V extends IValue> IVariable<V> getActiveVariable(IPartNetwork network, PartTarget target, S partState) {
-        return partState.getVariable(network);
+        return partState.getVariable(target, network);
     }
 
     @Override

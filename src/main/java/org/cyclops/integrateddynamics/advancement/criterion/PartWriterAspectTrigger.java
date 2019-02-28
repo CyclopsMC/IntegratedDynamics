@@ -60,7 +60,7 @@ public class PartWriterAspectTrigger extends BaseCriterionTrigger<PartWriterAspe
         public boolean test(EntityPlayerMP player, PartWriterAspectEvent event) {
             return (partType == null || event.getPartType() == partType)
                     && (aspect == null || event.getAspect() == aspect)
-                    && variablePredicate.test(((IPartStateWriter) event.getPartState()).getVariable(event.getPartNetwork()));
+                    && variablePredicate.test(((IPartStateWriter) event.getPartState()).getVariable(event.getTarget(), event.getPartNetwork()));
         }
     }
 

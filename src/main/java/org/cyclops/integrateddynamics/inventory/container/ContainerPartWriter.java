@@ -101,7 +101,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
                             NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
                                     getPartContainer().getPosition().getBlockPos(), getTarget().getCenter().getSide()));
                     if (partNetwork != null) {
-                        IVariable variable = getPartState().getVariable(partNetwork);
+                        IVariable variable = getPartState().getVariable(getTarget(), partNetwork);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
                         readValue = Pair.of("NETWORK CORRUPTED!", Helpers.RGBToInt(255, 100, 0));

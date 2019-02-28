@@ -95,7 +95,7 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
             if (!getPartState().getInventory().isEmpty()) {
                 try {
                     IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-                    IVariable variable = getPartState().getVariable(partNetwork);
+                    IVariable variable = getPartState().getVariable(getTarget(), partNetwork);
                     MinecraftForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network, partNetwork, getTarget(),
                             getPartType(), getPartState(), getPlayer(), variable, variable != null ? variable.getValue() : null));
                 } catch (EvaluationException e) {

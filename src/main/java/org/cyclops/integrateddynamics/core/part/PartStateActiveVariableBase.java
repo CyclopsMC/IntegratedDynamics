@@ -80,15 +80,24 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     /**
      * Get the active variable in this state.
      * @param <V> The variable value type.
-     * @param network The network.
+     * @param target The part target.
+     * @param partNetwork The part network.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
+    public <V extends IValue> IVariable<V> getVariable(PartTarget target, IPartNetwork partNetwork) {
         if(!checkedForWriteVariable) {
+            if (variableContainer.getVariableCache().isEmpty()) {
+                PartPos center = target.getCenter();
+                INetwork network = NetworkHelpers.getNetwork(center.getPos().getWorld(), center.getPos().getBlockPos(),
+                        center.getSide());
+                if (network != null) {
+                    variableContainer.refreshVariables(network, inventory, false);
+                }
+            }
             for (IVariableFacade facade : variableContainer.getVariableCache().values()) {
                 if (facade != null) {
                     currentVariableFacade = facade;
-                    validate(network);
+                    validate(partNetwork);
                 }
             }
             this.checkedForWriteVariable = true;
@@ -97,7 +106,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
             onCorruptedState();
             return null;
         }
-        return currentVariableFacade.getVariable(network);
+        return currentVariableFacade.getVariable(partNetwork);
     }
 
     /**
@@ -165,7 +174,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         if (capability == ValueInterfaceConfig.CAPABILITY) {
             return ValueInterfaceConfig.CAPABILITY.cast(() -> {
                 if (hasVariable()) {
-                    IVariable<IValue> variable = getVariable(network);
+                    IVariable<IValue> variable = getVariable(target, network);
                     if (variable != null) {
                         return Optional.of(variable.getValue());
                     }
