@@ -101,9 +101,14 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
                 this.positions.put(channel, positions);
             }
             positions.add(prioritizedPosition);
+            this.onPositionAdded(channel, prioritizedPosition);
             return true;
         }
         return false;
+    }
+
+    protected void onPositionAdded(int channel, PrioritizedPartPos pos) {
+
     }
 
     @Override

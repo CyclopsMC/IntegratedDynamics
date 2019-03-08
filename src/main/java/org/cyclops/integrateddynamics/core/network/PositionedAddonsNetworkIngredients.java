@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -104,6 +105,18 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
             this.indexes.put(channel, index);
         }
         return index;
+    }
+
+    @Override
+    protected void onPositionAdded(int channel, PrioritizedPartPos pos) {
+        super.onPositionAdded(channel, pos);
+
+        // If our position was added to the lastRemoved list without it being processed yet,
+        // remove it from the list before that processing is going to start.
+        List<PrioritizedPartPos> lastRemoved = ingredientObserver.getLastRemoved(channel);
+        if (lastRemoved != null) {
+            lastRemoved.remove(pos);
+        }
     }
 
     @Override

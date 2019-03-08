@@ -46,6 +46,11 @@ public class PrioritizedPartPos implements Comparable<PrioritizedPartPos> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof PrioritizedPartPos && compareTo((PrioritizedPartPos) obj) == 0;
+    }
+
+    @Override
     public int hashCode() {
         return getPartPos().hashCode() + getPriority() << 1;
     }

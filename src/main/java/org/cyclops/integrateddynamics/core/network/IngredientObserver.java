@@ -22,6 +22,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,6 +66,11 @@ public class IngredientObserver<T, M> {
 
     public IPositionedAddonsNetworkIngredients<T, M> getNetwork() {
         return network;
+    }
+
+    @Nullable
+    public List<PrioritizedPartPos> getLastRemoved(int channel) {
+        return lastRemoved.get(channel);
     }
 
     public void onPositionRemoved(int channel, PrioritizedPartPos pos) {
