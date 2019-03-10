@@ -104,6 +104,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
 
         // Limit rate
         long skippedQuantity = 0;
+        T ingredientOriginal = ingredient;
         if (this.limitsEnabled) {
             long limit = network.getRateLimit();
             long currentQuantity = matcher.getQuantity(ingredient);
@@ -138,7 +139,8 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
 
         // Re-add skipped quantity to response if applicable
         if (skippedQuantity > 0) {
-            ingredient = matcher.withQuantity(ingredient, skippedQuantity + matcher.getQuantity(ingredient));
+            // Modify ingredientOriginal instead of ingredient, because ingredient may be EMPTY.
+            ingredient = matcher.withQuantity(ingredientOriginal, skippedQuantity + matcher.getQuantity(ingredient));
         }
 
         if (!simulate) {
