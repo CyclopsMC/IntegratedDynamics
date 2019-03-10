@@ -1,0 +1,23 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.0.0 or higher.
+
+Changes:
+* Dump stack on state corruption
+
+Fixes:
+* Fix some optional-based CT handlers not working with missing args
+  Apparently CT does not work well with too many optionals.
+  This commit reduces the number of optionals to make this work again.
+  Closes CyclopsMC/IntegratedDynamics-Compat#21
+* Fix importing of item amounts >64 voiding everything >64
+  Closes CyclopsMC/IntegratedTunnels#158
+* Fix positioned parts being removed even if re-added in the same tick
+  This fixes an issue in IT where ingredient transfer would
+  stop because the index would become empty after a chunk reload.
+  Closes CyclopsMC/IntegratedTunnels#157
+* Partially fix writers not being updated with variable values
+  CyclopsMC/IntegratedTunnels#157
+* Save recipes in new CommonCapabilities format
+  This fixes issues where some oredict-based recipes
+  would become too big to store.
+  Closes #694
