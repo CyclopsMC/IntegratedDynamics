@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.cyclops.commoncapabilities.api.capability.inventorystate.IInventoryState;
@@ -129,12 +129,14 @@ public class IngredientObserver<T, M> {
         if (lastRemovedChannels.size() == 0) {
             return networkChannels;
         }
-        IntSet uniqueChannels = new IntArraySet();
-        for (int networkChannel : networkChannels) {
-            uniqueChannels.add(networkChannel);
-        }
+        // We use a set that maintains insertion order,
+        // because we MUST iterate over the channels that have removals first!
+        IntSet uniqueChannels = new IntLinkedOpenHashSet();
         for (int lastRemovedChannel : lastRemovedChannels) {
             uniqueChannels.add(lastRemovedChannel);
+        }
+        for (int networkChannel : networkChannels) {
+            uniqueChannels.add(networkChannel);
         }
         return uniqueChannels.toIntArray();
     }
