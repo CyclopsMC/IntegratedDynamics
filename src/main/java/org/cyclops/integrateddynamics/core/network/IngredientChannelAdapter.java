@@ -93,6 +93,10 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         network.setPartPosIteratorHandler(partPosIteratorHandler);
     }
 
+    protected void markStoragePositionChanged(int channel, PartPos targetPos) {
+        this.network.scheduleObservationForced(channel, targetPos);
+    }
+
     @Override
     public T insert(@Nonnull T ingredient, boolean simulate) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
@@ -130,7 +134,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             long quantityAfter = matcher.getQuantity(ingredient);
             this.network.enablePosition(pos);
             if (!simulate && quantityBefore != quantityAfter) {
-                this.network.scheduleObservationForced(channel, pos); // Mark the position as 'changed'
+                markStoragePositionChanged(channel, pos);
             }
             if (matcher.isEmpty(ingredient)) {
                 break;
@@ -174,7 +178,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             this.network.enablePosition(pos);
             if (!matcher.isEmpty(extracted)) {
                 if (!simulate) {
-                    this.network.scheduleObservationForced(channel, pos); // Mark the position as 'changed'
+                    markStoragePositionChanged(channel, pos);
                     savePartPosIteratorHandler(partPosIteratorData.getLeft());
                 }
                 return extracted;
@@ -314,7 +318,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
                 this.network.disablePosition(pos);
                 T extracted = this.network.getPositionedStorage(pos).extract(instancePrototype, matchFlags, false);
                 this.network.enablePosition(pos);
-                this.network.scheduleObservationForced(channel, pos); // Mark the position as 'changed'
+                markStoragePositionChanged(channel, pos);
                 long thisExtractedAmount = matcher.getQuantity(extracted);
                 toExtract -= thisExtractedAmount;
             }

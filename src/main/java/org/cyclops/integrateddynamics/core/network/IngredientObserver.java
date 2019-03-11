@@ -44,7 +44,7 @@ public class IngredientObserver<T, M> {
 
     private final Set<IIngredientComponentStorageObservable.IIndexChangeObserver<T, M>> changeObservers;
     private final Int2ObjectMap<Map<PartPos, Integer>> observeTargetTickIntervals;
-    private final Int2ObjectMap<Map<PrioritizedPartPos, Integer>> observeTargetTicks;
+    private final Int2ObjectMap<Map<PartPos, Integer>> observeTargetTicks;
     private final Int2ObjectMap<Map<PrioritizedPartPos, IngredientCollectionDiffManager<T, M>>> channeledDiffManagers;
 
     private final Int2ObjectMap<List<PrioritizedPartPos>> lastRemoved;
@@ -177,7 +177,7 @@ public class IngredientObserver<T, M> {
         int currentTick = getCurrentTick();
 
         // Prepare ticking collections
-        Map<PrioritizedPartPos, Integer> channelTargetTicks = observeTargetTicks.get(channel);
+        Map<PartPos, Integer> channelTargetTicks = observeTargetTicks.get(channel);
         if (channelTargetTicks == null) {
             channelTargetTicks = Maps.newHashMap();
         }
@@ -211,7 +211,7 @@ public class IngredientObserver<T, M> {
             }
 
             // Check if we should observe this position in this tick
-            int lastTick = channelTargetTicks.getOrDefault(partPos, currentTick);
+            int lastTick = channelTargetTicks.getOrDefault(partPos.getPartPos(), currentTick);
             if (lastTick <= currentTick) {
                 // If an inventory state is exposed, check if it has changed since the last observation call.
                 boolean skipPosition = false;
@@ -279,7 +279,7 @@ public class IngredientObserver<T, M> {
                     // definitely also cause this part to tick in next tick.
                     // This makes these cases slightly faster, as no map updates are needed.
                     if (tickInterval != 1) {
-                        channelTargetTicks.put(partPos, currentTick + tickInterval);
+                        channelTargetTicks.put(partPos.getPartPos(), currentTick + tickInterval);
 
                     }
                     // Only update when the interval has changed.
@@ -333,13 +333,13 @@ public class IngredientObserver<T, M> {
         }
     }
 
-    public void resetTickInterval(int channel, PartPos pos) {
-        Map<PartPos, Integer> channelIntervals = this.observeTargetTickIntervals.get(channel);
-        if (channelIntervals == null) {
-            channelIntervals = Maps.newHashMap();
-            this.observeTargetTickIntervals.put(channel, channelIntervals);
+    public void resetTickInterval(int channel, PartPos targetPos) {
+        Map<PartPos, Integer> channelTicks = this.observeTargetTicks.get(channel);
+        if (channelTicks == null) {
+            channelTicks = Maps.newHashMap();
+            this.observeTargetTicks.put(channel, channelTicks);
         }
-        channelIntervals.put(pos, GeneralConfig.ingredientNetworkObserverFrequencyForced);
+        channelTicks.put(targetPos, getCurrentTick() + GeneralConfig.ingredientNetworkObserverFrequencyForced);
     }
 
 }

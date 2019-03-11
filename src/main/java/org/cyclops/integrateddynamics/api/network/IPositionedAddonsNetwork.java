@@ -50,6 +50,14 @@ public interface IPositionedAddonsNetwork {
     public Collection<PrioritizedPartPos> getPrioritizedPositions(int channel);
 
     /**
+     * Get the channel this position is present in.
+     * -1 if it is not present in any channel.
+     * @param pos A position.
+     * @return A channel.
+     */
+    public int getPositionChannel(PartPos pos);
+
+    /**
      * @param channel The channel id.
      * @return The stored positions, sorted by priority.
      */

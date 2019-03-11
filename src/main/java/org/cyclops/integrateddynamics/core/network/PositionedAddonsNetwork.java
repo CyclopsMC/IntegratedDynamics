@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -16,6 +17,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,6 +32,7 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
     private INetwork network;
     private final Set<PrioritizedPartPos> allPositions = Sets.newTreeSet();
     private final Int2ObjectMap<Set<PrioritizedPartPos>> positions = new Int2ObjectOpenHashMap<>();
+    private final Map<PartPos, Integer> positionChannels = Maps.newHashMap();
     private final Set<PartPos> disabledPositions = Sets.newHashSet();
 
     private IPartPosIteratorHandler partPosIteratorHandler = null;
@@ -71,6 +74,11 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
         return this.allPositions;
     }
 
+    @Override
+    public int getPositionChannel(PartPos pos) {
+        return this.positionChannels.getOrDefault(pos, -1);
+    }
+
     protected void invalidateIterators() {
         setPartPosIteratorHandler(null);
     }
@@ -101,6 +109,7 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
                 this.positions.put(channel, positions);
             }
             positions.add(prioritizedPosition);
+            this.positionChannels.put(pos, channel);
             this.onPositionAdded(channel, prioritizedPosition);
             return true;
         }
@@ -139,6 +148,7 @@ public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwor
                 this.positions.remove(channel);
             }
         }
+        positionChannels.remove(pos);
     }
 
     protected void onPositionRemoved(int channel, PrioritizedPartPos pos) {

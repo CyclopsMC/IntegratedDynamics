@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorage
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientPositionsIndex;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
@@ -148,7 +149,11 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     @Override
     public void scheduleObservationForced(int channel, PartPos pos) {
         scheduleObservation();
-        this.ingredientObserver.resetTickInterval(channel, pos);
+        if (channel == IPositionedAddonsNetwork.WILDCARD_CHANNEL) {
+            this.ingredientObserver.resetTickInterval(getPositionChannel(pos), pos);
+        } else {
+            this.ingredientObserver.resetTickInterval(channel, pos);
+        }
     }
 
     @Override
