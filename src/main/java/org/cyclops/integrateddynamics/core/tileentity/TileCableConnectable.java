@@ -74,7 +74,7 @@ public class TileCableConnectable extends CyclopsTileEntity implements CyclopsTi
     public void onChunkUnload() {
         super.onChunkUnload();
         if (getWorld() != null && !getWorld().isRemote) {
-            NetworkHelpers.invalidateNetworkElements(getWorld(), getPos());
+            NetworkHelpers.invalidateNetworkElements(getWorld(), getPos(), this);
         }
     }
 }

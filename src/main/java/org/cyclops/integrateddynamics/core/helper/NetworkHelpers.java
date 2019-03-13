@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -179,13 +180,14 @@ public class NetworkHelpers {
      * Warning: this assumes unsided network carrier capabilities, for example full-block network elements.
      * @param world The world.
      * @param pos The position.
+     * @param tile The tile entity that is unloaded.
      */
-    public static void invalidateNetworkElements(World world, BlockPos pos) {
-        INetworkCarrier networkCarrier = TileHelpers.getCapability(world, pos, NetworkCarrierConfig.CAPABILITY);
+    public static void invalidateNetworkElements(World world, BlockPos pos, TileEntity tile) {
+        INetworkCarrier networkCarrier = tile.getCapability(NetworkCarrierConfig.CAPABILITY, null);
         if (networkCarrier != null) {
             INetwork network = networkCarrier.getNetwork();
             if (network != null) {
-                INetworkElementProvider networkElementProvider = TileHelpers.getCapability(world, pos, NetworkElementProviderConfig.CAPABILITY);
+                INetworkElementProvider networkElementProvider = tile.getCapability(NetworkElementProviderConfig.CAPABILITY, null);
                 if (networkElementProvider != null) {
                     for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                         networkElement.invalidate(network);
