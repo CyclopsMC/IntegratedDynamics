@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
+import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
@@ -107,6 +108,15 @@ public class Configs {
 
         // Entities
         configHandler.add(new EntityItemTargettedConfig());
+    }
+
+    /**
+     * A safe way to check if a {@link org.cyclops.cyclopscore.config.configurable.IConfigurable} is enabled. @see ExtendedConfig#isEnabled()
+     * @param config The config to check.
+     * @return If the given config is enabled.
+     */
+    public static boolean isEnabled(Class<? extends ExtendedConfig<?>> config) {
+        return IntegratedDynamics._instance.getConfigHandler().isConfigEnabled(config);
     }
 
 }

@@ -11,8 +11,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.world.gen.WorldGeneratorTree;
+import org.cyclops.integrateddynamics.Configs;
 import org.cyclops.integrateddynamics.block.BlockMenrilLeavesConfig;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogConfig;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogFilled;
@@ -175,7 +175,7 @@ public class WorldGeneratorMenrilTree extends WorldGeneratorTree {
                         if (block == null || block == Blocks.AIR ||
                                 block.isLeaves(loopBlockState, world, loopPos) ||
                                 block.isReplaceable(world, loopPos)) {
-                            boolean filled = ConfigHandler.isEnabled(BlockMenrilLogFilledConfig.class)
+                            boolean filled = Configs.isEnabled(BlockMenrilLogFilledConfig.class)
                                     && BlockMenrilLogFilledConfig.filledMenrilLogChance > 0
                                     && rand.nextInt(BlockMenrilLogFilledConfig.filledMenrilLogChance) == 0;
                             IBlockState logs = filled ? BlockMenrilLogFilled.getInstance().getDefaultState()

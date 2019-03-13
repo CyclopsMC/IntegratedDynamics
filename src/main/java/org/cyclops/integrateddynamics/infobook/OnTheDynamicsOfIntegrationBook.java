@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
-import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoBook;
 import org.cyclops.cyclopscore.infobook.InfoBookParser;
@@ -17,6 +16,7 @@ import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
+import org.cyclops.integrateddynamics.Configs;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -53,7 +53,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
     private static OnTheDynamicsOfIntegrationBook _instance = null;
 
     static {
-        if (ConfigHandler.isEnabled(BlockSqueezerConfig.class)) {
+        if (Configs.isEnabled(BlockSqueezerConfig.class)) {
             InfoBookParser.registerFactory(Reference.MOD_ID + ":squeezer_recipe", new InfoBookParser.IAppendixFactory() {
 
                 @Override
@@ -90,7 +90,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
         } else {
             InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":squeezer_recipe");
         }
-        if (ConfigHandler.isEnabled(BlockDryingBasinConfig.class)) {
+        if (Configs.isEnabled(BlockDryingBasinConfig.class)) {
             InfoBookParser.registerFactory(Reference.MOD_ID + ":drying_basin_recipe", new InfoBookParser.IAppendixFactory() {
 
                 @Override
@@ -121,7 +121,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
         } else {
             InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":drying_basin_recipe");
         }
-        if (ConfigHandler.isEnabled(BlockMechanicalSqueezerConfig.class)) {
+        if (Configs.isEnabled(BlockMechanicalSqueezerConfig.class)) {
             InfoBookParser.registerFactory(Reference.MOD_ID + ":mechanical_squeezer_recipe", new InfoBookParser.IAppendixFactory() {
 
                 @Override
@@ -158,7 +158,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
         } else {
             InfoBookParser.registerIgnoredFactory(Reference.MOD_ID + ":mechanical_squeezer_recipe");
         }
-        if (ConfigHandler.isEnabled(BlockMechanicalDryingBasinConfig.class)) {
+        if (Configs.isEnabled(BlockMechanicalDryingBasinConfig.class)) {
             InfoBookParser.registerFactory(Reference.MOD_ID + ":mechanical_drying_basin_recipe", new InfoBookParser.IAppendixFactory() {
 
                 @Override

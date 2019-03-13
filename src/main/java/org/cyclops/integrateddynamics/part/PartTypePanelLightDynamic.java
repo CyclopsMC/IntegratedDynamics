@@ -5,11 +5,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.Configs;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -109,7 +109,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     public static void setLightLevel(PartTarget target, int lightLevel) {
-        if(ConfigHandler.isEnabled(BlockInvisibleLightConfig.class)) {
+        if(Configs.isEnabled(BlockInvisibleLightConfig.class)) {
             World world = target.getTarget().getPos().getWorld();
             BlockPos pos = target.getTarget().getPos().getBlockPos();
             if(world.isAirBlock(pos)) {
