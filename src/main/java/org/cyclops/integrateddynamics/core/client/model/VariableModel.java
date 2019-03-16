@@ -42,7 +42,7 @@ public class VariableModel implements IModel {
 
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        if(base.getParentLocation() == null || base.getParentLocation().getResourcePath().startsWith("builtin/")) {
+        if(base.getParentLocation() == null || base.getParentLocation().getPath().startsWith("builtin/")) {
             return Collections.emptyList();
         }
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();

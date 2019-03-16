@@ -58,7 +58,7 @@ public class JsonDeserializers {
             valueType = ValueTypes.REGISTRY.getValueType(JsonUtils.getString(jsonobject, "valuetype"));
             if (valueType == null) {
                 throw new JsonSyntaxException("Unknown value type '" + JsonUtils.getString(jsonobject, "valuetype") + "', valid types are: "
-                        + ValueTypes.REGISTRY.getValueTypes().stream().map(IValueType::getUnlocalizedName).collect(Collectors.toList()));
+                        + ValueTypes.REGISTRY.getValueTypes().stream().map(IValueType::getTranslationKey).collect(Collectors.toList()));
             }
         }
         return valueType;

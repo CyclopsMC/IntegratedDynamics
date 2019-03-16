@@ -69,8 +69,8 @@ public class AspectProperties implements IAspectProperties {
         NBTTagList map = new NBTTagList();
         for(Map.Entry<IAspectPropertyTypeInstance, IValue> entry : values.entrySet()) {
             NBTTagCompound nbtEntry = new NBTTagCompound();
-            nbtEntry.setString("key", entry.getKey().getType().getUnlocalizedName());
-            nbtEntry.setString("label", entry.getKey().getUnlocalizedName());
+            nbtEntry.setString("key", entry.getKey().getType().getTranslationKey());
+            nbtEntry.setString("label", entry.getKey().getTranslationKey());
             nbtEntry.setString("value", ValueHelpers.serializeRaw(entry.getValue()));
             map.appendTag(nbtEntry);
         }

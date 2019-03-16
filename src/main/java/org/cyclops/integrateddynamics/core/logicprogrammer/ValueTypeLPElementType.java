@@ -21,7 +21,7 @@ public class ValueTypeLPElementType implements ILogicProgrammerElementType<IValu
 
     @Override
     public String getName(IValueTypeLogicProgrammerElement element) {
-        return element.getValueType().getUnlocalizedName();
+        return element.getValueType().getTranslationKey();
     }
 
     @Override

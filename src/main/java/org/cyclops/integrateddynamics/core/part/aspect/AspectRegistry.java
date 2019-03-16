@@ -21,12 +21,21 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.aspect.*;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -85,7 +94,7 @@ public final class AspectRegistry implements IAspectRegistry {
             partAspects.put(partType, aspects);
         }
         aspects.add(aspect);
-        unlocalizedAspects.put(aspect.getUnlocalizedName(), aspect);
+        unlocalizedAspects.put(aspect.getTranslationKey(), aspect);
     }
 
     @Override
@@ -138,8 +147,8 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public IAspect getAspect(String unlocalizedName) {
-        return unlocalizedAspects.get(unlocalizedName);
+    public IAspect getAspect(String translationKey) {
+        return unlocalizedAspects.get(translationKey);
     }
 
     @SideOnly(Side.CLIENT)
@@ -182,7 +191,7 @@ public final class AspectRegistry implements IAspectRegistry {
     @Override
     public void setVariableFacade(NBTTagCompound tag, IAspectVariableFacade variableFacade) {
         tag.setInteger("partId", variableFacade.getPartId());
-        tag.setString("aspectName", variableFacade.getAspect().getUnlocalizedName());
+        tag.setString("aspectName", variableFacade.getAspect().getTranslationKey());
     }
 
     @Override
@@ -193,7 +202,7 @@ public final class AspectRegistry implements IAspectRegistry {
             aspect = Aspects.REGISTRY.getAspect(JsonUtils.getString(element, "aspect"));
             if (aspect == null) {
                 throw new JsonSyntaxException("Unknown aspect type '" + JsonUtils.getString(element, "aspect") + "', valid types are: "
-                        + Aspects.REGISTRY.getAspects().stream().map(IAspect::getUnlocalizedName).collect(Collectors.toList()));
+                        + Aspects.REGISTRY.getAspects().stream().map(IAspect::getTranslationKey).collect(Collectors.toList()));
             }
         }
         return new AspectVariablePredicate(valueType, valuePredicate, aspect);

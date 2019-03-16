@@ -20,7 +20,7 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     private final IValueCastRegistry.IMapping<T1, T2, V1, V2> mapping;
 
     public CastOperator(final T1 from, final T2 to, final IValueCastRegistry.IMapping<T1, T2, V1, V2> mapping) {
-        super("()", from.getUnlocalizedName() + "$" + to.getUnlocalizedName(), constructInputVariables(1, from), to, new IFunction() {
+        super("()", from.getTranslationKey() + "$" + to.getTranslationKey(), constructInputVariables(1, from), to, new IFunction() {
             @Override
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 IValue value = variables.getValue(0);
@@ -38,7 +38,7 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
 
     @Override
     public String getUniqueName() {
-        return "operator.operators." + getModId() + ".cast" + from.getUnlocalizedName() + "$" + to.getUnlocalizedName();
+        return "operator.operators." + getModId() + ".cast" + from.getTranslationKey() + "$" + to.getTranslationKey();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
         lines.add(L10NHelpers.localize("operator.operators.integrateddynamics.cast.tooltip",
-                  L10NHelpers.localize(from.getUnlocalizedName()), L10NHelpers.localize(to.getUnlocalizedName()))
+                  L10NHelpers.localize(from.getTranslationKey()), L10NHelpers.localize(to.getTranslationKey()))
         );
         super.loadTooltip(lines, appendOptionalInfo);
     }

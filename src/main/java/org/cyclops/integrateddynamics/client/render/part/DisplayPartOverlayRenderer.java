@@ -31,9 +31,9 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     @Override
     protected void setMatrixOrientation(EnumFacing direction) {
         super.setMatrixOrientation(direction);
-        float translateX = -1F - direction.getFrontOffsetX() + 4 * pixel;
-        float translateY = 1F - direction.getFrontOffsetY() - 4 * pixel;
-        float translateZ = direction.getFrontOffsetZ() - pixel + 0.0025F;
+        float translateX = -1F - direction.getXOffset() + 4 * pixel;
+        float translateY = 1F - direction.getYOffset() - 4 * pixel;
+        float translateZ = direction.getZOffset() - pixel + 0.0025F;
         if (direction == EnumFacing.NORTH) {
             translateZ += 1F;
         } else if (direction == EnumFacing.EAST) {

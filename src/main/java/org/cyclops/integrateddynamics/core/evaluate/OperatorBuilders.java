@@ -61,7 +61,7 @@ public class OperatorBuilders {
     public static final IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString> PROPAGATOR_RESOURCELOCATION_MODNAME = resourceLocation -> {
         String modName;
         try {
-            String modId = Helpers.getModId(resourceLocation.getResourceDomain());
+            String modId = Helpers.getModId(resourceLocation.getNamespace());
             ModContainer mod = Loader.instance().getIndexedModList().get(modId);
             modName = mod == null ? "Minecraft" : mod.getName();
         } catch (NullPointerException e) {
@@ -191,8 +191,8 @@ public class OperatorBuilders {
                 // In this case, throw an eval exception
                 if (!(value instanceof ValueTypeOperator.ValueOperator)) {
                     throw new EvaluationException(L10NHelpers.localize(L10NValues.OPERATOR_ERROR_WRONGTYPE, "",
-                            L10NHelpers.localize(value.getType().getUnlocalizedName()), 0,
-                            L10NHelpers.localize(ValueTypes.OPERATOR.getUnlocalizedName())));
+                            L10NHelpers.localize(value.getType().getTranslationKey()), 0,
+                            L10NHelpers.localize(ValueTypes.OPERATOR.getTranslationKey())));
                 }
                 IOperator innerOperator = ((ValueTypeOperator.ValueOperator) value).getRawValue();
                 if (innerOperator.getRequiredInputLength() == 1) {
@@ -204,10 +204,10 @@ public class OperatorBuilders {
                 } else {
                     if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
                         L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
-                                new L10NHelpers.UnlocalizedString(innerOperator.getUnlocalizedName()),
-                                new L10NHelpers.UnlocalizedString(input.getVariables()[0].getType().getUnlocalizedName()),
+                                new L10NHelpers.UnlocalizedString(innerOperator.getTranslationKey()),
+                                new L10NHelpers.UnlocalizedString(input.getVariables()[0].getType().getTranslationKey()),
                                 0,
-                                new L10NHelpers.UnlocalizedString(innerOperator.getInputTypes()[0].getUnlocalizedName())
+                                new L10NHelpers.UnlocalizedString(innerOperator.getInputTypes()[0].getTranslationKey())
                                 );
                         throw new EvaluationException(error.localize());
                     }
@@ -262,9 +262,9 @@ public class OperatorBuilders {
                 if (!(applyingValue instanceof ValueTypeList.ValueList)) {
                     L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
                             "?",
-                            new L10NHelpers.UnlocalizedString(applyingValue.getType().getUnlocalizedName()),
+                            new L10NHelpers.UnlocalizedString(applyingValue.getType().getTranslationKey()),
                             0,
-                            new L10NHelpers.UnlocalizedString(ValueTypes.LIST.getUnlocalizedName())
+                            new L10NHelpers.UnlocalizedString(ValueTypes.LIST.getTranslationKey())
                     );
                     throw new EvaluationException(error.localize());
                 }
@@ -369,7 +369,7 @@ public class OperatorBuilders {
                 org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(subOperatorLength), ValueHelpers.from(expectedSubTypes));
         return (operator, input) -> {
             if (input.length == 0 || !ValueHelpers.correspondsTo(input[0], ValueTypes.OPERATOR)) {
-                String givenName = input.length == 0 ? "null" : input[0].getUnlocalizedName();
+                String givenName = input.length == 0 ? "null" : input[0].getTranslationKey();
                 return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDOPERATOROPERATOR,
                         0, givenName);
             }

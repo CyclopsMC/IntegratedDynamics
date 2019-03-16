@@ -84,7 +84,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         NBTTagList list = new NBTTagList();
         for(Map.Entry<IAspect, IAspectProperties> entry : aspectProperties.entrySet()) {
             NBTTagCompound entryTag = new NBTTagCompound();
-            entryTag.setString("key", entry.getKey().getUnlocalizedName());
+            entryTag.setString("key", entry.getKey().getTranslationKey());
             if(entry.getValue() != null) {
                 entryTag.setTag("value", entry.getValue().toNBT());
             }

@@ -68,7 +68,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
 
     @Override
     public String getLocalizedNameFull() {
-        return L10NHelpers.localize(getValueType().getUnlocalizedName());
+        return L10NHelpers.localize(getValueType().getTranslationKey());
     }
 
     @Override
@@ -107,7 +107,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
 
     @Override
     public String getSymbol() {
-        return L10NHelpers.localize(getValueType().getUnlocalizedName());
+        return L10NHelpers.localize(getValueType().getTranslationKey());
     }
 
     @Override

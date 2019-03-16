@@ -70,8 +70,8 @@ public class AspectAppendix extends SectionAppendix {
         Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
 
         // Base information
-        String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
-        String valueTypeName = L10NHelpers.localize(aspect.getValueType().getUnlocalizedName());
+        String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
+        String valueTypeName = L10NHelpers.localize(aspect.getValueType().getTranslationKey());
         gui.drawScaledCenteredString(L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
         String valueString = L10NHelpers.localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
         boolean wasUnicode = gui.getFontRenderer().getUnicodeFlag();
@@ -84,7 +84,7 @@ public class AspectAppendix extends SectionAppendix {
             gui.getFontRenderer().drawString(TextFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
             for (IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                 offsetY += 10;
-                gui.getFontRenderer().drawString(TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getUnlocalizedName()), x + 10, y + offsetY, 0);
+                gui.getFontRenderer().drawString(TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
             }
         }
         gui.getFontRenderer().setUnicodeFlag(wasUnicode);

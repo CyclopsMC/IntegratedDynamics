@@ -122,14 +122,14 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
                 sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ");
             }
             sb.append(inputType.getDisplayColorFormat())
-                    .append(L10NHelpers.localize(inputType.getUnlocalizedName()))
+                    .append(L10NHelpers.localize(inputType.getTranslationKey()))
                     .append(TextFormatting.RESET);
         }
 
         sb = switchSignatureLineContext(lines, sb);
         sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ")
                 .append(outputType.getDisplayColorFormat())
-                .append(L10NHelpers.localize(outputType.getUnlocalizedName()))
+                .append(L10NHelpers.localize(outputType.getTranslationKey()))
                 .append(TextFormatting.RESET);
         switchSignatureLineContext(lines, sb);
         return lines;

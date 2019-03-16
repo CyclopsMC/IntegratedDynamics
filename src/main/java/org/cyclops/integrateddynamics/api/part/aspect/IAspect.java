@@ -25,7 +25,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
     /**
      * @return The unique unlocalized name for this aspect.
      */
-    public String getUnlocalizedName();
+    public String getTranslationKey();
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
@@ -117,7 +117,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
         @Override
         public int compare(IAspect o1, IAspect o2) {
-            return o1.getUnlocalizedName().compareTo(o2.getUnlocalizedName());
+            return o1.getTranslationKey().compareTo(o2.getTranslationKey());
         }
     }
 

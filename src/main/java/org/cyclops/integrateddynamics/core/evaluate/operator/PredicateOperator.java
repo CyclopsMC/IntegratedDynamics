@@ -68,7 +68,7 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         @Override
         public String serialize(PredicateOperator<IValueType<IValue>, IValue> operator) {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("valueType", operator.inputType.getUnlocalizedName());
+            tag.setString("valueType", operator.inputType.getTranslationKey());
             NBTTagList list = new NBTTagList();
             for (IValue rawValue : operator.rawValues) {
                 list.appendTag(new NBTTagString(operator.inputType.serialize(rawValue)));

@@ -293,7 +293,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes()) {
                 @Override
                 protected String activeElementToString(IngredientComponent element) {
-                    return L10NHelpers.localize(element.getUnlocalizedName());
+                    return L10NHelpers.localize(element.getTranslationKey());
                 }
             };
             valueTypeSelector.setListener(this);

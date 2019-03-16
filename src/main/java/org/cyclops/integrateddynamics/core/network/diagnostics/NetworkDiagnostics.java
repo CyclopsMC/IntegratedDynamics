@@ -63,7 +63,7 @@ public class NetworkDiagnostics {
                 long lastSecondDurationNs = network.getLastSecondDuration(networkElement);
                 rawParts.add(new RawPartData(pos.getPos().getDimensionId(),
                         pos.getPos().getBlockPos(), pos.getSide(),
-                        L10NHelpers.localize(partNetworkElement.getPart().getUnlocalizedName()),
+                        L10NHelpers.localize(partNetworkElement.getPart().getTranslationKey()),
                         lastSecondDurationNs));
             } else {
                 // If needed, we can send the other part types later on as well

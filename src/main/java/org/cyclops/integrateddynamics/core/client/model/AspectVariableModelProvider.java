@@ -25,7 +25,7 @@ public class AspectVariableModelProvider implements IVariableModelProvider<Baked
     public BakedMapVariableModelProvider<IAspect> bakeOverlayModels(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         Map<IAspect, IBakedModel> bakedModels = Maps.newHashMap();
         for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
-            IModel model = ModelLoaderRegistry.getModelOrLogError(Aspects.REGISTRY.getAspectModel(aspect), "Could not find a model for aspect " + aspect.getUnlocalizedName());
+            IModel model = ModelLoaderRegistry.getModelOrLogError(Aspects.REGISTRY.getAspectModel(aspect), "Could not find a model for aspect " + aspect.getTranslationKey());
             IBakedModel bakedAspectModel = model.bake(state, format, bakedTextureGetter);
             bakedModels.put(aspect, bakedAspectModel);
         }

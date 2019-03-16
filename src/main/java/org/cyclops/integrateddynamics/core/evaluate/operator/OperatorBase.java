@@ -29,7 +29,7 @@ public abstract class OperatorBase implements IOperator {
     @Nullable
     private final IConfigRenderPattern renderPattern;
 
-    private String unlocalizedName = null;
+    private String translationKey = null;
 
     protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                            IFunction function, @Nullable IConfigRenderPattern renderPattern) {
@@ -60,12 +60,12 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public String getUniqueName() {
-        return getUnlocalizedName();
+        return getTranslationKey();
     }
 
     @Override
-    public String getUnlocalizedName() {
-        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedPrefix() + ".name");
+    public String getTranslationKey() {
+        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix() + ".name");
     }
 
     @Override
@@ -75,7 +75,7 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public String getLocalizedNameFull() {
-        return L10NHelpers.localize(getUnlocalizedCategoryPrefix() + ".basename", L10NHelpers.localize(getUnlocalizedName()));
+        return L10NHelpers.localize(getUnlocalizedCategoryPrefix() + ".basename", L10NHelpers.localize(getTranslationKey()));
     }
 
     protected String getUnlocalizedPrefix() {
@@ -97,16 +97,16 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
-        String operatorName = L10NHelpers.localize(getUnlocalizedName());
+        String operatorName = L10NHelpers.localize(getTranslationKey());
         String categoryName = L10NHelpers.localize(getUnlocalizedCategoryName());
         String symbol = getSymbol();
-        String outputTypeName = L10NHelpers.localize(getOutputType().getUnlocalizedName());
+        String outputTypeName = L10NHelpers.localize(getOutputType().getTranslationKey());
         lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
         lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
             lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME,
-                    i + 1, inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getUnlocalizedName())));
+                    i + 1, inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())));
         }
         lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
@@ -159,8 +159,8 @@ public abstract class OperatorBase implements IOperator {
             }
             if(!ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                        Integer.toString(i + 1), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
+                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
+                        Integer.toString(i + 1), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getTranslationKey()));
             }
         }
         return null;

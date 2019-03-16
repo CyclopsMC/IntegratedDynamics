@@ -15,7 +15,7 @@ public interface IRenderPatternValueTypeTooltip {
 
     public default List<String> getValueTypeTooltip(IValueType<?> valueType) {
         List<String> lines = Lists.newLinkedList();
-        lines.add(valueType.getDisplayColorFormat() + L10NHelpers.localize(valueType.getUnlocalizedName()));
+        lines.add(valueType.getDisplayColorFormat() + L10NHelpers.localize(valueType.getTranslationKey()));
         return lines;
     }
 

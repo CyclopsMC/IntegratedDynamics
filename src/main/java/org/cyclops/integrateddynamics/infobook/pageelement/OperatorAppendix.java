@@ -54,7 +54,7 @@ public class OperatorAppendix extends SectionAppendix {
         gui.drawScaledCenteredString(L10NHelpers.localize("operator.operators.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
         // Base information
-        String operatorName = L10NHelpers.localize(operator.getUnlocalizedName());
+        String operatorName = L10NHelpers.localize(operator.getTranslationKey());
         gui.drawScaledCenteredString(L10NHelpers.localize(operatorName) + " (" + operator.getSymbol() + ")", x, y + 8, width, 1f, gui.getBannerWidth(), 0);
         boolean wasUnicode = gui.getFontRenderer().getUnicodeFlag();
         gui.getFontRenderer().setUnicodeFlag(true);
@@ -64,10 +64,10 @@ public class OperatorAppendix extends SectionAppendix {
         int offsetY = 14;
         for(int i = 0; i < inputTypes.length; i++) {
             gui.getFontRenderer().drawString(L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
-                    + inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getUnlocalizedName())), x, y + offsetY, 0);
+                    + inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())), x, y + offsetY, 0);
             offsetY += 8;
         }
-        String outputTypeName = L10NHelpers.localize(operator.getOutputType().getUnlocalizedName());
+        String outputTypeName = L10NHelpers.localize(operator.getOutputType().getTranslationKey());
         gui.getFontRenderer().drawString(L10NHelpers.localize(L10NValues.GUI_OUTPUT,
                 operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, 0);
 

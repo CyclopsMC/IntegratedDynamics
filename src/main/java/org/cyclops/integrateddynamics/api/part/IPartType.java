@@ -43,12 +43,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * @return The unlocalized base name of this part. (Without the .name suffix)
      */
-    public String getUnlocalizedNameBase();
+    public String getTranslationKeyBase();
 
     /**
      * @return The unlocalized name of this part. (With the .name suffix)
      */
-    public String getUnlocalizedName();
+    public String getTranslationKey();
 
     /**
      * @return JSON model path for the block representation of this part.

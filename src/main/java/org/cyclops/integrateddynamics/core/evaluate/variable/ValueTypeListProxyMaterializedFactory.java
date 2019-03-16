@@ -33,11 +33,11 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
                 heterogeneous = true;
             }
         } catch (EvaluationException e) {}
-        sb.append(valueType.getUnlocalizedName());
+        sb.append(valueType.getTranslationKey());
         for (IValue value : values) {
             if(heterogeneous) {
                 sb.append(ELEMENT_DELIMITER);
-                sb.append(value.getType().getUnlocalizedName());
+                sb.append(value.getType().getTranslationKey());
             }
             sb.append(ELEMENT_DELIMITER);
             sb.append(ValueHelpers.serializeRaw(value).replaceAll(ELEMENT_DELIMITER, ELEMENT_DELIMITER_ESCAPED));

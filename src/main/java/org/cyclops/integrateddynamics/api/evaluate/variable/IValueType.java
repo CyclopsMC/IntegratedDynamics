@@ -40,7 +40,7 @@ public interface IValueType<V extends IValue> {
     /**
      * @return The unique name of this type that will also be used for display.
      */
-    public String getUnlocalizedName();
+    public String getTranslationKey();
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
@@ -136,7 +136,7 @@ public interface IValueType<V extends IValue> {
 
         @Override
         public int compare(IValueType<?> o1, IValueType<?> o2) {
-            return o1.getUnlocalizedName().compareTo(o2.getUnlocalizedName());
+            return o1.getTranslationKey().compareTo(o2.getTranslationKey());
         }
     }
 

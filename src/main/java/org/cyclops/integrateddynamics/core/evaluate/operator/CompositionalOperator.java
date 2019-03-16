@@ -159,7 +159,7 @@ public class CompositionalOperator extends OperatorBase {
             }, renderPattern, unlocalizedType) {
                 @Override
                 public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input) {
-                    return AppliedOperatorBuilder.this.validateTypes(getUnlocalizedName(), input);
+                    return AppliedOperatorBuilder.this.validateTypes(getTranslationKey(), input);
                 }
             };
         }

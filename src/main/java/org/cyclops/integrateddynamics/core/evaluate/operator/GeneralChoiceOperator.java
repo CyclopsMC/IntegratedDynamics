@@ -45,15 +45,15 @@ public class GeneralChoiceOperator extends GeneralOperator {
             }
             if(i == 0 && !ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                        Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
+                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
+                        Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getTranslationKey()));
             } else if(i == 1) {
                 temporarySecondInputType = inputType;
             } else if(i == 2) {
                 if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
                     return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                            this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                            Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getUnlocalizedName()));
+                            this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
+                            Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getTranslationKey()));
                 }
             }
         }

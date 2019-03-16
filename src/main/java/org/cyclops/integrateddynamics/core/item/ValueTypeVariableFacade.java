@@ -81,8 +81,8 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
             // Check expected aspect type and operator output type
             if (!ValueHelpers.correspondsTo(getValueType(), containingValueType)) {
                 validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
-                        new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                        new L10NHelpers.UnlocalizedString(getValueType().getUnlocalizedName())));
+                        new L10NHelpers.UnlocalizedString(containingValueType.getTranslationKey()),
+                        new L10NHelpers.UnlocalizedString(getValueType().getTranslationKey())));
             }
         }
     }

@@ -46,7 +46,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         try {
             return getItemStackDisplayNameUsSafe(itemStack);
         } catch (NoSuchMethodException e) {
-            return L10NHelpers.localize(itemStack.getUnlocalizedName() + ".name");
+            return L10NHelpers.localize(itemStack.getTranslationKey() + ".name");
         }
     }
 

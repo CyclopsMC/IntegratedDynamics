@@ -306,8 +306,8 @@ public class CombinedOperator extends OperatorBase {
             IValueType[] flippedInputTypes = new IValueType[originalInputTypes.length];
             if (originalInputTypes.length < 2) {
                 throw new EvaluationException(L10NHelpers.localize(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
-                        L10NHelpers.localize(Operators.OPERATOR_FLIP.getUnlocalizedName()),
-                        L10NHelpers.localize(operator.getUnlocalizedName()),
+                        L10NHelpers.localize(Operators.OPERATOR_FLIP.getTranslationKey()),
+                        L10NHelpers.localize(operator.getTranslationKey()),
                         originalInputTypes.length, 2));
             }
             for (int i = 0; i < flippedInputTypes.length; i++) {

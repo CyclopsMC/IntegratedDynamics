@@ -75,7 +75,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S> & IGui
             public boolean apply(A item, Pattern pattern) {
                 // We could cache this if this would prove to be a bottleneck.
                 // But we have a small amount of aspects, so this shouldn't be a problem.
-                return pattern.matcher(L10NHelpers.localize(item.getUnlocalizedName()).toLowerCase(Locale.ENGLISH)).matches();
+                return pattern.matcher(L10NHelpers.localize(item.getTranslationKey()).toLowerCase(Locale.ENGLISH)).matches();
             }
         });
         this.target = target;

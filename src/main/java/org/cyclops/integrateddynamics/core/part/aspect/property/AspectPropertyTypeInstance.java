@@ -16,16 +16,16 @@ import java.util.function.Predicate;
 public class AspectPropertyTypeInstance<T extends IValueType<V>, V extends IValue> implements IAspectPropertyTypeInstance<T, V> {
 
     private final T type;
-    private final String unlocalizedName;
+    private final String translationKey;
     private final Predicate<V> validator;
 
-    public AspectPropertyTypeInstance(T type, String unlocalizedName) {
-        this(type, unlocalizedName, Predicates.<V>alwaysTrue());
+    public AspectPropertyTypeInstance(T type, String translationKey) {
+        this(type, translationKey, Predicates.<V>alwaysTrue());
     }
 
-    public AspectPropertyTypeInstance(T type, String unlocalizedName, Predicate<V> validator) {
+    public AspectPropertyTypeInstance(T type, String translationKey, Predicate<V> validator) {
         this.type = type;
-        this.unlocalizedName = unlocalizedName;
+        this.translationKey = translationKey;
         this.validator = validator;
     }
 
@@ -33,11 +33,11 @@ public class AspectPropertyTypeInstance<T extends IValueType<V>, V extends IValu
     public boolean equals(Object o) {
         return o instanceof AspectPropertyTypeInstance
                 && ((AspectPropertyTypeInstance<?, ?>) o).type.equals(this.type)
-                && ((AspectPropertyTypeInstance<?, ?>) o).unlocalizedName.equals(this.unlocalizedName);
+                && ((AspectPropertyTypeInstance<?, ?>) o).translationKey.equals(this.translationKey);
     }
 
     @Override
     public int hashCode() {
-        return unlocalizedName.hashCode() + type.hashCode() << 2 + 11;
+        return translationKey.hashCode() + type.hashCode() << 2 + 11;
     }
 }

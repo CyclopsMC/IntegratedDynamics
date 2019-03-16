@@ -251,7 +251,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     lines.add(L10NHelpers.localize(
                             L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
                             valueType.getDisplayColorFormat() + valueType.toCompactString(value),
-                            L10NHelpers.localize(valueType.getUnlocalizedName())));
+                            L10NHelpers.localize(valueType.getTranslationKey())));
                 }
             } else {
                 lines.add(TextFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
@@ -289,7 +289,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.writeToNBT(tag);
             IValue value = getDisplayValue();
             if(value != null) {
-                tag.setString("displayValueType", value.getType().getUnlocalizedName());
+                tag.setString("displayValueType", value.getType().getTranslationKey());
                 tag.setString("displayValue", ValueHelpers.serializeRaw(value));
             }
             tag.setInteger("facingRotation", facingRotation.ordinal());

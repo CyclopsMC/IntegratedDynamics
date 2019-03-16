@@ -214,7 +214,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
                 // because that depends on tile entity data, which requires loading the part/chunk.
                 int compPriority = !isLoaded() || !p.isLoaded() ? 0 : -Integer.compare(this.getPriority(), p.getPriority());
                 if (compPriority == 0) {
-                    int compPart = getPart().getUnlocalizedName().compareTo(p.getPart().getUnlocalizedName());
+                    int compPart = getPart().getTranslationKey().compareTo(p.getPart().getTranslationKey());
                     if (compPart == 0) {
                         int compPos = getCenterPos(getTarget()).compareTo(getCenterPos(p.getTarget()));
                         if (compPos == 0) {

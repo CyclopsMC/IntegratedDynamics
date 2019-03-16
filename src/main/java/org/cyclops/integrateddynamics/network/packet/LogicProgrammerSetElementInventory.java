@@ -35,7 +35,7 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
     }
 
     public LogicProgrammerSetElementInventory(IValueType listValueType, int baseX, int baseY) {
-    	this.listValueType = listValueType.getUnlocalizedName();
+    	this.listValueType = listValueType.getTranslationKey();
 		this.baseX = baseX;
 		this.baseY = baseY;
     }

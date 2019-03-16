@@ -51,11 +51,11 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
             if (partStateUnsafe instanceof PartTypeConnectorOmniDirectional.State) {
                 PartTypeConnectorOmniDirectional.State partState = (PartTypeConnectorOmniDirectional.State) partStateUnsafe;
                 if (partState.hasConnectorId()) {
-                    double tx = pos.getX() + 0.5F + direction.getFrontOffsetX() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                    double tx = pos.getX() + 0.5F + direction.getXOffset() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
                             + (direction.getAxis() != EnumFacing.Axis.X ? 0.25F - rand.nextFloat() * 0.5F : 0F);
-                    double ty = pos.getY() + 0.5F + direction.getFrontOffsetY() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                    double ty = pos.getY() + 0.5F + direction.getYOffset() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
                             + (direction.getAxis() != EnumFacing.Axis.Y ? 0.25F - rand.nextFloat() * 0.5F : 0F);
-                    double tz = pos.getZ() + 0.5F + direction.getFrontOffsetZ() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                    double tz = pos.getZ() + 0.5F + direction.getZOffset() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
                             + (direction.getAxis() != EnumFacing.Axis.Z ? 0.25F - rand.nextFloat() * 0.5F : 0F);
 
                     float scale = 0.15F;
@@ -66,9 +66,9 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
                     float ageMultiplier = 17F;
 
                     ParticleBlur blur = new ParticleBlur(Minecraft.getMinecraft().world, tx, ty, tz, scale,
-                            -(direction.getFrontOffsetX() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
-                            -(direction.getFrontOffsetY() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
-                            -(direction.getFrontOffsetZ() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
+                            -(direction.getXOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
+                            -(direction.getYOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
+                            -(direction.getZOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
                             red, green, blue, ageMultiplier);
                     Minecraft.getMinecraft().effectRenderer.addEffect(blur);
                 }

@@ -60,8 +60,8 @@ public class CurriedOperator implements IOperator {
     }
 
     @Override
-    public String getUnlocalizedName() {
-        return baseOperator.getUnlocalizedName();
+    public String getTranslationKey() {
+        return baseOperator.getTranslationKey();
     }
 
     @Override
@@ -175,7 +175,7 @@ public class CurriedOperator implements IOperator {
                 i++;
                 NBTTagCompound valueTag = new NBTTagCompound();
                 IValueType valueType = value.getType();
-                valueTag.setString("valueType", valueType.getUnlocalizedName());
+                valueTag.setString("valueType", valueType.getTranslationKey());
                 valueTag.setString("value", ValueHelpers.serializeRaw(value));
                 list.appendTag(valueTag);
             }

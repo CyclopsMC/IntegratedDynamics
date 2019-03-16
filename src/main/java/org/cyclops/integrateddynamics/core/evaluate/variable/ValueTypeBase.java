@@ -26,7 +26,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     private final int color;
     private final String colorFormat;
 
-    private String unlocalizedName = null;
+    private String translationKey = null;
 
     public ValueTypeBase(String typeName, int color, String colorFormat) {
         this.typeName = typeName;
@@ -56,8 +56,8 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public String getUnlocalizedName() {
-        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedPrefix() + ".name");
+    public String getTranslationKey() {
+        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix() + ".name");
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo, @Nullable V value) {
-        String typeName = L10NHelpers.localize(getUnlocalizedName());
+        String typeName = L10NHelpers.localize(getTranslationKey());
         lines.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
@@ -112,7 +112,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public String toString() {
-        return L10NHelpers.localize(getUnlocalizedName());
+        return L10NHelpers.localize(getTranslationKey());
     }
 
     @Override

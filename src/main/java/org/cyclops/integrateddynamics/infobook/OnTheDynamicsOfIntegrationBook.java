@@ -68,7 +68,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     if(index >= recipes.size()) {
                         StringBuilder unlocalizedItems = new StringBuilder();
                         for (Ingredient ingredient : ingredients) {
-                            unlocalizedItems.append(ingredient.getMatchingStacks()[0].getUnlocalizedName());
+                            unlocalizedItems.append(ingredient.getMatchingStacks()[0].getTranslationKey());
                         }
                         throw new InfoBookParser.InvalidAppendixException("Could not find Squeezer recipe for "
                                 + unlocalizedItems + " and "
@@ -104,7 +104,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     int index = InfoBookParser.getIndex(node);
                     if(index >= recipes.size()) {
                         throw new InfoBookParser.InvalidAppendixException("Could not find Drying Basin recipe for "
-                                + itemStack.getItem().getUnlocalizedName() + "with index " + index);
+                                + itemStack.getItem().getTranslationKey() + "with index " + index);
                     }
                     return new DryingBasinRecipeAppendix(infoBook, recipes.get(index));
                 }
@@ -136,7 +136,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     if(index >= recipes.size()) {
                         StringBuilder unlocalizedItems = new StringBuilder();
                         for (Ingredient ingredient : ingredients) {
-                            unlocalizedItems.append(ingredient.getMatchingStacks()[0].getUnlocalizedName());
+                            unlocalizedItems.append(ingredient.getMatchingStacks()[0].getTranslationKey());
                         }
                         throw new InfoBookParser.InvalidAppendixException("Could not find MechanicalSqueezer recipe for "
                                 + unlocalizedItems + " and "
@@ -172,7 +172,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     int index = InfoBookParser.getIndex(node);
                     if(index >= recipes.size()) {
                         throw new InfoBookParser.InvalidAppendixException("Could not find Drying Basin recipe for "
-                                + itemStack.getItem().getUnlocalizedName() + "with index " + index);
+                                + itemStack.getItem().getTranslationKey() + "with index " + index);
                     }
                     return new MechanicalDryingBasinRecipeAppendix(infoBook, recipes.get(index));
                 }

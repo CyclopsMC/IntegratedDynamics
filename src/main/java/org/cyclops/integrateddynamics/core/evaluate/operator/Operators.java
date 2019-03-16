@@ -299,8 +299,8 @@ public final class Operators {
                     } else if(i == 1) {
                         if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
                             return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    operator.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                                    Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getUnlocalizedName()));
+                                    operator.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
+                                    Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getTranslationKey()));
                         }
                     }
                 }
@@ -1907,7 +1907,7 @@ public final class Operators {
                     }
                     Vec3d lookVec = entity.getLookVec();
                     Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
-                    Vec3d direction = origin.addVector(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
+                    Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
                     RayTraceResult mop = entity.world.rayTraceBlocks(origin, direction, true);
                     if(mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -1933,7 +1933,7 @@ public final class Operators {
                     }
                     Vec3d lookVec = entity.getLookVec();
                     Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
-                    Vec3d direction = origin.addVector(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
+                    Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
                     float size = entity.getCollisionBorderSize();
                     List<Entity> list = entity.world.getEntitiesWithinAABBExcludingEntity(entity,
@@ -2364,11 +2364,11 @@ public final class Operators {
                     Fluid fluid = a.getRawValue().get().getFluid();
                     String modDomain = null;
                     if (fluid.getStill() != null) {
-                        modDomain = fluid.getStill().getResourceDomain();
+                        modDomain = fluid.getStill().getNamespace();
                     } else if (fluid.getFlowing() != null) {
-                        modDomain = fluid.getFlowing().getResourceDomain();
+                        modDomain = fluid.getFlowing().getNamespace();
                     } else if (fluid.getBlock() != null) {
-                        modDomain = Block.REGISTRY.getNameForObject(fluid.getBlock()).getResourceDomain();
+                        modDomain = Block.REGISTRY.getNameForObject(fluid.getBlock()).getNamespace();
                     }
                     String modId = org.cyclops.cyclopscore.helper.Helpers.getModId(modDomain);
                     modName = Loader.instance().getIndexedModList().get(modId).getName();

@@ -31,7 +31,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     @Override
     public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
-        L10NHelpers.addStatusInfo(list, isActivated(itemStack), getUnlocalizedName() + ".info.auto_supply");
+        L10NHelpers.addStatusInfo(list, isActivated(itemStack), getTranslationKey() + ".info.auto_supply");
     }
 
     @Override

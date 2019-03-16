@@ -122,7 +122,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         } else if (dir == 4) {
             dir += (c.z >= 0.5) ? 1 : 0;
         }
-        return EnumFacing.getFront(dir);
+        return EnumFacing.byIndex(dir);
     }
 
     public List<BakedQuad> getFacadeQuads(IBlockState blockState, EnumFacing side, PartRenderPosition partRenderPosition) {
@@ -216,10 +216,10 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                             quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
                         }
                         for (float[][] v : quadVertexes) {
-                            Vec3d v1 = rotate(new Vec3d(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).addVector(.5, .5, .5);
-                            Vec3d v2 = rotate(new Vec3d(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).addVector(.5, .5, .5);
-                            Vec3d v3 = rotate(new Vec3d(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).addVector(.5, .5, .5);
-                            Vec3d v4 = rotate(new Vec3d(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).addVector(.5, .5, .5);
+                            Vec3d v1 = rotate(new Vec3d(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).add(.5, .5, .5);
+                            Vec3d v2 = rotate(new Vec3d(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).add(.5, .5, .5);
+                            Vec3d v3 = rotate(new Vec3d(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).add(.5, .5, .5);
+                            Vec3d v4 = rotate(new Vec3d(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).add(.5, .5, .5);
                             EnumFacing realSide = getSideFromVecs(v1, v2, v3);
 
                             boolean invert = i == 2 || i == 1;

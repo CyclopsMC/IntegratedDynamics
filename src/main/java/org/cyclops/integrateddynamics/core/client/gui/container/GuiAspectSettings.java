@@ -165,11 +165,11 @@ public class GuiAspectSettings extends GuiContainerExtended {
 
         IAspectPropertyTypeInstance activeProperty = getActiveProperty();
         if(activeProperty != null) {
-            String label = L10NHelpers.localize(activeProperty.getUnlocalizedName());
+            String label = L10NHelpers.localize(activeProperty.getTranslationKey());
             RenderHelpers.drawScaledCenteredString(fontRenderer, label, 88, 10, 0,
                     1.0F, 140, Helpers.RGBToInt(10, 10, 10));
             if (RenderHelpers.isPointInRegion(this.guiLeft + 40, this.guiTop, 110, 20, mouseX, mouseY)) {
-                String unlocalizedInfo = activeProperty.getUnlocalizedName().replaceFirst("\\.name$", ".info");
+                String unlocalizedInfo = activeProperty.getTranslationKey().replaceFirst("\\.name$", ".info");
                 if (I18n.hasKey(unlocalizedInfo)) {
                     drawTooltip(Lists.newArrayList(TextFormatting.GRAY.toString()
                             + L10NHelpers.localize(unlocalizedInfo)), mouseX - this.guiLeft, mouseY - this.guiTop + 20);

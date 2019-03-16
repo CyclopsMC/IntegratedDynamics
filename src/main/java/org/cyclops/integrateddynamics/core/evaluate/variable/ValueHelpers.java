@@ -63,7 +63,7 @@ public class ValueHelpers {
         L10NHelpers.UnlocalizedString[] names = new L10NHelpers.UnlocalizedString[valueTypes.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IValueType valueType = valueTypes[i];
-            names[i] = new L10NHelpers.UnlocalizedString(valueType.getUnlocalizedName());
+            names[i] = new L10NHelpers.UnlocalizedString(valueType.getTranslationKey());
         }
         return names;
     }
@@ -140,7 +140,7 @@ public class ValueHelpers {
      */
     public static NBTTagCompound serialize(IValue value) {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("valueType", value.getType().getUnlocalizedName());
+        tag.setString("valueType", value.getType().getTranslationKey());
         tag.setString("value", serializeRaw(value));
         return tag;
     }

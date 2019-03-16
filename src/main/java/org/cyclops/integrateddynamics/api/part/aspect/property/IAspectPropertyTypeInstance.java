@@ -19,7 +19,7 @@ public interface IAspectPropertyTypeInstance<T extends IValueType<V>, V extends 
     /**
      * @return The unique name of this property, also used for localization.
      */
-    String getUnlocalizedName();
+    String getTranslationKey();
 
     /**
      * @return The value validator.

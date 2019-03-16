@@ -88,7 +88,7 @@ public abstract class GuiMultipart<P extends IPartType<P, S> & IGuiContainerProv
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
         // Draw part name
-        fontRenderer.drawString(L10NHelpers.localize(getPartType().getUnlocalizedName()), guiLeft + 8, guiTop + 6, Helpers.RGBToInt(0, 0, 0));
+        fontRenderer.drawString(L10NHelpers.localize(getPartType().getTranslationKey()), guiLeft + 8, guiTop + 6, Helpers.RGBToInt(0, 0, 0));
     }
 
 }

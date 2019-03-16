@@ -28,7 +28,7 @@ public interface IOperator {
     /**
      * @return The unique unlocalized name for this operator.
      */
-    public String getUnlocalizedName();
+    public String getTranslationKey();
 
     /**
      * @return The unique unlocalized category name for this operator.

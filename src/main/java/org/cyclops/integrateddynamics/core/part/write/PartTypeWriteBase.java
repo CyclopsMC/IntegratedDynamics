@@ -207,9 +207,9 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
             if (state.hasVariable() && state.isEnabled()) {
                 lines.add(L10NHelpers.localize(
                         L10NValues.PART_TOOLTIP_WRITER_ACTIVEASPECT,
-                        L10NHelpers.localize(aspectWrite.getUnlocalizedName()),
+                        L10NHelpers.localize(aspectWrite.getTranslationKey()),
                         aspectWrite.getValueType().getDisplayColorFormat()
-                                + L10NHelpers.localize(aspectWrite.getValueType().getUnlocalizedName())
+                                + L10NHelpers.localize(aspectWrite.getValueType().getTranslationKey())
                                 + TextFormatting.RESET));
             } else {
                 lines.add(TextFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));

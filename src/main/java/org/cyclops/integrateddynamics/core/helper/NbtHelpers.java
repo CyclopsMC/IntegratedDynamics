@@ -122,7 +122,7 @@ public class NbtHelpers {
             if (tag.hasKey(key, type)) {
                 if (type == Constants.NBT.TAG_COMPOUND) {
                     NBTTagCompound difference = minus(tag.getCompoundTag(key), b.getCompoundTag(key));
-                    if (difference.hasNoTags()) {
+                    if (difference.isEmpty()) {
                         tag.removeTag(key);
                     } else {
                         tag.setTag(key, difference);

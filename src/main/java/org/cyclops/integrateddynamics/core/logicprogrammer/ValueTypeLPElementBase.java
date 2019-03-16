@@ -73,7 +73,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public String getLocalizedNameFull() {
-        return L10NHelpers.localize(valueType.getUnlocalizedName());
+        return L10NHelpers.localize(valueType.getTranslationKey());
     }
 
     @Override
@@ -131,7 +131,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public String getSymbol() {
-        return L10NHelpers.localize(valueType.getUnlocalizedName());
+        return L10NHelpers.localize(valueType.getTranslationKey());
     }
 
     @Override
