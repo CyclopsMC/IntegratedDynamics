@@ -112,7 +112,6 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
                 if (currentlyBurning++ >= currentlyBurningMax) {
                     currentlyBurning = 0;
                     currentlyBurningMax = 0;
-                    sendUpdate();
                 }
                 int toFill = ENERGY_PER_TICK;
                 addEnergy(toFill);
@@ -126,7 +125,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
                     }
                     currentlyBurningMax = TileEntityFurnace.getItemBurnTime(fuel);
                     currentlyBurning = 0;
-                    sendUpdate();
+                    markDirty();
                 }
                 updateBlockState();
             }
