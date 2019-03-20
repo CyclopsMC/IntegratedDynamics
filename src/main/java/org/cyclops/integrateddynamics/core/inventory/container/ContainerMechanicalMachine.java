@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IContainerListener;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.inventory.container.TileInventoryContainerConfigurable;
 import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
+
+import java.util.function.Supplier;
 
 /**
  * A base container for {@link TileMechanicalMachine}.
@@ -13,8 +12,10 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
  */
 public class ContainerMechanicalMachine<T extends TileMechanicalMachine<?, ?, ?, ?, ?>> extends TileInventoryContainerConfigurable<T> {
 
-    private int lastMaxProgress;
-    private int lastProgress;
+    private final Supplier<Integer> variableMaxProgress;
+    private final Supplier<Integer> variableProgress;
+    private final Supplier<Integer> variableMaxEnergy;
+    private final Supplier<Integer> variableEnergy;
 
     /**
      * Make a new ContainerMechanicalMachine.
@@ -24,38 +25,25 @@ public class ContainerMechanicalMachine<T extends TileMechanicalMachine<?, ?, ?,
      */
     public ContainerMechanicalMachine(InventoryPlayer inventory, T tile) {
         super(inventory, tile);
+        this.variableMaxProgress = registerSyncedVariable(Integer.class, () -> getTile().getMaxProgress());
+        this.variableProgress = registerSyncedVariable(Integer.class, () -> getTile().getProgress());
+        this.variableMaxEnergy = registerSyncedVariable(Integer.class, () -> getTile().getMaxEnergyStored());
+        this.variableEnergy = registerSyncedVariable(Integer.class, () -> getTile().getEnergyStored());
     }
 
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        for (int i = 0; i < this.listeners.size(); ++i) {
-            IContainerListener crafting = this.listeners.get(i);
-            if(lastMaxProgress != getTile().getMaxProgress()) {
-                crafting.sendWindowProperty(this, 0, getTile().getMaxProgress());
-            }
-            if(lastProgress != getTile().getProgress()) {
-                crafting.sendWindowProperty(this, 1, getTile().getProgress());
-            }
-        }
-        this.lastProgress = getTile().getProgress();
+    public int getMaxProgress() {
+        return variableMaxProgress.get();
     }
 
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int id, int data) {
-        if(id == 0) {
-            this.lastMaxProgress = data;
-        }
-        if(id == 1) {
-            this.lastProgress = data;
-        }
+    public int getProgress() {
+        return variableProgress.get();
     }
 
-    public int getLastMaxProgress() {
-        return this.lastMaxProgress;
+    public int getMaxEnergy() {
+        return variableMaxEnergy.get();
     }
 
-    public int getLastProgress() {
-        return this.lastProgress;
+    public int getEnergy() {
+        return variableEnergy.get();
     }
 }

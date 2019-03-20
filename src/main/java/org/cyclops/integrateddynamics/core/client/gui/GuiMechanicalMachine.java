@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.client.gui;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 import org.cyclops.cyclopscore.client.gui.container.GuiContainerConfigurable;
 import org.cyclops.cyclopscore.helper.GuiHelpers;
 import org.cyclops.cyclopscore.item.DamageIndicatedItemComponent;
@@ -28,8 +27,8 @@ public class GuiMechanicalMachine<C extends ContainerMechanicalMachine<?>> exten
 
     public void drawEnergyBarTooltip(int x, int y, int width, int height, int mouseX, int mouseY) {
         GuiHelpers.renderTooltipOptional(this, 8, 16, 18, 60, mouseX, mouseY, () -> {
-            int energyStored = getContainer().getTile().getEnergyStored();
-            int energyMax = getContainer().getTile().getMaxEnergyStored();
+            int energyStored = getContainer().getEnergy();
+            int energyMax = getContainer().getMaxEnergy();
             if (energyMax > 0) {
                 return Optional.of(Lists.newArrayList(Helpers.getLocalizedEnergyLevel(energyStored, energyMax)));
             }
@@ -37,13 +36,12 @@ public class GuiMechanicalMachine<C extends ContainerMechanicalMachine<?>> exten
         });
     }
 
-    public void drawFluidTankTooltip(IFluidTank tank, int x, int y, int width, int height, int mouseX, int mouseY) {
+    public void drawFluidTankTooltip(FluidStack fluidStack, int fluidCapacity, int x, int y, int width, int height, int mouseX, int mouseY) {
         GuiHelpers.renderTooltipOptional(this, x, y, width, height, mouseX, mouseY, () -> {
-            FluidStack fluidStack = tank.getFluid();
             if (fluidStack != null) {
                 String fluidName = fluidStack.getLocalizedName();
                 return Optional.of(Lists.newArrayList(fluidName,
-                        DamageIndicatedItemComponent.getInfo(fluidStack, tank.getFluidAmount(), tank.getCapacity())));
+                        DamageIndicatedItemComponent.getInfo(fluidStack, fluidStack.amount, fluidCapacity)));
             }
             return Optional.empty();
         });

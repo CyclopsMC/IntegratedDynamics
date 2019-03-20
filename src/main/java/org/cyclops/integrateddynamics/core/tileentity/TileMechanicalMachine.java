@@ -143,7 +143,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
 
     @Override
     public void onTankChanged() {
-        sendUpdate();
+        markDirty();
         updateInventoryHash();
     }
 
@@ -245,7 +245,6 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
                             drainEnergy(toDrain, false);
                             progress++;
                             sleep = -1;
-                            sendUpdate();
                         } else {
                             sleep = 1;
                         }
@@ -324,7 +323,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
         int lastEnergy = this.energy;
         if (lastEnergy != energy) {
             this.energy = energy;
-            sendUpdate();
+            markDirty();
         }
     }
 

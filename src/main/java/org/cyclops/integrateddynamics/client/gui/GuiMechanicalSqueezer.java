@@ -52,16 +52,16 @@ public class GuiMechanicalSqueezer extends GuiMechanicalMachine<ContainerMechani
         // Render progress
         GuiHelpers.renderProgressBar(this, getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
                 176, 120, GuiHelpers.ProgressDirection.DOWN,
-                getContainer().getLastProgress(), getContainer().getLastMaxProgress());
+                getContainer().getProgress(), getContainer().getMaxProgress());
 
         // Render energy level
         GuiHelpers.renderProgressBar(this, getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
                 176, 60, GuiHelpers.ProgressDirection.UP,
-                getContainer().getTile().getEnergyStored(), getContainer().getTile().getMaxEnergyStored());
+                getContainer().getEnergy(), getContainer().getMaxEnergy());
 
         // Render fluid tank
-        GuiHelpers.renderOverlayedFluidTank(this, getContainer().getTile().getTank().getFluid(),
-                getContainer().getTile().getTank().getCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 10,
+        GuiHelpers.renderOverlayedFluidTank(this, getContainer().getFluidStack(),
+                getContainer().getFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 10,
                 18, 60, texture, 176, 0);
     }
 
@@ -70,7 +70,7 @@ public class GuiMechanicalSqueezer extends GuiMechanicalMachine<ContainerMechani
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
         drawEnergyBarTooltip(8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getContainer().getTile().getTank(), 150, 10, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(getContainer().getFluidStack(), getContainer().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
 
         // Draw fluid auto-eject toggle
         GuiHelpers.renderTooltip(this, 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
