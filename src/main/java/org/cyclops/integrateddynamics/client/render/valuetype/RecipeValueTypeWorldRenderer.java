@@ -113,7 +113,8 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                     .collect(Collectors.toList())
             );
         } else {
-            return (Stream<List<IPrototypedIngredient>>) (Stream) inputs;
+            return ((Stream<IPrototypedIngredientAlternatives<?, ?>>) (Stream) inputs)
+                    .map(p -> Lists.newArrayList(p.getAlternatives()));
         }
     }
 }
