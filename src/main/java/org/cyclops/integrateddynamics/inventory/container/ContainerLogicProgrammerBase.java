@@ -226,7 +226,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         ItemStack itemStack = writeSlot.getStackInSlot(0);
         if(!itemStack.isEmpty()) {
             IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-            if(variableFacade.isValid()) {
+            if(this.lastLabel != null && variableFacade.isValid()) {
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableFacade.getId(), this.lastLabel);
             }
         }
