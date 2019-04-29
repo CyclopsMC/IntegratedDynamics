@@ -222,7 +222,11 @@ public class OperatorBuilders {
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, IOperator>, IValue> FUNCTION_TWO_OPERATORS = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 IOperator second = getSafeOperator(input.getValue(1), ValueTypes.CATEGORY_ANY);
-                IValueType secondInputType = second.getInputTypes()[0];
+                IValueType[] secondInputs = second.getInputTypes();
+                if(secondInputs.length < 1) {
+                    throw new EvaluationException("The second operator did not accept any inputs");
+                }
+                IValueType secondInputType = secondInputs[0];
                 if (ValueHelpers.correspondsTo(secondInputType, ValueTypes.OPERATOR)) {
                     secondInputType = ValueTypes.CATEGORY_ANY;
                 }
