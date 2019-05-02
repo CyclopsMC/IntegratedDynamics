@@ -20,10 +20,19 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
 
     private final String name;
     private final Class<P> proxyClass;
+    private final Constructor<P> proxyClassConstructor;
 
     public ValueTypeListProxyNBTFactory(String name, Class<P> proxyClass) {
         this.name = name;
         this.proxyClass = proxyClass;
+
+        try {
+            this.proxyClassConstructor = this.proxyClass.getConstructor();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new RuntimeException(String.format(
+                    "Could not find a default constructor for %s, while this is required for list proxies. This is a developer error.", proxyClass.getName()));
+        }
     }
 
     @Override
@@ -45,12 +54,11 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
     @Override
     public P deserialize(String value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         try {
-            Constructor<P> constructor = getProxyClass().getConstructor();
-            P proxy = constructor.newInstance();
+            P proxy = this.proxyClassConstructor.newInstance();
             NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
             proxy.readGeneratedFieldsFromNBT(tag);
             return proxy;
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | NBTException | IllegalAccessException e) {
+        } catch (InvocationTargetException | InstantiationException | NBTException | IllegalAccessException e) {
             e.printStackTrace();
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(e.getMessage());
         }
