@@ -18,6 +18,10 @@ public class ValueTypeListProxyPositionedRecipes extends ValueTypeListProxyPosit
         super(ValueTypeListProxyFactories.POSITIONED_RECIPES.getName(), ValueTypes.OBJECT_RECIPE, pos, side);
     }
 
+    public ValueTypeListProxyPositionedRecipes() {
+        this(null, null);
+    }
+
     protected IRecipeHandler getRecipeHandler() {
         return Helpers.getTileOrBlockCapability(getPos().getWorld(), getPos().getBlockPos(), getSide(),
                 Capabilities.RECIPE_HANDLER);

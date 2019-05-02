@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Iterables;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
@@ -14,6 +13,10 @@ public class ValueTypeListProxyEntityArmorInventory extends ValueTypeListProxyEn
 
     public ValueTypeListProxyEntityArmorInventory(World world, Entity entity) {
         super(ValueTypeListProxyFactories.ENTITY_ARMORINVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK, world, entity);
+    }
+
+    public ValueTypeListProxyEntityArmorInventory() {
+        this(null, null);
     }
 
     protected ItemStack[] getInventory() {
