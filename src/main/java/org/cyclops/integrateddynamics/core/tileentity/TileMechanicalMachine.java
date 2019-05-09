@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.tileentity;
 import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -155,19 +154,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (ArrayUtils.contains(getInputSlots(), index)) {
-            NonNullList<ItemStack> inputStacks = NonNullList.create();
-            for (int slot : getInputSlots()) {
-                if (slot == index) {
-                    inputStacks.add(stack);
-                } else {
-                    inputStacks.add(getStackInSlot(slot));
-                }
-            }
-            // Only allow items to be inserted that are used in at least once recipe.
-            return getRecipeRegistry().findRecipeByInput(getRecipeInput(inputStacks)) != null;
-        }
-        return super.isItemValidForSlot(index, stack);
+        return ArrayUtils.contains(getInputSlots(), index) && super.isItemValidForSlot(index, stack);
     }
 
     /**
@@ -200,15 +187,6 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     public int getMaxProgress() {
         return this.getCurrentRecipe() != null ? getRecipeDuration(getCurrentRecipe()) : 0;
     }
-
-    /**
-     * Create a new recipe input holder for the given input stacks.
-     * This is used to check which items can be inserted into which slots.
-     * @param inputStacks The given input stacks.
-     *                    These are not guaranteed to be the stacks that are currently in the inventory.
-     * @return A recipe input holder.
-     */
-    public abstract I getRecipeInput(NonNullList<ItemStack> inputStacks);
 
     /**
      * @param recipe A recipe.

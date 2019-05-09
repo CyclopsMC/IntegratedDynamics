@@ -119,11 +119,6 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Blo
     }
 
     @Override
-    public IngredientRecipeComponent getRecipeInput(NonNullList<ItemStack> inputStacks) {
-        return new IngredientRecipeComponent(inputStacks.get(0));
-    }
-
-    @Override
     public int getRecipeDuration(IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
         return recipe.getProperties().getDuration();
     }

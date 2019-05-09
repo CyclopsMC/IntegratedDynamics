@@ -138,11 +138,6 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
     }
 
     @Override
-    public IngredientAndFluidStackRecipeComponent getRecipeInput(NonNullList<ItemStack> inputStacks) {
-        return new IngredientAndFluidStackRecipeComponent(inputStacks.get(SLOT_INPUT), FluidHelpers.copy(getTankInput().getFluid()));
-    }
-
-    @Override
     public int getRecipeDuration(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
         return recipe.getProperties().getDuration();
     }
