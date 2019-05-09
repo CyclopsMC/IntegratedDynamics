@@ -335,7 +335,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                 .collect(Collectors.toList());
         List<IPrototypedIngredientAlternatives<FluidStack, Integer>> fluids = fluidStack != null
                 ? Collections.singletonList(new PrototypedIngredientAlternativesList<>(
-                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.NBT))))
+                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.FLUID | FluidMatch.NBT))))
                 : Collections.emptyList();
         List<IPrototypedIngredientAlternatives<Integer, Boolean>> energies = energy > 0 ?
                 Collections.singletonList(new PrototypedIngredientAlternativesList<>(
