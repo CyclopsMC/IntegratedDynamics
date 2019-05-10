@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.recipe.custom;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import net.minecraft.item.ItemStack;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.recipe.custom.RecipeHandlerMachine;
@@ -30,8 +28,8 @@ public class RecipeHandlerDryingBasin<M extends IMachine<M, IngredientAndFluidSt
     @Override
     protected IngredientAndFluidStackRecipeComponent inputIngredientsToRecipeInput(IMixedIngredients inputIngredients) {
         return new IngredientAndFluidStackRecipeComponent(
-                Iterables.getFirst(inputIngredients.getInstances(IngredientComponent.ITEMSTACK), ItemStack.EMPTY),
-                Iterables.getFirst(inputIngredients.getInstances(IngredientComponent.FLUIDSTACK), null)
+                inputIngredients.getFirstNonEmpty(IngredientComponent.ITEMSTACK),
+                inputIngredients.getFirstNonEmpty(IngredientComponent.FLUIDSTACK)
         );
     }
 }
