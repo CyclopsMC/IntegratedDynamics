@@ -76,16 +76,21 @@ public interface IConfigRenderPattern {
             // Fluid out
             Pair.of(82, 58),
     }, null);
-    public static final IConfigRenderPattern INFIX = new IConfigRenderPattern.Base(100, 22, new Pair[]{Pair.of(2, 2), Pair.of(80, 2)}, Pair.of(45, 2));
-    public static final IConfigRenderPattern PREFIX_1 = new IConfigRenderPattern.Base(40, 22, new Pair[]{Pair.of(20, 2)}, Pair.of(6, 2));
-    public static final IConfigRenderPattern PREFIX_1_LONG = new IConfigRenderPattern.Base(80, 22, new Pair[]{Pair.of(20, 2)}, Pair.of(6, 2));
-    public static final IConfigRenderPattern INFIX_2 = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(2, 2), Pair.of(80, 2), Pair.of(100, 2)}, Pair.of(22, 2));
-    public static final IConfigRenderPattern INFIX_2_LATE = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(2, 2), Pair.of(22, 2), Pair.of(100, 2)}, Pair.of(55, 2));
-    public static final IConfigRenderPattern PREFIX_2 = new IConfigRenderPattern.Base(80, 22, new Pair[]{Pair.of(40, 2), Pair.of(60, 2)}, Pair.of(6, 2));
-    public static final IConfigRenderPattern PREFIX_2_LONG = new IConfigRenderPattern.Base(100, 22, new Pair[]{Pair.of(60, 2), Pair.of(80, 2)}, Pair.of(6, 2));
-    public static final IConfigRenderPattern INFIX_3 = new IConfigRenderPattern.Base(100, 22, new Pair[]{Pair.of(2, 2), Pair.of(80, 2), Pair.of(100, 2), Pair.of(120, 2)}, Pair.of(45, 2));
-    public static final IConfigRenderPattern PREFIX_3_LONG = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(60, 2), Pair.of(80, 2), Pair.of(100, 2)}, Pair.of(6, 2));
-    public static final IConfigRenderPattern SUFFIX_1 = new IConfigRenderPattern.Base(40, 22, new Pair[]{Pair.of(6, 2)}, Pair.of(26, 2));
-    public static final IConfigRenderPattern SUFFIX_1_LONG = new IConfigRenderPattern.Base(80, 22, new Pair[]{Pair.of(6, 2)}, Pair.of(26, 2));
+    public static final IConfigRenderPattern INFIX = new IConfigRenderPattern.Base(100, 22, new Pair[]{Pair.of(2, 2), Pair.of(80, 2)}, Pair.of(50, 2));
+    public static final IConfigRenderPattern INFIX_LONG = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(2, 2), Pair.of(100, 2)}, Pair.of(59, 2));
+    public static final IConfigRenderPattern INFIX_VERYLONG = new IConfigRenderPattern.Base(140, 22, new Pair[]{Pair.of(2, 2), Pair.of(120, 2)}, Pair.of(69, 2));
+    public static final IConfigRenderPattern PREFIX_1 = new IConfigRenderPattern.Base(40, 22, new Pair[]{Pair.of(20, 2)}, Pair.of(10, 2));
+    public static final IConfigRenderPattern PREFIX_1_LONG = new IConfigRenderPattern.Base(100, 22, new Pair[]{Pair.of(80, 2)}, Pair.of(40, 2));
+    public static final IConfigRenderPattern INFIX_2 = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(2, 2), Pair.of(80, 2), Pair.of(100, 2)}, Pair.of(50, 2));
+    public static final IConfigRenderPattern INFIX_2_LONG = new IConfigRenderPattern.Base(140, 22, new Pair[]{Pair.of(2, 2), Pair.of(100, 2), Pair.of(120, 2)}, Pair.of(60, 2));
+    public static final IConfigRenderPattern INFIX_2_VERYLONG = new IConfigRenderPattern.Base(160, 22, new Pair[]{Pair.of(2, 2), Pair.of(130, 2), Pair.of(140, 2)}, Pair.of(70, 2));
+    public static final IConfigRenderPattern INFIX_2_LATE = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(2, 2), Pair.of(22, 2), Pair.of(100, 2)}, Pair.of(70, 2));
+    public static final IConfigRenderPattern PREFIX_2 = new IConfigRenderPattern.Base(80, 22, new Pair[]{Pair.of(40, 2), Pair.of(60, 2)}, Pair.of(20, 2));
+    public static final IConfigRenderPattern PREFIX_2_LONG = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(80, 2), Pair.of(100, 2)}, Pair.of(40, 2));
+    public static final IConfigRenderPattern INFIX_3 = new IConfigRenderPattern.Base(140, 22, new Pair[]{Pair.of(2, 2), Pair.of(80, 2), Pair.of(100, 2), Pair.of(120, 2)}, Pair.of(45, 2));
+    public static final IConfigRenderPattern PREFIX_3 = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(60, 2), Pair.of(80, 2), Pair.of(100, 2)}, Pair.of(30, 2));
+    public static final IConfigRenderPattern PREFIX_3_LONG = new IConfigRenderPattern.Base(140, 22, new Pair[]{Pair.of(80, 2), Pair.of(100, 2), Pair.of(120, 2)}, Pair.of(40, 2));
+    public static final IConfigRenderPattern SUFFIX_1 = new IConfigRenderPattern.Base(40, 22, new Pair[]{Pair.of(6, 2)}, Pair.of(31, 2));
+    public static final IConfigRenderPattern SUFFIX_1_LONG = new IConfigRenderPattern.Base(120, 22, new Pair[]{Pair.of(2, 2)}, Pair.of(70, 2));
 
 }

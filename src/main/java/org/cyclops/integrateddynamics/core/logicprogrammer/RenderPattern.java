@@ -61,11 +61,10 @@ public class RenderPattern<E extends IGuiInputElement, G extends Gui, C extends 
         }
 
         if(configRenderPattern.getSymbolPosition() != null) {
-            int width = fontRenderer.getStringWidth(element.getSymbol());
             RenderHelpers.drawScaledCenteredString(fontRenderer, element.getSymbol(),
                     baseX + configRenderPattern.getSymbolPosition().getLeft(),
                     baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
-                    width, 1, 0);
+                    0, 1, 0);
         }
         GlStateManager.color(1, 1, 1);
     }

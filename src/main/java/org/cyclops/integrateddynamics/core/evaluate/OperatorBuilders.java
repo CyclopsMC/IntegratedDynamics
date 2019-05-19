@@ -104,6 +104,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> STRING = OperatorBuilder.forType(ValueTypes.STRING).appendKind("string");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> STRING_1_PREFIX = STRING.inputTypes(1, ValueTypes.STRING).renderPattern(IConfigRenderPattern.PREFIX_1);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> STRING_2 = STRING.inputTypes(2, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> STRING_2_LONG = STRING.inputTypes(2, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX_LONG);
 
     // --------------- Double builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> DOUBLE = OperatorBuilder.forType(ValueTypes.DOUBLE).appendKind("double");
@@ -130,8 +131,10 @@ public class OperatorBuilders {
 
     // --------------- ItemStack builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK = OperatorBuilder.forType(ValueTypes.OBJECT_ITEMSTACK).appendKind("itemstack");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_1_PREFIX_LONG = ITEMSTACK.inputTypes(1, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.PREFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_1_SUFFIX_LONG = ITEMSTACK.inputTypes(1, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_2 = ITEMSTACK.inputTypes(2, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.INFIX);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_2_LONG = ITEMSTACK.inputTypes(2, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.INFIX_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_1_INTEGER_1 = ITEMSTACK.inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.INTEGER}).renderPattern(IConfigRenderPattern.INFIX);
     public static final IterativeFunction.PrePostBuilder<ItemStack, IValue> FUNCTION_ITEMSTACK = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
@@ -158,6 +161,7 @@ public class OperatorBuilders {
 
     // --------------- Entity builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY = OperatorBuilder.forType(ValueTypes.OBJECT_ENTITY).appendKind("entity");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_SUFFIX = ENTITY.inputTypes(1, ValueTypes.OBJECT_ENTITY).renderPattern(IConfigRenderPattern.SUFFIX_1);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_SUFFIX_LONG = ENTITY.inputTypes(1, ValueTypes.OBJECT_ENTITY).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final IterativeFunction.PrePostBuilder<Entity, IValue> FUNCTION_ENTITY = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
@@ -391,9 +395,9 @@ public class OperatorBuilders {
     // --------------- NBT builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT = OperatorBuilder.forType(ValueTypes.NBT).appendKind("nbt");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_1_SUFFIX_LONG = NBT.inputTypes(ValueTypes.NBT).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
-    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX);
-    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2_NBT = NBT.inputTypes(ValueTypes.NBT, ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX);
-    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_3 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING).output(ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX_2);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2_NBT = NBT.inputTypes(ValueTypes.NBT, ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_3 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING).output(ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX_2_LONG);
     public static final IterativeFunction.PrePostBuilder<NBTTagCompound, IValue> FUNCTION_NBT = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueTypeNbt.ValueNbt value = input.getValue(0);
@@ -437,16 +441,16 @@ public class OperatorBuilders {
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_ITEMSTACK = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.OBJECT_ITEMSTACK)
-            .renderPattern(IConfigRenderPattern.INFIX_2).output(ValueTypes.OBJECT_INGREDIENTS);
+            .renderPattern(IConfigRenderPattern.INFIX_2_LONG).output(ValueTypes.OBJECT_INGREDIENTS);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_FLUIDSTACK = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.OBJECT_FLUIDSTACK)
-            .renderPattern(IConfigRenderPattern.INFIX_2).output(ValueTypes.OBJECT_INGREDIENTS);
+            .renderPattern(IConfigRenderPattern.INFIX_2_LONG).output(ValueTypes.OBJECT_INGREDIENTS);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_INTEGER = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.INTEGER)
-            .renderPattern(IConfigRenderPattern.INFIX_2).output(ValueTypes.OBJECT_INGREDIENTS);
+            .renderPattern(IConfigRenderPattern.INFIX_2_LONG).output(ValueTypes.OBJECT_INGREDIENTS);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_2_LIST = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.LIST)
-            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.OBJECT_INGREDIENTS);
+            .renderPattern(IConfigRenderPattern.INFIX_LONG).output(ValueTypes.OBJECT_INGREDIENTS);
 
     public static OperatorBase.IFunction createFunctionIngredientsList(Callable<IngredientComponent<?, ?>> componentReference) {
         return variables -> {
@@ -490,7 +494,7 @@ public class OperatorBuilders {
             .inputTypes(ValueTypes.OBJECT_RECIPE).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE_2_INFIX = RECIPE
             .inputTypes(ValueTypes.OBJECT_RECIPE, ValueTypes.OBJECT_INGREDIENTS)
-            .renderPattern(IConfigRenderPattern.INFIX);
+            .renderPattern(IConfigRenderPattern.INFIX_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> RECIPE_2_PREFIX = RECIPE
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.OBJECT_INGREDIENTS)
             .renderPattern(IConfigRenderPattern.PREFIX_2_LONG);
