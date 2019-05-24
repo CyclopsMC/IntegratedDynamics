@@ -189,6 +189,9 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             savePartPosIteratorHandler(partPosIteratorData.getLeft());
         }
 
+        // Schedule an observation if nothing was extracted, because the index may not be initialized yet.
+        scheduleObservation();
+
         return matcher.getEmptyInstance();
     }
 
@@ -286,6 +289,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
                 maxValue = entry.getValue();
             }
         }
+
         return finalizeExtraction(maxInstance, matchFlags, maxValue, simulate);
     }
 
@@ -331,6 +335,10 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             }
         }
         return getComponent().getMatcher().withQuantity(instancePrototype, extractedCount);
+    }
+
+    protected void scheduleObservation() {
+        this.network.scheduleObservation();
     }
 
 }
