@@ -231,10 +231,6 @@ public class GuiPartSettings extends GuiContainerExtended {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        if (isFieldSideEnabled()) {
-            fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0));
-            dropdownFieldSide.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
-        }
         if (isFieldUpdateIntervalEnabled()) {
             fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0));
             numberFieldUpdateInterval.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
@@ -246,6 +242,10 @@ public class GuiPartSettings extends GuiContainerExtended {
         if (isFieldChannelEnabled()) {
             fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
             numberFieldChannel.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+        }
+        if (isFieldSideEnabled()) {
+            fontRenderer.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0));
+            dropdownFieldSide.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
         }
     }
 
