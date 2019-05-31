@@ -122,7 +122,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         IValue newValue = null;
         if(state.hasVariable()) {
             try {
-                IVariable variable = state.getVariable(target, partNetwork);
+                IVariable variable = state.getVariable(network, partNetwork);
                 if(variable != null) {
                     newValue = variable.getValue();
 
@@ -157,8 +157,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getActiveVariable(IPartNetwork network, PartTarget target, S partState) {
-        return partState.getVariable(target, network);
+    public <V extends IValue> IVariable<V> getActiveVariable(INetwork network, IPartNetwork partNetwork, PartTarget target, S partState) {
+        return partState.getVariable(network, partNetwork);
     }
 
     protected void onValueChanged(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,

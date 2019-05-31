@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.api.part;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -166,9 +167,31 @@ public interface IPartState<P extends IPartType> {
      * If this part state has the given capability.
      * @param capability The capability to check.
      * @param network The network the part belongs to.
+     * @param partNetwork The part network the part belongs to.
      * @param target The target.
-     * @return If this has the given capability/
+     * @return If this has the given capability.
      */
+    boolean hasCapability(Capability<?> capability, INetwork network, IPartNetwork partNetwork, PartTarget target);
+
+    /**
+     * Get the given capability.
+     * @param capability The capability to get.
+     * @param network The network the part belongs to.
+     * @param partNetwork The part network the part belongs to.
+     * @param target The target.
+     * @param <T> The capability type.
+     * @return The capability instance.
+     */
+    <T> T getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target);
+
+    /**
+     * If this part state has the given capability.
+     * @param capability The capability to check.
+     * @param network The network the part belongs to.
+     * @param target The target.
+     * @return If this has the given capability.
+     */
+    @Deprecated
     boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target);
 
     /**
@@ -179,6 +202,7 @@ public interface IPartState<P extends IPartType> {
      * @param <T> The capability type.
      * @return The capability instance.
      */
+    @Deprecated
     <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target);
 
     /**

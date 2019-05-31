@@ -11,6 +11,7 @@ import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -97,11 +98,11 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
                 if (!getPartState().isEnabled()) {
                     readValue = Pair.of("NO POWER", 0);
                 } else if (getPartState().hasVariable()) {
-                    IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(
-                            NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
-                                    getPartContainer().getPosition().getBlockPos(), getTarget().getCenter().getSide()));
+                    INetwork network = NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
+                            getPartContainer().getPosition().getBlockPos(), getTarget().getCenter().getSide());
+                    IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
                     if (partNetwork != null) {
-                        IVariable variable = getPartState().getVariable(getTarget(), partNetwork);
+                        IVariable variable = getPartState().getVariable(network, partNetwork);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
                         readValue = Pair.of("NETWORK CORRUPTED!", Helpers.RGBToInt(255, 100, 0));

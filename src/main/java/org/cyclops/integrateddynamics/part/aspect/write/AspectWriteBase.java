@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -43,10 +44,10 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
 
     @SuppressWarnings("unchecked")
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(INetwork network, IPartNetwork partNetwork, P partType, PartTarget target, S state) {
         IPartTypeWriter partTypeWriter = (IPartTypeWriter) partType;
         IPartStateWriter writerState = (IPartStateWriter) state;
-        IVariable variable = partTypeWriter.getActiveVariable(network, target, writerState);
+        IVariable variable = partTypeWriter.getActiveVariable(network, partNetwork, target, writerState);
         if(variable != null
                 && writerState.getErrors(this).isEmpty()
                 && getValueType().correspondsTo(variable.getType())) {

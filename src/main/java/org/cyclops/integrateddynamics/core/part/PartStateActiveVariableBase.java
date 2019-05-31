@@ -80,19 +80,14 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     /**
      * Get the active variable in this state.
      * @param <V> The variable value type.
-     * @param target The part target.
+     * @param network The network.
      * @param partNetwork The part network.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(PartTarget target, IPartNetwork partNetwork) {
+    public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
         if(!checkedForWriteVariable) {
             if (variableContainer.getVariableCache().isEmpty()) {
-                PartPos center = target.getCenter();
-                INetwork network = NetworkHelpers.getNetwork(center.getPos().getWorld(), center.getPos().getBlockPos(),
-                        center.getSide());
-                if (network != null) {
-                    variableContainer.refreshVariables(network, inventory, false);
-                }
+                variableContainer.refreshVariables(network, inventory, false);
             }
             for (IVariableFacade facade : variableContainer.getVariableCache().values()) {
                 if (facade != null) {
@@ -165,16 +160,16 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target) {
-        return capability == ValueInterfaceConfig.CAPABILITY || super.hasCapability(capability, network, target);
+    public boolean hasCapability(Capability<?> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        return capability == ValueInterfaceConfig.CAPABILITY || super.hasCapability(capability, network, partNetwork, target);
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target) {
+    public <T> T getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
         if (capability == ValueInterfaceConfig.CAPABILITY) {
             return ValueInterfaceConfig.CAPABILITY.cast(() -> {
                 if (hasVariable()) {
-                    IVariable<IValue> variable = getVariable(target, network);
+                    IVariable<IValue> variable = getVariable(network, partNetwork);
                     if (variable != null) {
                         return Optional.of(variable.getValue());
                     }
@@ -182,7 +177,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
                 return Optional.empty();
             });
         }
-        return super.getCapability(capability, network, target);
+        return super.getCapability(capability, network, partNetwork, target);
     }
 
     /**
