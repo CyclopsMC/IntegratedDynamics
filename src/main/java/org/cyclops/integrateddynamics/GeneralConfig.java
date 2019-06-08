@@ -128,8 +128,8 @@ public class GeneralConfig extends DummyConfig {
     /**
      * The frequency in ticks at which ingredient network should be observed after a position's contents are changed.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "The frequency in ticks at which ingredient network should be observed after a position's contents are changed.", minimalValue = 1, isCommandable = true)
-    public static int ingredientNetworkObserverFrequencyForced = 1;
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "The frequency in ticks at which ingredient network should be observed after a position's contents are changed.", minimalValue = 0, isCommandable = true)
+    public static int ingredientNetworkObserverFrequencyForced = 0;
 
     /**
      * The number of threads that the ingredient network observer can use.
