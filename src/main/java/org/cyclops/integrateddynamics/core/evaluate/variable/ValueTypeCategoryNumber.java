@@ -161,6 +161,10 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
         );
     }
 
+    public IValue abs(IVariable a) throws EvaluationException {
+        IValueTypeNumber type = getType(a);
+        return type.abs(a.getValue());
+    }
     public ValueTypeInteger.ValueInteger round(IVariable a) throws EvaluationException {
         IValueTypeNumber type = getType(a);
         return type.round(castValue(type, a.getValue()));
