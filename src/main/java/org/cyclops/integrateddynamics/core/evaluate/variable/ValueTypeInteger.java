@@ -77,6 +77,11 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
+    public ValueInteger abs(ValueInteger a) {
+        return ValueInteger.of(Math.abs(a.getRawValue()));
+    }
+
+    @Override
     public boolean greaterThan(ValueInteger a, ValueInteger b) {
         return a.getRawValue() > b.getRawValue();
     }

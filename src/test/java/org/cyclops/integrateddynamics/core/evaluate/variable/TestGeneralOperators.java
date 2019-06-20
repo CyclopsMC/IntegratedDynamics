@@ -171,4 +171,26 @@ public class TestGeneralOperators {
         Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{});
     }
 
+    /**
+     * ----------------------------------- ABS -----------------------------------
+     */
+    @Test
+    public void testAbsolute() throws  EvaluationException {
+        DummyVariableInteger i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
+        DummyVariableInteger i2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-2));
+
+        IValue res1 = Operators.NUMBER_ABSOLUTE.evaluate(new IVariable[]{i1});
+        assertThat("positive numbers unchanged", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(1));
+
+        IValue res2 = Operators.NUMBER_ABSOLUTE.evaluate(new IVariable[]{i2});
+        assertThat("negative numbers changed", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(2));
+    }
+
+    @Test
+    public void testAbsoluteDouble() throws EvaluationException {
+        DummyVariableDouble d1 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(-3.14));
+
+        IValue res1 = Operators.NUMBER_ABSOLUTE.evaluate(new IVariable[]{d1});
+        assertThat("negative doubles changed", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(3.14));
+    }
 }

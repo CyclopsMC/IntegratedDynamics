@@ -76,6 +76,11 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
+    public ValueDouble abs(ValueDouble a) {
+        return ValueDouble.of(Math.abs(a.getRawValue()));
+    }
+
+    @Override
     public boolean greaterThan(ValueDouble a, ValueDouble b) {
         return a.getRawValue() > b.getRawValue();
     }

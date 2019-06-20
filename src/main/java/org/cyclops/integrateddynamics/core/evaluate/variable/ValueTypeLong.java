@@ -86,6 +86,11 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     }
 
     @Override
+    public ValueLong abs(ValueLong a) {
+        return ValueTypeLong.ValueLong.of(Math.abs(a.getRawValue()));
+    }
+
+    @Override
     public ValueTypeInteger.ValueInteger round(ValueLong a) {
         return ValueTypeInteger.ValueInteger.of((int) a.getRawValue());
     }

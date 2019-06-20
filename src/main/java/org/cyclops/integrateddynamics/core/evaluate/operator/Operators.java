@@ -264,6 +264,23 @@ public final class Operators {
                 return ValueTypeInteger.ValueInteger.of(a.getRawValue() - 1);
             }).build());
 
+
+    /**
+     * Number ABS operator with one input and one output
+     */
+    public static final IOperator NUMBER_ABSOLUTE = REGISTRY.register(OperatorBuilder
+            .forType(ValueTypes.CATEGORY_NUMBER)
+            .inputTypes(1, ValueTypes.CATEGORY_NUMBER)
+            .appendKind("general")
+            .renderPattern(IConfigRenderPattern.PREFIX_1_LONG)
+            .symbolOperator("abs")
+            .symbol("abs")
+            .output(ValueTypes.CATEGORY_NUMBER)
+            .conditionalOutputTypeDeriver((operator, input) -> input[0].getType())
+            .function(variables -> {
+                return ValueTypes.CATEGORY_NUMBER.abs(variables.getVariables()[0]);
+            }).build());
+
     /**
      * ----------------------------------- RELATIONAL OPERATORS -----------------------------------
      */
