@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Value type category with values that are numbers.
@@ -159,6 +160,52 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
                 castValue(type, a.getValue()),
                 castValue(type, b.getValue())
         );
+    }
+
+    public IValue abs(IVariable a) throws EvaluationException {
+        IValueTypeNumber type = getType(a);
+        return type.abs(a.getValue());
+    }
+
+    public IValue randRange(IVariable min, IVariable max) throws EvaluationException {
+        IValueTypeNumber maxType = getType(max);
+        if(lessThan(min, max) && min.getValue() != max.getValue()) {
+            Random r = new Random();
+            if(ValueHelpers.correspondsTo(maxType, ValueTypes.INTEGER)) {
+                int minValue = min.getValue().cast(ValueTypes.INTEGER).getRawValue();
+                int maxValue = max.getValue().cast(ValueTypes.INTEGER).getRawValue();
+                int originalMax = maxValue;
+                if(minValue < 0) {
+                    maxValue += Math.abs(minValue);
+                }
+                return ValueTypeInteger.ValueInteger.of((r.nextInt(maxValue) + minValue) % originalMax);
+            } else if (ValueHelpers.correspondsTo(maxType, ValueTypes.DOUBLE)){
+                double minValue = min.getValue().cast(ValueTypes.DOUBLE).getRawValue();
+                double maxValue = max.getValue().cast(ValueTypes.DOUBLE).getRawValue();
+                double originalMax = maxValue;
+                if(minValue < 0) {
+                    maxValue += Math.abs(minValue);
+                }
+                return ValueTypeDouble.ValueDouble.of((r.nextDouble() * maxValue + minValue) % originalMax);
+            } else if (ValueHelpers.correspondsTo(maxType, ValueTypes.LONG)) {
+                long minValue = min.getValue().cast(ValueTypes.LONG).getRawValue();
+                long maxValue = max.getValue().cast(ValueTypes.LONG).getRawValue();
+                long originalMax = maxValue;
+                if(minValue < 0) {
+                    maxValue += Math.abs(minValue);
+                    return ValueTypeLong.ValueLong.of(((r.nextLong() % maxValue) + minValue) % originalMax);
+                } else {
+                    return ValueTypeLong.ValueLong.of(Math.abs((r.nextLong() % maxValue) + minValue) % originalMax);
+                }
+            }
+        }
+        if(!lessThan(min, max)) {
+            throw new EvaluationException("Minimum must be less than Maximum!");
+        }
+        if(min.getValue() == max.getValue()) {
+            throw new EvaluationException("Min cannot equal max!");
+        }
+        throw new EvaluationException("Unexpected error condition in randRange");
     }
 
     public ValueTypeInteger.ValueInteger round(IVariable a) throws EvaluationException {
