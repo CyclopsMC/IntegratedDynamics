@@ -856,6 +856,37 @@ public final class Operators {
             }).build());
 
     /**
+     * List random element operator
+     */
+
+    public static final IOperator LIST_RANDOM_ELEMENT = REGISTRY.register(OperatorBuilder
+            .forType(ValueTypes.LIST)
+            .appendKind("list")
+            .renderPattern(IConfigRenderPattern.SINGLE_SLOT)
+            .inputTypes(new IValueType[]{ValueTypes.LIST})
+            .output(ValueTypes.CATEGORY_ANY)
+            .symbolOperator("randElem")
+            .function(variables -> {
+                ValueTypeList.ValueList valueList = variables.getValue(0);
+                IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
+                IValueTypeListProxy a = valueList.getRawValue();
+                if (a.getLength() > 0) {
+                    Random r = new Random();
+                    int rIndex = r.nextInt(a.getLength());
+                    return a.get(rIndex);
+                } else {
+                    throw new EvaluationException("Unable to get random element from empty list!");
+                }
+            }).conditionalOutputTypeDeriver((operator, input) -> {
+                try {
+                    IValueTypeListProxy a = ((ValueTypeList.ValueList) input[0].getValue()).getRawValue();
+                    return a.getValueType();
+                } catch (ClassCastException | EvaluationException e) {
+                    return operator.getOutputType();
+                }
+            }).build());
+
+    /**
      * List operator with one input list, one output integer, and one default value
      */
     public static final IOperator LIST_ELEMENT_DEFAULT = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX

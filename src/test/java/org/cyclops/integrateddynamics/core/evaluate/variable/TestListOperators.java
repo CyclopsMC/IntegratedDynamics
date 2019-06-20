@@ -9,8 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -205,6 +204,23 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeElement() throws EvaluationException {
         Operators.LIST_ELEMENT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- GET_RANDOM -----------------------------------
+     */
+
+    @Test
+    public void testListRandomElement() throws EvaluationException {
+        IValue res1 = Operators.LIST_RANDOM_ELEMENT.evaluate(new IVariable[]{labc});
+
+        assertThat("element is from list", ((ValueTypeString.ValueString) res1).getRawValue(),
+                anyOf(is("a"), is("b"), is("")));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testListRandomEmpty() throws EvaluationException {
+        Operators.LIST_RANDOM_ELEMENT.evaluate(new IVariable[]{lempty});
     }
 
     /**
