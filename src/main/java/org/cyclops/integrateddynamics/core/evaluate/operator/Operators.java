@@ -79,6 +79,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
+import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -94,6 +95,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -1147,6 +1149,63 @@ public final class Operators {
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxySlice<>(list, from.getRawValue(), to.getRawValue()));
             }).build());
+
+    /**
+     * Random from 0 to MAX
+     */
+
+    public static final IOperator RANDOM_ZERO_MAX = REGISTRY.register(OperatorBuilder
+            .forType(ValueTypes.CATEGORY_NUMBER)
+            .renderPattern(IConfigRenderPattern.PREFIX_1_LONG)
+            .symbol("rand")
+            .symbolOperator("rand")
+            .appendKind("general")
+            .inputType(ValueTypes.CATEGORY_NUMBER)
+            .output(ValueTypes.CATEGORY_NUMBER)
+            .function(variables -> {
+                IVariable maxVar = variables.getVariables()[0];
+                IVariable zero = new Variable<>(maxVar.getType().getDefault());
+                return ValueTypes.CATEGORY_NUMBER.randRange(zero, maxVar);
+            })
+            .conditionalOutputTypeDeriver((operator, input) -> {
+                return input[0].getType();
+            }).build());
+
+    /**
+     * Random from MIN to MAX
+     */
+
+    public static final IOperator RANDOM_MIN_MAX = REGISTRY.register(OperatorBuilder
+            .forType(ValueTypes.CATEGORY_NUMBER)
+            .renderPattern(IConfigRenderPattern.INFIX)
+            .symbol("rand2")
+            .symbolOperator("rand2")
+            .appendKind("general")
+            .inputTypes(2, ValueTypes.CATEGORY_NUMBER)
+            .output(ValueTypes.CATEGORY_NUMBER)
+            .function(variables -> {
+                return ValueTypes.CATEGORY_NUMBER.randRange(variables.getVariables()[0], variables.getVariables()[1]);
+            })
+            .conditionalOutputTypeDeriver((operator, input) -> {
+                return input[1].getType();
+            }).build());
+
+    /**
+     * Random from 0 to MAX
+     */
+
+    public static final IOperator RANDOM_BOOLEAN = REGISTRY.register(OperatorBuilder
+            .forType(ValueTypes.BOOLEAN)
+            .renderPattern(IConfigRenderPattern.NONE)
+            .symbol("randBool")
+            .symbolOperator("randBool")
+            .appendKind("general")
+            .inputTypes(0, ValueTypes.BOOLEAN)
+            .output(ValueTypes.BOOLEAN)
+            .function(variables -> {
+                return ValueTypeBoolean.ValueBoolean.of(new Random().nextBoolean());
+            })
+            .build());
 
     /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------

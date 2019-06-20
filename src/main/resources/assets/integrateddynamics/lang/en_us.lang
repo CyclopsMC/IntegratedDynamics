@@ -1239,6 +1239,14 @@ operator.operators.integrateddynamics.general.isnull.name=Is Null
 operator.operators.integrateddynamics.general.isnull.info=If the given value is null
 operator.operators.integrateddynamics.general.isnotnull.name=Is Not Null
 operator.operators.integrateddynamics.general.isnotnull.info=If the given value is not null
+operator.operators.integrateddynamics.general.abs.name=Absolute
+operator.operators.integrateddynamics.general.abs.info=Absolute value
+operator.operators.integrateddynamics.general.rand.name=Random 0 to Max
+operator.operators.integrateddynamics.general.rand.info=Random value from 0 to given maximum
+operator.operators.integrateddynamics.general.rand2.name=Random Min to Max
+operator.operators.integrateddynamics.general.rand2.info=Random value from given minimum to given maximum
+operator.operators.integrateddynamics.general.randBool.name=Random Bool
+operator.operators.integrateddynamics.general.randBool.info=Random boolean
 
 operator.operators.integrateddynamics.virtual.name=Virtual Operator
 operator.operators.integrateddynamics.virtual.basename=Virtual %s

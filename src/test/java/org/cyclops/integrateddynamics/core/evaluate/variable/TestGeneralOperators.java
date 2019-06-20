@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -193,4 +194,83 @@ public class TestGeneralOperators {
         IValue res1 = Operators.NUMBER_ABSOLUTE.evaluate(new IVariable[]{d1});
         assertThat("negative doubles changed", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(3.14));
     }
+
+    /**
+     * ----------------------------------- RANDOM -----------------------------------
+     */
+
+    @Test
+    public void testRandZeroMax() throws EvaluationException {
+        DummyVariableInteger iMax = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
+
+        IValue res1 = Operators.RANDOM_ZERO_MAX.evaluate(new IVariable[]{iMax});
+        int result = ((ValueTypeInteger.ValueInteger) res1).getRawValue();
+        boolean inRange = result >= 0 && result < 10;
+        assertThat("number in rand range", inRange, is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testRandMaxOfZero() throws EvaluationException {
+        DummyVariableInteger iMax = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+
+        Operators.RANDOM_ZERO_MAX.evaluate(new IVariable[]{iMax});
+    }
+
+    @Test
+    public void testRandMinMax() throws EvaluationException {
+        DummyVariableInteger iMin = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+        DummyVariableInteger iMax = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
+
+        IValue res1 = Operators.RANDOM_MIN_MAX.evaluate(new IVariable[]{iMin,iMax});
+        int result = ((ValueTypeInteger.ValueInteger) res1).getRawValue();
+        boolean inRange = result >= 0 && result < 10;
+        assertThat("number in rand range 0 <= X < 10", inRange, is(true));
+
+        DummyVariableInteger iMin2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(5));
+        IValue res2 = Operators.RANDOM_MIN_MAX.evaluate(new IVariable[]{iMin,iMax});
+        int result2 = ((ValueTypeInteger.ValueInteger) res1).getRawValue();
+        boolean inRange2 = result >= 5 && result < 10;
+        assertThat("number in rand range 5 <= X < 10", inRange, is(true));
+
+        DummyVariableInteger iMin3 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-100));
+        DummyVariableInteger iMax2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-90));
+
+        IValue res3 = Operators.RANDOM_MIN_MAX.evaluate(new IVariable[]{iMin,iMax});
+        int result3 = ((ValueTypeInteger.ValueInteger) res1).getRawValue();
+        boolean inRange3 = result >= -100 && result < -90;
+        assertThat("number in rand range -100 <= X < -90", inRange, is(true));
+    }
+
+    @Test
+    public void testRandMixedTypes() throws EvaluationException {
+        DummyVariableInteger iMin = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+        DummyVariableDouble iMax = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(100.0));
+
+        IValue res1 = Operators.RANDOM_MIN_MAX.evaluate(new IVariable[]{iMin,iMax});
+        assertThat("mixed minmax uses max type", res1.getType(), is(ValueTypes.DOUBLE));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testRandMinMaxEqual() throws EvaluationException {
+        DummyVariableInteger iMin = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+        DummyVariableInteger iMax = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+
+        Operators.RANDOM_ZERO_MAX.evaluate(new IVariable[]{iMin,iMax});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testRandMaxLessThanMin() throws EvaluationException {
+        DummyVariableInteger iMin = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(100));
+        DummyVariableInteger iMax = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+
+        Operators.RANDOM_ZERO_MAX.evaluate(new IVariable[]{iMin,iMax});
+    }
+
+    @Test
+    public void testRandBool() throws EvaluationException {
+        IValue res1 = Operators.RANDOM_BOOLEAN.evaluate(new IVariable[]{});
+        assertThat("random boolean", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(),
+                anyOf(is(true), is(false)));
+    }
+
 }
