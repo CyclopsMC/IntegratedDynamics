@@ -281,7 +281,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
             // If we still need energy, ask it from the network.
             IEnergyNetwork energyNetwork = getEnergyNetwork();
             if (energyNetwork != null) {
-                return energyNetwork.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).extract(toDrain, simulate);
+                toDrain -= energyNetwork.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).extract(toDrain, simulate);
             }
         }
         return amount - toDrain;
