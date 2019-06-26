@@ -913,6 +913,9 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0);
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
+                if (list.isInfinite()) {
+                    throw new EvaluationException("Counting elements in an infinite list is not allowed");
+                }
                 IValue value = variables.getValue(1);
                 int count = 0;
                 for (IValue listValue : list) {
@@ -933,6 +936,9 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0);
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
+                if (list.isInfinite()) {
+                    throw new EvaluationException("Counting elements in an infinite list is not allowed");
+                }
                 IOperator operator = OperatorBuilders.getSafePredictate(variables.getValue(1));
                 int count = 0;
                 for (IValue listValue : list) {

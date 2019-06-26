@@ -30,6 +30,7 @@ public class TestListOperators {
     private DummyVariableList lintegers_dup;
     private DummyVariableList lintegers_rev_dup;
     private DummyVariableList llongs_hash_collision;
+    private DummyVariableList lintegers_inf;
 
     private DummyVariableInteger im1;
     private DummyVariableInteger i0;
@@ -82,6 +83,8 @@ public class TestListOperators {
                 ValueTypeLong.ValueLong.of(0x12345678AAAAAAAAL),
                 ValueTypeLong.ValueLong.of(0x1234567833333333L)
         ));
+        lintegers_inf = new DummyVariableList(ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyLazyBuilt<>(
+                ValueTypeInteger.ValueInteger.of(0), Operators.INTEGER_INCREMENT)));
     }
 
     /**
@@ -376,6 +379,11 @@ public class TestListOperators {
         Operators.LIST_COUNT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
+    @Test(expected = EvaluationException.class)
+    public void testListCountInfinite() throws EvaluationException {
+        Operators.LIST_COUNT.evaluate(new IVariable[]{lintegers_inf, i0});
+    }
+
     /**
      * ----------------------------------- COUNT_PREDICATE -----------------------------------
      */
@@ -423,6 +431,11 @@ public class TestListOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeCountPredicate() throws EvaluationException {
         Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testListCountPredicateInfinite() throws EvaluationException {
+        Operators.LIST_COUNT_PREDICATE.evaluate(new IVariable[]{lintegers_inf, i0});
     }
 
     /**
