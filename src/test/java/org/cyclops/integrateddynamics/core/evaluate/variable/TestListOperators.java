@@ -215,7 +215,7 @@ public class TestListOperators {
         IValue res1 = Operators.LIST_RANDOM_ELEMENT.evaluate(new IVariable[]{labc});
 
         assertThat("element is from list", ((ValueTypeString.ValueString) res1).getRawValue(),
-                anyOf(is("a"), is("b"), is("")));
+                anyOf(is("a"), is("b"), is("c")));
     }
 
     @Test(expected = EvaluationException.class)
