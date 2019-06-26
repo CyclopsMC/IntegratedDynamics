@@ -143,7 +143,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public void deactivate() {
-
+        this.activeElement = -1;
     }
 
     @Override
