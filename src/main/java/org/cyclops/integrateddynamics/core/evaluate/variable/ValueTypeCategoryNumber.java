@@ -169,7 +169,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
 
     public IValue randRange(IVariable min, IVariable max) throws EvaluationException {
         IValueTypeNumber maxType = getType(max);
-        if(lessThan(min, max) && min.getValue() != max.getValue()) {
+        if(lessThan(min, max) && min.getValue() != max.getValue() && min.getType() == max.getType()) {
             Random r = new Random();
             if(ValueHelpers.correspondsTo(maxType, ValueTypes.INTEGER)) {
                 int minValue = min.getValue().cast(ValueTypes.INTEGER).getRawValue();
@@ -205,7 +205,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
         if(min.getValue() == max.getValue()) {
             throw new EvaluationException("Min cannot equal max!");
         }
-        throw new EvaluationException("Unexpected error condition in randRange");
+        throw new EvaluationException("Min and Max must be the same variable type!");
     }
 
     public ValueTypeInteger.ValueInteger round(IVariable a) throws EvaluationException {

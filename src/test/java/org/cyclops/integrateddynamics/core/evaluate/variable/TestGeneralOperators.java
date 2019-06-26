@@ -241,7 +241,7 @@ public class TestGeneralOperators {
         assertThat("number in rand range -100 <= X < -90", inRange, is(true));
     }
 
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testRandMixedTypes() throws EvaluationException {
         DummyVariableInteger iMin = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
         DummyVariableDouble iMax = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(100.0));
