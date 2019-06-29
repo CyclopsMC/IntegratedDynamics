@@ -1,0 +1,24 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.1.1 or higher.
+
+Additions:
+* Expose slotted ingredient networks
+  This significantly improves performance when external handlers are
+  interacting with networks, such as hoppers inserting or extracting
+  items.
+  Closes CyclopsMC/IntegratedTunnels#167
+
+Fixes:
+* Fix ingredients duping when externals are interacting with IT interfaces
+  Fixes dupe bug with Thermal Expansion Item Allocator
+  Closes CyclopsMC/IntegratedTunnels#169
+* Fix counting in infinite lists causing infinite loop and crashing, Closes #748
+* Fix LP list creation incorrectly remembering values after deselecting, Closes #739
+* Improve Named and Uniquely Named value type categories, Closes #741, Closes #742
+* Fix mechanical machines not working if internal energy buffer too small
+  Even if there is a valid energy network available., Closes #743
+* Set default ingredientNetworkObserverFrequencyForced to 0
+  This fixes a problem where IT networks would not get re-indexed
+  by AE2 storage terminals.
+  This requires a config reset!
+  Related to CyclopsMC/IntegratedTunnels#166
