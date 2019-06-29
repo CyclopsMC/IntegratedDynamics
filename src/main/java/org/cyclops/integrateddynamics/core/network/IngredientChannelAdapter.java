@@ -124,8 +124,8 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         Iterator<PartPos> it = partPosIteratorData.getRight();
         while (it.hasNext()) {
             PartPos pos = it.next();
-            // Skip if the position is not loaded
-            if (!pos.getPos().isLoaded()) {
+            // Skip if the position is not loaded or disabled
+            if (!pos.getPos().isLoaded() || network.isPositionDisabled(pos)) {
                 continue;
             }
             this.network.disablePosition(pos);
@@ -169,8 +169,8 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         Iterator<PartPos> it = partPosIteratorData.getRight();
         while (it.hasNext()) {
             PartPos pos = it.next();
-            // Skip if the position is not loaded
-            if (!pos.getPos().isLoaded()) {
+            // Skip if the position is not loaded or disabled
+            if (!pos.getPos().isLoaded() || network.isPositionDisabled(pos)) {
                 continue;
             }
             this.network.disablePosition(pos);
@@ -234,8 +234,8 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         while (it.hasNext()) {
             PartPos pos = it.next();
 
-            // Skip if the position is not loaded
-            if (!pos.getPos().isLoaded()) {
+            // Skip if the position is not loaded or disabled
+            if (!pos.getPos().isLoaded() || network.isPositionDisabled(pos)) {
                 continue;
             }
 
