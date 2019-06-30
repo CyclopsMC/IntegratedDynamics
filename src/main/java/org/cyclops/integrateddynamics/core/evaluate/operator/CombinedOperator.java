@@ -81,6 +81,7 @@ public class CombinedOperator extends OperatorBase {
             IValue value = variables.getValue(0);
             for (IOperator operator : getOperators()) {
                 IValue result = ValueHelpers.evaluateOperator(operator, value);
+                ValueHelpers.validatePredicateOutput(operator, result);
                 if (!((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                     return ValueTypeBoolean.ValueBoolean.of(false);
                 }
@@ -118,6 +119,7 @@ public class CombinedOperator extends OperatorBase {
             IValue value = variables.getValue(0);
             for (IOperator operator : getOperators()) {
                 IValue result = ValueHelpers.evaluateOperator(operator, value);
+                ValueHelpers.validatePredicateOutput(operator, result);
                 if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
                     return ValueTypeBoolean.ValueBoolean.of(true);
                 }
@@ -153,7 +155,9 @@ public class CombinedOperator extends OperatorBase {
         @Override
         public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
             IValue value = variables.getValue(0);
-            IValue result = ValueHelpers.evaluateOperator(getOperators()[0], value);
+            IOperator operator = getOperators()[0];
+            IValue result = ValueHelpers.evaluateOperator(operator, value);
+            ValueHelpers.validatePredicateOutput(operator, result);
             return ValueTypeBoolean.ValueBoolean.of(!((ValueTypeBoolean.ValueBoolean) result).getRawValue());
         }
 
