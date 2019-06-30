@@ -4,8 +4,10 @@ import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
+import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageWrapperHandler;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollection;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable;
@@ -170,6 +172,15 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
             index = new IngredientPositionsIndexEmpty<>(getComponent());
         }
         return index;
+    }
+
+    @Nullable
+    @Override
+    public <S> S getChannelExternal(Capability<S> capability, int channel) {
+        IIngredientComponentStorageWrapperHandler<T, M, S> wrapperHandler = getComponent()
+                .getStorageWrapperHandler(capability);
+        return wrapperHandler != null ? wrapperHandler.wrapStorage(new IngredientChannelAdapterWrapperSlotted<>(
+                (IngredientChannelAdapter<T, M>) getChannel(channel))) : null;
     }
 
     @Override
