@@ -35,7 +35,7 @@ public enum ItemMatchType {
     ITEMNBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.NBT)),
     OREDICT(itemStack -> {
         return new PrototypedIngredientAlternativesItemStackOredictionary(getOreDictKeys(itemStack),
-                ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT);
+                ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT, itemStack.getCount());
     });
 
     private static final LoadingCache<ItemStack, List<String>> CACHE_OREDICT = CacheBuilder.newBuilder()
