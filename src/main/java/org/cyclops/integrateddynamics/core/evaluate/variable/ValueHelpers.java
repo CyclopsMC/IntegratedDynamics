@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -113,10 +114,30 @@ public class ValueHelpers {
      * @throws EvaluationException If something went wrong during operator evaluation.
      */
     public static IValue evaluateOperator(IOperator operator, IVariable... variables) throws EvaluationException {
-        if (operator.getRequiredInputLength() == variables.length) {
+        int requiredLength = operator.getRequiredInputLength();
+        if (requiredLength == variables.length) {
             return operator.evaluate(variables);
         } else {
-            return ValueTypeOperator.ValueOperator.of(new CurriedOperator(operator, variables));
+            if (variables.length > requiredLength) { // We have MORE variables as input than the operator accepts
+                IVariable[] acceptableVariables = ArrayUtils.subarray(variables, 0, requiredLength);
+                IVariable[] remainingVariables = ArrayUtils.subarray(variables, requiredLength, variables.length);
+
+                // Pass all required variables to the operator, and forward all remaining ones to the resulting operator
+                IValue result = evaluateOperator(operator, acceptableVariables);
+
+                // Error if the result is NOT an operatorø
+                if (result.getType() != ValueTypes.OPERATOR) {
+                    throw new EvaluationException(String.format(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
+                            operator.getTranslationKey(), requiredLength, variables.length, result.getType()));
+                }
+
+                // Pass all remaining variables to the resulting operator
+                IOperator nextOperator = ((ValueTypeOperator.ValueOperator) result).getRawValue();
+                return evaluateOperator(nextOperator, remainingVariables);
+
+            } else { // Else, the given variables only partially take up the required input
+                return ValueTypeOperator.ValueOperator.of(new CurriedOperator(operator, variables));
+            }
         }
     }
 

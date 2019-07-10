@@ -85,6 +85,8 @@ public class L10NValues {
     // 0: operator, 1: given-input, 2: position, 3: expected-input
     public static final String OPERATOR_ERROR_WRONGTYPE = "operator." + NS + ".error.wrong_type";
     public static final String OPERATOR_ERROR_WRONGCURRYINGTYPE = "operator." + NS + ".error.wrong_currying_type";
+    // 0: operator, 1: operator-inputs, 2: actual-inputs, 3: operator-output
+    public static final String OPERATOR_ERROR_CURRYINGOVERFLOW = "operator." + NS + ".error.currying_overflow";
     // 0: operator, 1: given-output, 2: expected-output
     public static final String OPERATOR_ERROR_WRONGPREDICATE = "operator." + NS + ".error.wrong_predicate";
     // 0: expected-output, 1:given-output, 2:given-operator

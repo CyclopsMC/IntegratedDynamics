@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -188,10 +189,20 @@ public class CombinedOperator extends OperatorBase {
 
         @Override
         public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
-            return pipeVariablesToOperators(1, variables.getVariables(), getOperators());
+            return pipeVariablesToOperators(variables.getVariables(), getOperators());
         }
 
-        public static IValue pipeVariablesToOperators(int firstInputRange, IVariable[] allVariables, IOperator[] operators) throws EvaluationException {
+        /**
+         * Pass the first variable to all n-1 first operators.
+         * Prepend the results of these operators to the variables array.
+         * Pass the final variables array to the last operator, and return the result.
+         * @param allVariables The input variables.
+         * @param operators The operators to apply to. The n-1 first ones are the inputs, and the last one is the target to pipe to.
+         * @return The final result.
+         * @throws EvaluationException If evaluation failed.
+         */
+        public static IValue pipeVariablesToOperators(IVariable[] allVariables, IOperator[] operators) throws EvaluationException {
+            int firstInputRange = operators.length - 1;
             IVariable input = allVariables[0];
             IVariable[] intermediates = new IVariable[firstInputRange];
             for (int i = 0; i < firstInputRange; ++i) {
@@ -202,16 +213,48 @@ public class CombinedOperator extends OperatorBase {
             return ValueHelpers.evaluateOperator(operators[operators.length - 1], newVariables);
         }
 
-        public static CombinedOperator asOperator(final IOperator... operators) {
-            return asOperator(new CombinedOperator.Pipe(operators), ":.:", "piped", 1, operators);
+        /**
+         * Determine the input types and output type for the given operators.
+         * @param operators The operators to apply to. The n-1 first ones are the inputs, and the last one is the target to pipe to.
+         * @return The input types and output type.
+         */
+        public static Pair<IValueType[], IValueType> getPipedInputOutputTypes(IOperator[] operators) {
+            int firstInputRange = operators.length - 1;
+            IValueType[] inputTypes = new IValueType[1];
+            for (int i = 0; i < operators.length; ++i) {
+                IValueType[] operatorInputTypes = operators[i].getInputTypes();
+                if (i < firstInputRange) {
+                    if (inputTypes[0] == null) {
+                        inputTypes[0] = operatorInputTypes[0];
+                    } else {
+                        if (inputTypes[0] != operatorInputTypes[0]) {
+                            if (ValueHelpers.correspondsTo(inputTypes[0], operatorInputTypes[0])) {
+                                if (inputTypes[0].isCategory()) {
+                                    inputTypes[0] = operatorInputTypes[0];
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    inputTypes = ArrayUtils.addAll(inputTypes,
+                            ArrayUtils.subarray(operatorInputTypes, firstInputRange, operatorInputTypes.length));
+                }
+            }
+            return Pair.of(inputTypes, operators[operators.length - 1].getOutputType());
+
         }
 
-        public static CombinedOperator asOperator(OperatorsFunction function, String symbol, String operatorName, final int firstInputRange, final IOperator... operators) {
-            return new CombinedOperator(symbol, operatorName, function, operators[operators.length - 1].getOutputType()) {
+        public static CombinedOperator asOperator(final IOperator... operators) {
+            return asOperator(new CombinedOperator.Pipe(operators), ":.:", "piped", operators);
+        }
+
+        public static CombinedOperator asOperator(OperatorsFunction function, String symbol, String operatorName, final IOperator... operators) {
+            Pair<IValueType[], IValueType> ioTypes = getPipedInputOutputTypes(operators);
+            return new CombinedOperator(symbol, operatorName, function, ioTypes.getRight()) {
                 @Override
                 public IValueType getConditionalOutputType(IVariable[] allVariables) {
                     try {
-                        return pipeVariablesToOperators(firstInputRange, allVariables, operators).getType();
+                        return pipeVariablesToOperators(allVariables, operators).getType();
                     } catch (EvaluationException e) {
                         return ValueTypes.CATEGORY_ANY;
                     }
@@ -219,27 +262,7 @@ public class CombinedOperator extends OperatorBase {
 
                 @Override
                 public IValueType[] getInputTypes() {
-                    IValueType[] inputTypes = new IValueType[1];
-                    for (int i = 0; i < operators.length; ++i) {
-                        IValueType[] operatorInputTypes = operators[i].getInputTypes();
-                        if (i < firstInputRange) {
-                            if (inputTypes[0] == null) {
-                                inputTypes[0] = operatorInputTypes[0];
-                            } else {
-                                if (inputTypes[0] != operatorInputTypes[0]) {
-                                    if (ValueHelpers.correspondsTo(inputTypes[0], operatorInputTypes[0])) {
-                                        if (inputTypes[0].isCategory()) {
-                                            inputTypes[0] = operatorInputTypes[0];
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            inputTypes = ArrayUtils.addAll(inputTypes,
-                                    ArrayUtils.subarray(operatorInputTypes, firstInputRange, operatorInputTypes.length));
-                        }
-                    }
-                    return inputTypes;
+                    return ioTypes.getLeft();
                 }
             };
         }
@@ -266,11 +289,11 @@ public class CombinedOperator extends OperatorBase {
 
         @Override
         public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
-            return Pipe.pipeVariablesToOperators(2, variables.getVariables(), getOperators());
+            return Pipe.pipeVariablesToOperators(variables.getVariables(), getOperators());
         }
 
         public static CombinedOperator asOperator(IOperator... operators) {
-            return Pipe.asOperator(new CombinedOperator.Pipe2(operators), ":.2:", "piped2", 2, operators);
+            return Pipe.asOperator(new CombinedOperator.Pipe2(operators), ":.2:", "piped2", operators);
         }
 
         public static class Serializer extends ListOperatorSerializer<Pipe2> {

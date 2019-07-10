@@ -733,6 +733,7 @@ operator.integrateddynamics.error.wrong_input_length=The operator %s received an
 operator.integrateddynamics.error.null_type=The operator %s received an input with a null variable at position %s.
 operator.integrateddynamics.error.wrong_type=The operator %s received an input with type %s at position %s while the type %s was expected.
 operator.integrateddynamics.error.wrong_currying_type=The operator %s received an input with type %s at position %s while the type %s was expected for currying.
+operator.integrateddynamics.error.currying_overflow=While currying the operator %s (%s inputs) with %s inputs, an operator was expected as output, but got %s.
 operator.integrateddynamics.error.wrong_predicate=The operator %s received an input operator that outputs the type %s while the type %s was expected.
 operator.integrateddynamics.error.illegal_property=The property is expected to output %s, while %s was found for operator %s.
 operator.integrateddynamics.error.variable_not_in_network=Variable with id %s could not be found within the current network.
