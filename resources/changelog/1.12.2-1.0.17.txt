@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.1.1 or higher.
+
+Fixes:
+* Fix oredict recipe item input quantities being lost, Closes #752
+* Fix crash when applying more variables than an operator can accept
+  This can be required in complex currying situations
+  where variables that don't fit into the inputs of one operator
+  should be delegated to the resulting operator.
+  Closes #754
+* Gracefully throw an evaluation error when building infinite operators, Closes #755
