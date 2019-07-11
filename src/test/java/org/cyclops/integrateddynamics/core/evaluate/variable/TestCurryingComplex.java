@@ -94,4 +94,14 @@ public class TestCurryingComplex {
         Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{new DummyVariable(ValueTypes.OPERATOR, oBound4_8), oAdd, oAdd});
     }
 
+    @Test(expected = EvaluationException.class)
+    public void testOmegaOperator() throws EvaluationException {
+        // This is supposed to throw an EvaluationException, and not result in infinite recursion
+        DummyVariableOperator oId = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
+        DummyVariableOperator oApply = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_APPLY));
+
+        IValue oX = Operators.OPERATOR_PIPE2.evaluate(new IVariable[]{oId, oId, oApply});
+        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{new DummyVariable(ValueTypes.OPERATOR, oX), new DummyVariable(ValueTypes.OPERATOR, oX)});
+    }
+
 }

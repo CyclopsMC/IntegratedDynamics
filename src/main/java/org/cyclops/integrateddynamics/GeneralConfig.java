@@ -148,6 +148,12 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "If network change events should be logged. Only enable this when debugging.", isCommandable = true)
     public static boolean logChangeEvents = false;
+
+    /**
+     * How deep the recursion stack on an operator can become. This is to avoid game crashes when building things like the omega operator.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.CORE, comment = "How deep the recursion stack on an operator can become. This is to avoid game crashes when building things like the omega operator.", isCommandable = true)
+    public static int operatorRecursionLimit = 256;
     
     /**
      * Create a new instance.

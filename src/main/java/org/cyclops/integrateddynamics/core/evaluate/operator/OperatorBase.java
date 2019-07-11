@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -30,6 +31,7 @@ public abstract class OperatorBase implements IOperator {
     private final IConfigRenderPattern renderPattern;
 
     private String translationKey = null;
+    private int recursiveInvocations;
 
     protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
                            IFunction function, @Nullable IConfigRenderPattern renderPattern) {
@@ -131,11 +133,20 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public IValue evaluate(IVariable... input) throws EvaluationException {
+        if (this.recursiveInvocations++ > GeneralConfig.operatorRecursionLimit) {
+            throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_RECURSIONLIMIT,
+                    GeneralConfig.operatorRecursionLimit,
+                    new L10NHelpers.UnlocalizedString(this.getTranslationKey())
+            ).localize());
+        }
         L10NHelpers.UnlocalizedString error = validateTypes(ValueHelpers.from(input));
         if(error != null) {
+            this.recursiveInvocations--;
             throw new EvaluationException(error.localize());
         }
-        return function.evaluate(new SafeVariablesGetter(input));
+        IValue res = function.evaluate(new SafeVariablesGetter(input));
+        this.recursiveInvocations--;
+        return res;
     }
 
     @Override

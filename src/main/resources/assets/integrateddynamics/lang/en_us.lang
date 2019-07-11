@@ -739,6 +739,7 @@ operator.integrateddynamics.error.illegal_property=The property is expected to o
 operator.integrateddynamics.error.variable_not_in_network=Variable with id %s could not be found within the current network.
 operator.integrateddynamics.error.cyclic_reference=Variable with id %s depends on itself, infinite recursion.
 operator.integrateddynamics.error.wrong_input_length_virtual=The operator %s received the operator %s with input length %s while length %s is required.
+operator.integrateddynamics.error.operator_recursion_limit=Reached the operator recursion limit of %s invocations for %s. Trying to crash the game, are you?
 
 operator.operators.integrateddynamics.logical.name=Logical
 operator.operators.integrateddynamics.logical.basename=Logical %s
