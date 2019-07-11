@@ -134,6 +134,7 @@ public abstract class OperatorBase implements IOperator {
     @Override
     public IValue evaluate(IVariable... input) throws EvaluationException {
         if (this.recursiveInvocations++ > GeneralConfig.operatorRecursionLimit) {
+            this.recursiveInvocations = 0;
             throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_RECURSIONLIMIT,
                     GeneralConfig.operatorRecursionLimit,
                     new L10NHelpers.UnlocalizedString(this.getTranslationKey())
