@@ -8,6 +8,7 @@ general.integrateddynamics.true=True
 general.integrateddynamics.false=False
 
 # Gui
+gui.integrateddynamics.keybinding=Key Binding
 gui.integrateddynamics.button.save=Save
 gui.integrateddynamics.button.rename=Rename
 gui.integrateddynamics.button.copy=Copy
