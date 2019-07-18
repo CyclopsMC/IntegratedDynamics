@@ -90,6 +90,7 @@ import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
+import org.cyclops.integrateddynamics.metadata.RegistryExportables;
 import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -218,6 +219,7 @@ public class IntegratedDynamics extends ModBaseVersionable {
         Aspects.load();
         PartTypes.load();
         LogicProgrammerElementTypes.load();
+        RegistryExportables.load();
         if(MinecraftHelpers.isClientSide()) {
             PartOverlayRenderers.load();
             ValueTypeWorldRenderers.load();
