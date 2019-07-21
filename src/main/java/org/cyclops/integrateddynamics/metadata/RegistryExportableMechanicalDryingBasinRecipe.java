@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
 public class RegistryExportableMechanicalDryingBasinRecipe extends RegistryExportableRecipeAbstract<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     public RegistryExportableMechanicalDryingBasinRecipe() {
-        super(() -> BlockMechanicalDryingBasin.getInstance().getRecipeRegistry(), "mechanical_dryingbasin_recipe");
+        super(() -> BlockMechanicalDryingBasin.getInstance().getRecipeRegistry(), "mechanical_drying_basin_recipe");
     }
 
     public JsonObject serializeRecipe(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {

@@ -23,7 +23,7 @@ import java.util.List;
 public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecipeAbstract<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     public RegistryExportableDryingBasinRecipe() {
-        super(() -> BlockDryingBasin.getInstance().getRecipeRegistry(), "dryingbasin_recipe");
+        super(() -> BlockDryingBasin.getInstance().getRecipeRegistry(), "drying_basin_recipe");
     }
 
     public static JsonObject serializeRecipeIO(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
@@ -54,10 +54,6 @@ public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecip
         }
         ItemStack itemOutput = recipe.getOutput().getFirstItemStack();
         outputObject.add("item", IRegistryExportable.serializeItemStack(itemOutput));
-        float chance = recipe.getOutput().getChance();
-        if (chance > 0) {
-            outputObject.addProperty("chance", chance);
-        }
 
         // Recipe object
         object.add("input", inputObject);
