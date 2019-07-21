@@ -14,6 +14,7 @@ public class RegistryExportables {
         REGISTRY.register(new RegistryExportableDryingBasinRecipe());
         REGISTRY.register(new RegistryExportableMechanicalDryingBasinRecipe());
         REGISTRY.register(new RegistryExportableAspect());
+        REGISTRY.register(new RegistryExportableOperator());
     }
 
 }
