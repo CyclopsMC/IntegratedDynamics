@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -85,6 +86,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
     /**
      * @return The default properties for this aspect.
      */
+    @Nullable
     public IAspectProperties getDefaultProperties();
 
     /**

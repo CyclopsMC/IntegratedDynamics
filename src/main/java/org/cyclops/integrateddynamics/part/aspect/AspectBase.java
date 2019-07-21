@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -106,7 +107,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     @SuppressWarnings("deprecation")
     @Override
     public Collection<IAspectPropertyTypeInstance> getPropertyTypes() {
-        return getDefaultProperties().getTypes();
+        return hasProperties() ? getDefaultProperties().getTypes() : Collections.emptyList();
     }
 
     /**

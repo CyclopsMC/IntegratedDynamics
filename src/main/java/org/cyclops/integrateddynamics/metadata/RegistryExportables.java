@@ -13,6 +13,7 @@ public class RegistryExportables {
         REGISTRY.register(new RegistryExportableMechanicalSqueezerRecipe());
         REGISTRY.register(new RegistryExportableDryingBasinRecipe());
         REGISTRY.register(new RegistryExportableMechanicalDryingBasinRecipe());
+        REGISTRY.register(new RegistryExportableAspect());
     }
 
 }
