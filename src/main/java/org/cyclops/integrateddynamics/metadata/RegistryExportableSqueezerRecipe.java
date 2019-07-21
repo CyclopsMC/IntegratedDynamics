@@ -41,14 +41,16 @@ public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAb
         }
         List<ItemStack> itemOutputs = recipe.getOutput().getIngredients();
         JsonArray arrayItemOutputs = new JsonArray();
+        int i = 0;
         for (ItemStack itemOutput : itemOutputs) {
-            arrayItemOutputs.add(IRegistryExportable.serializeItemStack(itemOutput));
+            JsonObject itemOutputObject = IRegistryExportable.serializeItemStack(itemOutput);
+            float chance = recipe.getOutput().getSubIngredientComponents().get(i++).getChance();
+            if (chance > 0) {
+                itemOutputObject.addProperty("chance", chance);
+            }
+            arrayItemOutputs.add(itemOutputObject);
         }
         outputObject.add("items", arrayItemOutputs);
-        float chance = recipe.getOutput().getChance();
-        if (chance > 0) {
-            outputObject.addProperty("chance", chance);
-        }
 
         // Recipe object
         object.add("input", arrayInputs);
