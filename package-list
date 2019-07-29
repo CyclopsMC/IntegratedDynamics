@@ -91,6 +91,7 @@ org.cyclops.integrateddynamics.infobook
 org.cyclops.integrateddynamics.infobook.pageelement
 org.cyclops.integrateddynamics.inventory.container
 org.cyclops.integrateddynamics.item
+org.cyclops.integrateddynamics.metadata
 org.cyclops.integrateddynamics.network
 org.cyclops.integrateddynamics.network.packet
 org.cyclops.integrateddynamics.part
