@@ -250,7 +250,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
     }
 
     private OnTheDynamicsOfIntegrationBook() {
-        super(IntegratedDynamics._instance, 2);
+        super(IntegratedDynamics._instance, 2, Reference.BOOK_URL);
     }
 
     public static OnTheDynamicsOfIntegrationBook getInstance() {

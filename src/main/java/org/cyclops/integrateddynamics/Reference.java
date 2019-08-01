@@ -16,6 +16,7 @@ public final class Reference {
     public static final String MOD_FINGERPRINT = "@FINGERPRINT@";
     public static final String GA_TRACKING_ID = "UA-65307010-4";
     public static final String VERSION_URL = "https://raw.githubusercontent.com/CyclopsMC/Versions/master/1.12/IntegratedDynamics.txt";
+    public static final String BOOK_URL = "https://integrateddynamics.rubensworks.net/book/";
 
     // Paths
     public static final String TEXTURE_PATH_GUI = "textures/gui/";
