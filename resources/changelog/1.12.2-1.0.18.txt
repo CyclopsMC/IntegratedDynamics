@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.5.0 or higher.
+
+Additions:
+* Link to infobook Web version
+  https://integrateddynamics.rubensworks.net/book/
+* Add registry exporters
+
+Changes:
+* Add keybinding infobook appendix localization
+* Properly implement getTranslationKey on ItemPart
