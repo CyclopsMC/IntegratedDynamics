@@ -1256,6 +1256,10 @@ operator.operators.integrateddynamics.cast.name=Cast
 operator.operators.integrateddynamics.cast.basename=Cast
 operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s
 
+operator.operators.integrateddynamics.parse.name=Parse
+operator.operators.integrateddynamics.parse.basename=Parse
+operator.operators.integrateddynamics.parse.tooltip=Parse %s
+
 ## Config categories
 config.integrateddynamics.item=Item settings
 config.integrateddynamics.item.tooltip=Item settings
