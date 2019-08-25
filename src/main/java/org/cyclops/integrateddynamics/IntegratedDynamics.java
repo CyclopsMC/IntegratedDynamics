@@ -66,7 +66,6 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueCastMappings;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueCastRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueParseOperators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevelRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactories;
@@ -217,7 +216,6 @@ public class IntegratedDynamics extends ModBaseVersionable {
         ValueTypeLightLevels.load();
         ValueTypeListProxyFactories.load();
         Operators.load();
-        ValueParseOperators.load();
         Aspects.load();
         PartTypes.load();
         LogicProgrammerElementTypes.load();

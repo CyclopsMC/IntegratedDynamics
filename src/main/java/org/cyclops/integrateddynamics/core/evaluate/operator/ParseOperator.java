@@ -18,17 +18,12 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   private final T2 to;
 
   public ParseOperator(final T2 to, OperatorBase.IFunction operator) {
-    super("parse_" + L10NHelpers.localize(to.getTranslationKey())
-        , "parse_" + to.getTranslationKey()
-        , constructInputVariables(1, ValueTypes.STRING)
-        , to
-        , new IFunction() {
-          @Override
-          public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
-            // TODO: Catch block?
-            return operator.evaluate(variables);
-          }
-        }, IConfigRenderPattern.PREFIX_1);
+    super("parse_" + L10NHelpers.localize(to.getTranslationKey()),
+        "parse_" + to.getTranslationKey(),
+        constructInputVariables(1, ValueTypes.STRING),
+        to,
+        operator::evaluate,
+        IConfigRenderPattern.PREFIX_1);
     this.to = to;
   }
 
