@@ -36,7 +36,6 @@ import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendere
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRendererRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueParseRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeLightLevelRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeRegistry;
@@ -67,8 +66,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueCastMappings;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueCastRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueParseMappings;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueParseRegistry;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueParseOperators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevelRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactories;
@@ -192,7 +190,6 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IValueCastRegistry.class, ValueCastRegistry.getInstance());
-        getRegistryManager().addRegistry(IValueParseRegistry.class, ValueParseRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeListProxyFactoryTypeRegistry.class, ValueTypeListProxyFactoryTypeRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeLightLevelRegistry.class, ValueTypeLightLevelRegistry.getInstance());
         getRegistryManager().addRegistry(IPartTypeRegistry.class, PartTypeRegistry.getInstance());
@@ -217,10 +214,10 @@ public class IntegratedDynamics extends ModBaseVersionable {
         IngredientComponentCapabilities.load();
         IngredientComponentHandlers.load();
         ValueCastMappings.load();
-        ValueParseMappings.load();
         ValueTypeLightLevels.load();
         ValueTypeListProxyFactories.load();
         Operators.load();
+        ValueParseOperators.load();
         Aspects.load();
         PartTypes.load();
         LogicProgrammerElementTypes.load();

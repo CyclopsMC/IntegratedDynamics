@@ -1,8 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueParseRegistry;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
+import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.operator.ParseOperator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,21 +16,17 @@ import java.util.regex.Pattern;
  * Collection of variable types.
  * @author rubensworks/LostOfThought
  */
-public class ValueParseMappings {
+public class ValueParseOperators {
 
-    public static final IValueParseRegistry REGISTRY = constructRegistry();
-
-    private static IValueParseRegistry constructRegistry() {
-        // This also allows this registry to be used outside of a minecraft environment.
-        if(MinecraftHelpers.isModdedEnvironment()) {
-            return IntegratedDynamics._instance.getRegistryManager().getRegistry(IValueParseRegistry.class);
-        } else {
-            return ValueParseRegistry.getInstance();
-        }
+    private static double numberParser(String s){
+        double ret = 0.0;
+        Pattern p = Pattern.compile("\\A(?<sign>[+-]?)(?<base>0x|#|0)?\\z", Pattern.CASE_INSENSITIVE);
+        return ret;
     }
 
-    public static void load() {
-        REGISTRY.register(ValueTypes.BOOLEAN, value -> {
+    public static void load() {}
+    public static IOperator PARSE_BOOLEAN = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.BOOLEAN, v -> {
+            ValueTypeString.ValueString value = v.getValue(0);
             try {
                 Pattern p = Pattern.compile("\\AF(alse)?|[+-]?(0x|#)?0+\\z", Pattern.CASE_INSENSITIVE);
                 if( value.getRawValue().isEmpty()
@@ -39,8 +40,10 @@ public class ValueParseMappings {
             } catch (NumberFormatException e) {
                 return ValueTypeBoolean.ValueBoolean.of(true);
             }
-        });
-        REGISTRY.register(ValueTypes.DOUBLE, value -> {
+        }));
+
+    public static IOperator PARSE_DOUBLE = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.DOUBLE, v -> {
+            ValueTypeString.ValueString value = v.getValue(0);
             // TODO: Floating point Hex/Octal
             try {
                 return ValueTypeDouble.ValueDouble.of(Double.parseDouble(value.getRawValue()));
@@ -61,29 +64,34 @@ public class ValueParseMappings {
                     return ValueTypeDouble.ValueDouble.of(0.0);
                 }
             }
-        });
-        REGISTRY.register(ValueTypes.INTEGER, value -> {
+        }));
+
+    public static IOperator PARSE_INTEGER = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.INTEGER, v -> {
+            ValueTypeString.ValueString value = v.getValue(0);
             try{
                 return ValueTypeInteger.ValueInteger.of(Integer.decode(value.getRawValue()));
             } catch (NumberFormatException e) {
                 return ValueTypeInteger.ValueInteger.of(0);
             }
-        });
-        REGISTRY.register(ValueTypes.LONG, value -> {
+        }));
+
+    public static IOperator PARSE_LONG = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.LONG, v -> {
+            ValueTypeString.ValueString value = v.getValue(0);
             try {
                 return ValueTypeLong.ValueLong.of(Long.decode(value.getRawValue()));
             } catch (NumberFormatException e) {
                 return ValueTypeLong.ValueLong.of(0L);
             }
-        });
-        REGISTRY.register(ValueTypes.NBT, value -> {
+        }));
+
+    public static IOperator PARSE_NBT = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.NBT, v -> {
+            ValueTypeString.ValueString value = v.getValue(0);
             try {
                 return new ValueTypeNbt().deserialize(value.getRawValue());
             } catch (IllegalArgumentException e) {
                 return ValueTypeNbt.ValueNbt.of(null);
             }
-        });
-        REGISTRY.register(ValueTypes.STRING, value -> value);
-    }
+        }));
 
+    public static IOperator PARSE_STRING = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.STRING, value -> value.getValue(0)));
 }
