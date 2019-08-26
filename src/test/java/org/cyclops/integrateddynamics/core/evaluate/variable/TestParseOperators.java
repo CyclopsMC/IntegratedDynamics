@@ -16,8 +16,8 @@ import static org.junit.Assert.fail;
 import static org.cyclops.integrateddynamics.core.evaluate.operator.Operators.*;
 
 /**
- * Test the different integer operators.
- * @author rubensworks
+ * Test the different parse operators.
+ * @author LostOfThought
  */
 public class TestParseOperators {
 
