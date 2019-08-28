@@ -113,28 +113,20 @@ public class TestParseOperators {
         IValue res1 = PARSE_INTEGER.evaluate(s(Long.toString((long) Integer.MAX_VALUE)));
         assertThat("parse_Integer(<Integer.MAX_VALUE>)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(Integer.MAX_VALUE));
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseIntMaxP1() throws EvaluationException {
-        try {
-            PARSE_INTEGER.evaluate(s(Long.toString((long) Integer.MAX_VALUE + 1)));
-            fail("parse_Integer(Long.toString((long) Integer.MAX_VALUE + 1)) did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_Integer(Long.toString((long) Integer.MAX_VALUE + 1)) throws", true, instanceOf(Boolean.class));
-        }
+        PARSE_INTEGER.evaluate(s(Long.toString((long) Integer.MAX_VALUE + 1)));
+        fail("parse_Integer(Long.toString((long) Integer.MAX_VALUE + 1)) did not throw");
     }
     @Test
     public void testParseIntMin() throws EvaluationException {
         IValue res1 = PARSE_INTEGER.evaluate(s(Long.toString((long) Integer.MIN_VALUE)));
         assertThat("parse_Integer(<Integer.MIN_VALUE>)", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(Integer.MIN_VALUE));
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseIntMinM1() throws EvaluationException {
-        try {
-            PARSE_INTEGER.evaluate(s(Long.toString((long) Integer.MIN_VALUE - 1)));
-            fail("parse_Integer(Long.toString((long) Integer.MIN_VALUE - 1)) did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_Integer(Long.toString((long) Integer.MIN_VALUE - 1)) throws", true, instanceOf(Boolean.class));
-        }
+        PARSE_INTEGER.evaluate(s(Long.toString((long) Integer.MIN_VALUE - 1)));
+        fail("parse_Integer(Long.toString((long) Integer.MIN_VALUE - 1)) did not throw");
     }
 
     /**
@@ -155,14 +147,10 @@ public class TestParseOperators {
             assertThat("parse_Long(\"\") throws", true, instanceOf(Boolean.class));
         }
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseLongGarbage() throws EvaluationException {
-        try {
-            PARSE_LONG.evaluate(s("garbage"));
-            fail("parse_Long(\"garbage\") did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_Long(\"garbage\") throws", true, instanceOf(Boolean.class));
-        }
+        PARSE_LONG.evaluate(s("garbage"));
+        fail("parse_Long(\"garbage\") did not throw");
     }
     @Test
     public void testParseLong0() throws EvaluationException {
@@ -249,28 +237,20 @@ public class TestParseOperators {
         IValue res1 = PARSE_LONG.evaluate(s(Long.toString(Long.MAX_VALUE)));
         assertThat("parse_Long(<Long.MAX_VALUE>)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(Long.MAX_VALUE));
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseLongMaxP1() throws EvaluationException {
-        try {
-            PARSE_LONG.evaluate(s("9223372036854775808"));
-            fail("parse_Long(\"9223372036854775808\") did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_Long(\"9223372036854775808\") throws", true, instanceOf(Boolean.class));
-        }
+        PARSE_LONG.evaluate(s("9223372036854775808"));
+        fail("parse_Long(\"9223372036854775808\") did not throw");
     }
     @Test
     public void testParseLongMin() throws EvaluationException {
         IValue res1 = PARSE_LONG.evaluate(s(Long.toString(Long.MIN_VALUE)));
         assertThat("parse_Long(<Long.MIN_VALUE>)", ((ValueTypeLong.ValueLong) res1).getRawValue(), is(Long.MIN_VALUE));
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseLongMinM1() throws EvaluationException {
-        try {
-            IValue res1 = PARSE_LONG.evaluate(s("-9223372036854775809"));
-            fail("parse_Long(\"-9223372036854775809\") did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_Long(\"-9223372036854775809\") throws", true, instanceOf(Boolean.class));
-        }
+        IValue res1 = PARSE_LONG.evaluate(s("-9223372036854775809"));
+        fail("parse_Long(\"-9223372036854775809\") did not throw");
     }
 
     /**
@@ -282,23 +262,15 @@ public class TestParseOperators {
         IValue res1 = PARSE_DOUBLE.evaluate(s("0.0"));
         assertThat("parse_Double(\"0.0\") is an double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseDoubleEmpty() throws EvaluationException {
-        try {
-            PARSE_DOUBLE.evaluate(s(""));
-            fail("parse_Double(\"\") did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_Double(\"\") throws", true, instanceOf(Boolean.class));
-        }
+        PARSE_DOUBLE.evaluate(s(""));
+        fail("parse_Double(\"\") did not throw");
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseDoubleGarbage() throws EvaluationException {
-        try {
-            IValue res1 = PARSE_DOUBLE.evaluate(s("garbage"));
-            fail("parse_Double(\"garbage\") did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_Double(\"garbage\") throws", true, instanceOf(Boolean.class));
-        }
+        IValue res1 = PARSE_DOUBLE.evaluate(s("garbage"));
+        fail("parse_Double(\"garbage\") did not throw");
     }
     @Test
     public void testParseDouble0() throws EvaluationException {
@@ -562,23 +534,15 @@ public class TestParseOperators {
     /**
      * ----------------------------------- NBT -----------------------------------
      */
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testNBTGarbage () throws EvaluationException {
-        try {
-            IValue res1 = PARSE_NBT.evaluate(s("}garbage{"));
-            fail("parse_NBT(\"}garbage{\") did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_NBT(\"}garbage{\") throws", true, instanceOf(Boolean.class));
-        }
+        IValue res1 = PARSE_NBT.evaluate(s("}garbage{"));
+        fail("parse_NBT(\"}garbage{\") did not throw");
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testNBTEmpty () throws EvaluationException {
-        try {
-            IValue res1 = PARSE_NBT.evaluate(s(""));
-            fail("parse_NBT(\"\") did not throw");
-        } catch (EvaluationException e){
-            assertThat("parse_NBT(\"\") throws", true, instanceOf(Boolean.class));
-        }
+        IValue res1 = PARSE_NBT.evaluate(s(""));
+        fail("parse_NBT(\"\") did not throw");
     }
     @Test
     public void testNBTFurnace () throws EvaluationException {

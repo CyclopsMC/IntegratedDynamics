@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -22,7 +21,7 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
         "parse_" + to.getTranslationKey(),
         constructInputVariables(1, ValueTypes.STRING),
         to,
-        operator::evaluate,
+        operator,
         IConfigRenderPattern.PREFIX_1);
     this.to = to;
   }

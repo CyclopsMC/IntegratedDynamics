@@ -3350,16 +3350,12 @@ public final class Operators {
      */
     public static final IOperator PARSE_BOOLEAN = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.BOOLEAN, v -> {
       ValueTypeString.ValueString value = v.getValue(0);
-      java.util.regex.Pattern p = java.util.regex.Pattern.compile("\\A(F(alse)?|[+-]?(0x|#)?0+|)\\z", java.util.regex.Pattern.CASE_INSENSITIVE);
-      if (p.matcher(value.getRawValue().trim()).matches()){
-        return ValueTypeBoolean.ValueBoolean.of(false);
-      } else {
-        return ValueTypeBoolean.ValueBoolean.of(true);
-      }
+      Pattern p = Pattern.compile("\\A(F(alse)?|[+-]?(0x|#)?0+|)\\z", Pattern.CASE_INSENSITIVE);
+      return ValueTypeBoolean.ValueBoolean.of(!p.matcher(value.getRawValue().trim()).matches());
     }));
 
     /**
-     * Double Parse operator which takes a string of a form Double.parseDouble() can consume,
+     * Double Parse operator which takes a string of a form Double.parseDouble(),
      * `/([+-]?)(Inf(inity)?|\u221E)/i`, or Long.decode() can consume.
      */
     public static final IOperator PARSE_DOUBLE = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.DOUBLE, v -> {
@@ -3369,8 +3365,8 @@ public final class Operators {
       } catch (NumberFormatException e) {
         try {
           // \u221E = infinity symbol
-          java.util.regex.Pattern p = java.util.regex.Pattern.compile("\\A([+-]?)(Inf(inity)?|\u221E)\\z", java.util.regex.Pattern.CASE_INSENSITIVE);
-          java.util.regex.Matcher m = p.matcher(value.getRawValue().trim());
+          Pattern p = Pattern.compile("\\A([+-]?)(Inf(inity)?|\u221E)\\z", Pattern.CASE_INSENSITIVE);
+          Matcher m = p.matcher(value.getRawValue().trim());
           if (m.matches()){
             if (m.group(1).equals("-")){
               return ValueTypeDouble.ValueDouble.of(Double.NEGATIVE_INFINITY);
@@ -3380,7 +3376,7 @@ public final class Operators {
           // Try as a long
           return ValueTypeDouble.ValueDouble.of((double) Long.decode(value.getRawValue()));
         } catch (NumberFormatException e2) {
-          throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a '" + ValueTypes.DOUBLE.getTranslationKey() + "'");
+          throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'DOUBLE'");
         }
       }
     }));
@@ -3393,7 +3389,7 @@ public final class Operators {
       try{
         return ValueTypeInteger.ValueInteger.of(Integer.decode(value.getRawValue()));
       } catch (NumberFormatException e) {
-        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a '" + ValueTypes.INTEGER.getTranslationKey() + "'");
+        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'INTEGER'");
       }
     }));
 
@@ -3405,7 +3401,7 @@ public final class Operators {
       try {
         return ValueTypeLong.ValueLong.of(Long.decode(value.getRawValue()));
       } catch (NumberFormatException e) {
-        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a '" + ValueTypes.LONG.getTranslationKey() + "'");
+        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'LONG'");
       }
     }));
 
@@ -3417,7 +3413,7 @@ public final class Operators {
       try {
         return new ValueTypeNbt().deserialize(value.getRawValue());
       } catch (IllegalArgumentException e) {
-        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a '" + ValueTypes.NBT.getTranslationKey() + "'");
+        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'NBT'");
       }
     }));
 
