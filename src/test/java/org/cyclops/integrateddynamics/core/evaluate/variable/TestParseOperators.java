@@ -44,7 +44,6 @@ public class TestParseOperators {
     public void testParseIntEmpty() throws EvaluationException {
         try {
             PARSE_INTEGER.evaluate(s(""));
-            fail("parse_Integer(\"\") did not throw");
         } catch (EvaluationException e){
             assertThat("parse_Integer(\"\") throws", true, instanceOf(Boolean.class));
         }
@@ -53,7 +52,6 @@ public class TestParseOperators {
     public void testParseIntGarbage() throws EvaluationException {
         try {
             PARSE_INTEGER.evaluate(s("garbage"));
-            fail("parse_Integer(\"garbage\") did not throw");
         } catch (EvaluationException e){
             assertThat("parse_Integer(\"garbage\") throws", true, instanceOf(Boolean.class));
         }
@@ -116,7 +114,6 @@ public class TestParseOperators {
     @Test(expected = EvaluationException.class)
     public void testParseIntMaxP1() throws EvaluationException {
         PARSE_INTEGER.evaluate(s(Long.toString((long) Integer.MAX_VALUE + 1)));
-        fail("parse_Integer(Long.toString((long) Integer.MAX_VALUE + 1)) did not throw");
     }
     @Test
     public void testParseIntMin() throws EvaluationException {
@@ -126,7 +123,6 @@ public class TestParseOperators {
     @Test(expected = EvaluationException.class)
     public void testParseIntMinM1() throws EvaluationException {
         PARSE_INTEGER.evaluate(s(Long.toString((long) Integer.MIN_VALUE - 1)));
-        fail("parse_Integer(Long.toString((long) Integer.MIN_VALUE - 1)) did not throw");
     }
 
     /**
@@ -142,7 +138,6 @@ public class TestParseOperators {
     public void testParseLongEmpty() throws EvaluationException {
         try {
             PARSE_LONG.evaluate(s(""));
-            fail("parse_Long(\"\") did not throw");
         } catch (EvaluationException e){
             assertThat("parse_Long(\"\") throws", true, instanceOf(Boolean.class));
         }
@@ -150,7 +145,6 @@ public class TestParseOperators {
     @Test(expected = EvaluationException.class)
     public void testParseLongGarbage() throws EvaluationException {
         PARSE_LONG.evaluate(s("garbage"));
-        fail("parse_Long(\"garbage\") did not throw");
     }
     @Test
     public void testParseLong0() throws EvaluationException {
@@ -240,7 +234,6 @@ public class TestParseOperators {
     @Test(expected = EvaluationException.class)
     public void testParseLongMaxP1() throws EvaluationException {
         PARSE_LONG.evaluate(s("9223372036854775808"));
-        fail("parse_Long(\"9223372036854775808\") did not throw");
     }
     @Test
     public void testParseLongMin() throws EvaluationException {
@@ -250,7 +243,6 @@ public class TestParseOperators {
     @Test(expected = EvaluationException.class)
     public void testParseLongMinM1() throws EvaluationException {
         IValue res1 = PARSE_LONG.evaluate(s("-9223372036854775809"));
-        fail("parse_Long(\"-9223372036854775809\") did not throw");
     }
 
     /**
@@ -265,12 +257,10 @@ public class TestParseOperators {
     @Test(expected = EvaluationException.class)
     public void testParseDoubleEmpty() throws EvaluationException {
         PARSE_DOUBLE.evaluate(s(""));
-        fail("parse_Double(\"\") did not throw");
     }
     @Test(expected = EvaluationException.class)
     public void testParseDoubleGarbage() throws EvaluationException {
         IValue res1 = PARSE_DOUBLE.evaluate(s("garbage"));
-        fail("parse_Double(\"garbage\") did not throw");
     }
     @Test
     public void testParseDouble0() throws EvaluationException {
@@ -537,12 +527,10 @@ public class TestParseOperators {
     @Test(expected = EvaluationException.class)
     public void testNBTGarbage () throws EvaluationException {
         IValue res1 = PARSE_NBT.evaluate(s("}garbage{"));
-        fail("parse_NBT(\"}garbage{\") did not throw");
     }
     @Test(expected = EvaluationException.class)
     public void testNBTEmpty () throws EvaluationException {
         IValue res1 = PARSE_NBT.evaluate(s(""));
-        fail("parse_NBT(\"\") did not throw");
     }
     @Test
     public void testNBTFurnace () throws EvaluationException {
