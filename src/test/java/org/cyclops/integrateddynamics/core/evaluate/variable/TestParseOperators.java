@@ -11,7 +11,6 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import static org.cyclops.integrateddynamics.core.evaluate.operator.Operators.*;
 
@@ -40,21 +39,13 @@ public class TestParseOperators {
         IValue res1 = PARSE_INTEGER.evaluate(s("0"));
         assertThat("parse_Integer(\"0\") is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseIntEmpty() throws EvaluationException {
-        try {
-            PARSE_INTEGER.evaluate(s(""));
-        } catch (EvaluationException e){
-            assertThat("parse_Integer(\"\") throws", true, instanceOf(Boolean.class));
-        }
+        PARSE_INTEGER.evaluate(s(""));
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseIntGarbage() throws EvaluationException {
-        try {
-            PARSE_INTEGER.evaluate(s("garbage"));
-        } catch (EvaluationException e){
-            assertThat("parse_Integer(\"garbage\") throws", true, instanceOf(Boolean.class));
-        }
+        PARSE_INTEGER.evaluate(s("garbage"));
     }
     @Test
     public void testParseInt0() throws EvaluationException {
@@ -134,13 +125,9 @@ public class TestParseOperators {
         IValue res1 = PARSE_LONG.evaluate(s("0"));
         assertThat("parse_Integer(\"0\") is an integer", res1, instanceOf(ValueTypeLong.ValueLong.class));
     }
-    @Test
+    @Test(expected = EvaluationException.class)
     public void testParseLongEmpty() throws EvaluationException {
-        try {
-            PARSE_LONG.evaluate(s(""));
-        } catch (EvaluationException e){
-            assertThat("parse_Long(\"\") throws", true, instanceOf(Boolean.class));
-        }
+        PARSE_LONG.evaluate(s(""));
     }
     @Test(expected = EvaluationException.class)
     public void testParseLongGarbage() throws EvaluationException {
