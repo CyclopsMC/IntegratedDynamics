@@ -22,7 +22,7 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
         constructInputVariables(1, ValueTypes.STRING),
         to,
         operator,
-        IConfigRenderPattern.PREFIX_1);
+        IConfigRenderPattern.PREFIX_1_LONG);
     this.to = to;
   }
 
