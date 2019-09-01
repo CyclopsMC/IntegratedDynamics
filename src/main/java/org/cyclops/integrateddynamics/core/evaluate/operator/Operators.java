@@ -3342,6 +3342,82 @@ public final class Operators {
             }).build());
 
     /**
+     * ------------------------------------ PARSE OPERATORS ------------------------------------
+     */
+
+    /**
+     * Boolean Parse operator which takes a string of form `/(F(alse)?|[+-]?(0x|#)?0+|)/i`.
+     */
+    public static final IOperator PARSE_BOOLEAN = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.BOOLEAN, v -> {
+      ValueTypeString.ValueString value = v.getValue(0);
+      Pattern p = Pattern.compile("\\A(F(alse)?|[+-]?(0x|#)?0+|)\\z", Pattern.CASE_INSENSITIVE);
+      return ValueTypeBoolean.ValueBoolean.of(!p.matcher(value.getRawValue().trim()).matches());
+    }));
+
+    /**
+     * Double Parse operator which takes a string of a form Double.parseDouble(),
+     * `/([+-]?)(Inf(inity)?|\u221E)/i`, or Long.decode() can consume.
+     */
+    public static final IOperator PARSE_DOUBLE = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.DOUBLE, v -> {
+      ValueTypeString.ValueString value = v.getValue(0);
+      try {
+        return ValueTypeDouble.ValueDouble.of(Double.parseDouble(value.getRawValue()));
+      } catch (NumberFormatException e) {
+        try {
+          // \u221E = infinity symbol
+          Pattern p = Pattern.compile("\\A([+-]?)(Inf(inity)?|\u221E)\\z", Pattern.CASE_INSENSITIVE);
+          Matcher m = p.matcher(value.getRawValue().trim());
+          if (m.matches()){
+            if (m.group(1).equals("-")){
+              return ValueTypeDouble.ValueDouble.of(Double.NEGATIVE_INFINITY);
+            }
+            return ValueTypeDouble.ValueDouble.of(Double.POSITIVE_INFINITY);
+          }
+          // Try as a long
+          return ValueTypeDouble.ValueDouble.of((double) Long.decode(value.getRawValue()));
+        } catch (NumberFormatException e2) {
+          throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'DOUBLE'");
+        }
+      }
+    }));
+
+    /**
+     * Integer Parse operator which takes a string of a form Integer.decode() can consume.
+     */
+    public static final IOperator PARSE_INTEGER = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.INTEGER, v -> {
+      ValueTypeString.ValueString value = v.getValue(0);
+      try{
+        return ValueTypeInteger.ValueInteger.of(Integer.decode(value.getRawValue()));
+      } catch (NumberFormatException e) {
+        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'INTEGER'");
+      }
+    }));
+
+    /**
+     * Long Parse operator which takes a string of a form Long.decode() can consume.
+     */
+    public static final IOperator PARSE_LONG = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.LONG, v -> {
+      ValueTypeString.ValueString value = v.getValue(0);
+      try {
+        return ValueTypeLong.ValueLong.of(Long.decode(value.getRawValue()));
+      } catch (NumberFormatException e) {
+        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'LONG'");
+      }
+    }));
+
+    /**
+     * NBT Parse operator which takes a string of a form ValueTypeNbt().deserialize() can consume.
+     */
+    public static final IOperator PARSE_NBT = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.NBT, v -> {
+      ValueTypeString.ValueString value = v.getValue(0);
+      try {
+        return new ValueTypeNbt().deserialize(value.getRawValue());
+      } catch (IllegalArgumentException e) {
+        throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'NBT'");
+      }
+    }));
+
+    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 
