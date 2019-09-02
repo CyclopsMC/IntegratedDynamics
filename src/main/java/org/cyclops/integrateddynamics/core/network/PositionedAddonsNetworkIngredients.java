@@ -205,8 +205,9 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     public void update() {
         if (this.shouldObserve()) {
-            this.ingredientObserver.observe();
-            this.observe = false;
+            if (this.ingredientObserver.observe()) {
+                this.observe = false;
+            }
         }
     }
 
