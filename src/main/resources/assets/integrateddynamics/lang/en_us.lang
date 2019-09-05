@@ -207,7 +207,7 @@ advancement.integrateddynamics.recursive_recursion.desc=Create an infinite List,
 advancement.integrateddynamics.tool_for_obsidian=Tools for Obsidian?
 advancement.integrateddynamics.tool_for_obsidian.desc=Check if a Stone Pickaxe can break an Obsidian block, and show the result in a Display Panel.
 advancement.integrateddynamics.smart_pressure_plate=Smart Pressure Plate
-advancement.integrateddynamics.smart_pressure_plate.desc=Create a system that automatically opens a door when you pass by an Entity Reader based on entity name matching, using a Redstone Writer directly pointing to the door.
+advancement.integrateddynamics.smart_pressure_plate.desc=Create a system that automatically opens a door when you pass by an Entity Reader based on entity name matching, using a Redstone Writer directly pointing to the door. (Hint: pass an entity name as first argument into the equals operator)
 
 # Value types
 valuetype.integrateddynamics.error.value=Invalid value

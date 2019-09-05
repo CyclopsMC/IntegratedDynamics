@@ -20,10 +20,17 @@
         "parttype": "redstone_writer",
         "variable": {
           "type": "operator",
+          "operator": "operator.operators.integrateddynamics.relational.equals.name",
           "input": {
             "0": {
-              "type": "aspect",
-              "aspect": "aspect.aspects.integrateddynamics.read.entity.entity.name"
+              "type": "operator",
+              "operator": "operator.operators.integrateddynamics.string.name.name",
+              "input": {
+                "0": {
+                  "type": "aspect",
+                  "aspect": "aspect.aspects.integrateddynamics.read.entity.entity.name"
+                }
+              }
             }
           }
         }
