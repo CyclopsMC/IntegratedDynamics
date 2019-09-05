@@ -1776,6 +1776,15 @@ public final class Operators {
             }).build());
 
     /**
+     * Item Stack has_nbt operator with one input itemstack and one output boolean.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_HASNBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_PREFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbol("has_nbt").operatorName("hasnbt")
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
+                    itemStack -> !itemStack.isEmpty() && itemStack.hasTagCompound()
+            )).build());
+
+    /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
      */
 

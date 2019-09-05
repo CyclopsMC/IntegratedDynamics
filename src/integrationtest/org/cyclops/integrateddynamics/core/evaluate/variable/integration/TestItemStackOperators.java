@@ -41,6 +41,7 @@ public class TestItemStackOperators {
 
     private DummyVariableItemStack iApple;
     private DummyVariableItemStack iApple2;
+    private DummyVariableItemStack iAppleTag;
     private DummyVariableItemStack iBeef;
     private DummyVariableItemStack iEnderPearl;
     private DummyVariableItemStack iHoe;
@@ -74,6 +75,9 @@ public class TestItemStackOperators {
     public void before() {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
         iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 2)));
+        ItemStack appleStack = new ItemStack(Items.APPLE);
+        appleStack.setTagCompound(new NBTTagCompound());
+        iAppleTag = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(appleStack));
         iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.BED)));
         iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ENDER_PEARL)));
         iHoe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
@@ -1256,6 +1260,35 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeNbt() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- HASNBT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackHasNbt() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "hasnbt(apple) = false");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iAppleTag});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "hasnbt(appleTag) = true");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputHasNbtHasNbtLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputHasNbtHasNbtSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeHasNbt() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

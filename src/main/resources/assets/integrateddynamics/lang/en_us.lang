@@ -989,6 +989,8 @@ operator.operators.integrateddynamics.itemstack.itemlistcount.name=Item List Cou
 operator.operators.integrateddynamics.itemstack.itemlistcount.info=Get the total item count of exactly the given item in a list.
 operator.operators.integrateddynamics.itemstack.nbt.name=Item NBT
 operator.operators.integrateddynamics.itemstack.nbt.info=Get the NBT tag of the given item.
+operator.operators.integrateddynamics.itemstack.hasnbt.name=Has NBT
+operator.operators.integrateddynamics.itemstack.hasnbt.info=If the item stack has an NBT tag.
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s
