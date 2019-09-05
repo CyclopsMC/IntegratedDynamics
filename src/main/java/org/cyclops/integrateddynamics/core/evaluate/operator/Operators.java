@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Streams;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
@@ -707,6 +708,28 @@ public final class Operators {
                 throw new EvaluationException(e.getMessage());
             }
         }).build()
+    );
+
+    /**
+     * String operator to join a list using a string delimiter
+     */
+    public static final IOperator STRING_JOIN = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("join")
+            .renderPattern(IConfigRenderPattern.PREFIX_2)
+            .inputTypes(ValueTypes.STRING, ValueTypes.LIST)
+            .output(ValueTypes.STRING)
+            .function(variables -> {
+                ValueTypeString.ValueString delimiter = variables.getValue(0);
+                ValueTypeList.ValueList<?, ?> elements = variables.getValue(1);
+                if (!ValueHelpers.correspondsTo(elements.getRawValue().getValueType(), ValueTypes.STRING)) {
+                    L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                            L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                            elements.getRawValue().getValueType(), ValueTypes.STRING);
+                    throw new EvaluationException(error.localize());
+                }
+                IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> rawList = (IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString>) elements.getRawValue();
+                return ValueTypeString.ValueString.of(String.join(delimiter.getRawValue(),
+                        Streams.stream(rawList).map(ValueTypeString.ValueString::getRawValue).collect(Collectors.toList())));
+            }).build()
     );
 
     /**
