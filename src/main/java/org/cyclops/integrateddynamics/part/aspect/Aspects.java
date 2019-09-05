@@ -145,6 +145,12 @@ public class Aspects {
                         }
                         return null;
                     }).handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
+            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_BIOME =
+                    AspectReadBuilders.Block.BUILDER_STRING
+                            .handle(
+                                    dimPos -> dimPos.getWorld().getBiome(dimPos.getBlockPos()).getRegistryName().toString()
+                            ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
         }
 
         public static final class Entity {

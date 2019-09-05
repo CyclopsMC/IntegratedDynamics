@@ -22,7 +22,8 @@ public class PartTypeBlockReader extends PartTypeReadBase<PartTypeBlockReader, P
                 Aspects.Read.Block.INTEGER_POSY,
                 Aspects.Read.Block.INTEGER_POSZ,
                 Aspects.Read.Block.BLOCK,
-                Aspects.Read.Block.NBT
+                Aspects.Read.Block.NBT,
+                Aspects.Read.Block.STRING_BIOME
         ));
     }
 

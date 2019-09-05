@@ -454,6 +454,8 @@ aspect.aspects.integrateddynamics.read.integer.block.posz.name=Z Coordinate
 aspect.aspects.integrateddynamics.read.integer.block.posz.info=The Z coordinate of the target
 aspect.aspects.integrateddynamics.read.nbt.block.tile.name=Tile Entity NBT
 aspect.aspects.integrateddynamics.read.nbt.block.tile.info=The target Tile Entity as NBT
+aspect.aspects.integrateddynamics.read.string.block.biome.name=Biome
+aspect.aspects.integrateddynamics.read.string.block.biome.info=The biome name at the target
 
 aspect.aspects.integrateddynamics.read.block.block.name=Block
 aspect.aspects.integrateddynamics.read.block.block.info=The target block
