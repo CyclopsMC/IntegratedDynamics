@@ -230,6 +230,20 @@ public class TestOperatorOperators {
         assertThat("2 > 1 == true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
     }
 
+    @Test
+    public void testApply2OnOpWith3Inputs() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oChoice, bTrue, i1});
+        assertThat("result is an operator", res1, instanceOf(ValueTypeOperator.ValueOperator.class));
+        assertThat("apply_2(?, true, 1)", ((ValueTypeOperator.ValueOperator) res1).getRawValue().getInputTypes().length, is(1));
+        assertThat("apply_2(?, true, 1)", ((ValueTypeOperator.ValueOperator) res1).getRawValue().getRequiredInputLength(), is(1));
+        assertThat("apply_2(?, true, 1)", ((ValueTypeOperator.ValueOperator) res1).getRawValue().getInputTypes()[0], is(ValueTypes.CATEGORY_ANY));
+        assertThat("apply_2(?, true, 1)", ((ValueTypeOperator.ValueOperator) res1).getRawValue().getOutputType(), is(ValueTypes.CATEGORY_ANY));
+
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{new Variable<>(res1), i2});
+        assertThat("result is an integer", res2, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("apply_2(?, true, 1)(2)", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(1));
+    }
+
     @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeApply2Large() throws EvaluationException {
         Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bFalse, bFalse, bFalse});
