@@ -367,6 +367,8 @@ aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassguitar.info
 
 aspect.aspects.integrateddynamics.write.string.audio.sound.name=Sound
 aspect.aspects.integrateddynamics.write.string.audio.sound.info=Play the given sound name
+aspect.aspects.integrateddynamics.write.string.audio.text.name=Text
+aspect.aspects.integrateddynamics.write.string.audio.text.info=Convert the given text to speech
 
 ## Effect aspects
 aspect.aspects.integrateddynamics.write.double.effect.particle.fireworksspark.name=Particle: Fireworks Spark
@@ -706,6 +708,7 @@ aspect.aspecttypes.integrateddynamics.integer.offset.name=Pulse Time Offset
 
 aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
 aspect.aspecttypes.integrateddynamics.double.frequency.name=Frequency
+aspect.aspecttypes.integrateddynamics.integer.range.name=Range
 
 aspect.aspecttypes.integrateddynamics.double.offset_x.name=X Offset
 aspect.aspecttypes.integrateddynamics.double.offset_y.name=Y Offset

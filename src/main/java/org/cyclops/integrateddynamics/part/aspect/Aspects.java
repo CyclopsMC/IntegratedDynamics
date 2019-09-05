@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.LocationHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -59,6 +60,7 @@ import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
+import org.cyclops.integrateddynamics.network.packet.SpeakTextPacket;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
@@ -772,6 +774,21 @@ public class Aspects {
                                 }
                                 return null;
                             }, "sound").buildWrite();
+
+            public static final IAspectWrite<ValueTypeString.ValueString, ValueTypeString> STRING_TEXT =
+                    AspectWriteBuilders.Audio.BUILDER_STRING.withProperties(AspectWriteBuilders.Audio.PROPERTIES_TEXT)
+                            .handle(input -> {
+                                IAspectProperties properties = input.getMiddle();
+                                World world = input.getLeft().getTarget().getPos().getWorld();
+                                BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
+                                if(!StringUtils.isNullOrEmpty(input.getRight())) {
+                                    int range = properties.getValue(AspectWriteBuilders.Audio.PROP_RANGE).getRawValue();
+                                    IntegratedDynamics._instance.getPacketHandler().sendToAllAround(
+                                            new SpeakTextPacket(input.getRight()),
+                                            LocationHelpers.createTargetPointFromLocation(world, pos, range));
+                                }
+                                return null;
+                            }, "text").buildWrite();
 
         }
 
