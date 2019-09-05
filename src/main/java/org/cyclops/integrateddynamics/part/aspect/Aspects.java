@@ -151,6 +151,9 @@ public class Aspects {
                                     dimPos -> dimPos.getWorld().getBiome(dimPos.getBlockPos()).getRegistryName().toString()
                             ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHT =
+                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(dimPos -> dimPos.getWorld().getLight(dimPos.getBlockPos(), false))
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER, "light").buildRead();
         }
 
         public static final class Entity {
