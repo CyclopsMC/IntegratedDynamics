@@ -1071,12 +1071,12 @@ operator.operators.integrateddynamics.entity.entityenergystored.info=The amount 
 operator.operators.integrateddynamics.entity.entityenergycapacity.name=Entity Energy Capacity
 operator.operators.integrateddynamics.entity.entityenergycapacity.info=The energy capacity of this entity.
 
-operator.operators.integrateddynamics.itemstack.isfecontainer.name=Is FE Container
-operator.operators.integrateddynamics.itemstack.isfecontainer.info=If the given item can hold FE
-operator.operators.integrateddynamics.itemstack.storedfe.name=FE Stored
-operator.operators.integrateddynamics.itemstack.storedfe.info=The amount of FE stored in this item
-operator.operators.integrateddynamics.itemstack.fecapacity.name=FE Capacity
-operator.operators.integrateddynamics.itemstack.fecapacity.info=The maximum amount of FE that can be stored in this item
+operator.operators.integrateddynamics.itemstack.isfecontainer.name=Is Energy Container
+operator.operators.integrateddynamics.itemstack.isfecontainer.info=If the given item can hold energy
+operator.operators.integrateddynamics.itemstack.storedfe.name=Energy Stored
+operator.operators.integrateddynamics.itemstack.storedfe.info=The amount of energy stored in this item
+operator.operators.integrateddynamics.itemstack.fecapacity.name=Energy Capacity
+operator.operators.integrateddynamics.itemstack.fecapacity.info=The maximum amount of energy that can be stored in this item
 
 operator.operators.integrateddynamics.fluidstack.name=Fluid
 operator.operators.integrateddynamics.fluidstack.basename=Fluid %s
