@@ -726,9 +726,12 @@ public final class Operators {
                             elements.getRawValue().getValueType(), ValueTypes.STRING);
                     throw new EvaluationException(error.localize());
                 }
-                IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> rawList = (IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString>) elements.getRawValue();
-                return ValueTypeString.ValueString.of(String.join(delimiter.getRawValue(),
-                        Streams.stream(rawList).map(ValueTypeString.ValueString::getRawValue).collect(Collectors.toList())));
+                return ValueTypeString.ValueString.of(Streams.stream(elements.getRawValue())
+                        .filter(value -> value instanceof ValueTypeString.ValueString)
+                        .map(value -> (ValueTypeString.ValueString) value)
+                        .map(ValueTypeString.ValueString::getRawValue)
+                        .collect(Collectors.joining(delimiter.getRawValue()))
+                );
             }).build()
     );
 
