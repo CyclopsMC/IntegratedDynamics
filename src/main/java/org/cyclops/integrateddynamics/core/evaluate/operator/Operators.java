@@ -726,8 +726,20 @@ public final class Operators {
                             elements.getRawValue().getValueType(), ValueTypes.STRING);
                     throw new EvaluationException(error.localize());
                 }
+
+                final java.util.Optional<IValueType> firstNonString = Streams.stream(elements.getRawValue())
+                        .map(IValue::getType)
+                        .filter(value -> value != ValueTypes.STRING)
+                        .findFirst();
+
+                if (firstNonString.isPresent()) {
+                    L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                            L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                            firstNonString.get(), ValueTypes.STRING);
+                    throw new EvaluationException(error.localize());
+                }
+
                 return ValueTypeString.ValueString.of(Streams.stream(elements.getRawValue())
-                        .filter(value -> value instanceof ValueTypeString.ValueString)
                         .map(value -> (ValueTypeString.ValueString) value)
                         .map(ValueTypeString.ValueString::getRawValue)
                         .collect(Collectors.joining(delimiter.getRawValue()))
