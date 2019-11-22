@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Streams;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
@@ -718,6 +717,7 @@ public final class Operators {
             .inputTypes(ValueTypes.STRING, ValueTypes.LIST)
             .output(ValueTypes.STRING)
             .function(variables -> {
+                // Prepare values
                 ValueTypeString.ValueString delimiter = variables.getValue(0);
                 ValueTypeList.ValueList<?, ?> elements = variables.getValue(1);
                 if (!ValueHelpers.correspondsTo(elements.getRawValue().getValueType(), ValueTypes.STRING)) {
@@ -726,9 +726,23 @@ public final class Operators {
                             elements.getRawValue().getValueType(), ValueTypes.STRING);
                     throw new EvaluationException(error.localize());
                 }
-                IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> rawList = (IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString>) elements.getRawValue();
-                return ValueTypeString.ValueString.of(String.join(delimiter.getRawValue(),
-                        Streams.stream(rawList).map(ValueTypeString.ValueString::getRawValue).collect(Collectors.toList())));
+
+                // Join in O(n), while type-checking each element, as the list may have been of ANY type.
+                StringBuilder sb = new StringBuilder();
+                for (IValue value : elements.getRawValue()) {
+                    if (value.getType() != ValueTypes.STRING) {
+                        L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                                L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                                value.getType(), ValueTypes.STRING);
+                        throw new EvaluationException(error.localize());
+                    }
+                    if (sb.length() > 0) {
+                        sb.append(delimiter.getRawValue());
+                    }
+                    sb.append(((ValueTypeString.ValueString) value).getRawValue());
+                }
+
+                return ValueTypeString.ValueString.of(sb.toString());
             }).build()
     );
 

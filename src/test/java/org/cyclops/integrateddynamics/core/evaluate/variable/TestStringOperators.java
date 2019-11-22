@@ -39,6 +39,7 @@ public class TestStringOperators {
     private DummyVariableDouble d10_5;
     private DummyVariableList labc;
     private DummyVariableList lint;
+    private DummyVariableList lstringinvalidtypes;
 
     @BeforeClass
     public static void beforeClass() {
@@ -68,6 +69,9 @@ public class TestStringOperators {
         ));
         lint = new DummyVariableList(ValueTypeList.ValueList.ofAll(ValueTypes.INTEGER,
                 ValueTypeInteger.ValueInteger.of(123)));
+        lstringinvalidtypes = new DummyVariableList(ValueTypeList.ValueList.ofAll(ValueTypes.STRING,
+                ValueTypeInteger.ValueInteger.of(123)
+        ));
     }
 
     /**
@@ -673,6 +677,11 @@ public class TestStringOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputListType() throws EvaluationException {
         Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, lint});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputListTypeInner() throws EvaluationException {
+        Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, lstringinvalidtypes});
     }
 
     @Test(expected = EvaluationException.class)
