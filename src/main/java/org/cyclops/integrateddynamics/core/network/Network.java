@@ -310,8 +310,10 @@ public class Network implements INetwork {
 
     @Override
     public synchronized void removeNetworkElementUpdateable(INetworkElement element) {
-        updateableElements.remove(element);
-        updateableElementsTicks.remove(element);
+        if (isInitialized()) {
+            updateableElements.remove(element);
+            updateableElementsTicks.remove(element);
+        }
     }
 
     /**
