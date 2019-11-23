@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
@@ -183,8 +184,10 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighborBlock) {
-        part.onBlockNeighborChange(network, NetworkHelpers.getPartNetwork(network), target, getPartState(), world, neighborBlock);
+    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighbourBlock,
+                                      BlockPos neighbourBlockPos) {
+        part.onBlockNeighborChange(network, NetworkHelpers.getPartNetwork(network), target, getPartState(), world,
+                neighbourBlock, neighbourBlockPos);
     }
 
     @Override

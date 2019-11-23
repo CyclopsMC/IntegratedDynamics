@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -90,7 +91,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighborBlock) {
+    public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighbourBlock, BlockPos neighbourPos) {
 
     }
 

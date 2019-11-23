@@ -215,9 +215,16 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     }
 
-    @Override
-    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
+    @Deprecated // TODO: remove in 1.14
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
+                                      IBlockAccess world, Block neighbourBlock) {
 
+    }
+
+    @Override
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
+                                      IBlockAccess world, Block neighbourBlock, BlockPos neighbourBlockPos) {
+        this.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock);
     }
 
     @Override

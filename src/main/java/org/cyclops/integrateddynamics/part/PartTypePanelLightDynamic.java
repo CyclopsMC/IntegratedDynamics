@@ -93,8 +93,9 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
-    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, State state, IBlockAccess world, Block neighborBlock) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighborBlock);
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, State state,
+                                      IBlockAccess world, Block neighbourBlock, BlockPos neighbourPos) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourPos);
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }
 

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.part;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -61,8 +62,10 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     }
 
     @Override
-    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, PartStateEmpty<PartTypePanelLightStatic> state, IBlockAccess world, Block neighborBlock) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighborBlock);
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target,
+                                      PartStateEmpty<PartTypePanelLightStatic> state, IBlockAccess world,
+                                      Block neighbourBlock, BlockPos neighbourPos) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourPos);
         PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
     }
 

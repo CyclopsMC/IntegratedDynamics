@@ -156,14 +156,33 @@ public class NetworkHelpers {
      * @param world The world in which the neighbour was updated.
      * @param pos The position of the center block.
      * @param side The side at the center block.
-     * @param neighborBlock The block type of the neighbour that was updated.
+     * @param neighbourBlock The block type of the neighbour that was updated.
      */
-    public static void onElementProviderBlockNeighborChange(World world, BlockPos pos, Block neighborBlock, @Nullable EnumFacing side) {
+    @Deprecated // TODO: remove in 1.14
+    public static void onElementProviderBlockNeighborChange(World world, BlockPos pos, Block neighbourBlock,
+                                                            @Nullable EnumFacing side) {
+        onElementProviderBlockNeighborChange(world, pos, neighbourBlock, side, null);
+    }
+
+    /**
+     * This MUST be called by blocks having the {@link INetworkElementProvider} capability in
+     * when a neighbouring block is updated, more specifically when
+     * {@link net.minecraft.block.Block#neighborChanged(IBlockState, World, BlockPos, Block, BlockPos)},
+     * {@link Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)}
+     * or {@link Block#observedNeighborChange(IBlockState, World, BlockPos, Block, BlockPos)} is called.
+     * @param world The world in which the neighbour was updated.
+     * @param pos The position of the center block.
+     * @param side The side at the center block.
+     * @param neighbourBlock The block type of the neighbour that was updated.
+     * @param neighbourBlockPos The position of the neighbour that was updated.
+     */
+    public static void onElementProviderBlockNeighborChange(World world, BlockPos pos, Block neighbourBlock,
+                                                            @Nullable EnumFacing side, BlockPos neighbourBlockPos) {
         if (!world.isRemote) {
             INetwork network = getNetwork(world, pos, side);
             INetworkElementProvider networkElementProvider = getNetworkElementProvider(world, pos, side);
             for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-                networkElement.onNeighborBlockChange(network, world, neighborBlock);
+                networkElement.onNeighborBlockChange(network, world, neighbourBlock, neighbourBlockPos);
             }
         }
     }

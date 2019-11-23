@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -84,8 +85,9 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state, IBlockAccess world, Block neighborBlock) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighborBlock);
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
+                                      IBlockAccess world, Block neighbourBlock, BlockPos neighbourBlockPos) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourBlockPos);
         for(IAspect aspect : getUpdateAspects(AspectUpdateType.BLOCK_UPDATE)) {
             aspect.update(network, partNetwork, this, target, state);
         }

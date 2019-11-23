@@ -95,9 +95,11 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * {@link Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} is called.
      * @param network The network to update in.
      * @param world The world in which the neighbour was updated.
-     * @param neighborBlock block type of the neighbour that was updated.
+     * @param neighbourBlock block type of the neighbour that was updated.
+     * @param neighbourBlockPos The position of the neighbour that was updated.
      */
-    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighborBlock);
+    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighbourBlock,
+                                      BlockPos neighbourBlockPos);
 
     /**
      * Set the priority and channel of this element in the network.
