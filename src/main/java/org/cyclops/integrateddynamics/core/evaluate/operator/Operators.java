@@ -727,6 +727,11 @@ public final class Operators {
                     throw new EvaluationException(error.localize());
                 }
 
+                // Don't allow joining on an infinite list
+                if (elements.getRawValue().isInfinite()) {
+                    throw new EvaluationException("Joining elements in an infinite list is not allowed");
+                }
+
                 // Join in O(n), while type-checking each element, as the list may have been of ANY type.
                 StringBuilder sb = new StringBuilder();
                 for (IValue value : elements.getRawValue()) {

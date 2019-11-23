@@ -2,12 +2,15 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.Iterator;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -40,6 +43,7 @@ public class TestStringOperators {
     private DummyVariableList labc;
     private DummyVariableList lint;
     private DummyVariableList lstringinvalidtypes;
+    private DummyVariableList lstring_inf;
 
     @BeforeClass
     public static void beforeClass() {
@@ -72,6 +76,42 @@ public class TestStringOperators {
         lstringinvalidtypes = new DummyVariableList(ValueTypeList.ValueList.ofAll(ValueTypes.STRING,
                 ValueTypeInteger.ValueInteger.of(123)
         ));
+        lstring_inf = new DummyVariableList(ValueTypeList.ValueList.ofFactory(new IValueTypeListProxy() {
+            @Override
+            public int getLength() throws EvaluationException {
+                return 0;
+            }
+
+            @Override
+            public IValue get(int index) throws EvaluationException {
+                return null;
+            }
+
+            @Override
+            public IValueType<? extends IValue> getValueType() {
+                return ValueTypes.STRING;
+            }
+
+            @Override
+            public String getName() {
+                return null;
+            }
+
+            @Override
+            public String toCompactString() {
+                return null;
+            }
+
+            @Override
+            public boolean isInfinite() {
+                return true;
+            }
+
+            @Override
+            public Iterator<IValue> iterator() {
+                return null;
+            }
+        }));
     }
 
     /**
@@ -682,6 +722,11 @@ public class TestStringOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputListTypeInner() throws EvaluationException {
         Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, lstringinvalidtypes});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputListInfinite() throws EvaluationException {
+        Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, lstring_inf});
     }
 
     @Test(expected = EvaluationException.class)
