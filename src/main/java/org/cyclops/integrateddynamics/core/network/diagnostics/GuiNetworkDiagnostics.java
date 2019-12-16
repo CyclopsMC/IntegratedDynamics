@@ -20,6 +20,8 @@ import org.cyclops.integrateddynamics.network.packet.PlayerTeleportPacket;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -27,6 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -185,10 +188,9 @@ public class GuiNetworkDiagnostics extends JFrame {
                             row.add(observablePartData.getNetworkId());
                             row.add(observablePartData.getNetworkCables());
                             row.add(observablePartData.getName());
-                            row.add(String.format("%.6f", ((double) observablePartData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
+                            row.add(((double) observablePartData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000);
                             row.add(observablePartData.getDimension());
-                            BlockPos pos = observablePartData.getPos();
-                            row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
+                            row.add(observablePartData.getPos());
                             row.add(observablePartData.getSide().name());
                             row.add(i++);
                             dataParts.addElement(row);
@@ -200,10 +202,9 @@ public class GuiNetworkDiagnostics extends JFrame {
                             Vector<Object> row = new Vector<>();
                             row.add(observableObserverData.getNetworkId());
                             row.add(observableObserverData.getName());
-                            row.add(String.format("%.6f", ((double) observableObserverData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
+                            row.add(((double) observableObserverData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000);
                             row.add(observableObserverData.getDimension());
-                            BlockPos pos = observableObserverData.getPos();
-                            row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
+                            row.add(observableObserverData.getPos());
                             row.add(observableObserverData.getSide() == null ? "null" : observableObserverData.getSide().name());
                             row.add(i++);
                             dataObservers.addElement(row);
@@ -233,30 +234,31 @@ public class GuiNetworkDiagnostics extends JFrame {
                                             return Integer.class;
 
                                         case IDX_PARTS_TICKTIME:
-                                            return Long.class;
+                                            return Double.class;
+
+                                        case IDX_PARTS_POSITION:
+                                            return BlockPos.class;
 
                                         case IDX_PARTS_PART:
-                                        case IDX_PARTS_POSITION:
                                         case IDX_PARTS_SIDE:
                                         default:
                                             return String.class;
                                     }
                                 }
-                            });
-
-                            tableParts.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
+                            }) {
                                 @Override
-                                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                                public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                                    Component c = super.prepareRenderer(renderer, row, column);
                                     ObservablePartData partData = getPartDataFromRow(row);
                                     if (partData != null && NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(partData.toPartPos())) {
                                         c.setBackground(Color.CYAN);
                                     } else {
-                                        c.setBackground(isSelected ? Color.BLUE : Color.WHITE);
+                                        c.setBackground(isCellSelected(row, column) ? getSelectionBackground() : null);
                                     }
                                     return c;
                                 }
-                            });
+                            };
+
                             tableParts.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mouseClicked(MouseEvent e) {
@@ -293,30 +295,31 @@ public class GuiNetworkDiagnostics extends JFrame {
                                             return Integer.class;
 
                                         case IDX_OBSERVERS_TICKTIME:
-                                            return Long.class;
+                                            return Double.class;
+
+                                        case IDX_OBSERVERS_POSITION:
+                                            return BlockPos.class;
 
                                         case IDX_OBSERVERS_PART:
-                                        case IDX_OBSERVERS_POSITION:
                                         case IDX_OBSERVERS_SIDE:
                                         default:
                                             return String.class;
                                     }
                                 }
-                            });
-
-                            tableObservers.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
+                            }) {
                                 @Override
-                                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                                public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                                    Component c = super.prepareRenderer(renderer, row, column);
                                     ObservableObserverData observerData = getObserverDataFromRow(row);
                                     if (observerData != null && NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(observerData.toPartPos())) {
                                         c.setBackground(Color.CYAN);
                                     } else {
-                                        c.setBackground(isSelected ? Color.BLUE : Color.WHITE);
+                                        c.setBackground(isCellSelected(row, column) ? getSelectionBackground() : null);
                                     }
                                     return c;
                                 }
-                            });
+                            };
+
                             tableObservers.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mouseClicked(MouseEvent e) {
@@ -335,7 +338,31 @@ public class GuiNetworkDiagnostics extends JFrame {
                             for (JTable table : new JTable[] { tableParts, tableObservers }) {
                                 table.getColumnModel().removeColumn(table.getColumn("_id"));
                                 table.setAutoCreateRowSorter(true);
+
+                                table.setDefaultRenderer(Double.class, new DefaultTableCellRenderer() {
+                                    {
+                                        setHorizontalAlignment(JLabel.RIGHT);
+                                    }
+
+                                    @Override
+                                    protected void setValue(Object value) {
+                                        Double doubleValue = (Double) value;
+                                        setText(String.format("%.6f", doubleValue));
+                                    }
+                                });
+
+                                table.setDefaultRenderer(BlockPos.class, new DefaultTableCellRenderer() {
+                                    @Override
+                                    protected void setValue(Object value) {
+                                        BlockPos pos = (BlockPos) value;
+                                        setText(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
+                                    }
+                                });
                             }
+
+                            // Set custom comparators for the Position columns
+                            ((TableRowSorter<?>) tableParts.getRowSorter()).setComparator(IDX_PARTS_POSITION, new BlockPosComparator());
+                            ((TableRowSorter<?>) tableObservers.getRowSorter()).setComparator(IDX_OBSERVERS_POSITION, new BlockPosComparator());
 
                             // Pack GUI
                             JPanel panelMain = new JPanel(new GridLayout(2, 1));
@@ -454,6 +481,19 @@ public class GuiNetworkDiagnostics extends JFrame {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;
+        }
+    }
+
+    private static class BlockPosComparator implements Comparator<BlockPos> {
+        @Override
+        public int compare(BlockPos o1, BlockPos o2) {
+            if (o1.getX() != o2.getX()) {
+                return o1.getX() - o2.getX();
+            }
+            if (o1.getY() != o2.getY()) {
+                return o1.getY() - o2.getY();
+            }
+            return o1.getZ() - o2.getZ();
         }
     }
 }
