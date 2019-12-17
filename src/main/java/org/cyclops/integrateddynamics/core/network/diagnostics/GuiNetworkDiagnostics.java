@@ -269,6 +269,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                                         ObservablePartData partData = getPartDataFromRow(row);
                                         if (partData != null) {
                                             teleportPlayer(e, partData.toPartPos());
+                                            ((DefaultTableModel) target.getModel()).fireTableRowsUpdated(row, row);
                                         }
                                     }
                                 }
@@ -330,6 +331,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                                         ObservableObserverData observerData = getObserverDataFromRow(row);
                                         if (observerData != null) {
                                             teleportPlayer(e, observerData.toPartPos());
+                                            ((DefaultTableModel) target.getModel()).fireTableRowsUpdated(row, row);
                                         }
                                     }
                                 }
@@ -427,6 +429,9 @@ public class GuiNetworkDiagnostics extends JFrame {
     }
 
     private static void teleportPlayer(MouseEvent e, PartPos pos) {
+        if (pos == null) {
+            return;
+        }
         if (e.getButton() == MouseEvent.BUTTON1) {
             if (NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(pos)) {
                 NetworkDiagnosticsPartOverlayRenderer.getInstance().removePos(pos);
@@ -434,8 +439,12 @@ public class GuiNetworkDiagnostics extends JFrame {
                 NetworkDiagnosticsPartOverlayRenderer.getInstance().addPos(pos);
             }
         } else if (e.getButton() == MouseEvent.BUTTON3) {
-            BlockPos blockPos = pos.getPos().getBlockPos().offset(pos.getSide());
-            float yaw = pos.getSide().getOpposite().getHorizontalAngle();
+            BlockPos blockPos = pos.getPos().getBlockPos();
+            float yaw = 0;
+            if (pos.getSide() != null) {
+                blockPos = blockPos.offset(pos.getSide());
+                yaw = pos.getSide().getOpposite().getHorizontalAngle();
+            }
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
                     pos.getPos().getDimensionId(),
                     blockPos.getX(),
