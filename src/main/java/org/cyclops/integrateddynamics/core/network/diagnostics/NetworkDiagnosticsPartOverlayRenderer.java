@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -68,13 +69,19 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             for (PartPos partPos : partList) {
                 if (partPos.getPos().getDimensionId() == player.world.provider.getDimension() && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
+                    final AxisAlignedBB localPartBB;
                     if (partStateHolder != null) {
-                        final AxisAlignedBB globalRenderBB = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide())
-                                .offset(partPos.getPos().getBlockPos())
-                                .offset(-offsetX, -offsetY, -offsetZ)
-                                .expand(0.05, 0.05, 0.05);
-                        RenderGlobal.drawSelectionBoundingBox(globalRenderBB, 1.0F, 0.2F, 0.1F, 0.8F);
+                        localPartBB = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide());
+                    } else {
+                        localPartBB = Block.FULL_BLOCK_AABB;
                     }
+
+                    final AxisAlignedBB globalRenderBB = localPartBB
+                            .offset(partPos.getPos().getBlockPos())
+                            .offset(-offsetX, -offsetY, -offsetZ)
+                            .expand(0.05, 0.05, 0.05)
+                            .expand(-0.05, -0.05, -0.05);
+                    RenderGlobal.drawSelectionBoundingBox(globalRenderBB, 1.0F, 0.2F, 0.1F, 0.8F);
                 }
             }
 
