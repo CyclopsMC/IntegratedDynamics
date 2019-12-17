@@ -65,18 +65,15 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             GlStateManager.depthMask(false);
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
-            for (Iterator<PartPos> it = partList.iterator(); it.hasNext(); ) {
-                PartPos partPos = it.next();
+            for (PartPos partPos : partList) {
                 if (partPos.getPos().getDimensionId() == player.world.provider.getDimension() && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
                     if (partStateHolder != null) {
-                        AxisAlignedBB bb = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide())
+                        final AxisAlignedBB globalRenderBB = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide())
                                 .offset(partPos.getPos().getBlockPos())
                                 .offset(-offsetX, -offsetY, -offsetZ)
                                 .expand(0.05, 0.05, 0.05);
-                        RenderGlobal.drawSelectionBoundingBox(bb, 1.0F, 0.2F, 0.1F, 0.8F);
-                    } else {
-                        it.remove();
+                        RenderGlobal.drawSelectionBoundingBox(globalRenderBB, 1.0F, 0.2F, 0.1F, 0.8F);
                     }
                 }
             }
