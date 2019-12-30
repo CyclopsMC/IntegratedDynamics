@@ -405,6 +405,7 @@ public class PartHelpers {
      * Open a part gui container from the server.
      * @param player The player opening the gui.
      * @param pos The part position.
+     * @param partType The part type.
      * @return If the part has a container provider.
      */
     public static boolean openContainerPart(ServerPlayerEntity player, PartPos pos, IPartType<?, ?> partType) {
@@ -420,6 +421,7 @@ public class PartHelpers {
      * Open a part settings gui container from the server.
      * @param player The player opening the gui.
      * @param pos The part position.
+     * @param partType The part type.
      * @return If the part has a container provider for settings.
      */
     public static boolean openContainerPartSettings(ServerPlayerEntity player, PartPos pos, IPartType<?, ?> partType) {

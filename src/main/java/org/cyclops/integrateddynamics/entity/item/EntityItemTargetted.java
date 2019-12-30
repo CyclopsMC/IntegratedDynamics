@@ -29,35 +29,16 @@ public class EntityItemTargetted extends ItemEntity {
 
 	private LivingEntity targetEntity = null;
 
-	/**
-	 * Make a new instance.
-	 * @param world The world.
-	 */
 	public EntityItemTargetted(EntityType<? extends EntityItemTargetted> entityType,  World world) {
         super(entityType, world);
 		this.lifespan = Integer.MAX_VALUE;
     }
 
-	/**
-	 * Make a new instance.
-	 * @param world The world.
-	 * @param x X
-	 * @param y Y
-	 * @param z Z
-	 */
     public EntityItemTargetted(World world, double x, double y, double z) {
         super(world, x, y, z);
 		this.lifespan = Integer.MAX_VALUE;
     }
-    
-    /**
-	 * Make a new instance.
-	 * @param world The world.
-	 * @param x X
-	 * @param y Y
-	 * @param z Z
-     * @param itemStack The item stack.
-	 */
+
     public EntityItemTargetted(World world, double x, double y, double z, ItemStack itemStack) {
         super(world, x, y, z, itemStack);
 		this.lifespan = Integer.MAX_VALUE;

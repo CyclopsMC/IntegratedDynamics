@@ -76,7 +76,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     /**
      * Creates and registers a block instance for this part type.
      * This is mainly used for the block model.
-     * @return The corresponding block.
      */
     protected void registerBlock() {
         BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + getName() + "_block", this::createBlock, this::createItem) {};
@@ -95,6 +94,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     /**
      * Factory method for creating a item instance.
      * @param blockConfig The block config to register the item for.
+     * @param block The block corresponding to the item.
      * @return The item instance.
      */
     protected Item createItem(BlockConfig blockConfig, Block block) {

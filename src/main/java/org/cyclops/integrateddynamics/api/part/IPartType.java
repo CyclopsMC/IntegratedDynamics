@@ -401,7 +401,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public boolean forceLightTransparency(S state);
 
     /**
-     * @see {@link #writeExtraGuiData(PacketBuffer, PartPos, ServerPlayerEntity)}.
+     * {@link #writeExtraGuiData(PacketBuffer, PartPos, ServerPlayerEntity)}.
      * @return The optional container provider for the part type gui.
      * @param pos The part position. May be null when called client-side, for checking presence.
      */
@@ -420,7 +420,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     }
 
     /**
-     * @see {@link #writeExtraGuiDataSettings(PacketBuffer, PartPos, ServerPlayerEntity)}.
+     * {@link #writeExtraGuiDataSettings(PacketBuffer, PartPos, ServerPlayerEntity)}.
      * @return The optional container provider for the part settings gui.
      * @param pos The part position. May be null when called client-side, for checking presence.
      */

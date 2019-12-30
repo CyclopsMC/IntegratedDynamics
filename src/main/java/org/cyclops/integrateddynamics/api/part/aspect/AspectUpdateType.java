@@ -1,8 +1,11 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -20,8 +23,8 @@ public enum AspectUpdateType {
     NETWORK_TICK,
     /**
      * Update its value on block neigbour changes,
-     * i.e., if {@link net.minecraft.block.Block#onNeighborChange(IBlockReader, BlockPos, BlockPos)} or
-     * {@link Block#onNeighborChange(IBlockReader, BlockPos, BlockPos)} is called.
+     * i.e., if {@link net.minecraft.block.Block#onNeighborChange(BlockState, IWorldReader, BlockPos, BlockPos)} or
+     * {@link Block#neighborChanged(BlockState, World, BlockPos, Block, BlockPos, boolean)} is called.
      */
     BLOCK_UPDATE,
     /**
