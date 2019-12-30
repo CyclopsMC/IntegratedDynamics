@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -21,7 +23,7 @@ public class BlockFluidLiquidChorusConfig extends BlockConfig {
                         .doesNotBlockMovement()
                         .hardnessAndResistance(100.0F)
                         .noDrops()),
-                getDefaultItemConstructor(IntegratedDynamics._instance)
+                (eConfig, block) -> new BlockItem(block, new Item.Properties())
         );
     }
     

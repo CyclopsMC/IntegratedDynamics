@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 /**
  * A block for the Liquid Chorus fluid.
  * @author rubensworks
- *
+ * TODO: doesn't seem to be rendering properly due to Forge not fully handling Fluid rendering yet.
  */
 public class BlockFluidLiquidChorus extends FlowingFluidBlock {
 
