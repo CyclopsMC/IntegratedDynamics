@@ -1,79 +1,63 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.Container;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.IContainerProvider;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.block.property.BlockProperty;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockGui;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammer;
+import org.cyclops.cyclopscore.block.BlockGui;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+
+import javax.annotation.Nullable;
 
 /**
  * A block that can hold defined variables so that they can be referred to elsewhere in the network.
  *
  * @author rubensworks
  */
-public class BlockLogicProgrammer extends ConfigurableBlockGui {
+public class BlockLogicProgrammer extends BlockGui {
 
-    @BlockProperty
-    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    private static BlockLogicProgrammer _instance = null;
+    public BlockLogicProgrammer(Properties properties) {
+        super(properties);
 
-    /**
-     * Get the unique instance.
-     *
-     * @return The instance.
-     */
-    public static BlockLogicProgrammer getInstance() {
-        return _instance;
-    }
-
-    /**
-     * Make a new block instance.
-     *
-     * @param eConfig Config for this block.
-     */
-    public BlockLogicProgrammer(ExtendedConfig<BlockConfig> eConfig) {
-        super(eConfig, Material.GLASS);
-
-        setHardness(3.0F);
-        setSoundType(SoundType.METAL);
+        this.setDefaultState(this.stateContainer.getBaseState()
+                        .with(FACING, Direction.NORTH));
     }
 
     @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
-                                     int meta, EntityLivingBase placer) {
-        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
+    @Nullable
     @Override
-    public Class<? extends Container> getContainer() {
-        return ContainerLogicProgrammer.class;
+    public BlockState getStateForPlacement(BlockItemUseContext blockItemUseContext) {
+        return this.getDefaultState().with(FACING, blockItemUseContext.getPlayer().getHorizontalFacing().getOpposite());
     }
 
+    @Nullable
     @Override
-    @SideOnly(Side.CLIENT)
-    public Class<? extends GuiScreen> getGui() {
-        return GuiLogicProgrammer.class;
-    }
-
-    @Override
-    protected ItemStack getSilkTouchDrop(IBlockState state) {
-        return new ItemStack(Item.getItemFromBlock(this));
+    public INamedContainerProvider getContainer(BlockState blockState, World world, BlockPos blockPos) {
+        return new SimpleNamedContainerProvider(new IContainerProvider() {
+            @Nullable
+            @Override
+            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                return new ContainerLogicProgrammer(id, playerInventory);
+            }
+        }, new TranslationTextComponent("block.integrateddynamics.logic_programmer"));
     }
 
 }

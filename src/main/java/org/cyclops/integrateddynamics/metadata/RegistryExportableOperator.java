@@ -44,7 +44,7 @@ public class RegistryExportableOperator implements IRegistryExportable {
     protected static JsonObject serializeValueType(IValueType valueType) {
         JsonObject object = new JsonObject();
         object.addProperty("name", valueType.getTranslationKey());
-        object.addProperty("color", valueType.getDisplayColorFormat());
+        object.addProperty("color", valueType.getDisplayColorFormat().toString());
         return object;
     }
 

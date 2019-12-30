@@ -1,39 +1,29 @@
 package org.cyclops.integrateddynamics.block;
 
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockDoor;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockDoorConfig;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
-
+import net.minecraft.block.Block;
+import net.minecraft.block.DoorBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * Config for the Menril Door.
  * @author josephcsible
  *
  */
-public class BlockMenrilDoorConfig extends BlockDoorConfig {
+public class BlockMenrilDoorConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockMenrilDoorConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockMenrilDoorConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "menril_door",
-                null,
-                null
+                eConfig -> new DoorBlock(Block.Properties.create(Material.WOOD, MaterialColor.CYAN)
+                        .hardnessAndResistance(3.0F)
+                        .sound(SoundType.WOOD)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 
-    @Override
-    protected ConfigurableBlockDoor initSubInstance() {
-        return (ConfigurableBlockDoor) new ConfigurableBlockDoor(this, Material.WOOD).setSoundType(SoundType.WOOD).setHardness(3.0F);
-    }
 }

@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.core.item;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
-
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -48,10 +48,10 @@ public abstract class VariableFacadeBase implements IVariableFacade {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(List<String> list, World world) {
-        list.add(L10NHelpers.localize("item.items.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
+    public void addInformation(List<ITextComponent> list, World world) {
+        list.add(new TranslationTextComponent("item.items.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
     }
 
 }

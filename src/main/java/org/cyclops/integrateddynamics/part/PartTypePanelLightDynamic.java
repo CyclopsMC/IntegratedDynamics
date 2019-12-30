@@ -1,16 +1,15 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.Configs;
-import org.cyclops.integrateddynamics.api.block.IDynamicLight;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -35,13 +34,8 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
-    public Class<? super PartTypePanelLightDynamic> getPartTypeClass() {
-        return PartTypePanelLightDynamic.class;
-    }
-
-    @Override
     protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus(blockConfig);
+        return new IgnoredBlockStatus();
     }
 
     @Override
@@ -74,8 +68,8 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         try {
             return ValueTypeLightLevels.REGISTRY.getLightLevel(value);
         } catch (InvalidValueTypeException e) {
-            state.addGlobalError(new L10NHelpers.UnlocalizedString(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
-                    new L10NHelpers.UnlocalizedString(value.getType().getTranslationKey())));
+            state.addGlobalError(new TranslationTextComponent(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
+                    new TranslationTextComponent(value.getType().getTranslationKey())));
         }
         return 0;
     }
@@ -94,7 +88,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, State state,
-                                      IBlockAccess world, Block neighbourBlock, BlockPos neighbourPos) {
+                                      IBlockReader world, Block neighbourBlock, BlockPos neighbourPos) {
         super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourPos);
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }
@@ -110,23 +104,20 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     public static void setLightLevel(PartTarget target, int lightLevel) {
-        if(Configs.isEnabled(BlockInvisibleLightConfig.class)) {
-            World world = target.getTarget().getPos().getWorld();
+        if (BlockInvisibleLightConfig.invisibleLightBlock) {
+            World world = target.getTarget().getPos().getWorld(true);
             BlockPos pos = target.getTarget().getPos().getBlockPos();
             if(world.isAirBlock(pos)) {
                 if(lightLevel > 0) {
-                    world.setBlockState(pos, BlockInvisibleLight.getInstance().getDefaultState().
-                            withProperty(BlockInvisibleLight.LIGHT, lightLevel));
+                    world.setBlockState(pos, RegistryEntries.BLOCK_INVISIBLE_LIGHT.getDefaultState().
+                            with(BlockInvisibleLight.LIGHT, lightLevel));
                 } else {
                     world.setBlockState(pos, Blocks.AIR.getDefaultState(), MinecraftHelpers.BLOCK_NOTIFY_CLIENT);
                 }
             }
         } else {
-            IDynamicLight dynamicLight = TileHelpers.getCapability(target.getCenter().getPos(),
-                    target.getCenter().getSide(), DynamicLightConfig.CAPABILITY);
-            if(dynamicLight != null) {
-                dynamicLight.setLightLevel(lightLevel);
-            }
+            TileHelpers.getCapability(target.getCenter().getPos(), target.getCenter().getSide(), DynamicLightConfig.CAPABILITY)
+                    .ifPresent(dynamicLight -> dynamicLight.setLightLevel(lightLevel));
         }
     }
 

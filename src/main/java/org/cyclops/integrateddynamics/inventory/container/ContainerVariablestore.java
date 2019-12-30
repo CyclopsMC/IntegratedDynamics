@@ -1,36 +1,36 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import org.cyclops.cyclopscore.inventory.container.TileInventoryContainerConfigurable;
-import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
-import org.cyclops.integrateddynamics.item.ItemVariable;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Slot;
+import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
+import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 /**
  * Container for the variablestore.
  * @author rubensworks
  */
-public class ContainerVariablestore extends TileInventoryContainerConfigurable<TileVariablestore> {
+public class ContainerVariablestore extends InventoryContainer {
 
-    /**
-     * Make a new instance.
-     * @param inventory The player inventory.
-     * @param tile The part.
-     */
-    public ContainerVariablestore(InventoryPlayer inventory, TileVariablestore tile) {
-        super(inventory, tile);
-        addInventory(tile, 0, offsetX + 8, offsetY + 18, TileVariablestore.ROWS, TileVariablestore.COLS);
-        addPlayerInventory(inventory, offsetX + 8, offsetY + 14 + TileVariablestore.ROWS * 18 + 17);
+    public ContainerVariablestore(int id, PlayerInventory playerInventory) {
+        this(id, playerInventory, new Inventory(TileVariablestore.INVENTORY_SIZE));
+    }
+
+    public ContainerVariablestore(int id, PlayerInventory playerInventory, IInventory inventory) {
+        super(RegistryEntries.CONTAINER_VARIABLESTORE, id, playerInventory, inventory);
+        addInventory(inventory, 0, offsetX + 8, offsetY + 18, TileVariablestore.ROWS, TileVariablestore.COLS);
+        addPlayerInventory(playerInventory, offsetX + 8, offsetY + 14 + TileVariablestore.ROWS * 18 + 17);
     }
 
     @Override
     public Slot createNewSlot(IInventory inventory, int index, int row, int column) {
-        if(inventory instanceof InventoryPlayer) {
+        if(inventory instanceof PlayerInventory) {
             return super.createNewSlot(inventory, index, row, column);
         }
-        return new SlotSingleItem(inventory, index, row, column, ItemVariable.getInstance());
+        return new SlotVariable(inventory, index, row, column);
     }
 
 }

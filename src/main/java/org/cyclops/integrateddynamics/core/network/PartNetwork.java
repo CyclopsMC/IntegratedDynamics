@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -65,13 +65,13 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     @Override
     public IPartState getPartState(int partId) {
         PartPos partPos = partPositions.get(partId);
-        return PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide()).getPartState(partPos.getSide());
+        return PartHelpers.getPartContainerChecked(partPos.getPos(), partPos.getSide()).getPartState(partPos.getSide());
     }
 
     @Override
     public IPartType getPartType(int partId) {
         PartPos partPos = partPositions.get(partId);
-        return PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide()).getPart(partPos.getSide());
+        return PartHelpers.getPartContainerChecked(partPos.getPos(), partPos.getSide()).getPart(partPos.getSide());
     }
 
     @Override
@@ -86,8 +86,9 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             return false;
         }
         PartPos partPos = partPositions.get(partId);
-        IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
-        return partContainer != null && partContainer.hasPart(partPos.getSide());
+        return PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide())
+                .map(partContainer -> partContainer.hasPart(partPos.getSide()))
+                .orElse(false);
     }
 
     @Override
@@ -123,7 +124,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
                 DimPos dimPos = it.next();
                 if (dimPos.isLoaded()) {
-                    IVariableContainer variableContainer = TileHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY);
+                    IVariableContainer variableContainer = TileHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY).orElse(null);
                     if (variableContainer != null) {
                         compositeMap.addElement(variableContainer.getVariableCache());
                     } else {
@@ -135,11 +136,9 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             // Also check parts
             for(PartPos partPos : partPositions.values()) {
                 if (partPos.getPos().isLoaded()) {
-                    IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
-                    IVariableContainer variableContainer = partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide());
-                    if (variableContainer != null) {
-                        compositeMap.addElement(variableContainer.getVariableCache());
-                    }
+                    IPartContainer partContainer = PartHelpers.getPartContainerChecked(partPos.getPos(), partPos.getSide());
+                    partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide())
+                            .ifPresent(variableContainer -> compositeMap.addElement(variableContainer.getVariableCache()));
                 }
             }
             compositeVariableCache = compositeMap;
@@ -227,7 +226,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement, EnumFacing side) {
+    public boolean removePathElement(IPathElement pathElement, Direction side) {
         notifyPartsChanged();
         return true;
     }

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "integrateddynamics:crystalized_chorus_block_stairs",
+    "integrateddynamics:crystalized_chorus_brick_stairs",
+    "integrateddynamics:crystalized_menril_block_stairs",
+    "integrateddynamics:crystalized_menril_brick_stairs",
+    "integrateddynamics:menril_planks_stairs"
+  ]
+}

@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 /**
@@ -23,21 +23,21 @@ public abstract class CableDefault implements ICable {
     protected abstract World getWorld();
     protected abstract BlockPos getPos();
 
-    protected boolean isForceDisconnected(EnumFacing side) {
+    protected boolean isForceDisconnected(Direction side) {
         if (!isForceDisconnectable()) return false;
         if (!getForceDisconnected().containsKey(side)) return false;
         return getForceDisconnected().get(side);
     }
 
     @Override
-    public boolean canConnect(ICable connector, EnumFacing side) {
+    public boolean canConnect(ICable connector, Direction side) {
         return !isForceDisconnected(side);
     }
 
     @Override
     public void updateConnections() {
         World world = getWorld();
-        for (EnumFacing side : EnumFacing.VALUES) {
+        for (Direction side : Direction.values()) {
             boolean cableConnected = CableHelpers.canCableConnectTo(world, getPos(), side, this);
             getConnected().put(side, cableConnected);
 
@@ -51,7 +51,7 @@ public abstract class CableDefault implements ICable {
     }
 
     @Override
-    public boolean isConnected(EnumFacing side) {
+    public boolean isConnected(Direction side) {
         if(getPos() == null) {
             return false;
         }
@@ -62,14 +62,14 @@ public abstract class CableDefault implements ICable {
     }
 
     @Override
-    public void disconnect(EnumFacing side) {
+    public void disconnect(Direction side) {
         if (isForceDisconnectable()) {
             getForceDisconnected().put(side, true);
         }
     }
 
     @Override
-    public void reconnect(EnumFacing side) {
+    public void reconnect(Direction side) {
         if (isForceDisconnectable()) {
             getForceDisconnected().remove(side);
         }
@@ -77,7 +77,7 @@ public abstract class CableDefault implements ICable {
 
     @Override
     public ItemStack getItemStack() {
-        return new ItemStack(BlockCable.getInstance());
+        return new ItemStack(RegistryEntries.BLOCK_CABLE);
     }
 
 }

@@ -1,8 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -53,20 +54,20 @@ public class ValueTypeListProxyConcat<T extends IValueType<V>, V extends IValue>
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyConcat<IValueType<IValue>, IValue> value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            NBTTagList list = new NBTTagList();
+        protected void serializeNbt(ValueTypeListProxyConcat<IValueType<IValue>, IValue> value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            ListNBT list = new ListNBT();
             for (IValueTypeListProxy<IValueType<IValue>, IValue> listProxy : value.lists) {
-                list.appendTag(new NBTTagString(ValueTypeListProxyFactories.REGISTRY.serialize(listProxy)));
+                list.add(ValueTypeListProxyFactories.REGISTRY.serialize(listProxy));
             }
-            tag.setTag("sublists", list);
+            tag.put("sublists", list);
         }
 
         @Override
-        protected ValueTypeListProxyConcat<IValueType<IValue>, IValue> deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            NBTTagList list = tag.getTagList("sublists", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal());
-            IValueTypeListProxy<IValueType<IValue>, IValue>[] listProxies = new IValueTypeListProxy[list.tagCount()];
-            for (int i = 0; i < list.tagCount(); i++) {
-                listProxies[i] = ValueTypeListProxyFactories.REGISTRY.deserialize(list.getStringTagAt(i));
+        protected ValueTypeListProxyConcat<IValueType<IValue>, IValue> deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            ListNBT list = (ListNBT) tag.get("sublists");
+            IValueTypeListProxy<IValueType<IValue>, IValue>[] listProxies = new IValueTypeListProxy[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                listProxies[i] = ValueTypeListProxyFactories.REGISTRY.deserialize(list.get(i));
             }
             return new ValueTypeListProxyConcat<>(listProxies);
         }

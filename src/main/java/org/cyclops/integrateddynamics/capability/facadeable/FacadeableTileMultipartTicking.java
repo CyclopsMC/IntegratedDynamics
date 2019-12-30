@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.capability.facadeable;
 
-import net.minecraft.block.state.IBlockState;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraft.block.BlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -22,26 +21,23 @@ public class FacadeableTileMultipartTicking implements IFacadeable {
 
     @Override
     public boolean hasFacade() {
-        return tile.getFacadeBlockName() != null && !tile.getFacadeBlockName().isEmpty();
+        return tile.getFacadeBlockTag() != null;
     }
 
     @Override
-    public IBlockState getFacade() {
+    public BlockState getFacade() {
         if(!hasFacade()) {
             return null;
         }
-        return BlockHelpers.deserializeBlockState(Pair.of(tile.getFacadeBlockName(), tile.getFacadeMeta()));
+        return BlockHelpers.deserializeBlockState(tile.getFacadeBlockTag());
     }
 
     @Override
-    public void setFacade(@Nullable IBlockState blockState) {
+    public void setFacade(@Nullable BlockState blockState) {
         if(blockState == null) {
-            tile.setFacadeMeta(0);
-            tile.setFacadeBlockName(null);
+            tile.setFacadeBlockTag(null);
         } else {
-            Pair<String, Integer> serializedBlockState = BlockHelpers.serializeBlockState(blockState);
-            tile.setFacadeMeta(serializedBlockState.getRight());
-            tile.setFacadeBlockName(serializedBlockState.getLeft());
+            tile.setFacadeBlockTag(BlockHelpers.serializeBlockState(blockState));
         }
         tile.sendUpdate();
     }

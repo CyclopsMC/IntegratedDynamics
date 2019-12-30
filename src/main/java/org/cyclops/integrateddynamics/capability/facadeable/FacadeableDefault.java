@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.facadeable;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 
 import javax.annotation.Nullable;
@@ -17,12 +17,12 @@ public class FacadeableDefault implements IFacadeable {
     }
 
     @Override
-    public IBlockState getFacade() {
+    public BlockState getFacade() {
         return null;
     }
 
     @Override
-    public void setFacade(@Nullable IBlockState blockState) {
+    public void setFacade(@Nullable BlockState blockState) {
 
     }
 }

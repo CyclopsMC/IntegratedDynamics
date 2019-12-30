@@ -1,43 +1,38 @@
 package org.cyclops.integrateddynamics.block;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import lombok.Setter;
-import lombok.experimental.Delegate;
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.block.property.BlockProperty;
-import org.cyclops.cyclopscore.block.property.UnlistedProperty;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.ModelProperty;
+import org.cyclops.cyclopscore.block.BlockTile;
 import org.cyclops.cyclopscore.client.icon.Icon;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
@@ -46,17 +41,17 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
-import org.cyclops.integrateddynamics.block.collidable.CollidableComponentCableCenter;
-import org.cyclops.integrateddynamics.block.collidable.CollidableComponentCableConnections;
-import org.cyclops.integrateddynamics.block.collidable.CollidableComponentFacade;
-import org.cyclops.integrateddynamics.block.collidable.CollidableComponentParts;
+import org.cyclops.integrateddynamics.block.shapes.VoxelShapeComponentsFactoryHandlerCableCenter;
+import org.cyclops.integrateddynamics.block.shapes.VoxelShapeComponentsFactoryHandlerCableConnections;
+import org.cyclops.integrateddynamics.block.shapes.VoxelShapeComponentsFactoryHandlerFacade;
+import org.cyclops.integrateddynamics.block.shapes.VoxelShapeComponentsFactoryHandlerParts;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.client.model.IRenderState;
-import org.cyclops.integrateddynamics.core.block.CollidableComponent;
-import org.cyclops.integrateddynamics.core.block.ICollidable;
-import org.cyclops.integrateddynamics.core.block.ICollidableParent;
+import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
+import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
+import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -64,40 +59,34 @@ import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 
 /**
- * A block that is buildReader up from different parts.
+ * A block that is built up from different parts.
  * This block refers to a ticking part entity.
  * @author rubensworks
  */
-public class BlockCable extends ConfigurableBlockContainer implements ICollidable<EnumFacing>, ICollidableParent {
+public class BlockCable extends BlockTile {
 
     public static final float BLOCK_HARDNESS = 3.0F;
     public static final Material BLOCK_MATERIAL = Material.GLASS;
 
-    // Properties
-    @BlockProperty
-    public static final IUnlistedProperty<Boolean> REALCABLE = Properties.toUnlisted(PropertyBool.create("realcable"));
-    @BlockProperty
-    public static final IUnlistedProperty<Boolean>[] CONNECTED = new IUnlistedProperty[6];
-    @BlockProperty
-    public static final IUnlistedProperty<PartRenderPosition>[] PART_RENDERPOSITIONS = new IUnlistedProperty[6];
-    @BlockProperty
-    public static final IUnlistedProperty<Optional> FACADE = new UnlistedProperty<>("facade", Optional.class);
+    // Model Properties
+    public static final ModelProperty<Boolean> REALCABLE = new ModelProperty<>();
+    public static final ModelProperty<Boolean>[] CONNECTED = new ModelProperty[6];
+    public static final ModelProperty<PartRenderPosition>[] PART_RENDERPOSITIONS = new ModelProperty[6];
+    public static final ModelProperty<Optional<BlockState>> FACADE = new ModelProperty<>();
     static {
-        for(EnumFacing side : EnumFacing.values()) {
-            CONNECTED[side.ordinal()] = Properties.toUnlisted(PropertyBool.create("connect-" + side.getName()));
-            PART_RENDERPOSITIONS[side.ordinal()] = new UnlistedProperty<>("partRenderPosition-" + side.getName(), PartRenderPosition.class);
+        for(Direction side : Direction.values()) {
+            CONNECTED[side.ordinal()] = new ModelProperty<>();
+            PART_RENDERPOSITIONS[side.ordinal()] = new ModelProperty<>();
         }
     }
-    @BlockProperty
-    public static final IUnlistedProperty<IPartContainer> PARTCONTAINER = new UnlistedProperty<>("partcontainer", IPartContainer.class);
-    @BlockProperty
-    public static final IUnlistedProperty<IRenderState> RENDERSTATE = new UnlistedProperty<>("renderState", IRenderState.class);
+    public static final ModelProperty<IPartContainer> PARTCONTAINER = new ModelProperty<>();
+    public static final ModelProperty<IRenderState> RENDERSTATE = new ModelProperty<>();
 
     // Collision boxes
     public final static AxisAlignedBB CABLE_CENTER_BOUNDINGBOX = new AxisAlignedBB(
@@ -111,217 +100,124 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
             new AxisAlignedBB(CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX) // EAST
     );
 
-    private static final List<IComponent<EnumFacing, BlockCable>> COLLIDABLE_COMPONENTS = Lists.newArrayList();
-    private static final IComponent<EnumFacing, BlockCable> FACADE_COMPONENT = new CollidableComponentFacade();
-    private static final IComponent<EnumFacing, BlockCable> CABLECENTER_COMPONENT = new CollidableComponentCableCenter();
-    private static final IComponent<EnumFacing, BlockCable> CABLECONNECTIONS_COMPONENT = new CollidableComponentCableConnections();
-    private static final IComponent<EnumFacing, BlockCable> PARTS_COMPONENT = new CollidableComponentParts();
-    static {
-        COLLIDABLE_COMPONENTS.add(FACADE_COMPONENT);
-        COLLIDABLE_COMPONENTS.add(CABLECENTER_COMPONENT);
-        COLLIDABLE_COMPONENTS.add(CABLECONNECTIONS_COMPONENT);
-        COLLIDABLE_COMPONENTS.add(PARTS_COMPONENT);
-    }
-    @SuppressWarnings("deprecation")
-    @Delegate
-    private ICollidable<EnumFacing> collidableComponent = new CollidableComponent<>(this, COLLIDABLE_COMPONENTS);
+    private final VoxelShapeComponentsFactory voxelShapeComponentsFactory = new VoxelShapeComponentsFactory(
+            new VoxelShapeComponentsFactoryHandlerCableCenter(),
+            new VoxelShapeComponentsFactoryHandlerCableConnections(),
+            new VoxelShapeComponentsFactoryHandlerFacade(),
+            new VoxelShapeComponentsFactoryHandlerParts()
+    );
 
-    private static BlockCable _instance = null;
-
-    public static boolean IS_MCMP_CONVERTING = false;
-
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Icon(location = "blocks/cable")
     public TextureAtlasSprite texture;
     @Setter
     private boolean disableCollisionBox = false;
 
-    /**
-     * Get the unique instance.
-     * @return The instance.
-     */
-    public static BlockCable getInstance() {
-        return _instance;
-    }
-
-    /**
-     * Make a new block instance.
-     * @param eConfig Config for this block.
-     */
-    public BlockCable(ExtendedConfig<BlockConfig> eConfig) {
-        super(eConfig, BLOCK_MATERIAL, TileMultipartTicking.class);
-
-        setHardness(BLOCK_HARDNESS);
-        setSoundType(SoundType.METAL);
-        if(MinecraftHelpers.isClientSide()) {
-            eConfig.getMod().getIconProvider().registerIconHolderObject(this);
-        }
+    public BlockCable(Properties properties) {
+        super(properties, TileMultipartTicking::new);
     }
 
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if(tile != null && state.getBlock() == this) {
-            return tile.getConnectionState();
-        }
-        return getDefaultState();
+    public void onPlayerDestroy(IWorld world, BlockPos blockPos, BlockState blockState) {
+        CableHelpers.onCableRemoving((World) world, blockPos, true, false);
+        super.onPlayerDestroy(world, blockPos, blockState);
+        CableHelpers.onCableRemoved((World) world, blockPos, CableHelpers.getExternallyConnectedCables((World) world, blockPos));
     }
 
     @Override
-    protected void onPreBlockDestroyed(World world, BlockPos pos, EntityPlayer player) {
-        CableHelpers.onCableRemoving(world, pos, true, false);
-        super.onPreBlockDestroyed(world, pos);
+    public void onExplosionDestroy(World world, BlockPos blockPos, Explosion explosion) {
+        CableHelpers.onCableRemoving(world, blockPos, true, false);
+        super.onExplosionDestroy(world, blockPos, explosion);
+        CableHelpers.onCableRemoved(world, blockPos, CableHelpers.getExternallyConnectedCables(world, blockPos));
     }
 
     @Override
-    protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        CableHelpers.onCableRemoving(world, pos, false, false);
-        super.onPreBlockDestroyed(world, pos);
-    }
-
-    @Override
-    protected void onPostBlockDestroyed(World world, BlockPos pos) {
-        super.onPostBlockDestroyed(world, pos);
-        if(!IS_MCMP_CONVERTING) { // Yes, this is a hack, we don't want this to be called after a MCMP block conversion
-            CableHelpers.onCableRemoved(world, pos, CableHelpers.getExternallyConnectedCables(world, pos));
-        }
-        IS_MCMP_CONVERTING = false;
-    }
-
-    @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState blockState, int fortune) {
-        // do nothing - leave drops empty
-    }
-
-    @Override
-    public boolean removedByPlayer(IBlockState blockState, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-        RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
-        if (rayTraceResult != null && rayTraceResult.getCollisionType() != null
-                && rayTraceResult.getCollisionType().destroy(world, pos, rayTraceResult.getPositionHit(), player, false)) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+        BlockRayTraceResultComponent rayTraceResult = getShape(state, world, pos, ISelectionContext.forEntity(player))
+                .rayTrace(pos, player);
+        if (rayTraceResult != null && rayTraceResult.getComponent().destroy(world, pos, player, false)) {
             return true;
         }
-        return rayTraceResult != null && super.removedByPlayer(blockState, world, pos, player, willHarvest);
+        return rayTraceResult != null && super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-                                    EnumHand hand, EnumFacing side,
-                                    float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         /*
             Wrench: sneak + right-click anywhere on cable to remove cable
                     right-click on a cable side to disconnect on that side
                     sneak + right-click on part to remove that part
             No wrench: right-click to open GUI
          */
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        ItemStack heldItem = player.getHeldItem(hand);
+        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class).orElse(null);
         if(tile != null) {
-            RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
-            if(rayTraceResult != null) {
-                EnumFacing positionHit = rayTraceResult.getPositionHit();
-                if(rayTraceResult.getCollisionType() == FACADE_COMPONENT) {
-                    if(WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
-                        if (!world.isRemote) {
-                            FACADE_COMPONENT.destroy(world, pos, side, player, true);
-                            world.notifyNeighborsOfStateChange(pos, this, true);
-                        }
-                        return true;
-                    }
-                    return false;
-                } else if(rayTraceResult.getCollisionType() == PARTS_COMPONENT) {
-                    if(WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
-                        // Remove part from cable
-                        if (!world.isRemote) {
-                            PARTS_COMPONENT.destroy(world, pos, rayTraceResult.getPositionHit(), player, true);
-                            ItemBlockCable.playBreakSound(world, pos, BlockCable.getInstance().getDefaultState());
-                        }
-                        return true;
-                    } else if(CableHelpers.isNoFakeCable(world, pos, side)) {
-                        // Delegate activated call to part
-                        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
-                        return partContainer.getPart(positionHit).onPartActivated(world, pos,
-                                partContainer.getPartState(positionHit), player, hand, heldItem, positionHit, hitX, hitY, hitZ);
-                    }
-                } else if ((rayTraceResult.getCollisionType() == CABLECONNECTIONS_COMPONENT
-                            || rayTraceResult.getCollisionType() == CABLECENTER_COMPONENT)) {
-                    if(CableHelpers.onCableActivated(world, pos, state, player, heldItem, side,
-                            rayTraceResult.getCollisionType() == CABLECENTER_COMPONENT ? null : rayTraceResult.getPositionHit())) {
-                        return true;
-                    }
-                }
+            BlockRayTraceResultComponent rayTraceResult = getShape(state, world, pos, ISelectionContext.forEntity(player))
+                    .rayTrace(pos, player);
+            if(rayTraceResult != null && rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, hand, rayTraceResult)) {
+                return true;
             }
         }
-        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(state, world, pos, player, hand, hit);
     }
 
     @Override
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        super.onBlockAdded(world, pos, state);
-        if (!world.isRemote) {
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onBlockAdded(state, world, pos, oldState, isMoving);
+        if (!world.isRemote()) {
             CableHelpers.onCableAdded(world, pos);
         }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        if (!world.isRemote) {
+        if (!world.isRemote()) {
             CableHelpers.onCableAddedByPlayer(world, pos, placer);
         }
     }
 
     @Override
-    public boolean saveNBTToDroppedItem() {
-        return false;
-    }
-
-    @Override
-    public boolean isDropBlockItem(IBlockAccess world, BlockPos pos, IBlockState blockState, int fortune) {
-        return CableHelpers.isNoFakeCable(world, pos, null);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public ItemStack getPickBlock(IBlockState blockState, net.minecraft.util.math.RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-        RayTraceResult<EnumFacing> rayTraceResult = doRayTrace(world, pos, player);
+    public ItemStack getPickBlock(BlockState state, net.minecraft.util.math.RayTraceResult target, IBlockReader world,
+                                  BlockPos blockPos, PlayerEntity player) {
+        BlockRayTraceResultComponent rayTraceResult = getShape(state, world, blockPos, ISelectionContext.forEntity(player))
+                .rayTrace(blockPos, player);
         if(rayTraceResult != null) {
-            EnumFacing positionHit = rayTraceResult.getPositionHit();
-            return rayTraceResult.getCollisionType().getPickBlock(world, pos, positionHit);
+            return rayTraceResult.getComponent().getPickBlock((World) world, blockPos);
         }
-        return getItem(world, pos, blockState);
+        return getItem(world, blockPos, state);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
-        super.neighborChanged(state, world, pos, neighborBlock, fromPos);
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, world, pos, neighborBlock, fromPos, isMoving);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null, fromPos);
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        super.onNeighborChange(world, pos, neighbor);
+    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
+        super.onNeighborChange(state, world, pos, neighbor);
         if (world instanceof World) {
             NetworkHelpers.onElementProviderBlockNeighborChange((World) world, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
         }
     }
 
     @Override
-    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
+    public void observedNeighborChange(BlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
         super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null, changedBlockPos);
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
-        super.updateTick(world, pos, state, rand);
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class);
-        if (tile != null) {
-            for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : tile
-                    .getPartContainer().getPartData().entrySet()) {
-                updateTickPart(entry.getValue().getPart(), world, pos, entry.getValue().getState(), rand);
-            }
-        }
+    public void tick(BlockState state, World world, BlockPos pos, Random rand) {
+        super.tick(state, world, pos, rand);
+        TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class)
+                .ifPresent(tile -> {
+                    for (Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : tile
+                            .getPartContainer().getPartData().entrySet()) {
+                        updateTickPart(entry.getValue().getPart(), world, pos, entry.getValue().getState(), rand);
+                    }
+                });
     }
 
     protected void updateTickPart(IPartType partType, World world, BlockPos pos, IPartState partState, Random random) {
@@ -330,7 +226,7 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
 
     /* --------------- Start ICollidable and rendering --------------- */
 
-    public AxisAlignedBB getCableBoundingBox(EnumFacing side) {
+    public AxisAlignedBB getCableBoundingBox(Direction side) {
         if (side == null) {
             return CABLE_CENTER_BOUNDINGBOX;
         } else {
@@ -338,162 +234,110 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        if(disableCollisionBox) return new AxisAlignedBB(0, 0, 0, 0, 0, 0);
-        return super.getCollisionBoundingBox(blockState, worldIn, pos);
+    public VoxelShapeComponents getShape(BlockState blockState, IBlockReader world, BlockPos pos, ISelectionContext selectionContext) {
+        return voxelShapeComponentsFactory.createShape(blockState, world, pos, selectionContext);
     }
 
     @Override
-    public int getLightOpacity(IBlockState blockState, IBlockAccess world, BlockPos pos) {
+    public VoxelShape getCollisionShape(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
+        if(disableCollisionBox) {
+            return VoxelShapes.empty();
+        }
+        return super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
+    }
+
+    @Override
+    public int getOpacity(BlockState blockState, IBlockReader world, BlockPos pos) {
         return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos, null) ? 255 : 0;
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState blockState) {
-        return EnumBlockRenderType.MODEL;
+    public BlockRenderType getRenderType(BlockState blockState) {
+        return BlockRenderType.MODEL;
     }
 
     @Override
-    public boolean hasDynamicModel() {
-        return true;
+    public boolean doesSideBlockRendering(BlockState state, IEnviromentBlockReader world, BlockPos pos, Direction face) {
+        return super.doesSideBlockRendering(state, world, pos, face)
+                || CableHelpers.getFacade(world, pos)
+                .map(b -> b.isOpaqueCube(world, pos))
+                .orElse(false);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public IBakedModel createDynamicModel() {
-        return new CableModel();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public boolean isOpaqueCube(IBlockState blockState) {
+    public boolean isNormalCube(BlockState blockState, IBlockReader world, BlockPos pos) {
         return false;
     }
 
     @Override
-    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return super.doesSideBlockRendering(state, world, pos, face) || (CableHelpers.hasFacade(world, pos) && CableHelpers.getFacade(world, pos).isOpaqueCube());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public boolean isFullCube(IBlockState blockState) {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState blockState, IBlockAccess world, BlockPos pos) {
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(IBlockState blockState, World world, net.minecraft.util.math.RayTraceResult target, ParticleManager particleManager) {
-        BlockPos blockPos = target.getBlockPos();
+    @OnlyIn(Dist.CLIENT)
+    public boolean addHitEffects(BlockState blockState, World world, RayTraceResult target, ParticleManager particleManager) {
+        BlockPos blockPos = ((BlockRayTraceResult) target).getPos();
         if(CableHelpers.hasFacade(world, blockPos)) {
-            IBlockState facadeState = CableHelpers.getFacade(world, blockPos);
-            RenderHelpers.addBlockHitEffects(particleManager, world, facadeState, blockPos, target.sideHit);
+            CableHelpers.getFacade(world, blockPos)
+                    .ifPresent(facadeState -> RenderHelpers.addBlockHitEffects(particleManager, world, facadeState, blockPos, ((BlockRayTraceResult) target).getFace()));
             return true;
         } else {
             return super.addHitEffects(blockState, world, target, particleManager);
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean isSideSolid(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        if(CableHelpers.hasFacade(world, pos)) {
-            return true;
-        }
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
-        if(partContainer != null && partContainer.hasPart(side)) {
-            IPartType partType = partContainer.getPart(side);
-            return partType.isSolid(partContainer.getPartState(side));
-        }
-        return super.isSideSolid(blockState, world, pos, side);
-    }
-
-    @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
-        if(CableHelpers.hasFacade(world, pos)) {
-            return BlockFaceShape.SOLID;
-        }
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
-        if(partContainer != null && partContainer.hasPart(side)) {
-            IPartType partType = partContainer.getPart(side);
-            return partType.isSolid(partContainer.getPartState(side)) ? BlockFaceShape.SOLID : BlockFaceShape.MIDDLE_POLE_THIN;
-        }
-        return BlockFaceShape.UNDEFINED;
-    }
-
-    @Override
-    public boolean canRenderInLayer(IBlockState blockState, BlockRenderLayer layer) {
+    public boolean canRenderInLayer(BlockState blockState, BlockRenderLayer layer) {
         return true;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.TRANSLUCENT;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public AxisAlignedBB getSelectedBoundingBoxParent(IBlockState blockState, World worldIn, BlockPos pos) {
-        return super.getSelectedBoundingBox(blockState, worldIn, pos);
-    }
-
-    @Override
-    public net.minecraft.util.math.RayTraceResult rayTraceParent(BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB boundingBox) {
-        return super.rayTrace(pos, start, end, boundingBox);
     }
 
     /* --------------- Start IDynamicRedstone --------------- */
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean canProvidePower(IBlockState blockState) {
+    public boolean canProvidePower(BlockState blockState) {
         return true;
     }
 
     @Override
-    public boolean canConnectRedstone(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public boolean canConnectRedstone(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
         if(side == null) {
-            for(EnumFacing dummySide : EnumFacing.VALUES) {
-                IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, dummySide, DynamicRedstoneConfig.CAPABILITY);
+            for(Direction dummySide : Direction.values()) {
+                IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, dummySide, DynamicRedstoneConfig.CAPABILITY).orElse(null);
                 if(dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput())) {
                     return true;
                 }
             }
             return false;
         }
-        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY);
+        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
         return dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput());
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getStrongPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY);
+    public int getStrongPower(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
+        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
         return dynamicRedstone != null && dynamicRedstone.isStrong() ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY);
+    public int getWeakPower(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
+        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
         return dynamicRedstone != null ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
     /* --------------- Start IDynamicLight --------------- */
 
     @Override
-    public int getLightValue(IBlockState blockState, IBlockAccess world, BlockPos pos) {
+    public int getLightValue(BlockState blockState, IEnviromentBlockReader world, BlockPos pos) {
         int light = 0;
-        for(EnumFacing side : EnumFacing.values()) {
-            IDynamicLight dynamicLight = TileHelpers.getCapability(world, pos, side, DynamicLightConfig.CAPABILITY);
+        for(Direction side : Direction.values()) {
+            IDynamicLight dynamicLight = TileHelpers.getCapability(world, pos, side, DynamicLightConfig.CAPABILITY).orElse(null);
             if (dynamicLight != null) {
                 light = Math.max(light, dynamicLight.getLightLevel());
             }

@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -84,7 +84,7 @@ public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<IAspe
      * @param aspect The aspect.
      * @param modelLocation The model resource location.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void registerAspectModel(IAspect aspect, ResourceLocation modelLocation);
 
     /**
@@ -92,14 +92,14 @@ public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<IAspe
      * @param aspect The aspect.
      * @return The model resource location.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ResourceLocation getAspectModel(IAspect aspect);
 
     /**
      * Get all registered model resource locations for the aspects.
      * @return All model resource locations.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public Collection<ResourceLocation> getAspectModels();
 
 }

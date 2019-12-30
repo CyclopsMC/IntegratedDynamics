@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
@@ -46,13 +46,13 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void actionClient(World world, EntityPlayer player) {
+	@OnlyIn(Dist.CLIENT)
+	public void actionClient(World world, PlayerEntity player) {
 		
 	}
 
 	@Override
-	public void actionServer(World world, EntityPlayerMP player) {
+	public void actionServer(World world, ServerPlayerEntity player) {
 		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
 			ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.openContainer;
 			ILogicProgrammerElement element = container.getActiveElement();

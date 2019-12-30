@@ -1,14 +1,15 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.block.BlockRedstoneWire;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.state.properties.NoteBlockInstrument;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -17,17 +18,17 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.commoncapabilities.api.capability.block.BlockCapabilities;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.commoncapabilities.api.capability.temperature.ITemperature;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.modcompat.commoncapabilities.BlockCapabilitiesHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -103,13 +104,13 @@ public class AspectReadBuilders {
     public static final IAspectValuePropagator<String, ValueTypeString.ValueString>
         PROP_GET_STRING = ValueTypeString.ValueString::of;
 
-    public static final IAspectValuePropagator<IBlockState, ValueObjectTypeBlock.ValueBlock>
+    public static final IAspectValuePropagator<BlockState, ValueObjectTypeBlock.ValueBlock>
         PROP_GET_BLOCK = ValueObjectTypeBlock.ValueBlock::of;
 
     public static final IAspectValuePropagator<FluidStack, ValueObjectTypeFluidStack.ValueFluidStack>
         PROP_GET_FLUIDSTACK = ValueObjectTypeFluidStack.ValueFluidStack::of;
 
-    public static final IAspectValuePropagator<NBTTagCompound,ValueTypeNbt.ValueNbt>
+    public static final IAspectValuePropagator<CompoundNBT,ValueTypeNbt.ValueNbt>
         PROP_GET_NBT = ValueTypeNbt.ValueNbt::of;
 
     // --------------- Value type validators ---------------
@@ -143,15 +144,17 @@ public class AspectReadBuilders {
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<PartTarget, IAspectProperties>>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.appendKind("audio");
 
-        public static AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer> forInstrument(final NoteBlockEvent.Instrument instrument) {
+        public static AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Integer> forInstrument(final NoteBlockInstrument instrument) {
             return BUILDER_INTEGER.appendKind("instrument").handle(input -> {
                 for (NoteBlockEvent.Play event : NoteBlockEventReceiver.getInstance().getEvents().get(instrument)) {
-                    net.minecraft.world.World world = input.getLeft().getTarget().getPos().getWorld();
-                    BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
-                    int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
-                    if (world.provider.getDimension() == event.getWorld().provider.getDimension()
-                            && pos.distanceSq(event.getPos()) <= range * range) {
-                        return event.getVanillaNoteId();
+                    net.minecraft.world.World world = input.getLeft().getTarget().getPos().getWorld(false);
+                    if (world != null) {
+                        BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
+                        int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
+                        if (world.getDimension() == event.getWorld().getDimension()
+                                && pos.distanceSq(event.getPos()) <= range * range) {
+                            return event.getVanillaNoteId();
+                        }
                     }
                 }
                 return -1;
@@ -197,7 +200,7 @@ public class AspectReadBuilders {
     public static final class ExtraDimensional {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, MinecraftServer>
-                PROP_GET = input -> FMLCommonHandler.instance().getMinecraftServerInstance();
+                PROP_GET = input -> ServerLifecycleHooks.getCurrentServer();
 
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, MinecraftServer>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "extradimensional");
@@ -219,30 +222,26 @@ public class AspectReadBuilders {
             PROPERTIES.setValue(PROP_TANKID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         }
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties[]> PROP_GET = input -> {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidHandler> PROP_GET = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            IFluidHandler fluidHandler = TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-            if(fluidHandler != null) {
-                return fluidHandler.getTankProperties();
-            }
-            return new IFluidTankProperties[0];
+            return TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
+                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+                    .orElse(EmptyFluidHandler.INSTANCE);
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidTankProperties> PROP_GET_ACTIVATABLE = input -> {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Pair<IFluidHandler, Integer>> PROP_GET_ACTIVATABLE = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             IFluidHandler fluidHandler = TileHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
             if(fluidHandler != null) {
-                IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
                 int i = input.getRight().getValue(PROP_TANKID).getRawValue();
-                if(tankInfo != null && i < tankInfo.length) {
-                    return tankInfo[i];
+                if(i < fluidHandler.getTanks()) {
+                    return Pair.of(fluidHandler, i);
                 }
             }
             return null;
         };
-        public static final IAspectValuePropagator<IFluidTankProperties, FluidStack>
-                PROP_GET_FLUIDSTACK = tankInfo -> tankInfo != null ? tankInfo.getContents() : null;
+        public static final IAspectValuePropagator<Pair<IFluidHandler, Integer>, FluidStack>
+                PROP_GET_FLUIDSTACK = tankInfo -> tankInfo != null ? tankInfo.getLeft().getFluidInTank(tankInfo.getRight()) : FluidStack.EMPTY;
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>
                 PROP_GET_LIST_FLUIDSTACKS = input -> ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankFluidStacks(
@@ -253,13 +252,13 @@ public class AspectReadBuilders {
                         input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
                 ));
 
-        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IFluidTankProperties[]>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IFluidHandler>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "fluid");
-        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IFluidTankProperties[]>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IFluidHandler>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "fluid");
-        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IFluidTankProperties>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<IFluidHandler, Integer>>
                 BUILDER_INTEGER_ACTIVATABLE = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
-        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, IFluidTankProperties>
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Pair<IFluidHandler, Integer>>
                 BUILDER_DOUBLE_ACTIVATABLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
 
     }
@@ -277,11 +276,11 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = input -> {
             PartPos target = input.getLeft().getTarget();
-            return TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            return TileHelpers.getCapability(target.getPos().getWorld(true), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = input -> {
             PartPos target = input.getLeft().getTarget();
-            IItemHandler itemHandler = TileHelpers.getCapability(target.getPos().getWorld(), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            IItemHandler itemHandler = TileHelpers.getCapability(target.getPos().getWorld(true), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
             int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
             if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
                 return itemHandler.getStackInSlot(slotId);
@@ -306,24 +305,17 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IWorker> PROP_GET_WORKER = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.WORKER);
+            return TileHelpers.getCapability(dimPos.getWorld(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.WORKER).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ITemperature> PROP_GET_TEMPERATURE = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.TEMPERATURE);
+            return TileHelpers.getCapability(dimPos.getWorld(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.TEMPERATURE).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IRecipeHandler> PROP_GET_RECIPE_HANDLER = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IRecipeHandler>() {
             @Override
             public IRecipeHandler getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos dimPos = input.getLeft().getTarget().getPos();
-                IRecipeHandler recipeHandler = TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(),
-                        input.getLeft().getTarget().getSide(), Capabilities.RECIPE_HANDLER);
-                if (recipeHandler == null) {
-                    IBlockState blockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
-                    return BlockCapabilities.getInstance().getCapability(blockState, Capabilities.RECIPE_HANDLER,
-                            dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
-                }
-                return recipeHandler;
+                return BlockCapabilitiesHelpers.getTileOrBlockCapability(dimPos, input.getLeft().getTarget().getSide(), Capabilities.RECIPE_HANDLER).orElse(null);
             }
         };
 
@@ -356,7 +348,7 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork> PROP_GET_NETWORK = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
+            return NetworkHelpers.getNetwork(dimPos.getWorld(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide()).orElse(null);
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, INetwork>
@@ -366,9 +358,11 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IEnergyStorage> PROP_GET_ENERGY_CHANNEL = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
+            INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide()).orElse(null);
             int channel = input.getRight().getValue(PROPERTY_CHANNEL).getRawValue();
-            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getChannelExternal(CapabilityEnergy.ENERGY, channel) : null;
+            return network != null ? network.getCapability(EnergyNetworkConfig.CAPABILITY)
+                    .map(energyNetwork -> energyNetwork.getChannelExternal(CapabilityEnergy.ENERGY, channel))
+                    .orElse(null) : null;
         };
 
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IEnergyStorage>
@@ -397,24 +391,24 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            int power = dimPos.getWorld().getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
+            int power = dimPos.getWorld(true).getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
             if (power == 0) {
-                IBlockState targetBlockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
-                power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.getValue(BlockRedstoneWire.POWER) : 0;
+                BlockState targetBlockState = dimPos.getWorld(true).getBlockState(dimPos.getBlockPos());
+                power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.get(RedstoneWireBlock.POWER) : 0;
             }
             return power;
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            IBlockState blockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+            BlockState blockState = dimPos.getWorld(true).getBlockState(dimPos.getBlockPos());
             return blockState.hasComparatorInputOverride()
-                    ? blockState.getComparatorInputOverride(dimPos.getWorld(), dimPos.getBlockPos()) : 0;
+                    ? blockState.getComparatorInputOverride(dimPos.getWorld(true), dimPos.getBlockPos()) : 0;
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = input -> {
             int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());
             int length = Math.max(1, input.getRight().getValue(PROPERTY_LENGTH).getRawValue());
             int offset = input.getRight().getValue(PROPERTY_OFFSET).getRawValue();
-            return (input.getLeft().getTarget().getPos().getWorld().getTotalWorldTime() - offset) % interval < length;
+            return (input.getLeft().getTarget().getPos().getWorld(true).getGameTime() - offset) % interval < length;
         };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, Integer>
@@ -435,22 +429,22 @@ public class AspectReadBuilders {
                 PROP_GET = input -> input.getLeft().getTarget().getPos();
 
         public static final IAspectValuePropagator<DimPos, net.minecraft.world.World>
-                PROP_GET_WORLD = DimPos::getWorld;
+                PROP_GET_WORLD = dimPos -> dimPos.getWorld(true);
 
         public static final IAspectValuePropagator<DimPos, BlockPos>
                 PROP_GET_POS = DimPos::getBlockPos;
 
         private static final com.google.common.base.Predicate<net.minecraft.entity.Entity>
-                ENTITY_SELECTOR_ITEMFRAME = entity -> entity instanceof EntityItemFrame;
+                ENTITY_SELECTOR_ITEMFRAME = entity -> entity instanceof ItemFrameEntity;
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EntityItemFrame> PROP_GET_ITEMFRAME = pair -> {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemFrameEntity> PROP_GET_ITEMFRAME = pair -> {
             DimPos dimPos = pair.getLeft().getTarget().getPos();
-            EnumFacing facing = pair.getLeft().getTarget().getSide();
-            List<net.minecraft.entity.Entity> entities = dimPos.getWorld().getEntitiesInAABBexcluding(null,
+            Direction facing = pair.getLeft().getTarget().getSide();
+            List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntitiesInAABBexcluding(null,
                     new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
             for(net.minecraft.entity.Entity entity : entities) {
-                if(EnumFacing.fromAngle(((EntityItemFrame) entity).rotationYaw) == facing.getOpposite()) {
-                    return ((EntityItemFrame) entity);
+                if(Direction.fromAngle(((ItemFrameEntity) entity).rotationYaw) == facing.getOpposite()) {
+                    return ((ItemFrameEntity) entity);
                 }
             }
             return null;

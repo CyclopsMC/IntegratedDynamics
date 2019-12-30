@@ -1,16 +1,20 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
-import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.ArrayUtils;
+import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
-import org.cyclops.cyclopscore.fluid.SingleUseTank;
+import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
@@ -26,8 +30,6 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.network.MechanicalMachineNetworkElement;
 
-import java.util.Set;
-
 /**
  * An abstract machine base tile entity that is able to process recipes by consuming energy.
  * @param <RCK> The recipe cache key type.
@@ -38,7 +40,7 @@ import java.util.Set;
  */
 public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>, I extends IRecipeInput,
         O extends IRecipeOutput, P extends IRecipeProperties> extends TileCableConnectableInventory
-        implements IEnergyStorage, SingleUseTank.IUpdateListener {
+        implements IEnergyStorage {
 
     /**
      * The number of ticks to sleep when the recipe could not be finalized.
@@ -54,27 +56,27 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
 
     private SingleCache<RCK, IRecipe<I, O, P>> recipeCache;
 
-    public TileMechanicalMachine(int inventorySize) {
-        super(inventorySize, "machine", 64);
+    public TileMechanicalMachine(TileEntityType<?> type, int inventorySize) {
+        super(type, inventorySize, 64);
 
         // Add energy capability
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
             @Override
             public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new MechanicalMachineNetworkElement(DimPos.of(world, blockPos));
             }
-        });
-        addCapabilityInternal(CapabilityEnergy.ENERGY, this);
+        }));
+        addCapabilityInternal(CapabilityEnergy.ENERGY, LazyOptional.of(() -> this));
 
         // Set inventory sides
-        Set<Integer> in = Sets.newHashSet(ArrayUtils.toObject(getInputSlots()));
-        Set<Integer> out = Sets.newHashSet(ArrayUtils.toObject(getOutputSlots()));
-        addSlotsToSide(EnumFacing.UP, in);
-        addSlotsToSide(EnumFacing.DOWN, out);
-        addSlotsToSide(EnumFacing.NORTH, in);
-        addSlotsToSide(EnumFacing.SOUTH, out);
-        addSlotsToSide(EnumFacing.WEST, in);
-        addSlotsToSide(EnumFacing.EAST, out);
+        LazyOptional<IItemHandler> itemHandlerInput = LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), getInputSlots()));
+        LazyOptional<IItemHandler> itemHandlerOutput = LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), getOutputSlots()));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.UP, itemHandlerInput);
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN, itemHandlerOutput);
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH, itemHandlerInput);
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.SOUTH, itemHandlerOutput);
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.WEST, itemHandlerInput);
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.EAST, itemHandlerOutput);
 
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(createCacheUpdater());
@@ -136,25 +138,29 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
         return this.sleep > 0;
     }
 
-    public IEnergyNetwork getEnergyNetwork() {
+    public LazyOptional<IEnergyNetwork> getEnergyNetwork() {
         return NetworkHelpers.getEnergyNetwork(getNetwork());
     }
 
-    @Override
     public void onTankChanged() {
         markDirty();
-        updateInventoryHash();
+        getInventory().markDirty();
     }
 
     @Override
-    protected void onInventoryChanged() {
-        super.onInventoryChanged();
-        this.sleep = -1;
-    }
+    protected SimpleInventory createInventory(int inventorySize, int stackSize) {
+        return new SimpleInventory(inventorySize, stackSize) {
+            @Override
+            public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+                return ArrayUtils.contains(getInputSlots(), i) && super.isItemValidForSlot(i, itemstack);
+            }
 
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return ArrayUtils.contains(getInputSlots(), index) && super.isItemValidForSlot(index, stack);
+            @Override
+            protected void onInventoryChanged() {
+                super.onInventoryChanged();
+                TileMechanicalMachine.this.sleep = -1;
+            }
+        };
     }
 
     /**
@@ -207,7 +213,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (!world.isRemote) {
+        if (!world.isRemote()) {
             if (isSleeping()) {
                 this.sleep--;
                 this.markDirty();
@@ -279,7 +285,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
 
         if (toDrain > 0) {
             // If we still need energy, ask it from the network.
-            IEnergyNetwork energyNetwork = getEnergyNetwork();
+            IEnergyNetwork energyNetwork = getEnergyNetwork().orElse(null);
             if (energyNetwork != null) {
                 toDrain -= energyNetwork.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).extract(toDrain, simulate);
             }

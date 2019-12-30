@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -22,10 +23,10 @@ public class PartTarget {
      * @param side The side on the central position that points to the target.
      * @return The target referral.
      */
-    public static PartTarget fromCenter(DimPos pos, @Nullable EnumFacing side) {
+    public static PartTarget fromCenter(DimPos pos, @Nullable Direction side) {
         return PartTarget.of(
                 PartPos.of(pos, side),
-                PartPos.of(DimPos.of(pos.getDimensionId(), side == null ? pos.getBlockPos() : pos.getBlockPos().offset(side)), side == null ? null : side.getOpposite())
+                PartPos.of(DimPos.of(pos.getDimension(), side == null ? pos.getBlockPos() : pos.getBlockPos().offset(side)), side == null ? null : side.getOpposite())
         );
     }
 
@@ -45,7 +46,7 @@ public class PartTarget {
      * @param side The side on the central position that points to the target.
      * @return The target referral.
      */
-    public static PartTarget fromCenter(World world, BlockPos pos, EnumFacing side) {
+    public static PartTarget fromCenter(World world, BlockPos pos, Direction side) {
         return PartTarget.fromCenter(DimPos.of(world, pos), side);
     }
 
@@ -77,7 +78,7 @@ public class PartTarget {
      * @param targetSide The side of the target.
      * @return A new {@link PartTarget} instance.
      */
-    public PartTarget forTargetSide(EnumFacing targetSide) {
+    public PartTarget forTargetSide(Direction targetSide) {
         return new PartTarget(center, PartPos.of(target.getPos(), targetSide));
     }
 

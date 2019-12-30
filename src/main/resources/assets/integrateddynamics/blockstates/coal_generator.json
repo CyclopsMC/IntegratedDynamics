@@ -1,28 +1,12 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "transform": "forge:default-block",
-    "model"    : "cube_all",
-    "textures" : {
-      "all"  : "integrateddynamics:blocks/coal_generator_side",
-      "up"   : "integrateddynamics:blocks/variablestore_top",
-      "north": "integrateddynamics:blocks/coal_generator_front_off"
-    }
-  },
   "variants": {
-    "normal": [{}],
-    "inventory": [{
-      "y": 0
-    }],
-    "facing": {
-      "north": {"y": 180},
-      "south": {},
-      "west" : {"y": 90},
-      "east" : {"y": 270}
-    },
-    "on": {
-      "false" : {},
-      "true"  : { "textures": { "north": "integrateddynamics:blocks/coal_generator_front_on" } }
-    }
+    "facing=north,lit=false": { "model": "integrateddynamics:block/coal_generator" },
+    "facing=south,lit=false": { "model": "integrateddynamics:block/coal_generator", "y": 180 },
+    "facing=west,lit=false":  { "model": "integrateddynamics:block/coal_generator", "y": 270 },
+    "facing=east,lit=false":  { "model": "integrateddynamics:block/coal_generator", "y": 90 },
+    "facing=north,lit=true": { "model": "integrateddynamics:block/coal_generator_on" },
+    "facing=south,lit=true": { "model": "integrateddynamics:block/coal_generator_on", "y": 180 },
+    "facing=west,lit=true":  { "model": "integrateddynamics:block/coal_generator_on", "y": 270 },
+    "facing=east,lit=true":  { "model": "integrateddynamics:block/coal_generator_on", "y": 90 }
   }
 }

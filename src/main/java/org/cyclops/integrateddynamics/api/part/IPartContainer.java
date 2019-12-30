@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -16,7 +16,7 @@ import java.util.Map;
  * An interface for containers that can hold {@link IPartType}s.
  * @author rubensworks
  */
-public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> {
+public interface IPartContainer extends ICapabilitySerializable<CompoundNBT> {
 
     /**
      * Should be called every tick, updates parts.
@@ -31,7 +31,7 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
     /**
      * @return The parts inside this container.
      */
-    public Map<EnumFacing, IPartType<?, ?>> getParts();
+    public Map<Direction, IPartType<?, ?>> getParts();
 
     /**
      * @return If this container has at least one part.
@@ -46,7 +46,7 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * @param <P> The type of part.
      * @param <S> The type of part state.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void setPart(EnumFacing side, IPartType<P, S> part,
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void setPart(Direction side, IPartType<P, S> part,
                                                                              IPartState<P> partState);
 
     /**
@@ -57,20 +57,20 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * @param <S> The type of part state.
      * @return If the part can be added.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>> boolean canAddPart(EnumFacing side, IPartType<P, S> part);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> boolean canAddPart(Direction side, IPartType<P, S> part);
 
     /**
      * Get the part of a side, can be null.
      * @param side The side.
      * @return The part or null.
      */
-    public IPartType getPart(EnumFacing side);
+    public IPartType getPart(Direction side);
 
     /**
      * @param side The side.
      * @return If the given side has a part.
      */
-    public boolean hasPart(EnumFacing side);
+    public boolean hasPart(Direction side);
 
     /**
      * Remove the part from a side, can return null if there was no part on that side.
@@ -80,7 +80,7 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * @param saveState If the part state should be saved in the item.
      * @return The removed part or null.
      */
-    public IPartType removePart(EnumFacing side, @Nullable EntityPlayer player, boolean dropMainElement, boolean saveState);
+    public IPartType removePart(Direction side, @Nullable PlayerEntity player, boolean dropMainElement, boolean saveState);
 
     /**dz
      * Set the state of a part.
@@ -88,7 +88,7 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * @param partState The part state.
      * @throws PartStateException If no part at the given position is available.
      */
-    public void setPartState(EnumFacing side, IPartState partState) throws PartStateException;
+    public void setPartState(Direction side, IPartState partState) throws PartStateException;
 
     /**
      * Get the state of a part.
@@ -96,7 +96,7 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * @return The part state.
      * @throws PartStateException If no part at the given position is available.
      */
-    public IPartState getPartState(EnumFacing side) throws PartStateException;
+    public IPartState getPartState(Direction side) throws PartStateException;
 
     /**
      * Get the part side the player is watching.
@@ -106,6 +106,7 @@ public interface IPartContainer extends ICapabilitySerializable<NBTTagCompound> 
      * @param player The player.
      * @return The side the player is watching or null.
      */
-    public @Nullable EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player);
+    public @Nullable
+    Direction getWatchingSide(World world, BlockPos pos, PlayerEntity player);
 
 }

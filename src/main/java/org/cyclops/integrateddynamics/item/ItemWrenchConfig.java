@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.item;
 
+import net.minecraft.item.Item;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -9,21 +10,13 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemWrenchConfig extends ItemConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static ItemWrenchConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public ItemWrenchConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "wrench",
-                null,
-                ItemWrench.class
+                eConfig -> new ItemWrench(new Item.Properties()
+                        .maxStackSize(1)
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 

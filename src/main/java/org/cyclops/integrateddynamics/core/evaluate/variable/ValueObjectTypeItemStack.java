@@ -3,13 +3,14 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.ToString;
-import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -36,17 +37,19 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         super("itemstack");
     }
 
-    public static String getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
-        return !itemStack.isEmpty() ? (itemStack.getDisplayName() + (itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")) : "";
+    public static ITextComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
+        return !itemStack.isEmpty()
+                ? (itemStack.getDisplayName().appendText((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
+                : new StringTextComponent("");
     }
 
-    public static String getItemStackDisplayNameSafe(ItemStack itemStack) {
+    public static ITextComponent getItemStackDisplayNameSafe(ItemStack itemStack) {
         // Certain mods may call client-side only methods,
         // so call a server-side-safe fallback method if that fails.
         try {
             return getItemStackDisplayNameUsSafe(itemStack);
         } catch (NoSuchMethodException e) {
-            return L10NHelpers.localize(itemStack.getTranslationKey() + ".name");
+            return new TranslationTextComponent(itemStack.getTranslationKey());
         }
     }
 
@@ -56,42 +59,42 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     @Override
-    public String toCompactString(ValueItemStack value) {
+    public ITextComponent toCompactString(ValueItemStack value) {
         return ValueObjectTypeItemStack.getItemStackDisplayNameSafe(value.getRawValue());
     }
 
     @Override
-    public String serialize(ValueItemStack value) {
-        NBTTagCompound tag = new NBTTagCompound();
+    public INBT serialize(ValueItemStack value) {
+        CompoundNBT tag = new CompoundNBT();
         ItemStack itemStack = value.getRawValue();
         if(!itemStack.isEmpty()) {
-            itemStack.writeToNBT(tag);
-            tag.setInteger("Count", itemStack.getCount());
+            itemStack.write(tag);
+            tag.putInt("Count", itemStack.getCount());
         }
-        return tag.toString();
+        return tag;
     }
 
     @Override
-    public ValueItemStack deserialize(String value) {
-        try {
-            NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
+    public ValueItemStack deserialize(INBT value) {
+        if (value instanceof CompoundNBT) {
+            CompoundNBT tag = (CompoundNBT) value;
             // Forge returns air for tags with negative count,
             // so we set it to 1 for deserialization and fix it afterwards.
-            int realCount = tag.getInteger("Count");
-            tag.setByte("Count", (byte)1);
-            ItemStack itemStack = new ItemStack(tag);
+            int realCount = tag.getInt("Count");
+            tag.putByte("Count", (byte)1);
+            ItemStack itemStack = ItemStack.read(tag);
             if (!itemStack.isEmpty()) {
                 itemStack.setCount(realCount);
             }
             return ValueItemStack.of(itemStack);
-        } catch (NBTException e) {
+        } else {
             return ValueItemStack.of(ItemStack.EMPTY);
         }
     }
 
     @Override
     public String getName(ValueItemStack a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @Override
@@ -108,7 +111,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             }
 
             @Override
-            public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
+            public ITextComponent validate(ItemStack itemStack) {
                 return null;
             }
 
@@ -137,8 +140,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     @Override
     public String getUniqueName(ValueItemStack value) {
         ItemStack itemStack = value.getRawValue();
-        return !itemStack.isEmpty() ? itemStack.getItem().getRegistryName()
-                + (itemStack.getMetadata() > 0 ? " " + itemStack.getMetadata() : "") : "";
+        return !itemStack.isEmpty() ? itemStack.getItem().getRegistryName().toString() : "";
     }
 
     @ToString

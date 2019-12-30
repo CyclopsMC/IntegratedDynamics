@@ -1,14 +1,15 @@
 package org.cyclops.integrateddynamics.client.render.tileentity;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 import org.lwjgl.opengl.GL11;
@@ -19,7 +20,7 @@ import org.lwjgl.opengl.GL11;
  * @author rubensworks
  *
  */
-public class RenderTileEntityEnergyBattery extends TileEntitySpecialRenderer<TileEnergyBattery> {
+public class RenderTileEntityEnergyBattery extends TileEntityRenderer<TileEnergyBattery> {
 
     private static final double OFFSET = 0.001D;
     private static final double MINY = 0D;
@@ -66,7 +67,7 @@ public class RenderTileEntityEnergyBattery extends TileEntitySpecialRenderer<Til
     };
 
 	@Override
-	public void render(TileEnergyBattery tile, double x, double y, double z, float partialTickTime, int partialDamage, float alpha) {
+	public void render(TileEnergyBattery tile, double x, double y, double z, float partialTickTime, int partialDamage) {
         if(tile != null && tile.getEnergyStored() > 0) {
             double height = (double) tile.getEnergyStored() / tile.getMaxEnergyStored();
 
@@ -80,19 +81,19 @@ public class RenderTileEntityEnergyBattery extends TileEntitySpecialRenderer<Til
             GlStateManager.pushMatrix();
 
             // Correct color & lighting
-            GlStateManager.color(1, 1, 1, 1);
+            GlStateManager.color4f(1, 1, 1, 1);
             GlStateManager.disableLighting();
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             // Set to current relative player location
-            GlStateManager.translate(x, y, z);
+            GlStateManager.translated(x, y, z);
 
             // Set blockState textures
-            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
-            for(EnumFacing side : EnumFacing.HORIZONTALS) {
-                TextureAtlasSprite icon = BlockEnergyBattery.getInstance().iconOverlay;
+            for(Direction side : Direction.Plane.HORIZONTAL) {
+                TextureAtlasSprite icon = RegistryEntries.BLOCK_ENERGY_BATTERY.iconOverlay;
 
                 Tessellator t = Tessellator.getInstance();
                 BufferBuilder worldRenderer = t.getBuffer();
@@ -106,7 +107,7 @@ public class RenderTileEntityEnergyBattery extends TileEntitySpecialRenderer<Til
                 float g = 1.0F;
                 float b = 1.0F;
                 if (tile.isCreative()) {
-                    float tickFactor = (((float) tile.getWorld().getTotalWorldTime() % 20) / 10);
+                    float tickFactor = (((float) tile.getWorld().getGameTime() % 20) / 10);
                     if (tickFactor > 1) {
                         tickFactor = -tickFactor + 1;
                     }

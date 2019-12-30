@@ -1,9 +1,10 @@
 {
+	"parent": "block/block",
 	"ambientocclusion": false,
 	"textures": {
-		"side": "integrateddynamics:blocks/mechanical_squeezer_x_off",
-		"y": "integrateddynamics:blocks/mechanical_squeezer_y",
-		"particle": "integrateddynamics:blocks/mechanical_squeezer_x_off"
+		"side": "integrateddynamics:block/mechanical_squeezer_x_off",
+		"y": "integrateddynamics:block/mechanical_squeezer_y",
+		"particle": "integrateddynamics:block/mechanical_squeezer_x_off"
 	},
 	"elements": [
 		{

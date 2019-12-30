@@ -1,22 +1,16 @@
 {
     "variants": {
-        "normal": { "model": "integrateddynamics:menril_log_filled" },
-        "inventory": { "model": "integrateddynamics:menril_log_filled" },
-        "axis=none,side=0": { "model": "integrateddynamics:menril_log_filled_bark" },
-        "axis=none,side=1": { "model": "integrateddynamics:menril_log_filled_bark", "y": 90 },
-        "axis=none,side=2": { "model": "integrateddynamics:menril_log_filled_bark", "y": 180 },
-        "axis=none,side=3": { "model": "integrateddynamics:menril_log_filled_bark", "y": 270 },
-        "axis=x,side=0": { "model": "integrateddynamics:menril_log_filled_side", "y": 90 },
-        "axis=x,side=1": { "model": "integrateddynamics:menril_log_filled_side", "y": 90, "x": 90 },
-        "axis=x,side=2": { "model": "integrateddynamics:menril_log_filled_side", "y": 90, "x": 180 },
-        "axis=x,side=3": { "model": "integrateddynamics:menril_log_filled_side", "y": 90, "x": 270 },
-        "axis=y,side=0": { "model": "integrateddynamics:menril_log_filled" },
-        "axis=y,side=1": { "model": "integrateddynamics:menril_log_filled", "y": 90 },
-        "axis=y,side=2": { "model": "integrateddynamics:menril_log_filled", "y": 180 },
-        "axis=y,side=3": { "model": "integrateddynamics:menril_log_filled", "y": 270 },
-        "axis=z,side=0": { "model": "integrateddynamics:menril_log_filled_side" },
-        "axis=z,side=1": { "model": "integrateddynamics:menril_log_filled_side", "x": 90 },
-        "axis=z,side=2": { "model": "integrateddynamics:menril_log_filled_side", "x": 180 },
-        "axis=z,side=3": { "model": "integrateddynamics:menril_log_filled_side", "x": 270 }
+        "axis=x,facing=north": { "model": "integrateddynamics:block/menril_log_filled_side", "y": 90 },
+        "axis=x,facing=east": { "model": "integrateddynamics:block/menril_log_filled_side", "y": 90, "x": 90 },
+        "axis=x,facing=south": { "model": "integrateddynamics:block/menril_log_filled_side", "y": 90, "x": 180 },
+        "axis=x,facing=west": { "model": "integrateddynamics:block/menril_log_filled_side", "y": 90, "x": 270 },
+        "axis=y,facing=north": { "model": "integrateddynamics:block/menril_log_filled" },
+        "axis=y,facing=east": { "model": "integrateddynamics:block/menril_log_filled", "y": 90 },
+        "axis=y,facing=south": { "model": "integrateddynamics:block/menril_log_filled", "y": 180 },
+        "axis=y,facing=west": { "model": "integrateddynamics:block/menril_log_filled", "y": 270 },
+        "axis=z,facing=north": { "model": "integrateddynamics:block/menril_log_filled_side" },
+        "axis=z,facing=east": { "model": "integrateddynamics:block/menril_log_filled_side", "x": 90 },
+        "axis=z,facing=south": { "model": "integrateddynamics:block/menril_log_filled_side", "x": 180 },
+        "axis=z,facing=west": { "model": "integrateddynamics:block/menril_log_filled_side", "x": 270 }
     }
 }

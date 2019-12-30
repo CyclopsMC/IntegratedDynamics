@@ -1,17 +1,17 @@
 package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.collect.Lists;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -26,27 +26,27 @@ public class EnergyHelpers {
         ENERGY_STORAGE_PROXIES.add(energyStorageProxy);
     }
 
-    public static IEnergyStorage getEnergyStorage(PartPos pos) {
+    public static LazyOptional<IEnergyStorage> getEnergyStorage(PartPos pos) {
         return getEnergyStorage(pos.getPos(), pos.getSide());
     }
 
-    public static IEnergyStorage getEnergyStorage(DimPos pos, EnumFacing facing) {
-        World world = pos.getWorld();
-        return world != null ? getEnergyStorage(world, pos.getBlockPos(), facing) : null;
+    public static LazyOptional<IEnergyStorage> getEnergyStorage(DimPos pos, Direction facing) {
+        World world = pos.getWorld(true);
+        return world != null ? getEnergyStorage(world, pos.getBlockPos(), facing) : LazyOptional.empty();
     }
 
-    public static IEnergyStorage getEnergyStorage(IBlockAccess world, BlockPos pos, EnumFacing facing) {
-        IEnergyStorage energyStorage = TileHelpers.getCapability(world, pos, facing, CapabilityEnergy.ENERGY);
-        if (energyStorage == null) {
-            for (IEnergyStorageProxy energyStorageProxy : ENERGY_STORAGE_PROXIES) {
-                energyStorage = energyStorageProxy.getEnergyStorageProxy(world, pos, facing);
-                if (energyStorage != null) {
-                    return energyStorage;
-                }
-            }
-
-        }
-        return energyStorage;
+    public static LazyOptional<IEnergyStorage> getEnergyStorage(IBlockReader world, BlockPos pos, Direction facing) {
+        IEnergyStorage energyStorage = TileHelpers.getCapability(world, pos, facing, CapabilityEnergy.ENERGY)
+                .orElseGet(() -> {
+                    for (IEnergyStorageProxy energyStorageProxy : ENERGY_STORAGE_PROXIES) {
+                        LazyOptional<IEnergyStorage> optionalEnergyStorage = energyStorageProxy.getEnergyStorageProxy(world, pos, facing);
+                        if (optionalEnergyStorage.isPresent()) {
+                            return optionalEnergyStorage.orElse(null);
+                        }
+                    }
+                    return null;
+                });
+        return energyStorage == null ? LazyOptional.empty() : LazyOptional.of(() -> energyStorage);
     }
 
     /**
@@ -59,8 +59,8 @@ public class EnergyHelpers {
      */
     public static int fillNeigbours(World world, BlockPos pos, int energy, boolean simulate) {
         int toFill = energy;
-        for(EnumFacing side : EnumFacing.VALUES) {
-            IEnergyStorage energyStorage = getEnergyStorage(world, pos.offset(side), side.getOpposite());
+        for(Direction side : Direction.values()) {
+            IEnergyStorage energyStorage = getEnergyStorage(world, pos.offset(side), side.getOpposite()).orElse(null);
             if(energyStorage != null) {
                 toFill -= energyStorage.receiveEnergy(toFill, simulate);
                 if(toFill <= 0) {
@@ -72,7 +72,7 @@ public class EnergyHelpers {
     }
 
     public static interface IEnergyStorageProxy {
-        public @Nullable IEnergyStorage getEnergyStorageProxy(IBlockAccess world, BlockPos pos, EnumFacing facing);
+        public LazyOptional<IEnergyStorage> getEnergyStorageProxy(IBlockReader world, BlockPos pos, Direction facing);
     }
 
 }

@@ -2,8 +2,9 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 
 import java.util.List;
@@ -25,44 +26,44 @@ public class RawNetworkData implements IRawData {
         return String.format("Network %s (cables: %s; elements: %s)", id, cables, parts.size());
     }
 
-    public NBTTagCompound toNbt() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setBoolean("killed", killed);
-        tag.setInteger("id", id);
-        tag.setLong("cables", cables);
+    public CompoundNBT toNbt() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putBoolean("killed", killed);
+        tag.putInt("id", id);
+        tag.putLong("cables", cables);
 
-        NBTTagList listParts = new NBTTagList();
+        ListNBT listParts = new ListNBT();
         for (RawPartData part : parts) {
-            listParts.appendTag(part.toNbt());
+            listParts.add(part.toNbt());
         }
-        tag.setTag("parts", listParts);
+        tag.put("parts", listParts);
 
-        NBTTagList listObservers = new NBTTagList();
+        ListNBT listObservers = new ListNBT();
         for (RawObserverData observer : observers) {
-            listObservers.appendTag(observer.toNbt());
+            listObservers.add(observer.toNbt());
         }
-        tag.setTag("observers", listObservers);
+        tag.put("observers", listObservers);
 
         return tag;
     }
 
-    public static RawNetworkData fromNbt(NBTTagCompound tag) {
+    public static RawNetworkData fromNbt(CompoundNBT tag) {
         List<RawPartData> parts = Lists.newArrayList();
-        NBTTagList listParts = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-        for (int i = 0; i < listParts.tagCount(); i++) {
-            NBTTagCompound partTag = listParts.getCompoundTagAt(i);
+        ListNBT listParts = tag.getList("parts", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < listParts.size(); i++) {
+            CompoundNBT partTag = listParts.getCompound(i);
             parts.add(RawPartData.fromNbt(partTag));
         }
 
         List<RawObserverData> observers = Lists.newArrayList();
-        NBTTagList listObservers = tag.getTagList("observers", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-        for (int i = 0; i < listObservers.tagCount(); i++) {
-            NBTTagCompound observerTag = listObservers.getCompoundTagAt(i);
+        ListNBT listObservers = tag.getList("observers", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < listObservers.size(); i++) {
+            CompoundNBT observerTag = listObservers.getCompound(i);
             observers.add(RawObserverData.fromNbt(observerTag));
         }
 
-        return new RawNetworkData(tag.getBoolean("killed"), tag.getInteger("id"),
-                tag.getInteger("cables"), parts, observers);
+        return new RawNetworkData(tag.getBoolean("killed"), tag.getInt("id"),
+                tag.getInt("cables"), parts, observers);
     }
 
 }

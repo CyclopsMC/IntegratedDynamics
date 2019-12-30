@@ -4,6 +4,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import org.cyclops.commoncapabilities.CommonCapabilities;
 import org.cyclops.cyclopscore.config.extendedconfig.CapabilityConfig;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityStorage;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
@@ -28,18 +29,16 @@ public class PathElementConfig extends CapabilityConfig<IPathElement> {
     public PathElementConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "path_element_provider",
-                "Capability for elements used for path construction",
                 IPathElement.class,
                 new DefaultCapabilityStorage<IPathElement>(),
-                PathElementDefault.class
+                () -> new PathElementDefault() {
+                    @Override
+                    public DimPos getPosition() {
+                        return null;
+                    }
+                }
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

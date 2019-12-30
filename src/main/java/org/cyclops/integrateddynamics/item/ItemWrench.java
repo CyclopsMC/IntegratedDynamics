@@ -1,20 +1,17 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.cyclops.commoncapabilities.api.capability.wrench.DefaultWrench;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.Capabilities;
 
@@ -22,47 +19,31 @@ import org.cyclops.integrateddynamics.Capabilities;
  * The default wrench for this mod.
  * @author rubensworks
  */
-public class ItemWrench extends ConfigurableItem {
+public class ItemWrench extends Item {
 
-    private static ItemWrench _instance = null;
-
-    /**
-     * Get the unique instance.
-     * @return The instance.
-     */
-    public static ItemWrench getInstance() {
-        return _instance;
-    }
-
-    /**
-     * Make a new item instance.
-     *
-     * @param eConfig Config for this blockState.
-     */
-    public ItemWrench(ExtendedConfig<ItemConfig> eConfig) {
-        super(eConfig);
+    public ItemWrench(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+    public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, PlayerEntity player) {
         return true;
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side,
-                                  float hitX, float hitY, float hitZ, EnumHand hand) {
-        Block block = world.getBlockState(pos).getBlock();
-        if(!world.isRemote || player.isSneaking()) {
-            return EnumActionResult.PASS;
-        } else if(block.rotateBlock(world, pos, side)) {
-            player.swingArm(hand);
-            return EnumActionResult.SUCCESS;
+    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+        BlockState blockState = context.getWorld().getBlockState(context.getPos());
+        if(!context.getWorld().isRemote() || context.getPlayer().isSneaking()) {
+            return ActionResultType.PASS;
+        } else if(blockState.rotate(context.getWorld(), context.getPos(), Rotation.CLOCKWISE_90) != blockState) {
+            context.getPlayer().swingArm(context.getHand());
+            return ActionResultType.SUCCESS;
         }
-        return EnumActionResult.PASS;
+        return ActionResultType.PASS;
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
         return new DefaultCapabilityProvider<>(() -> Capabilities.WRENCH, new DefaultWrench());
     }
 }

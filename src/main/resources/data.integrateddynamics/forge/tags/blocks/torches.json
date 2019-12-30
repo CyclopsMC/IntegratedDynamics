@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "integrateddynamics:menril_torch",
+    "integrateddynamics:menril_torch_stone"
+  ]
+}

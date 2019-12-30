@@ -1,12 +1,8 @@
 {
-    "parent": "cyclopscore:block/cube_double_layer_all",
+    "parent": "block/orientable",
     "textures": {
-        "particle": "integrateddynamics:blocks/energy_battery_side",
-        "all0": "integrateddynamics:blocks/energy_battery_side",
-        "all1": "#overlay_side",
-        "up0": "integrateddynamics:blocks/energy_battery_up",
-        "up1": "cyclopscore:blocks/empty",
-        "down0": "integrateddynamics:blocks/energy_battery_up",
-        "down1": "cyclopscore:blocks/empty"
+        "top": "integrateddynamics:block/energy_battery_up",
+        "front": "integrateddynamics:block/energy_battery_side",
+        "side": "integrateddynamics:block/energy_battery_side"
     }
 }

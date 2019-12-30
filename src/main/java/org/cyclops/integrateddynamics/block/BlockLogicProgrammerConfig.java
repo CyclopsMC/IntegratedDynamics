@@ -1,5 +1,8 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -9,21 +12,14 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class BlockLogicProgrammerConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockLogicProgrammerConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockLogicProgrammerConfig() {
         super(
-            IntegratedDynamics._instance,
-            true,
-            "logic_programmer",
-            null,
-            BlockLogicProgrammer.class
+                IntegratedDynamics._instance,
+                "logic_programmer",
+                eConfig -> new BlockLogicProgrammer(Block.Properties.create(Material.GLASS)
+                .hardnessAndResistance(3.0F)
+                .sound(SoundType.METAL)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 

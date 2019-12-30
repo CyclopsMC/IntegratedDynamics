@@ -1,12 +1,12 @@
 {
     "parent": "block/cube",
     "textures": {
-        "particle": "integrateddynamics:blocks/logic_programmer_top",
-        "down": "integrateddynamics:blocks/variablestore_top",
-        "up": "integrateddynamics:blocks/logic_programmer_top",
-        "north": "integrateddynamics:blocks/logic_programmer_side",
-        "east": "integrateddynamics:blocks/logic_programmer_side",
-        "south": "integrateddynamics:blocks/logic_programmer_side",
-        "west": "integrateddynamics:blocks/logic_programmer_side"
+        "particle": "integrateddynamics:block/logic_programmer_top",
+        "down": "integrateddynamics:block/variablestore_top",
+        "up": "integrateddynamics:block/logic_programmer_top",
+        "north": "integrateddynamics:block/logic_programmer_side",
+        "east": "integrateddynamics:block/logic_programmer_side",
+        "south": "integrateddynamics:block/logic_programmer_side",
+        "west": "integrateddynamics:block/logic_programmer_side"
     }
 }

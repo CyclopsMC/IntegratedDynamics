@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.client.render.valuetype;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -27,6 +27,6 @@ public interface IValueTypeWorldRenderer {
      * @param alpha The alpha to render with.
      */
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, EnumFacing direction, IPartType partType, IValue value, TileEntityRendererDispatcher rendererDispatcher, float alpha);
+                            int destroyStage, Direction direction, IPartType partType, IValue value, TileEntityRendererDispatcher rendererDispatcher, float alpha);
 
 }

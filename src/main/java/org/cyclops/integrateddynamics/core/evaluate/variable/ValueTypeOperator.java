@@ -2,10 +2,13 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
 import lombok.ToString;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -29,7 +32,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     private static final String SIGNATURE_LINK = "->";
 
     public ValueTypeOperator() {
-        super("operator", Helpers.RGBToInt(43, 231, 47), TextFormatting.DARK_GREEN.toString());
+        super("operator", Helpers.RGBToInt(43, 231, 47), TextFormatting.DARK_GREEN);
     }
 
     @Override
@@ -38,17 +41,17 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     }
 
     @Override
-    public String toCompactString(ValueOperator value) {
+    public ITextComponent toCompactString(ValueOperator value) {
         return value.getRawValue().getLocalizedNameFull();
     }
 
     @Override
-    public String serialize(ValueOperator value) {
+    public INBT serialize(ValueOperator value) {
         return Operators.REGISTRY.serialize(value.getRawValue());
     }
 
     @Override
-    public ValueOperator deserialize(String value) {
+    public ValueOperator deserialize(INBT value) {
         IOperator operator;
         try {
             operator = Operators.REGISTRY.deserialize(value);
@@ -62,10 +65,11 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     }
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo, @Nullable ValueOperator value) {
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, @Nullable ValueOperator value) {
         super.loadTooltip(lines, appendOptionalInfo, value);
         if (value != null) {
-            lines.add(L10NHelpers.localize(L10NValues.VALUETYPEOPERATOR_TOOLTIP_SIGNATURE, getSignature(value.getRawValue())));
+            lines.add(new TranslationTextComponent(L10NValues.VALUETYPEOPERATOR_TOOLTIP_SIGNATURE)
+                    .appendSibling(getSignature(value.getRawValue())));
         }
     }
 
@@ -84,8 +88,10 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      * @param operator The operator.
      * @return The signature.
      */
-    public static String getSignature(IOperator operator) {
-        return StringUtils.join(getSignatureLines(operator, false), " ");
+    public static ITextComponent getSignature(IOperator operator) {
+        return getSignatureLines(operator, false)
+                .stream()
+                .reduce(new StringTextComponent(""), (a, b) -> a.appendText(" ").appendSibling(b));
     }
 
     /**
@@ -98,9 +104,9 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
         return StringUtils.join(getSignatureLines(inputTypes, outputType, false), " ");
     }
 
-    protected static StringBuilder switchSignatureLineContext(List<String> lines, StringBuilder sb) {
-        lines.add(sb.toString());
-        return new StringBuilder();
+    protected static ITextComponent switchSignatureLineContext(List<ITextComponent> lines, ITextComponent sb) {
+        lines.add(sb);
+        return new StringTextComponent("");
     }
 
     /**
@@ -110,27 +116,27 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      * @param indent If the lines should be indented.
      * @return The signature.
      */
-    public static List<String> getSignatureLines(IValueType[] inputTypes, IValueType outputType, boolean indent) {
-        List<String> lines = Lists.newArrayList();
-        StringBuilder sb = new StringBuilder();
+    public static List<ITextComponent> getSignatureLines(IValueType[] inputTypes, IValueType outputType, boolean indent) {
+        List<ITextComponent> lines = Lists.newArrayList();
+        ITextComponent sb = new StringTextComponent("");
         boolean first = true;
         for (IValueType inputType : inputTypes) {
             if (first) {
                 first = false;
             } else {
                 sb = switchSignatureLineContext(lines, sb);
-                sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ");
+                sb.appendText((indent ? "  " : "") + SIGNATURE_LINK + " ");
             }
-            sb.append(inputType.getDisplayColorFormat())
-                    .append(L10NHelpers.localize(inputType.getTranslationKey()))
-                    .append(TextFormatting.RESET);
+            sb.applyTextStyle(inputType.getDisplayColorFormat())
+                    .appendSibling(new TranslationTextComponent(inputType.getTranslationKey()))
+                    .applyTextStyle(TextFormatting.RESET);
         }
 
         sb = switchSignatureLineContext(lines, sb);
-        sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ")
-                .append(outputType.getDisplayColorFormat())
-                .append(L10NHelpers.localize(outputType.getTranslationKey()))
-                .append(TextFormatting.RESET);
+        sb.appendText((indent ? "  " : "") + SIGNATURE_LINK + " ")
+                .applyTextStyle(outputType.getDisplayColorFormat())
+                .appendSibling(new TranslationTextComponent(outputType.getTranslationKey()))
+                .applyTextStyle(TextFormatting.RESET);
         switchSignatureLineContext(lines, sb);
         return lines;
     }
@@ -141,13 +147,13 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      * @param indent If the lines should be indented.
      * @return The signature.
      */
-    public static List<String> getSignatureLines(IOperator operator, boolean indent) {
+    public static List<ITextComponent> getSignatureLines(IOperator operator, boolean indent) {
         return getSignatureLines(operator.getInputTypes(), operator.getOutputType(), indent);
     }
 
     @Override
     public String getName(ValueTypeOperator.ValueOperator a) {
-        return a.getRawValue().getLocalizedNameFull();
+        return a.getRawValue().getLocalizedNameFull().getString();
     }
 
     @Override

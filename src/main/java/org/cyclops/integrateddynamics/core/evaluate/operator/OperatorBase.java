@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
@@ -76,8 +78,8 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public String getLocalizedNameFull() {
-        return L10NHelpers.localize(getUnlocalizedCategoryPrefix() + ".basename", L10NHelpers.localize(getTranslationKey()));
+    public ITextComponent getLocalizedNameFull() {
+        return new TranslationTextComponent(getUnlocalizedCategoryPrefix() + ".basename", new TranslationTextComponent(getTranslationKey()));
     }
 
     protected String getUnlocalizedPrefix() {
@@ -98,19 +100,20 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
-        String operatorName = L10NHelpers.localize(getTranslationKey());
-        String categoryName = L10NHelpers.localize(getUnlocalizedCategoryName());
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
+        ITextComponent operatorName = new TranslationTextComponent(getTranslationKey());
+        ITextComponent categoryName = new TranslationTextComponent(getUnlocalizedCategoryName());
         String symbol = getSymbol();
         String outputTypeName = L10NHelpers.localize(getOutputType().getTranslationKey());
-        lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
-        lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
+        lines.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
+        lines.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
-            lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME,
-                    i + 1, inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())));
+            lines.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME, i + 1)
+            .applyTextStyle(inputTypes[i].getDisplayColorFormat())
+            .appendSibling(new TranslationTextComponent(inputTypes[i].getTranslationKey())));
         }
-        lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
+        lines.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
@@ -135,15 +138,15 @@ public abstract class OperatorBase implements IOperator {
     public IValue evaluate(IVariable... input) throws EvaluationException {
         if (this.recursiveInvocations++ > GeneralConfig.operatorRecursionLimit) {
             this.recursiveInvocations = 0;
-            throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_RECURSIONLIMIT,
+            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_RECURSIONLIMIT,
                     GeneralConfig.operatorRecursionLimit,
-                    new L10NHelpers.UnlocalizedString(this.getTranslationKey())
-            ).localize());
+                    new TranslationTextComponent(this.getTranslationKey())
+            ));
         }
-        L10NHelpers.UnlocalizedString error = validateTypes(ValueHelpers.from(input));
+        ITextComponent error = validateTypes(ValueHelpers.from(input));
         if(error != null) {
             this.recursiveInvocations--;
-            throw new EvaluationException(error.localize());
+            throw new EvaluationException(error);
         }
         IValue res = function.evaluate(new SafeVariablesGetter(input));
         this.recursiveInvocations--;
@@ -156,23 +159,23 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input) {
+    public ITextComponent validateTypes(IValueType[] input) {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+            return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                     this.getOperatorName(), input.length, requiredInputLength);
         }
         // Input types checking
         for(int i = 0; i < requiredInputLength; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
-                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
+                return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
             if(!ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
-                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
-                        Integer.toString(i + 1), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getTranslationKey()));
+                return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        this.getOperatorName(), new TranslationTextComponent(inputType.getTranslationKey()),
+                        Integer.toString(i + 1), new TranslationTextComponent(getInputTypes()[i].getTranslationKey()));
             }
         }
         return null;

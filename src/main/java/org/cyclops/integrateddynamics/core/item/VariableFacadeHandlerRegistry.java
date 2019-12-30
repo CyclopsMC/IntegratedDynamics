@@ -1,16 +1,17 @@
 package org.cyclops.integrateddynamics.core.item;
 
 import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.MinecraftForge;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
@@ -31,6 +32,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * The variable facade handler registry.
@@ -61,23 +63,23 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public IVariableFacade handle(ItemStack itemStack) {
-        if(itemStack.isEmpty() || !itemStack.hasTagCompound()) {
+        if(itemStack.isEmpty() || !itemStack.hasTag()) {
             return DUMMY_FACADE;
         }
-        return handle(itemStack.getTagCompound());
+        return handle(itemStack.getTag());
     }
 
     @Override
-    public IVariableFacade handle(NBTTagCompound tagCompound) {
+    public IVariableFacade handle(CompoundNBT tagCompound) {
         if(tagCompound == null) {
             return DUMMY_FACADE;
         }
-        if(!tagCompound.hasKey("_type", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())
-                || !tagCompound.hasKey("_id", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
+        if(!tagCompound.contains("_type", Constants.NBT.TAG_STRING)
+                || !tagCompound.contains("_id", Constants.NBT.TAG_INT)) {
             return DUMMY_FACADE;
         }
         String type = tagCompound.getString("_type");
-        int id = tagCompound.getInteger("_id");
+        int id = tagCompound.getInt("_id");
         IVariableFacadeHandler handler = getHandler(type);
         if(handler != null) {
             return handler.getVariableFacade(id, tagCompound);
@@ -97,9 +99,9 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public <F extends IVariableFacade> void write(NBTTagCompound tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
-        tagCompound.setString("_type", handler.getTypeId());
-        tagCompound.setInteger("_id", variableFacade.getId());
+    public <F extends IVariableFacade> void write(CompoundNBT tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
+        tagCompound.putString("_type", handler.getTypeId());
+        tagCompound.putInt("_id", variableFacade.getId());
         handler.setVariableFacade(tagCompound, variableFacade);
     }
 
@@ -109,21 +111,21 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
             return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        CompoundNBT tag = itemStack.getOrCreateTag();
         this.write(tag, variableFacade, variableFacadeHandler);
         return itemStack;
     }
 
     @Override
-    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable EntityPlayer player, @Nullable Block block) {
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
         if(itemStack.isEmpty()) {
             return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        CompoundNBT tag = itemStack.getOrCreateTag();
         F variableFacade = writeVariableFacade(generateId, itemStack, variableFacadeHandler, variableFacadeFactory);
         if (player != null) {
-            MinecraftForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade, block));
+            MinecraftForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade, blockState));
         }
         this.write(tag, variableFacade, variableFacadeHandler);
         return itemStack;
@@ -134,7 +136,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         if(itemStack.isEmpty()) {
             return null;
         }
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        CompoundNBT tag = itemStack.getOrCreateTag();
         IVariableFacade previousVariableFacade = this.handle(tag);
         F variableFacade;
         if(generateId && previousVariableFacade.getId() > -1) {
@@ -149,7 +151,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     public <F extends IVariableFacade> ItemStack copy(boolean generateId, ItemStack itemStack) {
         ItemStack copy = itemStack.copy();
         int newId = generateId ? VariableFacadeBase.generateId() : -1;
-        copy.getTagCompound().setInteger("_id", newId);
+        copy.getTag().putInt("_id", newId);
         return copy;
     }
 
@@ -190,7 +192,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         @Override
         public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
             if (!ValueHelpers.correspondsTo(containingValueType, ValueTypes.BOOLEAN)) {
-                validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
+                validator.addError(new TranslationTextComponent(unlocalizedError));
             }
         }
 
@@ -200,12 +202,12 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void addInformation(List<String> list, World world) {
+        public void addInformation(List<ITextComponent> list, World world) {
 
         }
 
         @Override
-        public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads) {
+        public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData) {
 
         }
     }

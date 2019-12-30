@@ -46,14 +46,13 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     private final List<IAspectWriteActivator> writeActivators;
     private final List<IAspectWriteDeactivator> writeDeactivators;
     private final ModBase mod;
-    private final ModBase modGui;
     private final List<IAspectUpdateListener.Before> beforeUpdateListeners;
     private final List<IAspectUpdateListener.After> afterUpdateListeners;
     private final AspectUpdateType updateType;
 
     private AspectBuilder(boolean read, T valueType, List<String> kinds, IAspectProperties defaultAspectProperties,
                           List<IAspectValuePropagator> valuePropagators, List<IAspectWriteActivator> writeActivators,
-                          List<IAspectWriteDeactivator> writeDeactivators, ModBase mod, ModBase modGui,
+                          List<IAspectWriteDeactivator> writeDeactivators, ModBase mod,
                           List<IAspectUpdateListener.Before> beforeUpdateListeners, List<IAspectUpdateListener.After> afterUpdateListeners,
                           AspectUpdateType updateType) {
         this.read = read;
@@ -64,7 +63,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         this.writeActivators = writeActivators;
         this.writeDeactivators = writeDeactivators;
         this.mod = Objects.requireNonNull(mod);
-        this.modGui = Objects.requireNonNull(modGui);
         this.beforeUpdateListeners = beforeUpdateListeners;
         this.afterUpdateListeners = afterUpdateListeners;
         this.updateType = updateType;
@@ -96,7 +94,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, null),
                 Helpers.joinList(writeDeactivators, null),
                 mod,
-                modGui,
                 beforeUpdateListeners,
                 afterUpdateListeners,
                 updateType);
@@ -116,7 +113,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, null),
                 Helpers.joinList(writeDeactivators, null),
                 mod,
-                modGui,
                 beforeUpdateListeners,
                 afterUpdateListeners,
                 updateType);
@@ -136,7 +132,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, null),
                 Helpers.joinList(writeDeactivators, null),
                 mod,
-                modGui,
                 beforeUpdateListeners,
                 afterUpdateListeners,
                 updateType);
@@ -160,7 +155,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, activator),
                 Helpers.joinList(writeDeactivators, null),
                 mod,
-                modGui,
                 beforeUpdateListeners,
                 afterUpdateListeners,
                 updateType);
@@ -184,7 +178,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, null),
                 Helpers.joinList(writeDeactivators, deactivator),
                 mod,
-                modGui,
                 beforeUpdateListeners,
                 afterUpdateListeners,
                 updateType);
@@ -204,27 +197,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, null),
                 Helpers.joinList(writeDeactivators, null),
                 mod,
-                modGui,
-                beforeUpdateListeners,
-                afterUpdateListeners,
-                updateType);
-    }
-
-    /**
-     * Set the gui mod that provides the aspect.
-     * @param modGui The gui mod.
-     * @return The new builder instance.
-     */
-    public AspectBuilder<V, T, O> byModGui(ModBase modGui) {
-        return new AspectBuilder<>(
-                this.read, this.valueType,
-                Helpers.joinList(this.kinds, null),
-                this.defaultAspectProperties,
-                Helpers.joinList(this.valuePropagators, null),
-                Helpers.joinList(writeActivators, null),
-                Helpers.joinList(writeDeactivators, null),
-                mod,
-                modGui,
                 beforeUpdateListeners,
                 afterUpdateListeners,
                 updateType);
@@ -244,7 +216,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, null),
                 Helpers.joinList(writeDeactivators, null),
                 mod,
-                modGui,
                 Helpers.joinList(beforeUpdateListeners, listener),
                 Helpers.joinList(afterUpdateListeners, null),
                 updateType);
@@ -264,7 +235,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, null),
                 Helpers.joinList(writeDeactivators, null),
                 mod,
-                modGui,
                 Helpers.joinList(beforeUpdateListeners, null),
                 Helpers.joinList(afterUpdateListeners, listener),
                 updateType);
@@ -287,7 +257,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 Helpers.joinList(writeActivators, null),
                 Helpers.joinList(writeDeactivators, null),
                 mod,
-                modGui,
                 beforeUpdateListeners,
                 afterUpdateListeners,
                 updateType);
@@ -323,7 +292,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Pair<PartTarget, IAspectProperties>> forReadType(T valueType) {
         return new AspectBuilder<>(true, valueType, ImmutableList.of(valueType.getTypeName()), null,
                 Collections.<IAspectValuePropagator>emptyList(), Collections.<IAspectWriteActivator>emptyList(),
-                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, IntegratedDynamics._instance, Lists.newArrayList(), Lists.newArrayList(), AspectUpdateType.NETWORK_TICK);
+                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, Lists.newArrayList(), Lists.newArrayList(), AspectUpdateType.NETWORK_TICK);
     }
 
     /**
@@ -336,7 +305,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     public static <V extends IValue, T extends IValueType<V>> AspectBuilder<V, T, Triple<PartTarget, IAspectProperties, IVariable<V>>> forWriteType(T valueType) {
         return new AspectBuilder<>(false, valueType, ImmutableList.of(valueType.getTypeName()), null,
                 Collections.<IAspectValuePropagator>emptyList(), Collections.<IAspectWriteActivator>emptyList(),
-                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, IntegratedDynamics._instance, Lists.newArrayList(), Lists.newArrayList(), AspectUpdateType.NETWORK_TICK);
+                Collections.<IAspectWriteDeactivator>emptyList(), IntegratedDynamics._instance, Lists.newArrayList(), Lists.newArrayList(), AspectUpdateType.NETWORK_TICK);
     }
 
     private static class BuiltReader<V extends IValue, T extends IValueType<V>> extends AspectReadBase<V, T> {
@@ -347,8 +316,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         private final List<IAspectUpdateListener.After> afterUpdateListeners;
 
         public BuiltReader(AspectBuilder<V, T, V> aspectBuilder) {
-            super(aspectBuilder.mod, aspectBuilder.modGui,
-                    deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties,
+            super(aspectBuilder.mod, deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties,
                     aspectBuilder.updateType);
             this.valueType = aspectBuilder.valueType;
             this.valuePropagators = aspectBuilder.valuePropagators;
@@ -397,8 +365,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         private final List<IAspectUpdateListener.After> afterUpdateListeners;
 
         public BuiltWriter(AspectBuilder<V, T, V> aspectBuilder) {
-            super(aspectBuilder.mod, aspectBuilder.modGui,
-                    deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties);
+            super(aspectBuilder.mod, deriveUnlocalizedType(aspectBuilder), aspectBuilder.defaultAspectProperties);
             this.valueType = aspectBuilder.valueType;
             this.valuePropagators = aspectBuilder.valuePropagators;
             this.writeActivators = aspectBuilder.writeActivators;

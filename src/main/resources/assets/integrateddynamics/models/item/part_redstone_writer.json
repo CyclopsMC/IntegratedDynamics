@@ -1,0 +1,8 @@
+{
+  "forge_marker": 1,
+  "parent": "integrateddynamics:block/writer",
+  "textures": {
+    "back" : "integrateddynamics:part/redstone_reader_back",
+    "front": "integrateddynamics:part/redstone_writer_front_inactive"
+  }
+}

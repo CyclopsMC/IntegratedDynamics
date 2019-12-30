@@ -6,16 +6,16 @@
   "variants": {
     "status": {
       "active": {"textures": {
-        "back" : "integrateddynamics:parts/connector_omni_directional_back",
-        "front": "integrateddynamics:parts/connector_omni_directional_front"
+        "back" : "integrateddynamics:part/connector_omni_directional_back",
+        "front": "integrateddynamics:part/connector_omni_directional_front"
       }},
       "inactive": {"textures": {
-        "back" : "integrateddynamics:parts/connector_omni_directional_back",
-        "front": "integrateddynamics:parts/connector_omni_directional_front_inactive"
+        "back" : "integrateddynamics:part/connector_omni_directional_back",
+        "front": "integrateddynamics:part/connector_omni_directional_front_inactive"
       }},
       "error": {"textures": {
-        "back" : "integrateddynamics:parts/connector_omni_directional_back",
-        "front": "integrateddynamics:parts/connector_omni_directional_front"
+        "back" : "integrateddynamics:part/connector_omni_directional_back",
+        "front": "integrateddynamics:part/connector_omni_directional_front"
       }}
     },
     "facing": {

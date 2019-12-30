@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Network element for variable stores.
@@ -23,12 +24,15 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
 
     @Override
     public boolean onNetworkAddition(INetwork network) {
-        return NetworkHelpers.getPartNetwork(network).addVariableContainer(getPos());
+        return NetworkHelpers.getPartNetwork(network)
+                .map(partNetwork -> partNetwork.addVariableContainer(getPos()))
+                .orElse(false);
     }
 
     @Override
     public void onNetworkRemoval(INetwork network) {
-        NetworkHelpers.getPartNetwork(network).removeVariableContainer(getPos());
+        NetworkHelpers.getPartNetwork(network)
+                .ifPresent(partNetwork -> partNetwork.removeVariableContainer(getPos()));
     }
 
     @Override
@@ -58,7 +62,7 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
 
     @Nullable
     @Override
-    public TileVariablestore getNetworkEventListener() {
+    public Optional<TileVariablestore> getNetworkEventListener() {
         return getTile();
     }
 }

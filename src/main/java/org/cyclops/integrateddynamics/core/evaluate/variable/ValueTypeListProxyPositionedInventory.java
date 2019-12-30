@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.util.EnumFacing;
+import com.google.common.collect.Iterators;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -14,7 +17,7 @@ import java.util.Iterator;
  */
 public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPositioned<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
 
-    public ValueTypeListProxyPositionedInventory(DimPos pos, EnumFacing side) {
+    public ValueTypeListProxyPositionedInventory(DimPos pos, Direction side) {
         super(ValueTypeListProxyFactories.POSITIONED_INVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK, pos, side);
     }
 
@@ -22,22 +25,22 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
         this(null, null);
     }
 
-    protected IItemHandler getInventory() {
+    protected LazyOptional<IItemHandler> getInventory() {
         return TileHelpers.getCapability(getPos(), getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
     }
 
     @Override
     public int getLength() {
-        IItemHandler inventory = getInventory();
-        if(inventory == null) {
-            return 0;
-        }
-        return inventory.getSlots();
+        return getInventory()
+                .map(IItemHandler::getSlots)
+                .orElse(0);
     }
 
     @Override
     public ValueObjectTypeItemStack.ValueItemStack get(int index) {
-        return ValueObjectTypeItemStack.ValueItemStack.of(getInventory().getStackInSlot(index));
+        return ValueObjectTypeItemStack.ValueItemStack.of(getInventory()
+                .map(itemHandler -> itemHandler.getStackInSlot(index))
+                .orElse(ItemStack.EMPTY));
     }
 
     @Override
@@ -45,7 +48,9 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
         // We use a custom iterator that retrieves the itemhandler capability only once.
         // Because for large inventories, the capability would have to be retrieved for every single slot,
         // which could result in a major performance problem.
-        return new ValueTypeListProxyPositionedInventory.ListFactoryIterator(getInventory());
+        return getInventory()
+                .map(itemHandler -> (Iterator<ValueObjectTypeItemStack.ValueItemStack>) new ValueTypeListProxyPositionedInventory.ListFactoryIterator(itemHandler))
+                .orElse(Iterators.forArray());
     }
 
     public static class ListFactoryIterator implements Iterator<ValueObjectTypeItemStack.ValueItemStack> {

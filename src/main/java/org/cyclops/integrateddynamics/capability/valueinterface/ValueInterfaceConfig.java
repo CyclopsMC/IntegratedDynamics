@@ -14,32 +14,17 @@ import org.cyclops.integrateddynamics.api.evaluate.IValueInterface;
  */
 public class ValueInterfaceConfig extends CapabilityConfig<IValueInterface> {
 
-    /**
-     * The unique instance.
-     */
-    public static ValueInterfaceConfig _instance;
-
     @CapabilityInject(IValueInterface.class)
     public static Capability<IValueInterface> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public ValueInterfaceConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "value_interface_provider",
-                "Capability for elements used for path construction",
                 IValueInterface.class,
                 new DefaultCapabilityStorage<IValueInterface>(),
-                ValueInterfaceDefault.class
+                () -> new ValueInterfaceDefault(null)
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

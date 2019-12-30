@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.google.common.base.Optional;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -27,17 +26,17 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, EnumFacing direction, IPartType partType, IValue value,
+                            int destroyStage, Direction direction, IPartType partType, IValue value,
                             TileEntityRendererDispatcher rendererDispatcher, float alpha) {
-        Optional<FluidStack> fluidStackOptional = ((ValueObjectTypeFluidStack.ValueFluidStack) value).getRawValue();
-        if(fluidStackOptional.isPresent()) {
+        FluidStack fluidStack = ((ValueObjectTypeFluidStack.ValueFluidStack) value).getRawValue();
+        if (!fluidStack.isEmpty()) {
             // Fluid
             GlStateManager.pushMatrix();
             GlStateManager.enableRescaleNormal();
             BufferBuilder worldRenderer = Tessellator.getInstance().getBuffer();
             worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStackOptional.get(), EnumFacing.NORTH);
-            rendererDispatcher.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStack, Direction.NORTH);
+            RenderHelpers.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
             float min = 0F;
             float max = 12.5F;
@@ -45,7 +44,7 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             float u2 = icon.getMaxU();
             float v1 = icon.getMinV();
             float v2 = icon.getMaxV();
-            Triple<Float, Float, Float> colorParts = RenderHelpers.getFluidVertexBufferColor(fluidStackOptional.get());
+            Triple<Float, Float, Float> colorParts = RenderHelpers.getFluidVertexBufferColor(fluidStack);
             float r = colorParts.getLeft();
             float g = colorParts.getMiddle();
             float b = colorParts.getRight();
@@ -58,11 +57,11 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
             // Stack size
             GlStateManager.pushMatrix();
-            GlStateManager.translate(7F, 8.5F, 0.1F);
+            GlStateManager.translatef(7F, 8.5F, 0.1F);
             GlStateManager.pushMatrix();
-            String string = String.valueOf(fluidStackOptional.get().amount);
+            String string = String.valueOf(fluidStack.getAmount());
             float scale = ((float) 5) / (float) rendererDispatcher.getFontRenderer().getStringWidth(string);
-            GlStateManager.scale(scale, scale, 1F);
+            GlStateManager.scalef(scale, scale, 1F);
             rendererDispatcher.getFontRenderer().drawString(string,
                     0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)));
             GlStateManager.popMatrix();

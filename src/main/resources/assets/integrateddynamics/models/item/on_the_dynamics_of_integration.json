@@ -1,6 +1,6 @@
 {
   "parent": "cyclopscore:item/flat",
   "textures": {
-    "layer0": "integrateddynamics:items/on_the_dynamics_of_integration"
+    "layer0": "integrateddynamics:item/on_the_dynamics_of_integration"
   }
 }

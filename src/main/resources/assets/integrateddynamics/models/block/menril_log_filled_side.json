@@ -1,12 +1,12 @@
 {
   "parent": "block/cube",
   "textures": {
-    "north" : "integrateddynamics:blocks/menril_log_top",
-    "south" : "integrateddynamics:blocks/menril_log_top",
-    "up": "integrateddynamics:blocks/menril_log_filled",
-    "down": "integrateddynamics:blocks/menril_log",
-    "east": "integrateddynamics:blocks/menril_log",
-    "west": "integrateddynamics:blocks/menril_log",
-    "particle": "integrateddynamics:blocks/menril_log"
+    "north" : "integrateddynamics:block/menril_log_top",
+    "south" : "integrateddynamics:block/menril_log_top",
+    "up": "integrateddynamics:block/menril_log_filled",
+    "down": "integrateddynamics:block/menril_log",
+    "east": "integrateddynamics:block/menril_log",
+    "west": "integrateddynamics:block/menril_log",
+    "particle": "integrateddynamics:block/menril_log"
   }
 }

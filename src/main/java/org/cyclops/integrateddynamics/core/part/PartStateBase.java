@@ -1,12 +1,14 @@
 package org.cyclops.integrateddynamics.core.part;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -39,73 +41,73 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private int updateInterval = getDefaultUpdateInterval();
     private int priority = 0;
     private int channel = 0;
-    private EnumFacing targetSide = null;
+    private Direction targetSide = null;
     private int id = -1;
     private Map<IAspect, IAspectProperties> aspectProperties = new IdentityHashMap<>();
     private boolean enabled = true;
 
     private CapabilityDispatcher capabilities = null;
-    private IdentityHashMap<Capability<?>, Object> volatileCapabilities = new IdentityHashMap<>();
+    private IdentityHashMap<Capability<?>, LazyOptional<Object>> volatileCapabilities = new IdentityHashMap<>();
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        tag.setInteger("updateInterval", this.updateInterval);
-        tag.setInteger("priority", this.priority);
-        tag.setInteger("channel", this.channel);
+    public void writeToNBT(CompoundNBT tag) {
+        tag.putInt("updateInterval", this.updateInterval);
+        tag.putInt("priority", this.priority);
+        tag.putInt("channel", this.channel);
         if (this.targetSide != null) {
-            tag.setInteger("targetSide", this.targetSide.ordinal());
+            tag.putInt("targetSide", this.targetSide.ordinal());
         }
-        tag.setInteger("id", this.id);
+        tag.putInt("id", this.id);
         writeAspectProperties("aspectProperties", tag);
-        tag.setBoolean("enabled", this.enabled);
+        tag.putBoolean("enabled", this.enabled);
         if (this.capabilities != null) {
-            tag.setTag("ForgeCaps", this.capabilities.serializeNBT());
+            tag.put("ForgeCaps", this.capabilities.serializeNBT());
         }
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        this.updateInterval = tag.getInteger("updateInterval");
-        this.priority = tag.getInteger("priority");
-        this.channel = tag.getInteger("channel");
-        if (tag.hasKey("targetSide", Constants.NBT.TAG_INT)) {
-            this.targetSide = EnumFacing.VALUES[tag.getInteger("targetSide")];
+    public void readFromNBT(CompoundNBT tag) {
+        this.updateInterval = tag.getInt("updateInterval");
+        this.priority = tag.getInt("priority");
+        this.channel = tag.getInt("channel");
+        if (tag.contains("targetSide", Constants.NBT.TAG_INT)) {
+            this.targetSide = Direction.values()[tag.getInt("targetSide")];
         }
-        this.id = tag.getInteger("id");
+        this.id = tag.getInt("id");
         this.aspectProperties.clear();
         readAspectProperties("aspectProperties", tag);
         this.enabled = tag.getBoolean("enabled");
-        if (this.capabilities != null && tag.hasKey("ForgeCaps")) {
-            this.capabilities.deserializeNBT(tag.getCompoundTag("ForgeCaps"));
+        if (this.capabilities != null && tag.contains("ForgeCaps")) {
+            this.capabilities.deserializeNBT(tag.getCompound("ForgeCaps"));
         }
     }
 
-    protected void writeAspectProperties(String name, NBTTagCompound tag) {
-        NBTTagCompound mapTag = new NBTTagCompound();
-        NBTTagList list = new NBTTagList();
+    protected void writeAspectProperties(String name, CompoundNBT tag) {
+        CompoundNBT mapTag = new CompoundNBT();
+        ListNBT list = new ListNBT();
         for(Map.Entry<IAspect, IAspectProperties> entry : aspectProperties.entrySet()) {
-            NBTTagCompound entryTag = new NBTTagCompound();
-            entryTag.setString("key", entry.getKey().getTranslationKey());
+            CompoundNBT entryTag = new CompoundNBT();
+            entryTag.putString("key", entry.getKey().getTranslationKey());
             if(entry.getValue() != null) {
-                entryTag.setTag("value", entry.getValue().toNBT());
+                entryTag.put("value", entry.getValue().toNBT());
             }
-            list.appendTag(entryTag);
+            list.add(entryTag);
         }
-        mapTag.setTag("map", list);
-        tag.setTag(name, mapTag);
+        mapTag.put("map", list);
+        tag.put(name, mapTag);
     }
 
-    public void readAspectProperties(String name, NBTTagCompound tag) {
-        NBTTagCompound mapTag = tag.getCompoundTag(name);
-        NBTTagList list = mapTag.getTagList("map", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-        if(list.tagCount() > 0) {
-            for (int i = 0; i < list.tagCount(); i++) {
-                NBTTagCompound entryTag = list.getCompoundTagAt(i);
+    public void readAspectProperties(String name, CompoundNBT tag) {
+        CompoundNBT mapTag = tag.getCompound(name);
+        ListNBT list = mapTag.getList("map", Constants.NBT.TAG_COMPOUND);
+        if(list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                CompoundNBT entryTag = list.getCompound(i);
                 IAspect key = Aspects.REGISTRY.getAspect(entryTag.getString("key"));
                 IAspectProperties value = null;
-                if (entryTag.hasKey("value")) {
+                if (entryTag.contains("value")) {
                     value = new AspectProperties();
-                    value.fromNBT(entryTag.getCompoundTag("value"));
+                    value.fromNBT(entryTag.getCompound("value"));
                 }
                 if (key != null && value != null) {
                     this.aspectProperties.put(key, value);
@@ -155,13 +157,13 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
-    public void setTargetSideOverride(EnumFacing targetSide) {
+    public void setTargetSideOverride(Direction targetSide) {
         this.targetSide = targetSide;
     }
 
     @Nullable
     @Override
-    public EnumFacing getTargetSideOverride() {
+    public Direction getTargetSideOverride() {
         return targetSide;
     }
 
@@ -236,60 +238,21 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     public void gatherCapabilities(P partType) {
         AttachCapabilitiesEventPart event = new AttachCapabilitiesEventPart(partType, this);
         MinecraftForge.EVENT_BUS.post(event);
-        this.capabilities = event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities()) : null;
+        this.capabilities = event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners()) : null;
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
-        return hasCapability(capability) || volatileCapabilities.containsKey(capability)
-                 || hasCapability(capability, partNetwork, target)
-                || (capabilities != null && capabilities.hasCapability(capability, null));
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
-        T cap = getCapability(capability); // TODO: remove in 1.13
-        if (cap != null) {
-            return cap;
-        }
-
-        cap = getCapability(capability, partNetwork, target);
-        if (cap != null) { // TODO: remove in 1.13
-            return cap;
-        }
-
-        Object o = volatileCapabilities.get(capability);
-        if(o != null) {
-            return (T) o;
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        LazyOptional<Object> o = volatileCapabilities.get(capability);
+        if(o.isPresent()) {
+            return o.cast();
         }
         return capabilities == null ? null : capabilities.getCapability(capability, null);
     }
 
     @Override
-    @Deprecated // TODO: remove in 1.13
-    public boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target) {
-        return false;
-    }
-
-    @Override
-    @Deprecated // TODO: remove in 1.13
-    public <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target) {
-        return null;
-    }
-
-    @Deprecated // TODO: remove in 1.13
-    public boolean hasCapability(Capability<?> capability) {
-        return false;
-    }
-
-    @Deprecated // TODO: remove in 1.13
-    public <T> T getCapability(Capability<T> capability) {
-        return null;
-    }
-
-    @Override
-    public <T> void addVolatileCapability(Capability<T> capability, T value) {
-        volatileCapabilities.put(capability, value);
+    public <T> void addVolatileCapability(Capability<T> capability, LazyOptional<T> value) {
+        volatileCapabilities.put(capability, (LazyOptional<Object>) value);
     }
 
     @Override

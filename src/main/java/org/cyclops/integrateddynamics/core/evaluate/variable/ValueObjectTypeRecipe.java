@@ -2,10 +2,15 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.ToString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.EndNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
@@ -35,13 +40,14 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     }
 
     @Override
-    public String toCompactString(ValueRecipe value) {
+    public ITextComponent toCompactString(ValueRecipe value) {
         if (value.getRawValue().isPresent()) {
             IRecipeDefinition recipe = value.getRawValue().get();
-            StringBuilder sb = new StringBuilder();
+            ITextComponent sb = new StringTextComponent("");
 
-            sb.append(ValueObjectTypeIngredients.ingredientsToString(recipe.getOutput()));
-            sb.append(" <- ");
+            sb.appendSibling(ValueObjectTypeIngredients.ingredientsToTextComponent(recipe.getOutput()));
+            sb.appendSibling(new StringTextComponent(" <- "));
+            boolean first = true;
 
             for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
                 IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
@@ -53,36 +59,38 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
                     } else {
                         v = handler.toValue(prototypedIngredient.getPrototype());
                     }
-                    sb.append(handler.toCompactString(v));
-                    sb.append(", ");
+                    if (!first) {
+                        sb.appendSibling(new StringTextComponent(", "));
+                    } else {
+                        first = false;
+                    }
+                    sb.appendSibling(handler.toCompactString(v));
                 }
             }
-            String str = sb.toString();
-            return str.length() >= 2 ? str.substring(0, str.length() - 2) : "";
+            return sb;
         }
-        return "";
+        return new StringTextComponent("");
     }
 
     @Override
-    public String serialize(ValueRecipe value) {
-        if(!value.getRawValue().isPresent()) return "";
-        return IRecipeDefinition.serialize(value.getRawValue().get()).toString();
+    public INBT serialize(ValueRecipe value) {
+        if(!value.getRawValue().isPresent()) return new EndNBT();
+        return IRecipeDefinition.serialize(value.getRawValue().get());
     }
 
     @Override
-    public ValueRecipe deserialize(String value) {
-        if(Strings.isNullOrEmpty(value)) return ValueRecipe.of(null);
+    public ValueRecipe deserialize(INBT value) {
+        if(value.getId() == Constants.NBT.TAG_END) return ValueRecipe.of(null);
         try {
-            NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
-            return ValueRecipe.of(IRecipeDefinition.deserialize(tag));
-        } catch (NBTException e) {
+            return ValueRecipe.of(IRecipeDefinition.deserialize((CompoundNBT) value));
+        } catch (IllegalArgumentException e) {
             return ValueRecipe.of(null);
         }
     }
 
     @Override
     public String getName(ValueRecipe a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @Override

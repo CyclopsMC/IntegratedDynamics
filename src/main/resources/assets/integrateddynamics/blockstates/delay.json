@@ -1,13 +1,8 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "transform": "forge:default-block"
-  },
   "variants": {
-    "facing=south": { "model": "integrateddynamics:delay" },
-    "facing=west" : { "model": "integrateddynamics:delay", "y": 90 },
-    "facing=north": { "model": "integrateddynamics:delay", "y": 180 },
-    "facing=east" : { "model": "integrateddynamics:delay", "y": 270 },
-    "inventory"   : { "model": "integrateddynamics:delay" }
+    "facing=north": { "model": "integrateddynamics:block/delay" },
+    "facing=south": { "model": "integrateddynamics:block/delay", "y": 180 },
+    "facing=west":  { "model": "integrateddynamics:block/delay", "y": 270 },
+    "facing=east":  { "model": "integrateddynamics:block/delay", "y": 90 }
   }
 }

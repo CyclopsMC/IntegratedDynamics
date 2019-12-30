@@ -1,8 +1,10 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Sets;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -36,18 +38,18 @@ public class NetworkWorldStorage extends WorldStorage {
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(NBTTagCompound tag) {
+    public void readGeneratedFieldsFromNBT(CompoundNBT tag) {
         // TODO: backwards compat, remove in next major MC update.
-        if (tag.hasKey("networks", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal())
-                && "org.cyclops.integrateddynamics.core.network.PartNetwork".equals(tag.getCompoundTag("networks").getString("elementType"))) {
-            NBTTagCompound collectionTag = tag.getCompoundTag("networks");
+        if (tag.contains("networks", Constants.NBT.TAG_COMPOUND)
+                && "org.cyclops.integrateddynamics.core.network.PartNetwork".equals(tag.getCompound("networks").getString("elementType"))) {
+            CompoundNBT collectionTag = tag.getCompound("networks");
             networks = Sets.newHashSet();
-            NBTTagList list = collectionTag.getTagList("collection", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-            if(list.tagCount() > 0) {
-                for (int i = 0; i < list.tagCount(); i++) {
-                    NBTTagCompound entryTag = list.getCompoundTagAt(i);
+            ListNBT list = collectionTag.getList("collection", Constants.NBT.TAG_COMPOUND);
+            if(list.size() > 0) {
+                for (int i = 0; i < list.size(); i++) {
+                    CompoundNBT entryTag = list.getCompound(i);
                     Network network = new Network();
-                    network.fromNBT(entryTag.getCompoundTag("element"));
+                    network.fromNBT(entryTag.getCompound("element"));
                     networks.add(network);
                 }
             }

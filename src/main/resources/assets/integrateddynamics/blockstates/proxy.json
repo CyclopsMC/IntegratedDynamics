@@ -1,13 +1,8 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "transform": "forge:default-block"
-  },
   "variants": {
-    "facing=south": { "model": "integrateddynamics:proxy" },
-    "facing=west" : { "model": "integrateddynamics:proxy", "y": 90 },
-    "facing=north": { "model": "integrateddynamics:proxy", "y": 180 },
-    "facing=east" : { "model": "integrateddynamics:proxy", "y": 270 },
-    "inventory"   : { "model": "integrateddynamics:proxy" }
+    "facing=south": { "model": "integrateddynamics:block/proxy" },
+    "facing=west" : { "model": "integrateddynamics:block/proxy", "y": 90 },
+    "facing=north": { "model": "integrateddynamics:block/proxy", "y": 180 },
+    "facing=east" : { "model": "integrateddynamics:block/proxy", "y": 270 }
   }
 }

@@ -1,10 +1,11 @@
 package org.cyclops.integrateddynamics.api.item;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.IModelData;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -13,6 +14,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A facade for retrieving a variable.
@@ -61,16 +63,18 @@ public interface IVariableFacade {
      * @param list The list to add lines to.
      * @param world The world.
      */
-    @SideOnly(Side.CLIENT)
-    public void addInformation(List<String> list, World world);
+    @OnlyIn(Dist.CLIENT)
+    public void addInformation(List<ITextComponent> list, World world);
 
     /**
      * Handle the quads for the given baked model.
      * @param variableModelBaked The baked model.
      * @param quads The quads that can be added to.
+     * @param random A random instance.
+     * @param modelData Model data.
      */
-    @SideOnly(Side.CLIENT)
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads);
+    @OnlyIn(Dist.CLIENT)
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData);
 
     public static interface IValidator {
 
@@ -78,7 +82,7 @@ public interface IVariableFacade {
          * Set the current error for the given aspect.
          * @param error The error to set, or null to clear.
          */
-        public void addError(L10NHelpers.UnlocalizedString error);
+        public void addError(ITextComponent error);
 
     }
 

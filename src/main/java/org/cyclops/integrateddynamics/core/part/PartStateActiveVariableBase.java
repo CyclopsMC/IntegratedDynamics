@@ -4,14 +4,16 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -26,7 +28,6 @@ import org.cyclops.integrateddynamics.capability.variablecontainer.VariableConta
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * An abstract part state with a focus on activatable variables.
@@ -41,13 +42,13 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     @Setter
     private boolean deactivated = false;
     private SimpleInventory inventory;
-    private List<L10NHelpers.UnlocalizedString> globalErrorMessages = Lists.newLinkedList();
+    private List<ITextComponent> globalErrorMessages = Lists.newLinkedList();
 
     public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
         this.inventory.addDirtyMarkListener(this); // No need to remove myself eventually. If I am removed, inv is also removed.
         variableContainer = new VariableContainerDefault();
-        addVolatileCapability(VariableContainerConfig.CAPABILITY, variableContainer);
+        addVolatileCapability(VariableContainerConfig.CAPABILITY, LazyOptional.of(() -> variableContainer));
     }
 
     /**
@@ -118,15 +119,14 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
 
         // Refresh any contained variables
         PartPos center = target.getCenter();
-        INetwork network = NetworkHelpers.getNetwork(center.getPos().getWorld(), center.getPos().getBlockPos(),
-                center.getSide());
-        variableContainer.refreshVariables(network, inventory, false);
+        NetworkHelpers.getNetwork(center.getPos().getWorld(true), center.getPos().getBlockPos(), center.getSide())
+                .ifPresent(network -> variableContainer.refreshVariables(network, inventory, false));
     }
 
     /**
      * @return All global error messages.
      */
-    public List<L10NHelpers.UnlocalizedString> getGlobalErrors() {
+    public List<ITextComponent> getGlobalErrors() {
         return globalErrorMessages;
     }
 
@@ -134,7 +134,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      * Add a global error message.
      * @param error The message to add.
      */
-    public void addGlobalError(L10NHelpers.UnlocalizedString error) {
+    public void addGlobalError(ITextComponent error) {
         if(error == null) {
             globalErrorMessages.clear();
         } else {
@@ -145,37 +145,36 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
+    public void writeToNBT(CompoundNBT tag) {
         super.writeToNBT(tag);
         NBTClassType.writeNbt(List.class, "globalErrorMessages", globalErrorMessages, tag);
-        inventory.writeToNBT(tag);
+        inventory.writeToNBT(tag, "inventory");
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void readFromNBT(CompoundNBT tag) {
         super.readFromNBT(tag);
         //noinspection unchecked
         this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag);
-        inventory.readFromNBT(tag);
+        inventory.readFromNBT(tag, "inventory");
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
-        return capability == ValueInterfaceConfig.CAPABILITY || super.hasCapability(capability, network, partNetwork, target);
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
         if (capability == ValueInterfaceConfig.CAPABILITY) {
-            return ValueInterfaceConfig.CAPABILITY.cast(() -> {
-                if (hasVariable()) {
-                    IVariable<IValue> variable = getVariable(network, partNetwork);
-                    if (variable != null) {
-                        return Optional.of(variable.getValue());
-                    }
+            if (hasVariable()) {
+                IVariable<IValue> variable = getVariable(network, partNetwork);
+                if (variable != null) {
+                    return LazyOptional.of(() -> {
+                        try {
+                            return variable.getValue();
+                        } catch (EvaluationException e) {
+                            return variable.getType().getDefault();
+                        }
+                    }).cast();
                 }
-                return Optional.empty();
-            });
+            }
+            return LazyOptional.empty();
         }
         return super.getCapability(capability, network, partNetwork, target);
     }
@@ -191,7 +190,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
          * @param size The amount of slots in the inventory.
          */
         public SingularInventory(int size) {
-            super(size, "stateInventory", 1);
+            super(size, 1);
         }
 
         protected boolean canInsert(int slot) {
@@ -224,7 +223,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         }
 
         @Override
-        public void addError(L10NHelpers.UnlocalizedString error) {
+        public void addError(ITextComponent error) {
             this.state.addGlobalError(error);
         }
 

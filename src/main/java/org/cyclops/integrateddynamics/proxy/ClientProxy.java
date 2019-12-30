@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.proxy;
 
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.cyclops.cyclopscore.client.key.IKeyRegistry;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
@@ -17,7 +18,7 @@ import org.cyclops.integrateddynamics.core.client.model.VariableLoader;
 import org.cyclops.integrateddynamics.core.ingredient.ItemMatchType;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Client Proxy
@@ -29,11 +30,11 @@ public class ClientProxy extends ClientProxyComponent {
 
     public static final KeyBinding FOCUS_LP_SEARCH = new KeyBinding(
             "key." + Reference.MOD_ID + ".logic_programmer_focus_search",
-            KeyConflictContext.GUI, KeyModifier.ALT, Keyboard.KEY_F,
+            KeyConflictContext.GUI, KeyModifier.ALT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_F,
             KEYBINDING_CATEGORY_NAME);
     public static final KeyBinding FOCUS_LP_RENAME = new KeyBinding(
             "key." + Reference.MOD_ID + ".logic_programmer_open_rename",
-            KeyConflictContext.GUI, KeyModifier.ALT, Keyboard.KEY_R,
+            KeyConflictContext.GUI, KeyModifier.ALT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_R,
             KEYBINDING_CATEGORY_NAME);
 
     public ClientProxy() {
@@ -62,9 +63,9 @@ public class ClientProxy extends ClientProxyComponent {
 
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent.Pre event) {
-        event.getMap().registerSprite(SlotVariable.VARIABLE_EMPTY);
+        event.getMap().getSprite(SlotVariable.VARIABLE_EMPTY);
         for (ItemMatchType itemMatchType : ItemMatchType.values()) {
-            event.getMap().registerSprite(itemMatchType.getSlotSpriteName());
+            event.getMap().getSprite(itemMatchType.getSlotSpriteName());
         }
     }
 }

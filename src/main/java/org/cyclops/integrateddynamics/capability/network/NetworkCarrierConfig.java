@@ -14,32 +14,17 @@ import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
  */
 public class NetworkCarrierConfig extends CapabilityConfig<INetworkCarrier> {
 
-    /**
-     * The unique instance.
-     */
-    public static NetworkCarrierConfig _instance;
-
     @CapabilityInject(INetworkCarrier.class)
     public static Capability<INetworkCarrier> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public NetworkCarrierConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "network_carrier",
-                "Capability that can hold networks",
                 INetworkCarrier.class,
                 new DefaultCapabilityStorage<INetworkCarrier>(),
-                NetworkCarrierDefault.class
+                NetworkCarrierDefault::new
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

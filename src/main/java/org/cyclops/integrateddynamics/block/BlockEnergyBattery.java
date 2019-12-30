@@ -1,20 +1,16 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.block.property.BlockProperty;
 import org.cyclops.cyclopscore.client.icon.Icon;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 
 /**
@@ -24,60 +20,36 @@ import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCap
  */
 public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
-    // TODO: remove in 1.13
-    @Deprecated
-    @BlockProperty
-    public static final PropertyInteger FILL = PropertyInteger.create("fill", 0, 3);
-
     @Icon(location = "blocks/energy_battery_overlay_side_2")
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public TextureAtlasSprite iconOverlay;
 
-    private static BlockEnergyBattery _instance = null;
-
-    /**
-     * Get the unique instance.
-     *
-     * @return The instance.
-     */
-    public static BlockEnergyBattery getInstance() {
-        return _instance;
-    }
-
-    /**
-     * Make a new block instance.
-     *
-     * @param eConfig Config for this block.
-     */
-    public BlockEnergyBattery(ExtendedConfig<BlockConfig> eConfig) {
-        super(eConfig);
-
-        setHardness(5.0F);
-        setSoundType(SoundType.METAL);
-
+    public BlockEnergyBattery(Block.Properties properties) {
+        super(properties);
         if(MinecraftHelpers.isClientSide()) {
-            eConfig.getMod().getIconProvider().registerIconHolderObject(this);
+            IntegratedDynamics._instance.getIconProvider().registerIconHolderObject(this);
         }
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        if (!BlockHelpers.isValidCreativeTab(this, tab)) return;
-        ItemStack itemStack = new ItemStack(this);
+    public void fillItemGroup(ItemGroup tab, NonNullList<ItemStack> list) {
+        if (MinecraftHelpers.isMinecraftInitialized()) {
+            ItemStack itemStack = new ItemStack(this);
 
-        int capacityOriginal = BlockEnergyBatteryConfig.capacity;
-        int capacity = capacityOriginal;
-        int lastCapacity;
-        do{
-            ItemStack currentStack = itemStack.copy();
-            IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) currentStack.getCapability(CapabilityEnergy.ENERGY, null);
-            energyStorage.setCapacity(capacity);
-            list.add(currentStack.copy());
-            fill(energyStorage);
-            list.add(currentStack.copy());
-            lastCapacity = capacity;
-            capacity = capacity << 2;
-        } while(capacity < Math.min(BlockEnergyBatteryConfig.maxCreativeCapacity, BlockEnergyBatteryConfig.maxCapacity) && capacity > lastCapacity);
+            int capacityOriginal = BlockEnergyBatteryConfig.capacity;
+            int capacity = capacityOriginal;
+            int lastCapacity;
+            do {
+                ItemStack currentStack = itemStack.copy();
+                IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) currentStack.getCapability(CapabilityEnergy.ENERGY).orElse(null);
+                energyStorage.setCapacity(capacity);
+                list.add(currentStack.copy());
+                fill(energyStorage);
+                list.add(currentStack.copy());
+                lastCapacity = capacity;
+                capacity = capacity << 2;
+            } while (capacity < Math.min(BlockEnergyBatteryConfig.maxCreativeCapacity, BlockEnergyBatteryConfig.maxCapacity) && capacity > lastCapacity);
+        }
     }
 
     public boolean isCreative() {

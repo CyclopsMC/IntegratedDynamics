@@ -1,7 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.item.ItemBlock;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainerAutoSupply;
 
@@ -9,28 +12,18 @@ import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainerAutoSupp
  * Config for {@link BlockCreativeEnergyBattery}.
  * @author rubensworks
  */
-public class BlockCreativeEnergyBatteryConfig extends BlockContainerConfig {
+public class BlockCreativeEnergyBatteryConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockCreativeEnergyBatteryConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockCreativeEnergyBatteryConfig() {
         super(
-            IntegratedDynamics._instance,
-            true,
-            "creative_energy_battery",
-            null,
-            BlockCreativeEnergyBattery.class
+                IntegratedDynamics._instance,
+                "energy_battery_creative",
+                eConfig -> new BlockCreativeEnergyBattery(Block.Properties.create(Material.ANVIL)
+                        .sound(SoundType.METAL)
+                        .hardnessAndResistance(5.0F)),
+                (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block,
+                        (new Item.Properties()).group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 
-    @Override
-    public Class<? extends ItemBlock> getItemBlockClass() {
-        return ItemBlockEnergyContainerAutoSupply.class;
-    }
 }

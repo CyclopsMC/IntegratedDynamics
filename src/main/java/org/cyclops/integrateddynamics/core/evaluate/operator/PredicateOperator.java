@@ -1,13 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
@@ -66,29 +62,29 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         }
 
         @Override
-        public String serialize(PredicateOperator<IValueType<IValue>, IValue> operator) {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("valueType", operator.inputType.getTranslationKey());
-            NBTTagList list = new NBTTagList();
+        public INBT serialize(PredicateOperator<IValueType<IValue>, IValue> operator) {
+            CompoundNBT tag = new CompoundNBT();
+            tag.putString("valueType", operator.inputType.getTranslationKey());
+            ListNBT list = new ListNBT();
             for (IValue rawValue : operator.rawValues) {
-                list.appendTag(new NBTTagString(operator.inputType.serialize(rawValue)));
+                list.add(operator.inputType.serialize(rawValue));
             }
-            tag.setTag("values", list);
-            return tag.toString();
+            tag.put("values", list);
+            return tag;
         }
 
         @Override
-        public PredicateOperator<IValueType<IValue>, IValue> deserialize(String value) throws EvaluationException {
+        public PredicateOperator<IValueType<IValue>, IValue> deserialize(INBT value) throws EvaluationException {
             try {
-                NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
+                CompoundNBT tag = (CompoundNBT) value;
                 IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
-                NBTTagList list = tag.getTagList("values", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal());
+                ListNBT list = (ListNBT) tag.get("values");
                 List<IValue> values = Lists.newArrayList();
-                for (NBTBase subTag : list) {
-                    values.add(ValueHelpers.deserializeRaw(valueType, ((NBTTagString) subTag).getString()));
+                for (INBT subTag : list) {
+                    values.add(ValueHelpers.deserializeRaw(valueType, subTag));
                 }
                 return new PredicateOperator<>(valueType, values);
-            } catch (NBTException e) {
+            } catch (ClassCastException e) {
                 throw new EvaluationException(String.format("Something went wrong while deserializing '%s'.", value));
             }
         }

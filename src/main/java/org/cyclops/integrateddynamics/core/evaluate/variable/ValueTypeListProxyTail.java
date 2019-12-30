@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -43,13 +43,13 @@ public class ValueTypeListProxyTail<T extends IValueType<V>, V extends IValue> e
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyTail<IValueType<IValue>, IValue> value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.setString("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
+        protected void serializeNbt(ValueTypeListProxyTail<IValueType<IValue>, IValue> value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
         }
 
         @Override
-        protected ValueTypeListProxyTail<IValueType<IValue>, IValue> deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
-            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
+        protected ValueTypeListProxyTail<IValueType<IValue>, IValue> deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
+            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.get("sublist"));
             return new ValueTypeListProxyTail<>(list);
         }
     }

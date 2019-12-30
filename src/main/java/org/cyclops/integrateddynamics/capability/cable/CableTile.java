@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;

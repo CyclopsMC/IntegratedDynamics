@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.capability.partcontainer;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.world.World;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.core.block.ICollidable;
+import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import javax.annotation.Nullable;
@@ -55,10 +56,12 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
 
     @Nullable
     @Override
-    public EnumFacing getWatchingSide(World world, BlockPos pos, EntityPlayer player) {
-        ICollidable.RayTraceResult<EnumFacing> rayTraceResult = ((BlockCable) world.getBlockState(pos).getBlock()).doRayTrace(world, pos, player);
+    public Direction getWatchingSide(World world, BlockPos pos, PlayerEntity player) {
+        BlockRayTraceResultComponent rayTraceResult = ((BlockCable) world.getBlockState(pos).getBlock())
+                .getShape(world.getBlockState(pos), world, pos, ISelectionContext.forEntity(player))
+                .rayTrace(pos, player);
         if(rayTraceResult != null) {
-            return rayTraceResult.getPositionHit();
+            return rayTraceResult.getFace();
         }
         return null;
     }

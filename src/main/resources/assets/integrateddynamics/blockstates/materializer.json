@@ -1,13 +1,8 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "transform": "forge:default-block"
-  },
   "variants": {
-    "facing=south": { "model": "integrateddynamics:materializer" },
-    "facing=west" : { "model": "integrateddynamics:materializer", "y": 90 },
-    "facing=north": { "model": "integrateddynamics:materializer", "y": 180 },
-    "facing=east" : { "model": "integrateddynamics:materializer", "y": 270 },
-    "inventory"   : { "model": "integrateddynamics:materializer" }
+    "facing=south": { "model": "integrateddynamics:block/materializer" },
+    "facing=west" : { "model": "integrateddynamics:block/materializer", "y": 90 },
+    "facing=north": { "model": "integrateddynamics:block/materializer", "y": 180 },
+    "facing=east" : { "model": "integrateddynamics:block/materializer", "y": 270 }
   }
 }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.client.render.valuetype;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
  * Registry for {@link IValueTypeWorldRenderer}.
  * @author rubensworks
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public interface IValueTypeWorldRendererRegistry extends IRegistry {
 
     /**

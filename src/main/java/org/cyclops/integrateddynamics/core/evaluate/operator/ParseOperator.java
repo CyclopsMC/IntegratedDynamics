@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -42,9 +44,9 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   }
 
   @Override
-  public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
-    lines.add(L10NHelpers.localize("operator.operators.integrateddynamics.parse.tooltip",
-        L10NHelpers.localize(to.getTranslationKey()))
+  public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
+    lines.add(new TranslationTextComponent("operator.operators.integrateddynamics.parse.tooltip",
+            new TranslationTextComponent(to.getTranslationKey()))
     );
     super.loadTooltip(lines, appendOptionalInfo);
   }

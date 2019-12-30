@@ -1,11 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -142,16 +145,12 @@ public class ValueHelpers {
     }
 
     /**
-     * Serialize the given value to a raw string.
+     * Serialize the given value to a raw tag without its value type.
      * @param value The value.
      * @return The NBT tag.
      */
-    public static String serializeRaw(IValue value) {
-        String raw = value.getType().serialize(value);
-        if (raw.length() >= GeneralConfig.maxValueByteSize) {
-            return "TOO LONG";
-        }
-        return raw;
+    public static INBT serializeRaw(IValue value) {
+        return value.getType().serialize(value);
     }
 
     /**
@@ -159,10 +158,10 @@ public class ValueHelpers {
      * @param value The value.
      * @return The NBT tag.
      */
-    public static NBTTagCompound serialize(IValue value) {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("valueType", value.getType().getTranslationKey());
-        tag.setString("value", serializeRaw(value));
+    public static CompoundNBT serialize(IValue value) {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString("valueType", value.getType().getTranslationKey());
+        tag.put("value", serializeRaw(value));
         return tag;
     }
 
@@ -171,26 +170,52 @@ public class ValueHelpers {
      * @param tag The NBT tag containing a value.
      * @return The value.
      */
-    public static IValue deserialize(NBTTagCompound tag) {
+    public static IValue deserialize(CompoundNBT tag) {
         IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
         if (valueType == null) {
             return null;
         }
-        return deserializeRaw(valueType, tag.getString("value"));
+        return deserializeRaw(valueType, tag.get("value"));
     }
 
     /**
      * Deserialize the given value string to a value.
-     * @param valueType The value type to deserialize for.
-     * @param valueString The value string.
      * @param <T> The type of value.
+     * @param valueType The value type to deserialize for.
+     * @param valueString The value tag.
      * @return The value.
      */
-    public static <T extends IValue> T deserializeRaw(IValueType<T> valueType, String valueString) {
-        if ("TOO LONG".equals(valueString)) {
-            return valueType.getDefault();
-        }
+    public static <T extends IValue> T deserializeRaw(IValueType<T> valueType, INBT valueString) {
         return valueType.deserialize(valueString);
+    }
+
+    /**
+     * Get the string representation of the given value.
+     * This is useful for cases when the value needs to be edited in a GUI.
+     *
+     * This corresponds to {@link #parseString(IValueType, String)}.
+     *
+     * @param value A value.
+     * @param <T> The value type.
+     * @return A string representation of the given value.
+     */
+    public static <T extends IValue> String toString(T value) {
+        return value.getType().toString(value);
+    }
+
+    /**
+     * Parse the given string representation of a value.
+     *
+     * This corresponds to {@link #toString(IValue)}.
+     *
+     * @param valueType The value type to parse by.
+     * @param value A string representation of a value.
+     * @param <T> The value type.
+     * @return A value.
+     * @throws EvaluationException If parsing failed.
+     */
+    public static <T extends IValue> T parseString(IValueType<T> valueType, String value) throws EvaluationException {
+        return valueType.parseString(value);
     }
 
     /**
@@ -201,11 +226,11 @@ public class ValueHelpers {
      */
     public static void validatePredicateOutput(IOperator predicate, IValue result) throws EvaluationException {
         if (!(result instanceof ValueTypeBoolean.ValueBoolean)) {
-            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+            ITextComponent error = new TranslationTextComponent(
                     L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
                     predicate.getLocalizedNameFull(),
                     result.getType(), ValueTypes.BOOLEAN);
-            throw new EvaluationException(error.localize());
+            throw new EvaluationException(error);
         }
     }
 
@@ -214,18 +239,18 @@ public class ValueHelpers {
      * @param variable A nullable variable.
      * @return A pair of a string and color.
      */
-    public static Pair<String, Integer> getSafeReadableValue(@Nullable IVariable variable) {
-        String readValue = "";
+    public static Pair<ITextComponent, Integer> getSafeReadableValue(@Nullable IVariable variable) {
+        ITextComponent readValue = new StringTextComponent("");
         int readValueColor = 0;
         if (!NetworkHelpers.shouldWork()) {
-            readValue = "SAFE-MODE";
+            readValue = new StringTextComponent("SAFE-MODE");
         } else if(variable != null) {
             try {
                 IValue value = variable.getValue();
                 readValue = value.getType().toCompactString(value);
                 readValueColor = value.getType().getDisplayColor();
             } catch (EvaluationException | NullPointerException | PartStateException e) {
-                readValue = "ERROR";
+                readValue = new StringTextComponent("ERROR");
                 readValueColor = Helpers.RGBToInt(255, 0, 0);
             }
         }

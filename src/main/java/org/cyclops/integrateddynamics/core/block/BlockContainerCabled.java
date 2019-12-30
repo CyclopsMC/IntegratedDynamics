@@ -1,100 +1,94 @@
 package org.cyclops.integrateddynamics.core.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import org.cyclops.cyclopscore.block.BlockTile;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 
+import java.util.function.Supplier;
+
 /**
  * A base block with part entity that can connect to cables.
  * @author rubensworks
  */
-public abstract class BlockContainerCabled extends ConfigurableBlockContainer {
+public abstract class BlockContainerCabled extends BlockTile {
 
-    /**
-     * Make a new block instance.
-     *
-     * @param eConfig Config for this block.
-     * @param tileEntity The part class
-     */
-    public BlockContainerCabled(ExtendedConfig<BlockConfig> eConfig, Class<? extends CyclopsTileEntity> tileEntity) {
-        super(eConfig, Material.ANVIL, tileEntity);
-
-        setHardness(5.0F);
-        setSoundType(SoundType.ANVIL);
+    public BlockContainerCabled(Block.Properties properties, Supplier<CyclopsTileEntity> tileEntitySupplier) {
+        super(properties, tileEntitySupplier);
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                                    EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+                                    BlockRayTraceResult blockRayTraceResult) {
         ItemStack heldItem = player.getHeldItem(hand);
-        if (!world.isRemote && WrenchHelpers.isWrench(player, heldItem, world, pos, side) && player.isSneaking()) {
-            destroyBlock(world, pos, true);
+        if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getFace()) && player.isSneaking()) {
+            world.destroyBlock(pos, true);
             return true;
         }
-        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
     }
 
     @Override
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        super.onBlockAdded(world, pos, state);
-        if (!world.isRemote) {
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onBlockAdded(state, world, pos, oldState, isMoving);
+        if (!world.isRemote()) {
             CableHelpers.onCableAdded(world, pos);
         }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        if (!world.isRemote) {
+        if (!world.isRemote()) {
             CableHelpers.onCableAddedByPlayer(world, pos, placer);
         }
     }
 
     @Override
-    protected void onPreBlockDestroyed(World world, BlockPos pos) {
-        CableHelpers.onCableRemoving(world, pos, true, false);
-        super.onPreBlockDestroyed(world, pos);
+    public void onPlayerDestroy(IWorld world, BlockPos blockPos, BlockState blockState) {
+        CableHelpers.onCableRemoving((World) world, blockPos, true, false);
+        super.onPlayerDestroy(world, blockPos, blockState);
+        CableHelpers.onCableRemoved((World) world, blockPos, CableHelpers.getExternallyConnectedCables((World) world, blockPos));
     }
 
     @Override
-    protected void onPostBlockDestroyed(World world, BlockPos pos) {
-        super.onPostBlockDestroyed(world, pos);
-        CableHelpers.onCableRemoved(world, pos, CableHelpers.getExternallyConnectedCables(world, pos));
+    public void onExplosionDestroy(World world, BlockPos blockPos, Explosion explosion) {
+        CableHelpers.onCableRemoving(world, blockPos, true, false);
+        super.onExplosionDestroy(world, blockPos, explosion);
+        CableHelpers.onCableRemoved(world, blockPos, CableHelpers.getExternallyConnectedCables(world, blockPos));
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
-        super.neighborChanged(state, world, pos, neighborBlock, fromPos);
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, world, pos, neighborBlock, fromPos, isMoving);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null, fromPos);
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        super.onNeighborChange(world, pos, neighbor);
+    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
+        super.onNeighborChange(state, world, pos, neighbor);
         if (world instanceof World) {
             NetworkHelpers.onElementProviderBlockNeighborChange((World) world, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
         }
     }
 
     @Override
-    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
+    public void observedNeighborChange(BlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
         super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null, changedBlockPos);
     }

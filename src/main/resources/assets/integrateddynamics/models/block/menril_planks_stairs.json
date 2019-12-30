@@ -1,0 +1,8 @@
+{
+  "parent": "block/stairs",
+  "textures": {
+    "bottom": "integrateddynamics:block/menril_planks",
+    "top": "integrateddynamics:block/menril_planks",
+    "side": "integrateddynamics:block/menril_planks"
+  }
+}

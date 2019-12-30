@@ -11,10 +11,10 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 public abstract class ValueObjectTypeBase<V extends IValue> extends ValueTypeBase<V> {
 
     public ValueObjectTypeBase(String typeName) {
-        this(typeName, Helpers.RGBToInt(243, 243, 243), TextFormatting.GRAY.toString());
+        this(typeName, Helpers.RGBToInt(243, 243, 243), TextFormatting.GRAY);
     }
 
-    public ValueObjectTypeBase(String typeName, int color, String colorFormat) {
+    public ValueObjectTypeBase(String typeName, int color, TextFormatting colorFormat) {
         super(typeName, color, colorFormat);
     }
 

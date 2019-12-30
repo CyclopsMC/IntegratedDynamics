@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.item;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.Rarity;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
-import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -11,33 +12,20 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemOnTheDynamicsOfIntegrationConfig extends ItemConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static ItemOnTheDynamicsOfIntegrationConfig _instance;
-
-    /**
-     * If the info book can give item rewards for tutorial completion.
-     */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.ITEM, comment = "If the info book can give item rewards for tutorial completion.")
+    @ConfigurableProperty(category = "item", comment = "If the info book can give item rewards for tutorial completion.")
     public static boolean bookRewards = true;
 
-    /**
-     * If the info book should automatically obtained when the player first spawns.
-     */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.ITEM, comment = "If the info book should automatically obtained when the player first spawns.")
+    @ConfigurableProperty(category = "item", comment = "If the info book should automatically obtained when the player first spawns.")
     public static boolean obtainOnSpawn = true;
 
-    /**
-     * Make a new instance.
-     */
     public ItemOnTheDynamicsOfIntegrationConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "on_the_dynamics_of_integration",
-                null,
-                ItemOnTheDynamicsOfIntegration.class
+                eConfig -> new ItemOnTheDynamicsOfIntegration(new Item.Properties()
+                        .maxStackSize(1)
+                        .rarity(Rarity.UNCOMMON)
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 

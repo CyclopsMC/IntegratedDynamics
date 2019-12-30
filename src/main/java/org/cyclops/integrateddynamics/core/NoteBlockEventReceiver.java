@@ -2,10 +2,11 @@ package org.cyclops.integrateddynamics.core;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.state.properties.NoteBlockInstrument;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
  * Captures note block events for one tick.
@@ -14,8 +15,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public final class NoteBlockEventReceiver {
 
     private static NoteBlockEventReceiver INSTANCE;
-    private Multimap<NoteBlockEvent.Instrument, NoteBlockEvent.Play> previousEvents = HashMultimap.create();
-    private Multimap<NoteBlockEvent.Instrument, NoteBlockEvent.Play> currentEvents = HashMultimap.create();
+    private Multimap<NoteBlockInstrument, NoteBlockEvent.Play> previousEvents = HashMultimap.create();
+    private Multimap<NoteBlockInstrument, NoteBlockEvent.Play> currentEvents = HashMultimap.create();
 
     private NoteBlockEventReceiver() {
 
@@ -38,14 +39,14 @@ public final class NoteBlockEventReceiver {
     @SubscribeEvent
     public void onTick(TickEvent event) {
         if(event.type == TickEvent.Type.SERVER && event.phase == TickEvent.Phase.START) {
-            Multimap<NoteBlockEvent.Instrument, NoteBlockEvent.Play> tmp = previousEvents;
+            Multimap<NoteBlockInstrument, NoteBlockEvent.Play> tmp = previousEvents;
             previousEvents.clear();
             previousEvents = currentEvents;
             currentEvents = tmp;
         }
     }
 
-    public Multimap<NoteBlockEvent.Instrument, NoteBlockEvent.Play> getEvents() {
+    public Multimap<NoteBlockInstrument, NoteBlockEvent.Play> getEvents() {
         return previousEvents;
     }
 }

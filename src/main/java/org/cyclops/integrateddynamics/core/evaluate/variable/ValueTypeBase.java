@@ -1,8 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.Reference;
@@ -24,11 +28,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     private final String typeName;
     private final int color;
-    private final String colorFormat;
+    private final TextFormatting colorFormat;
 
     private String translationKey = null;
 
-    public ValueTypeBase(String typeName, int color, String colorFormat) {
+    public ValueTypeBase(String typeName, int color, TextFormatting colorFormat) {
         this.typeName = typeName;
         this.color = color;
         this.colorFormat = colorFormat;
@@ -71,7 +75,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public String getDisplayColorFormat() {
+    public TextFormatting getDisplayColorFormat() {
         return this.colorFormat;
     }
 
@@ -80,34 +84,44 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         return this == valueType;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected void registerModelResourceLocation() {
         ValueTypes.REGISTRY.registerValueTypeModel(this,
                 new ResourceLocation(getModId() + ":valuetype" + getTypeNamespace().replace('.', '/') + getTypeName().replace('.', '/')));
     }
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo, @Nullable V value) {
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, @Nullable V value) {
         String typeName = L10NHelpers.localize(getTranslationKey());
-        lines.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
+        lines.add(new TranslationTextComponent(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString canDeserialize(String value) {
+    public ITextComponent canDeserialize(INBT value) {
         try {
             deserialize(value);
             return null;
         } catch (IllegalArgumentException e) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);
+            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);
         }
     }
 
     @Override
     public V materialize(V value) throws EvaluationException {
         return value;
+    }
+
+    @Override
+    public V parseString(String value) throws EvaluationException {
+        throw new UnsupportedOperationException("parseString is not supported on value type " + this);
+    }
+
+    @Override
+    public String toString(V value) {
+        throw new UnsupportedOperationException("toString is not supported on value type " + this);
     }
 
     @Override

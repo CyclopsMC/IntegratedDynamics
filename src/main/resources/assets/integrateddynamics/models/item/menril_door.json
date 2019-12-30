@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:items/door_menril"
+    "layer0": "integrateddynamics:item/door_menril"
   }
 }

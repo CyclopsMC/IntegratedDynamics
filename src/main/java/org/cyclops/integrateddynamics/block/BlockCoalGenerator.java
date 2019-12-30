@@ -1,68 +1,52 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.Container;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.block.property.BlockProperty;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.client.gui.GuiCoalGenerator;
-import org.cyclops.integrateddynamics.core.block.BlockContainerGuiCabled;
-import org.cyclops.integrateddynamics.inventory.container.ContainerCoalGenerator;
+import org.cyclops.integrateddynamics.core.block.BlockTileGuiCabled;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 
 /**
  * A block that can generate energy from coal.
  * @author rubensworks
  */
-public class BlockCoalGenerator extends BlockContainerGuiCabled {
+public class BlockCoalGenerator extends BlockTileGuiCabled {
 
-    @BlockProperty
-    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    @BlockProperty
-    public static final PropertyBool ON = PropertyBool.create("on");
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
-    private static BlockCoalGenerator _instance = null;
+    public BlockCoalGenerator(Properties properties) {
+        super(properties, TileCoalGenerator::new);
 
-    /**
-     * Get the unique instance.
-     *
-     * @return The instance.
-     */
-    public static BlockCoalGenerator getInstance() {
-        return _instance;
-    }
-
-    /**
-     * Make a new block instance.
-     *
-     * @param eConfig Config for this block.
-     */
-    public BlockCoalGenerator(ExtendedConfig<BlockConfig> eConfig) {
-        super(eConfig, TileCoalGenerator.class);
+        this.setDefaultState(this.stateContainer.getBaseState()
+                .with(FACING, Direction.NORTH)
+                .with(LIT, false));
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING, LIT);
+    }
+
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        TileHelpers.getSafeTile(world, pos, TileCoalGenerator.class).updateBlockState();
+        TileHelpers.getSafeTile(world, pos, TileCoalGenerator.class)
+                .ifPresent(TileCoalGenerator::updateBlockState);
     }
 
-    @Override
-    public Class<? extends Container> getContainer() {
-        return ContainerCoalGenerator.class;
-    }
-
-    @Override
-    public Class<? extends GuiScreen> getGui() {
-        return GuiCoalGenerator.class;
-    }
 }

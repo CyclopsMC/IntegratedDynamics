@@ -15,32 +15,17 @@ import org.cyclops.integrateddynamics.core.network.PartNetwork;
  */
 public class PartNetworkConfig extends CapabilityConfig<IPartNetwork> {
 
-    /**
-     * The unique instance.
-     */
-    public static PartNetworkConfig _instance;
-
     @CapabilityInject(IPartNetwork.class)
     public static Capability<IPartNetwork> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public PartNetworkConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "part_network",
-                "A capability for adding parts to a network.",
                 IPartNetwork.class,
                 new DefaultCapabilityStorage<IPartNetwork>(),
-                PartNetwork.class
+                PartNetwork::new
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.item;
 
+import net.minecraft.item.Item;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -9,21 +10,12 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemFacadeConfig extends ItemConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static ItemFacadeConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public ItemFacadeConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "facade",
-                null,
-                ItemFacade.class
+                eConfig -> new ItemFacade(new Item.Properties()
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 

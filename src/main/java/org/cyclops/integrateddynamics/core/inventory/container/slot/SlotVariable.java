@@ -4,7 +4,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.item.ItemVariable;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Slot for a variable item.
@@ -23,7 +23,7 @@ public class SlotVariable extends SlotSingleItem {
      * @param y         Y coordinate.
      */
     public SlotVariable(IInventory inventory, int index, int x, int y) {
-        super(inventory, index, x, y, ItemVariable.getInstance());
+        super(inventory, index, x, y, RegistryEntries.ITEM_VARIABLE);
         setBackgroundName(SlotVariable.VARIABLE_EMPTY.toString());
     }
 }

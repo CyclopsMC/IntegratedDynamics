@@ -1,11 +1,12 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
 import com.google.common.collect.Sets;
-import net.minecraft.nbt.NBTTagCompound;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -32,15 +33,12 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
     private final InventoryVariableEvaluator<IValue> evaluator;
 
-    public TileActiveVariableBase(int inventorySize, String inventoryName) {
-        super(inventorySize, inventoryName, 1);
-        inventory.addDirtyMarkListener(this);
-        addCapabilityInternal(ValueInterfaceConfig.CAPABILITY, () -> {
+    public TileActiveVariableBase(TileEntityType<?> type, int inventorySize) {
+        super(type, inventorySize, 1);
+        getInventory().addDirtyMarkListener(this);
+        addCapabilityInternal(ValueInterfaceConfig.CAPABILITY, LazyOptional.of(() -> () -> {
             INetwork network = getNetwork();
-            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-            if (network == null || partNetwork == null) {
-                throw new EvaluationException("No valid network was found");
-            }
+            IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
             if (hasVariable()) {
                 IVariable<?> variable = getVariable(partNetwork);
                 if (variable != null) {
@@ -48,13 +46,13 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
                 }
             }
             return Optional.empty();
-        });
+        }));
 
         this.evaluator = createEvaluator();
     }
 
     protected InventoryVariableEvaluator<IValue> createEvaluator() {
-        return new InventoryVariableEvaluator<>(this, getSlotRead(), ValueTypes.CATEGORY_ANY);
+        return new InventoryVariableEvaluator<>(this.getInventory(), getSlotRead(), ValueTypes.CATEGORY_ANY);
     }
 
     public InventoryVariableEvaluator getEvaluator() {
@@ -62,22 +60,22 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        List<L10NHelpers.UnlocalizedString> errors = evaluator.getErrors();
+    public CompoundNBT write(CompoundNBT tag) {
+        List<ITextComponent> errors = evaluator.getErrors();
         NBTClassType.writeNbt(List.class, "errors", errors, tag);
-        return super.writeToNBT(tag);
+        return super.write(tag);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void read(CompoundNBT tag) {
         evaluator.setErrors(NBTClassType.readNbt(List.class, "errors", tag));
-        super.readFromNBT(tag);
+        super.read(tag);
     }
 
     public abstract int getSlotRead();
 
     public boolean hasVariable() {
-        return !getStackInSlot(getSlotRead()).isEmpty();
+        return !getInventory().getStackInSlot(getSlotRead()).isEmpty();
     }
 
     protected void updateReadVariable(boolean sendVariablesUpdateEvent) {
@@ -87,7 +85,7 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
     @Override
     public void onDirty() {
-        if(!world.isRemote) {
+        if(!world.isRemote()) {
             updateReadVariable(true);
         }
     }

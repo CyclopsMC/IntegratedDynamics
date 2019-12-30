@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.capability.variablecontainer;
 import com.google.common.collect.Maps;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -30,15 +31,14 @@ public class VariableContainerDefault implements IVariableContainer {
     @Override
     public void refreshVariables(INetwork network, IInventory inventory, boolean sendVariablesUpdateEvent){
         // Invalidate variables
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-        if (partNetwork != null) {
+        NetworkHelpers.getPartNetwork(network).ifPresent(partNetwork -> {
             for (IVariableFacade variableFacade : getVariableCache().values()) {
                 IVariable<?> variable = variableFacade.getVariable(partNetwork);
                 if (variable != null) {
                     variable.invalidate();
                 }
             }
-        }
+        });
 
         // Reset variable facades in inventory
         getVariableCache().clear();
@@ -46,7 +46,7 @@ public class VariableContainerDefault implements IVariableContainer {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack itemStack = inventory.getStackInSlot(i);
             if (!itemStack.isEmpty()) {
-                IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
+                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
                 if (variableFacade != null) {
                     if (variableFacade.isValid()) {
                         getVariableCache().put(variableFacade.getId(), variableFacade);

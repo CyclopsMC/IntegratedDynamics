@@ -1,11 +1,7 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
+import net.minecraft.item.Item;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -15,44 +11,13 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemVariableTransformerConfig extends ItemConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static ItemVariableTransformerConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
-    public ItemVariableTransformerConfig() {
+    public ItemVariableTransformerConfig(boolean input) {
         super(
                 IntegratedDynamics._instance,
-                true,
-                "variable_transformer",
-                null,
-                null
+                "variable_transformer_" + (input ? "input" : "output"),
+                eConfig -> new Item(new Item.Properties()
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
-    }
-
-    @Override
-    protected ConfigurableItem initSubInstance() {
-        return (ConfigurableItem) new ConfigurableItem(this) {
-            @Override
-            public String getTranslationKey(ItemStack itemStack) {
-                return super.getTranslationKey(itemStack) + (itemStack.getMetadata() == 0 ? ".output" : ".input");
-            }
-
-            @Override
-            public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-                if (!ItemStackHelpers.isValidCreativeTab(this, tab)) return;
-                super.getSubItems(tab, subItems);
-                subItems.add(new ItemStack(this, 1, 1));
-            }
-        }.setHasSubtypes(true).setMaxDamage(0);
-    }
-
-    @Override
-    public String getModelName(ItemStack itemStack) {
-        return super.getModelName(itemStack) + (itemStack.getMetadata() == 0 ? "_output" : "_input");
     }
     
 }

@@ -19,7 +19,7 @@ public abstract class PartTypePanel<P extends PartTypePanel<P, S>, S extends IPa
 
     @Override
     protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus(blockConfig);
+        return new IgnoredBlockStatus();
     }
 
 }

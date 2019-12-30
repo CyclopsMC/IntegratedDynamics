@@ -4,22 +4,29 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -31,8 +38,8 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartTypeActiveVariable;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.client.gui.GuiPartDisplay;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -40,15 +47,19 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
+import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
+import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A panel part that is driven by a contained variable.
@@ -62,26 +73,16 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
     @Override
     protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus(blockConfig);
+        return new IgnoredBlockStatus();
     }
 
     @Override
     protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
         Map<Class<? extends INetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
-        actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
-            @Override
-            public void onAction(INetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
-                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-                onVariableContentsUpdated(partNetwork, target, state);
-            }
-        });
-        actions.put(NetworkElementAddEvent.Post.class, new IEventAction<P, S, NetworkElementAddEvent.Post>() {
-            @Override
-            public void onAction(INetwork network, PartTarget target, S state, NetworkElementAddEvent.Post event) {
-                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-                onVariableContentsUpdated(partNetwork, target, state);
-            }
-        });
+        IEventAction<P, S, VariableContentsUpdatedEvent> updateEventListener = (network, target, state, event) -> NetworkHelpers
+                .getPartNetwork(network).ifPresent(partNetwork -> onVariableContentsUpdated(partNetwork, target, state));
+        actions.put(VariableContentsUpdatedEvent.class, updateEventListener);
+        actions.put(NetworkElementAddEvent.Post.class, updateEventListener);
         return actions;
     }
 
@@ -128,7 +129,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
                 }
             } catch (EvaluationException e) {
-                state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
+                state.addGlobalError(new TranslationTextComponent(e.getLocalizedMessage()));
             }
         }
         if(!ValueHelpers.areValuesEqual(lastValue, newValue)) {
@@ -147,7 +148,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             // tick-1: Part tick: update the value again, the old value has still not been sent here!
             // tick-1: -- send all block updates to client --- This will contain the value that was set in tick-1.
             state.onDirty();
-            BlockHelpers.markForUpdate(target.getCenter().getPos().getWorld(), target.getCenter().getPos().getBlockPos());
+            BlockHelpers.markForUpdate(target.getCenter().getPos().getWorld(true), target.getCenter().getPos().getBlockPos());
         }
     }
 
@@ -180,25 +181,39 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 }
                 materializedValue = newValue.getType().materialize(newValue);
             } catch (EvaluationException e) {
-                state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
+                state.addGlobalError(new TranslationTextComponent(e.getLocalizedMessage()));
             }
             state.setDisplayValue(materializedValue);
         }
     }
 
     @Override
-    protected boolean hasGui() {
-        return true;
+    public Optional<INamedContainerProvider> getContainerProvider(PartPos pos) {
+        return Optional.of(new INamedContainerProvider() {
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent(getTranslationKey());
+            }
+
+            @Nullable
+            @Override
+            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
+                PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
+                return new ContainerPartDisplay<>(id, playerInventory, partState.getInventory(),
+                        Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypePanelDisplay) data.getMiddle());
+            }
+        });
     }
 
     @Override
-    public Class<? extends Container> getContainer() {
-        return ContainerPartDisplay.class;
-    }
+    public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+        // Write inventory size
+        IPartContainer partContainer = PartHelpers.getPartContainerChecked(pos);
+        PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) partContainer.getPartState(pos.getSide());
+        packetBuffer.writeInt(partState.getInventory().getSizeInventory());
 
-    @Override
-    public Class<? extends GuiScreen> getGui() {
-        return GuiPartDisplay.class;
+        super.writeExtraGuiData(packetBuffer, pos, player);
     }
 
     protected IgnoredBlockStatus.Status getStatus(PartTypePanelVariableDriven.State state) {
@@ -214,12 +229,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer,
-                                     EnumFacing side) {
+    public BlockState getBlockState(IPartContainer partContainer,
+                                    Direction side) {
         IgnoredBlockStatus.Status status = getStatus(partContainer != null
                 ? (PartTypePanelVariableDriven.State) partContainer.getPartState(side) : null);
-        return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).
-                withProperty(IgnoredBlockStatus.STATUS, status);
+        return getBlock().getDefaultState()
+                .with(IgnoredBlock.FACING, side)
+                .with(IgnoredBlockStatus.STATUS, status);
     }
 
     protected void onVariableContentsUpdated(IPartNetwork network, PartTarget target, S state) {
@@ -227,40 +243,40 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, final S partState, EntityPlayer player, EnumHand hand,
-                                   ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
-            WrenchHelpers.wrench(player, heldItem, world, pos, side, new WrenchHelpers.IWrenchAction<Void>() {
+    public boolean onPartActivated(final S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
+                                   ItemStack heldItem, BlockRayTraceResult hit) {
+        if(WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getFace())) {
+            WrenchHelpers.wrench(player, heldItem, world, pos, hit.getFace(), new WrenchHelpers.IWrenchAction<Void>() {
                 @Override
-                public void onWrench(EntityPlayer player, BlockPos pos, Void parameter) {
-                    partState.setFacingRotation(partState.getFacingRotation().rotateAround(EnumFacing.Axis.Y));
+                public void onWrench(PlayerEntity player, BlockPos pos, Void parameter) {
+                    partState.setFacingRotation(partState.getFacingRotation().rotateAround(Direction.Axis.Y));
                 }
             });
             return true;
         }
-        return super.onPartActivated(world, pos, partState, player, hand, heldItem, side, hitX, hitY, hitZ);
+        return super.onPartActivated(partState, pos, world, player, hand, heldItem, hit);
     }
 
     @Override
-    public void loadTooltip(S state, List<String> lines) {
+    public void loadTooltip(S state, List<ITextComponent> lines) {
         if (!state.getInventory().isEmpty()) {
             if (state.hasVariable() && state.isEnabled()) {
                 IValue value = state.getDisplayValue();
                 if(value != null) {
                     IValueType valueType = value.getType();
-                    lines.add(L10NHelpers.localize(
+                    lines.add(new TranslationTextComponent(
                             L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
-                            valueType.getDisplayColorFormat() + valueType.toCompactString(value),
-                            L10NHelpers.localize(valueType.getTranslationKey())));
+                            valueType.toCompactString(value).applyTextStyle(valueType.getDisplayColorFormat()),
+                            new TranslationTextComponent(valueType.getTranslationKey())));
                 }
             } else {
-                lines.add(TextFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
-                for (L10NHelpers.UnlocalizedString error : state.getGlobalErrors()) {
-                    lines.add(TextFormatting.RED + error.localize());
+                lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS).applyTextStyle(TextFormatting.RED));
+                for (ITextComponent error : state.getGlobalErrors()) {
+                    lines.add(error.applyTextStyle(TextFormatting.RED));
                 }
             }
         } else {
-            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_INACTIVE));
+            lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_INACTIVE));
         }
         super.loadTooltip(state, lines);
     }
@@ -278,36 +294,36 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         private IValue displayValue;
         @Getter
         @Setter
-        private EnumFacing facingRotation = EnumFacing.NORTH;
+        private Direction facingRotation = Direction.NORTH;
 
         public State() {
             super(1);
         }
 
         @Override
-        public void writeToNBT(NBTTagCompound tag) {
+        public void writeToNBT(CompoundNBT tag) {
             super.writeToNBT(tag);
             IValue value = getDisplayValue();
             if(value != null) {
-                tag.setString("displayValueType", value.getType().getTranslationKey());
-                tag.setString("displayValue", ValueHelpers.serializeRaw(value));
+                tag.putString("displayValueType", value.getType().getTranslationKey());
+                tag.put("displayValue", ValueHelpers.serializeRaw(value));
             }
-            tag.setInteger("facingRotation", facingRotation.ordinal());
+            tag.putInt("facingRotation", facingRotation.ordinal());
         }
 
         @Override
-        public void readFromNBT(NBTTagCompound tag) {
+        public void readFromNBT(CompoundNBT tag) {
             super.readFromNBT(tag);
-            if(tag.hasKey("displayValueType", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())
-                    && tag.hasKey("displayValue", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
+            if(tag.contains("displayValueType", Constants.NBT.TAG_STRING)
+                    && tag.contains("displayValue", Constants.NBT.TAG_COMPOUND)) {
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("displayValueType"));
                 if(valueType != null) {
-                    String serializedValue = tag.getString("displayValue");
-                    L10NHelpers.UnlocalizedString deserializationError = valueType.canDeserialize(serializedValue);
+                    INBT serializedValue = tag.get("displayValue");
+                    ITextComponent deserializationError = valueType.canDeserialize(serializedValue);
                     if(deserializationError == null) {
                         setDisplayValue(ValueHelpers.deserializeRaw(valueType, serializedValue));
                     } else {
-                        IntegratedDynamics.clog(Level.ERROR, deserializationError.localize());
+                        IntegratedDynamics.clog(Level.ERROR, deserializationError.getString());
                     }
                 } else {
                     IntegratedDynamics.clog(Level.ERROR,
@@ -317,7 +333,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             } else {
                 setDisplayValue(null);
             }
-            facingRotation = EnumFacing.values()[Math.max(2, tag.getInteger("facingRotation"))];
+            facingRotation = Direction.values()[Math.max(2, tag.getInt("facingRotation"))];
         }
     }
 

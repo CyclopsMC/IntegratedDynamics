@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Network element for coal generators.
@@ -25,16 +26,13 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase implements I
 
     private final DimPos pos;
 
-    protected TileCoalGenerator getTile() {
-        return TileHelpers.getSafeTile(getPos().getWorld(), getPos().getBlockPos(), TileCoalGenerator.class);
+    protected Optional<TileCoalGenerator> getTile() {
+        return TileHelpers.getSafeTile(getPos(), TileCoalGenerator.class);
     }
 
     @Override
     public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
-        TileCoalGenerator tile = getTile();
-        if(tile != null) {
-            InventoryHelper.dropInventoryItems(getPos().getWorld(), getPos().getBlockPos(), tile.getInventory());
-        }
+        getTile().ifPresent(tile -> InventoryHelper.dropInventoryItems(getPos().getWorld(true), getPos().getBlockPos(), tile.getInventory()));
     }
 
     @Override

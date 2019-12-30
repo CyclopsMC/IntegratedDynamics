@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
 /**
@@ -34,7 +34,7 @@ public class FullNetworkListenerAdapter implements IFullNetworkListener {
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement, EnumFacing side) {
+    public boolean removePathElement(IPathElement pathElement, Direction side) {
         return true;
     }
 

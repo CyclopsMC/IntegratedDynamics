@@ -1,13 +1,8 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "transform": "forge:default-block"
-  },
   "variants": {
-    "facing=south": { "model": "integrateddynamics:logic_programmer" },
-    "facing=west" : { "model": "integrateddynamics:logic_programmer", "y": 90 },
-    "facing=north": { "model": "integrateddynamics:logic_programmer", "y": 180 },
-    "facing=east" : { "model": "integrateddynamics:logic_programmer", "y": 270 },
-    "inventory"   : { "model": "integrateddynamics:logic_programmer" }
+    "facing=south": { "model": "integrateddynamics:block/logic_programmer" },
+    "facing=west" : { "model": "integrateddynamics:block/logic_programmer", "y": 90 },
+    "facing=north": { "model": "integrateddynamics:block/logic_programmer", "y": 180 },
+    "facing=east" : { "model": "integrateddynamics:block/logic_programmer", "y": 270 }
   }
 }

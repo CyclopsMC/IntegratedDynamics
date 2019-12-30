@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Network element for coal generators.
@@ -31,7 +32,7 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
 
     @Override
     public int getId() {
-        return getTile().getProxyId();
+        return getTile().get().getProxyId();
     }
 
     @Override
@@ -42,17 +43,17 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
     @Override
     public boolean onNetworkAddition(INetwork network) {
         if(super.onNetworkAddition(network)) {
-            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-            if (partNetwork == null) {
-                return false;
-            }
-            if(!partNetwork.addProxy(getId(), getPos())) {
-                IntegratedDynamics.clog(Level.WARN, "A proxy already existed in the network, this is possibly a " +
-                        "result from item duplication.");
-                getTile().generateNewProxyId();
-                return partNetwork.addProxy(getId(), getPos());
-            }
-            return true;
+            return NetworkHelpers.getPartNetwork(network)
+                    .map(partNetwork -> {
+                        if(!partNetwork.addProxy(getId(), getPos())) {
+                            IntegratedDynamics.clog(Level.WARN, "A proxy already existed in the network, this is possibly a " +
+                                    "result from item duplication.");
+                            getTile().get().generateNewProxyId();
+                            return partNetwork.addProxy(getId(), getPos());
+                        }
+                        return true;
+                    })
+                    .orElse(false);
         }
         return false;
     }
@@ -60,10 +61,8 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
     @Override
     public void onNetworkRemoval(INetwork network) {
         super.onNetworkRemoval(network);
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-        if (partNetwork != null) {
-            partNetwork.removeProxy(getId());
-        }
+        NetworkHelpers.getPartNetwork(network)
+                .ifPresent(partNetwork -> partNetwork.removeProxy(getId()));
     }
 
     @Override
@@ -88,7 +87,7 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
 
     @Nullable
     @Override
-    public TileProxy getNetworkEventListener() {
+    public Optional<TileProxy> getNetworkEventListener() {
         return getTile();
     }
 

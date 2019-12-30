@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import lombok.Data;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.model.IBakedModel;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Map;

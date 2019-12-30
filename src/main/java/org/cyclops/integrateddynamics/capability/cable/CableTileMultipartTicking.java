@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -31,7 +31,7 @@ public class CableTileMultipartTicking extends CableTile<TileMultipartTicking> {
     }
 
     @Override
-    public boolean isForceDisconnected(EnumFacing side) {
+    public boolean isForceDisconnected(Direction side) {
         if(!tile.getCableFakeable().isRealCable() || tile.getPartContainer().hasPart(side)) return true;
         return super.isForceDisconnected(side);
     }

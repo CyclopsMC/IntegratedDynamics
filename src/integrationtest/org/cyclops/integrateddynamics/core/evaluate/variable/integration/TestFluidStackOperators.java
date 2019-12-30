@@ -318,7 +318,7 @@ public class TestFluidStackOperators {
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{eWater100Tag});
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("a", "abc");
+        tag.putString("a", "abc");
         TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue(), tag, "nbt(watertag) != null");
     }
 

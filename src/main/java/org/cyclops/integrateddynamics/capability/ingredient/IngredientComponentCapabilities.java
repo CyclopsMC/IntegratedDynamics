@@ -3,12 +3,14 @@ package org.cyclops.integrateddynamics.capability.ingredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.capability.IngredientComponentCapabilityAttacherAdapter;
 import org.cyclops.commoncapabilities.api.ingredient.capability.IngredientComponentCapabilityAttacherManager;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.ingredient.capability.IPositionedAddonsNetworkIngredientsHandler;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.PositionedAddonsNetworkIngredientsHandlerConfig;
 
@@ -26,7 +28,7 @@ public class IngredientComponentCapabilities {
         IngredientComponentCapabilityAttacherManager attacherManager = new IngredientComponentCapabilityAttacherManager();
 
         // Value handlers
-        ResourceLocation capabilityIngredientComponentValueHandler = new ResourceLocation(Reference.MOD_ID, "ingredientComponentValueHandler");
+        ResourceLocation capabilityIngredientComponentValueHandler = new ResourceLocation(Reference.MOD_ID, "ingredient_component_value_handler");
         attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<ItemStack, Integer>(INGREDIENT_ITEMSTACK_NAME, capabilityIngredientComponentValueHandler) {
             @Override
             public ICapabilityProvider createCapabilityProvider(IngredientComponent<ItemStack, Integer> ingredientComponent) {
@@ -50,7 +52,7 @@ public class IngredientComponentCapabilities {
         });
 
         // Network handler
-        ResourceLocation networkHandler = new ResourceLocation(Reference.MOD_ID, "networkHandler");
+        ResourceLocation networkHandler = new ResourceLocation(Reference.MOD_ID, "network_handler");
         attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<Integer, Boolean>(INGREDIENT_ENERGY_NAME, networkHandler) {
             @Override
             public ICapabilityProvider createCapabilityProvider(IngredientComponent<Integer, Boolean> ingredientComponent) {

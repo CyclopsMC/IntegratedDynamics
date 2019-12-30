@@ -1,15 +1,18 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Getter;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -19,14 +22,12 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
-import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
-import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
 
@@ -34,12 +35,12 @@ import java.util.List;
  * Element for value type.
  * @author rubensworks
  */
-public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgrammerElement<ISubGuiBox, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgrammerElement<ISubGuiBox, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     @Getter
     private final IValueType<?> valueType;
     @Getter
-    private GuiElementValueTypeString<GuiLogicProgrammerBase, ContainerLogicProgrammerBase> innerGuiElement;
+    private GuiElementValueTypeString<ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> innerGuiElement;
 
     public ValueTypeLPElementBase(IValueType<?> valueType) {
         this.valueType = valueType;
@@ -47,7 +48,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public void loadTooltip(List<String> lines) {
+    public void loadTooltip(List<ITextComponent> lines) {
         getInnerGuiElement().loadTooltip(lines);
     }
 
@@ -58,7 +59,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public String getMatchString() {
-        return getLocalizedNameFull().toLowerCase();
+        return getName().getString().toLowerCase();
     }
 
     @Override
@@ -72,8 +73,8 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public String getLocalizedNameFull() {
-        return L10NHelpers.localize(valueType.getTranslationKey());
+    public ITextComponent getName() {
+        return new TranslationTextComponent(valueType.getTranslationKey());
     }
 
     @Override
@@ -103,10 +104,10 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public ItemStack writeElement(EntityPlayer player, ItemStack itemStack) {
+    public ItemStack writeElement(PlayerEntity player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, ValueTypes.REGISTRY,
-                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player, BlockLogicProgrammer.getInstance());
+                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.getDefaultState());
     }
 
     @Override
@@ -136,11 +137,11 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
-        return itemStack.getItem() == ItemVariable.getInstance();
+        return itemStack.getItem() == RegistryEntries.ITEM_VARIABLE;
     }
 
     @Override
-    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player) {
         return false;
     }
 
@@ -150,7 +151,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public boolean isFocused(ISubGuiBox subGui) {
         if (subGui instanceof ValueTypeLPElementRenderPattern) {
             return ((ValueTypeLPElementRenderPattern) subGui).getSearchField().isFocused();
@@ -159,20 +160,20 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
         if (subGui instanceof ValueTypeLPElementRenderPattern) {
-            ((ValueTypeLPElementRenderPattern) subGui).getSearchField().setFocused(focused);
+            ((ValueTypeLPElementRenderPattern) subGui).getSearchField().focused = focused;
         }
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public abstract ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container);
+                                            ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container);
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setValueInGui(ISubGuiBox subGui) {
 
     }

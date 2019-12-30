@@ -2,11 +2,11 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import net.minecraft.advancements.critereon.AbstractCriterionInstance;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.cyclopscore.advancement.criterion.BaseCriterionTrigger;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
@@ -39,12 +39,12 @@ public class PartWriterAspectTrigger extends BaseCriterionTrigger<PartWriterAspe
 
     @SubscribeEvent
     public void onEvent(PartWriterAspectEvent event) {
-        if (event.getEntityPlayer() != null && event.getEntityPlayer() instanceof EntityPlayerMP) {
-            this.trigger((EntityPlayerMP) event.getEntityPlayer(), event);
+        if (event.getEntityPlayer() != null && event.getEntityPlayer() instanceof ServerPlayerEntity) {
+            this.trigger((ServerPlayerEntity) event.getEntityPlayer(), event);
         }
     }
 
-    public static class Instance extends AbstractCriterionInstance implements ICriterionInstanceTestable<PartWriterAspectEvent> {
+    public static class Instance extends CriterionInstance implements ICriterionInstanceTestable<PartWriterAspectEvent> {
         private final IPartType partType;
         private final IAspect aspect;
         private final VariablePredicate variablePredicate;
@@ -57,7 +57,7 @@ public class PartWriterAspectTrigger extends BaseCriterionTrigger<PartWriterAspe
             this.variablePredicate = variablePredicate;
         }
 
-        public boolean test(EntityPlayerMP player, PartWriterAspectEvent event) {
+        public boolean test(ServerPlayerEntity player, PartWriterAspectEvent event) {
             return (partType == null || event.getPartType() == partType)
                     && (aspect == null || event.getAspect() == aspect)
                     && variablePredicate.test(((IPartStateWriter) event.getPartState()).getVariable(event.getNetwork(), event.getPartNetwork()));

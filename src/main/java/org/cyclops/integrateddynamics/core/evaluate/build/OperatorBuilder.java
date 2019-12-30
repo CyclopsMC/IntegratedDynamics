@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.build;
 
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.util.text.ITextComponent;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -283,7 +283,7 @@ public class OperatorBuilder<O> {
         }
 
         @Override
-        public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input) {
+        public ITextComponent validateTypes(IValueType[] input) {
             return typeValidator != null
                     ? typeValidator.validateTypes(this, input)
                     : super.validateTypes(input);
@@ -304,7 +304,7 @@ public class OperatorBuilder<O> {
          * @param input The ordered input value types.
          * @return An error or null if valid.
          */
-        public L10NHelpers.UnlocalizedString validateTypes(OperatorBase operator, IValueType[] input);
+        public ITextComponent validateTypes(OperatorBase operator, IValueType[] input);
 
     }
 

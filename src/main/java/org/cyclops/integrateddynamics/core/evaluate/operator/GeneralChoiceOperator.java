@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -29,11 +31,11 @@ public class GeneralChoiceOperator extends GeneralOperator {
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input) {
+    public ITextComponent validateTypes(IValueType[] input) {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+            return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                     this.getOperatorName(), input.length, requiredInputLength);
         }
         // Input types checking
@@ -41,19 +43,19 @@ public class GeneralChoiceOperator extends GeneralOperator {
         for(int i = 0; i < requiredInputLength; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
-                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
+                return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
             if(i == 0 && !ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
-                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
                         Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getTranslationKey()));
             } else if(i == 1) {
                 temporarySecondInputType = inputType;
             } else if(i == 2) {
                 if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
-                    return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                            this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
-                            Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getTranslationKey()));
+                    return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                            this.getOperatorName(), new TranslationTextComponent(inputType.getTranslationKey()),
+                            Integer.toString(i), new TranslationTextComponent(temporarySecondInputType.getTranslationKey()));
                 }
             }
         }

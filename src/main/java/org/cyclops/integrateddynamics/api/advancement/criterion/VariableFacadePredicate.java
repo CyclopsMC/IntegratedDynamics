@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.api.advancement.criterion;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.util.JsonUtils;
+import net.minecraft.util.JSONUtils;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -38,12 +38,12 @@ public class VariableFacadePredicate<V extends IVariableFacade> {
 
     public static VariableFacadePredicate deserialize(@Nullable JsonElement element) {
         if (element != null && !element.isJsonNull()) {
-            JsonObject jsonobject = JsonUtils.getJsonObject(element, "variable_facade");
+            JsonObject jsonobject = JSONUtils.getJsonObject(element, "variable_facade");
             IVariableFacadeHandler handler;
 
             JsonElement typeElement = jsonobject.get("type");
             if (typeElement != null && !typeElement.isJsonNull()) {
-                String type = JsonUtils.getString(jsonobject, "type");
+                String type = JSONUtils.getString(jsonobject, "type");
                 handler = VARIABLE_FACADE_HANDLER_REGISTRY.getHandler(type);
                 if (handler == null) {
                     throw new JsonSyntaxException("Unknown variable type '" + type + "', valid types are: "

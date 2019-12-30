@@ -2,23 +2,23 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeStringRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * @author rubensworks
  */
-@SideOnly(Side.CLIENT)
-public class ValueTypeLPElementRenderPattern extends GuiElementValueTypeStringRenderPattern<RenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase>
+@OnlyIn(Dist.CLIENT)
+public class ValueTypeLPElementRenderPattern extends GuiElementValueTypeStringRenderPattern<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
         implements IRenderPatternValueTypeTooltip {
 
     private boolean renderTooltip = true;
 
     public ValueTypeLPElementRenderPattern(ValueTypeLPElementBase element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                           GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                           ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         super(element.getInnerGuiElement(), baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

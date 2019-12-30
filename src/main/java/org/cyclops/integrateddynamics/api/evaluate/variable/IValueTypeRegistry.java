@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -48,7 +48,7 @@ public interface IValueTypeRegistry extends IRegistry, IVariableFacadeHandler<IV
      * @param valueType The value type.
      * @param modelLocation The model resource location.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, ResourceLocation modelLocation);
 
     /**
@@ -58,14 +58,14 @@ public interface IValueTypeRegistry extends IRegistry, IVariableFacadeHandler<IV
      * @param valueType The value type.
      * @return The model resource location.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public <V extends IValue, T extends IValueType<V>> ResourceLocation getValueTypeModel(T valueType);
 
     /**
      * Get all registered model resource locations for the value types.
      * @return All model resource locations.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public Collection<ResourceLocation> getValueTypeModels();
 
     /**

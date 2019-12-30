@@ -2,11 +2,11 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import net.minecraft.advancements.critereon.AbstractCriterionInstance;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.cyclopscore.advancement.criterion.BaseCriterionTrigger;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
@@ -29,12 +29,12 @@ public class NetworkInitializedTrigger extends BaseCriterionTrigger<NetworkIniti
 
     @SubscribeEvent
     public void onCrafted(NetworkInitializedEvent event) {
-        if (event.getPlacer() != null && event.getPlacer() instanceof EntityPlayerMP) {
-            this.trigger((EntityPlayerMP) event.getPlacer(), event);
+        if (event.getPlacer() != null && event.getPlacer() instanceof ServerPlayerEntity) {
+            this.trigger((ServerPlayerEntity) event.getPlacer(), event);
         }
     }
 
-    public static class Instance extends AbstractCriterionInstance implements ICriterionInstanceTestable<NetworkInitializedEvent> {
+    public static class Instance extends CriterionInstance implements ICriterionInstanceTestable<NetworkInitializedEvent> {
         private final int minCablesCount;
 
         public Instance(ResourceLocation criterionIn, int minCablesCount) {
@@ -42,7 +42,7 @@ public class NetworkInitializedTrigger extends BaseCriterionTrigger<NetworkIniti
             this.minCablesCount = minCablesCount;
         }
 
-        public boolean test(EntityPlayerMP player, NetworkInitializedEvent networkEvent) {
+        public boolean test(ServerPlayerEntity player, NetworkInitializedEvent networkEvent) {
             return networkEvent.getNetwork().getCablesCount() >= minCablesCount;
         }
     }

@@ -1,8 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
+import net.minecraft.nbt.DoubleNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 
 /**
@@ -12,7 +18,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> implements IValueTypeNumber<ValueTypeDouble.ValueDouble> {
 
     public ValueTypeDouble() {
-        super("double", Helpers.RGBToInt(235, 234, 23), TextFormatting.YELLOW.toString());
+        super("double", Helpers.RGBToInt(235, 234, 23), TextFormatting.YELLOW);
     }
 
     @Override
@@ -21,18 +27,36 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
-    public String toCompactString(ValueDouble value) {
+    public ITextComponent toCompactString(ValueDouble value) {
+        return new StringTextComponent(Double.toString(value.getRawValue()));
+    }
+
+    @Override
+    public INBT serialize(ValueDouble value) {
+        return new DoubleNBT(value.getRawValue());
+    }
+
+    @Override
+    public ValueDouble deserialize(INBT value) {
+        if (value.getId() == Constants.NBT.TAG_DOUBLE) {
+            return ValueDouble.of(((DoubleNBT) value).getDouble());
+        } else {
+            throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a double.", value));
+        }
+    }
+
+    @Override
+    public String toString(ValueDouble value) {
         return Double.toString(value.getRawValue());
     }
 
     @Override
-    public String serialize(ValueDouble value) {
-        return Double.toString(value.getRawValue());
-    }
-
-    @Override
-    public ValueDouble deserialize(String value) {
-        return ValueDouble.of(Double.parseDouble(value));
+    public ValueDouble parseString(String value) throws EvaluationException {
+        try {
+            return ValueDouble.of(Double.parseDouble(value));
+        } catch (NumberFormatException e) {
+            throw new EvaluationException(e.getMessage());
+        }
     }
 
     @Override
@@ -102,7 +126,7 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
 
     @Override
     public String getName(ValueDouble a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @ToString

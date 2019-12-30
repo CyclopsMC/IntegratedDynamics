@@ -2,11 +2,11 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import net.minecraft.advancements.critereon.AbstractCriterionInstance;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.cyclopscore.advancement.criterion.BaseCriterionTrigger;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
@@ -34,12 +34,12 @@ public class PartVariableDrivenAspectTrigger extends BaseCriterionTrigger<PartVa
 
     @SubscribeEvent
     public void onEvent(PartVariableDrivenVariableContentsUpdatedEvent event) {
-        if (event.getEntityPlayer() != null && event.getEntityPlayer() instanceof EntityPlayerMP) {
-            this.trigger((EntityPlayerMP) event.getEntityPlayer(), event);
+        if (event.getEntityPlayer() != null && event.getEntityPlayer() instanceof ServerPlayerEntity) {
+            this.trigger((ServerPlayerEntity) event.getEntityPlayer(), event);
         }
     }
 
-    public static class Instance extends AbstractCriterionInstance implements ICriterionInstanceTestable<PartVariableDrivenVariableContentsUpdatedEvent> {
+    public static class Instance extends CriterionInstance implements ICriterionInstanceTestable<PartVariableDrivenVariableContentsUpdatedEvent> {
         private final IPartType partType;
         private final VariablePredicate variablePredicate;
 
@@ -49,7 +49,7 @@ public class PartVariableDrivenAspectTrigger extends BaseCriterionTrigger<PartVa
             this.variablePredicate = variablePredicate;
         }
 
-        public boolean test(EntityPlayerMP player, PartVariableDrivenVariableContentsUpdatedEvent event) {
+        public boolean test(ServerPlayerEntity player, PartVariableDrivenVariableContentsUpdatedEvent event) {
             return (partType == null || event.getPartType() == partType) && variablePredicate.test(event.getVariable());
         }
     }

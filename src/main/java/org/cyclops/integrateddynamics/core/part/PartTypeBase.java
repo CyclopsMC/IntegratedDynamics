@@ -2,26 +2,23 @@ package org.cyclops.integrateddynamics.core.part;
 
 import lombok.Getter;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.config.configurabletypeaction.BlockAction;
-import org.cyclops.cyclopscore.config.configurabletypeaction.ItemAction;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
-import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -35,8 +32,8 @@ import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.PartTypeAdapter;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
-import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 
@@ -51,15 +48,12 @@ import java.util.Set;
  * @author rubensworks
  */
 public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartState<P>>
-        extends PartTypeAdapter<P, S> implements IGuiContainerProvider {
+        extends PartTypeAdapter<P, S> {
 
     @Getter
-    private final Item item;
-    private ItemConfig itemConfig;
+    private Item item;
     @Getter
-    private final Block block;
-    @Getter
-    private final int guiID;
+    private Block block;
     @Getter
     private final String name;
     @Getter
@@ -67,18 +61,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     private final Map<Class<? extends INetworkEvent>, IEventAction> networkEventActions;
 
     public PartTypeBase(String name, PartRenderPosition partRenderPosition) {
-        if(hasGui()) {
-            this.guiID = Helpers.getNewId(getModGui(), Helpers.IDType.GUI);
-            getModGui().getGuiHandler().registerGUI(this, ExtendedGuiHandler.PART);
-        } else {
-            this.guiID = -1;
-        }
         this.name = name;
-        this.block = registerBlock();
-        this.item = registerItem();
         this.partRenderPosition = partRenderPosition;
 
         networkEventActions = constructNetworkEventActions();
+
+        registerBlock();
     }
 
     protected ModBase getMod() {
@@ -86,11 +74,14 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     /**
-     * Get the part type class.
-     * This is used for doing dynamic construction of guis.
-     * @return The actual class for this part type.
+     * Creates and registers a block instance for this part type.
+     * This is mainly used for the block model.
+     * @return The corresponding block.
      */
-    public abstract Class<? super P> getPartTypeClass();
+    protected void registerBlock() {
+        BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + getName() + "_block", this::createBlock, this::createItem) {};
+        getMod().getConfigHandler().addConfigurable(blockConfig);
+    }
 
     /**
      * Factory method for creating a block instance.
@@ -98,69 +89,16 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The block instance.
      */
     protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlock(blockConfig);
-    }
-
-    /**
-     * Creates and registers a block instance for this part type.
-     * This is mainly used for the block model.
-     * @return The corresponding block.
-     */
-    protected Block registerBlock() {
-        BlockConfig blockConfig = new BlockConfig(getMod(), true, "part_" + getName() + "_block", null, null) {
-            @Override
-            public boolean isDisableable() {
-                return false;
-            }
-
-            @Override
-            public Block getBlockInstance() {
-                return PartTypeBase.this.getBlock();
-            }
-        };
-        Block block = createBlock(blockConfig);
-        BlockAction.register(block, blockConfig, blockConfig.getTargetTab());
-        return block;
+        return block = new IgnoredBlock();
     }
 
     /**
      * Factory method for creating a item instance.
-     * @param itemConfig The config to register the item for.
+     * @param blockConfig The block config to register the item for.
      * @return The item instance.
      */
-    protected Item createItem(ItemConfig itemConfig) {
-        return new ItemPart<P, S>(itemConfig, this);
-    }
-
-    /**
-     * Creates and registers a item instance for this part type.
-     * This is the item used to place the part with and obtained when broken.
-     * @return The corresponding item.
-     */
-    protected Item registerItem() {
-        itemConfig = new ItemConfig(getMod(), true, "part_" + getName() + "_item", null, null) {
-            @Override
-            public boolean isDisableable() {
-                return false;
-            }
-
-            @Override
-            public String getFullTranslationKey() {
-                return PartTypeBase.this.getTranslationKey();
-            }
-
-            @Override
-            public Item getItemInstance() {
-                return PartTypeBase.this.getItem();
-            }
-        };
-        Item item = createItem(itemConfig);
-        ItemAction.register(item, itemConfig, itemConfig.getTargetTab());
-        if(MinecraftHelpers.isClientSide()) {
-            ItemAction.handleItemModel(itemConfig);
-        }
-        getMod().getConfigHandler().addToConfigDictionary(itemConfig);
-        return item;
+    protected Item createItem(BlockConfig blockConfig, Block block) {
+        return item = new ItemPart<>(new Item.Properties().group(blockConfig.getMod().getDefaultItemGroup()), this);
     }
 
     @Override
@@ -175,31 +113,22 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @SuppressWarnings("unchecked")
     @Override
-    public INetworkElement createNetworkElement(IPartContainer partContainer, DimPos pos, EnumFacing side) {
+    public INetworkElement createNetworkElement(IPartContainer partContainer, DimPos pos, Direction side) {
         return new PartNetworkElement(this, getTarget(PartPos.of(pos, side), (S) partContainer.getPartState(side)));
     }
 
-    protected boolean hasGui() {
-        return true;
-    }
-
     @Override
-    public ModBase getModGui() {
-        return getMod();
-    }
-
-    @Override
-    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player, EnumHand hand,
-                                   ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
+                                   ItemStack heldItem, BlockRayTraceResult hit) {
         // Drop through if the player is sneaking
         if(player.isSneaking()) {
             return false;
         }
 
-        if(hasGui()) {
-            getModGui().getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, side); // Pass the side as extra data to the gui
-            if (!world.isRemote && hasGui()) {
-                player.openGui(getModGui().getModId(), getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
+        PartPos partPos = PartPos.of(world, pos, hit.getFace());
+        if(getContainerProvider(partPos).isPresent()) {
+            if (!world.isRemote()) {
+                return PartHelpers.openContainerPart((ServerPlayerEntity) player, partPos, this);
             }
             return true;
         }
@@ -207,21 +136,22 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, EnumFacing side) {
-        return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side);
+    public BlockState getBlockState(IPartContainer partContainer, Direction side) {
+        return getBlock().getDefaultState()
+                .with(IgnoredBlock.FACING, side);
     }
 
     @Override
-    public BlockStateContainer getBaseBlockState() {
-        return getBlock().getBlockState();
+    public BlockState getBaseBlockState() {
+        return getBlock().getDefaultState();
     }
 
     @Override
-    public void loadTooltip(S state, List<String> lines) {
+    public void loadTooltip(S state, List<ITextComponent> lines) {
         if(!state.isEnabled()) {
-            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_DISABLED));
+            lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_DISABLED));
         }
-        lines.add(L10NHelpers.localize(L10NValues.GENERAL_ITEM_ID, state.getId()));
+        lines.add(new TranslationTextComponent(L10NValues.GENERAL_ITEM_ID, state.getId()));
     }
     /**
      * Override this to register your network event actions.
@@ -253,6 +183,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public boolean forceLightTransparency(S state) {
         return false;
+    }
+
+    @Override
+    public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+        packetBuffer.writeString(this.getName());
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {

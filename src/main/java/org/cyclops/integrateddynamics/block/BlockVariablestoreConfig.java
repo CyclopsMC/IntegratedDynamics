@@ -1,29 +1,25 @@
 package org.cyclops.integrateddynamics.block;
 
-import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * Config for {@link BlockVariablestore}.
  * @author rubensworks
  */
-public class BlockVariablestoreConfig extends BlockContainerConfig {
+public class BlockVariablestoreConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockVariablestoreConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockVariablestoreConfig() {
         super(
-            IntegratedDynamics._instance,
-            true,
-            "variablestore",
-            null,
-            BlockVariablestore.class
+                IntegratedDynamics._instance,
+                "variablestore",
+                eConfig -> new BlockVariablestore(Block.Properties.create(Material.ANVIL)
+                        .hardnessAndResistance(5.0F)
+                        .sound(SoundType.METAL)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 

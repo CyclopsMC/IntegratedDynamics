@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import com.google.common.collect.Maps;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -27,7 +27,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         extends PartStateActiveVariableBase<P> implements IPartStateWriter<P> {
 
     private IAspectWrite activeAspect = null;
-    private Map<String, List<L10NHelpers.UnlocalizedString>> errorMessages = Maps.newHashMap();
+    private Map<String, List<ITextComponent>> errorMessages = Maps.newHashMap();
     private boolean firstTick = true;
 
     public PartStateWriterBase(int inventorySize) {
@@ -35,19 +35,19 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        if (this.activeAspect != null) tag.setString("activeAspectName", this.activeAspect.getTranslationKey());
+    public void writeToNBT(CompoundNBT tag) {
+        if (this.activeAspect != null) tag.putString("activeAspectName", this.activeAspect.getTranslationKey());
         NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, tag);
         super.writeToNBT(tag);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void readFromNBT(CompoundNBT tag) {
         IAspect aspect = Aspects.REGISTRY.getAspect(tag.getString("activeAspectName"));
         if (aspect instanceof IAspectWrite) {
             this.activeAspect = (IAspectWrite) aspect;
         }
-        this.errorMessages = (Map<String, List<L10NHelpers.UnlocalizedString>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag);
+        this.errorMessages = (Map<String, List<ITextComponent>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag);
         super.readFromNBT(tag);
     }
 
@@ -100,8 +100,8 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public List<L10NHelpers.UnlocalizedString> getErrors(IAspectWrite aspect) {
-        List<L10NHelpers.UnlocalizedString> errors = errorMessages.get(aspect.getTranslationKey());
+    public List<ITextComponent> getErrors(IAspectWrite aspect) {
+        List<ITextComponent> errors = errorMessages.get(aspect.getTranslationKey());
         if(errors == null) {
             return Collections.emptyList();
         }
@@ -109,7 +109,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error) {
+    public void addError(IAspectWrite aspect, ITextComponent error) {
         if(error == null) {
             errorMessages.remove(aspect.getTranslationKey());
         } else {
@@ -144,7 +144,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         }
 
         @Override
-        public void addError(L10NHelpers.UnlocalizedString error) {
+        public void addError(ITextComponent error) {
             this.state.addError(aspect, error);
         }
 

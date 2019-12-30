@@ -1,38 +1,33 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.item.ItemBlock;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.item.Item;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.render.tileentity.RenderCable;
-import org.cyclops.integrateddynamics.core.block.BlockMultipartTicking;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 /**
- * Config for {@link BlockMultipartTicking}.
+ * Config for {@link BlockCable}.
  * @author rubensworks
  */
-public class BlockCableConfig extends BlockContainerConfig {
+public class BlockCableConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockCableConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockCableConfig() {
         super(
-            IntegratedDynamics._instance,
-            true,
-            "cable",
-            null,
-            BlockCable.class
-        );
+                IntegratedDynamics._instance,
+                "cable",
+                eConfig -> new BlockCable(Block.Properties.create(BlockCable.BLOCK_MATERIAL)
+                        .hardnessAndResistance(BlockCable.BLOCK_HARDNESS)
+                        .sound(SoundType.METAL)),
+                (eConfig, block) -> new ItemBlockCable(block, new Item.Properties()
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                );
     }
 
     @Override
@@ -43,19 +38,9 @@ public class BlockCableConfig extends BlockContainerConfig {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private void registerClientSide() {
-        IntegratedDynamics._instance.proxy.registerRenderer(TileMultipartTicking.class, new RenderCable());
-    }
-
-    @Override
-    public Class<? extends ItemBlock> getItemBlockClass() {
-        return ItemBlockCable.class;
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
+        IntegratedDynamics._instance.getProxy().registerRenderer(TileMultipartTicking.class, new RenderCable());
     }
 
 }

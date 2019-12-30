@@ -1,18 +1,27 @@
 package org.cyclops.integrateddynamics.core.part;
 
-import lombok.Data;
-import lombok.Getter;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.inventory.Container;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.init.ModBase;
-import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
-import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
-import org.cyclops.integrateddynamics.core.client.gui.container.GuiPartSettings;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
+import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * An abstract {@link IPartType} that can have settings.
@@ -20,42 +29,34 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSett
  */
 public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends IPartState<P>> extends PartTypeBase<P, S> {
 
-    @Getter
-    private final IGuiContainerProvider settingsGuiProvider;
-
     public PartTypeConfigurable(String name, PartRenderPosition partRenderPosition) {
         super(name, partRenderPosition);
-        if(hasSettings()) {
-            int guiIDSettings = Helpers.getNewId(getModGui(), Helpers.IDType.GUI);
-            getModGui().getGuiHandler().registerGUI((settingsGuiProvider = constructSettingsGuiProvider(guiIDSettings)), ExtendedGuiHandler.PART);
-        } else {
-            settingsGuiProvider = null;
-        }
     }
 
-    protected IGuiContainerProvider constructSettingsGuiProvider(int guiId) {
-        return new GuiProviderSettings(guiId, getModGui());
+    @Override
+    public Optional<INamedContainerProvider> getContainerProviderSettings(PartPos pos) {
+        return Optional.of(new INamedContainerProvider() {
+
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent(getTranslationKey());
+            }
+
+            @Nullable
+            @Override
+            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
+                PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
+                return new ContainerPartSettings(id, playerInventory, partState.getInventory(),
+                        data.getRight(), Optional.of(data.getLeft()), data.getMiddle());
+            }
+        });
     }
 
-    public boolean hasSettings() {
-        return true;
-    }
-
-    @Data
-    public static class GuiProviderSettings implements IGuiContainerProvider {
-
-        private final int guiID;
-        private final ModBase modGui;
-
-        @Override
-        public Class<? extends Container> getContainer() {
-            return ContainerPartSettings.class;
-        }
-
-        @Override
-        public Class<? extends GuiScreen> getGui() {
-            return GuiPartSettings.class;
-        }
+    @Override
+    public void writeExtraGuiDataSettings(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+        PacketCodec.write(packetBuffer, pos);
+        packetBuffer.writeString(this.getName());
     }
 
 }

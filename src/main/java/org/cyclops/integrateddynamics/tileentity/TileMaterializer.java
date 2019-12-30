@@ -1,15 +1,23 @@
 package org.cyclops.integrateddynamics.tileentity;
 
-import com.google.common.collect.Sets;
 import lombok.Setter;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -17,48 +25,62 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
+import org.cyclops.integrateddynamics.inventory.container.ContainerMaterializer;
 import org.cyclops.integrateddynamics.network.MaterializerNetworkElement;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A part entity for the variable materializer.
  * @author rubensworks
  */
-public class TileMaterializer extends TileActiveVariableBase<MaterializerNetworkElement> {
+public class TileMaterializer extends TileActiveVariableBase<MaterializerNetworkElement> implements INamedContainerProvider {
 
+    public static final int INVENTORY_SIZE = 3;
     public static final int SLOT_READ = 0;
     public static final int SLOT_WRITE_IN = 1;
     public static final int SLOT_WRITE_OUT = 2;
 
     @Setter
-    private EntityPlayer lastPlayer = null;
+    private PlayerEntity lastPlayer = null;
 
     public TileMaterializer() {
-        super(3, "materializer");
+        super(RegistryEntries.TILE_ENTITY_MATERIALIZER, TileMaterializer.INVENTORY_SIZE);
 
-        addSlotsToSide(EnumFacing.UP, Sets.newHashSet(SLOT_READ));
-        addSlotsToSide(EnumFacing.DOWN, Sets.newHashSet(SLOT_READ));
-        addSlotsToSide(EnumFacing.SOUTH, Sets.newHashSet(SLOT_READ));
-        addSlotsToSide(EnumFacing.WEST, Sets.newHashSet(SLOT_WRITE_OUT));
-        addSlotsToSide(EnumFacing.EAST, Sets.newHashSet(SLOT_WRITE_IN));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.UP,
+                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN,
+                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.SOUTH,
+                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.WEST,
+                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_OUT)));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.EAST,
+                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_IN)));
 
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
             @Override
             public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new MaterializerNetworkElement(DimPos.of(world, blockPos));
             }
-        });
+        }));
     }
 
     @Override
-    public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing side) {
-        return slot != SLOT_WRITE_OUT && super.canInsertItem(slot, itemStack, side);
+    protected SimpleInventory createInventory(int inventorySize, int stackSize) {
+        return new SimpleInventory(inventorySize, stackSize) {
+            @Override
+            public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
+                return slot != SLOT_WRITE_OUT && super.isItemValidForSlot(slot, itemStack);
+            }
+        };
     }
 
     @Override
@@ -67,20 +89,21 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     }
 
     protected boolean canWrite() {
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(getNetwork());
-        return partNetwork != null && getVariable(partNetwork) != null && getEvaluator().getErrors().isEmpty();
+        return NetworkHelpers.getPartNetwork(getNetwork())
+                .map(partNetwork -> getVariable(partNetwork) != null && getEvaluator().getErrors().isEmpty())
+                .orElse(false);
     }
 
     @Override
     public void onDirty() {
         super.onDirty();
-        if(!world.isRemote) {
-            if (!getStackInSlot(SLOT_WRITE_IN).isEmpty() && canWrite() && getStackInSlot(SLOT_WRITE_OUT).isEmpty()) {
+        if(!world.isRemote()) {
+            if (!getInventory().getStackInSlot(SLOT_WRITE_IN).isEmpty() && canWrite() && getInventory().getStackInSlot(SLOT_WRITE_OUT).isEmpty()) {
                 // Write proxy reference
-                ItemStack outputStack = writeMaterialized(!getWorld().isRemote, getStackInSlot(SLOT_WRITE_IN));
+                ItemStack outputStack = writeMaterialized(!getWorld().isRemote, getInventory().getStackInSlot(SLOT_WRITE_IN));
                 if(!outputStack.isEmpty()) {
-                    setInventorySlotContents(SLOT_WRITE_OUT, outputStack);
-                    removeStackFromSlot(SLOT_WRITE_IN);
+                    getInventory().setInventorySlotContents(SLOT_WRITE_OUT, outputStack);
+                    getInventory().removeStackFromSlot(SLOT_WRITE_IN);
                 }
             }
         }
@@ -88,7 +111,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
 
     public ItemStack writeMaterialized(boolean generateId, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        IVariable variable = getVariable(NetworkHelpers.getPartNetwork(getNetwork()));
+        IVariable variable = getVariable(NetworkHelpers.getPartNetworkChecked(getNetwork()));
         try {
             final IValue value = variable.getType().materialize(variable.getValue());
             final IValueType valueType = value.getType();
@@ -102,10 +125,21 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
                 public IValueTypeVariableFacade create(int id) {
                     return new ValueTypeVariableFacade(id, valueType, value);
                 }
-            }, lastPlayer, getBlock());
+            }, lastPlayer, getBlockState());
         } catch (EvaluationException e) {
-            getEvaluator().addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            getEvaluator().addError(new TranslationTextComponent(e.getMessage()));
         }
         return ItemStack.EMPTY;
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        return new ContainerMaterializer(id, playerInventory, this.getInventory(), Optional.of(this));
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("block.integrateddynamics.materializer");
     }
 }

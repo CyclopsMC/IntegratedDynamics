@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
@@ -15,14 +16,12 @@ public class ReadRedstoneComponent implements IReadRedstoneComponent {
     @Override
     public void setAllowRedstoneInput(PartTarget target, boolean allow) {
         DimPos dimPos = target.getCenter().getPos();
-        IDynamicRedstone block = getDynamicRedstoneBlock(dimPos, target.getCenter().getSide());
-        if(block != null) {
-            block.setAllowRedstoneInput(allow);
-        }
+        getDynamicRedstoneBlock(dimPos, target.getCenter().getSide())
+                .ifPresent(block -> block.setAllowRedstoneInput(allow));
     }
 
     @Override
-    public IDynamicRedstone getDynamicRedstoneBlock(DimPos dimPos, EnumFacing side) {
+    public LazyOptional<IDynamicRedstone> getDynamicRedstoneBlock(DimPos dimPos, Direction side) {
         return TileHelpers.getCapability(dimPos, side, DynamicRedstoneConfig.CAPABILITY);
     }
 }

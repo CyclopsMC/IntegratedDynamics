@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.StringNBT;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 
@@ -20,13 +22,13 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
     }
 
     @Override
-    public String serialize(IOperator operator) {
-        return operator.getUniqueName();
+    public INBT serialize(IOperator operator) {
+        return new StringNBT(operator.getUniqueName());
     }
 
     @Override
-    public IOperator deserialize(String value) {
-        IOperator operator = Operators.REGISTRY.getOperator(value);
+    public IOperator deserialize(INBT value) {
+        IOperator operator = Operators.REGISTRY.getOperator(value.getString());
         if (operator != null) {
             return operator;
         }

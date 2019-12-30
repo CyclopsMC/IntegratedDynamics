@@ -2,7 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
@@ -21,11 +22,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class PositionedOperatorRecipeHandlerOutput<T extends IValueType<V>, V extends IValue> extends PositionedOperatorRecipeHandler<T, V> {
 
-    private static final Cache<Pair<Pair<DimPos, EnumFacing>, ValueObjectTypeIngredients.ValueIngredients>,
+    private static final Cache<Pair<Pair<DimPos, Direction>, ValueObjectTypeIngredients.ValueIngredients>,
             ValueObjectTypeIngredients.ValueIngredients> CACHE = CacheBuilder.newBuilder()
             .expireAfterAccess(20, TimeUnit.SECONDS).build();
 
-    public PositionedOperatorRecipeHandlerOutput(DimPos pos, EnumFacing side) {
+    public PositionedOperatorRecipeHandlerOutput(DimPos pos, Direction side) {
         super("recipeoutputbyinput", new Function(), pos, side);
     }
 
@@ -38,9 +39,9 @@ public class PositionedOperatorRecipeHandlerOutput<T extends IValueType<V>, V ex
         @Override
         public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
             ValueObjectTypeIngredients.ValueIngredients ingredients = variables.getValue(0);
-            IRecipeHandler recipeHandler = this.getOperator().getRecipeHandler();
+            IRecipeHandler recipeHandler = (IRecipeHandler) this.getOperator().getRecipeHandler().orElse(null);
             if (recipeHandler != null && ingredients.getRawValue().isPresent()) {
-                Pair<Pair<DimPos, EnumFacing>, ValueObjectTypeIngredients.ValueIngredients> key =
+                Pair<Pair<DimPos, Direction>, ValueObjectTypeIngredients.ValueIngredients> key =
                         Pair.of(Pair.of(this.getOperator().getPos(), this.getOperator().getSide()), ingredients);
                 try {
                     return CACHE.get(key, () -> {

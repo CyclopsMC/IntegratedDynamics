@@ -4,17 +4,23 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -31,8 +37,11 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.item.DelayVariableFacade;
+import org.cyclops.integrateddynamics.inventory.container.ContainerDelay;
 import org.cyclops.integrateddynamics.network.DelayNetworkElement;
 
+import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Queue;
 
 /**
@@ -40,7 +49,9 @@ import java.util.Queue;
  *
  * @author rubensworks
  */
-public class TileDelay extends TileProxy {
+public class TileDelay extends TileProxy implements INamedContainerProvider {
+
+    public static final int INVENTORY_SIZE = 3;
 
     protected Queue<IValue> values = null;
     @NBTPersist
@@ -54,9 +65,10 @@ public class TileDelay extends TileProxy {
     private final IVariable<?> variable;
 
     @Setter
-    private EntityPlayer lastPlayer = null;
+    private PlayerEntity lastPlayer = null;
 
     public TileDelay() {
+        super(RegistryEntries.TILE_ENTITY_DELAY, TileDelay.INVENTORY_SIZE);
         this.variable = new VariableAdapter<ValueTypeList.ValueList>() {
 
             @Override
@@ -70,12 +82,12 @@ public class TileDelay extends TileProxy {
             }
         };
 
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
             @Override
             public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new DelayNetworkElement(DimPos.of(world, blockPos));
             }
-        });
+        }));
     }
 
     @Override
@@ -91,7 +103,7 @@ public class TileDelay extends TileProxy {
             public IDelayVariableFacade create(int id) {
                 return new DelayVariableFacade(id, proxyId);
             }
-        }, lastPlayer, getBlock());
+        }, lastPlayer, getBlockState());
     }
 
     @Override
@@ -112,25 +124,25 @@ public class TileDelay extends TileProxy {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag = super.writeToNBT(tag);
-        NBTTagList valueList = new NBTTagList();
+    public CompoundNBT write(CompoundNBT tag) {
+        tag = super.write(tag);
+        ListNBT valueList = new ListNBT();
         for (IValue value : getValues()) {
-            valueList.appendTag(ValueHelpers.serialize(value));
+            valueList.add(ValueHelpers.serialize(value));
         }
-        tag.setTag("values", valueList);
+        tag.put("values", valueList);
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
         if (this.capacity <= 0) this.capacity = 1;
         values = Queues.newArrayBlockingQueue(this.capacity);
 
-        NBTTagList valueList = tag.getTagList("values", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-        for (int i = 0; i < valueList.tagCount(); i++) {
-            IValue value = ValueHelpers.deserialize(valueList.getCompoundTagAt(i));
+        ListNBT valueList = tag.getList("values", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < valueList.size(); i++) {
+            IValue value = ValueHelpers.deserialize(valueList.getCompound(i));
             if (value != null) {
                 this.values.add(value);
             }
@@ -140,20 +152,25 @@ public class TileDelay extends TileProxy {
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (!getWorld().isRemote && updateInterval > 0 && getWorld().getTotalWorldTime() % updateInterval == 0) {
+        if (!getWorld().isRemote && updateInterval > 0 && getWorld().getGameTime() % updateInterval == 0) {
             // Remove oldest elements from the queue until we have room for a new one.
             while (getValues().size() >= this.capacity) {
                 getValues().poll();
             }
 
+            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(getNetwork()).orElse(null);
+            if (partNetwork == null) {
+                return;
+            }
+
             // Add new value to the queue
-            IVariable<?> variable = super.getVariable(NetworkHelpers.getPartNetwork(getNetwork()));
+            IVariable<?> variable = super.getVariable(partNetwork);
             IValue value = null;
             if (variable != null) {
                 try {
                     value = variable.getValue();
                 } catch (EvaluationException e) {
-                    getEvaluator().addError(new L10NHelpers.UnlocalizedString(e.toString()));
+                    getEvaluator().addError(new TranslationTextComponent(e.toString()));
                 }
                 if (value != null) {
                     try {
@@ -172,5 +189,16 @@ public class TileDelay extends TileProxy {
             }
             this.variable.invalidate();
         }
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        return new ContainerDelay(id, playerInventory, this.getInventory(), Optional.of(this));
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("block.integrateddynamics.delay");
     }
 }

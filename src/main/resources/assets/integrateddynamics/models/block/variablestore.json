@@ -1,8 +1,8 @@
 {
     "parent": "block/orientable",
     "textures": {
-        "top": "integrateddynamics:blocks/variablestore_top",
-        "front": "integrateddynamics:blocks/variablestore_front",
-        "side": "integrateddynamics:blocks/variablestore_side"
+        "top": "integrateddynamics:block/variablestore_top",
+        "front": "integrateddynamics:block/variablestore_front",
+        "side": "integrateddynamics:block/variablestore_side"
     }
 }

@@ -29,4 +29,9 @@ public class ValueTypeListProxyMaterialized<T extends IValueType<V>, V extends I
     public V get(int index) throws EvaluationException {
         return list.get(index);
     }
+
+    @Override
+    public String toString() {
+        return list.toString();
+    }
 }

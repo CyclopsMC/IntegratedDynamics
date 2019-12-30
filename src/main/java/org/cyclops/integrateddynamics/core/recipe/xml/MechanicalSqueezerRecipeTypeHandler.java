@@ -11,7 +11,7 @@ import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackR
 import org.cyclops.cyclopscore.recipe.xml.SuperRecipeTypeHandler;
 import org.cyclops.cyclopscore.recipe.xml.XmlRecipeLoader;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -63,7 +63,7 @@ public class MechanicalSqueezerRecipeTypeHandler extends SuperRecipeTypeHandler<
 
         IngredientsAndFluidStackRecipeComponent outputRecipeComponent = new IngredientsAndFluidStackRecipeComponent(outputItems, outputFluid);
 
-		return BlockMechanicalSqueezer.getInstance().getRecipeRegistry().registerRecipe(
+		return RegistryEntries.BLOCK_MECHANICAL_SQUEEZER.getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,
                 outputRecipeComponent,
                 new DurationRecipeProperties(duration)

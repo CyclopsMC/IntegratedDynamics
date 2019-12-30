@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
@@ -36,13 +36,13 @@ public class NetworkDiagnostics {
         return _INSTANCE;
     }
 
-    protected EntityPlayerMP getPlayer(UUID uuid) {
-        return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(uuid);
+    protected ServerPlayerEntity getPlayer(UUID uuid) {
+        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(uuid);
     }
 
-    public synchronized void registerPlayer(EntityPlayerMP player) {
-        if (!players.contains(player.getPersistentID())) {
-            players.add(player.getPersistentID());
+    public synchronized void registerPlayer(ServerPlayerEntity player) {
+        if (!players.contains(player.getUniqueID())) {
+            players.add(player.getUniqueID());
             for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                 sendNetworkUpdateToPlayer(player, network);
             }
@@ -50,18 +50,18 @@ public class NetworkDiagnostics {
         }
     }
 
-    public synchronized void unRegisterPlayer(EntityPlayerMP player) {
-        players.remove(player.getPersistentID());
+    public synchronized void unRegisterPlayer(ServerPlayerEntity player) {
+        players.remove(player.getUniqueID());
     }
 
-    public void sendNetworkUpdateToPlayer(EntityPlayerMP player, INetwork network) {
+    public void sendNetworkUpdateToPlayer(ServerPlayerEntity player, INetwork network) {
         List<RawPartData> rawParts = Lists.newArrayList();
         for (INetworkElement networkElement : network.getElements()) {
             if (networkElement instanceof IPartNetworkElement) {
                 IPartNetworkElement partNetworkElement = (IPartNetworkElement) networkElement;
                 PartPos pos = partNetworkElement.getTarget().getCenter();
                 long lastSecondDurationNs = network.getLastSecondDuration(networkElement);
-                rawParts.add(new RawPartData(pos.getPos().getDimensionId(),
+                rawParts.add(new RawPartData(pos.getPos().getDimension(),
                         pos.getPos().getBlockPos(), pos.getSide(),
                         L10NHelpers.localize(partNetworkElement.getPart().getTranslationKey()),
                         lastSecondDurationNs));
@@ -77,7 +77,7 @@ public class NetworkDiagnostics {
                 Map<PartPos, Long> durations = networkIngredients.getLastSecondDurationIndex();
                 for (Map.Entry<PartPos, Long> durationEntry : durations.entrySet()) {
                     PartPos pos = durationEntry.getKey();
-                    rawObservers.add(new RawObserverData(pos.getPos().getDimensionId(),
+                    rawObservers.add(new RawObserverData(pos.getPos().getDimension(),
                             pos.getPos().getBlockPos(), pos.getSide(),
                             networkIngredients.getComponent().getName().toString(), durationEntry.getValue()));
                 }
@@ -91,7 +91,7 @@ public class NetworkDiagnostics {
     public synchronized void sendNetworkUpdate(INetwork network) {
         for (Iterator<UUID> it = players.iterator(); it.hasNext();) {
             UUID uuid = it.next();
-            EntityPlayerMP player = getPlayer(uuid);
+            ServerPlayerEntity player = getPlayer(uuid);
             if (player != null) {
                 sendNetworkUpdateToPlayer(player, network);
             } else {

@@ -9,7 +9,7 @@ import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRe
 import org.cyclops.cyclopscore.recipe.xml.SuperRecipeTypeHandler;
 import org.cyclops.cyclopscore.recipe.xml.XmlRecipeLoader;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.w3c.dom.Element;
 
 /**
@@ -47,7 +47,7 @@ public class MechanicalDryingBasinRecipeTypeHandler extends SuperRecipeTypeHandl
         }
 
         if(inputFluid != null && outputFluid != null) {
-            throw new XmlRecipeLoader.XmlRecipeException(String.format("Can't have an input and output fluid: %s and %s", inputFluid.getLocalizedName(), outputFluid.getLocalizedName()));
+            throw new XmlRecipeLoader.XmlRecipeException(String.format("Can't have an input and output fluid: %s and %s", inputFluid.getFluid().getRegistryName(), outputFluid.getFluid().getRegistryName()));
         }
 
 		int duration = Integer.parseInt(properties.getElementsByTagName("duration").item(0).getTextContent());
@@ -55,7 +55,7 @@ public class MechanicalDryingBasinRecipeTypeHandler extends SuperRecipeTypeHandl
         IngredientAndFluidStackRecipeComponent inputRecipeComponent = new IngredientAndFluidStackRecipeComponent(inputItem, inputFluid);
 
         IngredientAndFluidStackRecipeComponent outputRecipeComponent = new IngredientAndFluidStackRecipeComponent(outputItem, outputFluid);
-		return BlockMechanicalDryingBasin.getInstance().getRecipeRegistry().registerRecipe(
+		return RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN.getRecipeRegistry().registerRecipe(
                 inputRecipeComponent,
                 outputRecipeComponent,
                 new DurationRecipeProperties(duration)

@@ -1,12 +1,5 @@
 {
-  "forge_marker": 1,
   "variants": {
-    "inventory": [{
-      "model": "integrateddynamics:liquid_chorus"
-    }],
-    "fluid": {
-      "model": "forge:fluid",
-      "custom": { "fluid": "liquidchorus" }
-    }
+    "": { "model": "integrateddynamics:block/liquid_chorus" }
   }
 }

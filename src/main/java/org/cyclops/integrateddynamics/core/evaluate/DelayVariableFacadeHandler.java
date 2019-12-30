@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -30,15 +32,15 @@ public class DelayVariableFacadeHandler implements IVariableFacadeHandler<IDelay
     }
 
     @Override
-    public IDelayVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
-        if(!tag.hasKey("partId", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
+    public IDelayVariableFacade getVariableFacade(int id, CompoundNBT tag) {
+        if(!tag.contains("partId", Constants.NBT.TAG_INT)) {
             return INVALID_FACADE;
         }
-        return new DelayVariableFacade(id, tag.getInteger("partId"));
+        return new DelayVariableFacade(id, tag.getInt("partId"));
     }
 
     @Override
-    public void setVariableFacade(NBTTagCompound tag, IDelayVariableFacade variableFacade) {
-        tag.setInteger("partId", variableFacade.getProxyId());
+    public void setVariableFacade(CompoundNBT tag, IDelayVariableFacade variableFacade) {
+        tag.putInt("partId", variableFacade.getProxyId());
     }
 }

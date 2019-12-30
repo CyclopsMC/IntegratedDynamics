@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.capability.path;
 
 import com.google.common.collect.Sets;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -24,11 +24,11 @@ public abstract class PathElementCable extends PathElementDefault {
     public Set<ISidedPathElement> getReachableElements() {
         Set<ISidedPathElement> elements = Sets.newHashSet();
         BlockPos pos = getPosition().getBlockPos();
-        for (EnumFacing side : EnumFacing.VALUES) {
+        for (Direction side : Direction.values()) {
             if (getCable().isConnected(side)) {
                 BlockPos posOffset = pos.offset(side);
-                EnumFacing pathElementSide = side.getOpposite();
-                IPathElement pathElement = TileHelpers.getCapability(getPosition().getWorld(), posOffset, pathElementSide, PathElementConfig.CAPABILITY);
+                Direction pathElementSide = side.getOpposite();
+                IPathElement pathElement = TileHelpers.getCapability(getPosition().getWorld(true), posOffset, pathElementSide, PathElementConfig.CAPABILITY).orElse(null);
                 if (pathElement == null) {
                     IntegratedDynamics.clog(Level.ERROR, String.format("The position at %s was incorrectly marked " +
                             "as reachable as path element by %s at %s side %s.", posOffset, getCable(), pos, side));

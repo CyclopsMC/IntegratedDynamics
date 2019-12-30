@@ -1,13 +1,8 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "transform": "forge:default-block"
-  },
   "variants": {
-    "facing=south": { "model": "integrateddynamics:variablestore" },
-    "facing=west" : { "model": "integrateddynamics:variablestore", "y": 90 },
-    "facing=north": { "model": "integrateddynamics:variablestore", "y": 180 },
-    "facing=east" : { "model": "integrateddynamics:variablestore", "y": 270 },
-    "inventory"   : { "model": "integrateddynamics:variablestore" }
+    "facing=south": { "model": "integrateddynamics:block/variablestore" },
+    "facing=west" : { "model": "integrateddynamics:block/variablestore", "y": 90 },
+    "facing=north": { "model": "integrateddynamics:block/variablestore", "y": 180 },
+    "facing=east" : { "model": "integrateddynamics:block/variablestore", "y": 270 }
   }
 }

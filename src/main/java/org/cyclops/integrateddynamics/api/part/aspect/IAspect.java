@@ -1,12 +1,14 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
-import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.util.text.ITextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
@@ -34,7 +36,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * @param lines The list to add lines to.
      * @param appendOptionalInfo If shift-to-show info should be added.
      */
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo);
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo);
 
     /**
      * @return The type of value this aspect can handle.
@@ -62,7 +64,6 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
     /**
      * Get the current properties of this aspect in the given part.
-     * * @param network The network to update in.
      * @param <P> The part type type.
      * @param <S> The part state.
      * @param partType The part type.
@@ -99,9 +100,10 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
     /**
      * This will only be called if this aspect has properties.
-     * @return The gui container provider for the gui to configure the properties.
+     * @return The container type for the screen to configure the properties.
+     * @param pos The part position.
      */
-    public IGuiContainerProvider getPropertiesGuiProvider();
+    public INamedContainerProvider getPropertiesContainerProvider(PartPos pos);
 
     /**
      * Use this comparator for any comparisons with aspects.

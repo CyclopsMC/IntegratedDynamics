@@ -1,30 +1,31 @@
 package org.cyclops.integrateddynamics.fluid;
 
+import net.minecraft.item.Rarity;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import org.cyclops.cyclopscore.config.extendedconfig.FluidConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
- * Config for {@link FluidLiquidChorus}.
+ * Config for Liquid Chorus.
  * @author rubensworks
  *
  */
 public class FluidLiquidChorusConfig extends FluidConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static FluidLiquidChorusConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public FluidLiquidChorusConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "liquidchorus",
-                null,
-                FluidLiquidChorus.class
+                fluidConfig -> new ForgeFlowingFluid.Source(
+                        getDefaultFluidProperties(IntegratedDynamics._instance,
+                                "block/liquid_chorus",
+                                builder -> builder
+                                        .density(1500)
+                                        .viscosity(3000)
+                                        .rarity(Rarity.EPIC))
+                                .block(() -> RegistryEntries.BLOCK_FLUID_LIQUID_CHORUS))
         );
     }
+
 }

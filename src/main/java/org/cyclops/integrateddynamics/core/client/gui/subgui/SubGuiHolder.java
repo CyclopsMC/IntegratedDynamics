@@ -5,7 +5,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGui;
 
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -33,9 +32,9 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
-    public void initGui(int guiLeft, int guiTop) {
+    public void init(int guiLeft, int guiTop) {
         for(ISubGui subGui : getSubGuis()) {
-            subGui.initGui(guiLeft, guiTop);
+            subGui.init(guiLeft, guiTop);
         }
     }
 
@@ -54,9 +53,9 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
-    public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException {
+    public boolean charTyped(char typedChar, int keyCode) {
         for(ISubGui subGui : getSubGuis()) {
-            if(subGui.keyTyped(checkHotbarKeys, typedChar, keyCode)) {
+            if(subGui.charTyped(typedChar, keyCode)) {
                 return true;
             }
         }
@@ -64,9 +63,12 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         for(ISubGui subGui : getSubGuis()) {
-            subGui.mouseClicked(mouseX, mouseY, mouseButton);
+            if (subGui.mouseClicked(mouseX, mouseY, mouseButton)) {
+                return true;
+            }
         }
+        return false;
     }
 }

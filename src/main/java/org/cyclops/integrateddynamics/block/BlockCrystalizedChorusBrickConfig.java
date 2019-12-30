@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlock;
-import org.cyclops.cyclopscore.config.configurable.IConfigurable;
+import net.minecraftforge.common.ToolType;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -14,35 +14,17 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class BlockCrystalizedChorusBrickConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockCrystalizedChorusBrickConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockCrystalizedChorusBrickConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "crystalized_chorus_brick",
-                null,
-                null
+                eConfig -> new Block(Block.Properties.create(Material.CLAY)
+                        .sound(SoundType.SNOW)
+                        .hardnessAndResistance(1.5F)
+                        .harvestLevel(0)
+                        .harvestTool(ToolType.PICKAXE)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-    }
-
-    @Override
-    protected ConfigurableBlock initSubInstance() {
-        ConfigurableBlock block = (ConfigurableBlock) new ConfigurableBlock(this, Material.CLAY) {
-            @SuppressWarnings("deprecation")
-            @Override
-            public SoundType getSoundType() {
-                return SoundType.SNOW;
-            }
-        }.setHardness(1.5F);
-        block.setHarvestLevel("pickaxe", 0);
-        return block;
     }
     
 }

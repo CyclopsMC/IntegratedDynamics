@@ -1,12 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.modcompat.commoncapabilities.BlockCapabilitiesHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -14,7 +15,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -25,24 +25,22 @@ public class PositionedOperatorRecipeHandler<T extends IValueType<V>, V extends 
 
     private final String unlocalizedType;
 
-    public PositionedOperatorRecipeHandler(String name, Function function, IValueType output, DimPos pos, EnumFacing side) {
+    public PositionedOperatorRecipeHandler(String name, Function function, IValueType output, DimPos pos, Direction side) {
         super(name, name, new IValueType[]{ValueTypes.OBJECT_INGREDIENTS},
                 output, function, IConfigRenderPattern.PREFIX_1, pos, side);
         this.unlocalizedType = "virtual";
         ((Function) this.getFunction()).setOperator(this);
     }
 
-    public PositionedOperatorRecipeHandler(String name, Function function, DimPos pos, EnumFacing side) {
+    public PositionedOperatorRecipeHandler(String name, Function function, DimPos pos, Direction side) {
         super(name, name, new IValueType[]{ValueTypes.OBJECT_INGREDIENTS},
                 ValueTypes.OBJECT_INGREDIENTS, function, IConfigRenderPattern.PREFIX_1, pos, side);
         this.unlocalizedType = "virtual";
         ((Function) this.getFunction()).setOperator(this);
     }
 
-    @Nullable
-    protected IRecipeHandler getRecipeHandler() {
-        return Helpers.getTileOrBlockCapability(getPos().getWorld(), getPos().getBlockPos(), getSide(),
-                Capabilities.RECIPE_HANDLER);
+    protected LazyOptional<IRecipeHandler> getRecipeHandler() {
+        return BlockCapabilitiesHelpers.getTileOrBlockCapability(getPos(), getSide(), Capabilities.RECIPE_HANDLER);
     }
 
     @Override

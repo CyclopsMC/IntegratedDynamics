@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -19,18 +20,18 @@ public class GeneralConstantOperator extends GeneralOperator {
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validateTypes(IValueType[] input) {
+    public ITextComponent validateTypes(IValueType[] input) {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+            return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                     this.getOperatorName(), input.length, requiredInputLength);
         }
         // Input types checking
         for(int i = 0; i < requiredInputLength; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
-                return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
+                return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
         }
         return null;

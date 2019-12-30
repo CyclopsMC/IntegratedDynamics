@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.model.IBakedModel;
 
 /**
  * A model for variable items.

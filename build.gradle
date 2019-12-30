@@ -1,3 +1,4 @@
+// For those who want the bleeding edge
 buildscript {
     repositories {
         mavenCentral()
@@ -8,7 +9,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
 }
@@ -17,13 +18,16 @@ plugins {
     // For people who want stable
     //id "net.minecraftforge.gradle.forge" version "2.0.2"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'com.github.kt3k.coveralls' version '2.8.2'
+	id 'com.github.kt3k.coveralls' version '2.8.2'
 }
 
-// For those who want the bleeding edge
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'idea'
+apply plugin: 'maven'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'jacoco'
+
+import net.minecraftforge.gradle.common.task.SignJar
 
 loadProperties()
 
@@ -32,10 +36,6 @@ group = "org.cyclops.integrateddynamics"
 archivesBaseName = "IntegratedDynamics"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-configurations {
-    shadow
-}
 
 def loadProperties() {
     // Config file with custom properties
@@ -52,22 +52,303 @@ def loadProperties() {
         project.buildnumber = System.getenv().BUILD_NUMBER
     if (System.getenv().TRAVIS_BUILD_NUMBER)
         project.buildnumber = System.getenv().TRAVIS_BUILD_NUMBER
-    if (System.getenv().CI) {
-        //project.buildnumber += "-DEV"
-    }
+
     if (System.getenv().RELEASE || System.getenv().TRAVIS_TAG)
         project.buildnumber = "RELEASE"
     logger.lifecycle "BUILDING VERSION: " + project.buildnumber
 }
 
-apply from: 'gradle/forge.gradle'
-apply from: 'gradle/dev.gradle'
-apply from: 'gradle/deploy.gradle'
+sourceSets {
+    main
+    test
+}
 
-// Mark API directory as source directory in IDEA.
+configurations {
+    shadow
+}
+
+repositories {
+    mavenCentral()
+	mavenLocal()
+    maven {
+        name "Cyclops Repo"
+        url "https://oss.jfrog.org/artifactory/simple/libs-release/"
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${config.minecraft_version}-${config.forge_version}"
+
+    // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local CyclopsCore version.
+    if(project.hasProperty("cyclopscore_version_local")) {
+        compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${project.cyclopscore_version_local}:deobf"
+    } else {
+        compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
+    }
+	
+    // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local Integrated Dynamics Compat version.
+// TODO: enable ID compat
+//    if(project.hasProperty("integrateddynamicscompat_version_local")) {
+//        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${project.integrateddynamicscompat_version_local}") {
+//            exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+//            exclude group: 'org.cyclops.integrateddynamics', module: 'IntegratedDynamics'
+//        }
+//    } else {
+//        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.integrateddynamicscompat_version}") {
+//            exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+//            exclude group: 'org.cyclops.integrateddynamics', module: 'IntegratedDynamics'
+//        }
+//    }
+
+    if(project.hasProperty("commoncapabilities_version_local")) {
+        compile "org.cyclops.commoncapabilities:CommonCapabilities:${project.commoncapabilities_version_local}:deobf"
+    } else {
+        compileOnly fg.deobf("org.cyclops.commoncapabilities:CommonCapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
+            exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+        }
+    }
+	
+    compile "com.google.re2j:re2j:1.1"
+    shadow "com.google.re2j:re2j:1.1"
+
+    // Project lombok
+    compileOnly "org.projectlombok:lombok:1.16.4"
+	
+	testCompile "junit:junit:4.12"
+}
+
+shadowJar {
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup == 'org.projectlombok'
+        })
+    }
+}
+
+minecraft {
+    mappings channel: "${config.mcp_mappings_channel}", version: "${config.mcp_mappings_version}"
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            //property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                integrateddynamics {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                integrateddynamics {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'integrateddynamics', '--all', '--output', file('src/generated/resources/')
+            mods {
+                integrateddynamics {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+if (project.buildnumber.equals("RELEASE"))
+    version = "${config.minecraft_version}-${config.mod_version}"
+else
+    version = "${config.minecraft_version}-${config.mod_version}-${buildnumber}"
+
+jar {
+    manifest {
+        attributes([
+                "FMLAT": "accesstransformer.cfg",
+                "Specification-Title": "${project.name}",
+                "Specification-Vendor": "rubensworks",
+                "Specification-Version": "${config.mod_version}",
+                "Implementation-Title": "${project.name}",
+                "Implementation-Version": "${config.mod_version}",
+                "Implementation-Vendor" :"rubensworks",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+task signJar(type: SignJar, dependsOn: jar) {
+    onlyIf {
+        System.getenv().SIGN_KEYSTORE
+    }
+
+    keyStore = System.getenv().SIGN_KEYSTORE
+    alias = System.getenv().SIGN_ALIAS
+    storePass = System.getenv().SIGN_STOREPASS
+    keyPass = System.getenv().SIGN_KEYPASS
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
+}
+build.dependsOn signJar
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+    manifest {
+        attributes([
+                "FMLAT": "accesstransformer.cfg",
+                "Specification-Title": "${project.name}",
+                "Specification-Vendor": "rubensworks",
+                "Specification-Version": "${config.mod_version}",
+                "Implementation-Title": "${project.name}",
+                "Implementation-Version": "${config.mod_version}",
+                "Implementation-Vendor" :"rubensworks",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+task apiJar(type: Jar) {
+    from (sourceSets.main.output) {
+        include "**/api/**/*"
+    }
+    includeEmptyDirs = false
+    version = "${project.config.api_version}"
+    classifier = "api"
+}
+
+task sourceJar(type: Jar) {
+    classifier = "sources"
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier 'javadoc'
+}
+
+shadowJar {
+	archiveName = tasks.jar.archiveName
+	configurations = [project.configurations.shadow]
+}
+
+// TODO
+//reobfJar {
+//	setJar(tasks.shadowJar.archivePath)
+//}
+//reobfJar.dependsOn shadowJar
+
+artifacts {
+    archives deobfJar
+	archives apiJar
+    archives sourceJar
+    archives javadocJar
+}
+
+curseforge {
+    if(project.hasProperty("curseforge_key")) {
+        apiKey = project.curseforge_key
+    } else if(System.getenv().TRAVIS && System.getenv().CURSEFORGE_KEY_SECRET) {
+        apiKey = System.getenv().CURSEFORGE_KEY_SECRET
+    }
+
+    project {
+        id = "236307" // my project url is http://minecraft.curseforge.com/mc-mods/236307/
+        releaseType = project.config.release_type
+        mainArtifact(jar) {
+            relations {
+                requiredDependency 'cyclops-core'
+            }
+        }
+
+        changelog = ""
+        if (new File("resources/changelog/${project.version}.txt").exists()) {
+            changelog = new File("resources/changelog/${project.version}.txt").text
+        }
+
+        addArtifact deobfJar
+        addArtifact sourceJar
+        addArtifact javadocJar
+    }
+}
+
+configurations {
+    deployerJars
+}
+
+dependencies {
+    deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
+}
+
+uploadArchives {
+    repositories {
+        add getProject().repositories.mavenLocal()
+    }
+    repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+
+        if (project.hasProperty("filesmaven_url")) {
+            logger.info('Publishing to files server')
+            repository(url: project.filesmaven_url) {
+                authentication(userName: project.filesmaven_username, password: project.filesmaven_key)
+            }
+        } else if (System.getenv().MAVEN_URL) {
+            logger.info('Publishing to files server')
+            repository(url: System.getenv().MAVEN_URL) {
+                authentication(userName: System.getenv().MAVEN_USERNAME, password: System.getenv().MAVEN_KEY)
+            }
+        } else {
+            logger.info('Publishing to repo folder')
+            repository(url: 'file://localhost/' + project.file('~/.m2/repository').getAbsolutePath())
+        }
+
+        pom {
+            groupId = project.group
+            version = project.version
+            artifactId = project.archivesBaseName
+        }
+        pom.project {
+            name project.archivesBaseName
+            packaging 'jar'
+            description 'todo'
+            url 'https://github.com/CyclopsMC/IntegratedDynamics'
+
+            scm {
+                url 'https://github.com/CyclopsMC/IntegratedDynamics'
+                connection 'scm:git:git://github.com/CyclopsMC/IntegratedDynamics.git'
+                developerConnection 'scm:git:git@github.com:CyclopsMC/IntegratedDynamics.git'
+            }
+
+            issueManagement {
+                system 'github'
+                url 'https://github.com/CyclopsMC/IntegratedDynamics/issues'
+            }
+
+            developers {
+                developer {
+                    id 'rubensworks'
+                    name 'rubensworks'
+                    roles { role 'developer' }
+                }
+            }
+        }
+    }
+}
+
 idea {
     module {
-        sourceDirs += file('src/api/java')
+        for (String excludeDirName in ["run", "out", "logs", "gradle"]) {
+            File excludeDir = new File(projectDir, excludeDirName)
+            excludeDirs.add(excludeDir)
+        }
     }
 }
 

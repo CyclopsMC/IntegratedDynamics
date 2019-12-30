@@ -1,12 +1,19 @@
 package org.cyclops.integrateddynamics.tileentity;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
@@ -17,38 +24,49 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasinConfig;
 import org.cyclops.integrateddynamics.core.recipe.custom.RecipeHandlerDryingBasin;
 import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
+import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalDryingBasin;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A part entity for the mechanical drying basin.
  * @author rubensworks
  */
 public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemStack, FluidStack>, BlockMechanicalDryingBasin,
-        IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
+        IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties>
+        implements INamedContainerProvider {
 
-    private static final int SLOTS = 5;
+    public static final int INVENTORY_SIZE = 5;
+
     private static final int SLOT_INPUT = 0;
     private static final int[] SLOTS_OUTPUT = {1, 2, 3, 4};
 
-    private final SingleUseTank tankIn = new SingleUseTank(Fluid.BUCKET_VOLUME * 10, this);
-    private final SingleUseTank tankOut = new SingleUseTank(Fluid.BUCKET_VOLUME * 100, this);
+    private final SingleUseTank tankIn = new SingleUseTank(FluidHelpers.BUCKET_VOLUME * 10);
+    private final SingleUseTank tankOut = new SingleUseTank(FluidHelpers.BUCKET_VOLUME * 100);
 
     public TileMechanicalDryingBasin() {
-        super(SLOTS);
+        super(RegistryEntries.TILE_ENTITY_MECHANICAL_DRYING_BASIN, INVENTORY_SIZE);
 
         // Add fluid tank capability
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.UP, tankIn);
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.DOWN, tankOut);
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.NORTH, tankIn);
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.SOUTH, tankIn);
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.WEST, tankIn);
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.EAST, tankIn);
+        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.UP, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.DOWN, LazyOptional.of(() -> tankOut));
+        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.NORTH, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.SOUTH, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.WEST, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.EAST, LazyOptional.of(() -> tankIn));
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, new RecipeHandlerDryingBasin<>(BlockMechanicalDryingBasin.getInstance()));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin<>(RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN)));
+
+        // Add tank update listeners
+        tankIn.addDirtyMarkListener(this::onTankChanged);
+        tankOut.addDirtyMarkListener(this::onTankChanged);
     }
 
     @Override
@@ -64,9 +82,9 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
                 for (IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe : getRecipeRegistry().findRecipesByInput(recipeInput)) {
                     if(key.getRight() == null) {
                         return recipe;
-                    } else if(key.getRight().amount >= recipe.getInput().getFluidStack().amount
+                    } else if(key.getRight().getAmount() >= recipe.getInput().getFluidStack().getAmount()
                             && (maxRecipe == null
-                            || recipe.getInput().getFluidStack().amount > maxRecipe.getInput().getFluidStack().amount)) {
+                            || recipe.getInput().getFluidStack().getAmount() > maxRecipe.getInput().getFluidStack().getAmount())) {
                         maxRecipe = recipe;
                     }
                 }
@@ -95,13 +113,13 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
 
     @Override
     public boolean wasWorking() {
-        return getWorld().getBlockState(getPos()).getValue(BlockMechanicalDryingBasin.ON);
+        return getWorld().getBlockState(getPos()).get(BlockMechanicalDryingBasin.LIT);
     }
 
     @Override
     public void setWorking(boolean working) {
         getWorld().setBlockState(getPos(), getWorld().getBlockState(getPos())
-                .withProperty(BlockMechanicalDryingBasin.ON, working));
+                .with(BlockMechanicalDryingBasin.LIT, working));
     }
 
     public SingleUseTank getTankInput() {
@@ -113,28 +131,28 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        getTankInput().readFromNBT(tag.getCompoundTag("tankIn"));
-        getTankOutput().readFromNBT(tag.getCompoundTag("tankOut"));
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        getTankInput().readFromNBT(tag.getCompound("tankIn"));
+        getTankOutput().readFromNBT(tag.getCompound("tankOut"));
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("tankIn", getTankInput().writeToNBT(new NBTTagCompound()));
-        tag.setTag("tankOut", getTankOutput().writeToNBT(new NBTTagCompound()));
-        return super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        tag.put("tankIn", getTankInput().writeToNBT(new CompoundNBT()));
+        tag.put("tankOut", getTankOutput().writeToNBT(new CompoundNBT()));
+        return super.write(tag);
     }
 
     @Override
     protected IRecipeRegistry<BlockMechanicalDryingBasin, IngredientAndFluidStackRecipeComponent,
             IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
-        return BlockMechanicalDryingBasin.getInstance().getRecipeRegistry();
+        return RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN.getRecipeRegistry();
     }
 
     @Override
     protected Pair<ItemStack, FluidStack> getCurrentRecipeCacheKey() {
-        return Pair.of(getStackInSlot(SLOT_INPUT).copy(), FluidHelpers.copy(getTankInput().getFluid()));
+        return Pair.of(getInventory().getStackInSlot(SLOT_INPUT).copy(), FluidHelpers.copy(getTankInput().getFluid()));
     }
 
     @Override
@@ -144,6 +162,8 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
 
     @Override
     protected boolean finalizeRecipe(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe, boolean simulate) {
+        IFluidHandler.FluidAction fluidAction = FluidHelpers.simulateBooleanToAction(simulate);
+
         // Output items
         ItemStack outputStack = recipe.getOutput().getFirstItemStack().copy();
         if (!outputStack.isEmpty()) {
@@ -155,7 +175,7 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
         // Output fluid
         FluidStack outputFluid = recipe.getOutput().getFluidStack();
         if (outputFluid != null) {
-            if (getTankOutput().fill(outputFluid.copy(), !simulate) != outputFluid.amount) {
+            if (getTankOutput().fill(outputFluid.copy(), fluidAction) != outputFluid.getAmount()) {
                 return false;
             }
         }
@@ -163,14 +183,14 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
         // Only consume items if we are not simulating
         if (!simulate) {
             if (!recipe.getInput().getFirstItemStack().isEmpty()) {
-                this.decrStackSize(SLOT_INPUT, 1);
+                getInventory().decrStackSize(SLOT_INPUT, 1);
             }
         }
 
         // Consume fluid
         FluidStack inputFluid = recipe.getInput().getFluidStack();
         if (inputFluid != null) {
-            if (FluidHelpers.getAmount(getTankInput().drain(inputFluid, !simulate)) != inputFluid.amount) {
+            if (FluidHelpers.getAmount(getTankInput().drain(inputFluid, fluidAction)) != inputFluid.getAmount()) {
                 return false;
             }
         }
@@ -186,5 +206,16 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
     @Override
     public int getMaxEnergyStored() {
         return BlockMechanicalDryingBasinConfig.capacity;
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        return new ContainerMechanicalDryingBasin(id, playerInventory, this.getInventory(), Optional.of(this));
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("block.integrateddynamics.mechanical_drying_basin");
     }
 }

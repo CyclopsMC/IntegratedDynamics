@@ -293,22 +293,6 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         return finalizeExtraction(maxInstance, matchFlags, maxValue, simulate);
     }
 
-    /**
-     * Check if the given instance can be extracted.
-     *
-     * This is needed in cases where you want to block the extraction
-     * if it has not yet been indexed properly.
-     * Otherwise, changes to a storage may not be indexed at all,
-     * and important information may be lost.
-     *
-     * @param extractedSimulated A simulated extraction.
-     * @return If the extraction is allowed.
-     */
-    @Deprecated // TODO: remove in 1.13
-    protected boolean canExtract(T extractedSimulated) {
-        return true;
-    }
-
     protected T finalizeExtraction(T instancePrototype, M matchFlags, Pair<Wrapper<Long>, List<PartPos>> value,
                                    boolean simulate) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();

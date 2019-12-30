@@ -1,16 +1,20 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.base.Optional;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import lombok.ToString;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -21,6 +25,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNa
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -41,44 +46,43 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     }
 
     @Override
-    public String toCompactString(ValueEntity value) {
+    public ITextComponent toCompactString(ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if (uuid.isPresent()) {
             Optional<Entity> entity = value.getRawValue();
-            String entityName = "unknown";
             if(entity.isPresent()) {
                 Entity e = entity.get();
-                if(e instanceof EntityItem) {
-                    entityName = ((EntityItem) e).getItem().getDisplayName();
+                if(e instanceof ItemEntity) {
+                    return ((ItemEntity) e).getItem().getDisplayName();
                 } else {
-                    entityName = e.getName();
+                    return e.getName();
                 }
             }
-            return entityName;
+            return new StringTextComponent("unknown");
         }
-        return "";
+        return new StringTextComponent("");
     }
 
     @Override
-    public String serialize(ValueEntity value) {
+    public INBT serialize(ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if(uuid.isPresent()) {
-            return uuid.get().toString();
+            return new StringNBT(uuid.get().toString());
         }
-        return "";
+        return new StringNBT("");
     }
 
     @Override
-    public ValueEntity deserialize(String value) {
+    public ValueEntity deserialize(INBT value) {
         try {
-            return ValueEntity.of(UUID.fromString(value));
+            return ValueEntity.of(UUID.fromString(value.getString()));
         } catch (IllegalArgumentException e) {}
         return ValueEntity.of((UUID) null);
     }
 
     @Override
     public String getName(ValueEntity a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @Override
@@ -114,16 +118,9 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         Optional<UUID> uuid = value.getUuid();
         if (uuid.isPresent()) {
             UUID id = uuid.get();
-            Optional<Entity> entity = value.getRawValue();
-            String entityName = "unknown";
-            if(entity.isPresent()) {
-                Entity e = entity.get();
-                if (e instanceof EntityPlayer) {
-                    entityName = "Player";
-                } else {
-                    entityName = EntityList.getEntityString(e);
-                }
-            }
+            String entityName = value.getRawValue()
+                    .map(entity -> entity.getType().getRegistryName().toString())
+                    .orElse("unknown");
             return id.toString() + " (" + entityName + ")";
         }
         return "";
@@ -136,12 +133,12 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
         protected ValueEntity(@Nullable Entity value) {
             super(ValueTypes.OBJECT_ENTITY);
-            this.value = value == null ? Optional.<UUID>absent() : Optional.of(value.getUniqueID());
+            this.value = value == null ? Optional.<UUID>empty() : Optional.of(value.getUniqueID());
         }
 
         private ValueEntity(@Nullable UUID entityUuid) {
             super(ValueTypes.OBJECT_ENTITY);
-            this.value = Optional.fromNullable(entityUuid);
+            this.value = Optional.ofNullable(entityUuid);
         }
 
         /**
@@ -150,17 +147,29 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         public Optional<Entity> getRawValue() {
             Optional<UUID> uuid = getUuid();
             if (uuid.isPresent()) {
-                if (MinecraftHelpers.isClientSide()) {
-                    for (Entity entity : FMLClientHandler.instance().getWorldClient().getLoadedEntityList()) {
-                        if (entity.getUniqueID().equals(uuid.get())) {
+                Optional<Entity> optionalEntity = DistExecutor.callWhenOn(Dist.CLIENT, ()->()-> {
+                    if (MinecraftHelpers.isClientSide()) {
+                        for (Entity entity : Minecraft.getInstance().world.getAllEntities()) {
+                            if (entity.getUniqueID().equals(uuid.get())) {
+                                return Optional.of(entity);
+                            }
+                        }
+                        return Optional.empty();
+                    }
+                    return null;
+                });
+                if (optionalEntity == null) {
+                    for (ServerWorld world : ServerLifecycleHooks.getCurrentServer().getWorlds()) {
+                        Entity entity = world.getEntityByUuid(uuid.get());
+                        if (entity != null) {
                             return Optional.of(entity);
                         }
                     }
-                    return Optional.absent();
+                } else {
+                    return optionalEntity;
                 }
-                return Optional.fromNullable(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid.get()));
             }
-            return Optional.absent();
+            return Optional.empty();
         }
 
         public Optional<UUID> getUuid() {

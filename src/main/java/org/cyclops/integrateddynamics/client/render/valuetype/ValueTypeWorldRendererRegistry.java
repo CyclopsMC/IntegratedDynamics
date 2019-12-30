@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRendererRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -13,7 +13,7 @@ import java.util.Map;
  * Registry for {@link IValueTypeWorldRenderer}.
  * @author rubensworks
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public final class ValueTypeWorldRendererRegistry implements IValueTypeWorldRendererRegistry {
 
     private static ValueTypeWorldRendererRegistry INSTANCE = new ValueTypeWorldRendererRegistry();

@@ -3,15 +3,16 @@ package org.cyclops.integrateddynamics.core.path;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.experimental.Delegate;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -46,43 +47,44 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
     }
 
     @Override
-    public NBTTagCompound toNBT() {
-        NBTTagCompound tag = new NBTTagCompound();
-        NBTTagList list = new NBTTagList();
+    public CompoundNBT toNBT() {
+        CompoundNBT tag = new CompoundNBT();
+        ListNBT list = new ListNBT();
 
         for(ISidedPathElement e : elements) {
-            NBTTagCompound elementTag = new NBTTagCompound();
-            elementTag.setInteger("dimension", e.getPathElement().getPosition().getDimensionId());
-            elementTag.setLong("pos", e.getPathElement().getPosition().getBlockPos().toLong());
+            CompoundNBT elementTag = new CompoundNBT();
+            elementTag.putString("dimension", e.getPathElement().getPosition().getDimension().getRegistryName().toString());
+            elementTag.putLong("pos", e.getPathElement().getPosition().getBlockPos().toLong());
             if (e.getSide() != null) {
-                elementTag.setInteger("side", e.getSide().ordinal());
+                elementTag.putInt("side", e.getSide().ordinal());
             }
-            list.appendTag(elementTag);
+            list.add(elementTag);
         }
 
-        tag.setTag("list", list);
+        tag.put("list", list);
         return tag;
     }
 
     @Override
-    public void fromNBT(NBTTagCompound tag) {
-        NBTTagList list = tag.getTagList("list", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
+    public void fromNBT(CompoundNBT tag) {
+        ListNBT list = tag.getList("list", Constants.NBT.TAG_COMPOUND);
 
-        for(int i = 0; i < list.tagCount(); i++) {
-            NBTTagCompound elementTag = list.getCompoundTagAt(i);
-            int dimensionId = elementTag.getInteger("dimension");
+        for(int i = 0; i < list.size(); i++) {
+            CompoundNBT elementTag = list.getCompound(i);
+            ResourceLocation dimensionId = new ResourceLocation(elementTag.getString("dimension"));
+            DimensionType dimension = DimensionType.byName(dimensionId);
             BlockPos pos = BlockPos.fromLong(elementTag.getLong("pos"));
-            EnumFacing side = null;
-            if (elementTag.hasKey("side", Constants.NBT.TAG_INT)) {
-                side = EnumFacing.VALUES[elementTag.getInteger("side")];
+            Direction side = null;
+            if (elementTag.contains("side", Constants.NBT.TAG_INT)) {
+                side = Direction.values()[elementTag.getInt("side")];
             }
 
-            if(!net.minecraftforge.common.DimensionManager.isDimensionRegistered(dimensionId)) {
+            if (dimension == null) {
                 IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at the " +
                         "invalid dimension id %s.", dimensionId));
             } else {
-                World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimensionId);
-                IPathElement pathElement = TileHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY);
+                World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
+                IPathElement pathElement = TileHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY).orElse(null);
                 if(pathElement == null) {
                     IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +
                             "position %s in world %s because it has no valid path element.", pos, dimensionId));

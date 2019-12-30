@@ -7,7 +7,7 @@ import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
 import org.cyclops.integrateddynamics.tileentity.TileMaterializer;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Network element for materializers.
@@ -19,9 +19,8 @@ public class MaterializerNetworkElement extends TileNetworkElement<TileMateriali
         super(pos);
     }
 
-    @Nullable
     @Override
-    public TileMaterializer getNetworkEventListener() {
+    public Optional<TileMaterializer> getNetworkEventListener() {
         return getTile();
     }
 

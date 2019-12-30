@@ -1,9 +1,15 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
+import net.minecraft.block.LogBlock;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Config for the Menril Wood.
@@ -12,32 +18,20 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class BlockMenrilLogConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockMenrilLogConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockMenrilLogConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "menril_log",
-                null,
-                BlockMenrilLog.class
+                eConfig -> new LogBlock(MaterialColor.CYAN, Block.Properties.create(Material.WOOD, MaterialColor.CYAN)
+                        .hardnessAndResistance(2.0F)
+                        .sound(SoundType.WOOD)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
     
     @Override
-    public String getOreDictionaryId() {
-        return Reference.DICT_WOODLOG;
-    }
-    
-    @Override
     public void onRegistered() {
-    	Blocks.FIRE.setFireInfo(getBlockInstance(), 5, 20);
+        ((FireBlock) Blocks.FIRE).setFireInfo(RegistryEntries.BLOCK_MENRIL_LOG, 5, 20);
     }
 
 }

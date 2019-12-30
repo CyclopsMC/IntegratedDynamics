@@ -1,11 +1,12 @@
 package org.cyclops.integrateddynamics.core.network.event;
 
 import com.google.common.collect.Maps;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.eventbus.EventBus;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.event.ICancelableNetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
@@ -41,17 +42,19 @@ public class NetworkEventBus implements INetworkEventBus {
 
     @Override
     public void unregister(IEventListenableNetworkElement<?> target) {
-        for(Class<? extends INetworkEvent> eventType : target.getNetworkEventListener().getSubscribedEvents()) {
-            unregister(target, eventType);
-        }
+        target.getNetworkEventListener().ifPresent(listener -> {
+            for(Class<? extends INetworkEvent> eventType : listener.getSubscribedEvents()) {
+                unregister(target, eventType);
+            }
+        });
     }
 
     @Override
     public void post(INetworkEvent event) {
         Set<IEventListenableNetworkElement<?>> listeners = this.listeners.get(event.getClass());
         if(listeners != null) {
-            for (IEventListenableNetworkElement listener : listeners) {
-                listener.getNetworkEventListener().onEvent(event, listener);
+            for (IEventListenableNetworkElement<?> listener : listeners) {
+                listener.getNetworkEventListener().ifPresent(l -> ((INetworkEventListener) l).onEvent(event, listener));
             }
         }
     }

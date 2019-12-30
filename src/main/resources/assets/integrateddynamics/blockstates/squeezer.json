@@ -1,30 +1,40 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "transform": "forge:default-block",
-    "model"    : "integrateddynamics:squeezer",
-    "textures" : {
-      "0": "integrateddynamics:models/squeezer"
-    }
-  },
-  "variants": {
-    "height": {
-      "1": { "submodel" : "integrateddynamics:squeezer_top_1" },
-      "2": { "submodel" : "integrateddynamics:squeezer_top_2" },
-      "3": { "submodel" : "integrateddynamics:squeezer_top_3" },
-      "4": { "submodel" : "integrateddynamics:squeezer_top_4" },
-      "5": { "submodel" : "integrateddynamics:squeezer_top_5" },
-      "6": { "submodel" : "integrateddynamics:squeezer_top_6" },
-      "7": { "submodel" : "integrateddynamics:squeezer_top_7" }
+  "multipart": [
+    {
+      "when": { "axis": "x" },
+      "apply": { "model": "integrateddynamics:block/squeezer" }
     },
-    "inventory": [{
-      "y": 0,
-      "submodel" : "integrateddynamics:squeezer_top_1"
-    }],
-    "axis": {
-      "x": {},
-      "y": {},
-      "z": {"y": 90}
+    {
+      "when": { "axis": "z" },
+      "apply": { "model": "integrateddynamics:block/squeezer", "y": 90 }
+    },
+    {
+      "when": { "height": "1" },
+      "apply": { "model": "integrateddynamics:block/squeezer_top_1" }
+    },
+    {
+      "when": { "height": "2" },
+      "apply": { "model": "integrateddynamics:block/squeezer_top_2" }
+    },
+    {
+      "when": { "height": "3" },
+      "apply": { "model": "integrateddynamics:block/squeezer_top_3" }
+    },
+    {
+      "when": { "height": "4" },
+      "apply": { "model": "integrateddynamics:block/squeezer_top_4" }
+    },
+    {
+      "when": { "height": "5" },
+      "apply": { "model": "integrateddynamics:block/squeezer_top_5" }
+    },
+    {
+      "when": { "height": "6" },
+      "apply": { "model": "integrateddynamics:block/squeezer_top_6" }
+    },
+    {
+      "when": { "height": "7" },
+      "apply": { "model": "integrateddynamics:block/squeezer_top_7" }
     }
-  }
+  ]
 }

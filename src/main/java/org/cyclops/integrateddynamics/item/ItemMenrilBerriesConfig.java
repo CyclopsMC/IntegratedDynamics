@@ -1,12 +1,10 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.init.MobEffects;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.item.Food;
+import net.minecraft.item.Item;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
-import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableItemFood;
-import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -17,42 +15,28 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemMenrilBerriesConfig extends ItemConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static ItemMenrilBerriesConfig _instance;
-
-    /**
-     * If the berries should give the night vision effect when eaten.
-     */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.ITEM, comment = "If the berries should give the night vision effect when eaten.", requiresMcRestart = true)
+    @ConfigurableProperty(category = "item", comment = "If the berries should give the night vision effect when eaten.", requiresMcRestart = true)
     public static boolean nightVision = true;
 
-    /**
-     * Make a new instance.
-     */
     public ItemMenrilBerriesConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "menril_berries",
-                null,
-                null
+                eConfig -> new Item(new Item.Properties()
+                        .food(createFood())
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 
-    @Override
-    protected ConfigurableItemFood initSubInstance() {
-        ConfigurableItemFood food = new ConfigurableItemFood(this, 4, 0.3F, false) {
-            @Override
-            public int getMaxItemUseDuration(ItemStack stack) {
-                return 10;
-            }
-        };
-        if(nightVision) {
-            food = (ConfigurableItemFood) food.setPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 20, 1), 1);
+    protected static Food createFood() {
+        Food.Builder builder = new Food.Builder()
+                .hunger(4)
+                .saturation(0.3F)
+                .fastToEat();
+        if (nightVision) {
+            builder = builder.effect(new EffectInstance(Effects.NIGHT_VISION, 20, 1), 1);
         }
-        return food;
+        return builder.build();
     }
     
 }

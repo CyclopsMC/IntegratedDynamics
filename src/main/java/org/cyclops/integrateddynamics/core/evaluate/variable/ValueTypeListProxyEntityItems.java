@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -14,7 +15,7 @@ import javax.annotation.Nullable;
  */
 public class ValueTypeListProxyEntityItems extends ValueTypeListProxyEntityCapability<IItemHandler, ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
 
-    public ValueTypeListProxyEntityItems(World world, Entity entity, @Nullable EnumFacing side) {
+    public ValueTypeListProxyEntityItems(World world, Entity entity, @Nullable Direction side) {
         super(ValueTypeListProxyFactories.ENTITY_CAPABILITY_ITEMS.getName(), ValueTypes.OBJECT_ITEMSTACK,
                 world, entity, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
     }

@@ -1,34 +1,18 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.material.Material;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockFluidClassic;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.fluid.FluidMenrilResin;
+import net.minecraft.block.Block;
+import net.minecraft.block.FlowingFluidBlock;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
- * A blockState for the {@link org.cyclops.integrateddynamics.fluid.FluidMenrilResin} fluid.
+ * A block for the Menril Resin fluid.
  * @author rubensworks
  *
  */
-public class BlockFluidMenrilResin extends ConfigurableBlockFluidClassic {
+public class BlockFluidMenrilResin extends FlowingFluidBlock {
 
-    private static BlockFluidMenrilResin _instance = null;
-    
-    /**
-     * Get the unique instance.
-     * @return The instance.
-     */
-    public static BlockFluidMenrilResin getInstance() {
-        return _instance;
-    }
-
-    public BlockFluidMenrilResin(ExtendedConfig<BlockConfig> eConfig) {
-        super(eConfig, FluidMenrilResin.getInstance(), Material.WATER);
-        
-        if (MinecraftHelpers.isClientSide())
-            this.setParticleColor(0.654901961F, 0.870588235F, 0.780392157F);
+    public BlockFluidMenrilResin(Block.Properties builder) {
+        super(() -> RegistryEntries.FLUID_MENRIL_RESIN, builder);
     }
 
 }

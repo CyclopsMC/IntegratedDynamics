@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
@@ -22,8 +22,8 @@ public class ValueTypeListProxyEntityInventory extends ValueTypeListProxyEntityB
 
     protected NonNullList<ItemStack> getInventory() {
         Entity e = getEntity();
-        if(e != null && e instanceof EntityPlayer) {
-            return ((EntityPlayer) e).inventory.mainInventory;
+        if(e != null && e instanceof PlayerEntity) {
+            return ((PlayerEntity) e).inventory.mainInventory;
         }
         return NonNullList.create();
     }

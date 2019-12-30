@@ -2,27 +2,29 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.platform.GlStateManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.ClickType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
@@ -31,17 +33,18 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinit
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
-import org.cyclops.cyclopscore.client.gui.component.input.GuiTextFieldExtended;
+import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeRecipe;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
@@ -50,7 +53,6 @@ import org.cyclops.integrateddynamics.core.ingredient.ItemMatchType;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRecipeValueChangedPacket;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +66,7 @@ import java.util.stream.Collectors;
  */
 public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private SubGuiRenderPattern lastGui;
 
     private NonNullList<Pair<ItemStack, ItemMatchType>> inputStacks;
@@ -85,7 +87,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     private String outputEnergy = "0";
 
     public static ItemMatchType getDefaultItemMatch() {
-        return ItemMatchType.ITEMMETA;
+        return ItemMatchType.ITEM;
     }
 
     public ValueTypeRecipeLPElement() {
@@ -136,14 +138,14 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected void refreshInputFluidAmountBox() {
         if (this.lastGui != null && this.lastGui.getInputFluidAmountBox() != null) {
             this.lastGui.getInputFluidAmountBox().setText(inputFluidAmount);
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected void refreshOutputFluidAmountBox() {
         if (this.lastGui != null && this.lastGui.getOutputFluidAmountBox() != null) {
             this.lastGui.getOutputFluidAmountBox().setText(outputFluidAmount);
@@ -216,8 +218,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     protected ItemStack getFluidBucket(FluidStack fluidStack) {
         ItemStack itemStack = new ItemStack(Items.BUCKET);
-        IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-        fluidHandler.fill(new FluidStack(fluidStack, Fluid.BUCKET_VOLUME), true);
+        IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).orElse(null);
+        fluidHandler.fill(new FluidStack(fluidStack, FluidHelpers.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
         return fluidHandler.getContainer();
     }
 
@@ -250,32 +252,32 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validate() {
+    public ITextComponent validate() {
         if (!inputFluid.isEmpty() && Helpers.getFluidStack(inputFluid) == null) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+            return new TranslationTextComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
         }
         if (!outputFluid.isEmpty() && Helpers.getFluidStack(outputFluid) == null) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+            return new TranslationTextComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
         }
         try {
             Integer.parseInt(inputFluidAmount);
         } catch (NumberFormatException e) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputFluidAmount);
+            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputFluidAmount);
         }
         try {
             Integer.parseInt(outputFluidAmount);
         } catch (NumberFormatException e) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputFluidAmount);
+            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputFluidAmount);
         }
         try {
             Integer.parseInt(inputEnergy);
         } catch (NumberFormatException e) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputEnergy);
+            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputEnergy);
         }
         try {
             Integer.parseInt(outputEnergy);
         } catch (NumberFormatException e) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputEnergy);
+            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputEnergy);
         }
         return null;
     }
@@ -295,7 +297,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player) {
         if (slotId >= 4 && slotId < 13 && mouseButton == 0 && clickType == ClickType.QUICK_MOVE) {
             int id = slotId - 4;
             this.inputStacks.set(id, Pair.of(this.inputStacks.get(id).getLeft(), this.inputStacks.get(id).getRight().next()));
@@ -325,8 +327,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
         // Override fluid amount
         FluidStack fluidStack = Helpers.getFluidStack(fluid);
-        if (fluidStack != null) {
-            fluidStack.amount = fluidAmount;
+        if (!fluidStack.isEmpty()) {
+            fluidStack.setAmount(fluidAmount);
         }
 
         Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> inputs = Maps.newIdentityHashMap();
@@ -368,15 +370,15 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
         // Override fluid amount
         FluidStack fluidStack = Helpers.getFluidStack(fluid);
-        if (fluidStack != null) {
-            fluidStack.amount = fluidAmount;
+        if (!fluidStack.isEmpty()) {
+            fluidStack.setAmount(fluidAmount);
         }
 
         Map<IngredientComponent<?, ?>, List<?>> outputs = Maps.newIdentityHashMap();
         if (!itemStacks.isEmpty()) {
             outputs.put(IngredientComponent.ITEMSTACK, itemStacks);
         }
-        if (fluidStack != null) {
+        if (!fluidStack.isEmpty()) {
             outputs.put(IngredientComponent.FLUIDSTACK, Collections.singletonList(fluidStack));
         }
         if (energy > 0) {
@@ -396,14 +398,14 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return lastGui = new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setValueInGui(ISubGuiBox subGui) {
         ValueTypeRecipeLPElement.SubGuiRenderPattern gui = ((ValueTypeRecipeLPElement.SubGuiRenderPattern) subGui);
         IInventory slots = gui.container.getTemporaryInputSlots();
@@ -425,46 +427,46 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    protected static class SubGuiRenderPattern extends RenderPattern<ValueTypeRecipeLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase>
+    @OnlyIn(Dist.CLIENT)
+    protected static class SubGuiRenderPattern extends RenderPattern<ValueTypeRecipeLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
             implements IRenderPatternValueTypeTooltip {
 
         @Getter
         @Setter
         private boolean renderTooltip = true;
         @Getter
-        private GuiTextFieldExtended inputFluidAmountBox = null;
+        private WidgetTextFieldExtended inputFluidAmountBox = null;
         @Getter
-        private GuiTextFieldExtended inputEnergyBox = null;
+        private WidgetTextFieldExtended inputEnergyBox = null;
         @Getter
-        private GuiTextFieldExtended outputFluidAmountBox = null;
+        private WidgetTextFieldExtended outputFluidAmountBox = null;
         @Getter
-        private GuiTextFieldExtended outputEnergyBox = null;
+        private WidgetTextFieldExtended outputEnergyBox = null;
 
         public SubGuiRenderPattern(ValueTypeRecipeLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                   GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
         }
 
-        protected static GuiTextFieldExtended makeTextBox(int componentId, int x, int y, String text) {
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        protected static WidgetTextFieldExtended makeTextBox(int componentId, int x, int y, String text) {
+            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
             int searchWidth = 35;
 
-            GuiTextFieldExtended box = new GuiTextFieldExtended(componentId, fontRenderer, x, y,
-                    searchWidth, fontRenderer.FONT_HEIGHT + 3, true);
+            WidgetTextFieldExtended box = new WidgetTextFieldExtended(fontRenderer, x, y,
+                    searchWidth, fontRenderer.FONT_HEIGHT + 3, L10NHelpers.localize("gui.cyclopscore.search"), true);
             box.setMaxStringLength(10);
             box.setEnableBackgroundDrawing(false);
             box.setVisible(true);
             box.setTextColor(16777215);
             box.setCanLoseFocus(true);
             box.setText(text);
-            box.width = searchWidth;
+            box.setWidth(searchWidth);
             return box;
         }
 
         @Override
-        public void initGui(int guiLeft, int guiTop) {
-            super.initGui(guiLeft, guiTop);
+        public void init(int guiLeft, int guiTop) {
+            super.init(guiLeft, guiTop);
 
             this.inputFluidAmountBox = makeTextBox(0, guiLeft + getX() + 21, guiTop + getY() + 59, element.getInputFluidAmount());
             this.inputEnergyBox = makeTextBox(1, guiLeft + getX() + 21, guiTop + getY() + 77, element.getInputEnergy());
@@ -480,8 +482,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
 
             // Render the overlay of the input item slots
-            for (int slotId = 0; slotId < this.gui.inventorySlots.inventorySlots.size(); ++slotId) {
-                Slot slot = this.gui.inventorySlots.inventorySlots.get(slotId);
+            for (int slotId = 0; slotId < this.container.inventorySlots.size(); ++slotId) {
+                Slot slot = this.container.inventorySlots.get(slotId);
                 if (slotId >= 4 && slotId < 13) {
                     int slotX = slot.xPos;
                     int slotY = slot.yPos;
@@ -490,11 +492,11 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                         TextureAtlasSprite textureatlassprite = slot.getBackgroundSprite();
                         if (textureatlassprite != null) {
                             GlStateManager.disableLighting();
-                            GlStateManager.disableDepth();
-                            GlStateManager.color(1, 1, 1);
-                            this.gui.mc.getTextureManager().bindTexture(slot.getBackgroundLocation());
-                            this.drawTexturedModalRect(slotX, slotY, textureatlassprite, 16, 16);
-                            GlStateManager.enableDepth();
+                            GlStateManager.disableDepthTest();
+                            GlStateManager.color3f(1, 1, 1);
+                            RenderHelpers.bindTexture(slot.getBackgroundLocation());
+                            this.blit(slotX, slotY, 0, 16, 16, textureatlassprite);
+                            GlStateManager.enableDepthTest();
                         }
                     }
 
@@ -517,62 +519,60 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
             // Draw crafting arrow
-            this.drawTexturedModalRect(guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
+            this.blit(guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
 
-            inputFluidAmountBox.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+            inputFluidAmountBox.render(mouseX, mouseY, partialTicks);
             fontRenderer.drawString(L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0);
-            inputEnergyBox.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
-            outputFluidAmountBox.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+            inputEnergyBox.render(mouseX, mouseY, partialTicks);
+            outputFluidAmountBox.render(mouseX, mouseY, partialTicks);
             fontRenderer.drawString(L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0);
-            outputEnergyBox.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+            outputEnergyBox.render(mouseX, mouseY, partialTicks);
         }
 
         @Override
-        public boolean keyTyped(boolean checkHotbarKeys, char typedChar, int keyCode) throws IOException {
-            if (!checkHotbarKeys) {
-                if (inputFluidAmountBox.textboxKeyTyped(typedChar, keyCode)) {
-                    element.setInputFluidAmount(inputFluidAmountBox.getText());
-                    container.onDirty();
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                            new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputFluidAmount(),
-                                    LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_FLUID));
-                    return true;
-                }
-                if (inputEnergyBox.textboxKeyTyped(typedChar, keyCode)) {
-                    element.setInputEnergy(inputEnergyBox.getText());
-                    container.onDirty();
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                            new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputEnergy(),
-                                    LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_ENERGY));
-                    return true;
-                }
-                if (outputFluidAmountBox.textboxKeyTyped(typedChar, keyCode)) {
-                    element.setOutputFluidAmount(outputFluidAmountBox.getText());
-                    container.onDirty();
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                            new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputFluidAmount(),
-                                    LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_FLUID));
-                    return true;
-                }
-                if (outputEnergyBox.textboxKeyTyped(typedChar, keyCode)) {
-                    element.setOutputEnergy(outputEnergyBox.getText());
-                    container.onDirty();
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                            new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputEnergy(),
-                                    LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_ENERGY));
-                    return true;
-                }
+        public boolean charTyped(char typedChar, int keyCode) {
+            if (inputFluidAmountBox.charTyped(typedChar, keyCode)) {
+                element.setInputFluidAmount(inputFluidAmountBox.getText());
+                container.onDirty();
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                        new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputFluidAmount(),
+                                LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_FLUID));
+                return true;
             }
-            return super.keyTyped(checkHotbarKeys, typedChar, keyCode);
+            if (inputEnergyBox.charTyped(typedChar, keyCode)) {
+                element.setInputEnergy(inputEnergyBox.getText());
+                container.onDirty();
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                        new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputEnergy(),
+                                LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_ENERGY));
+                return true;
+            }
+            if (outputFluidAmountBox.charTyped(typedChar, keyCode)) {
+                element.setOutputFluidAmount(outputFluidAmountBox.getText());
+                container.onDirty();
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                        new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputFluidAmount(),
+                                LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_FLUID));
+                return true;
+            }
+            if (outputEnergyBox.charTyped(typedChar, keyCode)) {
+                element.setOutputEnergy(outputEnergyBox.getText());
+                container.onDirty();
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                        new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputEnergy(),
+                                LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_ENERGY));
+                return true;
+            }
+            return super.charTyped(typedChar, keyCode);
         }
 
         @Override
-        public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-            inputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton);
-            inputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton);
-            outputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton);
-            outputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton);
-            super.mouseClicked(mouseX, mouseY, mouseButton);
+        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+            return inputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton)
+                    || inputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton)
+                    || outputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton)
+                    || outputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton)
+                    || super.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 

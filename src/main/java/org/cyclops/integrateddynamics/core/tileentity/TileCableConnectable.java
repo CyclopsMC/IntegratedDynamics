@@ -2,7 +2,9 @@ package org.cyclops.integrateddynamics.core.tileentity;
 
 import lombok.Getter;
 import lombok.experimental.Delegate;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
@@ -30,7 +32,8 @@ public class TileCableConnectable extends CyclopsTileEntity implements CyclopsTi
     @Getter
     private final ICable cable;
 
-    public TileCableConnectable() {
+    public TileCableConnectable(TileEntityType<?> type) {
+        super(type);
         cable = new CableTile<TileCableConnectable>(this) {
 
             @Override
@@ -48,14 +51,14 @@ public class TileCableConnectable extends CyclopsTileEntity implements CyclopsTi
                 return tile.connected;
             }
         };
-        addCapabilityInternal(CableConfig.CAPABILITY, cable);
-        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, new NetworkCarrierDefault());
-        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTile<>(this, cable));
+        addCapabilityInternal(CableConfig.CAPABILITY, LazyOptional.of(() -> cable));
+        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, LazyOptional.of(NetworkCarrierDefault::new));
+        addCapabilityInternal(PathElementConfig.CAPABILITY, LazyOptional.of(() -> new PathElementTile<>(this, cable)));
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
         connected.clear();
     }
 
@@ -71,8 +74,8 @@ public class TileCableConnectable extends CyclopsTileEntity implements CyclopsTi
     }
 
     @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
         if (getWorld() != null && !getWorld().isRemote) {
             NetworkHelpers.invalidateNetworkElements(getWorld(), getPos(), this);
         }

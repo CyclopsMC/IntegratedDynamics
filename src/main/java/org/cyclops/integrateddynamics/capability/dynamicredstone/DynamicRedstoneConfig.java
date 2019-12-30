@@ -14,32 +14,17 @@ import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
  */
 public class DynamicRedstoneConfig extends CapabilityConfig<IDynamicRedstone> {
 
-    /**
-     * The unique instance.
-     */
-    public static DynamicRedstoneConfig _instance;
-
     @CapabilityInject(IDynamicRedstone.class)
     public static Capability<IDynamicRedstone> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public DynamicRedstoneConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "dynamic_redstone",
-                "Allows redstone level modifications.",
                 IDynamicRedstone.class,
                 new DefaultCapabilityStorage<IDynamicRedstone>(),
-                DynamicRedstoneDefault.class
+                DynamicRedstoneDefault::new
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

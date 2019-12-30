@@ -12,6 +12,7 @@ import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 
@@ -23,7 +24,7 @@ import java.util.List;
 public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecipeAbstract<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
 
     public RegistryExportableDryingBasinRecipe() {
-        super(() -> BlockDryingBasin.getInstance().getRecipeRegistry(), "drying_basin_recipe");
+        super(() -> RegistryEntries.BLOCK_DRYING_BASIN.getRecipeRegistry(), "drying_basin_recipe");
     }
 
     public static JsonObject serializeRecipeIO(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {

@@ -1,8 +1,0 @@
-{
-  "forge_marker": 1,
-  "parent": "integrateddynamics:block/writer",
-  "textures": {
-    "back" : "integrateddynamics:parts/inventory_reader_back",
-    "front": "integrateddynamics:parts/inventory_writer_front_inactive"
-  }
-}

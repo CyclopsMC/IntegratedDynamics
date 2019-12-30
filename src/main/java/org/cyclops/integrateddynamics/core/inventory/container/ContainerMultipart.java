@@ -1,87 +1,78 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import com.google.common.collect.Maps;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
-import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
-import org.cyclops.cyclopscore.inventory.container.button.IButtonActionServer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
-import org.cyclops.integrateddynamics.core.client.gui.container.GuiMultipart;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
-import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
+import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 
-import java.util.Map;
+import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Container for parts.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = false)
-@Data
-public abstract class ContainerMultipart<P extends IPartType<P, S> & IGuiContainerProvider, S extends IPartState<P>>
-        extends ExtendedInventoryContainer implements IDirtyMarkListener {
+public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IPartState<P>>
+        extends InventoryContainer implements IDirtyMarkListener {
+
+    public static final String BUTTON_SETTINGS = "button_settings";
 
     private static final int PAGE_SIZE = 3;
 
-    private final PartTarget target;
-    private final IPartContainer partContainer;
+    private final Optional<PartTarget> target;
+    private final Optional<IPartContainer> partContainer;
     private final P partType;
     private final World world;
-    private final BlockPos pos;
-    private final Map<IAspect, Integer> aspectPropertyButtons = Maps.newHashMap();
 
-    protected final EntityPlayer player;
+    protected static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
+        String name = packetBuffer.readString();
+        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(name),
+                String.format("Could not find a part by name %s", name));
+    }
 
-    /**
-     * Make a new instance.
-     * @param target The target.
-     * @param player The player.
-     * @param partContainer The part container.
-     * @param partType The part type.
-     */
-    public ContainerMultipart(EntityPlayer player, PartTarget target, IPartContainer partContainer, P partType) {
-        super(player.inventory, partType);
+    public ContainerMultipart(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory, IInventory inventory,
+                              Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
+        super(type, id, playerInventory, inventory);
         this.target = target;
-        this.partContainer = partContainer;
         this.partType = partType;
+        this.partContainer = partContainer;
         this.world = player.getEntityWorld();
-        this.pos = player.getPosition();
 
-        this.player = player;
-
-        putButtonAction(GuiMultipart.BUTTON_SETTINGS, new IButtonActionServer<InventoryContainer>() {
-            @Override
-            public void onAction(int buttonId, InventoryContainer container) {
-                if(!world.isRemote) {
-                    IGuiContainerProvider gui = ((PartTypeConfigurable) getPartType()).getSettingsGuiProvider();
-                    IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide()); // Pass the side as extra data to the gui
-                    BlockPos cPos = getTarget().getCenter().getPos().getBlockPos();
-                    ContainerMultipart.this.player.openGui(gui.getModGui(), gui.getGuiID(),
-                            world, cPos.getX(), cPos.getY(), cPos.getZ());
-                }
+        putButtonAction(ContainerMultipart.BUTTON_SETTINGS, (s, containerExtended) -> {
+            if(!world.isRemote()) {
+                PartHelpers.openContainerPart((ServerPlayerEntity) player, target.get().getCenter(), partType);
             }
         });
     }
 
-    @SuppressWarnings("unchecked")
-    public S getPartState() {
-        return (S) partContainer.getPartState(getTarget().getCenter().getSide());
+    public P getPartType() {
+        return partType;
+    }
+
+    public Optional<PartTarget> getTarget() {
+        return target;
+    }
+
+    public Optional<S> getPartState() {
+        return partContainer.map(p -> (S) p.getPartState(getTarget().get().getCenter().getSide()));
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
-        return PartHelpers.canInteractWith(getTarget(), player, this.partContainer);
+    public boolean canInteractWith(PlayerEntity playerIn) {
+        return PartHelpers.canInteractWith(getTarget().get(), player, this.partContainer.get());
     }
 }

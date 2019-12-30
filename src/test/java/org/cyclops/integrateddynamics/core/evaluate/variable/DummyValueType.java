@@ -1,7 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
@@ -41,13 +44,13 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo, DummyValue value) {
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, DummyValue value) {
 
     }
 
     @Override
-    public String toCompactString(DummyValue value) {
-        return "dummy";
+    public ITextComponent toCompactString(DummyValue value) {
+        return new StringTextComponent("dummy");
     }
 
     @Override
@@ -56,8 +59,8 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public String getDisplayColorFormat() {
-        return "";
+    public TextFormatting getDisplayColorFormat() {
+        return TextFormatting.WHITE;
     }
 
     @Override
@@ -66,17 +69,17 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public String serialize(DummyValue value) {
+    public INBT serialize(DummyValue value) {
         return null;
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString canDeserialize(String value) {
+    public ITextComponent canDeserialize(INBT value) {
         return null;
     }
 
     @Override
-    public DummyValue deserialize(String value) {
+    public DummyValue deserialize(INBT value) {
         return null;
     }
 
@@ -86,11 +89,20 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
+    public String toString(DummyValue value) {
+        return "";
+    }
+
+    @Override
+    public DummyValue parseString(String value) throws EvaluationException {
+        return DummyValue.of();
+    }
+
+    @Override
     public ValueTypeLPElementBase createLogicProgrammerElement() {
         return null;
     }
 
-    @ToString
     public static class DummyValue extends ValueBase {
 
         private DummyValue() {

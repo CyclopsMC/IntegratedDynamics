@@ -60,7 +60,7 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
     @Nullable
     public default IIngredientComponentStorage<T, M> getPositionedStorageUnsafe(PartPos pos) {
         DimPos dimPos = pos.getPos();
-        TileEntity tile = dimPos.getWorld().getTileEntity(dimPos.getBlockPos());
+        TileEntity tile = dimPos.getWorld(true).getTileEntity(dimPos.getBlockPos());
         return tile != null ? getComponent().getStorage(tile, pos.getSide()) : null;
     }
 

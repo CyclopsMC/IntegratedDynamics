@@ -3,7 +3,8 @@ package org.cyclops.integrateddynamics.core.evaluate;
 import com.google.common.collect.Lists;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -33,7 +34,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
     private final IValueType containingValueType;
 
     private IVariableFacade variableStored = null;
-    private List<L10NHelpers.UnlocalizedString> errors = Lists.newLinkedList();
+    private List<ITextComponent> errors = Lists.newLinkedList();
 
     public InventoryVariableEvaluator(IInventory inventory, int slot, IValueType<V> containingValueType) {
         this.inventory = inventory;
@@ -55,8 +56,8 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
      * @param sendVariablesUpdateEvent If a {@link VariableContentsUpdatedEvent} event must be sent
      *                                 if the variable has changed.
      */
-    public void refreshVariable(INetwork network, boolean sendVariablesUpdateEvent) {
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+    public void refreshVariable(@Nullable INetwork network, boolean sendVariablesUpdateEvent) {
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network).orElse(null);
 
         int lastVariabledId = this.variableStored == null ? -1 : this.variableStored.getId();
         int variableId = -1;
@@ -73,13 +74,13 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
 
         clearErrors();
         if (partNetwork == null) {
-            addError(new L10NHelpers.UnlocalizedString(L10NValues.GENERAL_ERROR_NONETWORK));
+            addError(new TranslationTextComponent(L10NValues.GENERAL_ERROR_NONETWORK));
         } else if (this.variableStored != null) {
             preValidate();
             try {
                 variableStored.validate(partNetwork, this, containingValueType);
             } catch (IllegalArgumentException e) {
-                addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+                addError(new TranslationTextComponent(e.getMessage()));
             }
         }
         if(sendVariablesUpdateEvent && partNetwork != null && lastVariabledId != variableId) {
@@ -89,7 +90,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
 
     @Nullable
     public IVariable<V> getVariable(INetwork network) {
-        return getVariable(NetworkHelpers.getPartNetwork(network));
+        return getVariable(NetworkHelpers.getPartNetworkChecked(network));
 
     }
 
@@ -99,7 +100,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         try {
             return getVariableFacade().getVariable(network);
         } catch (IllegalArgumentException e) {
-            addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            addError(new TranslationTextComponent(e.getMessage()));
             return null;
         }
     }
@@ -117,17 +118,17 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         onErrorsChanged();
     }
 
-    public void setErrors(List<L10NHelpers.UnlocalizedString> errors) {
+    public void setErrors(List<ITextComponent> errors) {
         this.errors = errors;
         onErrorsChanged();
     }
 
-    public List<L10NHelpers.UnlocalizedString> getErrors() {
+    public List<ITextComponent> getErrors() {
         return errors;
     }
 
     @Override
-    public void addError(L10NHelpers.UnlocalizedString error) {
+    public void addError(ITextComponent error) {
         errors.add(error);
     }
 

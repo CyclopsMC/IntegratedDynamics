@@ -1,22 +1,5 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "model"    : "integrateddynamics:energy_battery",
-    "textures" : {
-      "overlay_front": "cyclopscore:blocks/empty",
-      "overlay_side" : "cyclopscore:blocks/empty"
-    }
-  },
   "variants": {
-    "normal": [{}],
-    "inventory": [{
-      "y": 0
-    }],
-    "fill": {
-      "0" : {},
-      "1" : {},
-      "2" : {},
-      "3" : {}
-    }
+    "": { "model": "integrateddynamics:block/energy_battery" }
   }
 }

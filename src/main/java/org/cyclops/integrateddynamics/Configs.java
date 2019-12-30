@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
@@ -19,11 +18,24 @@ import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettingsConfig;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettingsConfig;
+import org.cyclops.integrateddynamics.core.item.ItemPart;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.core.recipe.ItemBlockEnergyContainerCombinationRecipeConfig;
+import org.cyclops.integrateddynamics.core.recipe.ItemNbtClearRecipeConfig;
+import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTickingConfig;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
 import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
+import org.cyclops.integrateddynamics.inventory.container.*;
 import org.cyclops.integrateddynamics.item.*;
+import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipeConfig;
+import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipeConfig;
+import org.cyclops.integrateddynamics.tileentity.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
+import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureFlowersMenrilConfig;
+import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureTreeMenrilConfig;
 
 /**
  * This class holds a set of all the configs that need to be registered.
@@ -34,89 +46,128 @@ public class Configs {
     public static void registerBlocks(ConfigHandler configHandler) {
 
         // Capabilities
-        configHandler.add(new PartContainerConfig());
-        configHandler.add(new NetworkElementProviderConfig());
-        configHandler.add(new DynamicLightConfig());
-        configHandler.add(new DynamicRedstoneConfig());
-        configHandler.add(new FacadeableConfig());
-        configHandler.add(new VariableContainerConfig());
-        configHandler.add(new CableConfig());
-        configHandler.add(new CableFakeableConfig());
-        configHandler.add(new NetworkCarrierConfig());
-        configHandler.add(new PathElementConfig());
-        configHandler.add(new VariableFacadeHolderConfig());
-        configHandler.add(new PartNetworkConfig());
-        configHandler.add(new EnergyNetworkConfig());
-        configHandler.add(new ValueInterfaceConfig());
-        configHandler.add(new PositionedAddonsNetworkIngredientsHandlerConfig());
-        configHandler.add(new IngredientComponentValueHandlerConfig());
+        configHandler.addConfigurable(new PartContainerConfig());
+        configHandler.addConfigurable(new NetworkElementProviderConfig());
+        configHandler.addConfigurable(new DynamicLightConfig());
+        configHandler.addConfigurable(new DynamicRedstoneConfig());
+        configHandler.addConfigurable(new FacadeableConfig());
+        configHandler.addConfigurable(new VariableContainerConfig());
+        configHandler.addConfigurable(new CableConfig());
+        configHandler.addConfigurable(new CableFakeableConfig());
+        configHandler.addConfigurable(new NetworkCarrierConfig());
+        configHandler.addConfigurable(new PathElementConfig());
+        configHandler.addConfigurable(new VariableFacadeHolderConfig());
+        configHandler.addConfigurable(new PartNetworkConfig());
+        configHandler.addConfigurable(new EnergyNetworkConfig());
+        configHandler.addConfigurable(new ValueInterfaceConfig());
+        configHandler.addConfigurable(new PositionedAddonsNetworkIngredientsHandlerConfig());
+        configHandler.addConfigurable(new IngredientComponentValueHandlerConfig());
 
         // Fluids
-        configHandler.add(new FluidMenrilResinConfig());
-        configHandler.add(new FluidLiquidChorusConfig());
+        configHandler.addConfigurable(new FluidMenrilResinConfig());
+        configHandler.addConfigurable(new FluidLiquidChorusConfig());
+
+        // Tile entities
+        configHandler.addConfigurable(new TileCoalGeneratorConfig());
+        configHandler.addConfigurable(new TileDelayConfig());
+        configHandler.addConfigurable(new TileDryingBasinConfig());
+        configHandler.addConfigurable(new TileEnergyBatteryConfig());
+        configHandler.addConfigurable(new TileMaterializerConfig());
+        configHandler.addConfigurable(new TileMechanicalDryingBasinConfig());
+        configHandler.addConfigurable(new TileMechanicalSqueezerConfig());
+        configHandler.addConfigurable(new TileMultipartTickingConfig());
+        configHandler.addConfigurable(new TileProxyConfig());
+        configHandler.addConfigurable(new TileSqueezerConfig());
+        configHandler.addConfigurable(new TileVariableStoreConfig());
 
         // Blocks
-        configHandler.add(new BlockCableConfig());
-        configHandler.add(new BlockVariablestoreConfig());
-        configHandler.add(new BlockLogicProgrammerConfig());
-        configHandler.add(new BlockInvisibleLightConfig());
-        configHandler.add(new BlockEnergyBatteryConfig());
-        configHandler.add(new BlockCreativeEnergyBatteryConfig());
-        configHandler.add(new BlockCoalGeneratorConfig());
-        configHandler.add(new BlockProxyConfig());
-        configHandler.add(new BlockMaterializerConfig());
-        configHandler.add(new BlockMenrilLogConfig());
-        configHandler.add(new BlockMenrilLogFilledConfig());
-        configHandler.add(new BlockMenrilLeavesConfig());
-        configHandler.add(new BlockMenrilSaplingConfig());
-        configHandler.add(new BlockMenrilPlanksConfig());
-        configHandler.add(new BlockCrystalizedMenrilBlockConfig());
-        configHandler.add(new BlockCrystalizedMenrilBrickConfig());
-        configHandler.add(new BlockFluidMenrilResinConfig());
-        configHandler.add(new BlockDryingBasinConfig());
-        configHandler.add(new BlockSqueezerConfig());
-        configHandler.add(new BlockMenrilDoorConfig());
-        configHandler.add(new BlockMenrilTorchConfig());
-        configHandler.add(new BlockMenrilTorchStoneConfig());
-        configHandler.add(new BlockMenrilPlanksStairsConfig());
-        configHandler.add(new BlockCrystalizedMenrilBlockStairsConfig());
-        configHandler.add(new BlockCrystalizedMenrilBrickStairsConfig());
-        configHandler.add(new BlockDelayConfig());
-        configHandler.add(new BlockFluidLiquidChorusConfig());
-        configHandler.add(new BlockCrystalizedChorusBlockConfig());
-        configHandler.add(new BlockCrystalizedChorusBrickConfig());
-        configHandler.add(new BlockCrystalizedChorusBlockStairsConfig());
-        configHandler.add(new BlockCrystalizedChorusBrickStairsConfig());
-        configHandler.add(new BlockMechanicalSqueezerConfig());
-        configHandler.add(new BlockMechanicalDryingBasinConfig());
+        configHandler.addConfigurable(new BlockCableConfig());
+        configHandler.addConfigurable(new BlockVariablestoreConfig());
+        configHandler.addConfigurable(new BlockLogicProgrammerConfig());
+        configHandler.addConfigurable(new BlockInvisibleLightConfig());
+        configHandler.addConfigurable(new BlockEnergyBatteryConfig());
+        configHandler.addConfigurable(new BlockCreativeEnergyBatteryConfig());
+        configHandler.addConfigurable(new BlockCoalGeneratorConfig());
+        configHandler.addConfigurable(new BlockProxyConfig());
+        configHandler.addConfigurable(new BlockMaterializerConfig());
+        configHandler.addConfigurable(new BlockMenrilLogConfig());
+        configHandler.addConfigurable(new BlockMenrilLogFilledConfig());
+        configHandler.addConfigurable(new BlockMenrilLeavesConfig());
+        configHandler.addConfigurable(new BlockMenrilSaplingConfig());
+        configHandler.addConfigurable(new BlockMenrilPlanksConfig());
+        configHandler.addConfigurable(new BlockCrystalizedMenrilBlockConfig());
+        configHandler.addConfigurable(new BlockCrystalizedMenrilBrickConfig());
+        configHandler.addConfigurable(new BlockFluidMenrilResinConfig());
+        configHandler.addConfigurable(new BlockDryingBasinConfig());
+        configHandler.addConfigurable(new BlockSqueezerConfig());
+        configHandler.addConfigurable(new BlockMenrilDoorConfig());
+        configHandler.addConfigurable(new BlockMenrilTorchConfig());
+        configHandler.addConfigurable(new BlockMenrilTorchStoneConfig());
+        configHandler.addConfigurable(new BlockMenrilPlanksStairsConfig());
+        configHandler.addConfigurable(new BlockCrystalizedMenrilBlockStairsConfig());
+        configHandler.addConfigurable(new BlockCrystalizedMenrilBrickStairsConfig());
+        configHandler.addConfigurable(new BlockDelayConfig());
+        configHandler.addConfigurable(new BlockFluidLiquidChorusConfig());
+        configHandler.addConfigurable(new BlockCrystalizedChorusBlockConfig());
+        configHandler.addConfigurable(new BlockCrystalizedChorusBrickConfig());
+        configHandler.addConfigurable(new BlockCrystalizedChorusBlockStairsConfig());
+        configHandler.addConfigurable(new BlockCrystalizedChorusBrickStairsConfig());
+        configHandler.addConfigurable(new BlockMechanicalSqueezerConfig());
+        configHandler.addConfigurable(new BlockMechanicalDryingBasinConfig());
 
         // Items
-        configHandler.add(new ItemWrenchConfig());
-        configHandler.add(new ItemVariableConfig());
-        configHandler.add(new ItemLabellerConfig());
-        configHandler.add(new ItemFacadeConfig());
-        configHandler.add(new ItemCrystalizedMenrilChunkConfig());
-        configHandler.add(new ItemVariableTransformerConfig());
-        configHandler.add(new ItemMenrilBerriesConfig());
-        configHandler.add(new ItemPortableLogicProgrammerConfig());
-        configHandler.add(new ItemOnTheDynamicsOfIntegrationConfig());
-        configHandler.add(new ItemCrystalizedChorusChunkConfig());
-        configHandler.add(new ItemLogicDirectorConfig());
+        configHandler.addConfigurable(new ItemWrenchConfig());
+        configHandler.addConfigurable(new ItemVariableConfig());
+        configHandler.addConfigurable(new ItemLabellerConfig());
+        configHandler.addConfigurable(new ItemFacadeConfig());
+        configHandler.addConfigurable(new ItemCrystalizedMenrilChunkConfig());
+        configHandler.addConfigurable(new ItemVariableTransformerConfig(true));
+        configHandler.addConfigurable(new ItemVariableTransformerConfig(false));
+        configHandler.addConfigurable(new ItemMenrilBerriesConfig());
+        configHandler.addConfigurable(new ItemPortableLogicProgrammerConfig());
+        configHandler.addConfigurable(new ItemOnTheDynamicsOfIntegrationConfig());
+        configHandler.addConfigurable(new ItemCrystalizedChorusChunkConfig());
+        configHandler.addConfigurable(new ItemLogicDirectorConfig());
+
+        // World features
+        configHandler.addConfigurable(new WorldFeatureFlowersMenrilConfig());
+        configHandler.addConfigurable(new WorldFeatureTreeMenrilConfig());
 
         // Biomes
-        configHandler.add(new BiomeMeneglinConfig());
+        configHandler.addConfigurable(new BiomeMeneglinConfig());
 
         // Entities
-        configHandler.add(new EntityItemTargettedConfig());
-    }
+        configHandler.addConfigurable(new EntityItemTargettedConfig());
 
-    /**
-     * A safe way to check if a {@link org.cyclops.cyclopscore.config.configurable.IConfigurable} is enabled. @see ExtendedConfig#isEnabled()
-     * @param config The config to check.
-     * @return If the given config is enabled.
-     */
-    public static boolean isEnabled(Class<? extends ExtendedConfig<?>> config) {
-        return IntegratedDynamics._instance.getConfigHandler().isConfigEnabled(config);
+        // Guis
+        configHandler.addConfigurable(new ContainerAspectSettingsConfig());
+        configHandler.addConfigurable(new ContainerCoalGeneratorConfig());
+        configHandler.addConfigurable(new ContainerDelayConfig());
+        configHandler.addConfigurable(new ContainerLabellerConfig());
+        configHandler.addConfigurable(new ContainerLogicProgrammerConfig());
+        configHandler.addConfigurable(new ContainerLogicProgrammerPortableConfig());
+        configHandler.addConfigurable(new ContainerMaterializerConfig());
+        configHandler.addConfigurable(new ContainerMechanicalDryingBasinConfig());
+        configHandler.addConfigurable(new ContainerMechanicalSqueezerConfig());
+        configHandler.addConfigurable(new ContainerOnTheDynamicsOfIntegrationConfig());
+        configHandler.addConfigurable(new ContainerPartDisplayConfig());
+        configHandler.addConfigurable(new ContainerPartReaderConfig());
+        configHandler.addConfigurable(new ContainerPartSettingsConfig());
+        configHandler.addConfigurable(new ContainerPartWriterConfig());
+        configHandler.addConfigurable(new ContainerProxyConfig());
+        configHandler.addConfigurable(new ContainerVariablestoreConfig());
+
+        // Recipes
+        configHandler.addConfigurable(new ItemVariableCopyRecipeConfig());
+        configHandler.addConfigurable(new ItemFacadeRecipeConfig());
+        for(int i = 1; i < 9; i++) {
+            configHandler.addConfigurable(new ItemBlockEnergyContainerCombinationRecipeConfig(i,
+                    () -> RegistryEntries.ITEM_ENERGY_BATTERY, "energy_battery", BlockEnergyBatteryConfig.maxCapacity));
+        }
+        configHandler.addConfigurable(new ItemNbtClearRecipeConfig(ItemVariable.class, () -> RegistryEntries.ITEM_VARIABLE, "variable_clear"));
+        configHandler.addConfigurable(new ItemNbtClearRecipeConfig(ItemPart.class, () -> PartTypes.REDSTONE_READER.getItem(), "part_clear"));
+        configHandler.addConfigurable(new ItemNbtClearRecipeConfig(ItemBlockProxy.class, () -> RegistryEntries.ITEM_PROXY, "proxy_clear"));
+        configHandler.addConfigurable(new ItemNbtClearRecipeConfig(ItemBlockDelay.class, () -> RegistryEntries.ITEM_DELAY, "delay_clear"));
     }
 
 }

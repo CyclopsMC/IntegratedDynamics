@@ -10,7 +10,7 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.block.BlockSqueezer;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
 public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAbstract<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> {
 
     public RegistryExportableSqueezerRecipe() {
-        super(() -> BlockSqueezer.getInstance().getRecipeRegistry(), "squeezer_recipe");
+        super(() -> RegistryEntries.BLOCK_SQUEEZER.getRecipeRegistry(), "squeezer_recipe");
     }
 
     public static JsonObject serializeRecipeIO(IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, ?> recipe) {

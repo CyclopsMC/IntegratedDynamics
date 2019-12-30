@@ -3,26 +3,26 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.IInventory;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
  * @author rubensworks
  */
-@SideOnly(Side.CLIENT)
-class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase>
+@OnlyIn(Dist.CLIENT)
+class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
         implements IRenderPatternValueTypeTooltip {
 
     private boolean renderTooltip = true;
 
     public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                          GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                          ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
@@ -40,7 +40,7 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Gu
             if (temporaryInputSlots.getStackInSlot(i).isEmpty()) {
                 Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
                 if (gui.isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
-                        GuiLogicProgrammerBase.BOX_HEIGHT, GuiLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
+                        ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
                     gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
                 }
             }

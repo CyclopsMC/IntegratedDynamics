@@ -3,8 +3,8 @@
   "defaults": {
     "model": "integrateddynamics:panel",
     "textures": {
-      "back" : "integrateddynamics:parts/panel_back_inactive",
-      "front": "integrateddynamics:parts/panel_front_light"
+      "back" : "integrateddynamics:part/panel_back_inactive",
+      "front": "integrateddynamics:part/panel_front_light"
     }
   },
   "variants": {

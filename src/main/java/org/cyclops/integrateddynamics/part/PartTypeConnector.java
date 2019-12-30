@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.inventory.Container;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -29,22 +28,7 @@ public abstract class PartTypeConnector<P extends PartTypeConnector<P, S>, S ext
 
     @Override
     protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus(blockConfig);
-    }
-
-    @Override
-    protected boolean hasGui() {
-        return false;
-    }
-
-    @Override
-    public Class<? extends Container> getContainer() {
-        return null;
-    }
-
-    @Override
-    public Class<? extends GuiScreen> getGui() {
-        return null;
+        return new IgnoredBlockStatus();
     }
 
     @Override
@@ -82,16 +66,11 @@ public abstract class PartTypeConnector<P extends PartTypeConnector<P, S>, S ext
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability) {
-            return capability == PathElementConfig.CAPABILITY || super.hasCapability(capability);
-        }
-
-        @Override
-        public <T> T getCapability(Capability<T> capability) {
+        public <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
             if (capability == PathElementConfig.CAPABILITY) {
-                return (T) this;
+                return LazyOptional.of(() -> this).cast();
             }
-            return super.getCapability(capability);
+            return super.getCapability(capability, network, partNetwork, target);
         }
 
     }

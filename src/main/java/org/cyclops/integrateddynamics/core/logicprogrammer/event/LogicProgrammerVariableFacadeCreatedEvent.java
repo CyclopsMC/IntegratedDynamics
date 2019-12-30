@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.event;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 
 import javax.annotation.Nullable;
@@ -14,12 +14,12 @@ public class LogicProgrammerVariableFacadeCreatedEvent extends LogicProgrammerEv
 
     private final IVariableFacade variableFacade;
     @Nullable
-    private final Block block;
+    private final BlockState blockState;
 
-    public LogicProgrammerVariableFacadeCreatedEvent(EntityPlayer player, IVariableFacade variableFacade, Block block) {
+    public LogicProgrammerVariableFacadeCreatedEvent(PlayerEntity player, IVariableFacade variableFacade, BlockState blockState) {
         super(player);
         this.variableFacade = variableFacade;
-        this.block = block;
+        this.blockState = blockState;
     }
 
     public IVariableFacade getVariableFacade() {
@@ -27,7 +27,7 @@ public class LogicProgrammerVariableFacadeCreatedEvent extends LogicProgrammerEv
     }
 
     @Nullable
-    public Block getBlock() {
-        return block;
+    public BlockState getBlockState() {
+        return blockState;
     }
 }

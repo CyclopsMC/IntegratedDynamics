@@ -1,9 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
@@ -13,7 +14,7 @@ import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
  */
 public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListProxyPositioned<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
 
-    public ValueTypeListProxyPositionedTankFluidStacks(DimPos pos, EnumFacing side) {
+    public ValueTypeListProxyPositionedTankFluidStacks(DimPos pos, Direction side) {
         super(ValueTypeListProxyFactories.POSITIONED_TANK_FLUIDSTACKS.getName(), ValueTypes.OBJECT_FLUIDSTACK, pos, side);
     }
 
@@ -21,25 +22,21 @@ public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListPr
         this(null, null);
     }
 
-    protected IFluidHandler getTank() {
+    protected LazyOptional<IFluidHandler> getTank() {
         return TileHelpers.getCapability(getPos(), getSide(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
     }
 
     @Override
     public int getLength() {
-        IFluidHandler tank = getTank();
-        if(tank == null) {
-            return 0;
-        }
-        IFluidTankProperties[] tanks = tank.getTankProperties();
-        if(tanks == null) {
-            return 0;
-        }
-        return tanks.length;
+        return getTank()
+                .map(IFluidHandler::getTanks)
+                .orElse(0);
     }
 
     @Override
     public ValueObjectTypeFluidStack.ValueFluidStack get(int index) {
-        return ValueObjectTypeFluidStack.ValueFluidStack.of(getTank().getTankProperties()[index].getContents());
+        return ValueObjectTypeFluidStack.ValueFluidStack.of(getTank()
+                .map(fluidHandler -> fluidHandler.getFluidInTank(index))
+                .orElse(FluidStack.EMPTY));
     }
 }

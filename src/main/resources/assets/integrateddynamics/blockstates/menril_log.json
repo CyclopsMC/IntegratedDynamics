@@ -1,17 +1,7 @@
 {
-    "forge_marker": 1,
-    "defaults": {
-        "transform": "forge:default-block",
-        "model": "integrateddynamics:menril_log"
-    },
     "variants": {
-        "normal": [{}],
-        "inventory": [{}],
-        "axis": {
-            "none": { "model": "integrateddynamics:menril_log_bark" },
-            "x"   : { "x": 90, "y": 90 },
-            "y"   : { },
-            "z"   : { "x": 90 }
-        }
+        "axis=y": { "model": "integrateddynamics:block/menril_log" },
+        "axis=z": { "model": "integrateddynamics:block/menril_log", "x": 90 },
+        "axis=x": { "model": "integrateddynamics:block/menril_log", "x": 90, "y": 90 }
     }
 }

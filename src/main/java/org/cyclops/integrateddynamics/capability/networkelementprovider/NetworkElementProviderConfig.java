@@ -14,32 +14,17 @@ import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
  */
 public class NetworkElementProviderConfig extends CapabilityConfig<INetworkElementProvider> {
 
-    /**
-     * The unique instance.
-     */
-    public static NetworkElementProviderConfig _instance;
-
     @CapabilityInject(INetworkElementProvider.class)
     public static Capability<INetworkElementProvider> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public NetworkElementProviderConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "network_element_provider",
-                "Providers network elements.",
                 INetworkElementProvider.class,
                 new DefaultCapabilityStorage<INetworkElementProvider>(),
-                NetworkElementProviderEmpty.class
+                NetworkElementProviderEmpty::new
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

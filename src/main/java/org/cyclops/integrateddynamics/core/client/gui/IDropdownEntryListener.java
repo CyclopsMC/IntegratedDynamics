@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
 /**
- * Listener for {@link GuiTextFieldDropdown} dropdown element selection.
+ * Listener for {@link WidgetTextFieldDropdown} dropdown element selection.
  * @param <T> The dropdown entry type.
  * @author rubensworks
  */

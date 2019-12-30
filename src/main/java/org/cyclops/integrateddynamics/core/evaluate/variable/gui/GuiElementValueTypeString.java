@@ -1,23 +1,27 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import lombok.Data;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.Container;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.client.gui.container.GuiContainerExtended;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -32,27 +36,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * GUI element for value type that can be read from and written to strings.
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeString<G extends Gui, C extends Container> implements IGuiInputElement<RenderPattern, G, C>, IDropdownEntryListener {
+public class GuiElementValueTypeString<G extends AbstractGui, C extends Container> implements IGuiInputElement<RenderPattern, G, C>, IDropdownEntryListener {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
     private final IConfigRenderPattern renderPattern;
     private String defaultInputString;
     private String inputString;
-    private Set<IDropdownEntry<?>> dropdownPossibilities = Collections.emptySet();
+    private Set<IDropdownEntry<IOperator>> dropdownPossibilities = Collections.emptySet();
     private IDropdownEntryListener dropdownEntryListener = null;
 
     public GuiElementValueTypeString(IValueType valueType, IConfigRenderPattern renderPattern) {
         this.valueType = valueType;
         this.validator = Predicates.alwaysTrue();
         this.renderPattern = renderPattern;
-        defaultInputString = getValueType().toCompactString(getValueType().getDefault());
+        defaultInputString = ValueHelpers.toString(getValueType().getDefault());
     }
 
     public void setInputString(String inputString, GuiElementValueTypeStringRenderPattern subGui) {
@@ -67,12 +72,12 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
     }
 
     @Override
-    public String getLocalizedNameFull() {
-        return L10NHelpers.localize(getValueType().getTranslationKey());
+    public ITextComponent getName() {
+        return new TranslationTextComponent(getValueType().getTranslationKey());
     }
 
     @Override
-    public void loadTooltip(List<String> lines) {
+    public void loadTooltip(List<ITextComponent> lines) {
         getValueType().loadTooltip(lines, true, null);
     }
 
@@ -83,7 +88,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
 
     @Override
     public void activate() {
-        this.inputString = new String(defaultInputString);
+        this.inputString = defaultInputString;
     }
 
     @Override
@@ -92,12 +97,16 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validate() {
-        L10NHelpers.UnlocalizedString error = getValueType().canDeserialize(inputString);
-        if (error == null && !this.validator.test(ValueHelpers.deserializeRaw(getValueType(), inputString))) {
-            error = new L10NHelpers.UnlocalizedString(L10NValues.VALUE_ERROR);
+    public ITextComponent validate() {
+        try {
+            IValue value = getValueType().parseString(inputString);
+            if (!this.validator.test(value)) {
+                return new TranslationTextComponent(L10NValues.VALUE_ERROR);
+            }
+        } catch (EvaluationException e) {
+            return e.getErrorMessage();
         }
-        return error;
+        return null;
     }
 
     @Override
@@ -118,14 +127,14 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public GuiElementValueTypeStringRenderPattern<GuiElementValueTypeStringRenderPattern, G, C> createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   G gui, C container) {
         return new GuiElementValueTypeStringRenderPattern<>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
-    @SideOnly(Side.CLIENT)
-    public abstract static class SubGuiValueTypeInfo<S extends ISubGuiBox, G extends GuiContainerExtended, C extends Container> extends SubGuiBox.Base {
+    @OnlyIn(Dist.CLIENT)
+    public abstract static class SubGuiValueTypeInfo<S extends ISubGuiBox, G extends ContainerScreenExtended<?>, C extends Container> extends SubGuiBox.Base {
 
         private final IGuiInputElement element;
         protected final G gui;
@@ -139,7 +148,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
         }
 
         protected abstract boolean showError();
-        protected abstract L10NHelpers.UnlocalizedString getLastError();
+        protected abstract ITextComponent getLastError();
         protected abstract ResourceLocation getTexture();
 
         protected int getSignalX() {
@@ -157,10 +166,10 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
             int x = guiLeft + getX();
             int y = guiTop + getY();
 
-            fontRenderer.drawString(element.getLocalizedNameFull(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
+            fontRenderer.drawString(element.getName().getFormattedText(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
 
             if(showError()) {
-                L10NHelpers.UnlocalizedString lastError = getLastError();
+                ITextComponent lastError = getLastError();
                 if (lastError != null) {
                     Images.ERROR.draw(this, x + getSignalX(), y + getSignalY() - 1);
                 } else {
@@ -177,11 +186,13 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
             int y = getY();
 
             if(showError()) {
-                L10NHelpers.UnlocalizedString lastError = getLastError();
+                ITextComponent lastError = getLastError();
                 if (lastError != null && gui.isPointInRegion(x + getSignalX(), y + getSignalY() - 1, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
-                    List<String> lines = Lists.newLinkedList();
-                    lines.addAll(StringHelpers.splitLines(lastError.localize(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
-                            TextFormatting.RED.toString()));
+                    List<ITextComponent> lines = StringHelpers.splitLines(lastError.getFormattedText(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
+                            TextFormatting.RED.toString())
+                            .stream()
+                            .map(StringTextComponent::new)
+                            .collect(Collectors.toList());
                     gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
                 }
             }

@@ -1,14 +1,12 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.NoteBlockInstrument;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.NoteBlockEvent;
@@ -33,8 +31,6 @@ import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTy
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.redstone.IWriteRedstoneComponent;
 import org.cyclops.integrateddynamics.part.aspect.write.redstone.WriteRedstoneComponent;
-
-import java.util.List;
 
 /**
  * Collection of aspect write builders and value propagators.
@@ -83,13 +79,13 @@ public class AspectWriteBuilders {
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeString.ValueString>, Triple<PartTarget, IAspectProperties, String>>
             PROP_GET_STRING = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeBlock.ValueBlock>, Triple<PartTarget, IAspectProperties, IBlockState>>
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeBlock.ValueBlock>, Triple<PartTarget, IAspectProperties, BlockState>>
             PROP_GET_BLOCK = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orNull());
 
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack>, Triple<PartTarget, IAspectProperties, FluidStack>>
-            PROP_GET_FLUIDSTACK = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orNull());
+            PROP_GET_FLUIDSTACK = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>, Triple<PartTarget, IAspectProperties, NBTTagCompound>>
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>, Triple<PartTarget, IAspectProperties, CompoundNBT>>
             PROP_GET_NBT = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeRecipe.ValueRecipe>, Triple<PartTarget, IAspectProperties, IRecipeDefinition>>
@@ -120,36 +116,29 @@ public class AspectWriteBuilders {
             PROPERTIES_TEXT.setValue(PROP_RANGE, ValueTypeInteger.ValueInteger.of(32));
         }
 
-        private static final List<SoundEvent> INSTRUMENTS = Lists.newArrayList(new SoundEvent[] {SoundEvents.BLOCK_NOTE_HARP, SoundEvents.BLOCK_NOTE_BASEDRUM, SoundEvents.BLOCK_NOTE_SNARE, SoundEvents.BLOCK_NOTE_HAT, SoundEvents.BLOCK_NOTE_BASS});
-        private static SoundEvent getInstrument(int id) {
-            if (id < 0 || id >= INSTRUMENTS.size()) {
-                id = 0;
-            }
-            return INSTRUMENTS.get(id);
-        }
-
-        public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>>, Void> PROP_SET = input -> {
+        public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Pair<NoteBlockInstrument, Integer>>, Void> PROP_SET = input -> {
             IAspectProperties properties = input.getMiddle();
             BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
 
-            int eventID = input.getRight().getLeft().ordinal();
+            NoteBlockInstrument instrument = input.getRight().getLeft();
             int eventParam = input.getRight().getRight();
             if(eventParam >= 0 && eventParam <= 24) {
-                World world = input.getLeft().getTarget().getPos().getWorld();
-                NoteBlockEvent.Play e = new NoteBlockEvent.Play(world, pos, world.getBlockState(pos), eventParam, eventID);
-                if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
-                    float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
-                    float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                    world.playSound(null,
-                            (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                            getInstrument(eventID), SoundCategory.RECORDS, volume, f);
+                World world = input.getLeft().getTarget().getPos().getWorld(false);
+                if (world != null) { // If a block falls in a world when there's no one around, does it make any sound?
+                    NoteBlockEvent.Play e = new NoteBlockEvent.Play(world, pos, world.getBlockState(pos), eventParam, instrument);
+                    if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
+                        float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
+                        float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
+                        world.playSound((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
+                                instrument.getSound(), SoundCategory.RECORDS, volume, f, true);
+                    }
                 }
             }
             return null;
         };
 
-        public static IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Triple<PartTarget, IAspectProperties, Pair<NoteBlockEvent.Instrument, Integer>>>
-            propWithInstrument(final NoteBlockEvent.Instrument instrument) {
+        public static IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Triple<PartTarget, IAspectProperties, Pair<NoteBlockInstrument, Integer>>>
+            propWithInstrument(final NoteBlockInstrument instrument) {
             return input -> Triple.of(input.getLeft(), input.getMiddle(), Pair.of(instrument, input.getRight()));
         }
 
@@ -187,8 +176,7 @@ public class AspectWriteBuilders {
                 PROP_PARTICLES,
                 PROP_SPREAD_X,
                 PROP_SPREAD_Y,
-                PROP_SPREAD_Z,
-                PROP_FORCE
+                PROP_SPREAD_Z
         ));
 
         static {
@@ -199,7 +187,6 @@ public class AspectWriteBuilders {
             PROPERTIES_PARTICLE.setValue(PROP_SPREAD_X, ValueTypeDouble.ValueDouble.of(0.0D));
             PROPERTIES_PARTICLE.setValue(PROP_SPREAD_Y, ValueTypeDouble.ValueDouble.of(0.0D));
             PROPERTIES_PARTICLE.setValue(PROP_SPREAD_Z, ValueTypeDouble.ValueDouble.of(0.0D));
-            PROPERTIES_PARTICLE.setValue(PROP_FORCE, ValueTypeBoolean.ValueBoolean.of(false));
         }
 
         public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Triple<PartTarget, IAspectProperties, Double>>

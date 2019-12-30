@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.base.Strings;
 import lombok.ToString;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.EndNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -30,50 +32,49 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         return ValueIngredients.of(null);
     }
 
-    public static String ingredientsToString(IMixedIngredients ingredients) {
-        StringBuilder sb = new StringBuilder();
+    public static ITextComponent ingredientsToTextComponent(IMixedIngredients ingredients) {
+        ITextComponent sb = new StringTextComponent("");
 
         for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
             IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
             for (Object instance : ingredients.getInstances(component)) {
-                sb.append(handler.toCompactString(handler.toValue(instance)));
-                sb.append(", ");
+                if (sb.getSiblings().size() > 0) {
+                    sb.appendSibling(new StringTextComponent(", "));
+                }
+                sb.appendSibling(handler.toCompactString(handler.toValue(instance)));
             }
         }
 
-        String str = sb.toString();
-        return str.length() >= 2 ? str.substring(0, str.length() - 2) : "";
+        return sb;
     }
 
     @Override
-    public String toCompactString(ValueIngredients value) {
+    public ITextComponent toCompactString(ValueIngredients value) {
         if (value.getRawValue().isPresent()) {
-            return ingredientsToString(value.getRawValue().get());
+            return ingredientsToTextComponent(value.getRawValue().get());
         }
-        return "";
+        return new StringTextComponent("");
     }
 
     @Override
-    public String serialize(ValueIngredients value) {
-        if(!value.getRawValue().isPresent()) return "";
-
-        return IMixedIngredients.serialize(value.getRawValue().get()).toString();
+    public INBT serialize(ValueIngredients value) {
+        if(!value.getRawValue().isPresent()) return new EndNBT();
+        return IMixedIngredients.serialize(value.getRawValue().get());
     }
 
     @Override
-    public ValueIngredients deserialize(String value) {
-        if(Strings.isNullOrEmpty(value)) return ValueIngredients.of(null);
+    public ValueIngredients deserialize(INBT value) {
+        if(value.getId() == Constants.NBT.TAG_END) return ValueIngredients.of(null);
         try {
-            NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
-            return ValueIngredients.of(IMixedIngredients.deserialize(tag));
-        } catch (NBTException | IllegalArgumentException e) {
+            return ValueIngredients.of(IMixedIngredients.deserialize((CompoundNBT) value));
+        } catch (IllegalArgumentException e) {
             return ValueIngredients.of(null);
         }
     }
 
     @Override
     public String getName(ValueIngredients a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @Override

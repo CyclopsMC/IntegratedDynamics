@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -31,8 +31,8 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
 
     protected final String unlocalizedTypeSuffix;
 
-    public AspectWriteBase(ModBase mod, ModBase modGui, String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
-        super(mod, modGui, defaultProperties);
+    public AspectWriteBase(ModBase mod, String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
+        super(mod, defaultProperties);
         if(unlocalizedTypeSuffix == null) {
             unlocalizedTypeSuffix = "";
         }
@@ -57,7 +57,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
             try {
                 write(partTypeWriter, target, writerState, variable);
             } catch (EvaluationException e) {
-                writerState.addError(this, new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
+                writerState.addError(this, new TranslationTextComponent(e.getLocalizedMessage()));
                 writerState.setDeactivated(true);
             }
         } else if(!writerState.isDeactivated()) {
@@ -79,7 +79,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
         return "write" + unlocalizedTypeSuffix;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected void registerModelResourceLocation() {
         Aspects.REGISTRY.registerAspectModel(this,
                 new ResourceLocation(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));

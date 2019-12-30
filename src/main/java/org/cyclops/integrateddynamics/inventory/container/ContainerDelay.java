@@ -1,13 +1,18 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.nbt.CompoundNBT;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerActiveVariableBase;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.tileentity.TileDelay;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
+
+import java.util.Optional;
 
 /**
  * Container for the delay.
@@ -18,27 +23,27 @@ public class ContainerDelay extends ContainerActiveVariableBase<TileDelay> {
     private final int lastUpdateValueId;
     private final int lastCapacityValueId;
 
-    /**
-     * Make a new instance.
-     * @param inventory The player inventory.
-     * @param tile The part.
-     */
-    public ContainerDelay(InventoryPlayer inventory, TileDelay tile) {
-        super(inventory, tile);
-        addSlotToContainer(new SlotVariable(tile, TileProxy.SLOT_READ, 81, 25));
-        addSlotToContainer(new SlotVariable(tile, TileProxy.SLOT_WRITE_IN, 56, 78));
-        addSlotToContainer(new SlotRemoveOnly(tile, TileProxy.SLOT_WRITE_OUT, 104, 78));
-        addPlayerInventory(inventory, offsetX + 9, offsetY + 145);
+    public ContainerDelay(int id, PlayerInventory playerInventory) {
+        this(id, playerInventory, new Inventory(TileDelay.INVENTORY_SIZE), Optional.empty());
+    }
+
+    public ContainerDelay(int id, PlayerInventory playerInventory, IInventory inventory,
+                          Optional<TileDelay> tileSupplier) {
+        super(RegistryEntries.CONTAINER_DELAY, id, playerInventory, inventory, tileSupplier);
+        addSlot(new SlotVariable(inventory, TileProxy.SLOT_READ, 81, 25));
+        addSlot(new SlotVariable(inventory, TileProxy.SLOT_WRITE_IN, 56, 78));
+        addSlot(new SlotRemoveOnly(inventory, TileProxy.SLOT_WRITE_OUT, 104, 78));
+        addPlayerInventory(playerInventory, offsetX + 9, offsetY + 145);
 
         lastUpdateValueId = getNextValueId();
         lastCapacityValueId = getNextValueId();
-        tile.setLastPlayer(inventory.player);
+        getTileSupplier().ifPresent(tile -> tile.setLastPlayer(playerInventory.player));
     }
 
     @Override
     protected void initializeValues() {
-        ValueNotifierHelpers.setValue(this, lastUpdateValueId, getTile().getUpdateInterval());
-        ValueNotifierHelpers.setValue(this, lastCapacityValueId, getTile().getCapacity());
+        ValueNotifierHelpers.setValue(this, lastUpdateValueId, getTileSupplier().map(TileDelay::getUpdateInterval).orElse(0));
+        ValueNotifierHelpers.setValue(this, lastCapacityValueId, getTileSupplier().map(TileDelay::getCapacity).orElse(0));
     }
 
     public int getLastUpdateValueId() {
@@ -58,14 +63,14 @@ public class ContainerDelay extends ContainerActiveVariableBase<TileDelay> {
     }
 
     @Override
-    public void onUpdate(int valueId, NBTTagCompound value) {
+    public void onUpdate(int valueId, CompoundNBT value) {
         super.onUpdate(valueId, value);
-        if(!getTile().getWorld().isRemote) {
+        getTileSupplier().ifPresent(tile -> {
             if (valueId == getLastUpdateValueId()) {
-                getTile().setUpdateInterval(getLastUpdateValue());
+                tile.setUpdateInterval(getLastUpdateValue());
             } else if (valueId == getLastCapacityValueId()) {
-                getTile().setCapacity(getLastCapacityValue());
+                tile.setCapacity(getLastCapacityValue());
             }
-        }
+        });
     }
 }

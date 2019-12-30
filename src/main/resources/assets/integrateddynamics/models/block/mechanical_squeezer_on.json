@@ -1,0 +1,6 @@
+{
+  "parent": "integrateddynamics:block/mechanical_squeezer",
+  "textures": {
+    "side": "integrateddynamics:block/mechanical_squeezer_x_on"
+  }
+}

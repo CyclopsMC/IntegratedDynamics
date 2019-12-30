@@ -1,31 +1,35 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
-import lombok.Data;
-import lombok.Getter;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.inventory.Container;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.Helpers;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
-import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
-import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
-import org.cyclops.integrateddynamics.core.client.gui.container.GuiAspectSettings;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
+import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Base class for aspects.
@@ -34,27 +38,13 @@ import java.util.List;
 public abstract class AspectBase<V extends IValue, T extends IValueType<V>> implements IAspect<V, T> {
 
     private final IAspectProperties defaultProperties;
-    @Getter
-    private final IGuiContainerProvider propertiesGuiProvider;
 
     private final ModBase mod;
-    private final ModBase modGui;
     private String translationKey = null;
 
-    public AspectBase(ModBase mod, ModBase modGui, IAspectProperties defaultProperties) {
+    public AspectBase(ModBase mod, IAspectProperties defaultProperties) {
         this.mod = mod;
-        this.modGui = modGui;
         this.defaultProperties = defaultProperties == null ? createDefaultProperties() : defaultProperties;
-        if(hasProperties()) {
-            int guiIDSettings = Helpers.getNewId(getModGui(), Helpers.IDType.GUI);
-            getModGui().getGuiHandler().registerGUI((propertiesGuiProvider = constructSettingsGuiProvider(guiIDSettings)), ExtendedGuiHandler.ASPECT);
-        } else {
-            propertiesGuiProvider = null;
-        }
-    }
-
-    protected IGuiContainerProvider constructSettingsGuiProvider(int guiId) {
-        return new GuiProviderSettings(guiId, getModGui());
     }
 
     @Override
@@ -69,11 +59,12 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     protected abstract String getUnlocalizedType();
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
-        String aspectName = L10NHelpers.localize(getTranslationKey());
-        String valueTypeName = L10NHelpers.localize(getValueType().getTranslationKey());
-        lines.add(L10NHelpers.localize(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
-        lines.add(L10NHelpers.localize(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, getValueType().getDisplayColorFormat() + valueTypeName));
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
+        ITextComponent aspectName = new TranslationTextComponent(getTranslationKey());
+        ITextComponent valueTypeName = new TranslationTextComponent(getValueType().getTranslationKey());
+        lines.add(new TranslationTextComponent(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
+        lines.add(new TranslationTextComponent(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
+                .applyTextStyle(getValueType().getDisplayColorFormat()));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
@@ -110,6 +101,24 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         return hasProperties() ? getDefaultProperties().getTypes() : Collections.emptyList();
     }
 
+    @Override
+    public INamedContainerProvider getPropertiesContainerProvider(PartPos pos) {
+        return new INamedContainerProvider() {
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent("gui.integrateddynamics.aspect_settings");
+            }
+
+            @Nullable
+            @Override
+            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
+                return new ContainerAspectSettings(id, playerInventory, new Inventory(0),
+                        Optional.of(data.getRight()), Optional.of(data.getLeft()), Optional.of(data.getMiddle()), AspectBase.this);
+            }
+        };
+    }
+
     /**
      * Creates the default properties for this aspect, only called once.
      * @return The default properties.
@@ -123,30 +132,8 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         return mod;
     }
 
-    protected ModBase getModGui() {
-        return modGui;
-    }
-
     protected String getModId() {
         return getMod().getModId();
-    }
-
-    @Data
-    public static class GuiProviderSettings implements IGuiContainerProvider {
-
-        private final int guiID;
-        private final ModBase modGui;
-
-        @Override
-        public Class<? extends Container> getContainer() {
-            return ContainerAspectSettings.class;
-        }
-
-        @SideOnly(Side.CLIENT)
-        @Override
-        public Class<? extends GuiScreen> getGui() {
-            return GuiAspectSettings.class;
-        }
     }
 
 }

@@ -1,39 +1,30 @@
 package org.cyclops.integrateddynamics.command;
 
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-import org.cyclops.cyclopscore.command.CommandMod;
-import org.cyclops.cyclopscore.init.ModBase;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsOpenClient;
-
-import java.util.List;
 
 /**
  * Command for opening the network diagnostics gui.
  * @author rubensworks
  *
  */
-public class CommandNetworkDiagnostics extends CommandMod {
-
-    public static final String NAME = "networkdiagnostics";
-
-    public CommandNetworkDiagnostics(ModBase mod) {
-        super(mod, NAME);
-    }
+public class CommandNetworkDiagnostics implements Command<CommandSource> {
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
-        return null;
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new NetworkDiagnosticsOpenClient(), context.getSource().asPlayer());
+        return 0;
     }
 
-    @Override
-    public void execute(MinecraftServer server, final ICommandSender sender, String[] parts) {
-        if (sender instanceof EntityPlayerMP) {
-            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new NetworkDiagnosticsOpenClient(), (EntityPlayerMP) sender);
-        }
+    public static LiteralArgumentBuilder<CommandSource> make() {
+        return Commands.literal("networkdiagnostics")
+                .requires((commandSource) -> commandSource.hasPermissionLevel(2))
+                .executes(new CommandNetworkDiagnostics());
     }
-
 }

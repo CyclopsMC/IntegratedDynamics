@@ -2,7 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
@@ -23,11 +24,11 @@ import java.util.concurrent.TimeUnit;
 public class PositionedOperatorRecipeHandlerRecipeByInput<T extends IValueType<V>, V extends IValue>
         extends PositionedOperatorRecipeHandler<T, V> {
 
-    private static final Cache<Pair<Pair<DimPos, EnumFacing>, ValueObjectTypeIngredients.ValueIngredients>,
+    private static final Cache<Pair<Pair<DimPos, Direction>, ValueObjectTypeIngredients.ValueIngredients>,
             ValueObjectTypeRecipe.ValueRecipe> CACHE = CacheBuilder.newBuilder()
             .expireAfterAccess(20, TimeUnit.SECONDS).build();
 
-    public PositionedOperatorRecipeHandlerRecipeByInput(DimPos pos, EnumFacing side) {
+    public PositionedOperatorRecipeHandlerRecipeByInput(DimPos pos, Direction side) {
         super("recipebyinput", new Function(), ValueTypes.OBJECT_RECIPE, pos, side);
     }
 
@@ -42,7 +43,7 @@ public class PositionedOperatorRecipeHandlerRecipeByInput<T extends IValueType<V
         }
 
         @Override
-        protected Cache<Pair<Pair<DimPos, EnumFacing>, ValueObjectTypeIngredients.ValueIngredients>, ValueObjectTypeRecipe.ValueRecipe> getCache() {
+        protected Cache<Pair<Pair<DimPos, Direction>, ValueObjectTypeIngredients.ValueIngredients>, ValueObjectTypeRecipe.ValueRecipe> getCache() {
             return CACHE;
         }
 

@@ -2,17 +2,24 @@ package org.cyclops.integrateddynamics.core.part.read;
 
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.inventory.Container;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.AspectUpdateType;
@@ -21,14 +28,17 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
-import org.cyclops.integrateddynamics.client.gui.GuiPartReader;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
+import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartReader;
+import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -72,11 +82,6 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    public Class<? super P> getPartTypeClass() {
-        return IPartTypeReader.class;
-    }
-
-    @Override
     public void update(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
         super.update(network, partNetwork, target, state);
         for(IAspect aspect : getUpdateAspects(AspectUpdateType.NETWORK_TICK)) {
@@ -86,7 +91,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
-                                      IBlockAccess world, Block neighbourBlock, BlockPos neighbourBlockPos) {
+                                      IBlockReader world, Block neighbourBlock, BlockPos neighbourBlockPos) {
         super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourBlockPos);
         for(IAspect aspect : getUpdateAspects(AspectUpdateType.BLOCK_UPDATE)) {
             aspect.update(network, partNetwork, this, target, state);
@@ -117,8 +122,8 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    public void setTargetSideOverride(S state, @Nullable EnumFacing side) {
-        EnumFacing lastSide = getTargetSideOverride(state);
+    public void setTargetSideOverride(S state, @Nullable Direction side) {
+        Direction lastSide = getTargetSideOverride(state);
         super.setTargetSideOverride(state, side);
         if (lastSide != side) {
             state.resetVariables();
@@ -126,14 +131,30 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    public Class<? extends Container> getContainer() {
-        return ContainerPartReader.class;
+    public Optional<INamedContainerProvider> getContainerProvider(PartPos pos) {
+        return Optional.of(new INamedContainerProvider() {
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent(getTranslationKey());
+            }
+
+            @Nullable
+            @Override
+            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
+                PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
+                return new ContainerPartReader<>(id, playerInventory, partState.getInventory(),
+                        Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypeReadBase) data.getMiddle());
+            }
+        });
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public Class<? extends GuiScreen> getGui() {
-        return GuiPartReader.class;
+    public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+        // Write inventory size
+        packetBuffer.writeInt(getReadAspects().size());
+
+        super.writeExtraGuiData(packetBuffer, pos, player);
     }
 
 }

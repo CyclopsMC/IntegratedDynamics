@@ -1,29 +1,25 @@
 package org.cyclops.integrateddynamics.block;
 
-import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * Config for {@link BlockCoalGenerator}.
  * @author rubensworks
  */
-public class BlockCoalGeneratorConfig extends BlockContainerConfig {
+public class BlockCoalGeneratorConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockCoalGeneratorConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockCoalGeneratorConfig() {
         super(
-            IntegratedDynamics._instance,
-            true,
-            "coal_generator",
-            null,
-            BlockCoalGenerator.class
+                IntegratedDynamics._instance,
+                "coal_generator",
+                eConfig -> new BlockCoalGenerator(Block.Properties.create(Material.ANVIL)
+                        .hardnessAndResistance(5.0F)
+                        .sound(SoundType.METAL)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 }

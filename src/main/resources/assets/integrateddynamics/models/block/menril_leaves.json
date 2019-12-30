@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "integrateddynamics:blocks/menril_leaves_fancy"
+    "all": "integrateddynamics:block/menril_leaves_fancy"
   }
 }

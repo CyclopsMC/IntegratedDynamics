@@ -1,6 +1,5 @@
 {
-  "parent": "cyclopscore:item/flat",
   "textures": {
-    "layer0": "integrateddynamics:blocks/liquidchorus_still"
+    "particle": "integrateddynamics:block/liquid_chorus_still"
   }
 }

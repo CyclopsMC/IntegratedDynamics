@@ -1,15 +1,16 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.block.TorchBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockTorch;
-import org.cyclops.cyclopscore.config.configurable.IConfigurable;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.Reference;
 
 import java.util.Random;
 
@@ -20,41 +21,23 @@ import java.util.Random;
  */
 public class BlockMenrilTorchStoneConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockMenrilTorchStoneConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockMenrilTorchStoneConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "menril_torch_stone",
-                null,
-                null
+                eConfig -> new TorchBlock(Block.Properties.create(Material.MISCELLANEOUS)
+                        .doesNotBlockMovement()
+                        .hardnessAndResistance(0)
+                        .lightValue(14)
+                        .sound(SoundType.STONE)) {
+                    @Override
+                    @OnlyIn(Dist.CLIENT)
+                    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+                        // No particles
+                    }
+                },
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 
-    @Override
-    protected ConfigurableBlockTorch initSubInstance() {
-        return new ConfigurableBlockTorch(this) {
-            @Override
-            public void randomDisplayTick(IBlockState state, World worldIn, BlockPos pos, Random rand) {
-                // No particles
-            }
-
-            @Override
-            public SoundType getSoundType(IBlockState state, World world, BlockPos pos, Entity entity) {
-                return SoundType.STONE;
-            }
-        };
-    }
-
-    @Override
-    public String getOreDictionaryId() {
-        return Reference.DICT_TORCH;
-    }
 }

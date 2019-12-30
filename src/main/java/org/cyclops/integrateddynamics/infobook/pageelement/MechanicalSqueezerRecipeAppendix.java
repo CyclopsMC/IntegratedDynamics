@@ -5,7 +5,7 @@ import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Mechanical squeezer recipes.
@@ -23,6 +23,6 @@ public class MechanicalSqueezerRecipeAppendix extends SqueezerRecipeAppendix {
 
     @Override
     protected ItemStack getCrafter() {
-        return new ItemStack(BlockMechanicalSqueezer.getInstance());
+        return new ItemStack(RegistryEntries.BLOCK_MECHANICAL_SQUEEZER);
     }
 }

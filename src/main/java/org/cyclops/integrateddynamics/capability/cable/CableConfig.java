@@ -1,9 +1,12 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import org.cyclops.commoncapabilities.CommonCapabilities;
 import org.cyclops.cyclopscore.config.extendedconfig.CapabilityConfig;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityStorage;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 
@@ -14,32 +17,57 @@ import org.cyclops.integrateddynamics.api.block.cable.ICable;
  */
 public class CableConfig extends CapabilityConfig<ICable> {
 
-    /**
-     * The unique instance.
-     */
-    public static CableConfig _instance;
-
     @CapabilityInject(ICable.class)
     public static Capability<ICable> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public CableConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "cable",
-                "Cables form networks",
                 ICable.class,
                 new DefaultCapabilityStorage<ICable>(),
-                CableDefault.class
-        );
-    }
+                () -> new CableDefault() {
+                    @Override
+                    public void destroy() {
 
-    @Override
-    public boolean isDisableable() {
-        return false;
+                    }
+
+                    @Override
+                    protected boolean isForceDisconnectable() {
+                        return false;
+                    }
+
+                    @Override
+                    protected EnumFacingMap<Boolean> getForceDisconnected() {
+                        return null;
+                    }
+
+                    @Override
+                    protected EnumFacingMap<Boolean> getConnected() {
+                        return null;
+                    }
+
+                    @Override
+                    protected void markDirty() {
+
+                    }
+
+                    @Override
+                    protected void sendUpdate() {
+
+                    }
+
+                    @Override
+                    protected World getWorld() {
+                        return null;
+                    }
+
+                    @Override
+                    protected BlockPos getPos() {
+                        return null;
+                    }
+                }
+        );
     }
 
 }

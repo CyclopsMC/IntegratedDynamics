@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.core.block;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import net.minecraft.block.properties.PropertyHelper;
-import org.cyclops.cyclopscore.block.property.BlockProperty;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.EnumProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.IStringSerializable;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -20,86 +20,70 @@ import java.util.Locale;
  * @author rubensworks
  */
 public class IgnoredBlockStatus extends IgnoredBlock {
-    @BlockProperty(excludeFromMeta = true)
-    public static final PropertyStatus STATUS = PropertyStatus.<Status>create("status", Status.class);
 
-    /**
-     * Make a new blockState instance.
-     *
-     * @param eConfig  Config for this blockState.
-     */
-    public IgnoredBlockStatus(ExtendedConfig<BlockConfig> eConfig) {
-        super(eConfig);
+    public static final PropertyStatus STATUS = PropertyStatus.<Status>create("status");
+
+    public IgnoredBlockStatus() {
+        super();
+
+        this.setDefaultState(this.stateContainer.getBaseState()
+                .with(FACING, Direction.NORTH)
+                .with(STATUS, Status.INACTIVE));
     }
 
-    public static class PropertyStatus extends PropertyHelper<Status> {
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        super.fillStateContainer(builder);
+        builder.add(STATUS);
+    }
 
-        private final ImmutableSet<Status> allowedValues;
+    public static class PropertyStatus extends EnumProperty<Status> {
 
         protected PropertyStatus(String name, Collection<Status> values) {
-            super(name, Status.class);
-            this.allowedValues = ImmutableSet.copyOf(values);
-        }
-
-        public Collection<Status> getAllowedValues()
-        {
-            return this.allowedValues;
-        }
-
-        @Override
-        public Optional<Status> parseValue(String value) {
-            try {
-                return Optional.of(Status.valueOf(value.toUpperCase(Locale.ENGLISH)));
-            } catch (IllegalArgumentException e) {
-                return Optional.absent();
-            }
-        }
-
-        @Override
-        public String getName(Status value) {
-            return value.toString().toLowerCase(Locale.ENGLISH);
+            super(name, Status.class, values);
         }
 
         /**
          * Create a new PropertyStatus with all Enum constants of the given class.
          * @param name The property name.
-         * @param clazz The property class.
          * @return The property
          */
-        public static PropertyStatus create(String name, Class<Status> clazz) {
-            return create(name, clazz, Predicates.<Status>alwaysTrue());
+        public static PropertyStatus create(String name) {
+            return create(name, Predicates.alwaysTrue());
         }
 
         /**
          * Create a new PropertyStatus with all Enum constants of the given class.
          * @param name The property name.
-         * @param clazz The property class.
          * @param filter The filter for checking property values.
          * @return The property
          */
-        public static PropertyStatus create(String name, Class<Status> clazz, Predicate<Status> filter) {
-            return create(name, clazz, Collections2.filter(Lists.newArrayList(clazz.getEnumConstants()), filter));
+        public static PropertyStatus create(String name, Predicate<Status> filter) {
+            return create(name, Collections2.filter(Lists.newArrayList(Status.class.getEnumConstants()), filter));
         }
 
         /**
          * Create a new PropertyStatus with all Enum constants of the given class.
          * @param name The property name.
-         * @param clazz The property class.
          * @param values The possible property values.
          * @return The property
          */
-        public static PropertyStatus create(String name, Class<Status> clazz, Collection<Status> values) {
+        public static PropertyStatus create(String name, Collection<Status> values) {
             return new PropertyStatus(name, values);
         }
 
     }
 
-    public enum Status {
+    public enum Status implements IStringSerializable {
 
         ACTIVE,
         INACTIVE,
-        ERROR
+        ERROR;
 
+        @Override
+        public String getName() {
+            return this.name().toLowerCase(Locale.ENGLISH);
+        }
     }
 
 }

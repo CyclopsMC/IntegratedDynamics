@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.dynamiclight;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -12,9 +12,9 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 public class DynamicLightTileMultipartTicking implements IDynamicLight {
 
     private final TileMultipartTicking tile;
-    private final EnumFacing side;
+    private final Direction side;
 
-    public DynamicLightTileMultipartTicking(TileMultipartTicking tile, EnumFacing side) {
+    public DynamicLightTileMultipartTicking(TileMultipartTicking tile, Direction side) {
         this.tile = tile;
         this.side = side;
     }

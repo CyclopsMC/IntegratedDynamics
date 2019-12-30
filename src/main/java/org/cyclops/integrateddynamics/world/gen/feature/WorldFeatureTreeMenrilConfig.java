@@ -1,0 +1,84 @@
+package org.cyclops.integrateddynamics.world.gen.feature;
+
+import com.google.common.collect.Lists;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
+import net.minecraft.world.gen.placement.Placement;
+import net.minecraftforge.fml.config.ModConfig;
+import org.cyclops.cyclopscore.config.ConfigurableProperty;
+import org.cyclops.cyclopscore.config.extendedconfig.WorldFeatureConfig;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+
+import java.util.List;
+
+/**
+ * Config for {@link WorldFeatureTreeMenril}.
+ * @author rubensworks
+ *
+ */
+public class WorldFeatureTreeMenrilConfig extends WorldFeatureConfig {
+
+    @ConfigurableProperty(category = "worldgeneration", comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0, requiresMcRestart = true, configLocation = ModConfig.Type.SERVER)
+    public static int wildMenrilTreeChance = 350;
+
+    @ConfigurableProperty(category = "worldgeneration", comment = "List of dimension IDs in which wild menril trees should not generate.", configLocation = ModConfig.Type.SERVER)
+    public static List<String> wildMenrilTreeDimensionBlacklist = Lists.newArrayList(
+            "the_nether",
+            "the_end"
+    );
+
+    public WorldFeatureTreeMenrilConfig() {
+        super(
+                IntegratedDynamics._instance,
+                "tree_menril",
+                eConfig -> new WorldFeatureTreeMenril(NoFeatureConfig::deserialize, false)
+        );
+    }
+
+    @Override
+    public void onForgeRegistered() {
+        super.onForgeRegistered();
+
+        // Register
+        GenerationStage.Decoration decoration = GenerationStage.Decoration.VEGETAL_DECORATION;
+        ConfiguredFeature<?> feature = Biome.createDecoratedFeature((WorldFeatureTreeMenril) getInstance(),
+                IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_EXTRA_HEIGHTMAP,
+                new AtSurfaceWithExtraConfig(wildMenrilTreeChance, 0.1F, 1));
+
+        Biomes.PLAINS.addFeature(decoration, feature);
+        Biomes.MOUNTAINS.addFeature(decoration, feature);
+        Biomes.FOREST.addFeature(decoration, feature);
+        Biomes.SWAMP.addFeature(decoration, feature);
+        Biomes.RIVER.addFeature(decoration, feature);
+        Biomes.SNOWY_TUNDRA.addFeature(decoration, feature);
+        Biomes.SNOWY_MOUNTAINS.addFeature(decoration, feature);
+        Biomes.MUSHROOM_FIELDS.addFeature(decoration, feature);
+        Biomes.MUSHROOM_FIELD_SHORE.addFeature(decoration, feature);
+        Biomes.WOODED_HILLS.addFeature(decoration, feature);
+        Biomes.TAIGA_HILLS.addFeature(decoration, feature);
+        Biomes.BIRCH_FOREST.addFeature(decoration, feature);
+        Biomes.JUNGLE_HILLS.addFeature(decoration, feature);
+        Biomes.BIRCH_FOREST.addFeature(decoration, feature);
+        Biomes.DARK_FOREST.addFeature(decoration, feature);
+        Biomes.SNOWY_TAIGA_HILLS.addFeature(decoration, feature);
+        Biomes.GIANT_TREE_TAIGA_HILLS.addFeature(decoration, feature);
+        Biomes.SAVANNA_PLATEAU.addFeature(decoration, feature);
+        Biomes.WOODED_BADLANDS_PLATEAU.addFeature(decoration, feature);
+        Biomes.SUNFLOWER_PLAINS.addFeature(decoration, feature);
+        Biomes.FLOWER_FOREST.addFeature(decoration, feature);
+        Biomes.TAIGA_MOUNTAINS.addFeature(decoration, feature);
+        Biomes.SWAMP_HILLS.addFeature(decoration, feature);
+        Biomes.TALL_BIRCH_FOREST.addFeature(decoration, feature);
+        Biomes.TALL_BIRCH_HILLS.addFeature(decoration, feature);
+        Biomes.DARK_FOREST_HILLS.addFeature(decoration, feature);
+        Biomes.SNOWY_TAIGA_MOUNTAINS.addFeature(decoration, feature);
+        Biomes.GIANT_SPRUCE_TAIGA_HILLS.addFeature(decoration, feature);
+
+
+    }
+}

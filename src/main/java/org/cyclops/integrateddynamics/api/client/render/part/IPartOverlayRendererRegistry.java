@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.client.render.part;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 
@@ -11,7 +11,7 @@ import java.util.Collection;
  * Registry for {@link IPartOverlayRenderer}.
  * @author rubensworks
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public interface IPartOverlayRendererRegistry extends IRegistry {
 
     /**

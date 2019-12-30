@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
+import net.minecraft.nbt.INBT;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 /**
@@ -31,25 +32,25 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
 
     /**
      * Serialize the given list proxy.
-     * @param proxy The proxy to serialize.
      * @param <T> The list element type value type.
      * @param <V> The list element type.
      * @param <P> The proxy type.
+     * @param proxy The proxy to serialize.
      * @return The serialized string.
      * @throws SerializationException If something goes wrong while serializing.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> String serialize(P proxy) throws SerializationException;
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> INBT serialize(P proxy) throws SerializationException;
 
     /**
      * Deserialize the given serialized list proxy to a list proxy instance.
-     * @param value The serialized list proxy.
      * @param <T> The list element type value type.
      * @param <V> The list element type.
      * @param <P> The proxy type.
+     * @param value The serialized list proxy.
      * @return The deserialized list proxy.
      * @throws SerializationException If something goes wrong while serializing.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(String value) throws SerializationException;
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(INBT value) throws SerializationException;
 
     /**
      * Factory for a list proxy.
@@ -70,7 +71,7 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
          * @return The serialized value.
          * @throws SerializationException If something goes wrong while serializing.
          */
-        public String serialize(P value) throws SerializationException;
+        public INBT serialize(P value) throws SerializationException;
 
         /**
          * Deserialize the given value.
@@ -78,7 +79,7 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
          * @return The deserialized value.
          * @throws SerializationException If something goes wrong while deserializing.
          */
-        public P deserialize(String value) throws SerializationException;
+        public P deserialize(INBT value) throws SerializationException;
 
     }
 

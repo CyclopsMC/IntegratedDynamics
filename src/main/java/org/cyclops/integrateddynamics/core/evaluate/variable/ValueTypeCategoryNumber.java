@@ -25,7 +25,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
     private static final Map<IValueTypeNumber, Integer> INVERTED_ELEMENTS = Collections.unmodifiableMap(constructInvertedArray(ELEMENTS));
 
     public ValueTypeCategoryNumber() {
-        super("number", Helpers.RGBToInt(243, 245, 4), TextFormatting.GOLD.toString(),
+        super("number", Helpers.RGBToInt(243, 245, 4), TextFormatting.GOLD,
                 Sets.<IValueType<?>>newHashSet(ELEMENTS));
     }
 

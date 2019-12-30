@@ -3,28 +3,31 @@ package org.cyclops.integrateddynamics.core.helper;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.oredict.OreDictionary;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 
-import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -33,11 +36,7 @@ import java.util.stream.Stream;
  */
 public final class Helpers {
 
-    public static final Predicate<Entity> SELECTOR_IS_PLAYER = new Predicate<Entity>() {
-        public boolean apply(@Nullable Entity p_apply_1_) {
-            return p_apply_1_ instanceof EntityPlayer;
-        }
-    };
+    public static final Predicate<Entity> SELECTOR_IS_PLAYER = entity -> entity instanceof PlayerEntity;
 
     /**
      * Get the fluidstack from the given itemstack.
@@ -45,11 +44,11 @@ public final class Helpers {
      * @return The fluidstack or null.
      */
     public static FluidStack getFluidStack(ItemStack itemStack) {
-        FluidStack fluidStack = FluidUtil.getFluidContained(itemStack);
-        if (fluidStack == null
-                && itemStack.getItem() instanceof ItemBlock
-                && ((ItemBlock) itemStack.getItem()).getBlock() instanceof IFluidBlock) {
-            fluidStack = new FluidStack(((IFluidBlock) ((ItemBlock) itemStack.getItem()).getBlock()).getFluid(), Fluid.BUCKET_VOLUME);
+        FluidStack fluidStack = FluidUtil.getFluidContained(itemStack).orElse(FluidStack.EMPTY);
+        if (fluidStack.isEmpty()
+                && itemStack.getItem() instanceof BlockItem
+                && ((BlockItem) itemStack.getItem()).getBlock() instanceof IFluidBlock) {
+            fluidStack = new FluidStack(((IFluidBlock) ((BlockItem) itemStack.getItem()).getBlock()).getFluid(), FluidHelpers.BUCKET_VOLUME);
         }
         return fluidStack;
     }
@@ -60,36 +59,27 @@ public final class Helpers {
      * @return The capacity
      */
     public static int getFluidStackCapacity(ItemStack itemStack) {
-        IFluidHandler fluidHandler = FluidUtil.getFluidHandler(itemStack);
+        IFluidHandler fluidHandler = FluidUtil.getFluidHandler(itemStack).orElse(null);
         if (fluidHandler != null) {
-            for (IFluidTankProperties properties : fluidHandler.getTankProperties()) {
-                return properties.getCapacity();
+            if (fluidHandler.getTanks() > 0) {
+                return fluidHandler.getTankCapacity(0);
             }
         }
         return 0;
     }
 
     /**
-     * Retrieves a Stream of items that are registered to this ore type
-     * with wildcard meta values expanded out into sub items
+     * Retrieves a Stream of items that are registered to this tag name.
      *
-     * @param name The ore name, directly calls OreDictionary.getOres
+     * @param name The tag name, directly calls OreDictionary.getOres
      * @return A Stream containing ItemStacks registered for this ore
      */
-    public static Stream<ItemStack> getOresWildcard(String name) {
-        Stream.Builder<ItemStack> builder = Stream.builder();
-        for (ItemStack itemStack : OreDictionary.getOres(name)) {
-            if (itemStack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
-                NonNullList<ItemStack> subItems = NonNullList.create();
-                itemStack.getItem().getSubItems(CreativeTabs.SEARCH, subItems);
-                for (ItemStack subItem : subItems) {
-                    builder.accept(subItem);
-                }
-            } else {
-                builder.accept(itemStack);
-            }
+    public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
+        Tag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(name));
+        if (tag == null) {
+            return Stream.empty();
         }
-        return builder.build();
+        return tag.getAllElements().stream().map(ItemStack::new);
     }
 
     /**
@@ -128,12 +118,7 @@ public final class Helpers {
 
     private static final List<IInterfaceRetriever> INTERFACE_RETRIEVERS = Lists.newArrayList();
     static {
-        addInterfaceRetriever(new IInterfaceRetriever() {
-            @Override
-            public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {
-                return TileHelpers.getSafeTile(world, pos, clazz);
-            }
-        });
+        addInterfaceRetriever(TileHelpers::getSafeTile);
     }
 
     /**
@@ -142,29 +127,29 @@ public final class Helpers {
      * @param pos The position.
      * @param clazz The class to find.
      * @param <C> The class type.
-     * @return The instance or null.
+     * @return The optional instance.
      */
-    private static <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz) {
-        C instance;
+    private static <C> Optional<C> getInterface(IBlockReader world, BlockPos pos, Class<C> clazz) {
         for(IInterfaceRetriever interfaceRetriever : INTERFACE_RETRIEVERS) {
-            instance = interfaceRetriever.getInterface(world, pos, clazz);
-            if(instance != null) {
-                return instance;
+            Optional<C> optionalInstance = interfaceRetriever.getInterface(world, pos, clazz);
+            if(optionalInstance.isPresent()) {
+                return optionalInstance;
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
      * Check for the given interface at the given position.
      * @param dimPos The dimensional position.
      * @param clazz The class to find.
+     * @param forceLoad If the world should be loaded if it was not loaded yet.
      * @param <C> The class type.
-     * @return The instance or null.
+     * @return The optional instance.
      */
-    public static <C> C getInterface(DimPos dimPos, Class<C> clazz) {
-        World world = dimPos.getWorld();
-        return world != null ? getInterface(world, dimPos.getBlockPos(), clazz) : null;
+    public static <C> Optional<C> getInterface(DimPos dimPos, Class<C> clazz, boolean forceLoad) {
+        World world = dimPos.getWorld(forceLoad);
+        return world != null ? getInterface(world, dimPos.getBlockPos(), clazz) : Optional.empty();
     }
 
     /**
@@ -173,9 +158,12 @@ public final class Helpers {
      * @param capacity The capacity of the energy container.
      * @return The localized string.
      */
-    public static String getLocalizedEnergyLevel(int stored, int capacity) {
-        return String.format("%,d", stored) + " / " + String.format("%,d", capacity)
-                + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
+    public static ITextComponent getLocalizedEnergyLevel(int stored, int capacity) {
+        return new StringTextComponent(String.format("%,d", stored))
+                .appendText(" / ")
+                .appendText(String.format("%,d", capacity))
+                .appendText(" ")
+                .appendSibling(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
     }
 
     public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {
@@ -190,9 +178,9 @@ public final class Helpers {
          * @param pos The position.
          * @param clazz The class to find.
          * @param <C> The class type.
-         * @return The instance or null.
+         * @return The optional instance.
          */
-        public <C> C getInterface(IBlockAccess world, BlockPos pos, Class<C> clazz);
+        public <C> Optional<C> getInterface(IBlockReader world, BlockPos pos, Class<C> clazz);
 
     }
 

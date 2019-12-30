@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.event;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * A logic programmer event that is posted in the Forge event bus.
@@ -9,13 +9,13 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  */
 public class LogicProgrammerEvent extends Event {
 
-    private final EntityPlayer player;
+    private final PlayerEntity player;
 
-    public LogicProgrammerEvent(EntityPlayer player) {
+    public LogicProgrammerEvent(PlayerEntity player) {
         this.player = player;
     }
 
-    public EntityPlayer getPlayer() {
+    public PlayerEntity getPlayer() {
         return player;
     }
 }

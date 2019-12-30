@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -33,9 +33,9 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
     private final String unlocalizedTypeSuffix;
     private final AspectUpdateType updateType;
 
-    public AspectReadBase(ModBase mod, ModBase modGui, String unlocalizedTypeSuffix,
+    public AspectReadBase(ModBase mod, String unlocalizedTypeSuffix,
                           IAspectProperties defaultProperties, AspectUpdateType updateType) {
-        super(mod, modGui, defaultProperties);
+        super(mod, defaultProperties);
         if(unlocalizedTypeSuffix == null) {
             unlocalizedTypeSuffix = "";
         }
@@ -57,7 +57,7 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
         return "read" + this.unlocalizedTypeSuffix;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected void registerModelResourceLocation() {
         Aspects.REGISTRY.registerAspectModel(this,
                 new ResourceLocation(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));

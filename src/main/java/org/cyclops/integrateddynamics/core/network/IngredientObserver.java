@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.cyclops.commoncapabilities.api.capability.inventorystate.IInventoryState;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.ingredient.collection.diff.IngredientCollectionDiff;
@@ -102,13 +102,13 @@ public class IngredientObserver<T, M> {
     }
 
     protected int getCurrentTick() {
-        return FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        return ServerLifecycleHooks.getCurrentServer().getTickCounter();
     }
 
     protected void emitEvent(IIngredientComponentStorageObservable.StorageChangeEvent<T, M> event) {
         if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
             // Make sure we are running on the main server thread to avoid concurrency exceptions
-            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
+            ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
                 for (IIngredientComponentStorageObservable.IIndexChangeObserver<T, M> observer : getObserversCopy()) {
                     observer.onChange(event);
                 }
@@ -228,10 +228,10 @@ public class IngredientObserver<T, M> {
 
                 if (!skipPosition) {
                     IInventoryState inventoryState = TileHelpers.getCapability(partPos.getPartPos().getPos(),
-                            partPos.getPartPos().getSide(), Capabilities.INVENTORY_STATE);
+                            partPos.getPartPos().getSide(), Capabilities.INVENTORY_STATE).orElse(null);
                     if (inventoryState != null) {
                         Integer lastState = this.lastInventoryStates.get(partPos.getPartPos());
-                        int newState = inventoryState.getHash();
+                        int newState = inventoryState.getState();
                         if (lastState != null && lastState == newState) {
                             // Skip this position if it hasn't not changed
                             skipPosition = true;

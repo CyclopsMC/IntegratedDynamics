@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import lombok.Getter;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.Container;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.inventory.container.Container;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
@@ -19,8 +19,8 @@ import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
  * Sub gui for rendering logic programmer elements.
  * @author rubensworks
  */
-@SideOnly(Side.CLIENT)
-public class RenderPattern<E extends IGuiInputElement, G extends Gui, C extends Container> extends SubGuiBox implements ISubGuiBox {
+@OnlyIn(Dist.CLIENT)
+public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C extends Container> extends SubGuiBox implements ISubGuiBox {
 
     @Getter
     protected final E element;
@@ -40,12 +40,12 @@ public class RenderPattern<E extends IGuiInputElement, G extends Gui, C extends 
     }
 
     protected void drawSlot(int x, int y) {
-        this.drawTexturedModalRect(x, y, 19, 0, 18, 18);
+        this.blit(x, y, 19, 0, 18, 18);
     }
 
     @Override
-    public void initGui(int guiLeft, int guiTop) {
-        super.initGui(guiLeft, guiTop);
+    public void init(int guiLeft, int guiTop) {
+        super.init(guiLeft, guiTop);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends Gui, C extends 
                     baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
                     0, 1, 0);
         }
-        GlStateManager.color(1, 1, 1);
+        GlStateManager.color3f(1, 1, 1);
     }
 
     @Override

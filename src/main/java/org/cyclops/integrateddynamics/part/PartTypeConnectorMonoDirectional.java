@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.server.ServerWorld;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -50,11 +50,6 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public Class<? super PartTypeConnectorMonoDirectional> getPartTypeClass() {
-        return PartTypeConnectorMonoDirectional.class;
-    }
-
-    @Override
     public void onNetworkAddition(INetwork network, IPartNetwork partNetwork, PartTarget target, State state) {
         super.onNetworkAddition(network, partNetwork, target, state);
 
@@ -68,8 +63,8 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
                 // Re-init network at the two disconnected connectors
                 DimPos originPos = target.getCenter().getPos();
                 DimPos targetPos = PartTypeConnectorMonoDirectional.State.getTargetPos(target.getCenter(), state.getOffset());
-                NetworkHelpers.initNetwork(originPos.getWorld(), originPos.getBlockPos(), target.getCenter().getSide());
-                NetworkHelpers.initNetwork(targetPos.getWorld(), targetPos.getBlockPos(), target.getCenter().getSide().getOpposite());
+                NetworkHelpers.initNetwork(originPos.getWorld(true), originPos.getBlockPos(), target.getCenter().getSide());
+                NetworkHelpers.initNetwork(targetPos.getWorld(true), targetPos.getBlockPos(), target.getCenter().getSide().getOpposite());
             }
         }
     }
@@ -90,9 +85,9 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
             state.removeTarget();
 
             // Re-init network at the two disconnected connectors
-            NetworkHelpers.initNetwork(originPos.getWorld(), originPos.getBlockPos(),  target.getCenter().getSide());
+            NetworkHelpers.initNetwork(originPos.getWorld(true), originPos.getBlockPos(),  target.getCenter().getSide());
             if (targetPos != null) {
-                NetworkHelpers.initNetwork(targetPos.getWorld(), targetPos.getBlockPos(),  target.getCenter().getSide().getOpposite());
+                NetworkHelpers.initNetwork(targetPos.getWorld(true), targetPos.getBlockPos(),  target.getCenter().getSide().getOpposite());
             }
         }
     }
@@ -119,11 +114,12 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, EnumFacing side) {
+    public BlockState getBlockState(IPartContainer partContainer, Direction side) {
         IgnoredBlockStatus.Status status = getStatus(partContainer != null
                 ? (PartTypeConnectorMonoDirectional.State) partContainer.getPartState(side) : null);
-        return super.getBlockState(partContainer, side).withProperty(IgnoredBlock.FACING, side).
-                withProperty(IgnoredBlockStatus.STATUS, status);
+        return super.getBlockState(partContainer, side)
+                .with(IgnoredBlock.FACING, side)
+                .with(IgnoredBlockStatus.STATUS, status);
     }
 
     public static class State extends PartTypeConnector.State<PartTypeConnectorMonoDirectional> {
@@ -133,9 +129,9 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         @Override
         public Set<ISidedPathElement> getReachableElements() {
             if (getPartPos() != null) {
-                EnumFacing targetSide = getPartPos().getSide().getOpposite();
+                Direction targetSide = getPartPos().getSide().getOpposite();
                 IPathElement pathElement = TileHelpers.getCapability(State.getTargetPos(getPartPos(), offset),
-                        targetSide, PathElementConfig.CAPABILITY);
+                        targetSide, PathElementConfig.CAPABILITY).orElse(null);
                 if (pathElement != null) {
                     return Sets.newHashSet(SidedPathElement.of(pathElement, targetSide));
                 }
@@ -152,8 +148,8 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
                 BlockPos pos = dimPos.getBlockPos();
                 for (int i = 1; i < this.offset; i++) {
                     pos = pos.offset(getPartPos().getSide());
-                    ((WorldServer) getPosition().getWorld())
-                            .spawnParticle(EnumParticleTypes.REDSTONE, true,
+                    ((ServerWorld) getPosition().getWorld(true))
+                            .spawnParticle(RedstoneParticleData.REDSTONE_DUST,
                                     pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 1, 0D, 0D, 0D, 0);
                 }
             }
@@ -176,18 +172,18 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         }
 
         @Override
-        public void writeToNBT(NBTTagCompound tag) {
+        public void writeToNBT(CompoundNBT tag) {
             super.writeToNBT(tag);
             if (offset > 0) {
-                tag.setInteger("connect_offset", offset);
+                tag.putInt("connect_offset", offset);
             }
         }
 
         @Override
-        public void readFromNBT(NBTTagCompound tag) {
+        public void readFromNBT(CompoundNBT tag) {
             super.readFromNBT(tag);
-            if (tag.hasKey("connect_offset")) {
-                this.offset = tag.getInteger("connect_offset");
+            if (tag.contains("connect_offset")) {
+                this.offset = tag.getInt("connect_offset");
             }
         }
 
@@ -209,7 +205,7 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         }
 
         protected static DimPos getTargetPos(PartPos origin, int offset) {
-            return DimPos.of(origin.getPos().getWorld(),
+            return DimPos.of(origin.getPos().getDimension(),
                     origin.getPos().getBlockPos().offset(origin.getSide(), offset));
         }
     }

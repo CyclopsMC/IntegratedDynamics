@@ -3,8 +3,8 @@
   "defaults": {
     "model": "integrateddynamics:reader",
     "textures": {
-      "back" : "integrateddynamics:parts/entity_reader_back",
-      "front": "integrateddynamics:parts/entity_reader_front"
+      "back" : "integrateddynamics:part/entity_reader_back",
+      "front": "integrateddynamics:part/entity_reader_front"
     }
   },
   "variants": {

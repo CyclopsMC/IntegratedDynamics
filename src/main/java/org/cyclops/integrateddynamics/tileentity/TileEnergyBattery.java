@@ -1,13 +1,15 @@
 package org.cyclops.integrateddynamics.tileentity;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
@@ -31,17 +33,18 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     private int capacity = BlockEnergyBatteryConfig.capacity;
 
     public TileEnergyBattery() {
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
+        super(RegistryEntries.TILE_ENTITY_ENERGY_BATTERY);
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
             @Override
             public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
             }
-        });
-        addCapabilityInternal(CapabilityEnergy.ENERGY, this);
+        }));
+        addCapabilityInternal(CapabilityEnergy.ENERGY, LazyOptional.of(() -> this));
     }
 
     public boolean isCreative() {
-        Block block = getBlockType();
+        Block block = getBlockState().getBlock();
         return block instanceof BlockEnergyBatteryBase && ((BlockEnergyBatteryBase) block).isCreative();
     }
 
@@ -85,7 +88,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
 
     @Override
     protected void onSendUpdate() {
-        IBlockState blockState = world.getBlockState(pos);
+        BlockState blockState = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, blockState, blockState,
                 MinecraftHelpers.BLOCK_NOTIFY | MinecraftHelpers.BLOCK_NOTIFY_CLIENT | MinecraftHelpers.BLOCK_NOTIFY_NO_RERENDER);
     }

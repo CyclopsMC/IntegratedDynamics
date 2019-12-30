@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /**
  * A network element that exists at a certain side.
@@ -8,6 +8,6 @@ import net.minecraft.util.EnumFacing;
  */
 public interface ISidedNetworkElement extends INetworkElement {
 
-    public EnumFacing getSide();
+    public Direction getSide();
 
 }

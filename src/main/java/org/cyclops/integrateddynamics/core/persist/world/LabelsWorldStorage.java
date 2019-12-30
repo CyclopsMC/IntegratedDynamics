@@ -1,17 +1,17 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Maps;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.network.packet.ActionLabelPacket;
-import org.cyclops.integrateddynamics.core.network.packet.AllLabelsPacket;
+import org.cyclops.integrateddynamics.network.packet.ActionLabelPacket;
+import org.cyclops.integrateddynamics.network.packet.AllLabelsPacket;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -110,7 +110,7 @@ public class LabelsWorldStorage extends WorldStorage {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if(!MinecraftHelpers.isClientSide()) {
-            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (EntityPlayerMP) event.player);
+            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (ServerPlayerEntity) event.getPlayer());
         }
     }
 

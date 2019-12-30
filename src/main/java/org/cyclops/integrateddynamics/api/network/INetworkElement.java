@@ -1,10 +1,11 @@
 package org.cyclops.integrateddynamics.api.network;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -91,14 +92,14 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Called when a neighbouring block is updated, more specifically when
-     * {@link net.minecraft.block.Block#neighborChanged(IBlockState, World, BlockPos, Block, BlockPos)} or
-     * {@link Block#onNeighborChange(IBlockAccess, BlockPos, BlockPos)} is called.
+     * {@link net.minecraft.block.Block#neighborChanged(BlockState, World, BlockPos, Block, BlockPos, boolean)} or
+     * {@link Block#onNeighborChange(BlockState, IWorldReader, BlockPos, BlockPos)} is called.
      * @param network The network to update in.
      * @param world The world in which the neighbour was updated.
      * @param neighbourBlock block type of the neighbour that was updated.
      * @param neighbourBlockPos The position of the neighbour that was updated.
      */
-    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighbourBlock,
+    public void onNeighborBlockChange(@Nullable INetwork network, IBlockReader world, Block neighbourBlock,
                                       BlockPos neighbourBlockPos);
 
     /**

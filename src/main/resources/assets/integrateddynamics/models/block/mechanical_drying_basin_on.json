@@ -1,0 +1,6 @@
+{
+  "parent": "integrateddynamics:block/mechanical_drying_basin",
+  "textures": {
+    "texture": "integrateddynamics:block/mechanical_drying_basin_on"
+  }
+}

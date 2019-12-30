@@ -1,15 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.base.Strings;
 import lombok.ToString;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraft.nbt.EndNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -29,17 +31,17 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         super("block");
     }
 
-    public static String getBlockDisplayNameUsSafe(IBlockState blockState) throws NoSuchMethodException {
-        return blockState.getBlock().getLocalizedName();
+    public static ITextComponent getBlockDisplayNameUsSafe(BlockState blockState) throws NoSuchMethodException {
+        return blockState.getBlock().getNameTextComponent();
     }
 
-    public static String getBlockkDisplayNameSafe(IBlockState blockState) {
+    public static ITextComponent getBlockkDisplayNameSafe(BlockState blockState) {
         // Certain mods may call client-side only methods,
         // so call a server-side-safe fallback method if that fails.
         try {
             return getBlockDisplayNameUsSafe(blockState);
         } catch (NoSuchMethodException e) {
-            return L10NHelpers.localize(blockState.getBlock().getTranslationKey() + ".name");
+            return new TranslationTextComponent(blockState.getBlock().getTranslationKey());
         }
     }
 
@@ -49,42 +51,33 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     }
 
     @Override
-    public String toCompactString(ValueBlock value) {
+    public ITextComponent toCompactString(ValueBlock value) {
         if (value.getRawValue().isPresent()) {
-            IBlockState blockState = value.getRawValue().get();
+            BlockState blockState = value.getRawValue().get();
             ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockState);
             if (!itemStack.isEmpty()) {
                 return ValueObjectTypeItemStack.getItemStackDisplayNameSafe(itemStack);
             }
             return ValueObjectTypeBlock.getBlockkDisplayNameSafe(blockState);
         }
-        return "";
+        return new StringTextComponent("");
     }
 
     @Override
-    public String serialize(ValueBlock value) {
-        if(!value.getRawValue().isPresent()) return "";
-        Pair<String, Integer> serializedBlockState = BlockHelpers.serializeBlockState(value.getRawValue().get());
-        return String.format("%s$%s", serializedBlockState.getLeft(), serializedBlockState.getRight());
+    public INBT serialize(ValueBlock value) {
+        if(!value.getRawValue().isPresent()) return new EndNBT();
+        return BlockHelpers.serializeBlockState(value.getRawValue().get());
     }
 
     @Override
-    public ValueBlock deserialize(String value) {
-        if(Strings.isNullOrEmpty(value)) return ValueBlock.of(Blocks.AIR.getDefaultState());
-        String[] parts = value.split("\\$");
-        try {
-            return ValueBlock.of(BlockHelpers.deserializeBlockState(
-                    Pair.of(parts[0], Integer.parseInt(parts[1]))
-            ));
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw new RuntimeException(String.format("Something went wrong while deserializing '%s'.", value));
-        }
+    public ValueBlock deserialize(INBT value) {
+        if (value.getId() == Constants.NBT.TAG_END) return ValueBlock.of(Blocks.AIR.getDefaultState());
+        return ValueBlock.of(BlockHelpers.deserializeBlockState(value));
     }
 
     @Override
     public String getName(ValueBlock a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @Override
@@ -101,9 +94,9 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             }
 
             @Override
-            public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
-                if(!itemStack.isEmpty() && !(itemStack.getItem() instanceof ItemBlock)) {
-                    return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
+            public ITextComponent validate(ItemStack itemStack) {
+                if(!itemStack.isEmpty() && !(itemStack.getItem() instanceof BlockItem)) {
+                    return new TranslationTextComponent(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
                 }
                 return null;
             }
@@ -119,29 +112,26 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     @Override
     public String getUniqueName(ValueBlock value) {
         if (value.getRawValue().isPresent()) {
-            IBlockState blockState = value.getRawValue().get();
-            int meta = blockState.getBlock().getMetaFromState(blockState);
-            return blockState.getBlock().getRegistryName() + (meta > 0 ? " " + meta : "");
+            BlockState blockState = value.getRawValue().get();
+            return blockState.getBlock().getRegistryName().toString();
         }
         return "";
     }
 
     @ToString
-    public static class ValueBlock extends ValueOptionalBase<IBlockState> {
+    public static class ValueBlock extends ValueOptionalBase<BlockState> {
 
-        private ValueBlock(IBlockState blockState) {
+        private ValueBlock(BlockState blockState) {
             super(ValueTypes.OBJECT_BLOCK, blockState);
         }
 
-        public static ValueBlock of(IBlockState blockState) {
+        public static ValueBlock of(BlockState blockState) {
             return new ValueBlock(blockState);
         }
 
         @Override
-        protected boolean isEqual(IBlockState a, IBlockState b) {
-            Block blockA = a.getBlock();
-            Block blockB = b.getBlock();
-            return blockA == blockB && blockA.getMetaFromState(a) == blockB.getMetaFromState(b);
+        protected boolean isEqual(BlockState a, BlockState b) {
+            return a.equals(b); // TODO: check if this works, otherwise use getValues().equals
         }
     }
 

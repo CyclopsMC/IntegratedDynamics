@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
-import net.minecraft.client.gui.Gui;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -22,7 +22,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C extends Container> extends IGuiInputElement<S, G, C> {
+public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends IGuiInputElement<S, G, C> {
 
     /**
      * @return The element type.
@@ -91,7 +91,7 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @param itemStack The stack to write to.
      * @return The resulting itemstack.
      */
-    public ItemStack writeElement(EntityPlayer player, ItemStack itemStack);
+    public ItemStack writeElement(PlayerEntity player, ItemStack itemStack);
 
     /**
      * If this element in its current state can be deactivated because of another item being inserted into the
@@ -123,7 +123,7 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @param player The clicking player.
      * @return If further processing of the clicking should stop.
      */
-    boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player);
+    boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player);
 
     /**
      * @return The max stacksize.
@@ -134,7 +134,7 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @param subGui The corresponding sub gui of this element.
      * @return If this element has the active focus. For typing and things like that.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public boolean isFocused(S subGui);
 
     /**
@@ -142,6 +142,6 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @param subGui The corresponding sub gui of this element.
      * @param focused If it must be focused.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setFocused(S subGui, boolean focused);
 }

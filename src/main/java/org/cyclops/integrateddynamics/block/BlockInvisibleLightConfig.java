@@ -1,5 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraftforge.fml.config.ModConfig;
+import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -9,21 +14,17 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class BlockInvisibleLightConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockInvisibleLightConfig _instance;
+    @ConfigurableProperty(category = "machine", comment = "If invisible light should act as full a block", configLocation = ModConfig.Type.SERVER)
+    public static boolean invisibleLightBlock = true;
 
-    /**
-     * Make a new instance.
-     */
     public BlockInvisibleLightConfig() {
         super(
-            IntegratedDynamics._instance,
-            true,
-            "invisible_light",
-            null,
-            BlockInvisibleLight.class
+                IntegratedDynamics._instance,
+                "invisible_light",
+                eConfig -> new BlockInvisibleLight(Block.Properties.create(Material.AIR)
+                        .hardnessAndResistance(3.0F)
+                        .sound(SoundType.METAL)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 

@@ -1,15 +1,16 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Data;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
@@ -18,13 +19,11 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
-import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ import java.util.List;
  * @author rubensworks
  */
 @Data
-public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     private final IOperator operator;
     private IVariableFacade[] inputVariables;
@@ -47,7 +46,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     @Override
     public String getMatchString() {
-        return getOperator().getLocalizedNameFull().toLowerCase();
+        return getOperator().getLocalizedNameFull().getString().toLowerCase();
     }
 
     @Override
@@ -66,12 +65,12 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public String getLocalizedNameFull() {
+    public ITextComponent getName() {
         return getOperator().getLocalizedNameFull();
     }
 
     @Override
-    public void loadTooltip(List<String> lines) {
+    public void loadTooltip(List<ITextComponent> lines) {
         getOperator().loadTooltip(lines, true);
     }
 
@@ -109,10 +108,11 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public ItemStack writeElement(EntityPlayer player, ItemStack itemStack) {
+    public ItemStack writeElement(PlayerEntity player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         int[] variableIds = getVariableIds(inputVariables);
-        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, Operators.REGISTRY, new OperatorVariableFacadeFactory(operator, variableIds), player, BlockLogicProgrammer.getInstance());
+        return registry.writeVariableFacadeItem(!MinecraftHelpers.isClientSide(), itemStack, Operators.REGISTRY,
+                new OperatorVariableFacadeFactory(operator, variableIds), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.getDefaultState());
     }
 
     @Override
@@ -131,7 +131,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validate() {
+    public ITextComponent validate() {
         return getOperator().validateTypes(ValueHelpers.from(inputVariables));
     }
 
@@ -158,11 +158,11 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     @Override
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
-        return itemStack.getItem() == ItemVariable.getInstance();
+        return itemStack.getItem() == RegistryEntries.ITEM_VARIABLE;
     }
 
     @Override
-    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player) {
         return false;
     }
 
@@ -182,9 +182,9 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public RenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                      ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new OperatorLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /**
  * A wrapper around {@link PartPos} that also holds a priority.
@@ -24,8 +24,8 @@ public class PrioritizedPartPos implements Comparable<PrioritizedPartPos> {
         if (compPriority == 0) {
             int compPos = this.getPartPos().getPos().compareTo(o.getPartPos().getPos());
             if (compPos == 0) {
-                EnumFacing thisSide = this.getPartPos().getSide();
-                EnumFacing otherSide = o.getPartPos().getSide();
+                Direction thisSide = this.getPartPos().getSide();
+                Direction otherSide = o.getPartPos().getSide();
                 return thisSide == null ? -1 : (otherSide == null ? 1 : thisSide.compareTo(otherSide));
             }
             return compPos;

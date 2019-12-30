@@ -3,7 +3,9 @@ package org.cyclops.integrateddynamics.api.advancement.criterion;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.util.JsonUtils;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.util.JSONUtils;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -45,11 +47,15 @@ public class ValuePredicate<V extends IValue> {
         IValue value = null;
         if (valueElement != null && !valueElement.isJsonNull()) {
             if (valueElement.isJsonPrimitive()) {
-                String valueString = JsonUtils.getString(jsonObject, "value");
+                String valueString = JSONUtils.getString(jsonObject, "value");
                 if (valueType == null) {
                     throw new JsonSyntaxException("A value '" + valueString + "' requires a corresponding valueType to be defined");
                 }
-                value = ValueHelpers.deserializeRaw(valueType, valueString);
+                try {
+                    value = ValueHelpers.deserializeRaw(valueType, JsonToNBT.getTagFromJson(valueString));
+                } catch (CommandSyntaxException e) {
+                    e.printStackTrace();
+                }
             } else if (valueType != null && valueElement.isJsonObject()) {
                 return valueType.deserializeValuePredicate(valueElement.getAsJsonObject(), value);
             }

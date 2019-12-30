@@ -1,15 +1,23 @@
 package org.cyclops.integrateddynamics.tileentity;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
@@ -21,9 +29,10 @@ import org.cyclops.integrateddynamics.capability.variablecontainer.VariableConta
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
+import org.cyclops.integrateddynamics.inventory.container.ContainerVariablestore;
 import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
 
-import java.util.Collection;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -32,57 +41,55 @@ import java.util.Set;
  * @author rubensworks
  */
 public class TileVariablestore extends TileCableConnectableInventory
-        implements IDirtyMarkListener, INetworkEventListener<VariablestoreNetworkElement> {
+        implements IDirtyMarkListener, INetworkEventListener<VariablestoreNetworkElement>, INamedContainerProvider {
 
     public static final int ROWS = 5;
     public static final int COLS = 9;
+    public static final int INVENTORY_SIZE = ROWS * COLS;
 
     private final IVariableContainer variableContainer;
 
     private boolean shouldSendUpdateEvent = false;
 
     public TileVariablestore() {
-        super(ROWS * COLS, "variables", 1);
-        inventory.addDirtyMarkListener(this);
+        super(RegistryEntries.TILE_ENTITY_VARIABLE_STORE, TileVariablestore.INVENTORY_SIZE, 1);
+        getInventory().addDirtyMarkListener(this);
 
-        // Make all sides active for all slots
-        Collection<Integer> slots = Lists.newArrayListWithCapacity(getInventory().getSizeInventory());
-        for(int i = 0; i < getInventory().getSizeInventory(); i++) {
-            slots.add(i);
-        }
-        for(EnumFacing side : EnumFacing.VALUES) {
-            addSlotsToSide(side, slots);
-        }
-
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderSingleton() {
+        addCapabilityInternal(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, LazyOptional.of(() -> getInventory().getItemHandler()));
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
             @Override
             public INetworkElement createNetworkElement(World world, BlockPos blockPos) {
                 return new VariablestoreNetworkElement(DimPos.of(world, blockPos));
             }
-        });
+        }));
         variableContainer = new VariableContainerDefault();
-        addCapabilityInternal(VariableContainerConfig.CAPABILITY, variableContainer);
+        addCapabilityInternal(VariableContainerConfig.CAPABILITY, LazyOptional.of(() -> variableContainer));
     }
 
     @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return super.isItemValidForSlot(index, stack)
-                && (stack.isEmpty() || stack.hasCapability(VariableFacadeHolderConfig.CAPABILITY, null));
+    protected SimpleInventory createInventory(int inventorySize, int stackSize) {
+        return new SimpleInventory(inventorySize, stackSize) {
+            @Override
+            public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
+                return super.isItemValidForSlot(slot, itemStack)
+                        && (itemStack.isEmpty() || itemStack.getCapability(VariableFacadeHolderConfig.CAPABILITY, null).isPresent());
+            }
+        };
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
         shouldSendUpdateEvent = true;
     }
 
     protected void refreshVariables(boolean sendVariablesUpdateEvent) {
-        variableContainer.refreshVariables(getNetwork(), inventory, sendVariablesUpdateEvent);
+        variableContainer.refreshVariables(getNetwork(), getInventory(), sendVariablesUpdateEvent);
     }
 
     @Override
     public void onDirty() {
-        if(!world.isRemote) {
+        if(!world.isRemote()) {
             refreshVariables(true);
         }
     }
@@ -122,5 +129,16 @@ public class TileVariablestore extends TileCableConnectableInventory
         if(event instanceof VariableContentsUpdatedEvent) {
             refreshVariables(false);
         }
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        return new ContainerVariablestore(id, playerInventory, this.getInventory());
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("block.integrateddynamics.variable_store");
     }
 }

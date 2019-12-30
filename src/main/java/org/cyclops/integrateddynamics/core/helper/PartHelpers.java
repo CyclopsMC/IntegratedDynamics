@@ -2,19 +2,24 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.Data;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -25,8 +30,10 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
+import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 import javax.annotation.Nullable;
@@ -43,9 +50,9 @@ public class PartHelpers {
      * @param world The world.
      * @param pos The position.
      * @param side The side.
-     * @return The part container capability, or null if not present.
+     * @return The optional part container capability.
      */
-    public static @Nullable IPartContainer getPartContainer(IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
+    public static LazyOptional<IPartContainer> getPartContainer(IBlockReader world, BlockPos pos, @Nullable Direction side) {
         return TileHelpers.getCapability(world, pos, side, PartContainerConfig.CAPABILITY);
     }
 
@@ -53,10 +60,54 @@ public class PartHelpers {
      * Get the part container capability at the given position.
      * @param dimPos The dimensional position.
      * @param side The side.
-     * @return The part container capability, or null if not present.
+     * @return The optional part container capability.
      */
-    public static @Nullable IPartContainer getPartContainer(DimPos dimPos, @Nullable EnumFacing side) {
+    public static LazyOptional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side) {
         return TileHelpers.getCapability(dimPos, side, PartContainerConfig.CAPABILITY);
+    }
+
+    /**
+     * Get the part container capability at the given position.
+     * If it is not present, then an illegal state exception will be thrown.
+     *
+     * This should only be called if you know for certain that there will be a part container present.
+     *
+     * @param world The world.
+     * @param pos The position.
+     * @param side The side.
+     * @return The part container capability.
+     */
+    public static IPartContainer getPartContainerChecked(IBlockReader world, BlockPos pos, @Nullable Direction side) {
+        return getPartContainer(world, pos, side)
+                .orElseThrow(() -> new IllegalStateException("Could not get a part container"));
+    }
+
+    /**
+     * Get the part container capability at the given position.
+     * If it is not present, then an illegal state exception will be thrown.
+     *
+     * This should only be called if you know for certain that there will be a part container present.
+     *
+     * @param dimPos The dimensional position.
+     * @param side The side.
+     * @return The part container capability.
+     */
+    public static IPartContainer getPartContainerChecked(DimPos dimPos, @Nullable Direction side) {
+       return PartHelpers.getPartContainer(dimPos, side)
+               .orElseThrow(() -> new IllegalStateException("Could not find a part container at " + dimPos.toString()));
+    }
+
+    /**
+     * Get the part container capability at the given position.
+     * If it is not present, then an illegal state exception will be thrown.
+     *
+     * This should only be called if you know for certain that there will be a part container present.
+     *
+     * @param pos The part position.
+     * @return The part container capability.
+     */
+    public static IPartContainer getPartContainerChecked(PartPos pos) {
+        return PartHelpers.getPartContainerChecked(pos.getPos(), pos.getSide());
     }
 
     /**
@@ -82,9 +133,9 @@ public class PartHelpers {
      * @param side The side to write.
      * @param partType The part type to write.
      */
-    public static void writePartTypeToNBT(NBTTagCompound partTag, EnumFacing side, IPartType partType) {
-        partTag.setString("__partType", partType.getName());
-        partTag.setString("__side", side.getName());
+    public static void writePartTypeToNBT(CompoundNBT partTag, Direction side, IPartType partType) {
+        partTag.putString("__partType", partType.getName());
+        partTag.putString("__side", side.getName());
     }
 
     /**
@@ -94,7 +145,7 @@ public class PartHelpers {
      * @param partData The part data.
      * @return If the writing succeeded.
      */
-    public static boolean writePartToNBT(BlockPos pos, NBTTagCompound partTag, Pair<EnumFacing, PartStateHolder<?, ?>> partData) {
+    public static boolean writePartToNBT(BlockPos pos, CompoundNBT partTag, Pair<Direction, PartStateHolder<?, ?>> partData) {
         IPartType part = partData.getValue().getPart();
         IPartState partState = partData.getValue().getState();
         writePartTypeToNBT(partTag, partData.getKey(), part);
@@ -115,15 +166,15 @@ public class PartHelpers {
      * @param tag The tag to write to.
      * @param partData The part data.
      */
-    public static void writePartsToNBT(BlockPos pos, NBTTagCompound tag, Map<EnumFacing, PartStateHolder<?, ?>> partData) {
-        NBTTagList partList = new NBTTagList();
-        for(Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
-            NBTTagCompound partTag = new NBTTagCompound();
-            if(writePartToNBT(pos, partTag, Pair.<EnumFacing, PartStateHolder<?, ?>>of(entry.getKey(), entry.getValue()))) {
-                partList.appendTag(partTag);
+    public static void writePartsToNBT(BlockPos pos, CompoundNBT tag, Map<Direction, PartStateHolder<?, ?>> partData) {
+        ListNBT partList = new ListNBT();
+        for(Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
+            CompoundNBT partTag = new CompoundNBT();
+            if(writePartToNBT(pos, partTag, Pair.<Direction, PartStateHolder<?, ?>>of(entry.getKey(), entry.getValue()))) {
+                partList.add(partTag);
             }
         }
-        tag.setTag("parts", partList);
+        tag.put("parts", partList);
     }
 
     /**
@@ -133,11 +184,11 @@ public class PartHelpers {
      * @param partTag The tag to read from.
      * @return The part data.
      */
-    public static Pair<EnumFacing, IPartType> readPartTypeFromNBT(@Nullable INetwork network, BlockPos pos, NBTTagCompound partTag) {
+    public static Pair<Direction, IPartType> readPartTypeFromNBT(@Nullable INetwork network, BlockPos pos, CompoundNBT partTag) {
         String partTypeName = partTag.getString("__partType");
         IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(partTypeName));
         if(partType != null) {
-            EnumFacing side = EnumFacing.byName(partTag.getString("__side"));
+            Direction side = Direction.byName(partTag.getString("__side"));
             if (side != null) {
                 return Pair.of(side, partType);
             } else {
@@ -159,8 +210,8 @@ public class PartHelpers {
      * @param partTag The tag to read from.
      * @return The part data.
      */
-    public static Pair<EnumFacing, ? extends PartStateHolder<?, ?>> readPartFromNBT(@Nullable INetwork network, BlockPos pos, NBTTagCompound partTag) {
-        Pair<EnumFacing, IPartType> partData = readPartTypeFromNBT(network, pos, partTag);
+    public static Pair<Direction, ? extends PartStateHolder<?, ?>> readPartFromNBT(@Nullable INetwork network, BlockPos pos, CompoundNBT partTag) {
+        Pair<Direction, IPartType> partData = readPartTypeFromNBT(network, pos, partTag);
         if(partData != null) {
             IPartState partState = partData.getValue().fromNBT(partTag);
             return Pair.of(partData.getKey(), PartStateHolder.of(partData.getValue(), partState));
@@ -178,23 +229,23 @@ public class PartHelpers {
      * @param partData The map of part data to write to.
      * @param world The world.
      */
-    public static void readPartsFromNBT(@Nullable INetwork network, BlockPos pos, NBTTagCompound tag,
-                                        Map<EnumFacing, PartStateHolder<?, ?>> partData, @Nullable World world) {
-        Map<EnumFacing, PartStateHolder<?, ?>> oldPartData = ImmutableMap.copyOf(partData);
+    public static void readPartsFromNBT(@Nullable INetwork network, BlockPos pos, CompoundNBT tag,
+                                        Map<Direction, PartStateHolder<?, ?>> partData, @Nullable World world) {
+        Map<Direction, PartStateHolder<?, ?>> oldPartData = ImmutableMap.copyOf(partData);
         partData.clear();
-        NBTTagList partList = tag.getTagList("parts", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-        for(int i = 0; i < partList.tagCount(); i++) {
-            NBTTagCompound partTag = partList.getCompoundTagAt(i);
-            Pair<EnumFacing, ? extends PartStateHolder<?, ?>> part = readPartFromNBT(network, pos, partTag);
+        ListNBT partList = tag.getList("parts", Constants.NBT.TAG_COMPOUND);
+        for(int i = 0; i < partList.size(); i++) {
+            CompoundNBT partTag = partList.getCompound(i);
+            Pair<Direction, ? extends PartStateHolder<?, ?>> part = readPartFromNBT(network, pos, partTag);
             if(part != null) {
                 partData.put(part.getKey(), part.getValue());
             }
         }
 
         // Trigger block render update if at least one of the parts requires it.
-        if (world != null && world.isRemote) {
+        if (world != null && world.isRemote()) {
             boolean triggerBlockRenderUpdate = false;
-            for (EnumFacing side : EnumFacing.VALUES) {
+            for (Direction side : Direction.values()) {
                 PartStateHolder<?, ?> oldData = oldPartData.get(side);
                 PartStateHolder<?, ?> newData = partData.get(side);
                 if (oldData != null || newData != null) {
@@ -211,7 +262,7 @@ public class PartHelpers {
                 }
             }
             if (triggerBlockRenderUpdate) {
-                world.markBlockRangeForRenderUpdate(pos, pos);
+                BlockHelpers.markForUpdate(world, pos);
             }
         }
     }
@@ -227,10 +278,10 @@ public class PartHelpers {
      * @param saveState If the element state should be saved in the item.
      * @return If the block was set to air (removed).
      */
-    public static boolean removePart(World world, BlockPos pos, EnumFacing side, @Nullable EntityPlayer player,
+    public static boolean removePart(World world, BlockPos pos, Direction side, @Nullable PlayerEntity player,
                                      boolean destroyIfEmpty, boolean dropMainElement, boolean saveState) {
-        IPartContainer partContainer = getPartContainer(world, pos, side);
-        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, pos, side);
+        IPartContainer partContainer = getPartContainerChecked(world, pos, side);
+        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, pos, side).orElse(null);
         partContainer.removePart(side, player, dropMainElement, saveState);
 
         // Remove full cable block if this was the last part and if it was already an unreal cable.
@@ -238,7 +289,7 @@ public class PartHelpers {
         if(removeCompletely) {
             world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         } else {
-            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
+            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
             // If there is a cable in the direction of the removed part, try connecting with it.
             if (CableHelpers.getCable(world, pos.offset(side), side.getOpposite()) != null) {
                 CableHelpers.updateConnections(world, pos, side);
@@ -259,10 +310,10 @@ public class PartHelpers {
      * @param itemStack The item holding the part state.
      * @return If the part was added.
      */
-    public static boolean addPart(World world, BlockPos pos, EnumFacing side, IPartType partType, ItemStack itemStack) {
-        IPartContainer partContainer = getPartContainer(world, pos, side);
+    public static boolean addPart(World world, BlockPos pos, Direction side, IPartType partType, ItemStack itemStack) {
+        IPartContainer partContainer = getPartContainerChecked(world, pos, side);
         if(partContainer.canAddPart(side, partType)) {
-            if(!world.isRemote) {
+            if(!world.isRemote()) {
                 partContainer.setPart(side, partType, partType.getState(itemStack));
             }
             return true;
@@ -279,10 +330,10 @@ public class PartHelpers {
      * @param partState The part state.
      * @return If the part was added.
      */
-    public static boolean addPart(World world, BlockPos pos, EnumFacing side, IPartType partType, IPartState partState) {
-        IPartContainer partContainer = getPartContainer(world, pos, side);
+    public static boolean addPart(World world, BlockPos pos, Direction side, IPartType partType, IPartState partState) {
+        IPartContainer partContainer = getPartContainerChecked(world, pos, side);
         if(partContainer.canAddPart(side, partType)) {
-            if(!world.isRemote) {
+            if(!world.isRemote()) {
                 partContainer.setPart(side, partType, partState);
             }
             return true;
@@ -301,10 +352,10 @@ public class PartHelpers {
      * @param callback The callback for the part state holder.
      * @return If the part could be placed.
      */
-    public static boolean setPart(@Nullable INetwork network, World world, BlockPos pos, EnumFacing side, IPartType part, IPartState partState, IPartStateHolderCallback callback) {
+    public static boolean setPart(@Nullable INetwork network, World world, BlockPos pos, Direction side, IPartType part, IPartState partState, IPartStateHolderCallback callback) {
         callback.onSet(PartStateHolder.of(part, partState));
         if(network != null) {
-            IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
+            IPartContainer partContainer = PartHelpers.getPartContainerChecked(world, pos, side);
             INetworkElement networkElement = part.createNetworkElement(partContainer, DimPos.of(world, pos), side);
             if(!network.addNetworkElement(networkElement, false)) {
                 // In this case, the addition failed because that part id is already present in the network,
@@ -327,9 +378,9 @@ public class PartHelpers {
      * @param expectedPartContainer The expected part container.
      * @return If the player can interact with it.
      */
-    public static boolean canInteractWith(PartTarget target, EntityPlayer player, IPartContainer expectedPartContainer) {
+    public static boolean canInteractWith(PartTarget target, PlayerEntity player, IPartContainer expectedPartContainer) {
         BlockPos blockPos = target.getCenter().getPos().getBlockPos();
-        IPartContainer partContainer = PartHelpers.getPartContainer(target.getCenter().getPos(), target.getCenter().getSide());
+        IPartContainer partContainer = PartHelpers.getPartContainer(target.getCenter().getPos(), target.getCenter().getSide()).orElse(null);
         return partContainer == expectedPartContainer
                 && player.getDistanceSq((double) blockPos.getX() + 0.5D,
                 (double) blockPos.getY() + 0.5D,
@@ -342,12 +393,74 @@ public class PartHelpers {
      * @return The part.
      */
     public static @Nullable PartStateHolder<?, ?> getPart(PartPos partPos) {
-        EnumFacing side = partPos.getSide();
-        IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
+        Direction side = partPos.getSide();
+        IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide()).orElse(null);
         if (partContainer != null && partContainer.hasPart(side)) {
             return PartStateHolder.of(partContainer.getPart(side), partContainer.getPartState(side));
         }
         return null;
+    }
+
+    /**
+     * Open a part gui container from the server.
+     * @param player The player opening the gui.
+     * @param pos The part position.
+     * @return If the part has a container provider.
+     */
+    public static boolean openContainerPart(ServerPlayerEntity player, PartPos pos, IPartType<?, ?> partType) {
+        return partType.getContainerProvider(pos)
+                .map(containerProvider -> {
+                    NetworkHooks.openGui(player, containerProvider, packetBuffer -> partType.writeExtraGuiData(packetBuffer, pos, player));
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    /**
+     * Open a part settings gui container from the server.
+     * @param player The player opening the gui.
+     * @param pos The part position.
+     * @return If the part has a container provider for settings.
+     */
+    public static boolean openContainerPartSettings(ServerPlayerEntity player, PartPos pos, IPartType<?, ?> partType) {
+        return partType.getContainerProviderSettings(pos)
+                .map(containerProvider -> {
+                    NetworkHooks.openGui(player, containerProvider, packetBuffer -> partType.writeExtraGuiDataSettings(packetBuffer, pos, player));
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    /**
+     * Open an aspect settings gui container from the server.
+     * @param player The player opening the gui.
+     * @param pos The part position.
+     * @param aspect The aspect for which to show the settings.
+     */
+    public static void openContainerAspectSettings(ServerPlayerEntity player, PartPos pos, IAspect<?, ?> aspect) {
+        NetworkHooks.openGui(player, aspect.getPropertiesContainerProvider(pos),
+                packetBuffer -> packetBuffer.writeString(aspect.getTranslationKey()));
+    }
+
+    /**
+     * Construct a data holder for constructing a part-related container.
+     * @param pos A part position.
+     * @return A data holder.
+     */
+    public static Triple<IPartContainer, PartTypeBase, PartTarget> getContainerPartConstructionData(PartPos pos) {
+        IPartContainer partContainer = PartHelpers.getPartContainer(pos.getPos(), pos.getSide()).orElse(null);
+        if(partContainer == null) {
+            IntegratedDynamics.clog(Level.WARN, String.format("The tile at %s is not a valid part container.", pos));
+            return null;
+        }
+        IPartType partType = partContainer.getPart(pos.getSide());
+        if(partType == null || !(partType instanceof PartTypeBase)) {
+            IntegratedDynamics.clog(Level.WARN, String.format("The part container at %s side %s does not " +
+                    "have a valid part.", pos, pos.getSide()));
+            return null;
+        }
+        PartTarget target = partType.getTarget(pos, partContainer.getPartState(pos.getSide()));
+        return Triple.of(partContainer, (PartTypeBase) partType, target);
     }
 
     /**

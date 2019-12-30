@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import org.cyclops.cyclopscore.init.IInitListener;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 import java.util.Collection;
@@ -9,7 +8,7 @@ import java.util.Collection;
  * Registry for {@link IPartType}.
  * @author rubensworks
  */
-public interface IPartTypeRegistry extends IRegistry, IInitListener {
+public interface IPartTypeRegistry extends IRegistry {
 
     /**
      * Register a new part type.

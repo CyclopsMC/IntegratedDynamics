@@ -1,8 +1,15 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.IntNBT;
+import net.minecraft.nbt.LongNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 
 /**
@@ -12,7 +19,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implements IValueTypeNumber<ValueTypeLong.ValueLong> {
 
     public ValueTypeLong() {
-        super("long", Helpers.RGBToInt(215, 254, 23), TextFormatting.YELLOW.toString());
+        super("long", Helpers.RGBToInt(215, 254, 23), TextFormatting.YELLOW);
     }
 
     @Override
@@ -21,18 +28,36 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     }
 
     @Override
-    public String toCompactString(ValueLong value) {
+    public ITextComponent toCompactString(ValueLong value) {
+        return new StringTextComponent(Long.toString(value.getRawValue()));
+    }
+
+    @Override
+    public INBT serialize(ValueLong value) {
+        return new LongNBT(value.getRawValue());
+    }
+
+    @Override
+    public ValueLong deserialize(INBT value) {
+        if (value.getId() == Constants.NBT.TAG_LONG) {
+            return ValueLong.of(((LongNBT) value).getLong());
+        } else {
+            throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a long.", value));
+        }
+    }
+
+    @Override
+    public String toString(ValueLong value) {
         return Long.toString(value.getRawValue());
     }
 
     @Override
-    public String serialize(ValueLong value) {
-        return Long.toString(value.getRawValue());
-    }
-
-    @Override
-    public ValueLong deserialize(String value) {
-        return ValueLong.of(Long.parseLong(value));
+    public ValueLong parseString(String value) throws EvaluationException {
+        try {
+            return ValueLong.of(Long.parseLong(value));
+        } catch (NumberFormatException e) {
+            throw new EvaluationException(e.getMessage());
+        }
     }
 
     @Override
@@ -102,7 +127,7 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
 
     @Override
     public String getName(ValueLong a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @ToString

@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlock;
-import org.cyclops.cyclopscore.config.configurable.IConfigurable;
+import net.minecraft.block.material.MaterialColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Config for the Menril Wood Planks.
@@ -16,43 +17,20 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class BlockMenrilPlanksConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockMenrilPlanksConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockMenrilPlanksConfig() {
         super(
                 IntegratedDynamics._instance,
-        	true,
-            "menril_planks",
-            null,
-            null
+                "menril_planks",
+                eConfig -> new Block(Block.Properties.create(Material.WOOD, MaterialColor.CYAN)
+                        .hardnessAndResistance(2.0F, 3.0F)
+                        .sound(SoundType.WOOD)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-    }
-
-    @Override
-    protected ConfigurableBlock initSubInstance() {
-        return (ConfigurableBlock) new ConfigurableBlock(this, Material.WOOD) {
-            @SuppressWarnings("deprecation")
-            @Override
-            public SoundType getSoundType() {
-                return SoundType.WOOD;
-            }
-        }.setHardness(2.0F);
-    }
-    
-    @Override
-    public String getOreDictionaryId() {
-        return Reference.DICT_WOODPLANK;
     }
     
     @Override
     public void onRegistered() {
-    	Blocks.FIRE.setFireInfo(getBlockInstance(), 5, 20);
+        ((FireBlock) Blocks.FIRE).setFireInfo(RegistryEntries.BLOCK_MENRIL_PLANKS, 5, 20);
     }
     
 }

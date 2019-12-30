@@ -5,7 +5,7 @@ import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Mechanical drying basin recipes.
@@ -22,7 +22,7 @@ public class MechanicalDryingBasinRecipeAppendix extends DryingBasinRecipeAppend
     }
 
     protected ItemStack getCrafter() {
-        return new ItemStack(BlockMechanicalDryingBasin.getInstance());
+        return new ItemStack(RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN);
     }
 
 }

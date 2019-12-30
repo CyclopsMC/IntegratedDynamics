@@ -2,13 +2,14 @@ package org.cyclops.integrateddynamics.core.ingredient;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
@@ -96,7 +97,7 @@ public class IngredientComponentHandlers {
                 @Override
                 @Nullable
                 public FluidStack toInstance(ValueObjectTypeFluidStack.ValueFluidStack value) {
-                    return value.getRawValue().orNull();
+                    return value.getRawValue();
                 }
             });
             REGISTRY.register(new IIngredientComponentHandler<ValueTypeInteger, ValueTypeInteger.ValueInteger, Integer, Boolean>() {
@@ -122,10 +123,10 @@ public class IngredientComponentHandlers {
                 }
 
                 @Override
-                public String toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
-                    String value = getValueType().toCompactString(ingredientValue);
-                    value += " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
-                    return value;
+                public ITextComponent toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
+                    return getValueType().toCompactString(ingredientValue)
+                            .appendText(" ")
+                            .appendSibling(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
                 }
             });
         }

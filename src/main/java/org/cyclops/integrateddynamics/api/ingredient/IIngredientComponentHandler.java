@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.ingredient;
 
+import net.minecraft.util.text.ITextComponent;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -47,7 +48,7 @@ public interface IIngredientComponentHandler<VT extends IValueType<V>, V extends
      * @param ingredientValue A list of ingredient values.
      * @return A compact string representation.
      */
-    default public String toCompactString(V ingredientValue) {
+    default public ITextComponent toCompactString(V ingredientValue) {
         return getValueType().toCompactString(ingredientValue);
     }
 

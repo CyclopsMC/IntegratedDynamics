@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.network;
 
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
@@ -93,19 +94,12 @@ public interface INetwork extends IFullNetworkListener, INBTSerializable {
     public void setCrashed(boolean crashed);
 
     /**
-     * If this network has the given capability.
-     * @param capability The capability to check.
-     * @return If this has the given capability/
-     */
-    public boolean hasCapability(Capability<?> capability);
-
-    /**
      * Get the given capability.
      * @param capability The capability to get.
      * @param <T> The capability type.
-     * @return The capability instance.
+     * @return The optional capability instance.
      */
-    public <T> T getCapability(Capability<T> capability);
+    public <T> LazyOptional<T> getCapability(Capability<T> capability);
 
     /**
      * Invalidate the given element.

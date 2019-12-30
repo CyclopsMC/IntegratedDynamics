@@ -11,8 +11,7 @@ env:
   - TERM=dumb
 
 before_install: '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || openssl aes-256-cbc -K $encrypted_a4e14d5ba873_key -iv $encrypted_a4e14d5ba873_iv -in keystore.jks.enc -out keystore.jks -d'
-install: ./gradlew setupCIWorkspace -S
-script: ./gradlew build -S
+install: ./gradlew build -S
 after_success: ./gradlew jacocoTestReport coveralls
 
 cache:

@@ -14,32 +14,17 @@ import org.cyclops.integrateddynamics.api.block.IFacadeable;
  */
 public class FacadeableConfig extends CapabilityConfig<IFacadeable> {
 
-    /**
-     * The unique instance.
-     */
-    public static FacadeableConfig _instance;
-
     @CapabilityInject(IFacadeable.class)
     public static Capability<IFacadeable> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public FacadeableConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "facadeable",
-                "Can hold a facade",
                 IFacadeable.class,
                 new DefaultCapabilityStorage<IFacadeable>(),
-                FacadeableDefault.class
+                FacadeableDefault::new
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

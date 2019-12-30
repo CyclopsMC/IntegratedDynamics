@@ -16,13 +16,8 @@ public class PartTypePanelDisplay extends PartTypePanelVariableDriven<PartTypePa
     }
 
     @Override
-    public Class<? super PartTypePanelDisplay> getPartTypeClass() {
-        return PartTypePanelDisplay.class;
-    }
-
-    @Override
     protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus(blockConfig);
+        return new IgnoredBlockStatus();
     }
 
     @Override

@@ -1,20 +1,25 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import com.google.common.collect.Maps;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
-import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
@@ -22,12 +27,17 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
+import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Container for writer parts.
  * @author rubensworks
  */
-public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainerProvider, S extends IPartStateWriter<P>>
+public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>>
         extends ContainerMultipartAspects<P, S, IAspectWrite> {
 
     public static final int ASPECT_BOX_HEIGHT = 18;
@@ -35,19 +45,20 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
     private static final int SLOT_X = 131;
     private static final int SLOT_Y = 18;
 
-    private final int valueId, colorId;
+    private final int valueId, colorId, enabledId, activeAspectId;
+    private final Map<IAspectWrite, Integer> aspectErrorIds;
 
-    /**
-     * Make a new instance.
-     * @param partTarget    The target.
-     * @param player        The player.
-     * @param partContainer The part container.
-     * @param partType      The part type.
-     */
-    public ContainerPartWriter(EntityPlayer player, PartTarget partTarget, IPartContainer partContainer, P partType) {
-        super(player, partTarget, partContainer, partType, partType.getWriteAspects());
+    public ContainerPartWriter(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
+        this(id, playerInventory, new SimpleInventory(packetBuffer.readInt(), 1),
+                Optional.empty(), Optional.empty(), readPart(packetBuffer));
+    }
+
+    public ContainerPartWriter(int id, PlayerInventory playerInventory, IInventory inventory,
+                               Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
+        super(RegistryEntries.CONTAINER_PART_WRITER, id, playerInventory, inventory, target, partContainer, partType,
+                partType.getWriteAspects());
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            addSlotToContainer(new SlotVariable(inputSlots, i, SLOT_X, SLOT_Y + getAspectBoxHeight() * i));
+            addSlot(new SlotVariable(inputSlots, i, SLOT_X, SLOT_Y + getAspectBoxHeight() * i));
             disableSlot(i);
         }
 
@@ -55,6 +66,12 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
 
         this.valueId = getNextValueId();
         this.colorId = getNextValueId();
+        this.enabledId = getNextValueId();
+        this.activeAspectId = getNextValueId();
+        this.aspectErrorIds = Maps.newIdentityHashMap();
+        for (IAspectWrite aspect : partType.getWriteAspects()) {
+            this.aspectErrorIds.put(aspect, getNextValueId());
+        }
     }
 
     @Override
@@ -76,15 +93,19 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
 
     @Override
     protected IInventory constructInputSlotsInventory() {
-        SimpleInventory inventory = getPartState().getInventory();
-        inventory.addDirtyMarkListener(this);
-        return inventory;
+        if (!player.world.isRemote()) {
+            SimpleInventory inventory = getPartState().get().getInventory();
+            inventory.addDirtyMarkListener(this);
+            return inventory;
+        } else {
+            return super.constructInputSlotsInventory();
+        }
     }
 
     @Override
     public void onDirty() {
-        if(!MinecraftHelpers.isClientSide()) {
-            getPartType().updateActivation(getTarget(), getPartState(), getPlayer());
+        if (!player.world.isRemote()) {
+            getPartType().updateActivation(getTarget().get(), getPartState().get(), player);
         }
     }
 
@@ -93,45 +114,69 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S> & IGuiContainer
         super.detectAndSendChanges();
 
         try {
-            if(!MinecraftHelpers.isClientSide()) {
-                Pair<String, Integer> readValue;
-                if (!getPartState().isEnabled()) {
-                    readValue = Pair.of("NO POWER", 0);
-                } else if (getPartState().hasVariable()) {
-                    INetwork network = NetworkHelpers.getNetwork(getPartContainer().getPosition().getWorld(),
-                            getPartContainer().getPosition().getBlockPos(), getTarget().getCenter().getSide());
-                    IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
+            if (!player.world.isRemote()) {
+                // Update write value
+                Pair<ITextComponent, Integer> readValue;
+                S partState = getPartState().get();
+                if (!partState.isEnabled()) {
+                    readValue = Pair.of(new StringTextComponent("NO POWER"), 0);
+                } else if (partState.hasVariable()) {
+                    IPartContainer partContainer = getPartContainer().get();
+                    LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(partContainer.getPosition().getWorld(true),
+                            partContainer.getPosition().getBlockPos(), getTarget().get().getCenter().getSide());
+                    IPartNetwork partNetwork = optionalNetwork.map(NetworkHelpers::getPartNetworkChecked).orElse(null);
                     if (partNetwork != null) {
-                        IVariable variable = getPartState().getVariable(network, partNetwork);
+                        IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        readValue = Pair.of("NETWORK CORRUPTED!", Helpers.RGBToInt(255, 100, 0));
+                        readValue = Pair.of(new StringTextComponent("NETWORK CORRUPTED!"), Helpers.RGBToInt(255, 100, 0));
                     }
                 } else {
-                    readValue = Pair.of("", 0);
+                    readValue = Pair.of(new StringTextComponent(""), 0);
                 }
                 setWriteValue(readValue.getLeft(), readValue.getRight());
+
+                // Update error values
+                for (IAspectWrite aspectWrite : getPartType().getWriteAspects()) {
+                    ValueNotifierHelpers.setValue(this, aspectErrorIds.get(aspectWrite), getPartState().get().getErrors(aspectWrite));
+                }
+
+                // Update state
+                ValueNotifierHelpers.setValue(this, enabledId, partState.isEnabled());
+                ValueNotifierHelpers.setValue(this, activeAspectId, partState.getActiveAspect().getTranslationKey());
             }
         } catch (PartStateException e) {
-            getPlayer().closeScreen();
+            player.closeScreen();
         }
     }
 
-    public void setWriteValue(String writeValue, int writeColor) {
+    public void setWriteValue(ITextComponent writeValue, int writeColor) {
         ValueNotifierHelpers.setValue(this, valueId, writeValue);
         ValueNotifierHelpers.setValue(this, colorId, writeColor);
     }
 
-    public String getWriteValue() {
-        String value = ValueNotifierHelpers.getValueString(this, valueId);
+    public ITextComponent getWriteValue() {
+        ITextComponent value = ValueNotifierHelpers.getValueTextComponent(this, valueId);
         if(value == null) {
-            value = "";
+            value = new StringTextComponent("");
         }
         return value;
     }
 
     public int getWriteValueColor() {
         return ValueNotifierHelpers.getValueInt(this, colorId);
+    }
+
+    public List<ITextComponent> getAspectErrors(IAspectWrite aspectWrite) {
+        return ValueNotifierHelpers.getValueTextComponentList(this, aspectErrorIds.get(aspectWrite));
+    }
+
+    public boolean isPartStateEnabled() {
+        return ValueNotifierHelpers.getValueBoolean(this, enabledId);
+    }
+
+    public IAspect getPartStateActiveAspect() {
+        return AspectRegistry.getInstance().getAspect(ValueNotifierHelpers.getValueString(this, activeAspectId));
     }
 
 }

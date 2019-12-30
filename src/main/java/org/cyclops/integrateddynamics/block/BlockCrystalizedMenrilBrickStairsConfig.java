@@ -1,9 +1,13 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockStairs;
+import net.minecraft.block.StairsBlock;
+import net.minecraft.block.material.Material;
+import net.minecraftforge.common.ToolType;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Config for the Crystallized Menril Brick Stairs.
@@ -12,35 +16,17 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class BlockCrystalizedMenrilBrickStairsConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockCrystalizedMenrilBrickStairsConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockCrystalizedMenrilBrickStairsConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "crystalized_menril_brick_stairs",
-                null,
-                null
+                eConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_MENRIL_BRICK.getDefaultState(), Block.Properties.create(Material.CLAY)
+                        .sound(SoundType.SNOW)
+                        .hardnessAndResistance(1.5F)
+                        .harvestLevel(0)
+                        .harvestTool(ToolType.PICKAXE)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-    }
-
-    @Override
-    protected ConfigurableBlockStairs initSubInstance() {
-        ConfigurableBlockStairs block = (ConfigurableBlockStairs) new ConfigurableBlockStairs(this, BlockCrystalizedMenrilBrickConfig._instance.getBlockInstance().getDefaultState()) {
-            @SuppressWarnings("deprecation")
-            @Override
-            public SoundType getSoundType() {
-                return SoundType.SNOW;
-            }
-        }.setHardness(1.5F);
-        block.setHarvestLevel("pickaxe", 0);
-        return block;
     }
 
 }

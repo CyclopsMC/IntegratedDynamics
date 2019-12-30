@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -30,15 +31,15 @@ public class ProxyVariableFacadeHandler implements IVariableFacadeHandler<IProxy
     }
 
     @Override
-    public IProxyVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
-        if(!tag.hasKey("partId", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
+    public IProxyVariableFacade getVariableFacade(int id, CompoundNBT tag) {
+        if(!tag.contains("partId", Constants.NBT.TAG_INT)) {
             return INVALID_FACADE;
         }
-        return new ProxyVariableFacade(id, tag.getInteger("partId"));
+        return new ProxyVariableFacade(id, tag.getInt("partId"));
     }
 
     @Override
-    public void setVariableFacade(NBTTagCompound tag, IProxyVariableFacade variableFacade) {
-        tag.setInteger("partId", variableFacade.getProxyId());
+    public void setVariableFacade(CompoundNBT tag, IProxyVariableFacade variableFacade) {
+        tag.putInt("partId", variableFacade.getProxyId());
     }
 }

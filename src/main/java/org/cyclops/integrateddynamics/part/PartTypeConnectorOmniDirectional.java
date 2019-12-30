@@ -3,21 +3,22 @@ package org.cyclops.integrateddynamics.part;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -27,7 +28,6 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
@@ -66,16 +66,11 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public Class<? super PartTypeConnectorOmniDirectional> getPartTypeClass() {
-        return PartTypeConnectorOmniDirectional.class;
-    }
-
-    @Override
     public ItemStack getItemStack(State state, boolean saveState) {
         ItemStack itemStack = super.getItemStack(state, saveState);
         if (state.hasConnectorId()) {
-            NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
-            tag.setInteger(NBT_KEY_ID, state.getGroupId());
+            CompoundNBT tag = itemStack.getOrCreateTag();
+            tag.putInt(NBT_KEY_ID, state.getGroupId());
         }
         return itemStack;
     }
@@ -83,9 +78,9 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     @Override
     public State getState(ItemStack itemStack) {
         State state = super.getState(itemStack);
-        NBTTagCompound tag = itemStack.getTagCompound();
-        if (tag != null && tag.hasKey(NBT_KEY_ID, MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
-            state.setGroupId(tag.getInteger(NBT_KEY_ID));
+        CompoundNBT tag = itemStack.getTag();
+        if (tag != null && tag.contains(NBT_KEY_ID, Constants.NBT.TAG_INT)) {
+            state.setGroupId(tag.getInt(NBT_KEY_ID));
         } else {
             state.setGroupId(PartTypeConnectorOmniDirectional.generateGroupId());
         }
@@ -127,17 +122,17 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public void loadTooltip(State state, List<String> lines) {
+    public void loadTooltip(State state, List<ITextComponent> lines) {
         super.loadTooltip(state, lines);
-        lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP, state.getGroupId()));
+        lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP, state.getGroupId()));
     }
 
     @Override
-    public void loadTooltip(ItemStack itemStack, List<String> lines) {
+    public void loadTooltip(ItemStack itemStack, List<ITextComponent> lines) {
         super.loadTooltip(itemStack, lines);
-        if (itemStack.hasTagCompound()) {
-            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
-                    itemStack.getTagCompound().getInteger(NBT_KEY_ID)));
+        if (itemStack.hasTag()) {
+            lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
+                    itemStack.getTag().getInt(NBT_KEY_ID)));
         }
     }
 
@@ -147,26 +142,27 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer, EnumFacing side) {
+    public BlockState getBlockState(IPartContainer partContainer, Direction side) {
         IgnoredBlockStatus.Status status = getStatus(partContainer != null
                 ? (PartTypeConnectorOmniDirectional.State) partContainer.getPartState(side) : null);
-        return super.getBlockState(partContainer, side).withProperty(IgnoredBlock.FACING, side).
-                withProperty(IgnoredBlockStatus.STATUS, status);
+        return super.getBlockState(partContainer, side)
+                .with(IgnoredBlock.FACING, side)
+                .with(IgnoredBlockStatus.STATUS, status);
     }
 
     @SubscribeEvent
     public void onCrafted(PlayerEvent.ItemCraftedEvent event) {
         // When crafting the item, either copy the group id from the existing item or generate a new id.
-        if (event.crafting.getItem() == this.getItem()) {
+        if (event.getCrafting().getItem() == this.getItem()) {
             int groupId = -1, stackCount = 0;
-            for (int i = 0; i < event.craftMatrix.getSizeInventory(); i++) {
-                ItemStack slotStack = event.craftMatrix.getStackInSlot(i);
+            for (int i = 0; i < event.getInventory().getSizeInventory(); i++) {
+                ItemStack slotStack = event.getInventory().getStackInSlot(i);
                 if (!slotStack.isEmpty()) {
                     ++stackCount;
-                    if(groupId == -1 && slotStack.getItem() == this.getItem() && slotStack.hasTagCompound()) {
-                        NBTTagCompound tag = slotStack.getTagCompound();
-                        if (tag.hasKey(NBT_KEY_ID, MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
-                            groupId = tag.getInteger(NBT_KEY_ID);
+                    if(groupId == -1 && slotStack.getItem() == this.getItem() && slotStack.hasTag()) {
+                        CompoundNBT tag = slotStack.getTag();
+                        if (tag.contains(NBT_KEY_ID, Constants.NBT.TAG_INT)) {
+                            groupId = tag.getInt(NBT_KEY_ID);
                         }
                     }
                 }
@@ -179,20 +175,20 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 if (groupId < 0) {
                     groupId = generateGroupId();
                 }
-                NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(event.crafting);
-                tag.setInteger(NBT_KEY_ID, groupId);
+                CompoundNBT tag = event.getCrafting().getOrCreateTag();
+                tag.putInt(NBT_KEY_ID, groupId);
             }
         }
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, State partState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onPartActivated(State partState, BlockPos pos, World world, PlayerEntity player, Hand hand, ItemStack heldItem, BlockRayTraceResult hit) {
         // Drop through if the player is sneaking
         if(player.isSneaking() || !partState.isEnabled()) {
             return false;
         }
-        if (world.isRemote) {
-            player.sendStatusMessage(new TextComponentTranslation(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
+        if (world.isRemote()) {
+            player.sendStatusMessage(new TranslationTextComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
                     partState.getGroupId()), true);
         }
 
@@ -205,15 +201,15 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         private boolean addedToGroup = false;
 
         @Override
-        public void writeToNBT(NBTTagCompound tag) {
+        public void writeToNBT(CompoundNBT tag) {
             super.writeToNBT(tag);
-            tag.setInteger(NBT_KEY_ID, groupId);
+            tag.putInt(NBT_KEY_ID, groupId);
         }
 
         @Override
-        public void readFromNBT(NBTTagCompound tag) {
+        public void readFromNBT(CompoundNBT tag) {
             super.readFromNBT(tag);
-            this.groupId = tag.getInteger(NBT_KEY_ID);
+            this.groupId = tag.getInt(NBT_KEY_ID);
         }
 
         @Override
@@ -222,11 +218,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 Set<ISidedPathElement> pathElements = Sets.newTreeSet();
                 for (PartPos pos : PartTypeConnectorOmniDirectional.LOADED_GROUPS.getPositions(getGroupId())) {
                     if (!pos.equals(this.getPartPos())) {
-                        IPathElement pathElement = TileHelpers.getCapability(pos.getPos(), pos.getSide(),
-                                PathElementConfig.CAPABILITY);
-                        if (pathElement != null) {
-                            pathElements.add(SidedPathElement.of(pathElement, pos.getSide()));
-                        }
+                        TileHelpers.getCapability(pos.getPos(), pos.getSide(), PathElementConfig.CAPABILITY)
+                                .ifPresent(pathElement -> pathElements.add(SidedPathElement.of(pathElement, pos.getSide())));
                     }
                 }
                 return pathElements;
@@ -274,7 +267,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         protected void initNetworkGroup(Set<PartPos> positions) {
             for (PartPos position : positions) {
                 if (position.getPos().isLoaded()) {
-                    NetworkHelpers.initNetwork(position.getPos().getWorld(), position.getPos().getBlockPos(), position.getSide());
+                    NetworkHelpers.initNetwork(position.getPos().getWorld(true), position.getPos().getBlockPos(), position.getSide());
                 }
             }
         }
@@ -304,7 +297,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 modifyingPositions = true;
                 initNetworkGroup(positions);
                 if (pos.getPos().isLoaded()) {
-                    NetworkHelpers.initNetwork(pos.getPos().getWorld(), pos.getPos().getBlockPos(), pos.getSide());
+                    NetworkHelpers.initNetwork(pos.getPos().getWorld(true), pos.getPos().getBlockPos(), pos.getSide());
                 }
                 modifyingPositions = false;
             }

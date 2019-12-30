@@ -1,19 +1,23 @@
 package org.cyclops.integrateddynamics.client.render.model;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.data.IModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
-import org.cyclops.integrateddynamics.item.ItemFacade;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Dynamic model for facade items.
@@ -31,11 +35,11 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
         super(baseModel);
     }
 
-    public FacadeModel(IBakedModel baseModel, IBlockState blockState, EnumFacing facing, long rand) {
-        super(baseModel, blockState, facing, rand);
+    public FacadeModel(IBakedModel baseModel, BlockState blockState, Direction facing, Random rand, IModelData modelData) {
+        super(baseModel, blockState, facing, rand, modelData);
     }
 
-    public FacadeModel(IBakedModel baseModel, ItemStack itemStack, World world, EntityLivingBase entity) {
+    public FacadeModel(IBakedModel baseModel, ItemStack itemStack, World world, LivingEntity entity) {
         super(baseModel, itemStack, world, entity);
     }
 
@@ -49,19 +53,20 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
     }
 
     @Override
-    public IBakedModel handleBlockState(IBlockState state, EnumFacing side, long rand) {
+    public IBakedModel handleBlockState(@Nullable BlockState blockState, @Nullable Direction direction,
+                                        @Nonnull Random random, @Nonnull IModelData iModelData) {
         return null;
     }
 
     @Override
-    public IBakedModel handleItemState(ItemStack itemStack, World world, EntityLivingBase entity) {
-        IBlockState blockState = ItemFacade.getInstance().getFacadeBlock(itemStack);
+    public IBakedModel handleItemState(ItemStack itemStack, World world, LivingEntity entity) {
+        BlockState blockState = RegistryEntries.ITEM_FACADE.getFacadeBlock(itemStack);
         if(blockState == null) {
             return new FacadeModel(emptyModel, itemStack, world, entity);
         }
         IBakedModel bakedModel = RenderHelpers.getBakedModel(blockState);
-        bakedModel = bakedModel.getOverrides().handleItemState(bakedModel,
-                ItemFacade.getInstance().getFacadeBlockItem(itemStack), world, entity);
+        bakedModel = bakedModel.getOverrides().getModelWithOverrides(bakedModel,
+                RegistryEntries.ITEM_FACADE.getFacadeBlockItem(itemStack), world, entity);
         return new FacadeModel(bakedModel, itemStack, world, entity);
     }
 

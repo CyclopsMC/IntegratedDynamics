@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.item;
 
+import net.minecraft.item.Item;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -9,21 +10,12 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemLabellerConfig extends ItemConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static ItemLabellerConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public ItemLabellerConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "labeller",
-                null,
-                ItemLabeller.class
+                eConfig -> new ItemLabeller(new Item.Properties()
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 

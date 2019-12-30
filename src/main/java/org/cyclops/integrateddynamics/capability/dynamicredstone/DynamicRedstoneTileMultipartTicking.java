@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.dynamicredstone;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
@@ -12,9 +12,9 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 public class DynamicRedstoneTileMultipartTicking implements IDynamicRedstone {
 
     private final TileMultipartTicking tile;
-    private final EnumFacing side;
+    private final Direction side;
 
-    public DynamicRedstoneTileMultipartTicking(TileMultipartTicking tile, EnumFacing side) {
+    public DynamicRedstoneTileMultipartTicking(TileMultipartTicking tile, Direction side) {
         this.tile = tile;
         this.side = side;
     }

@@ -1,10 +1,8 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -27,32 +25,12 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
 
     @Override
     protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlock(blockConfig);
-    }
-
-    @Override
-    public Class<? super PartTypePanelLightStatic> getPartTypeClass() {
-        return PartTypePanelLightStatic.class;
+        return new IgnoredBlock();
     }
 
     @Override
     public PartStateEmpty<PartTypePanelLightStatic> constructDefaultState() {
         return new PartStateEmpty<PartTypePanelLightStatic>();
-    }
-
-    @Override
-    protected boolean hasGui() {
-        return false;
-    }
-
-    @Override
-    public Class<? extends Container> getContainer() {
-        return null;
-    }
-
-    @Override
-    public Class<? extends GuiScreen> getGui() {
-        return null;
     }
 
     @Override
@@ -63,7 +41,7 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target,
-                                      PartStateEmpty<PartTypePanelLightStatic> state, IBlockAccess world,
+                                      PartStateEmpty<PartTypePanelLightStatic> state, IBlockReader world,
                                       Block neighbourBlock, BlockPos neighbourPos) {
         super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourPos);
         PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);

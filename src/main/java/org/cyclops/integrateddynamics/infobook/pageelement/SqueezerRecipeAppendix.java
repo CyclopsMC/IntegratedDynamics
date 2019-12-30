@@ -2,19 +2,18 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.infobook.AdvancedButton;
 import org.cyclops.cyclopscore.infobook.AdvancedButtonEnum;
-import org.cyclops.cyclopscore.infobook.GuiInfoBook;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoSection;
+import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
 import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.block.BlockSqueezer;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,8 +67,8 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void drawElementInner(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
+    @OnlyIn(Dist.CLIENT)
+    public void drawElementInner(ScreenInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         int middle = (width - SLOT_SIZE) / 2;
         gui.drawArrowRight(x + middle - 3, y + 2);
 
@@ -97,7 +96,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
     }
 
     protected ItemStack getCrafter()  {
-        return new ItemStack(BlockSqueezer.getInstance());
+        return new ItemStack(RegistryEntries.BLOCK_SQUEEZER);
     }
 
 

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.event;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -20,7 +20,7 @@ public class PartWriterAspectEvent<P extends IPartTypeWriter<P, S>, S extends IP
     private final ItemStack itemStack;
 
     public PartWriterAspectEvent(INetwork network, IPartNetwork partNetwork, PartTarget target, P partType, S partState,
-                                 @Nullable EntityPlayer entityPlayer, A aspect, ItemStack itemStack) {
+                                 @Nullable PlayerEntity entityPlayer, A aspect, ItemStack itemStack) {
         super(network, partNetwork, target, partType, partState, entityPlayer, aspect);
         this.itemStack = itemStack;
     }

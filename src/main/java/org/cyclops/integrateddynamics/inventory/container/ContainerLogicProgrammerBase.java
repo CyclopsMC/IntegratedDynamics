@@ -1,36 +1,38 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.StringUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
-import org.cyclops.integrateddynamics.item.ItemVariable;
 
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Base container for the logic programmer.
@@ -41,39 +43,35 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public static final int OUTPUT_X = 232;
     public static final int OUTPUT_Y = 110;
 
-    protected static final IItemPredicate<ILogicProgrammerElement> FILTERER = new IItemPredicate<ILogicProgrammerElement>(){
-
-        @Override
-        public boolean apply(ILogicProgrammerElement item, Pattern pattern) {
-            return pattern.matcher(item.getMatchString()).matches() || pattern.matcher(item.getSymbol()).matches();
-        }
-    };
+    protected static final IItemPredicate<ILogicProgrammerElement> FILTERER =
+            (item, pattern) -> pattern.matcher(item.getMatchString()).matches()
+                    || pattern.matcher(item.getSymbol()).matches();
 
     private final SimpleInventory writeSlot;
     private final SimpleInventory filterSlots;
     private ILogicProgrammerElement activeElement = null;
     private ILogicProgrammerElement temporarySlotsElement = null;
     private SimpleInventory temporaryInputSlots = null;
-    private L10NHelpers.UnlocalizedString lastError;
+    private ITextComponent lastError;
     private LoadConfigListener loadConfigListener;
 
     private IValueType filterIn1 = null;
     private IValueType filterIn2 = null;
     private IValueType filterOut = null;
 
-    @SideOnly(Side.CLIENT)
-    private GuiLogicProgrammerBase gui;
+    @OnlyIn(Dist.CLIENT)
+    private ContainerScreenLogicProgrammerBase gui;
 
     private String lastLabel = "";
 
-    public ContainerLogicProgrammerBase(InventoryPlayer inventory, IGuiContainerProvider guiProvider) {
-        super(inventory, guiProvider, getElements(), FILTERER);
-        this.writeSlot = new SimpleInventory(1, "writeSlot", 1);
-        this.filterSlots = new SimpleInventory(3, "filterSlots", 1);
+    public ContainerLogicProgrammerBase(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory) {
+        super(type, id, playerInventory, new Inventory(0), getElements(), FILTERER);
+        this.writeSlot = new SimpleInventory(1, 1);
+        this.filterSlots = new SimpleInventory(3, 1);
         this.filterSlots.addDirtyMarkListener(new FilterSlotListener());
         this.writeSlot.addDirtyMarkListener(this);
         this.writeSlot.addDirtyMarkListener(loadConfigListener = new LoadConfigListener());
-        this.temporaryInputSlots = new SimpleInventory(0, "temporaryInput", 1);
+        this.temporaryInputSlots = new SimpleInventory(0, 1);
         initializeSlotsPre();
         initializeSlotsPost();
     }
@@ -86,31 +84,31 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         return elements;
     }
 
-    @SideOnly(Side.CLIENT)
-    public void setGui(GuiLogicProgrammerBase gui) {
+    @OnlyIn(Dist.CLIENT)
+    public void setGui(ContainerScreenLogicProgrammerBase gui) {
         this.gui = gui;
     }
 
-    @SideOnly(Side.CLIENT)
-    public GuiLogicProgrammerBase getGui() {
+    @OnlyIn(Dist.CLIENT)
+    public ContainerScreenLogicProgrammerBase getGui() {
         return this.gui;
     }
 
     protected void initializeSlotsPre() {
-        addSlotToContainer(new SlotSingleItem(writeSlot, 0, OUTPUT_X, OUTPUT_Y, ItemVariable.getInstance()));
-        SlotSingleItem filterSlotIn1 = new SlotSingleItem(filterSlots, 0, 6, 218, ItemVariable.getInstance());
-        SlotSingleItem filterSlotIn2 = new SlotSingleItem(filterSlots, 1, 24, 218, ItemVariable.getInstance());
-        SlotSingleItem filterSlotOut = new SlotSingleItem(filterSlots, 2, 58, 218, ItemVariable.getInstance());
+        addSlot(new SlotSingleItem(writeSlot, 0, OUTPUT_X, OUTPUT_Y, RegistryEntries.ITEM_VARIABLE));
+        SlotSingleItem filterSlotIn1 = new SlotSingleItem(filterSlots, 0, 6, 218, RegistryEntries.ITEM_VARIABLE);
+        SlotSingleItem filterSlotIn2 = new SlotSingleItem(filterSlots, 1, 24, 218, RegistryEntries.ITEM_VARIABLE);
+        SlotSingleItem filterSlotOut = new SlotSingleItem(filterSlots, 2, 58, 218, RegistryEntries.ITEM_VARIABLE);
         filterSlotIn1.setPhantom(true);
         filterSlotIn2.setPhantom(true);
         filterSlotOut.setPhantom(true);
-        addSlotToContainer(filterSlotIn1);
-        addSlotToContainer(filterSlotIn2);
-        addSlotToContainer(filterSlotOut);
+        addSlot(filterSlotIn1);
+        addSlot(filterSlotIn2);
+        addSlot(filterSlotOut);
     }
 
     protected void initializeSlotsPost() {
-        addPlayerInventory((InventoryPlayer) getPlayerIInventory(), 88, 131);
+        addPlayerInventory((PlayerInventory) getPlayerIInventory(), 88, 131);
     }
 
     @Override
@@ -169,17 +167,17 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
         // This assumes that there is only one other slot, the remaining slots will be erased!
         // (We can do this because they are all ghost slots)
-        inventoryItemStacks = NonNullList.create();
-        inventorySlots = Lists.newArrayList();
+        inventoryItemStacks.clear();
+        inventorySlots.clear();
         initializeSlotsPre();
         this.temporaryInputSlots.removeDirtyMarkListener(this);
-        this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, "temporaryInput", element == null ? 0 : element.getItemStackSizeLimit());
+        this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, element == null ? 0 : element.getItemStackSizeLimit());
         temporaryInputSlots.addDirtyMarkListener(this);
         this.temporarySlotsElement = element;
         if(element != null) {
             Pair<Integer, Integer>[] slotPositions = element.getRenderPattern().getSlotPositions();
             for (int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
-                addSlotToContainer(element.createSlot(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
+                addSlot(element.createSlot(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
                         1 + baseY + slotPositions[i].getRight()));
             }
         }
@@ -207,9 +205,9 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer player) {
+    public void onContainerClosed(PlayerEntity player) {
         super.onContainerClosed(player);
-        if (!player.world.isRemote) {
+        if (!player.world.isRemote()) {
             ItemStack itemStack = writeSlot.getStackInSlot(0);
             if(!itemStack.isEmpty()) {
                 player.dropItem(itemStack, false);
@@ -225,7 +223,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     protected void labelCurrent() {
         ItemStack itemStack = writeSlot.getStackInSlot(0);
         if(!itemStack.isEmpty()) {
-            IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
+            IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
             if(this.lastLabel != null && variableFacade.isValid()) {
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableFacade.getId(), this.lastLabel);
             }
@@ -273,7 +271,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         }
     }
 
-    public L10NHelpers.UnlocalizedString getLastError() {
+    public ITextComponent getLastError() {
         return this.lastError;
     }
 
@@ -293,7 +291,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int mouseButton, ClickType clickType, EntityPlayer player) {
+    public ItemStack slotClick(int slotId, int mouseButton, ClickType clickType, PlayerEntity player) {
         // Handle cases where the client may have more (phantom) slots than the server.
         if (slotId >= this.inventorySlots.size() || (this.activeElement != null
                 && this.inventorySlots.size() > slotId && slotId >= 0

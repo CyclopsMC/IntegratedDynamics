@@ -1,8 +1,9 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -27,13 +28,13 @@ public interface IPartState<P extends IPartType> {
      * Write a state to NBT.
      * @param tag The tag to write to.
      */
-    public void writeToNBT(NBTTagCompound tag);
+    public void writeToNBT(CompoundNBT tag);
 
     /**
      * Read a state from NBT.
      * @param tag The tag to read from.
      */
-    public void readFromNBT(NBTTagCompound tag);
+    public void readFromNBT(CompoundNBT tag);
 
     /**
      * Generate a server-wide unique ID for this part state.
@@ -88,13 +89,13 @@ public interface IPartState<P extends IPartType> {
      * @param side The side of the target block to interact with.
      *             Null removes the side override.
      */
-    public void setTargetSideOverride(@Nullable EnumFacing side);
+    public void setTargetSideOverride(@Nullable Direction side);
 
     /**
      * @return The side of the target block to interact with. Can be null.
      */
     @Nullable
-    public EnumFacing getTargetSideOverride();
+    public Direction getTargetSideOverride();
 
     /**
      * Check if dirty and reset the dirty state.
@@ -164,54 +165,23 @@ public interface IPartState<P extends IPartType> {
     public void gatherCapabilities(P partType);
 
     /**
-     * If this part state has the given capability.
-     * @param capability The capability to check.
-     * @param network The network the part belongs to.
-     * @param partNetwork The part network the part belongs to.
-     * @param target The target.
-     * @return If this has the given capability.
-     */
-    boolean hasCapability(Capability<?> capability, INetwork network, IPartNetwork partNetwork, PartTarget target);
-
-    /**
      * Get the given capability.
      * @param capability The capability to get.
      * @param network The network the part belongs to.
      * @param partNetwork The part network the part belongs to.
      * @param target The target.
      * @param <T> The capability type.
-     * @return The capability instance.
+     * @return The optional capability instance.
      */
-    <T> T getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target);
-
-    /**
-     * If this part state has the given capability.
-     * @param capability The capability to check.
-     * @param network The network the part belongs to.
-     * @param target The target.
-     * @return If this has the given capability.
-     */
-    @Deprecated
-    boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target);
-
-    /**
-     * Get the given capability.
-     * @param capability The capability to get.
-     * @param network The network the part belongs to.
-     * @param target The target.
-     * @param <T> The capability type.
-     * @return The capability instance.
-     */
-    @Deprecated
-    <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target);
+    <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target);
 
     /**
      * Add a capability to this state that will not be automatically persisted to NBT.
-     * @param capability The capability.
+     * @param capability The optional capability.
      * @param value The capability instance.
      * @param <T> The capability type.
      */
-    public <T> void addVolatileCapability(Capability<T> capability, T value);
+    public <T> void addVolatileCapability(Capability<T> capability, LazyOptional<T> value);
 
     /**
      * Remove a non-persisted capability.

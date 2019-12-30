@@ -2,10 +2,11 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.advancement.criterion.JsonDeserializers;
@@ -35,7 +36,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     private static final IValueTypeVariableFacade INVALID_FACADE = new ValueTypeVariableFacade(false, null, (IValue) null);
 
     private final Map<String, IValueType> valueTypes = Maps.newHashMap();
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private Map<IValueType, ResourceLocation> valueTypeModels;
 
     private ValueTypeRegistry() {
@@ -70,19 +71,19 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
         return valueTypes.get(name);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, ResourceLocation modelLocation) {
         valueTypeModels.put(valueType, modelLocation);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public <V extends IValue, T extends IValueType<V>> ResourceLocation getValueTypeModel(T valueType) {
         return valueTypeModels.get(valueType);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public Collection<ResourceLocation> getValueTypeModels() {
         return Collections.unmodifiableCollection(valueTypeModels.values());
@@ -99,23 +100,23 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public IValueTypeVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
-        if(!tag.hasKey("typeName", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())
-                || !tag.hasKey("value", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
+    public IValueTypeVariableFacade getVariableFacade(int id, CompoundNBT tag) {
+        if(!tag.contains("typeName", Constants.NBT.TAG_STRING)
+                || !tag.contains("value", Constants.NBT.TAG_STRING)) {
             return INVALID_FACADE;
         }
         IValueType type = getValueType(tag.getString("typeName"));
         if(type == null) {
             return INVALID_FACADE;
         }
-        IValue value = ValueHelpers.deserializeRaw(type, tag.getString("value"));
+        IValue value = ValueHelpers.deserializeRaw(type, tag.get("value"));
         return new ValueTypeVariableFacade(id, type, value);
     }
 
     @Override
-    public void setVariableFacade(NBTTagCompound tag, IValueTypeVariableFacade variableFacade) {
-        tag.setString("typeName", variableFacade.getValueType().getTranslationKey());
-        tag.setString("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
+    public void setVariableFacade(CompoundNBT tag, IValueTypeVariableFacade variableFacade) {
+        tag.putString("typeName", variableFacade.getValueType().getTranslationKey());
+        tag.put("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
     }
 
     @Override

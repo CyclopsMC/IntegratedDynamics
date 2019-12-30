@@ -1,45 +1,52 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
-import org.cyclops.integrateddynamics.client.gui.GuiPartWriter;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
+import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.event.PartWriterAspectEvent;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
+import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * An abstract {@link IPartTypeWriter}.
@@ -61,31 +68,16 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @Override
     protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
         Map<Class<? extends INetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
-        actions.put(VariableContentsUpdatedEvent.class, new IEventAction<P, S, VariableContentsUpdatedEvent>() {
-            @Override
-            public void onAction(INetwork network, PartTarget target, S state, VariableContentsUpdatedEvent event) {
-                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-                onVariableContentsUpdated(partNetwork, target, state);
-            }
-        });
-        actions.put(NetworkElementAddEvent.Post.class, new IEventAction<P, S, NetworkElementAddEvent.Post>() {
-            @Override
-            public void onAction(INetwork network, PartTarget target, S state, NetworkElementAddEvent.Post event) {
-                IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-                onVariableContentsUpdated(partNetwork, target, state);
-            }
-        });
+        IEventAction<P, S, VariableContentsUpdatedEvent> updateEventListener = (network, target, state, event) -> NetworkHelpers
+                .getPartNetwork(network).ifPresent(partNetwork -> onVariableContentsUpdated(partNetwork, target, state));
+        actions.put(VariableContentsUpdatedEvent.class, updateEventListener);
+        actions.put(NetworkElementAddEvent.Post.class, updateEventListener);
         return actions;
     }
 
     @Override
     protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus(blockConfig);
-    }
-
-    @Override
-    public Class<? super P> getPartTypeClass() {
-        return IPartTypeWriter.class;
+        return new IgnoredBlockStatus();
     }
 
     @Override
@@ -146,7 +138,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void updateActivation(PartTarget target, S partState, @Nullable EntityPlayer player) {
+    public void updateActivation(PartTarget target, S partState, @Nullable PlayerEntity player) {
         // Check inside the inventory for a variable item and determine everything with that.
         int activeIndex = -1;
         for(int i = 0 ; i < partState.getInventory().getSizeInventory(); i++) {
@@ -158,11 +150,13 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         IAspectWrite aspect = activeIndex == -1 ? null : getWriteAspects().get(activeIndex);
         partState.triggerAspectInfoUpdate((P) this, target, aspect);
 
-        INetwork network = NetworkHelpers.getNetwork(target.getCenter());
-        if (aspect != null) {
-            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-            MinecraftForge.EVENT_BUS.post(new PartWriterAspectEvent<>(network, partNetwork, target, (P) this, partState, player,
-                    aspect, partState.getInventory().getStackInSlot(activeIndex)));
+        INetwork network = NetworkHelpers.getNetwork(target.getCenter()).orElse(null);
+        if (network != null && aspect != null) {
+            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network).orElse(null);
+            if (partNetwork != null) {
+                MinecraftForge.EVENT_BUS.post(new PartWriterAspectEvent<>(network, partNetwork, target, (P) this,
+                        partState, player, aspect, partState.getInventory().getStackInSlot(activeIndex)));
+            }
         }
         if (network != null) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
@@ -186,46 +180,62 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public IBlockState getBlockState(IPartContainer partContainer,
-                                     EnumFacing side) {
+    public BlockState getBlockState(IPartContainer partContainer,
+                                    Direction side) {
         IgnoredBlockStatus.Status status = getStatus(partContainer != null
                 ? (IPartStateWriter) partContainer.getPartState(side) : null);
-        return getBlock().getDefaultState().withProperty(IgnoredBlock.FACING, side).
-                withProperty(IgnoredBlockStatus.STATUS, status);
+        return getBlock().getDefaultState().with(IgnoredBlock.FACING, side).
+                with(IgnoredBlockStatus.STATUS, status);
     }
 
     @Override
-    public Class<? extends Container> getContainer() {
-        return ContainerPartWriter.class;
-    }
-
-    @Override
-    public void loadTooltip(S state, List<String> lines) {
+    public void loadTooltip(S state, List<ITextComponent> lines) {
         super.loadTooltip(state, lines);
         IAspectWrite aspectWrite = state.getActiveAspect();
         if (aspectWrite != null) {
             if (state.hasVariable() && state.isEnabled()) {
-                lines.add(L10NHelpers.localize(
+                lines.add(new TranslationTextComponent(
                         L10NValues.PART_TOOLTIP_WRITER_ACTIVEASPECT,
-                        L10NHelpers.localize(aspectWrite.getTranslationKey()),
-                        aspectWrite.getValueType().getDisplayColorFormat()
-                                + L10NHelpers.localize(aspectWrite.getValueType().getTranslationKey())
-                                + TextFormatting.RESET));
+                        new TranslationTextComponent(aspectWrite.getTranslationKey()),
+                        new TranslationTextComponent(aspectWrite.getValueType().getTranslationKey())
+                                .applyTextStyles(aspectWrite.getValueType().getDisplayColorFormat())));
             } else {
-                lines.add(TextFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
-                for (L10NHelpers.UnlocalizedString error : state.getErrors(aspectWrite)) {
-                    lines.add(TextFormatting.RED + error.localize());
+                lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS)
+                        .applyTextStyle(TextFormatting.RED));
+                for (ITextComponent error : state.getErrors(aspectWrite)) {
+                    lines.add(error.applyTextStyle(TextFormatting.RED));
                 }
             }
         } else {
-            lines.add(L10NHelpers.localize(L10NValues.PART_TOOLTIP_INACTIVE));
+            lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_INACTIVE));
         }
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public Class<? extends GuiScreen> getGui() {
-        return GuiPartWriter.class;
+    public Optional<INamedContainerProvider> getContainerProvider(PartPos pos) {
+        return Optional.of(new INamedContainerProvider() {
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent(getTranslationKey());
+            }
+
+            @Nullable
+            @Override
+            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
+                PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
+                return new ContainerPartWriter<>(id, playerInventory, partState.getInventory(),
+                        Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypeWriteBase) data.getMiddle());
+            }
+        });
+    }
+
+    @Override
+    public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+        // Write inventory size
+        packetBuffer.writeInt(getWriteAspects().size());
+
+        super.writeExtraGuiData(packetBuffer, pos, player);
     }
 
     @Override

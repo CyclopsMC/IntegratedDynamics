@@ -1,19 +1,23 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ItemInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
-import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.client.gui.GuiLabeller;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLabeller;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.item.ItemLabeller;
 
@@ -25,47 +29,42 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
 
     private SimpleInventory temporaryInputSlots = null;
 
-    @SideOnly(Side.CLIENT)
-    private GuiLabeller gui;
+    @OnlyIn(Dist.CLIENT)
+    private ContainerScreenLabeller gui;
 
-    /**
-     * Make a new instance.
-     *
-     * @param player The player.
-     * @param itemIndex The index of the item in use inside the player inventory.
-     */
-    public ContainerLabeller(EntityPlayer player, int itemIndex) {
-        super(player.inventory, ItemLabeller.getInstance(), itemIndex);
-        this.temporaryInputSlots = new SimpleInventory(1, "temporaryInput", 1);
-        addSlotToContainer(new SlotExtended(temporaryInputSlots, 0, 8, 8));
+    public ContainerLabeller(int id, PlayerInventory inventory, PacketBuffer packetBuffer) {
+        this(id, inventory, readItemIndex(packetBuffer), readHand(packetBuffer));
+    }
+
+    public ContainerLabeller(int id, PlayerInventory inventory, int itemIndex, Hand hand) {
+        super(RegistryEntries.CONTAINER_LABELLER, id, inventory, itemIndex, hand);
+        this.temporaryInputSlots = new SimpleInventory(1, 1);
+        addSlot(new SlotExtended(temporaryInputSlots, 0, 8, 8));
         this.addPlayerInventory(player.inventory, 8, 31);
 
         if(MinecraftHelpers.isClientSide()) {
-            temporaryInputSlots.addDirtyMarkListener(new IDirtyMarkListener() {
-                @Override
-                public void onDirty() {
-                    ItemStack itemStack = temporaryInputSlots.getStackInSlot(0);
-                    IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-                    IVariableFacade variableFacade = registry.handle(itemStack);
-                    String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
-                    if(label == null && !itemStack.isEmpty() && itemStack.hasDisplayName()) {
-                        label = itemStack.getDisplayName();
-                    }
-                    if(label != null) {
-                        ContainerLabeller.this.getGui().setText(label);
-                    }
+            temporaryInputSlots.addDirtyMarkListener(() -> {
+                ItemStack itemStack = temporaryInputSlots.getStackInSlot(0);
+                IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+                IVariableFacade variableFacade = registry.handle(itemStack);
+                String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
+                if(label == null && !itemStack.isEmpty() && itemStack.hasDisplayName()) {
+                    label = itemStack.getDisplayName().getString();
+                }
+                if(label != null) {
+                    ContainerLabeller.this.getGui().setText(label);
                 }
             });
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void setGui(GuiLabeller gui) {
+    @OnlyIn(Dist.CLIENT)
+    public void setGui(ContainerScreenLabeller gui) {
         this.gui = gui;
     }
 
-    @SideOnly(Side.CLIENT)
-    public GuiLabeller getGui() {
+    @OnlyIn(Dist.CLIENT)
+    public ContainerScreenLabeller getGui() {
         return this.gui;
     }
 
@@ -79,9 +78,9 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer player) {
+    public void onContainerClosed(PlayerEntity player) {
         super.onContainerClosed(player);
-        if (!player.world.isRemote) {
+        if (!player.world.isRemote()) {
             ItemStack itemStack = temporaryInputSlots.getStackInSlot(0);
             if(!itemStack.isEmpty()) {
                 player.dropItem(itemStack, false);
@@ -95,7 +94,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
             if (StringUtils.isBlank(name)) {
                 itemStack.clearCustomName();
             } else {
-                itemStack.setStackDisplayName(name);
+                itemStack.setDisplayName(new StringTextComponent(name));
             }
         }
     }

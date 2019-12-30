@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -52,10 +54,10 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     }
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
-        lines.add(L10NHelpers.localize("operator.operators.integrateddynamics.cast.tooltip",
-                  L10NHelpers.localize(from.getTranslationKey()), L10NHelpers.localize(to.getTranslationKey()))
-        );
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
+        lines.add(new TranslationTextComponent("operator.operators.integrateddynamics.cast.tooltip",
+                new TranslationTextComponent(from.getTranslationKey()),
+                new TranslationTextComponent(to.getTranslationKey())));
         super.loadTooltip(lines, appendOptionalInfo);
     }
 

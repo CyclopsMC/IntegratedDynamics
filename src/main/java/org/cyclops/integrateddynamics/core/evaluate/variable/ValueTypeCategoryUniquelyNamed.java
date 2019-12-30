@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 public class ValueTypeCategoryUniquelyNamed extends ValueTypeCategoryBase<IValue> {
 
     public ValueTypeCategoryUniquelyNamed() {
-        super("uniquely_named", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED.toString());
+        super("uniquely_named", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED);
     }
 
     public String getUniqueName(IVariable a) throws EvaluationException {

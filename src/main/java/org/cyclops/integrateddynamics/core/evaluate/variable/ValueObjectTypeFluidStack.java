@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.base.Optional;
 import lombok.ToString;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -15,6 +15,8 @@ import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+
+import java.util.Objects;
 
 /**
  * Value type with values that are fluidstacks.
@@ -31,42 +33,40 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
 
     @Override
     public ValueFluidStack getDefault() {
-        return ValueFluidStack.of(null);
+        return ValueFluidStack.of(FluidStack.EMPTY);
     }
 
     @Override
-    public String toCompactString(ValueFluidStack value) {
-        Optional<FluidStack> fluidStack = value.getRawValue();
-        return fluidStack.isPresent() ? String.format("%s (%s mB)", fluidStack.get().getLocalizedName(), fluidStack.get().amount) : "";
+    public ITextComponent toCompactString(ValueFluidStack value) {
+        FluidStack fluidStack = value.getRawValue();
+        return !fluidStack.isEmpty() ? fluidStack.getDisplayName().appendText(String.format(" (%s mB)", fluidStack.getAmount())) : new StringTextComponent("");
     }
 
     @Override
-    public String serialize(ValueFluidStack value) {
-        NBTTagCompound tag = new NBTTagCompound();
-        Optional<FluidStack> fluidStack = value.getRawValue();
-        if(fluidStack.isPresent()) fluidStack.get().writeToNBT(tag);
-        return tag.toString();
+    public INBT serialize(ValueFluidStack value) {
+        CompoundNBT tag = new CompoundNBT();
+        value.getRawValue().writeToNBT(tag);
+        return tag;
     }
 
     @Override
-    public ValueFluidStack deserialize(String value) {
-        try {
-            NBTTagCompound tag = JsonToNBT.getTagFromJson(value);
-            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(tag);
+    public ValueFluidStack deserialize(INBT value) {
+        if (value instanceof CompoundNBT) {
+            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT((CompoundNBT) value);
             return ValueFluidStack.of(fluidStack);
-        } catch (NBTException e) {
+        } else {
             return null;
         }
     }
 
     @Override
     public String getName(ValueFluidStack a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @Override
     public boolean isNull(ValueFluidStack a) {
-        return !a.getRawValue().isPresent();
+        return a.getRawValue().isEmpty();
     }
 
     @Override
@@ -78,8 +78,8 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
             }
 
             @Override
-            public L10NHelpers.UnlocalizedString validate(ItemStack itemStack) {
-                return itemStack.isEmpty() || Helpers.getFluidStack(itemStack) != null ? null : new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+            public ITextComponent validate(ItemStack itemStack) {
+                return itemStack.isEmpty() || Helpers.getFluidStack(itemStack) != null ? null : new TranslationTextComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
             }
 
             @Override
@@ -91,26 +91,39 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
 
     @Override
     public String getUniqueName(ValueFluidStack value) {
-        Optional<FluidStack> fluidStack = value.getRawValue();
-        return fluidStack.isPresent() ?
-                String.format("%s %s", fluidStack.get().getFluid().getName(), fluidStack.get().amount) : "";
+        FluidStack fluidStack = value.getRawValue();
+        return !fluidStack.isEmpty() ?
+                String.format("%s %s", fluidStack.getFluid().getRegistryName(), fluidStack.getAmount()) : "";
     }
 
     @ToString
-    public static class ValueFluidStack extends ValueOptionalBase<FluidStack> {
+    public static class ValueFluidStack extends ValueBase {
 
-        private ValueFluidStack(FluidStack fluidStack) {
-            super(ValueTypes.OBJECT_FLUIDSTACK, fluidStack);
+        private final FluidStack fluidStack;
+
+        private ValueFluidStack(FluidStack itemStack) {
+            super(ValueTypes.OBJECT_FLUIDSTACK);
+            this.fluidStack = Objects.requireNonNull(itemStack, "Attempted to create a ValueFluidStack for a null FluidStack.");
         }
 
-        public static ValueFluidStack of(FluidStack fluidStack) {
-            return new ValueFluidStack(fluidStack);
+        public static ValueFluidStack of(FluidStack itemStack) {
+            return new ValueFluidStack(itemStack);
+        }
+
+        public FluidStack getRawValue() {
+            return fluidStack;
         }
 
         @Override
-        protected boolean isEqual(FluidStack a, FluidStack b) {
-            return a.isFluidStackIdentical(b);
+        public boolean equals(Object o) {
+            return o instanceof ValueFluidStack && this.getRawValue().isFluidStackIdentical(((ValueFluidStack) o).getRawValue());
         }
+
+        @Override
+        public int hashCode() {
+            return fluidStack.hashCode();
+        }
+
     }
 
 }

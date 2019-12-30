@@ -5,10 +5,9 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
@@ -18,6 +17,7 @@ import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Network element for variable stores.
@@ -29,8 +29,8 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     private final DimPos pos;
 
-    protected TileEnergyBattery getTile() {
-        return TileHelpers.getSafeTile(getPos().getWorld(), getPos().getBlockPos(), TileEnergyBattery.class);
+    protected Optional<TileEnergyBattery> getTile() {
+        return TileHelpers.getSafeTile(getPos(), TileEnergyBattery.class);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     @Override
     public boolean onNetworkAddition(INetwork network) {
         PartPos pos = PartPos.of(getPos(), null);
-        boolean added = NetworkHelpers.getEnergyNetwork(network).addPosition(pos, 0, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
+        boolean added = NetworkHelpers.getEnergyNetworkChecked(network).addPosition(pos, 0, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
         scheduleNetworkObservation(network, pos);
         return added;
     }
@@ -75,14 +75,12 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     public void onNetworkRemoval(INetwork network) {
         PartPos pos = PartPos.of(getPos(), null);
         scheduleNetworkObservation(network, pos);
-        NetworkHelpers.getEnergyNetwork(network).removePosition(pos);
+        NetworkHelpers.getEnergyNetworkChecked(network).removePosition(pos);
     }
 
     protected void scheduleNetworkObservation(INetwork network, PartPos pos) {
-        IEnergyNetwork energyNetwork = NetworkHelpers.getEnergyNetwork(network);
-        if (energyNetwork != null) {
-            energyNetwork.scheduleObservationForced(IPositionedAddonsNetwork.DEFAULT_CHANNEL, pos);
-        }
+        NetworkHelpers.getEnergyNetwork(network)
+                .ifPresent(energyNetwork -> energyNetwork.scheduleObservationForced(IPositionedAddonsNetwork.DEFAULT_CHANNEL, pos));
     }
 
     @Override
@@ -91,7 +89,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void onNeighborBlockChange(INetwork network, IBlockAccess world, Block neighbourBlock, BlockPos neighbourPos) {
+    public void onNeighborBlockChange(INetwork network, IBlockReader world, Block neighbourBlock, BlockPos neighbourPos) {
 
     }
 

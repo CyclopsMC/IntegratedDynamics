@@ -2,25 +2,27 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Sets;
 import lombok.Setter;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.Container;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
@@ -40,7 +42,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
 
     public ValueTypeOperatorLPElement() {
         super(ValueTypes.OPERATOR);
-        Set<IDropdownEntry<?>> operatorEntries = Sets.newLinkedHashSet();
+        Set<IDropdownEntry<IOperator>> operatorEntries = Sets.newLinkedHashSet();
         for (IOperator operator : Operators.REGISTRY.getOperators()) {
             operatorEntries.add(new OperatorDropdownEntry(operator));
         }
@@ -55,8 +57,15 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validate() {
-        return selectedOperator != null ? null : getValueType().canDeserialize(getInnerGuiElement().getInputString());
+    public ITextComponent validate() {
+        if (selectedOperator == null) {
+            try {
+                ValueHelpers.parseString(getValueType(), getInnerGuiElement().getInputString());
+            } catch (EvaluationException e) {
+                return e.getErrorMessage();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -91,16 +100,16 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+    @OnlyIn(Dist.CLIENT)
+    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight, ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new RenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
-    public static class RenderPattern<S extends ISubGuiBox, G extends Gui, C extends Container> extends ValueTypeLPElementRenderPattern {
+    public static class RenderPattern<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends ValueTypeLPElementRenderPattern {
 
         private final ValueTypeOperatorLPElement element;
 
-        public RenderPattern(ValueTypeOperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight, GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+        public RenderPattern(ValueTypeOperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight, ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             this.element = element;
         }
@@ -111,8 +120,8 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
             IOperator operator = element.selectedOperator;
             if (operator != null) {
                 int offsetY = 0;
-                for (String line : ValueTypeOperator.getSignatureLines(operator, true)) {
-                    fontRenderer.drawString(line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
+                for (ITextComponent line : ValueTypeOperator.getSignatureLines(operator, true)) {
+                    fontRenderer.drawString(line.getFormattedText(), getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
                     offsetY += fontRenderer.FONT_HEIGHT;
                 }
             }
@@ -129,7 +138,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
 
         @Override
         public String getMatchString() {
-            return operator.getLocalizedNameFull();
+            return operator.getLocalizedNameFull().getString();
         }
 
         @Override
@@ -138,7 +147,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         }
 
         @Override
-        public List<String> getTooltip() {
+        public List<ITextComponent> getTooltip() {
             return ValueTypeOperator.getSignatureLines(operator, true);
         }
 

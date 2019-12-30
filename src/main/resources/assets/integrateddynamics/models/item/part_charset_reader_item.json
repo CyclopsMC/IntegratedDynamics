@@ -1,8 +1,0 @@
-{
-  "forge_marker": 1,
-  "parent": "integrateddynamics:block/reader",
-  "textures": {
-    "back" : "integrateddynamics:blocks/charset_reader_back",
-    "front": "integrateddynamics:blocks/charset_reader_front"
-  }
-}

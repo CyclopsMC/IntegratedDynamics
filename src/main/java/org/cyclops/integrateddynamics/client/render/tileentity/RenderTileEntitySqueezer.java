@@ -1,19 +1,19 @@
 package org.cyclops.integrateddynamics.client.render.tileentity;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.DirectionHelpers;
+import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 import org.lwjgl.opengl.GL11;
@@ -24,7 +24,7 @@ import org.lwjgl.opengl.GL11;
  * @author rubensworks
  *
  */
-public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSqueezer> implements RenderHelpers.IFluidContextRender {
+public class RenderTileEntitySqueezer extends TileEntityRenderer<TileSqueezer> implements RenderHelpers.IFluidContextRender {
 
     private static final double OFFSET = 0.01D;
     private static final double MINY = 0.0625D;
@@ -73,15 +73,15 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
     private TileSqueezer lastTile;
 
 	@Override
-	public void render(TileSqueezer tile, double x, double y, double z, float partialTickTime, int partialDamage, float alpha) {
+	public void render(TileSqueezer tile, double x, double y, double z, float partialTickTime, int partialDamage) {
         if(tile != null) {
-            if(tile.getStackInSlot(0) != null) {
+            if(tile.getInventory().getStackInSlot(0) != null) {
                 GlStateManager.pushMatrix();
                 float var10 = (float) (x - 0.5F);
                 float var11 = (float) (y - 0.5F);
                 float var12 = (float) (z - 0.5F);
-                GlStateManager.translate(var10, var11, var12);
-                renderItem(tile.getWorld(), tile.getPos(), tile.getStackInSlot(0), tile);
+                GlStateManager.translatef(var10, var11, var12);
+                renderItem(tile.getWorld(), tile.getPos(), tile.getInventory().getStackInSlot(0), tile);
                 GlStateManager.popMatrix();
             }
 
@@ -95,35 +95,35 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
 	private void renderItem(World world, BlockPos pos, ItemStack itemStack, TileSqueezer tile) {
         GlStateManager.pushMatrix();
         float yTop = (9 - tile.getItemHeight()) * 0.125F;
-        GlStateManager.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
-        GlStateManager.scale(0.7F, 0.7F, 0.7F);
-        GlStateManager.scale(1F, yTop - 0.125F, 1F);
+        GlStateManager.translatef(1F, (yTop - 1F) / 2 + 1F, 1F);
+        GlStateManager.scalef(0.7F, 0.7F, 0.7F);
+        GlStateManager.scalef(1F, yTop - 0.125F, 1F);
         
-        GlStateManager.pushAttrib();
+        GlStateManager.pushTextureAttributes();
         RenderHelper.enableStandardItemLighting();
         RenderHelpers.renderItem(itemStack);
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.popAttrib();
+        GlStateManager.popAttributes();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
     }
 
     @Override
     public void renderFluid(FluidStack fluid) {
-        double height = Math.max(0.0625D - OFFSET, ((double) fluid.amount) * 0.0625D / Fluid.BUCKET_VOLUME + 0.0625D - OFFSET);
-        int brightness = lastTile.getWorld().getCombinedLight(lastTile.getPos(), fluid.getFluid().getLuminosity(fluid));
+        double height = Math.max(0.0625D - OFFSET, ((double) fluid.getAmount()) * 0.0625D / FluidHelpers.BUCKET_VOLUME + 0.0625D - OFFSET);
+        int brightness = lastTile.getWorld().getCombinedLight(lastTile.getPos(), fluid.getFluid().getAttributes().getLuminosity(fluid));
         int l2 = brightness >> 0x10 & 0xFFFF;
         int i3 = brightness & 0xFFFF;
 
-        for(EnumFacing side : DirectionHelpers.DIRECTIONS) {
-            TextureAtlasSprite icon = RenderHelpers.getFluidIcon(lastTile.getTank().getFluid(), EnumFacing.UP);
+        for(Direction side : DirectionHelpers.DIRECTIONS) {
+            TextureAtlasSprite icon = RenderHelpers.getFluidIcon(lastTile.getTank().getFluid(), Direction.UP);
 
             Tessellator t = Tessellator.getInstance();
             BufferBuilder worldRenderer = t.getBuffer();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
 
             double[][] c = coordinates[side.ordinal()];
-            double replacedMaxV = (side == EnumFacing.UP || side == EnumFacing.DOWN) ?
+            double replacedMaxV = (side == Direction.UP || side == Direction.DOWN) ?
                     icon.getMaxV() : ((icon.getMaxV() - icon.getMinV()) * height + icon.getMinV());
             worldRenderer.pos(c[0][0], getHeight(side, c[0][1], height), c[0][2]).tex(icon.getMinU(), replacedMaxV).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
             worldRenderer.pos(c[1][0], getHeight(side, c[1][1], height), c[1][2]).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
@@ -134,7 +134,7 @@ public class RenderTileEntitySqueezer extends TileEntitySpecialRenderer<TileSque
         }
     }
 
-    private static double getHeight(EnumFacing side, double height, double replaceHeight) {
+    private static double getHeight(Direction side, double height, double replaceHeight) {
         if(height == MAXY) {
             return replaceHeight;
         }

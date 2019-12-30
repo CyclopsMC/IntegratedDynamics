@@ -1,18 +1,20 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.collect.Sets;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.ToString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import org.cyclops.cyclopscore.config.IChangedCallback;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 
 /**
  * Value type with values that are NBT tags.
@@ -21,39 +23,51 @@ import java.util.Set;
 public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
         implements IValueTypeNullable<ValueTypeNbt.ValueNbt>, IValueTypeNamed<ValueTypeNbt.ValueNbt> {
 
-    private Set<String> tagBlacklist = Sets.newHashSet();
-
     public ValueTypeNbt() {
-        super("nbt", Helpers.RGBToInt(0, 170, 170), TextFormatting.DARK_AQUA.toString());
+        super("nbt", Helpers.RGBToInt(0, 170, 170), TextFormatting.DARK_AQUA);
     }
 
     @Override
     public ValueNbt getDefault() {
-        return ValueNbt.of(new NBTTagCompound());
+        return ValueNbt.of(new CompoundNBT());
     }
 
     @Override
-    public String toCompactString(ValueNbt value) {
-        return value.getRawValue().toString();
+    public ITextComponent toCompactString(ValueNbt value) {
+        return new StringTextComponent(value.getRawValue().toString());
     }
 
     @Override
-    public String serialize(ValueNbt value) {
-        return isNull(value) ? "{}" : value.getRawValue().toString();
+    public INBT serialize(ValueNbt value) {
+        return value.getRawValue();
     }
 
     @Override
-    public ValueNbt deserialize(String value) {
+    public ValueNbt deserialize(INBT value) {
         try {
-            return ValueNbt.of(JsonToNBT.getTagFromJson(value));
-        } catch (NBTException e) {
+            return ValueNbt.of((CompoundNBT) value);
+        } catch (ClassCastException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
 
     @Override
+    public String toString(ValueNbt value) {
+        return isNull(value) ? "{}" : value.getRawValue().toString();
+    }
+
+    @Override
+    public ValueNbt parseString(String value) throws EvaluationException {
+        try {
+            return ValueNbt.of(JsonToNBT.getTagFromJson(value));
+        } catch (CommandSyntaxException e) {
+            throw new EvaluationException(e.getMessage());
+        }
+    }
+
+    @Override
     public boolean isNull(ValueNbt a) {
-        return a.getRawValue().getSize() == 0;
+        return a.getRawValue().size() == 0;
     }
 
     /**
@@ -62,15 +76,15 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
      * @param tag The tag.
      * @return The tag where all blacklisted tags have been removed.
      */
-    public NBTTagCompound filterBlacklistedTags(NBTTagCompound tag) {
+    public CompoundNBT filterBlacklistedTags(CompoundNBT tag) {
         boolean copied = false;
-        for (String key : tagBlacklist) {
-            if (tag.hasKey(key)) {
+        for (String key : GeneralConfig.nbtTagBlacklist) {
+            if (tag.contains(key)) {
                 if (!copied) {
                     copied = true;
                     tag = tag.copy();
                 }
-                tag.removeTag(key);
+                tag.remove(key);
             }
         }
         return tag;
@@ -78,24 +92,24 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
 
     @Override
     public String getName(ValueNbt value) {
-        return toCompactString(value);
+        return toCompactString(value).getString();
     }
 
     @ToString
     public static class ValueNbt extends ValueBase {
 
-        private final NBTTagCompound value;
+        private final CompoundNBT value;
 
-        private ValueNbt(NBTTagCompound value) {
+        private ValueNbt(CompoundNBT value) {
             super(ValueTypes.NBT);
             this.value = ValueTypes.NBT.filterBlacklistedTags(value);
         }
 
-        public static ValueNbt of(@Nullable NBTTagCompound value) {
+        public static ValueNbt of(@Nullable CompoundNBT value) {
             return value == null ? ValueTypes.NBT.getDefault() : new ValueNbt(value);
         }
 
-        public NBTTagCompound getRawValue() {
+        public CompoundNBT getRawValue() {
             return value;
         }
 
@@ -107,20 +121,6 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
         @Override
         public int hashCode() {
             return getType().hashCode() + value.hashCode();
-        }
-    }
-
-    public static class BlacklistChangedCallback implements IChangedCallback {
-
-        @Override
-        public void onChanged(Object value) {
-            String[] elements = (String[]) value;
-            ValueTypes.NBT.tagBlacklist = Sets.newHashSet(elements);
-        }
-
-        @Override
-        public void onRegisteredPostInit(Object value) {
-
         }
     }
 

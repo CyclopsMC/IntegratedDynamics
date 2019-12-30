@@ -1,8 +1,11 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.render.tileentity.RenderTileEntitySqueezer;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
@@ -11,28 +14,21 @@ import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
  * Config for {@link BlockSqueezer}.
  * @author rubensworks
  */
-public class BlockSqueezerConfig extends BlockContainerConfig {
+public class BlockSqueezerConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockSqueezerConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockSqueezerConfig() {
         super(
-            IntegratedDynamics._instance,
-            true,
-            "squeezer",
-            null,
-            BlockSqueezer.class
+                IntegratedDynamics._instance,
+                "squeezer",
+                eConfig -> new BlockSqueezer(Block.Properties.create(Material.IRON)
+                        .hardnessAndResistance(5.0F)
+                        .sound(SoundType.METAL)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void onRegistered() {
         super.onRegistered();
         getMod().getProxy().registerRenderer(TileSqueezer.class, new RenderTileEntitySqueezer());

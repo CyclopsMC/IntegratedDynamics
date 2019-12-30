@@ -1,6 +1,7 @@
 {
+    "parent": "block/block",
     "textures": {
-        "particle": "integrateddynamics:blocks/menril_log",
+        "particle": "integrateddynamics:block/menril_log",
         "texture": "integrateddynamics:models/drying_basin"
     },
     "elements": [
@@ -259,12 +260,5 @@
             "south": { "uv": [ 0.5, 15, 7, 16 ], "texture": "#texture" }
         }
     }
-    ],
-    "display": {
-        "gui": {
-            "rotation": [ 22.5, 22.5, 0 ],
-            "translation": [ 0, 0, 0 ],
-            "scale": [ 0.5, 0.5, 0.5 ]
-        }
-    }
+    ]
 }

@@ -1,9 +1,14 @@
 package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import lombok.Data;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * @author rubensworks
@@ -11,9 +16,9 @@ import net.minecraft.util.math.BlockPos;
 @Data
 public class RawPartData implements IRawData {
 
-    private final int dimension;
+    private final DimensionType dimension;
     private final BlockPos pos;
-    private final EnumFacing side;
+    private final Direction side;
     private final String name;
     private final long last20TicksDurationNs;
 
@@ -22,19 +27,19 @@ public class RawPartData implements IRawData {
         return String.format("%s: %s,%s,%s,%s (%s)", name, pos.getX(), pos.getY(), pos.getZ(), side, dimension);
     }
 
-    public NBTTagCompound toNbt() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setInteger("dimension", dimension);
-        tag.setLong("pos", pos.toLong());
-        tag.setInteger("side", side.ordinal());
-        tag.setString("name", name);
-        tag.setLong("last20TicksDurationNs", last20TicksDurationNs);
+    public CompoundNBT toNbt() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString("dimension", dimension.getRegistryName().toString());
+        tag.putLong("pos", pos.toLong());
+        tag.putInt("side", side.ordinal());
+        tag.putString("name", name);
+        tag.putLong("last20TicksDurationNs", last20TicksDurationNs);
         return tag;
     }
 
-    public static RawPartData fromNbt(NBTTagCompound tag) {
-        return new RawPartData(tag.getInteger("dimension"), BlockPos.fromLong(tag.getLong("pos")),
-                EnumFacing.VALUES[tag.getInteger("side")], tag.getString("name"), tag.getLong("last20TicksDurationNs"));
+    public static RawPartData fromNbt(CompoundNBT tag) {
+        return new RawPartData(DimensionType.byName(new ResourceLocation(tag.getString("dimension"))), BlockPos.fromLong(tag.getLong("pos")),
+                Direction.values()[tag.getInt("side")], tag.getString("name"), tag.getLong("last20TicksDurationNs"));
     }
 
 }

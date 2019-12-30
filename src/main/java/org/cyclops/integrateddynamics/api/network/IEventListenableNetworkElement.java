@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Network elements that can delegate to elements that are automatically subscribed to the
@@ -12,8 +12,8 @@ public interface IEventListenableNetworkElement<D extends INetworkEventListener<
 
     /**
      * This listener will never be saved as an instance, this network element is always used as delegator to this listener.
-     * @return The event listener.
+     * @return The optional event listener.
      */
-    public @Nullable D getNetworkEventListener();
+    public Optional<D> getNetworkEventListener();
 
 }

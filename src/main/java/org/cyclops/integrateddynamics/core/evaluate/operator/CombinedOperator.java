@@ -1,14 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
@@ -332,9 +330,9 @@ public class CombinedOperator extends OperatorBase {
             IValueType[] originalInputTypes = operator.getInputTypes();
             IValueType[] flippedInputTypes = new IValueType[originalInputTypes.length];
             if (originalInputTypes.length < 2) {
-                throw new EvaluationException(L10NHelpers.localize(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
-                        L10NHelpers.localize(Operators.OPERATOR_FLIP.getTranslationKey()),
-                        L10NHelpers.localize(operator.getTranslationKey()),
+                throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
+                        new TranslationTextComponent(Operators.OPERATOR_FLIP.getTranslationKey()),
+                        new TranslationTextComponent(operator.getTranslationKey()),
                         originalInputTypes.length, 2));
             }
             for (int i = 0; i < flippedInputTypes.length; i++) {
@@ -386,31 +384,31 @@ public class CombinedOperator extends OperatorBase {
         }
 
         @Override
-        public String serialize(CombinedOperator operator) {
+        public INBT serialize(CombinedOperator operator) {
             OperatorsFunction function = (OperatorsFunction) operator.getFunction();
             IOperator[] operators = function.getOperators();
-            NBTTagCompound tag = new NBTTagCompound();
-            NBTTagList list = new NBTTagList();
+            CompoundNBT tag = new CompoundNBT();
+            ListNBT list = new ListNBT();
             for (IOperator functionOperator : operators) {
-                list.appendTag(new NBTTagString(Operators.REGISTRY.serialize(functionOperator)));
+                list.add(Operators.REGISTRY.serialize(functionOperator));
             }
-            tag.setTag("operators", list);
-            return tag.toString();
+            tag.put("operators", list);
+            return tag;
         }
 
         @Override
-        public CombinedOperator deserialize(String valueOperator) throws EvaluationException {
-            NBTTagList list;
+        public CombinedOperator deserialize(INBT valueOperator) throws EvaluationException {
+            ListNBT list;
             try {
-                NBTTagCompound tag = JsonToNBT.getTagFromJson(valueOperator);
-                list = tag.getTagList("operators", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal());
-            } catch (NBTException e) {
+                CompoundNBT tag = (CompoundNBT) valueOperator;
+                list = tag.getList("operators", Constants.NBT.TAG_STRING);
+            } catch (ClassCastException e) {
                 e.printStackTrace();
                 throw new EvaluationException(e.getMessage());
             }
-            IOperator[] operators = new IOperator[list.tagCount()];
-            for (int i = 0; i < list.tagCount(); i++) {
-                operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.getStringTagAt(i)));
+            IOperator[] operators = new IOperator[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.get(i)));
             }
             return newFunction(operators);
         }

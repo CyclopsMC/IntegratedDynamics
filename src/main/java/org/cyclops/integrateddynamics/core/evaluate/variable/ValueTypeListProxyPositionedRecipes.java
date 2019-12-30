@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
-import net.minecraft.util.EnumFacing;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.modcompat.commoncapabilities.BlockCapabilitiesHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.integrateddynamics.Capabilities;
 
@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.Capabilities;
  */
 public class ValueTypeListProxyPositionedRecipes extends ValueTypeListProxyPositioned<ValueObjectTypeRecipe, ValueObjectTypeRecipe.ValueRecipe> implements INBTProvider {
 
-    public ValueTypeListProxyPositionedRecipes(DimPos pos, EnumFacing side) {
+    public ValueTypeListProxyPositionedRecipes(DimPos pos, Direction side) {
         super(ValueTypeListProxyFactories.POSITIONED_RECIPES.getName(), ValueTypes.OBJECT_RECIPE, pos, side);
     }
 
@@ -22,23 +22,21 @@ public class ValueTypeListProxyPositionedRecipes extends ValueTypeListProxyPosit
         this(null, null);
     }
 
-    protected IRecipeHandler getRecipeHandler() {
-        return Helpers.getTileOrBlockCapability(getPos().getWorld(), getPos().getBlockPos(), getSide(),
-                Capabilities.RECIPE_HANDLER);
+    protected LazyOptional<IRecipeHandler> getRecipeHandler() {
+        return BlockCapabilitiesHelpers.getTileOrBlockCapability(getPos(), getSide(), Capabilities.RECIPE_HANDLER);
     }
 
     @Override
     public int getLength() {
-        IRecipeHandler recipeHandler = getRecipeHandler();
-        if(recipeHandler == null) {
-            return 0;
-        }
-        return recipeHandler.getRecipes().size();
+        return getRecipeHandler()
+                .map(recipeHandler -> recipeHandler.getRecipes().size())
+                .orElse(0);
     }
 
     @Override
     public ValueObjectTypeRecipe.ValueRecipe get(int index) {
-        IRecipeDefinition recipeDefinition = Iterables.get(getRecipeHandler().getRecipes(), index);
-        return ValueObjectTypeRecipe.ValueRecipe.of(recipeDefinition);
+        return ValueObjectTypeRecipe.ValueRecipe.of(getRecipeHandler()
+                .map(recipeHandler -> Iterables.get(recipeHandler.getRecipes(), index))
+                .orElse(null));
     }
 }

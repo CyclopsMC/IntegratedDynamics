@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.api.client.render.part;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 
@@ -24,6 +25,6 @@ public interface IPartOverlayRenderer {
      * @param rendererDispatcher The render dispatcher
      */
     public void renderPartOverlay(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                  int destroyStage, EnumFacing direction, IPartType partType, TileEntityRendererDispatcher rendererDispatcher);
+                                  int destroyStage, Direction direction, IPartType partType, TileEntityRendererDispatcher rendererDispatcher);
 
 }

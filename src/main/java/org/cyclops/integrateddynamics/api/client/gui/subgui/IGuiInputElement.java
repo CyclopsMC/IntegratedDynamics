@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.api.client.gui.subgui;
 
-import net.minecraft.client.gui.Gui;
-import net.minecraft.inventory.Container;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 
 import java.util.List;
@@ -16,17 +16,17 @@ import java.util.List;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface IGuiInputElement<S extends ISubGuiBox, G extends Gui, C extends Container> {
+public interface IGuiInputElement<S extends ISubGuiBox, G extends AbstractGui, C extends Container> {
 
     /**
-     * @return Localized name used for rendering.
+     * @return Name used for rendering.
      */
-    public String getLocalizedNameFull();
+    public ITextComponent getName();
 
     /**
      * @param lines The list to add tooltip lines to.
      */
-    public void loadTooltip(List<String> lines);
+    public void loadTooltip(List<ITextComponent> lines);
 
     /**
      * @return The render pattern.
@@ -47,7 +47,7 @@ public interface IGuiInputElement<S extends ISubGuiBox, G extends Gui, C extends
      * Validates the current state of the element.
      * @return An error or null.
      */
-    public L10NHelpers.UnlocalizedString validate();
+    public ITextComponent validate();
 
     /**
      * @return The color used to identify this element.
@@ -68,7 +68,7 @@ public interface IGuiInputElement<S extends ISubGuiBox, G extends Gui, C extends
      * @param container The parent container
      * @return A subgui that is shown when activated.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public S createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                                   G gui, C container);
 

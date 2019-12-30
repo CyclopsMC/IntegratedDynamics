@@ -63,7 +63,7 @@ public class LazyExpression<V extends IValue> extends VariableAdapter<V> impleme
             value = evaluate();
         } catch (EvaluationException e) {
             errored = true;
-            throw new EvaluationException(e.getMessage());
+            throw e;
         }
         try {
             return (V) value;

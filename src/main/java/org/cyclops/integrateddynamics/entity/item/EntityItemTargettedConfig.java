@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.entity.item;
 
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderEntityItem;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.extendedconfig.EntityConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -15,34 +15,23 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class EntityItemTargettedConfig extends EntityConfig<Entity> {
-    
-    /**
-     * The unique instance.
-     */
-    public static EntityItemTargettedConfig _instance;
+public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted> {
 
-    /**
-     * Make a new instance.
-     */
     public EntityItemTargettedConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "entityItemTargetted",
-                null,
+                eConfig -> EntityType.Builder.<EntityItemTargetted>create(EntityItemTargetted::new, EntityClassification.MISC)
+                        .immuneToFire()
+                        .setShouldReceiveVelocityUpdates(true)
+                        .size(0.25F, 0.25F),
                 EntityItemTargetted.class
         );
     }
-    
-    @Override
-    public boolean sendVelocityUpdates() {
-        return true;
-    }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
 	@Override
-	public Render getRender(RenderManager renderManager, RenderItem renderItem) {
-        return new RenderEntityItem(renderManager, renderItem);
+	public EntityRenderer<EntityItemTargetted> getRender(EntityRendererManager renderManager, ItemRenderer renderItem) {
+        return (EntityRenderer) new net.minecraft.client.renderer.entity.ItemRenderer(renderManager, renderItem);
 	}
 }

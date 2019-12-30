@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.part.write;
 
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.util.text.ITextComponent;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -67,14 +67,14 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      * @param aspect The aspect to get the error from.
      * @return The current error, can be empty.
      */
-    public List<L10NHelpers.UnlocalizedString> getErrors(IAspectWrite aspect);
+    public List<ITextComponent> getErrors(IAspectWrite aspect);
 
     /**
      * Set the current error for the given aspect.
      * @param aspect The aspect to set the error for.
      * @param error The error to set, or null to clear.
      */
-    public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error);
+    public void addError(IAspectWrite aspect, ITextComponent error);
 
     /**
      * @return If this part has been deactivated.

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
+import net.minecraft.util.text.ITextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 
 /**
@@ -37,7 +38,7 @@ public interface IValueTypeListProxy<T extends IValueType<V>, V extends IValue> 
     /**
      * @return A short string representation used in guis to show the value.
      */
-    public String toCompactString();
+    public ITextComponent toCompactString();
 
     /**
      * @return If this is an infinite list.

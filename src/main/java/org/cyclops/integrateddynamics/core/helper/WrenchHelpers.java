@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.helper;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.commoncapabilities.api.capability.wrench.IWrench;
 import org.cyclops.commoncapabilities.api.capability.wrench.WrenchTarget;
 import org.cyclops.integrateddynamics.Capabilities;
 
@@ -24,17 +23,18 @@ public final class WrenchHelpers {
      * @param side The side that is being wrenched.
      * @return If the wrenching can continue with the held item.
      */
-    public static boolean isWrench(EntityPlayer player, ItemStack heldItem, World world, BlockPos pos, EnumFacing side) {
+    public static boolean isWrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, Direction side) {
         if(heldItem == null) {
             return false;
         }
-        return heldItem.hasCapability(Capabilities.WRENCH, null) && heldItem.getCapability(Capabilities.WRENCH, null)
-                .canUse(player, WrenchTarget.forBlock(world, pos, side));
+        return heldItem.getCapability(Capabilities.WRENCH, null)
+                .map(wrench -> wrench.canUse(player, WrenchTarget.forBlock(world, pos, side)))
+                .orElse(false);
     }
 
     /**
      * Wrench a given position.
-     * Requires the {@link WrenchHelpers#isWrench(EntityPlayer, ItemStack, World, BlockPos, EnumFacing)}
+     * Requires the {@link WrenchHelpers#isWrench(PlayerEntity, ItemStack, World, BlockPos, Direction)}
      * to be passed.
      * Takes an extra parameter of any type that is forwarded to the wrench action.
      * @param player The player.
@@ -46,17 +46,19 @@ public final class WrenchHelpers {
      * @param parameter An extra parameter that is forwarded to the action.
      * @param <P> The type of parameter to pass.
      */
-    public static <P> void wrench(EntityPlayer player, ItemStack heldItem, World world, BlockPos pos, EnumFacing side, IWrenchAction<P> action, P parameter) {
-        IWrench wrench = heldItem.getCapability(Capabilities.WRENCH, null);
-        WrenchTarget wrenchTarget = WrenchTarget.forBlock(world, pos, side);
-        wrench.beforeUse(player, wrenchTarget);
-        action.onWrench(player, pos, parameter);
-        wrench.afterUse(player, wrenchTarget);
+    public static <P> void wrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, Direction side, IWrenchAction<P> action, P parameter) {
+        heldItem.getCapability(Capabilities.WRENCH, null)
+                .ifPresent(wrench -> {
+                    WrenchTarget wrenchTarget = WrenchTarget.forBlock(world, pos, side);
+                    wrench.beforeUse(player, wrenchTarget);
+                    action.onWrench(player, pos, parameter);
+                    wrench.afterUse(player, wrenchTarget);
+                });
     }
 
     /**
      * Wrench a given position.
-     * Requires the {@link WrenchHelpers#isWrench(EntityPlayer, ItemStack, World, BlockPos, EnumFacing)}
+     * Requires the {@link WrenchHelpers#isWrench(PlayerEntity, ItemStack, World, BlockPos, Direction)}
      * to be passed.
      * @param player The player.
      * @param heldItem The item the player is holding.
@@ -65,7 +67,7 @@ public final class WrenchHelpers {
      * @param side The side that is being wrenched.
      * @param action The actual wrench action.
      */
-    public static void wrench(EntityPlayer player, ItemStack heldItem, World world, BlockPos pos, EnumFacing side, IWrenchAction<Void> action) {
+    public static void wrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, Direction side, IWrenchAction<Void> action) {
         wrench(player, heldItem, world, pos, side, action, null);
     }
 
@@ -81,7 +83,7 @@ public final class WrenchHelpers {
          * @param pos The position that is being wrenched.
          * @param parameter An extra parameter that is used to call this action.
          */
-        public void onWrench(EntityPlayer player, BlockPos pos, P parameter);
+        public void onWrench(PlayerEntity player, BlockPos pos, P parameter);
 
     }
 
@@ -96,7 +98,7 @@ public final class WrenchHelpers {
          * @param pos The position that is being wrenched.
          * @param parameter An extra parameter that is used to call this action.
          */
-        public void onWrench(EntityPlayer player, BlockPos pos, Void parameter) {
+        public void onWrench(PlayerEntity player, BlockPos pos, Void parameter) {
             onWrench(player, pos);
         }
 
@@ -105,7 +107,7 @@ public final class WrenchHelpers {
          * @param player The player.
          * @param pos The position that is being wrenched.
          */
-        public abstract void onWrench(EntityPlayer player, BlockPos pos);
+        public abstract void onWrench(PlayerEntity player, BlockPos pos);
 
     }
 

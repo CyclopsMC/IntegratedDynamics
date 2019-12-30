@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
 
-import org.cyclops.cyclopscore.config.extendedconfig.BlockFluidConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -9,29 +11,15 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class BlockFluidMenrilResinConfig extends BlockFluidConfig {
-    
-    /**
-     * The unique instance.
-     */
-    public static BlockFluidMenrilResinConfig _instance;
+public class BlockFluidMenrilResinConfig extends BlockConfig {
 
-    /**
-     * Make a new instance.
-     */
     public BlockFluidMenrilResinConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "block_menril_resin",
-                null,
-                BlockFluidMenrilResin.class
+                eConfig -> new BlockFluidMenrilResin(Block.Properties.create(Material.WATER)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-    }
-    
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
     
 }

@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.EndNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -23,7 +25,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCodec {
 
 	@CodecField
-	private String operatorValue;
+	private INBT operatorValue;
 
     public LogicProgrammerValueTypeOperatorValueChangedPacket() {
 
@@ -33,7 +35,7 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 		try {
 			this.operatorValue = ValueHelpers.serializeRaw(value);
 		} catch (Exception e) {
-			this.operatorValue = "";
+			this.operatorValue = new EndNBT();
 		}
     }
 
@@ -43,13 +45,13 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void actionClient(World world, EntityPlayer player) {
+	@OnlyIn(Dist.CLIENT)
+	public void actionClient(World world, PlayerEntity player) {
 		
 	}
 
 	@Override
-	public void actionServer(World world, EntityPlayerMP player) {
+	public void actionServer(World world, ServerPlayerEntity player) {
 		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
 			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
 			if(element instanceof ValueTypeOperatorLPElement) {

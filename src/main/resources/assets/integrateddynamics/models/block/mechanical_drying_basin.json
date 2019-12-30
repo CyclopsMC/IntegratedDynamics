@@ -1,8 +1,9 @@
 {
+	"parent": "block/block",
 	"ambientocclusion": false,
 	"textures": {
-		"texture": "integrateddynamics:blocks/mechanical_drying_basin_off",
-		"particle": "integrateddynamics:blocks/menril_log"
+		"texture": "integrateddynamics:block/mechanical_drying_basin_off",
+		"particle": "integrateddynamics:block/menril_log"
 	},
 	"elements": [
 		{
@@ -1145,24 +1146,5 @@
 			},
 			"type": "cube"
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [
-				22.5,
-				22.5,
-				0
-			],
-			"translation": [
-				0,
-				0,
-				0
-			],
-			"scale": [
-				0.5,
-				0.5,
-				0.5
-			]
-		}
-	}
+	]
 }

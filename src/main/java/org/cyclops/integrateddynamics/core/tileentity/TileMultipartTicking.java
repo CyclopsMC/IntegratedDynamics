@@ -1,19 +1,21 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
-import com.google.common.base.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import org.cyclops.cyclopscore.block.property.ExtendedBlockStateBuilder;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -46,6 +48,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A ticking part entity which is made up of different parts.
@@ -73,10 +76,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     private EnumFacingMap<Integer> previousLightLevels;
     @Getter
     @Setter
-    @NBTPersist private String facadeBlockName = null;
-    @Getter
-    @Setter
-    @NBTPersist private int facadeMeta = 0;
+    @NBTPersist private INBT facadeBlockTag = null;
 
     @Getter
     private final PartContainerTileMultipartTicking partContainer;
@@ -87,58 +87,51 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Getter
     private final ICableFakeable cableFakeable;
 
-    private IExtendedBlockState cachedState = null;
+    private IModelData cachedState = null;
 
     public TileMultipartTicking() {
+        super(RegistryEntries.TILE_ENTITY_MULTIPART_TICKING);
         partContainer = new PartContainerTileMultipartTicking(this);
-        addCapabilityInternal(PartContainerConfig.CAPABILITY, partContainer);
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, new NetworkElementProviderPartContainer(partContainer));
-        addCapabilityInternal(FacadeableConfig.CAPABILITY, new FacadeableTileMultipartTicking(this));
+        addCapabilityInternal(PartContainerConfig.CAPABILITY, LazyOptional.of(() -> partContainer));
+        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderPartContainer(partContainer)));
+        addCapabilityInternal(FacadeableConfig.CAPABILITY, LazyOptional.of(() -> new FacadeableTileMultipartTicking(this)));
         cable = new CableTileMultipartTicking(this);
-        addCapabilityInternal(CableConfig.CAPABILITY, cable);
+        addCapabilityInternal(CableConfig.CAPABILITY, LazyOptional.of(() -> cable));
         networkCarrier = new NetworkCarrierDefault();
-        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, networkCarrier);
+        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, LazyOptional.of(() -> networkCarrier));
         cableFakeable = new CableFakeableMultipartTicking(this);
-        addCapabilityInternal(CableFakeableConfig.CAPABILITY, cableFakeable);
-        addCapabilityInternal(PathElementConfig.CAPABILITY, new PathElementTileMultipartTicking(this, cable));
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, new DynamicLightTileMultipartTicking(this, facing));
-            addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, new DynamicRedstoneTileMultipartTicking(this, facing));
+        addCapabilityInternal(CableFakeableConfig.CAPABILITY, LazyOptional.of(() -> cableFakeable));
+        addCapabilityInternal(PathElementConfig.CAPABILITY, LazyOptional.of(() -> new PathElementTileMultipartTicking(this, cable)));
+        for (Direction facing : Direction.values()) {
+            addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, LazyOptional.of(() -> new DynamicLightTileMultipartTicking(this, facing)));
+            addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, LazyOptional.of(() -> new DynamicRedstoneTileMultipartTicking(this, facing)));
         }
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag = super.writeToNBT(tag);
-        tag.setTag("partContainer", partContainer.serializeNBT());
-        tag.setBoolean("realCable", cableFakeable.isRealCable());
+    public CompoundNBT write(CompoundNBT tag) {
+        tag = super.write(tag);
+        tag.put("partContainer", partContainer.serializeNBT());
+        tag.putBoolean("realCable", cableFakeable.isRealCable());
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void read(CompoundNBT tag) {
         EnumFacingMap<Boolean> lastConnected = EnumFacingMap.newMap(connected);
-        String lastFacadeBlockName = facadeBlockName;
-        int lastFacadeMeta = facadeMeta;
+        INBT lastFacadeBlock = facadeBlockTag;
         boolean lastRealCable = cableFakeable.isRealCable();
-        if (tag.hasKey("parts", MinecraftHelpers.NBTTag_Types.NBTTagList.ordinal())
-                && !tag.hasKey("partContainer", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal())) {
-            // Backwards compatibility with old part saving.
-            // TODO: remove in next major MC update.
-            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, partContainer.getPartData(), getWorld());
-        } else {
-            partContainer.deserializeNBT(tag.getCompoundTag("partContainer"));
-        }
+        partContainer.deserializeNBT(tag.getCompound("partContainer"));
         boolean wasLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos(), null);
 
-        super.readFromNBT(tag);
+        super.read(tag);
         cableFakeable.setRealCable(tag.getBoolean("realCable"));
         boolean isLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos(), null);
         if (getWorld() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
-                || !Objects.equals(lastFacadeBlockName, facadeBlockName) || lastFacadeMeta != facadeMeta
+                || !Objects.equals(lastFacadeBlock, facadeBlockTag)
                 || lastRealCable != cableFakeable.isRealCable() || wasLightTransparent != isLightTransparent)) {
-            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
-            getWorld().checkLight(getPos());
+            BlockHelpers.markForUpdate(getWorld(), getPos());
+            // TODO: pre-1.14: getWorld().checkLight(getPos());
         }
     }
 
@@ -146,36 +139,35 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     public void onUpdateReceived() {
         if(!lightLevels.equals(previousLightLevels)) {
             previousLightLevels = lightLevels;
-            getWorld().checkLight(getPos());
+            // TODO: pre-1.14: getWorld().checkLight(getPos());
         }
         cachedState = null;
     }
 
-    public IExtendedBlockState getConnectionState() {
+    public IModelData getConnectionState() {
         if (cachedState != null) {
             return cachedState;
         }
-        ExtendedBlockStateBuilder builder = ExtendedBlockStateBuilder.builder((IExtendedBlockState) BlockCable.getInstance().getDefaultState());
+        ModelDataMap.Builder builder = new ModelDataMap.Builder();
         if (partContainer.getPartData() != null) { // Can be null in rare cases where rendering happens before data sync
-            builder.withProperty(BlockCable.REALCABLE, cableFakeable.isRealCable());
+            builder.withInitial(BlockCable.REALCABLE, cableFakeable.isRealCable());
             if (connected.isEmpty()) {
                 getCable().updateConnections();
             }
-            for (EnumFacing side : EnumFacing.VALUES) {
-                builder.withProperty(BlockCable.CONNECTED[side.ordinal()],
+            for (Direction side : Direction.values()) {
+                builder.withInitial(BlockCable.CONNECTED[side.ordinal()],
                         !cable.isForceDisconnected(side) && connected.get(side));
-                builder.withProperty(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
+                builder.withInitial(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
                         partContainer.hasPart(side) ? partContainer.getPart(side).getPartRenderPosition() : PartRenderPosition.NONE);
             }
-            IFacadeable facadeable = getCapability(FacadeableConfig.CAPABILITY, null);
-            builder.withProperty(BlockCable.FACADE, facadeable.hasFacade() ? Optional.of(facadeable.getFacade()) : Optional.absent());
-            builder.withProperty(BlockCable.PARTCONTAINER, partContainer);
-            builder.withProperty(BlockCable.RENDERSTATE, new CableRenderState(
+            IFacadeable facadeable = getCapability(FacadeableConfig.CAPABILITY).orElse(null);
+            builder.withInitial(BlockCable.FACADE, facadeable.hasFacade() ? Optional.of(facadeable.getFacade()) : Optional.empty());
+            builder.withInitial(BlockCable.PARTCONTAINER, partContainer);
+            builder.withInitial(BlockCable.RENDERSTATE, new CableRenderState(
                     this.cableFakeable.isRealCable(),
                     EnumFacingMap.newMap(this.connected),
                     EnumFacingMap.newMap(this.partContainer.getPartData()),
-                    facadeBlockName,
-                    facadeMeta
+                    facadeBlockTag
                     ));
         }
         return cachedState = builder.build();
@@ -195,13 +187,13 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         }
     }
 
-    public void updateRedstoneInfo(EnumFacing side, boolean strongPower) {
+    public void updateRedstoneInfo(Direction side, boolean strongPower) {
         this.markDirty();
         if (getWorld().isBlockLoaded(getPos().offset(side))) {
-            getWorld().neighborChanged(getPos().offset(side), getBlockType(), getPos());
+            getWorld().neighborChanged(getPos().offset(side), getBlockState().getBlock(), getPos());
             if (strongPower) {
                 // When we are emitting a strong power, also update all neighbours of the target
-                getWorld().notifyNeighborsOfStateChange(getPos().offset(side), getBlockType(), true);
+                getWorld().notifyNeighborsOfStateChange(getPos().offset(side), getBlockState().getBlock());
             }
         }
     }
@@ -236,28 +228,24 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         return true;
     }
 
-    @Override
+    // TODO: remove in 1.14? Used to be related to MinecraftForgeClient#getRenderPass()
+    /*@Override
     public boolean shouldRenderInPass(int pass) {
         return true;
-    }
+    }*/
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return super.hasCapability(capability, facing) || partContainer.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        T value = super.getCapability(capability, facing);
-        if (value != null) {
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
+        LazyOptional<T> value = super.getCapability(capability, facing);
+        if (value.isPresent()) {
             return value;
         }
         return partContainer.getCapability(capability, facing);
     }
 
     @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
         invalidateParts();
     }
 
@@ -265,7 +253,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         if (getWorld() != null && !getWorld().isRemote) {
             INetwork network = getNetwork();
             if (network != null) {
-                for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partContainer.getPartData().entrySet()) {
+                for (Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : partContainer.getPartData().entrySet()) {
                     INetworkElement element = entry.getValue().getPart().createNetworkElement(getPartContainer(), DimPos.of(getWorld(), getPos()), entry.getKey());
                     element.invalidate(network);
                 }
@@ -274,7 +262,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     @Override
-    protected EnumFacing transformFacingForRotation(EnumFacing facing) {
+    protected Direction transformFacingForRotation(Direction facing) {
         // Ignore rotations on this tile
         return facing;
     }

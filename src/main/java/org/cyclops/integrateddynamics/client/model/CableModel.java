@@ -1,22 +1,24 @@
 package org.cyclops.integrateddynamics.client.model;
 
-import com.google.common.base.Optional;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
+import net.minecraftforge.client.model.data.IModelData;
+import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
+
+import java.util.Optional;
+import java.util.Random;
 
 /**
  * A dynamic model for cables.
@@ -24,11 +26,11 @@ import org.cyclops.integrateddynamics.block.BlockCable;
  */
 public class CableModel extends CableModelBase {
 
-    public CableModel(IExtendedBlockState state, EnumFacing facing, long rand) {
-        super(state, facing, rand);
+    public CableModel(BlockState state, Direction facing, Random rand, IModelData modelData) {
+        super(state, facing, rand, modelData);
     }
 
-    public CableModel(ItemStack itemStack, World world, EntityLivingBase entity) {
+    public CableModel(ItemStack itemStack, World world, LivingEntity entity) {
         super(itemStack, world, entity);
     }
 
@@ -37,59 +39,59 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
-    protected boolean isRealCable() {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.REALCABLE, true);
+    protected boolean isRealCable(IModelData modelData) {
+        return ModelHelpers.getSafeProperty(modelData, BlockCable.REALCABLE, true);
     }
 
     @Override
-    protected Optional<IBlockState> getFacade() {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.FACADE, Optional.absent());
+    protected Optional<BlockState> getFacade(IModelData modelData) {
+        return ModelHelpers.getSafeProperty(modelData, BlockCable.FACADE, Optional.empty());
     }
 
     @Override
-    protected boolean isConnected(EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.CONNECTED[side.ordinal()], false);
+    protected boolean isConnected(IModelData modelData, Direction side) {
+        return ModelHelpers.getSafeProperty(modelData, BlockCable.CONNECTED[side.ordinal()], false);
     }
 
     @Override
-    protected boolean hasPart(EnumFacing side) {
-        return getPartRenderPosition(side) != PartRenderPosition.NONE;
+    protected boolean hasPart(IModelData modelData, Direction side) {
+        return getPartRenderPosition(modelData, side) != PartRenderPosition.NONE;
     }
 
     @Override
-    protected PartRenderPosition getPartRenderPosition(EnumFacing side) {
-        return BlockHelpers.getSafeBlockStateProperty(getState(),
+    protected PartRenderPosition getPartRenderPosition(IModelData modelData, Direction side) {
+        return ModelHelpers.getSafeProperty(modelData,
                 BlockCable.PART_RENDERPOSITIONS[side.ordinal()], PartRenderPosition.NONE);
     }
 
     @Override
-    protected boolean shouldRenderParts() {
+    protected boolean shouldRenderParts(IModelData modelData) {
         return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT
-                && BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PARTCONTAINER, null) != null;
+                && ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null) != null;
     }
 
     @Override
-    protected IBakedModel getPartModel(EnumFacing side) {
-        IPartContainer partContainer = BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.PARTCONTAINER, null);
-        IBlockState blockState = partContainer != null && partContainer.hasPart(side) ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
-        Minecraft mc = Minecraft.getMinecraft();
+    protected IBakedModel getPartModel(IModelData modelData, Direction side) {
+        IPartContainer partContainer = ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null);
+        BlockState blockState = partContainer != null && partContainer.hasPart(side) ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
+        Minecraft mc = Minecraft.getInstance();
         BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRendererDispatcher();
         BlockModelShapes blockModelShapes = blockRendererDispatcher.getBlockModelShapes();
-        return blockModelShapes.getModelForState(blockState);
+        return blockModelShapes.getModel(blockState);
     }
 
     @Override
-    protected IRenderState getRenderState() {
-        return BlockHelpers.getSafeBlockStateProperty(getState(), BlockCable.RENDERSTATE, null);
+    protected IRenderState getRenderState(IModelData modelData) {
+        return ModelHelpers.getSafeProperty(modelData, BlockCable.RENDERSTATE, null);
     }
 
     @Override
-    public IBakedModel handleBlockState(IBlockState state, EnumFacing side, long rand) {
-        return new CableModel((IExtendedBlockState) state, side, rand);
+    public IBakedModel handleBlockState(BlockState state, Direction side, Random rand, IModelData modelData) {
+        return new CableModel(state, side, rand, modelData);
     }
 
     @Override
-    public IBakedModel handleItemState(ItemStack stack, World world, EntityLivingBase entity) {
+    public IBakedModel handleItemState(ItemStack stack, World world, LivingEntity entity) {
         return new CableModel(stack, world, entity);
     }
 }

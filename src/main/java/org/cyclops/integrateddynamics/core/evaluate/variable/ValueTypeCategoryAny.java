@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 
@@ -10,7 +11,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 public class ValueTypeCategoryAny extends ValueTypeCategoryBase<IValue> {
 
     public ValueTypeCategoryAny() {
-        super("any", Helpers.RGBToInt(240, 240, 240), "");
+        super("any", Helpers.RGBToInt(240, 240, 240), TextFormatting.RESET);
     }
 
 }

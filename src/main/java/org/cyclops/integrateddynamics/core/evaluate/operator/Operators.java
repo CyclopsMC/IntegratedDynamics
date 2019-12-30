@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -8,51 +7,58 @@ import com.google.common.collect.Sets;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Lombok;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.IAnimals;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTPrimitive;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagLong;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.nbt.ByteNBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.IntNBT;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.LongNBT;
+import net.minecraft.nbt.NumberNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.state.IProperty;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
@@ -83,7 +89,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
-import org.cyclops.integrateddynamics.core.helper.obfuscation.ObfuscationHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
@@ -94,6 +99,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -281,7 +287,7 @@ public final class Operators {
                 // Input size checking
                 int requiredInputLength = operator.getRequiredInputLength();
                 if(input.length != requiredInputLength) {
-                    return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+                    return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                             operator.getOperatorName(), input.length, requiredInputLength);
                 }
                 // Input types checking
@@ -292,13 +298,13 @@ public final class Operators {
                         inputType = ValueTypes.CATEGORY_NUMBER;
                     }
                     if(inputType == null) {
-                        return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_NULLTYPE, operator.getOperatorName(), Integer.toString(i));
+                        return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NULLTYPE, operator.getOperatorName(), Integer.toString(i));
                     }
                     if(i == 0) {
                         temporarySecondInputType = inputType;
                     } else if(i == 1) {
                         if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
-                            return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                            return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
                                     operator.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
                                     Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getTranslationKey()));
                         }
@@ -1158,7 +1164,7 @@ public final class Operators {
     public static final IOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("opaque")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
-                return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && a.getRawValue().get().isOpaqueCube());
+                return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && a.getRawValue().get().isOpaqueCube(null, null));
             }).build());
 
     /**
@@ -1177,7 +1183,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
-                        return a.getRawValue().isPresent() ? Block.REGISTRY.getNameForObject(a.getRawValue().get().getBlock()) : null;
+                        return a.getRawValue().isPresent() ? ForgeRegistries.BLOCKS.getKey(a.getRawValue().get().getBlock()) : null;
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1189,7 +1195,7 @@ public final class Operators {
             .symbol("break_sound").operatorName("breaksound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? ObfuscationHelpers.getSoundEventName(sound.get().getBreakSound()).toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getBreakSound().name.toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
     /**
@@ -1199,7 +1205,7 @@ public final class Operators {
             .symbol("place_sound").operatorName("placesound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? ObfuscationHelpers.getSoundEventName(sound.get().getPlaceSound()).toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getPlaceSound().name.toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
     /**
@@ -1209,7 +1215,7 @@ public final class Operators {
             .symbol("step_sound").operatorName("stepsound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? ObfuscationHelpers.getSoundEventName(sound.get().getStepSound()).toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getStepSound().name.toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
 
@@ -1222,7 +1228,7 @@ public final class Operators {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
                         && a.getRawValue().get().getBlock() instanceof IShearable
-                        && ((IShearable) a.getRawValue().get().getBlock()).isShearable(null, null, null));
+                        && ((IShearable) a.getRawValue().get().getBlock()).isShearable(ItemStack.EMPTY, null, null));
             }).build());
 
     /**
@@ -1257,7 +1263,7 @@ public final class Operators {
             .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
-                IBlockState plant = null;
+                BlockState plant = null;
                 if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
                     plant = ((IPlantable) a.getRawValue().get().getBlock()).getPlant(null, null);
                 }
@@ -1273,9 +1279,9 @@ public final class Operators {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0);
                 int age = 0;
                 if (a.getRawValue().isPresent()) {
-                    for (IProperty<?> prop : a.getRawValue().get().getProperties().keySet()) {
+                    for (IProperty<?> prop : a.getRawValue().get().getProperties()) {
                         if (prop.getName().equals("age") && prop.getValueClass() == Integer.class) {
-                            age = (Integer) a.getRawValue().get().getValue(prop);
+                            age = (Integer) a.getRawValue().get().get(prop);
                         }
                     }
                 }
@@ -1290,12 +1296,8 @@ public final class Operators {
             .symbol("block_by_name").operatorName("blockbyname")
             .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
                     .build(input -> {
-                        Block block = Block.REGISTRY.getObject(input.getLeft());
-                        IBlockState blockState = null;
-                        if (block != null) {
-                            blockState = block.getStateFromMeta(input.getRight());
-                        }
-                        return ValueObjectTypeBlock.ValueBlock.of(blockState);
+                        Block block = ForgeRegistries.BLOCKS.getValue(input);
+                        return ValueObjectTypeBlock.ValueBlock.of(block.getDefaultState());
                     })).build());
 
     /**
@@ -1335,7 +1337,7 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_ISDAMAGEABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbolOperator("damageable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
-                itemStack -> !itemStack.isEmpty() && itemStack.isItemStackDamageable()
+                itemStack -> !itemStack.isEmpty() && itemStack.isDamageable()
             )).build());
 
     /**
@@ -1344,7 +1346,7 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_DAMAGE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("damage")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
-                itemStack -> !itemStack.isEmpty() ? itemStack.getItemDamage() : 0
+                itemStack -> !itemStack.isEmpty() ? itemStack.getDamage() : 0
             )).build());
 
     /**
@@ -1362,7 +1364,7 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbolOperator("enchanted")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
-                itemStack -> !itemStack.isEmpty() && itemStack.isItemEnchanted()
+                itemStack -> !itemStack.isEmpty() && itemStack.isEnchanted()
             )).build());
 
     /**
@@ -1371,7 +1373,7 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbolOperator("enchantable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
-                itemStack -> !itemStack.isEmpty() && itemStack.isItemEnchantable()
+                itemStack -> !itemStack.isEmpty() && itemStack.isEnchantable()
             )).build());
 
     /**
@@ -1391,7 +1393,7 @@ public final class Operators {
             .output(ValueTypes.STRING).symbolOperator("rarity")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                return ValueTypeString.ValueString.of(!a.getRawValue().isEmpty() ? a.getRawValue().getRarity().rarityName : "");
+                return ValueTypeString.ValueString.of(!a.getRawValue().isEmpty() ? a.getRawValue().getRarity().name() : "");
             }).build());
 
     /**
@@ -1425,7 +1427,7 @@ public final class Operators {
             .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                return ValueObjectTypeBlock.ValueBlock.of((!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof ItemBlock) ? BlockHelpers.getBlockStateFromItemStack(a.getRawValue()) : null);
+                return ValueObjectTypeBlock.ValueBlock.of((!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem) ? BlockHelpers.getBlockStateFromItemStack(a.getRawValue()) : null);
             }).build());
 
     /**
@@ -1522,7 +1524,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                        return !a.getRawValue().isEmpty() ? Item.REGISTRY.getNameForObject(a.getRawValue().getItem()) : null;
+                        return !a.getRawValue().isEmpty() ? ForgeRegistries.ITEMS.getKey(a.getRawValue().getItem()) : null;
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1533,9 +1535,15 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_FUELBURNTIME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER)
             .symbol("burn_time").operatorName("burntime")
-            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
-                itemStack -> !itemStack.isEmpty() ? TileEntityFurnace.getItemBurnTime(itemStack) : 0
-            )).build());
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(itemStack -> {
+                if (!itemStack.isEmpty()) {
+                    int burnTime = itemStack.getBurnTime();
+                    return ForgeEventFactory.getItemBurnTime(itemStack, burnTime == -1
+                            ? AbstractFurnaceTileEntity.getBurnTimes().getOrDefault(itemStack.getItem(), 0)
+                            : burnTime);
+                }
+                return 0;
+            })).build());
 
     /**
      * If the given item can be used as fuel
@@ -1543,51 +1551,45 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_CANBURN = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN)
             .symbol("can_burn").operatorName("canburn")
-            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
-                itemStack -> itemStack != null && TileEntityFurnace.getItemBurnTime(itemStack) > 0
-            )).build());
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN
+                    .build(AbstractFurnaceTileEntity::isFuel))
+            .build());
 
     /**
-     * If the given item can be smelted
+     * The tag entries of the given item
      */
-    public static final IOperator OBJECT_ITEMSTACK_CANSMELT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN)
-            .symbol("can_smelt").operatorName("cansmelt")
-            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
-                itemStack -> itemStack != null && !FurnaceRecipes.instance().getSmeltingResult(itemStack).isEmpty()
-            )).build());
-
-    /**
-     * The oredict entries of the given item
-     */
-    public static final IOperator OBJECT_ITEMSTACK_OREDICT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+    public static final IOperator OBJECT_ITEMSTACK_TAG = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.LIST)
-            .symbol("oredict_names").operatorName("oredict")
+            .symbol("tag_names").operatorName("tag")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                 ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
                 if(!a.getRawValue().isEmpty()) {
-                    for (int i : OreDictionary.getOreIDs(a.getRawValue())) {
-                        builder.add(ValueTypeString.ValueString.of(OreDictionary.getOreName(i)));
+                    for (ResourceLocation owningTag : ItemTags.getCollection().getOwningTags(a.getRawValue().getItem())) {
+                        builder.add(ValueTypeString.ValueString.of(owningTag.toString()));
                     }
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING, builder.build());
             }).build());
 
     /**
-     * Get a list of items that correspond to the given oredict key.
+     * Get a list of items that correspond to the given tag key.
      */
-    public static final IOperator OBJECT_ITEMSTACK_OREDICT_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
+    public static final IOperator OBJECT_ITEMSTACK_TAG_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
             .output(ValueTypes.LIST)
-            .symbol("oredict_values").operatorName("oredict")
+            .symbol("tag_values").operatorName("tag")
             .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
             .function(variables -> {
                 ValueTypeString.ValueString a = variables.getValue(0);
                 ImmutableList.Builder<ValueObjectTypeItemStack.ValueItemStack> builder = ImmutableList.builder();
                 if (!StringUtils.isNullOrEmpty(a.getRawValue())) {
-                    Helpers.getOresWildcard(a.getRawValue())
-                            .map(ValueObjectTypeItemStack.ValueItemStack::of)
-                            .forEach(builder::add);
+                    try {
+                        Helpers.getTagValues(a.getRawValue())
+                                .map(ValueObjectTypeItemStack.ValueItemStack::of)
+                                .forEach(builder::add);
+                    } catch (ResourceLocationException e) {
+                        throw new EvaluationException(e.getMessage());
+                    }
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, builder.build());
             }).build());
@@ -1648,7 +1650,7 @@ public final class Operators {
             .symbol("has_inventory").operatorName("hasinventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
+                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent());
             }).build());
 
     /**
@@ -1674,13 +1676,9 @@ public final class Operators {
             .symbol("inventory_size").operatorName("inventorysize")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                int size = 0;
-                if (!a.getRawValue().isEmpty()
-                        && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                    IItemHandler itemHandler = a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                    size = itemHandler.getSlots();
-                }
-                return ValueTypeInteger.ValueInteger.of(size);
+                return ValueTypeInteger.ValueInteger.of(a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+                        .map(IItemHandler::getSlots)
+                        .orElse(0));
             }).build());
 
     /**
@@ -1705,16 +1703,15 @@ public final class Operators {
             .output(ValueTypes.LIST).symbolOperator("inventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                if (!a.getRawValue().isEmpty()
-                        && a.getRawValue().hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                    IItemHandler itemHandler = a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                    List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.getSlots());
-                    for (int i = 0; i < itemHandler.getSlots(); i++) {
-                        values.add(ValueObjectTypeItemStack.ValueItemStack.of(itemHandler.getStackInSlot(i)));
-                    }
-                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
-                }
-                return ValueTypes.LIST.getDefault();
+                return a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
+                        .map(itemHandler -> {
+                            List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.getSlots());
+                            for (int i = 0; i < itemHandler.getSlots(); i++) {
+                                values.add(ValueObjectTypeItemStack.ValueItemStack.of(itemHandler.getStackInSlot(i)));
+                            }
+                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
+                        })
+                        .orElseGet(() -> ValueTypes.LIST.getDefault());
             }).build());
 
     /**
@@ -1724,7 +1721,7 @@ public final class Operators {
             .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
-                IBlockState plant = null;
+                BlockState plant = null;
                 if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof IPlantable) {
                     plant = ((IPlantable) a.getRawValue().getItem()).getPlant(null, null);
                 }
@@ -1739,10 +1736,10 @@ public final class Operators {
             .symbol("item_by_name").operatorName("itembyname")
             .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
                     .build(input -> {
-                        Item item = Item.REGISTRY.getObject(input.getLeft());
+                        Item item = ForgeRegistries.ITEMS.getValue(input);
                         ItemStack itemStack = ItemStack.EMPTY;
                         if (item != null) {
-                            itemStack = new ItemStack(item, 1, input.getRight());
+                            itemStack = new ItemStack(item);
                         }
                         return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
                     })).build());
@@ -1758,10 +1755,10 @@ public final class Operators {
                 ValueTypeList.ValueList a = variables.getValue(0);
                 ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1);
                 if (!ValueHelpers.correspondsTo(a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK)) {
-                    L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                    ITextComponent error = new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                             a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK);
-                    throw new EvaluationException(error.localize());
+                    throw new EvaluationException(error);
                 }
 
                 ItemStack itemStack = b.getRawValue();
@@ -1791,7 +1788,7 @@ public final class Operators {
             .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
             .function(input -> {
                 ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0);
-                return ValueTypeNbt.ValueNbt.of(itemStack.getRawValue().getTagCompound());
+                return ValueTypeNbt.ValueNbt.of(itemStack.getRawValue().getTag());
             }).build());
 
     /**
@@ -1800,7 +1797,7 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_HASNBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_PREFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("has_nbt").operatorName("hasnbt")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
-                    itemStack -> !itemStack.isEmpty() && itemStack.hasTagCompound()
+                    itemStack -> !itemStack.isEmpty() && itemStack.hasTag()
             )).build());
 
     /**
@@ -1822,7 +1819,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_animal").operatorName("isanimal")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
-                entity -> entity instanceof IAnimals && !(entity instanceof IMob)
+                entity -> entity instanceof AnimalEntity && !(entity instanceof IMob) // TODO: AnimalEntity was IAnimal
             )).build());
 
     /**
@@ -1831,7 +1828,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ISITEM = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_item").operatorName("isitem")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
-                entity -> entity instanceof EntityItem
+                entity -> entity instanceof ItemEntity
             )).build());
 
     /**
@@ -1840,7 +1837,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ISPLAYER = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_player").operatorName("isplayer")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
-                entity -> entity instanceof EntityPlayer
+                entity -> entity instanceof PlayerEntity
             )).build());
 
     /**
@@ -1849,7 +1846,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ISMINECART = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_minecart").operatorName("isminecart")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
-                entity -> entity instanceof EntityMinecart
+                entity -> entity instanceof AbstractMinecartEntity
             )).build());
 
     /**
@@ -1860,7 +1857,7 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = variables.getValue(0);
                 Optional<Entity> a = valueEntity.getRawValue();
-                return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof EntityItem) ? ((EntityItem) a.get()).getItem() : ItemStack.EMPTY);
+                return ValueObjectTypeItemStack.ValueItemStack.of((a.isPresent() && a.get() instanceof ItemEntity) ? ((ItemEntity) a.get()).getItem() : ItemStack.EMPTY);
             }).build());
 
     /**
@@ -1869,7 +1866,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_HEALTH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.DOUBLE).symbolOperator("health")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(
-                entity -> entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).getHealth() : 0.0
+                entity -> entity instanceof LivingEntity ? ((LivingEntity) entity).getHealth() : 0.0
             )).build());
 
     /**
@@ -1878,7 +1875,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_WIDTH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.DOUBLE).symbolOperator("width")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(
-                entity -> entity != null ? entity.width : 0.0
+                entity -> entity != null ? entity.getWidth() : 0.0
             )).build());
 
     /**
@@ -1887,7 +1884,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_HEIGHT = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.DOUBLE).symbolOperator("height")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(
-                entity -> entity != null ? entity.height : 0.0
+                entity -> entity != null ? entity.getHeight() : 0.0
             )).build());
 
     /**
@@ -1923,7 +1920,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ISEATING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_eating").operatorName("iseating")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
-                entity -> entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getItemInUseCount() > 0
+                entity -> entity instanceof LivingEntity && ((LivingEntity) entity).getItemInUseCount() > 0
             )).build());
 
     /**
@@ -1962,16 +1959,18 @@ public final class Operators {
      * The name of the mod owning this entity
      */
     public static final IOperator OBJECT_ENTITY_MODNAME = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
-            .function(variables -> {
-                ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
-                String modName = "";
-                if(a.getRawValue().isPresent()) {
-                    Entity entity = a.getRawValue().get();
-                    EntityRegistry.EntityRegistration entityRegistration = EntityRegistry.instance().lookupModSpawn(entity.getClass(), true);
-                    modName = entityRegistration != null ? entityRegistration.getContainer().getName() : "Minecraft";
-                }
-                return ValueTypeString.ValueString.of(modName);
-            }).build());
+            .function(new IterativeFunction(Lists.newArrayList(
+                    (OperatorBase.SafeVariablesGetter variables) -> {
+                        ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
+                        if(a.getRawValue().isPresent()) {
+                            Entity entity = a.getRawValue().get();
+                            return entity.getType().getRegistryName();
+                        }
+                        return new ResourceLocation("");
+                    },
+                    OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
+            )))
+            .build());
 
     /**
      * The block the given player is currently looking at.
@@ -1980,21 +1979,20 @@ public final class Operators {
             .symbol("target_block").operatorName("targetblock")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
-                IBlockState blockState = null;
-                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                    EntityLivingBase entity = (EntityLivingBase) a.getRawValue().get();
-                    double reachDistance = 5;
+                BlockState blockState = null;
+                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
+                    LivingEntity entity = (LivingEntity) a.getRawValue().get();
+                    IAttributeInstance reachDistanceAttribute = entity.getAttribute(PlayerEntity.REACH_DISTANCE);
+                    double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
                     double eyeHeight = entity.getEyeHeight();
-                    if(entity instanceof EntityPlayerMP) {
-                        reachDistance = ((EntityPlayerMP) entity).interactionManager.getBlockReachDistance();
-                    }
                     Vec3d lookVec = entity.getLookVec();
                     Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
                     Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
-                    RayTraceResult mop = entity.world.rayTraceBlocks(origin, direction, true);
-                    if(mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
-                        blockState = entity.world.getBlockState(mop.getBlockPos());
+                    RayTraceContext rayTraceContext = new RayTraceContext(origin, direction, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, entity);
+                    BlockRayTraceResult mop = entity.world.rayTraceBlocks(rayTraceContext);
+                    if(mop != null && mop.getType() == RayTraceResult.Type.BLOCK) {
+                        blockState = entity.world.getBlockState(mop.getPos());
                     }
                 }
                 return ValueObjectTypeBlock.ValueBlock.of(blockState);
@@ -2008,42 +2006,29 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 Entity entityOut = null;
-                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                    EntityLivingBase entity = (EntityLivingBase) a.getRawValue().get();
-                    double reachDistance = 5;
-                    double eyeHeight = entity.getEyeHeight();
-                    if(entity instanceof EntityPlayerMP) {
-                        reachDistance = ((EntityPlayerMP) entity).interactionManager.getBlockReachDistance();
-                    }
-                    Vec3d lookVec = entity.getLookVec();
-                    Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
+                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
+                    LivingEntity entity = (LivingEntity) a.getRawValue().get();
+                    IAttributeInstance reachDistanceAttribute = entity.getAttribute(PlayerEntity.REACH_DISTANCE);
+                    double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
+
+                    // Copied and modified from GameRenderer#getMouseOver
+                    Vec3d origin = entity.getEyePosition(1.0F);
+                    double reachDistanceSquared = reachDistance * reachDistance;
+
+                    Vec3d lookVec = entity.getLook(1.0F);
                     Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
-
-                    float size = entity.getCollisionBorderSize();
-                    List<Entity> list = entity.world.getEntitiesWithinAABBExcludingEntity(entity,
-                            entity.getEntityBoundingBox().expand(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance)
-                                    .grow((double) size, (double) size, (double) size));
-                    for (Entity e : list) {
-                        if (e.canBeCollidedWith()) {
-                            float f10 = e.getCollisionBorderSize();
-                            AxisAlignedBB axisalignedbb = e.getEntityBoundingBox().expand((double) f10, (double) f10, (double) f10);
-                            RayTraceResult mop = axisalignedbb.calculateIntercept(origin, direction);
-
-                            if (axisalignedbb.contains(origin)) {
-                                entityOut = e;
-                            } else if (mop != null) {
-                                double distance = origin.distanceTo(mop.hitVec);
-                                if (distance < reachDistance || reachDistance == 0.0D) {
-                                    if (e == entity.getRidingEntity() && !entity.canRiderInteract()) {
-                                        if (reachDistance == 0.0D) {
-                                            entityOut = e;
-                                        }
-                                    } else {
-                                        entityOut = e;
-                                        reachDistance = distance;
-                                    }
-                                }
-                            }
+                    AxisAlignedBB boundingBox = entity.getBoundingBox()
+                            .expand(lookVec.scale(reachDistance))
+                            .grow(1.0D, 1.0D, 1.0D);
+                    EntityRayTraceResult entityraytraceresult = ProjectileHelper.func_221273_a(entity, origin, direction,
+                            boundingBox, e -> !e.isSpectator() && e.canBeCollidedWith(), reachDistanceSquared);
+                    if (entityraytraceresult != null) {
+                        Entity entity1 = entityraytraceresult.getEntity();
+                        Vec3d vec3d3 = entityraytraceresult.getHitVec();
+                        double distanceSquared = origin.squareDistanceTo(vec3d3);
+                        if (distanceSquared < reachDistanceSquared
+                                && (entity1 instanceof LivingEntity || entity1 instanceof ItemFrameEntity)) {
+                            entityOut = entity1;
                         }
                     }
                 }
@@ -2057,9 +2042,9 @@ public final class Operators {
             .symbol("has_gui_open").operatorName("hasguiopen")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
-                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityPlayer) {
-                    EntityPlayer entity = (EntityPlayer) a.getRawValue().get();
-                    return ValueTypeBoolean.ValueBoolean.of(entity.openContainer != entity.inventoryContainer);
+                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof PlayerEntity) {
+                    PlayerEntity entity = (PlayerEntity) a.getRawValue().get();
+                    return ValueTypeBoolean.ValueBoolean.of(entity.openContainer != entity.container);
                 }
                 return ValueTypeBoolean.ValueBoolean.of(false);
             }).build());
@@ -2072,8 +2057,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 ItemStack itemStack = ItemStack.EMPTY;
-                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                    itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItemMainhand();
+                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
+                    itemStack = ((LivingEntity) a.getRawValue().get()).getHeldItemMainhand();
                 }
                 return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
             }).build());
@@ -2086,8 +2071,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 ItemStack itemStack = ItemStack.EMPTY;
-                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                    itemStack = ((EntityLivingBase) a.getRawValue().get()).getHeldItemOffhand();
+                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
+                    itemStack = ((LivingEntity) a.getRawValue().get()).getHeldItemOffhand();
                 }
                 return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
             }).build());
@@ -2115,8 +2100,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 ItemStack itemStack = ItemStack.EMPTY;
-                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityItemFrame) {
-                    itemStack = ((EntityItemFrame) a.getRawValue().get()).getDisplayedItem();
+                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof ItemFrameEntity) {
+                    itemStack = ((ItemFrameEntity) a.getRawValue().get()).getDisplayedItem();
                 }
                 return ValueObjectTypeItemStack.ValueItemStack.of(itemStack);
             }).build());
@@ -2129,8 +2114,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 Integer rotation = 0;
-                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityItemFrame) {
-                    rotation = ((EntityItemFrame) a.getRawValue().get()).getRotation();
+                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof ItemFrameEntity) {
+                    rotation = ((ItemFrameEntity) a.getRawValue().get()).getRotation();
                 }
                 return ValueTypeInteger.ValueInteger.of(rotation);
             }).build());
@@ -2142,8 +2127,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 String hurtSound = "";
-                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                    String sound = ObfuscationHelpers.getSoundEventName(ObfuscationHelpers.getEntityLivingBaseHurtSound((EntityLivingBase) a.getRawValue().get(), DamageSource.GENERIC)).toString();
+                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
+                    String sound = ((LivingEntity) a.getRawValue().get()).getHurtSound(DamageSource.GENERIC).name.toString();
                     if (sound != null) {
                         hurtSound = sound;
                     }
@@ -2158,8 +2143,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 String hurtSound = "";
-                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                    String sound = ObfuscationHelpers.getSoundEventName(ObfuscationHelpers.getEntityLivingBaseDeathSound((EntityLivingBase) a.getRawValue().get())).toString();
+                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
+                    String sound = ((LivingEntity) a.getRawValue().get()).getDeathSound().name.toString();
                     if (sound != null) {
                         hurtSound = sound;
                     }
@@ -2174,8 +2159,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 int age = 0;
-                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                    age = ((EntityLivingBase) a.getRawValue().get()).getIdleTime();
+                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
+                    age = ((LivingEntity) a.getRawValue().get()).getIdleTime();
                 }
                 return ValueTypeInteger.ValueInteger.of(age);
             }).build());
@@ -2188,8 +2173,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 boolean child = false;
-                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityLivingBase) {
-                    child = ((EntityLivingBase) a.getRawValue().get()).isChild();
+                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
+                    child = ((LivingEntity) a.getRawValue().get()).isChild();
                 }
                 return ValueTypeBoolean.ValueBoolean.of(child);
             }).build());
@@ -2202,8 +2187,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 boolean canBreed = false;
-                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityAgeable) {
-                    canBreed = ((EntityAgeable) a.getRawValue().get()).getGrowingAge() == 0;
+                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof AgeableEntity) {
+                    canBreed = ((AgeableEntity) a.getRawValue().get()).getGrowingAge() == 0;
                 }
                 return ValueTypeBoolean.ValueBoolean.of(canBreed);
             }).build());
@@ -2216,8 +2201,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 boolean inLove = false;
-                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof EntityAnimal) {
-                    inLove = ((EntityAnimal) a.getRawValue().get()).isInLove();
+                if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof AnimalEntity) {
+                    inLove = ((AnimalEntity) a.getRawValue().get()).isInLove();
                 }
                 return ValueTypeBoolean.ValueBoolean.of(inLove);
             }).build());
@@ -2234,8 +2219,8 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0);
                 ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1);
                 boolean canBreedWith = false;
-                if (a.getRawValue().isPresent() && !b.getRawValue().isEmpty() && a.getRawValue().get() instanceof EntityAnimal) {
-                    canBreedWith = ((EntityAnimal) a.getRawValue().get()).isBreedingItem(b.getRawValue());
+                if (a.getRawValue().isPresent() && !b.getRawValue().isEmpty() && a.getRawValue().get() instanceof AnimalEntity) {
+                    canBreedWith = ((AnimalEntity) a.getRawValue().get()).isBreedingItem(b.getRawValue());
                 }
                 return ValueTypeBoolean.ValueBoolean.of(canBreedWith);
             }).build());
@@ -2261,7 +2246,7 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity entity = input.getValue(0);
                 try {
                     if (entity.getRawValue().isPresent()) {
-                        return ValueTypeNbt.ValueNbt.of(entity.getRawValue().get().writeToNBT(new NBTTagCompound()));
+                        return ValueTypeNbt.ValueNbt.of(entity.getRawValue().get().serializeNBT());
                     }
                 } catch (Exception e) {
                     // Catch possible errors during NBT writing
@@ -2279,14 +2264,7 @@ public final class Operators {
                 String entityType = "";
                 if (entity.getRawValue().isPresent()) {
                     Entity e = entity.getRawValue().get();
-                    entityType = EntityList.getEntityString(e);
-                    if (entityType == null) {
-                        if (e instanceof EntityPlayer) {
-                            entityType = "Player";
-                        } else {
-                            entityType = e.getClass().getCanonicalName();
-                        }
-                    }
+                    entityType = e.getType().getRegistryName().toString();
                 }
                 return ValueTypeString.ValueString.of(entityType);
             }).build());
@@ -2333,9 +2311,9 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    if (entity.hasCapability(CapabilityEnergy.ENERGY, null)) {
-                        return ValueTypeInteger.ValueInteger.of(entity.getCapability(CapabilityEnergy.ENERGY, null).getEnergyStored());
-                    }
+                    return ValueTypeInteger.ValueInteger.of(entity.getCapability(CapabilityEnergy.ENERGY, null)
+                            .map(IEnergyStorage::getEnergyStored)
+                            .orElse(0));
                 }
                 return ValueTypeInteger.ValueInteger.of(0);
             }).build());
@@ -2350,9 +2328,9 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    if (entity.hasCapability(CapabilityEnergy.ENERGY, null)) {
-                        return ValueTypeInteger.ValueInteger.of(entity.getCapability(CapabilityEnergy.ENERGY, null).getMaxEnergyStored());
-                    }
+                    return ValueTypeInteger.ValueInteger.of(entity.getCapability(CapabilityEnergy.ENERGY, null)
+                            .map(IEnergyStorage::getMaxEnergyStored)
+                            .orElse(0));
                 }
                 return ValueTypeInteger.ValueInteger.of(0);
             }).build());
@@ -2367,7 +2345,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("amount")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
-                fluidStack -> fluidStack != null ? fluidStack.amount : 0
+                    FluidStack::getAmount
             )).build());
 
     /**
@@ -2377,8 +2355,8 @@ public final class Operators {
             .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0);
-                Optional<FluidStack> a = valueFluidStack.getRawValue();
-                return ValueObjectTypeBlock.ValueBlock.of(a.isPresent() ? a.get().getFluid().getBlock().getDefaultState() : null);
+                FluidStack a = valueFluidStack.getRawValue();
+                return ValueObjectTypeBlock.ValueBlock.of(!a.isEmpty() ? a.getFluid().getAttributes().getStateForPlacement(null, null, a).getBlockState() : null);
             }).build());
 
     /**
@@ -2387,7 +2365,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("luminosity")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
-                fluidStack -> fluidStack != null ? fluidStack.getFluid().getLuminosity(fluidStack) : 0
+                fluidStack -> fluidStack.getFluid().getAttributes().getLuminosity(fluidStack)
             )).build());
 
     /**
@@ -2396,7 +2374,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("density")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
-                fluidStack -> fluidStack != null ? fluidStack.getFluid().getDensity(fluidStack) : 0
+                fluidStack -> fluidStack.getFluid().getAttributes().getDensity(fluidStack)
             )).build());
 
     /**
@@ -2405,7 +2383,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("viscosity")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
-                fluidStack -> fluidStack != null ? fluidStack.getFluid().getViscosity(fluidStack) : 0
+                fluidStack -> fluidStack.getFluid().getAttributes().getViscosity(fluidStack)
             )).build());
 
     /**
@@ -2414,7 +2392,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_gaseous").operatorName("isgaseous")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_BOOLEAN.build(
-                fluidStack -> fluidStack != null && fluidStack.getFluid().isGaseous(fluidStack)
+                fluidStack -> fluidStack.getFluid().getAttributes().isGaseous(fluidStack)
             )).build());
 
     /**
@@ -2424,8 +2402,8 @@ public final class Operators {
             .output(ValueTypes.STRING).symbolOperator("rarity")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0);
-                Optional<FluidStack> a = valueFluidStack.getRawValue();
-                return ValueTypeString.ValueString.of(a.isPresent() ? a.get().getFluid().getRarity(a.get()).rarityName : "");
+                FluidStack a = valueFluidStack.getRawValue();
+                return ValueTypeString.ValueString.of(a.getFluid().getAttributes().getRarity(a).name());
             }).build());
 
     /**
@@ -2436,39 +2414,20 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack0 = variables.getValue(0);
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack1 = variables.getValue(1);
-                Optional<FluidStack> a = valueFluidStack0.getRawValue();
-                Optional<FluidStack> b = valueFluidStack1.getRawValue();
-                boolean equal = false;
-                if(a.isPresent() && b.isPresent()) {
-                    equal = a.get().isFluidEqual(b.get());
-                } else if(!a.isPresent() && !b.isPresent()) {
-                    equal = true;
-                }
-                return ValueTypeBoolean.ValueBoolean.of(equal);
+                return ValueTypeBoolean.ValueBoolean.of(valueFluidStack0.getRawValue().isFluidEqual(valueFluidStack1.getRawValue()));
             }).build());
 
     /**
      * The name of the mod owning this fluid
      */
     public static final IOperator OBJECT_FLUIDSTACK_MODNAME = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
-            .function(variables -> {
-                ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0);
-                String modName = "";
-                if (a.getRawValue().isPresent()) {
-                    Fluid fluid = a.getRawValue().get().getFluid();
-                    String modDomain = null;
-                    if (fluid.getStill() != null) {
-                        modDomain = fluid.getStill().getNamespace();
-                    } else if (fluid.getFlowing() != null) {
-                        modDomain = fluid.getFlowing().getNamespace();
-                    } else if (fluid.getBlock() != null) {
-                        modDomain = Block.REGISTRY.getNameForObject(fluid.getBlock()).getNamespace();
-                    }
-                    String modId = org.cyclops.cyclopscore.helper.Helpers.getModId(modDomain);
-                    modName = Loader.instance().getIndexedModList().get(modId).getName();
-                }
-                return ValueTypeString.ValueString.of(modName);
-            }).build());
+            .function(new IterativeFunction(Lists.newArrayList(
+                    (OperatorBase.SafeVariablesGetter variables) -> {
+                        ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0);
+                        return a.getRawValue().getFluid().getRegistryName();
+                    },
+                    OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
+            ))).build());
 
     /**
      * The tag of the given fluidstack.
@@ -2477,10 +2436,7 @@ public final class Operators {
             .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
             .function(input -> {
                 ValueObjectTypeFluidStack.ValueFluidStack fluidStack = input.getValue(0);
-                if (fluidStack.getRawValue().isPresent()) {
-                    return ValueTypeNbt.ValueNbt.of(fluidStack.getRawValue().get().tag);
-                }
-                return ValueTypes.NBT.getDefault();
+                return ValueTypeNbt.ValueNbt.of(fluidStack.getRawValue().getTag());
             }).build());
 
     /**
@@ -2742,7 +2698,7 @@ public final class Operators {
     public static final IOperator NBT_SIZE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).operatorName("size").symbol("NBT.size")
             .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(
-                NBTTagCompound::getSize
+                CompoundNBT::size
             )).build());
 
     /**
@@ -2761,7 +2717,7 @@ public final class Operators {
     public static final IOperator NBT_HASKEY = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.BOOLEAN).operatorName("haskey").symbol("NBT.has_key")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(
-                Optional::isPresent
+                    Optional::isPresent
             )).build());
 
     /**
@@ -2772,7 +2728,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(tag -> {
                 if (tag.isPresent()) {
                     try {
-                        return NBTBase.NBT_TYPES[tag.get().getId()];
+                        return INBT.NBT_TYPES[tag.get().getId()];
                     } catch (IndexOutOfBoundsException e) {
 
                     }
@@ -2786,7 +2742,7 @@ public final class Operators {
     public static final IOperator NBT_VALUE_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.BOOLEAN).operatorName("valueBoolean").symbol("NBT.boolean")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(
-                tag -> tag.orNull() instanceof NBTPrimitive && ((NBTPrimitive) tag.orNull()).getByte() != 0
+                    o -> o.map(tag -> tag instanceof NumberNBT && ((NumberNBT) tag).getByte() != 0).orElse(false)
             )).build());
 
     /**
@@ -2795,7 +2751,7 @@ public final class Operators {
     public static final IOperator NBT_VALUE_INTEGER = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.INTEGER).operatorName("valueInteger").symbol("NBT.integer")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_INT.build(
-                tag -> tag.orNull() instanceof NBTPrimitive ? ((NBTPrimitive) tag.orNull()).getInt() : 0
+                    o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getInt() : 0).orElse(0)
             )).build());
 
     /**
@@ -2804,7 +2760,7 @@ public final class Operators {
     public static final IOperator NBT_VALUE_LONG = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.LONG).operatorName("valueLong").symbol("NBT.long")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_LONG.build(
-                tag -> tag.orNull() instanceof NBTPrimitive ? ((NBTPrimitive) tag.orNull()).getLong() : 0L
+                    o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getLong() : 0).orElse(0L)
             )).build());
 
     /**
@@ -2813,7 +2769,7 @@ public final class Operators {
     public static final IOperator NBT_VALUE_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.DOUBLE).operatorName("valueDouble").symbol("NBT.double")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_DOUBLE.build(
-                tag -> tag.orNull() instanceof NBTPrimitive ? ((NBTPrimitive) tag.orNull()).getDouble() : 0D
+                    o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getDouble() : 0).orElse(0D)
             )).build());
 
     /**
@@ -2822,7 +2778,7 @@ public final class Operators {
     public static final IOperator NBT_VALUE_STRING = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.STRING).operatorName("valueString").symbol("NBT.string")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(
-                tag -> tag.orNull() instanceof NBTTagString ? ((NBTTagString) tag.orNull()).getString() : ""
+                    o -> o.map(tag -> tag instanceof StringNBT ? tag.getString() : "").orElse("")
             )).build());
 
     /**
@@ -2831,7 +2787,7 @@ public final class Operators {
     public static final IOperator NBT_VALUE_TAG = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.NBT).operatorName("valueTag").symbol("NBT.tag")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_NBT.build(
-                tag -> tag.orNull() instanceof NBTTagCompound ? (NBTTagCompound) tag.orNull() : new NBTTagCompound()
+                    o -> o.map(tag -> tag instanceof CompoundNBT ? (CompoundNBT) tag : new CompoundNBT()).orElseGet(CompoundNBT::new)
             )).build());
 
     /**
@@ -2874,13 +2830,13 @@ public final class Operators {
             .output(ValueTypes.NBT).operatorName("without").symbol("NBT.without")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt = variables.getValue(0);
-                NBTTagCompound tag = valueNbt.getRawValue();
+                CompoundNBT tag = valueNbt.getRawValue();
                 ValueTypeString.ValueString valueString = variables.getValue(1);
                 String key = valueString.getRawValue();
-                if (tag.hasKey(key)) {
+                if (tag.contains(key)) {
                     // Copy the tag to ensure immutability
                     tag = tag.copy();
-                    tag.removeTag(key);
+                    tag.remove(key);
                 }
                 return ValueTypeNbt.ValueNbt.of(tag);
             }).build());
@@ -2896,8 +2852,8 @@ public final class Operators {
             .operatorName("withBoolean").symbol("NBT.with_boolean")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeBoolean.ValueBoolean value = input.getRight().getValue(0);
-                NBTTagCompound tag = input.getLeft();
-                tag.setBoolean(input.getMiddle(), value.getRawValue());
+                CompoundNBT tag = input.getLeft();
+                tag.putBoolean(input.getMiddle(), value.getRawValue());
                 return tag;
             })).build());
 
@@ -2909,8 +2865,8 @@ public final class Operators {
             .operatorName("withShort").symbol("NBT.with_short")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeInteger.ValueInteger value = input.getRight().getValue(0);
-                NBTTagCompound tag = input.getLeft();
-                tag.setShort(input.getMiddle(), (short) value.getRawValue());
+                CompoundNBT tag = input.getLeft();
+                tag.putShort(input.getMiddle(), (short) value.getRawValue());
                 return tag;
             })).build());
 
@@ -2922,8 +2878,8 @@ public final class Operators {
             .operatorName("withInteger").symbol("NBT.with_integer")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeInteger.ValueInteger value = input.getRight().getValue(0);
-                NBTTagCompound tag = input.getLeft();
-                tag.setInteger(input.getMiddle(), value.getRawValue());
+                CompoundNBT tag = input.getLeft();
+                tag.putInt(input.getMiddle(), value.getRawValue());
                 return tag;
             })).build());
 
@@ -2935,8 +2891,8 @@ public final class Operators {
             .operatorName("withLong").symbol("NBT.with_long")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeLong.ValueLong value = input.getRight().getValue(0);
-                NBTTagCompound tag = input.getLeft();
-                tag.setLong(input.getMiddle(), value.getRawValue());
+                CompoundNBT tag = input.getLeft();
+                tag.putLong(input.getMiddle(), value.getRawValue());
                 return tag;
             })).build());
 
@@ -2948,8 +2904,8 @@ public final class Operators {
             .operatorName("withDouble").symbol("NBT.with_double")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeDouble.ValueDouble value = input.getRight().getValue(0);
-                NBTTagCompound tag = input.getLeft();
-                tag.setDouble(input.getMiddle(), value.getRawValue());
+                CompoundNBT tag = input.getLeft();
+                tag.putDouble(input.getMiddle(), value.getRawValue());
                 return tag;
             })).build());
 
@@ -2961,8 +2917,8 @@ public final class Operators {
             .operatorName("withFloat").symbol("NBT.with_float")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeDouble.ValueDouble value = input.getRight().getValue(0);
-                NBTTagCompound tag = input.getLeft();
-                tag.setFloat(input.getMiddle(), (float) value.getRawValue());
+                CompoundNBT tag = input.getLeft();
+                tag.putFloat(input.getMiddle(), (float) value.getRawValue());
                 return tag;
             })).build());
 
@@ -2974,8 +2930,8 @@ public final class Operators {
             .operatorName("withString").symbol("NBT.with_string")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeString.ValueString value = input.getRight().getValue(0);
-                NBTTagCompound tag = input.getLeft();
-                tag.setString(input.getMiddle(), value.getRawValue());
+                CompoundNBT tag = input.getLeft();
+                tag.putString(input.getMiddle(), value.getRawValue());
                 return tag;
             })).build());
 
@@ -2987,8 +2943,8 @@ public final class Operators {
             .operatorName("withTag").symbol("NBT.with_tag")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeNbt.ValueNbt value = input.getRight().getValue(0);
-                NBTTagCompound tag = input.getLeft();
-                tag.setTag(input.getMiddle(), value.getRawValue());
+                CompoundNBT tag = input.getLeft();
+                tag.put(input.getMiddle(), value.getRawValue());
                 return tag;
             })).build());
 
@@ -2999,23 +2955,23 @@ public final class Operators {
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
             .operatorName("withListTag").symbol("NBT.with_tag_list")
-            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
                 @Override
-                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                     ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
-                    NBTTagCompound tag = input.getLeft();
-                    NBTTagList list = new NBTTagList();
+                    CompoundNBT tag = input.getLeft();
+                    ListNBT list = new ListNBT();
                     for (IValue valueNbt : value.getRawValue()) {
                         if (value.getRawValue().getValueType() != ValueTypes.NBT) {
-                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                            ITextComponent error = new TranslationTextComponent(
                                     L10NValues.OPERATOR_ERROR_WRONGTYPE,
                                     NBT_WITH_LIST_TAG.getLocalizedNameFull(),
                                     value.getType(), 1, ValueTypes.NBT);
-                            throw new EvaluationException(error.localize());
+                            throw new EvaluationException(error);
                         }
-                        list.appendTag(((ValueTypeNbt.ValueNbt) valueNbt).getRawValue());
+                        list.add(((ValueTypeNbt.ValueNbt) valueNbt).getRawValue());
                     }
-                    tag.setTag(input.getMiddle(), list);
+                    tag.put(input.getMiddle(), list);
                     return tag;
                 }
             })).build());
@@ -3027,23 +2983,23 @@ public final class Operators {
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
             .operatorName("withListByte").symbol("NBT.with_byte_list")
-            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
                 @Override
-                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                     ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
-                    NBTTagCompound tag = input.getLeft();
-                    NBTTagList list = new NBTTagList();
+                    CompoundNBT tag = input.getLeft();
+                    ListNBT list = new ListNBT();
                     for (IValue valueNbt : value.getRawValue()) {
                         if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
-                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                            ITextComponent error = new TranslationTextComponent(
                                     L10NValues.OPERATOR_ERROR_WRONGTYPE,
                                     NBT_WITH_LIST_BYTE.getLocalizedNameFull(),
                                     value.getType(), 1, ValueTypes.INTEGER);
-                            throw new EvaluationException(error.localize());
+                            throw new EvaluationException(error);
                         }
-                        list.appendTag(new NBTTagByte((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
+                        list.add(new ByteNBT((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
                     }
-                    tag.setTag(input.getMiddle(), list);
+                    tag.put(input.getMiddle(), list);
                     return tag;
                 }
             })).build());
@@ -3055,23 +3011,23 @@ public final class Operators {
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
             .operatorName("withListInt").symbol("NBT.with_int_list")
-            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
                 @Override
-                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                     ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
-                    NBTTagCompound tag = input.getLeft();
-                    NBTTagList list = new NBTTagList();
+                    CompoundNBT tag = input.getLeft();
+                    ListNBT list = new ListNBT();
                     for (IValue valueNbt : value.getRawValue()) {
                         if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
-                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                            ITextComponent error = new TranslationTextComponent(
                                     L10NValues.OPERATOR_ERROR_WRONGTYPE,
                                     NBT_WITH_LIST_INT.getLocalizedNameFull(),
                                     value.getType(), 1, ValueTypes.INTEGER);
-                            throw new EvaluationException(error.localize());
+                            throw new EvaluationException(error);
                         }
-                        list.appendTag(new NBTTagInt(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
+                        list.add(new IntNBT(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
                     }
-                    tag.setTag(input.getMiddle(), list);
+                    tag.put(input.getMiddle(), list);
                     return tag;
                 }
             })).build());
@@ -3083,23 +3039,23 @@ public final class Operators {
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
             .operatorName("withListLong").symbol("NBT.with_list_long")
-            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter>, NBTTagCompound>() {
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
                 @Override
-                public NBTTagCompound getOutput(Triple<NBTTagCompound, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                     ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
-                    NBTTagCompound tag = input.getLeft();
-                    NBTTagList list = new NBTTagList();
+                    CompoundNBT tag = input.getLeft();
+                    ListNBT list = new ListNBT();
                     for (IValue valueNbt : value.getRawValue()) {
                         if (value.getRawValue().getValueType() != ValueTypes.LONG) {
-                            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                            ITextComponent error = new TranslationTextComponent(
                                     L10NValues.OPERATOR_ERROR_WRONGTYPE,
                                     NBT_WITH_LIST_LONG.getLocalizedNameFull(),
                                     value.getType(), 1, ValueTypes.LONG);
-                            throw new EvaluationException(error.localize());
+                            throw new EvaluationException(error);
                         }
-                        list.appendTag(new NBTTagLong(((ValueTypeLong.ValueLong) valueNbt).getRawValue()));
+                        list.add(new LongNBT(((ValueTypeLong.ValueLong) valueNbt).getRawValue()));
                     }
-                    tag.setTag(input.getMiddle(), list);
+                    tag.put(input.getMiddle(), list);
                     return tag;
                 }
             })).build());
@@ -3112,8 +3068,8 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1);
-                NBTTagCompound a = valueNbt0.getRawValue();
-                NBTTagCompound b = valueNbt1.getRawValue();
+                CompoundNBT a = valueNbt0.getRawValue();
+                CompoundNBT b = valueNbt1.getRawValue();
                 return ValueTypeBoolean.ValueBoolean.of(NbtHelpers.nbtMatchesSubset(a, b, true));
             }).build());
 
@@ -3125,8 +3081,8 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1);
-                NBTTagCompound a = valueNbt0.getRawValue();
-                NBTTagCompound b = valueNbt1.getRawValue();
+                CompoundNBT a = valueNbt0.getRawValue();
+                CompoundNBT b = valueNbt1.getRawValue();
                 return ValueTypeNbt.ValueNbt.of(NbtHelpers.union(a, b));
             }).build());
 
@@ -3138,8 +3094,8 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1);
-                NBTTagCompound a = valueNbt0.getRawValue();
-                NBTTagCompound b = valueNbt1.getRawValue();
+                CompoundNBT a = valueNbt0.getRawValue();
+                CompoundNBT b = valueNbt1.getRawValue();
                 return ValueTypeNbt.ValueNbt.of(NbtHelpers.intersection(a, b));
             }).build());
 
@@ -3151,8 +3107,8 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1);
-                NBTTagCompound a = valueNbt0.getRawValue();
-                NBTTagCompound b = valueNbt1.getRawValue();
+                CompoundNBT a = valueNbt0.getRawValue();
+                CompoundNBT b = valueNbt1.getRawValue();
                 return ValueTypeNbt.ValueNbt.of(NbtHelpers.minus(a, b));
             }).build());
     /**
@@ -3214,7 +3170,7 @@ public final class Operators {
                 }
                 IMixedIngredients baseIngredients = value.getRawValue().get();
                 return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsSingle<>(baseIngredients,
-                        index.getRawValue(), IngredientComponent.FLUIDSTACK, fluidStack.getRawValue().orNull()));
+                        index.getRawValue(), IngredientComponent.FLUIDSTACK, fluidStack.getRawValue()));
             }).build());
 
     /**
@@ -3462,8 +3418,8 @@ public final class Operators {
     public static final IOperator PARSE_NBT = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.NBT, v -> {
       ValueTypeString.ValueString value = v.getValue(0);
       try {
-        return new ValueTypeNbt().deserialize(value.getRawValue());
-      } catch (IllegalArgumentException e) {
+        return new ValueTypeNbt().deserialize(JsonToNBT.getTagFromJson(value.getRawValue()));
+      } catch (CommandSyntaxException e) {
         throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'NBT'");
       }
     }));

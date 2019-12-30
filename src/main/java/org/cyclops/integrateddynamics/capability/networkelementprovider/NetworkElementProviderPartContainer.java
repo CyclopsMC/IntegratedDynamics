@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.capability.networkelementprovider;
 
 import com.google.common.collect.Sets;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -29,7 +29,7 @@ public class NetworkElementProviderPartContainer implements INetworkElementProvi
     @Override
     public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
         Set<INetworkElement> sidedElements = Sets.newHashSet();
-        for(Map.Entry<EnumFacing, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
+        for(Map.Entry<Direction, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
             sidedElements.add(entry.getValue().createNetworkElement(partContainer, DimPos.of(world, blockPos), entry.getKey()));
         }
         return sidedElements;

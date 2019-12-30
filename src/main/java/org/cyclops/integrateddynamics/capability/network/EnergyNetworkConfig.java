@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.capability.network;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import org.cyclops.commoncapabilities.CommonCapabilities;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.config.extendedconfig.CapabilityConfig;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityStorage;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
@@ -15,32 +16,17 @@ import org.cyclops.integrateddynamics.core.network.EnergyNetwork;
  */
 public class EnergyNetworkConfig extends CapabilityConfig<IEnergyNetwork> {
 
-    /**
-     * The unique instance.
-     */
-    public static EnergyNetworkConfig _instance;
-
     @CapabilityInject(IEnergyNetwork.class)
     public static Capability<IEnergyNetwork> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public EnergyNetworkConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "energy_network",
-                "A capability for networks that can hold energy.",
                 IEnergyNetwork.class,
                 new DefaultCapabilityStorage<IEnergyNetwork>(),
-                EnergyNetwork.class
+                () -> new EnergyNetwork(IngredientComponent.ENERGY)
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

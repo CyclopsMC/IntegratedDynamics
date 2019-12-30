@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -12,12 +12,12 @@ import java.util.Optional;
 /**
  * An abstraction for a list of NBT values of a certain type.
  */
-public abstract class ValueTypeListProxyNbtValueListGeneric<N extends NBTBase, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyBase<T, V> {
+public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyBase<T, V> {
 
     private final String key;
-    private final NBTTagCompound tag;
+    private final CompoundNBT tag;
 
-    public ValueTypeListProxyNbtValueListGeneric(String name, T valueType, String key, NBTTagCompound tag) {
+    public ValueTypeListProxyNbtValueListGeneric(String name, T valueType, String key, CompoundNBT tag) {
         super(name, valueType);
         this.key = key;
         this.tag = tag;
@@ -27,14 +27,14 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends NBTBase, T
         return key;
     }
 
-    public NBTTagCompound getTag() {
+    public CompoundNBT getTag() {
         return tag;
     }
 
     @Override
     public int getLength() throws EvaluationException {
         try {
-            return getLength(Optional.ofNullable((N) tag.getTag(key)).orElse(getDefault()));
+            return getLength(Optional.ofNullable((N) tag.get(key)).orElse(getDefault()));
         } catch (ClassCastException e) {
             return 0;
         }
@@ -44,7 +44,7 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends NBTBase, T
     public V get(int index) throws EvaluationException {
         try {
             if (index < getLength()) {
-                return get(Optional.ofNullable((N) tag.getTag(key)).orElse(getDefault()), index);
+                return get(Optional.ofNullable((N) tag.get(key)).orElse(getDefault()), index);
             }
         } catch (ClassCastException e) {}
         return null;
@@ -54,7 +54,7 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends NBTBase, T
     protected abstract V get(N tag, int index);
     protected abstract N getDefault();
 
-    public static abstract class Factory<L extends ValueTypeListProxyNbtValueListGeneric<N, T, V>, N extends NBTBase, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyNBTFactorySimple<T, V, L> {
+    public static abstract class Factory<L extends ValueTypeListProxyNbtValueListGeneric<N, T, V>, N extends INBT, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyNBTFactorySimple<T, V, L> {
 
         @Override
         public String getName() {
@@ -62,16 +62,16 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends NBTBase, T
         }
 
         @Override
-        protected void serializeNbt(L value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.setString("key", value.getKey());
-            tag.setTag("tag", value.getTag());
+        protected void serializeNbt(L value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            tag.putString("key", value.getKey());
+            tag.put("tag", value.getTag());
         }
 
         @Override
-        protected L deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            return create(tag.getString("key"), tag.getCompoundTag("tag"));
+        protected L deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            return create(tag.getString("key"), tag.getCompound("tag"));
         }
 
-        protected abstract L create(String key, NBTTagCompound tag);
+        protected abstract L create(String key, CompoundNBT tag);
     }
 }

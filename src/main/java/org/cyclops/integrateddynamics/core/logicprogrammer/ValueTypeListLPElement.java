@@ -4,15 +4,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonArrow;
-import org.cyclops.cyclopscore.client.gui.component.button.GuiButtonText;
-import org.cyclops.cyclopscore.client.gui.component.input.GuiArrowedListField;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.client.gui.component.button.ButtonArrow;
+import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.IInputListener;
+import org.cyclops.cyclopscore.client.gui.component.input.WidgetArrowedListField;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -24,7 +27,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -32,7 +35,6 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerSetElementInventory;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeListValueChangedPacket;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +49,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     private Map<Integer, RenderPattern> subElementGuis;
     private int length = 0;
     private int activeElement = -1;
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private MasterSubGuiRenderPattern masterGui;
 
     private ValueTypeList.ValueList serverValue = null;
@@ -147,21 +149,21 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validate() {
+    public ITextComponent validate() {
         if(!MinecraftHelpers.isClientSide()) {
-            return serverValue == null ? new L10NHelpers.UnlocalizedString() : null;
+            return serverValue == null ? new StringTextComponent("") : null;
         }
         if(MinecraftHelpers.isClientSide()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeListValueChangedPacket(
                     listValueType == null ? ValueTypes.LIST.getDefault() : ValueTypeList.ValueList.ofList(listValueType, constructValues())));
         }
         if(this.listValueType == null) {
-            return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
+            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
         for(Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : subElements.entrySet()) {
-            L10NHelpers.UnlocalizedString error = entry.getValue().validate();
+            ITextComponent error = entry.getValue().validate();
             if(error != null) {
-                return new L10NHelpers.UnlocalizedString(L10NValues.VALUETYPE_ERROR_INVALIDLISTELEMENT, entry.getKey(), error);
+                return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDLISTELEMENT, entry.getKey(), error);
             }
         }
         return null;
@@ -175,24 +177,24 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return masterGui = new MasterSubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     /**
      * Sub gui that holds the list element value type panel and the panel for browsing through the elements.
      */
-    @SideOnly(Side.CLIENT)
-    protected static class MasterSubGuiRenderPattern extends RenderPattern<ValueTypeListLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase>
+    @OnlyIn(Dist.CLIENT)
+    protected static class MasterSubGuiRenderPattern extends RenderPattern<ValueTypeListLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
             implements IRenderPatternValueTypeTooltip {
 
         private final int baseX;
         private final int baseY;
         private final int maxWidth;
         private final int maxHeight;
-        private final GuiLogicProgrammerBase gui;
+        private final ContainerScreenLogicProgrammerBase gui;
         private final ContainerLogicProgrammerBase container;
 
         protected ListElementSubGui elementSubGui = null;
@@ -201,7 +203,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         private boolean renderTooltip = true;
 
         public MasterSubGuiRenderPattern(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                         GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                         ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             subGuiHolder.addSubGui(new SelectionSubGui(element, baseX, baseY, maxWidth, maxHeight, gui, container));
             this.baseX = baseX;
@@ -219,13 +221,13 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             if(index >= 0) {
                 subGuiHolder.addSubGui(elementSubGui = new ListElementSubGui(element, baseX, baseY + (getHeight() / 4),
                         maxWidth, maxHeight, gui, container));
-                elementSubGui.initGui(lastGuiLeft, lastGuiTop);
+                elementSubGui.init(lastGuiLeft, lastGuiTop);
             }
         }
 
         @Override
-        public void initGui(int guiLeft, int guiTop) {
-            super.initGui(guiLeft, guiTop);
+        public void init(int guiLeft, int guiTop) {
+            super.init(guiLeft, guiTop);
             lastGuiLeft = guiLeft;
             lastGuiTop = guiTop;
         }
@@ -252,14 +254,14 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     /**
      * Selection panel for the list element value type.
      */
-    @SideOnly(Side.CLIENT)
-    protected static class SelectionSubGui extends RenderPattern<ValueTypeListLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> implements IInputListener {
+    @OnlyIn(Dist.CLIENT)
+    protected static class SelectionSubGui extends RenderPattern<ValueTypeListLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> implements IInputListener {
 
-        private GuiArrowedListField<IValueType> valueTypeSelector = null;
-        private GuiButton arrowAdd;
+        private WidgetArrowedListField<IValueType<?>> valueTypeSelector = null;
+        private Button arrowAdd;
 
         public SelectionSubGui(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                               GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                               ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
         }
 
@@ -268,35 +270,36 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             return super.getHeight() / 4;
         }
 
-        protected static List<IValueType> getValueTypes() {
-            List<IValueType> valueTypes = Lists.newArrayList(LogicProgrammerElementTypes.VALUETYPE.getValueTypes());
+        protected static List<IValueType<?>> getValueTypes() {
+            List<IValueType<?>> valueTypes = Lists.newArrayList(LogicProgrammerElementTypes.VALUETYPE.getValueTypes());
             valueTypes.remove(ValueTypes.LIST);
             valueTypes.add(ValueTypes.CATEGORY_ANY);
             return valueTypes;
         }
 
         @Override
-        public void initGui(int guiLeft, int guiTop) {
-            super.initGui(guiLeft, guiTop);
-            valueTypeSelector = new GuiArrowedListField<>(0, Minecraft.getMinecraft().fontRenderer,
-                    getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, true, getValueTypes());
+        public void init(int guiLeft, int guiTop) {
+            super.init(guiLeft, guiTop);
+            valueTypeSelector = new WidgetArrowedListField<IValueType<?>>(Minecraft.getInstance().fontRenderer,
+                    getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true,
+                    L10NHelpers.localize("valuetype.integrateddynamics.value_type"), true, getValueTypes());
             valueTypeSelector.setListener(this);
             if (element.activeElement == -1) {
                 onChanged();
             }
             int x = guiLeft + getX();
             int y = guiTop + getY();
-            buttonList.add(arrowAdd = new GuiButtonText(1, x + getWidth() - 13, y + getHeight() - 13, 12, 12, "+", true));
+            buttonList.add(arrowAdd = new ButtonText(x + getWidth() - 13, y + getHeight() - 13, 12, 12,
+                    L10NHelpers.localize("gui.integrateddynamics.button.add"), "+", b -> {}, true));
         }
 
         @Override
-        public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-            super.mouseClicked(mouseX, mouseY, mouseButton);
-            valueTypeSelector.mouseClicked(mouseX, mouseY, mouseButton);
+        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+            return super.mouseClicked(mouseX, mouseY, mouseButton) || valueTypeSelector.mouseClicked(mouseX, mouseY, mouseButton);
         }
 
         @Override
-        protected void actionPerformed(GuiButton guibutton) {
+        protected void actionPerformed(Button guibutton) {
             super.actionPerformed(guibutton);
             if(guibutton == arrowAdd) {
                 element.setLength(element.length + 1);
@@ -306,7 +309,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         @Override
         public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-            valueTypeSelector.drawTextBox(Minecraft.getMinecraft(), mouseX, mouseY);
+            valueTypeSelector.render(mouseX, mouseY, partialTicks);
         }
 
         @Override
@@ -314,7 +317,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             IValueType newType = valueTypeSelector.getActiveElement();
             element.setListValueType(newType);
             if(arrowAdd != null) {
-                arrowAdd.enabled = newType != ValueTypes.CATEGORY_ANY;
+                arrowAdd.active = newType != ValueTypes.CATEGORY_ANY;
             }
         }
     }
@@ -322,15 +325,15 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     /**
      * Panel for browsing through the list elements and updating them.
      */
-    @SideOnly(Side.CLIENT)
-    protected static class ListElementSubGui extends RenderPattern<ValueTypeListLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+    @OnlyIn(Dist.CLIENT)
+    protected static class ListElementSubGui extends RenderPattern<ValueTypeListLPElement, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> {
 
-        private GuiButtonArrow arrowLeft;
-        private GuiButtonArrow arrowRight;
-        private GuiButton arrowRemove;
+        private ButtonArrow arrowLeft;
+        private ButtonArrow arrowRight;
+        private Button arrowRemove;
 
         public ListElementSubGui(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                               GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                 ContainerScreenLogicProgrammerBase<?> gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             RenderPattern subGui = element.subElementGuis.get(element.activeElement);
             IValueTypeLogicProgrammerElement subElement = element.subElements.get(element.activeElement);
@@ -361,28 +364,19 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void initGui(int guiLeft, int guiTop) {
-            super.initGui(guiLeft, guiTop);
+        public void init(int guiLeft, int guiTop) {
+            super.init(guiLeft, guiTop);
             int x = guiLeft + getX();
             int y = guiTop + getY();
-            buttonList.add(arrowLeft = new GuiButtonArrow(1, x, y, GuiButtonArrow.Direction.WEST));
-            buttonList.add(arrowRight = new GuiButtonArrow(1, x + getWidth() - arrowLeft.width - 1, y, GuiButtonArrow.Direction.EAST));
-            buttonList.add(arrowRemove = new GuiButtonText(2, x + (getWidth() / 2) - (arrowLeft.width / 2), y + getHeight() - 13, 12, 12, "-", true));
-            arrowLeft.enabled = element.activeElement > 0;
-            arrowRight.enabled = element.activeElement < element.length - 1;
-            arrowRemove.enabled = element.length > 0;
-        }
-
-        @Override
-        protected void actionPerformed(GuiButton guibutton) {
-            super.actionPerformed(guibutton);
-            if(guibutton == arrowLeft) {
-                element.setActiveElement(element.activeElement - 1);
-            } else if(guibutton == arrowRight) {
-                element.setActiveElement(element.activeElement + 1);
-            } else if(guibutton == arrowRemove) {
-                element.removeElement(element.activeElement);
-            }
+            buttonList.add(arrowLeft = new ButtonArrow(x, y, L10NHelpers.localize("gui.cyclopscore.left"),
+                    b -> element.setActiveElement(element.activeElement - 1), ButtonArrow.Direction.WEST));
+            buttonList.add(arrowRight = new ButtonArrow(x + getWidth() - arrowLeft.getWidth() - 1, y, L10NHelpers.localize("gui.cyclopscore.right"),
+                    b -> element.setActiveElement(element.activeElement + 1), ButtonArrow.Direction.EAST));
+            buttonList.add(arrowRemove = new ButtonText(x + (getWidth() / 2) - (arrowLeft.getWidth() / 2), y + getHeight() - 13, 12, 12, L10NHelpers.localize("gui.integrateddynamics.button.remove"), "-",
+                    b -> element.removeElement(element.activeElement), true));
+            arrowLeft.active = element.activeElement > 0;
+            arrowRight.active = element.activeElement < element.length - 1;
+            arrowRemove.active = element.length > 0;
         }
 
         @Override

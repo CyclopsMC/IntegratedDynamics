@@ -1,11 +1,15 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
 import net.minecraft.block.SoundType;
-import net.minecraft.init.Blocks;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockStairs;
+import net.minecraft.block.StairsBlock;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Config for the Menril Wood Stairs.
@@ -14,43 +18,20 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class BlockMenrilPlanksStairsConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockMenrilPlanksStairsConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockMenrilPlanksStairsConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "menril_planks_stairs",
-                null,
-                null
+                eConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_MENRIL_PLANKS.getDefaultState(), Block.Properties.create(Material.WOOD, MaterialColor.CYAN)
+                        .hardnessAndResistance(2.0F)
+                        .sound(SoundType.WOOD)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-    }
-
-    @Override
-    protected ConfigurableBlockStairs initSubInstance() {
-        return (ConfigurableBlockStairs) new ConfigurableBlockStairs(this, BlockMenrilPlanksConfig._instance.getBlockInstance().getDefaultState()) {
-            @SuppressWarnings("deprecation")
-            @Override
-            public SoundType getSoundType() {
-                return SoundType.WOOD;
-            }
-        }.setHardness(2.0F);
-    }
-    
-    @Override
-    public String getOreDictionaryId() {
-        return Reference.DICT_STAIRWOOD;
     }
     
     @Override
     public void onRegistered() {
-    	Blocks.FIRE.setFireInfo(getBlockInstance(), 5, 20);
+        ((FireBlock) Blocks.FIRE).setFireInfo(RegistryEntries.BLOCK_MENRIL_PLANKS_STAIRS, 5, 20);
     }
 
 }

@@ -1,6 +1,0 @@
-{
-  "parent": "cyclopscore:item/flat",
-  "textures": {
-    "layer0": "integrateddynamics:blocks/menril_torch"
-  }
-}

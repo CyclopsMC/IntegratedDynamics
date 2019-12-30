@@ -1,12 +1,13 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
@@ -32,7 +33,7 @@ public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
 
     @Override
     public void activate() {
-        getInnerGuiElement().setInputString(new String(getInnerGuiElement().getDefaultInputString()));
+        getInnerGuiElement().setInputString(getInnerGuiElement().getDefaultInputString());
     }
 
     @Override
@@ -41,31 +42,41 @@ public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString validate() {
-        return getValueType().canDeserialize(getInnerGuiElement().getInputString());
+    public ITextComponent validate() {
+        try {
+            ValueHelpers.parseString(getInnerGuiElement().getValueType(), getInnerGuiElement().getInputString());
+        } catch (EvaluationException e) {
+            return e.getErrorMessage();
+        }
+        return null;
     }
 
     @Override
     public IValue getValue() {
-        return ValueHelpers.deserializeRaw(getInnerGuiElement().getValueType(), getInnerGuiElement().getInputString());
+        try {
+            return ValueHelpers.parseString(getInnerGuiElement().getValueType(), getInnerGuiElement().getInputString());
+        } catch (EvaluationException e) {
+            // Should not occur, as validation must've happened before.
+            return getInnerGuiElement().getValueType().getDefault();
+        }
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public boolean isFocused(ISubGuiBox subGui) {
         return ((ValueTypeLPElementRenderPattern) subGui).getSearchField().isFocused();
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
-        ((ValueTypeLPElementRenderPattern) subGui).getSearchField().setFocused(focused);
+        ((ValueTypeLPElementRenderPattern) subGui).getSearchField().focused = focused;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                            GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         return new ValueTypeLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

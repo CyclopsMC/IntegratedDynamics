@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Network element for part entities.
@@ -26,16 +27,13 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
 
     protected abstract Class<T> getTileClass();
 
-    protected T getTile() {
+    protected Optional<T> getTile() {
         return TileHelpers.getSafeTile(getPos(), getTileClass());
     }
 
     @Override
     public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
-        T tile = getTile();
-        if(tile != null) {
-            InventoryHelper.dropInventoryItems(getPos().getWorld(), getPos().getBlockPos(), tile.getInventory());
-        }
+        getTile().ifPresent(tile -> InventoryHelper.dropInventoryItems(getPos().getWorld(true), getPos().getBlockPos(), tile.getInventory()));
     }
 
     @Override
@@ -49,7 +47,7 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
     @Override
     public void afterNetworkReAlive(INetwork network) {
         super.afterNetworkReAlive(network);
-        getTile().afterNetworkReAlive();
+        getTile().ifPresent(T::afterNetworkReAlive);
     }
 
     @Override

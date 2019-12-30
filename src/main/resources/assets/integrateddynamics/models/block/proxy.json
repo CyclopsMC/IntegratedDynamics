@@ -1,12 +1,12 @@
 {
     "parent": "block/cube",
     "textures": {
-        "particle": "integrateddynamics:blocks/proxy_top",
-        "down": "integrateddynamics:blocks/proxy_top",
-        "up": "integrateddynamics:blocks/proxy_top",
-        "north": "integrateddynamics:blocks/proxy_front",
-        "east": "integrateddynamics:blocks/proxy_side",
-        "south": "integrateddynamics:blocks/proxy_back",
-        "west": "integrateddynamics:blocks/proxy_side"
+        "particle": "integrateddynamics:block/proxy_top",
+        "down": "integrateddynamics:block/proxy_top",
+        "up": "integrateddynamics:block/proxy_top",
+        "north": "integrateddynamics:block/proxy_front",
+        "east": "integrateddynamics:block/proxy_side",
+        "south": "integrateddynamics:block/proxy_back",
+        "west": "integrateddynamics:block/proxy_side"
     }
 }

@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
-import net.minecraft.client.gui.Gui;
-import net.minecraft.inventory.Container;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Container;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -13,7 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C extends Container> extends ILogicProgrammerElement<S, G, C> {
+public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends ILogicProgrammerElement<S, G, C> {
 
     /**
      * @return The value type of this element.

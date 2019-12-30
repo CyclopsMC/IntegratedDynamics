@@ -3,13 +3,14 @@ package org.cyclops.integrateddynamics.capability.partcontainer;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
@@ -61,7 +62,7 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public Map<EnumFacing, IPartType<?, ?>> getParts() {
+    public Map<Direction, IPartType<?, ?>> getParts() {
         return Maps.transformValues(partData, new Function<PartHelpers.PartStateHolder<?, ?>, IPartType<?, ?>>() {
             @Nullable
             @Override
@@ -77,12 +78,12 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>> boolean canAddPart(EnumFacing side, IPartType<P, S> part) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>> boolean canAddPart(Direction side, IPartType<P, S> part) {
         return !hasPart(side);
     }
 
     @Override
-    public <P extends IPartType<P, S>, S extends IPartState<P>>void setPart(final EnumFacing side, final IPartType<P, S> part, final IPartState<P> partState) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>>void setPart(final Direction side, final IPartType<P, S> part, final IPartState<P> partState) {
         PartHelpers.setPart(getNetwork(), getWorld(), getPos(), side, Objects.requireNonNull(part),
                 Objects.requireNonNull(partState), new PartHelpers.IPartStateHolderCallback() {
                     @Override
@@ -95,18 +96,18 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public IPartType getPart(EnumFacing side) {
+    public IPartType getPart(Direction side) {
         if(!partData.containsKey(side)) return null;
         return partData.get(side).getPart();
     }
 
     @Override
-    public boolean hasPart(EnumFacing side) {
+    public boolean hasPart(Direction side) {
         return partData.containsKey(side);
     }
 
     @Override
-    public IPartType removePart(EnumFacing side, EntityPlayer player, boolean dropMainElement, boolean saveState) {
+    public IPartType removePart(Direction side, PlayerEntity player, boolean dropMainElement, boolean saveState) {
         PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side); // Don't remove the state just yet! We might need it in network removal.
         if(partStateHolder == null) {
             IntegratedDynamics.clog(Level.WARN, "Attempted to remove a part at a side where no part was.");
@@ -125,7 +126,7 @@ public abstract class PartContainerDefault implements IPartContainer {
                 networkElement.addDrops(itemStacks, dropMainElement, saveState);
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
-                        if (!player.capabilities.isCreativeMode) {
+                        if (!player.isCreative()) {
                             ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
                         }
                     } else {
@@ -146,7 +147,7 @@ public abstract class PartContainerDefault implements IPartContainer {
             } else if (dropMainElement) {
                 ItemStack itemStack = removed.getItemStack(partStateHolder.getState(), saveState);
                 if(player != null) {
-                    if (!player.capabilities.isCreativeMode) {
+                    if (!player.isCreative()) {
                         ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
                     }
                 } else {
@@ -161,7 +162,7 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public void setPartState(EnumFacing side, IPartState partState) throws PartStateException {
+    public void setPartState(Direction side, IPartState partState) throws PartStateException {
         if(!hasPart(side)) {
             throw new PartStateException(getPosition(), side);
         }
@@ -170,7 +171,7 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public IPartState getPartState(EnumFacing side) throws PartStateException {
+    public IPartState getPartState(Direction side) throws PartStateException {
         synchronized (partData) {
             PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
             if (partStateHolder == null) {
@@ -181,62 +182,43 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
         INetwork network = getNetwork();
-        IPartNetwork partNetwork = getPartNetwork();
-        DimPos pos = getPosition();
-        if(facing == null) {
-            for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
-                IPartState partState = entry.getValue().getState();
-                if(partState != null && partState.hasCapability(capability, network, partNetwork, PartTarget.fromCenter(pos, entry.getKey()))) {
-                    return true;
+        IPartNetwork partNetwork = getPartNetwork().orElse(null);
+        if (partNetwork != null) {
+            DimPos pos = getPosition();
+            if (facing == null) {
+                for (Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
+                    IPartState partState = entry.getValue().getState();
+                    PartTarget target = PartTarget.fromCenter(pos, entry.getKey());
+                    LazyOptional<T> cap = partState.getCapability(capability, network, partNetwork, target);
+                    if (partState != null && cap.isPresent()) {
+                        return cap;
+                    }
                 }
-            }
-        } else {
-            if(hasPart(facing)) {
-                IPartState partState = getPartState(facing);
-                if (partState != null && partState.hasCapability(capability, network, partNetwork, PartTarget.fromCenter(pos, facing))) {
-                    return true;
+            } else {
+                if (hasPart(facing)) {
+                    IPartState partState = getPartState(facing);
+                    PartTarget partTarget = PartTarget.fromCenter(pos, facing);
+                    LazyOptional<T> cap = partState.getCapability(capability, network, partNetwork, partTarget);
+                    if (partState != null && cap.isPresent()) {
+                        return cap;
+                    }
                 }
             }
         }
-        return false;
+        return LazyOptional.empty();
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        INetwork network = getNetwork();
-        IPartNetwork partNetwork = getPartNetwork();
-        DimPos pos = getPosition();
-        if(facing == null) {
-            for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
-                IPartState partState = entry.getValue().getState();
-                PartTarget target = PartTarget.fromCenter(pos, entry.getKey());
-                if(partState != null && partState.hasCapability(capability, network, partNetwork, target)) {
-                    return (T) partState.getCapability(capability, network, partNetwork, target);
-                }
-            }
-        } else {
-            if(hasPart(facing)) {
-                IPartState partState = getPartState(facing);
-                PartTarget partTarget = PartTarget.fromCenter(pos, facing);
-                if (partState != null && partState.hasCapability(capability, network, partNetwork, partTarget)) {
-                    return (T) partState.getCapability(capability, network, partNetwork, partTarget);
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound tag = new NBTTagCompound();
+    public CompoundNBT serializeNBT() {
+        CompoundNBT tag = new CompoundNBT();
         PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound tag) {
+    public void deserializeNBT(CompoundNBT tag) {
         synchronized (this.partData) {
             PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
         }
@@ -253,7 +235,7 @@ public abstract class PartContainerDefault implements IPartContainer {
     protected abstract BlockPos getPos();
     protected abstract INetwork getNetwork();
 
-    protected IPartNetwork getPartNetwork() {
+    protected LazyOptional<IPartNetwork> getPartNetwork() {
         return NetworkHelpers.getPartNetwork(getNetwork());
     }
 
@@ -268,7 +250,7 @@ public abstract class PartContainerDefault implements IPartContainer {
      * Override the part data.
      * @param partData The raw part data.
      */
-    public void setPartData(Map<EnumFacing, PartHelpers.PartStateHolder<?, ?>> partData) {
+    public void setPartData(Map<Direction, PartHelpers.PartStateHolder<?, ?>> partData) {
         this.partData.clear();
         this.partData.putAll(partData);
     }

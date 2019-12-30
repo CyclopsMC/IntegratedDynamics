@@ -2,66 +2,77 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
-import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
-import org.cyclops.cyclopscore.inventory.container.ExtendedInventoryContainer;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
-import org.cyclops.cyclopscore.inventory.container.button.IButtonActionServer;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
-import org.cyclops.integrateddynamics.core.client.gui.container.GuiPartSettings;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
+import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Container for part settings.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = false)
-@Data
-public class ContainerPartSettings extends ExtendedInventoryContainer {
+public class ContainerPartSettings extends InventoryContainer {
 
-    public static final int BUTTON_SETTINGS = 1;
+    public static final String BUTTON_SAVE = "button_save";
+    public static final String BUTTON_SETTINGS = "button_settings";
     private static final int PAGE_SIZE = 3;
 
     private final PartTarget target;
-    private final IPartContainer partContainer;
+    private final Optional<IPartContainer> partContainer;
     private final IPartType partType;
     private final World world;
-    private final BlockPos pos;
 
     private final int lastUpdateValueId;
     private final int lastPriorityValueId;
     private final int lastChannelValueId;
     private final int lastSideValueId;
 
-    /**
-     * Make a new instance.
-     * @param target The target.
-     * @param player The player.
-     * @param partContainer The part container.
-     * @param partType The part type.
-     */
-    public ContainerPartSettings(final EntityPlayer player, PartTarget target, IPartContainer partContainer, IPartType partType) {
-        super(player.inventory, (IGuiContainerProvider) partType);
+    public ContainerPartSettings(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
+        this(id, playerInventory, new Inventory(0),
+                readPartTarget(packetBuffer), Optional.empty(), readPart(packetBuffer));
+    }
+
+    protected static PartTarget readPartTarget(PacketBuffer packetBuffer) {
+        return PartTarget.fromCenter(PacketCodec.read(packetBuffer, PartPos.class));
+    }
+
+    protected static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
+        String name = packetBuffer.readString();
+        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(name),
+                String.format("Could not find a part by name %s", name));
+    }
+
+    public ContainerPartSettings(int id, PlayerInventory playerInventory, IInventory inventory,
+                                 PartTarget target, Optional<IPartContainer> partContainer, IPartType partType) {
+        super(RegistryEntries.CONTAINER_PART_SETTINGS, id, playerInventory, inventory);
         this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
         this.world = player.getEntityWorld();
-        this.pos = player.getPosition();
 
         addPlayerInventory(player.inventory, 27, getPlayerInventoryOffsetY());
 
@@ -70,20 +81,35 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         lastChannelValueId = getNextValueId();
         lastSideValueId = getNextValueId();
 
-        putButtonAction(GuiPartSettings.BUTTON_SAVE, new IButtonActionServer<InventoryContainer>() {
-            @Override
-            public void onAction(int buttonId, InventoryContainer container) {
-                if (!(getPartType() instanceof IGuiContainerProvider) || ((IGuiContainerProvider) getPartType()).getContainer() != ContainerPartSettings.this.getClass()) {
-                    if(!world.isRemote) {
-                        IntegratedDynamics._instance.getGuiHandler().setTemporaryData(ExtendedGuiHandler.PART, getTarget().getCenter().getSide());
-                        BlockPos pos = getTarget().getCenter().getPos().getBlockPos();
-                        player.openGui(IntegratedDynamics._instance.getModId(), ((IGuiContainerProvider) getPartType()).getGuiID(), world, pos.getX(), pos.getY(), pos.getZ());
-                    }
-                } else {
-                    player.closeScreen();
-                }
+        putButtonAction(ContainerPartSettings.BUTTON_SAVE, (s, containerExtended) -> {
+            if(!world.isRemote()) {
+                PartHelpers.openContainerPart((ServerPlayerEntity) player, target.getCenter(), getPartType());
             }
         });
+    }
+
+    public IPartType getPartType() {
+        return partType;
+    }
+
+    public PartTarget getTarget() {
+        return target;
+    }
+
+    public int getLastChannelValueId() {
+        return lastChannelValueId;
+    }
+
+    public int getLastPriorityValueId() {
+        return lastPriorityValueId;
+    }
+
+    public int getLastSideValueId() {
+        return lastSideValueId;
+    }
+
+    public int getLastUpdateValueId() {
+        return lastUpdateValueId;
     }
 
     protected int getPlayerInventoryOffsetY() {
@@ -95,7 +121,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
         ValueNotifierHelpers.setValue(this, lastUpdateValueId, getPartType().getUpdateInterval(getPartState()));
         ValueNotifierHelpers.setValue(this, lastPriorityValueId, getPartType().getPriority(getPartState()));
         ValueNotifierHelpers.setValue(this, lastChannelValueId, getPartType().getChannel(getPartState()));
-        EnumFacing targetSide = getPartType().getTargetSideOverride(getPartState());
+        Direction targetSide = getPartType().getTargetSideOverride(getPartState());
         ValueNotifierHelpers.setValue(this, lastSideValueId, targetSide == null ? -1 : targetSide.ordinal());
     }
 
@@ -116,12 +142,12 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     }
 
     public IPartState getPartState() {
-        return partContainer.getPartState(getTarget().getCenter().getSide());
+        return partContainer.get().getPartState(getTarget().getCenter().getSide());
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return PartHelpers.canInteractWith(getTarget(), player, this.partContainer);
+    public boolean canInteractWith(PlayerEntity player) {
+        return PartHelpers.canInteractWith(getTarget(), player, this.partContainer.get());
     }
 
     @Override
@@ -130,18 +156,18 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
     }
 
     @Override
-    public void onUpdate(int valueId, NBTTagCompound value) {
+    public void onUpdate(int valueId, CompoundNBT value) {
         super.onUpdate(valueId, value);
         try {
-            if(!world.isRemote) {
-                DimPos dimPos = getTarget().getCenter().getPos();
-                INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos(), getTarget().getCenter().getSide());
+            if(!world.isRemote()) {
                 PartTarget target = getTarget();
+                DimPos dimPos = target.getCenter().getPos();
+                INetwork network = NetworkHelpers.getNetworkChecked(dimPos.getWorld(true), dimPos.getBlockPos(), target.getCenter().getSide());
                 updatePartSettings();
                 if (getPartState().getTargetSideOverride() != null) {
                     target = target.forTargetSide(getPartState().getTargetSideOverride());
                 }
-                PartNetworkElement networkElement = new PartNetworkElement(getPartType(), target);
+                PartNetworkElement networkElement = new PartNetworkElement<>(getPartType(), target);
                 network.setPriorityAndChannel(networkElement, getLastPriorityValue(), getLastChannelValue());
             }
         } catch (PartStateException e) {
@@ -151,7 +177,7 @@ public class ContainerPartSettings extends ExtendedInventoryContainer {
 
     protected void updatePartSettings() {
         getPartType().setUpdateInterval(getPartState(), getLastUpdateValue());
-        EnumFacing targetSide = getLastSideValue() >= 0 ? EnumFacing.VALUES[getLastSideValue()] : null;
+        Direction targetSide = getLastSideValue() >= 0 ? Direction.values()[getLastSideValue()] : null;
         getPartType().setTargetSideOverride(getPartState(), targetSide);
     }
 }

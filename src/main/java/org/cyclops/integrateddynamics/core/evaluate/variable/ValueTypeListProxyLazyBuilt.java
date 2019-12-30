@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -64,17 +64,17 @@ public class ValueTypeListProxyLazyBuilt<T extends IValueType<V>, V extends IVal
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.setString("valueType", value.value.getType().getTranslationKey());
-            tag.setString("value", ValueHelpers.serializeRaw(value.value));
-            tag.setString("operator", Operators.REGISTRY.serialize(value.operator));
+        protected void serializeNbt(ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            tag.putString("valueType", value.value.getType().getTranslationKey());
+            tag.put("value", ValueHelpers.serializeRaw(value.value));
+            tag.put("operator", Operators.REGISTRY.serialize(value.operator));
         }
 
         @Override
-        protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
+        protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
             IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
-            IValue value = ValueHelpers.deserializeRaw(valueType, tag.getString("value"));
-            IOperator operator = Operators.REGISTRY.deserialize(tag.getString("operator"));
+            IValue value = ValueHelpers.deserializeRaw(valueType, tag.get("value"));
+            IOperator operator = Operators.REGISTRY.deserialize(tag.get("operator"));
             return new ValueTypeListProxyLazyBuilt<>(value, operator);
         }
     }

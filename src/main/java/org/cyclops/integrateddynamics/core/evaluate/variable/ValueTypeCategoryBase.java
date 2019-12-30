@@ -1,5 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -24,7 +27,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
      * @param colorFormat The color format.
      * @param elements The elements inside this category.
      */
-    public ValueTypeCategoryBase(String typeName, int color, String colorFormat, Set<IValueType<?>> elements) {
+    public ValueTypeCategoryBase(String typeName, int color, TextFormatting colorFormat, Set<IValueType<?>> elements) {
         super(typeName, color, colorFormat);
         this.elements = Collections.unmodifiableSet(elements);
     }
@@ -35,7 +38,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
      * @param color The color.
      * @param colorFormat The color format.
      */
-    public ValueTypeCategoryBase(String typeName, int color, String colorFormat) {
+    public ValueTypeCategoryBase(String typeName, int color, TextFormatting colorFormat) {
         super(typeName, color, colorFormat);
         this.elements = null;
     }
@@ -57,7 +60,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public String toCompactString(V value) {
+    public ITextComponent toCompactString(V value) {
         return null;
     }
 
@@ -67,12 +70,12 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public String serialize(V value) {
+    public INBT serialize(V value) {
         throw new UnsupportedOperationException("This operation is not allowed");
     }
 
     @Override
-    public V deserialize(String value) {
+    public V deserialize(INBT value) {
         throw new UnsupportedOperationException("This operation is not allowed");
     }
 

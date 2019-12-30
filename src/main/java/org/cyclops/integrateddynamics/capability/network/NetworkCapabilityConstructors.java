@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.capability.network;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.Reference;
@@ -26,11 +26,11 @@ public class NetworkCapabilityConstructors {
         EnergyNetwork energyNetwork = new EnergyNetwork(IngredientComponent.ENERGY);
         IEnergyStorage energyChannel = energyNetwork.getChannelExternal(CapabilityEnergy.ENERGY, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
 
-        event.addCapability(new ResourceLocation(Reference.MOD_ID, "partNetwork"),
+        event.addCapability(new ResourceLocation(Reference.MOD_ID, "part_network"),
                 new DefaultCapabilityProvider<>(() -> PartNetworkConfig.CAPABILITY, partNetwork));
-        event.addCapability(new ResourceLocation(Reference.MOD_ID, "energyNetwork"),
+        event.addCapability(new ResourceLocation(Reference.MOD_ID, "energy_network"),
                 new DefaultCapabilityProvider<>(() -> EnergyNetworkConfig.CAPABILITY, energyNetwork));
-        event.addCapability(new ResourceLocation(Reference.MOD_ID, "energyStorageNetwork"),
+        event.addCapability(new ResourceLocation(Reference.MOD_ID, "energy_storage_network"),
                 new DefaultCapabilityProvider<>(() -> CapabilityEnergy.ENERGY, energyChannel));
 
         event.addFullNetworkListener(partNetwork);

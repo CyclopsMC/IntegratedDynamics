@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
 
-import org.cyclops.cyclopscore.config.extendedconfig.BlockFluidConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -9,29 +11,15 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class BlockFluidLiquidChorusConfig extends BlockFluidConfig {
+public class BlockFluidLiquidChorusConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockFluidLiquidChorusConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockFluidLiquidChorusConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "block_liquid_chorus",
-                null,
-                BlockFluidLiquidChorus.class
+                eConfig -> new BlockFluidLiquidChorus(Block.Properties.create(Material.WATER)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-    }
-    
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
     
 }

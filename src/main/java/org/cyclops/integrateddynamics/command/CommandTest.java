@@ -3,12 +3,13 @@ package org.cyclops.integrateddynamics.command;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import org.cyclops.cyclopscore.command.CommandMod;
-import org.cyclops.cyclopscore.init.ModBase;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.StringTextComponent;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 
@@ -22,9 +23,7 @@ import java.util.Map;
  * @author rubensworks
  *
  */
-public class CommandTest extends CommandMod {
-
-    public static final String NAME = "test";
+public class CommandTest implements Command<CommandSource> {
 
     private static final String P = "org.cyclops.integrateddynamics.core.evaluate.variable.integration.";
     public static final List<String> CLASSES = ImmutableList.of(
@@ -37,26 +36,19 @@ public class CommandTest extends CommandMod {
             P + "TestRecipeOperators"
     );
 
-    public CommandTest(ModBase mod) {
-        super(mod, NAME);
-    }
-
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] parts, BlockPos blockPos) {
-        return null;
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] parts) {
-        sender.sendMessage(new TextComponentString("Running tests..."));
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        context.getSource().asPlayer().sendMessage(new StringTextComponent("Running tests..."));
         try {
             if(!test()) {
-                sender.sendMessage(new TextComponentString("There were failing tests, see results in console."));
+                context.getSource().asPlayer().sendMessage(new StringTextComponent("There were failing tests, see results in console."));
             } else {
-                sender.sendMessage(new TextComponentString("All tests succeeded!"));
+                context.getSource().asPlayer().sendMessage(new StringTextComponent("All tests succeeded!"));
             }
+            return 0;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
+            return 1;
         }
     }
 
@@ -117,6 +109,12 @@ public class CommandTest extends CommandMod {
         }
         System.err.println(String.format("Tests succeeded: %s/%s", ok, total));
         return ok == total;
+    }
+
+    public static LiteralArgumentBuilder<CommandSource> make() {
+        return Commands.literal("test")
+                .requires((commandSource) -> commandSource.hasPermissionLevel(2))
+                .executes(new CommandTest());
     }
 
 }

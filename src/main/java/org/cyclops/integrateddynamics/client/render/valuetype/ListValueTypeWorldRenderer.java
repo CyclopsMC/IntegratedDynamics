@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.EnumFacing;
-
+import net.minecraft.util.Direction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
@@ -28,7 +27,7 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, EnumFacing direction, IPartType partType, IValue value,
+                            int destroyStage, Direction direction, IPartType partType, IValue value,
                             TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float maxWidth = 0;
@@ -59,8 +58,8 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         float scale = Math.min(scaleX, scaleY); // Maintain aspect ratio
         float newWidth = maxWidth * scale;
         float newHeight = totalHeight * scale;
-        GlStateManager.translate((MAX - newWidth) / 2, (MAX - newHeight) / 2, 0F);
-        GlStateManager.scale(scale, scale, 1F);
+        GlStateManager.translatef((MAX - newWidth) / 2, (MAX - newHeight) / 2, 0F);
+        GlStateManager.scalef(scale, scale, 1F);
 
         int offset = 0;
         for(Pair<String, Integer> line : lines) {

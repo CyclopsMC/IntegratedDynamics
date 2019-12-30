@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -14,24 +14,24 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 public abstract class ValueTypeListProxyPositioned<T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyBase<T, V> implements INBTProvider {
 
     private DimPos pos;
-    private EnumFacing side;
+    private Direction side;
 
-    public ValueTypeListProxyPositioned(String name, T valueType, DimPos pos, EnumFacing side) {
+    public ValueTypeListProxyPositioned(String name, T valueType, DimPos pos, Direction side) {
         super(name, valueType);
         this.pos = pos;
         this.side = side;
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(NBTTagCompound tag) {
+    public void writeGeneratedFieldsToNBT(CompoundNBT tag) {
         NBTClassType.writeNbt(DimPos.class, "pos", pos, tag);
-        NBTClassType.writeNbt(EnumFacing.class, "side", side, tag);
+        NBTClassType.writeNbt(Direction.class, "side", side, tag);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(NBTTagCompound tag) {
+    public void readGeneratedFieldsFromNBT(CompoundNBT tag) {
         this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag);
-        this.side = NBTClassType.readNbt(EnumFacing.class, "side", tag);
+        this.side = NBTClassType.readNbt(Direction.class, "side", tag);
     }
 
     protected DimPos getPos() {
@@ -42,11 +42,11 @@ public abstract class ValueTypeListProxyPositioned<T extends IValueType<V>, V ex
         this.pos = pos;
     }
 
-    protected EnumFacing getSide() {
+    protected Direction getSide() {
         return side;
     }
 
-    protected void setSide(EnumFacing side) {
+    protected void setSide(Direction side) {
         this.side = side;
     }
 }

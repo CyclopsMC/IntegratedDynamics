@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
@@ -13,7 +13,7 @@ import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
  */
 public class ValueTypeListProxyPositionedTankCapacities extends ValueTypeListProxyPositioned<ValueTypeInteger, ValueTypeInteger.ValueInteger> implements INBTProvider {
 
-    public ValueTypeListProxyPositionedTankCapacities(DimPos pos, EnumFacing side) {
+    public ValueTypeListProxyPositionedTankCapacities(DimPos pos, Direction side) {
         super(ValueTypeListProxyFactories.POSITIONED_TANK_CAPACITIES.getName(), ValueTypes.INTEGER, pos, side);
     }
 
@@ -21,25 +21,21 @@ public class ValueTypeListProxyPositionedTankCapacities extends ValueTypeListPro
         this(null, null);
     }
 
-    protected IFluidHandler getTank() {
+    protected LazyOptional<IFluidHandler> getTank() {
         return TileHelpers.getCapability(getPos(), getSide(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
     }
 
     @Override
     public int getLength() {
-        IFluidHandler tank = getTank();
-        if(tank == null) {
-            return 0;
-        }
-        IFluidTankProperties[] tanks = tank.getTankProperties();
-        if(tanks == null) {
-            return 0;
-        }
-        return tanks.length;
+        return getTank()
+                .map(IFluidHandler::getTanks)
+                .orElse(0);
     }
 
     @Override
     public ValueTypeInteger.ValueInteger get(int index) {
-        return ValueTypeInteger.ValueInteger.of(getTank().getTankProperties()[index].getCapacity());
+        return ValueTypeInteger.ValueInteger.of(getTank()
+                .map(fluidHandler -> fluidHandler.getTankCapacity(index))
+                .orElse(0));
     }
 }

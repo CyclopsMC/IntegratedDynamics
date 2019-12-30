@@ -16,15 +16,15 @@ public class L10NValues {
     public static final String GENERAL_TRUE = "general." + NS + ".true";
     public static final String GENERAL_FALSE = "general." + NS + ".false";
 
-    public static final String PART_PANEL_ERROR_INVALIDTYPE = "parttype.parttypes." + NS + ".data_driven_panel.error.invalid_type";
-    public static final String PART_ERROR_LOWENERGY = "parttype.parttypes." + NS + ".error.low_energy";
-    public static final String PART_TOOLTIP_DISABLED = "parttype.parttypes." + NS + ".tooltip.disabled";
-    public static final String PART_TOOLTIP_INACTIVE = "parttype.parttypes." + NS + ".tooltip.inactive";
-    public static final String PART_TOOLTIP_ERRORS = "parttype.parttypes." + NS + ".tooltip.errors";
-    public static final String PART_TOOLTIP_WRITER_ACTIVEASPECT = "parttype.parttypes." + NS + ".tooltip.writer.active_aspect";
-    public static final String PART_TOOLTIP_DISPLAY_ACTIVEVALUE = "parttype.parttypes." + NS + ".tooltip.display.active_value";
-    public static final String PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP = "parttype.parttypes." + NS + ".tooltip.monodirectionalconnector.group";
-    public static final String PART_TOOLTIP_NOASPECTS = "parttype.parttypes." + NS + ".tooltip.noaspects";
+    public static final String PART_PANEL_ERROR_INVALIDTYPE = "parttype." + NS + ".data_driven_panel.error.invalid_type";
+    public static final String PART_ERROR_LOWENERGY = "parttype." + NS + ".error.low_energy";
+    public static final String PART_TOOLTIP_DISABLED = "parttype." + NS + ".tooltip.disabled";
+    public static final String PART_TOOLTIP_INACTIVE = "parttype." + NS + ".tooltip.inactive";
+    public static final String PART_TOOLTIP_ERRORS = "parttype." + NS + ".tooltip.errors";
+    public static final String PART_TOOLTIP_WRITER_ACTIVEASPECT = "parttype." + NS + ".tooltip.writer.active_aspect";
+    public static final String PART_TOOLTIP_DISPLAY_ACTIVEVALUE = "parttype." + NS + ".tooltip.display.active_value";
+    public static final String PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP = "parttype." + NS + ".tooltip.monodirectionalconnector.group";
+    public static final String PART_TOOLTIP_NOASPECTS = "parttype." + NS + ".tooltip.noaspects";
 
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";

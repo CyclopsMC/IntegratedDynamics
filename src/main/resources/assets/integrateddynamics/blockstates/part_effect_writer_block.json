@@ -6,16 +6,16 @@
   "variants": {
     "status": {
       "active": {"textures": {
-        "back" : "integrateddynamics:parts/effect_reader_back",
-        "front": "integrateddynamics:parts/effect_writer_front_active"
+        "back" : "integrateddynamics:part/effect_reader_back",
+        "front": "integrateddynamics:part/effect_writer_front_active"
       }},
       "inactive": {"textures": {
-        "back" : "integrateddynamics:parts/effect_reader_back",
-        "front": "integrateddynamics:parts/effect_writer_front_inactive"
+        "back" : "integrateddynamics:part/effect_reader_back",
+        "front": "integrateddynamics:part/effect_writer_front_inactive"
       }},
       "error": {"textures": {
-        "back" : "integrateddynamics:parts/effect_reader_back",
-        "front": "integrateddynamics:parts/effect_writer_front_error"
+        "back" : "integrateddynamics:part/effect_reader_back",
+        "front": "integrateddynamics:part/effect_writer_front_error"
       }}
     },
     "facing": {

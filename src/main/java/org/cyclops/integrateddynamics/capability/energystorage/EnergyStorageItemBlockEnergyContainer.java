@@ -1,8 +1,7 @@
 package org.cyclops.integrateddynamics.capability.energystorage;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import net.minecraft.nbt.CompoundNBT;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.block.IEnergyContainerBlock;
@@ -40,18 +39,18 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     @Override
     public int getEnergyStored() {
         if(isCreative()) return Integer.MAX_VALUE;
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
-        return tag.getInteger(itemBlockEnergyContainer.get().getEneryContainerNBTName());
+        CompoundNBT tag = itemStack.getOrCreateTag();
+        return tag.getInt(itemBlockEnergyContainer.get().getEneryContainerNBTName());
     }
 
     @Override
     public int getMaxEnergyStored() {
         if(isCreative()) return Integer.MAX_VALUE;
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
-        if (!tag.hasKey(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName())) {
+        CompoundNBT tag = itemStack.getOrCreateTag();
+        if (!tag.contains(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName())) {
             return BlockEnergyBatteryConfig.capacity;
         }
-        return tag.getInteger(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
+        return tag.getInt(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
     }
 
     @Override
@@ -90,17 +89,17 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     protected void setEnergy(ItemStack itemStack, int energy) {
         if(isCreative()) return;
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
-        tag.setInteger(itemBlockEnergyContainer.get().getEneryContainerNBTName(), energy);
+        CompoundNBT tag = itemStack.getOrCreateTag();
+        tag.putInt(itemBlockEnergyContainer.get().getEneryContainerNBTName(), energy);
     }
 
     @Override
     public void setCapacity(int capacity) {
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
+        CompoundNBT tag = itemStack.getOrCreateTag();
         if (capacity == BlockEnergyBatteryConfig.capacity) {
-            tag.removeTag(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
+            tag.remove(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
         } else {
-            tag.setInteger(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName(), capacity);
+            tag.putInt(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName(), capacity);
         }
     }
 }

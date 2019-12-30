@@ -6,16 +6,16 @@
   "variants": {
     "status": {
       "active": {"textures": {
-        "back" : "integrateddynamics:parts/panel_back_active",
-        "front": "integrateddynamics:parts/panel_front_dark"
+        "back" : "integrateddynamics:part/panel_back_active",
+        "front": "integrateddynamics:part/panel_front_dark"
       }},
       "inactive": {"textures": {
-        "back" : "integrateddynamics:parts/panel_back_inactive",
-        "front": "integrateddynamics:parts/panel_front_dark"
+        "back" : "integrateddynamics:part/panel_back_inactive",
+        "front": "integrateddynamics:part/panel_front_dark"
       }},
       "error": {"textures": {
-        "back" : "integrateddynamics:parts/panel_back_error",
-        "front": "integrateddynamics:parts/panel_front_dark"
+        "back" : "integrateddynamics:part/panel_back_error",
+        "front": "integrateddynamics:part/panel_front_dark"
       }}
     },
     "facing": {

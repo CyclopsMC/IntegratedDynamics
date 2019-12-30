@@ -1,6 +1,6 @@
 {
   "parent": "cyclopscore:item/flat",
   "textures": {
-    "layer0": "integrateddynamics:items/logic_director"
+    "layer0": "integrateddynamics:item/logic_director"
   }
 }

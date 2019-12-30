@@ -1,15 +1,22 @@
 package org.cyclops.integrateddynamics.tileentity;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
+import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -19,36 +26,46 @@ import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezerConfig;
 import org.cyclops.integrateddynamics.core.recipe.custom.RecipeHandlerSqueezer;
 import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
+import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalSqueezer;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A part entity for the mechanical squeezer.
  * @author rubensworks
  */
 public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, BlockMechanicalSqueezer,
-        IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> {
+        IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties>
+        implements INamedContainerProvider {
 
-    private static final int SLOTS = 5;
+    public static final int INVENTORY_SIZE = 5;
+
     private static final int SLOT_INPUT = 0;
     private static final int[] SLOTS_OUTPUT = {1, 2, 3, 4};
-    private static final int TANK_SIZE = Fluid.BUCKET_VOLUME * 100;
+    private static final int TANK_SIZE = FluidHelpers.BUCKET_VOLUME * 100;
 
     @NBTPersist
     private boolean autoEjectFluids = false;
 
-    private final SingleUseTank tank = new SingleUseTank(TANK_SIZE, this);
+    private final SingleUseTank tank = new SingleUseTank(TANK_SIZE);
 
     public TileMechanicalSqueezer() {
-        super(SLOTS);
+        super(RegistryEntries.TILE_ENTITY_MECHANICAL_SQUEEZER, INVENTORY_SIZE);
 
         // Add fluid tank capability
-        addCapabilityInternal(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.tank);
+        addCapabilityInternal(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, LazyOptional.of(() -> this.tank));
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, new RecipeHandlerSqueezer<>(BlockMechanicalSqueezer.getInstance()));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(RegistryEntries.BLOCK_MECHANICAL_SQUEEZER)));
+
+        // Add tank update listeners
+        tank.addDirtyMarkListener(this::onTankChanged);
     }
 
     @Override
@@ -82,13 +99,13 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Blo
 
     @Override
     public boolean wasWorking() {
-        return getWorld().getBlockState(getPos()).getValue(BlockMechanicalSqueezer.ON);
+        return getWorld().getBlockState(getPos()).get(BlockMechanicalSqueezer.LIT);
     }
 
     @Override
     public void setWorking(boolean working) {
         getWorld().setBlockState(getPos(), getWorld().getBlockState(getPos())
-                .withProperty(BlockMechanicalSqueezer.ON, working));
+                .with(BlockMechanicalSqueezer.LIT, working));
     }
 
     public SingleUseTank getTank() {
@@ -96,26 +113,26 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Blo
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        getTank().readFromNBT(tag.getCompoundTag("tank"));
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        getTank().readFromNBT(tag.getCompound("tank"));
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("tank", getTank().writeToNBT(new NBTTagCompound()));
-        return super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        tag.put("tank", getTank().writeToNBT(new CompoundNBT()));
+        return super.write(tag);
     }
 
     @Override
     protected IRecipeRegistry<BlockMechanicalSqueezer, IngredientRecipeComponent,
                 IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
-        return BlockMechanicalSqueezer.getInstance().getRecipeRegistry();
+        return RegistryEntries.BLOCK_MECHANICAL_SQUEEZER.getRecipeRegistry();
     }
 
     @Override
     protected ItemStack getCurrentRecipeCacheKey() {
-        return getStackInSlot(SLOT_INPUT).copy();
+        return getInventory().getStackInSlot(SLOT_INPUT).copy();
     }
 
     @Override
@@ -141,14 +158,14 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Blo
         // Output fluid
         FluidStack outputFluid = recipe.getOutput().getFluidStack();
         if (outputFluid != null) {
-            if (getTank().fill(outputFluid.copy(), !simulate) != outputFluid.amount) {
+            if (getTank().fill(outputFluid.copy(), FluidHelpers.simulateBooleanToAction(simulate)) != outputFluid.getAmount()) {
                 return false;
             }
         }
 
         // Only consume items if we are not simulating
         if (!simulate) {
-            this.decrStackSize(SLOT_INPUT, 1);
+            getInventory().decrStackSize(SLOT_INPUT, 1);
         }
 
         return true;
@@ -167,17 +184,17 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Blo
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (!world.isRemote) {
+        if (!world.isRemote()) {
             // Auto-eject fluid
             if (isAutoEjectFluids() && !getTank().isEmpty()) {
-                for (EnumFacing side : EnumFacing.VALUES) {
+                for (Direction side : Direction.values()) {
                     IFluidHandler handler = TileHelpers.getCapability(getWorld(), getPos().offset(side),
-                            side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+                            side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
                     if(handler != null) {
                         FluidStack fluidStack = getTank().getFluid().copy();
-                        fluidStack.amount = Math.min(BlockMechanicalSqueezerConfig.autoEjectFluidRate, fluidStack.amount);
-                        if (handler.fill(fluidStack, false) > 0) {
-                            getTank().drain(handler.fill(fluidStack, true), true);
+                        fluidStack.setAmount(Math.min(BlockMechanicalSqueezerConfig.autoEjectFluidRate, fluidStack.getAmount()));
+                        if (handler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
+                            getTank().drain(handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
                             break;
                         }
                     }
@@ -193,5 +210,16 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Blo
     public void setAutoEjectFluids(boolean autoEjectFluids) {
         this.autoEjectFluids = autoEjectFluids;
         sendUpdate();
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        return new ContainerMechanicalSqueezer(id, playerInventory, this.getInventory(), Optional.of(this));
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("block.integrateddynamics.mechanical_squeezer");
     }
 }

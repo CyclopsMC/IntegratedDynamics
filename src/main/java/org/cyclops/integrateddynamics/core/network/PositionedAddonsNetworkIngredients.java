@@ -3,7 +3,8 @@ package org.cyclops.integrateddynamics.core.network;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
@@ -212,7 +213,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement, EnumFacing side) {
+    public boolean removePathElement(IPathElement pathElement, Direction side) {
         return true;
     }
 

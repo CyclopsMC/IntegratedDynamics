@@ -7,11 +7,12 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.JsonUtils;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -55,7 +56,7 @@ public final class AspectRegistry implements IAspectRegistry {
     private final Map<String, IAspect> unlocalizedAspects = Maps.newHashMap();
     private final Map<String, IAspectRead> unlocalizedReadAspects = Maps.newHashMap();
     private final Map<String, IAspectWrite> unlocalizedWriteAspects = Maps.newHashMap();
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private Map<IAspect, ResourceLocation> aspectModels;
 
     private AspectRegistry() {
@@ -151,19 +152,19 @@ public final class AspectRegistry implements IAspectRegistry {
         return unlocalizedAspects.get(translationKey);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void registerAspectModel(IAspect aspect, ResourceLocation modelLocation) {
         aspectModels.put(aspect, modelLocation);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public ResourceLocation getAspectModel(IAspect aspect) {
         return aspectModels.get(aspect);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public Collection<ResourceLocation> getAspectModels() {
         return Collections.unmodifiableCollection(aspectModels.values());
@@ -175,12 +176,12 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public IAspectVariableFacade getVariableFacade(int id, NBTTagCompound tag) {
-        if(!tag.hasKey("partId", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())
-                || !tag.hasKey("aspectName", MinecraftHelpers.NBTTag_Types.NBTTagString.ordinal())) {
+    public IAspectVariableFacade getVariableFacade(int id, CompoundNBT tag) {
+        if(!tag.contains("partId", Constants.NBT.TAG_INT)
+                || !tag.contains("aspectName", Constants.NBT.TAG_STRING)) {
             return INVALID_FACADE;
         }
-        int partId = tag.getInteger("partId");
+        int partId = tag.getInt("partId");
         IAspect aspect = getAspect(tag.getString("aspectName"));
         if(aspect == null) {
             return INVALID_FACADE;
@@ -189,9 +190,9 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public void setVariableFacade(NBTTagCompound tag, IAspectVariableFacade variableFacade) {
-        tag.setInteger("partId", variableFacade.getPartId());
-        tag.setString("aspectName", variableFacade.getAspect().getTranslationKey());
+    public void setVariableFacade(CompoundNBT tag, IAspectVariableFacade variableFacade) {
+        tag.putInt("partId", variableFacade.getPartId());
+        tag.putString("aspectName", variableFacade.getAspect().getTranslationKey());
     }
 
     @Override
@@ -199,9 +200,9 @@ public final class AspectRegistry implements IAspectRegistry {
         JsonElement aspectElement = element.get("aspect");
         IAspect aspect = null;
         if (aspectElement != null && !aspectElement.isJsonNull()) {
-            aspect = Aspects.REGISTRY.getAspect(JsonUtils.getString(element, "aspect"));
+            aspect = Aspects.REGISTRY.getAspect(JSONUtils.getString(element, "aspect"));
             if (aspect == null) {
-                throw new JsonSyntaxException("Unknown aspect type '" + JsonUtils.getString(element, "aspect") + "', valid types are: "
+                throw new JsonSyntaxException("Unknown aspect type '" + JSONUtils.getString(element, "aspect") + "', valid types are: "
                         + Aspects.REGISTRY.getAspects().stream().map(IAspect::getTranslationKey).collect(Collectors.toList()));
             }
         }

@@ -1,15 +1,13 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.inventory.Container;
-import net.minecraft.util.EnumFacing;
-import org.cyclops.cyclopscore.block.property.BlockProperty;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.integrateddynamics.client.gui.GuiVariablestore;
-import org.cyclops.integrateddynamics.core.block.BlockContainerGuiCabled;
-import org.cyclops.integrateddynamics.inventory.container.ContainerVariablestore;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
+import org.cyclops.integrateddynamics.core.block.BlockTileGuiCabled;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 /**
@@ -17,43 +15,24 @@ import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
  *
  * @author rubensworks
  */
-public class BlockVariablestore extends BlockContainerGuiCabled {
+public class BlockVariablestore extends BlockTileGuiCabled {
 
-    @BlockProperty
-    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    private static BlockVariablestore _instance = null;
+    public BlockVariablestore(Properties properties) {
+        super(properties, TileVariablestore::new);
 
-    /**
-     * Get the unique instance.
-     *
-     * @return The instance.
-     */
-    public static BlockVariablestore getInstance() {
-        return _instance;
-    }
-
-    /**
-     * Make a new block instance.
-     *
-     * @param eConfig Config for this block.
-     */
-    public BlockVariablestore(ExtendedConfig<BlockConfig> eConfig) {
-        super(eConfig, TileVariablestore.class);
+        this.setDefaultState(this.stateContainer.getBaseState()
+                .with(FACING, Direction.NORTH));
     }
 
     @Override
-    public boolean saveNBTToDroppedItem() {
-        return false;
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
-    @Override
-    public Class<? extends Container> getContainer() {
-        return ContainerVariablestore.class;
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
     }
 
-    @Override
-    public Class<? extends GuiScreen> getGui() {
-        return GuiVariablestore.class;
-    }
 }

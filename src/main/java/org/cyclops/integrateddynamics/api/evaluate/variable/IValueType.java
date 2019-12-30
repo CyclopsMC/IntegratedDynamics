@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import com.google.gson.JsonObject;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
@@ -48,13 +50,13 @@ public interface IValueType<V extends IValue> {
      * @param appendOptionalInfo If shift-to-show info should be added.
      * @param value The value to show the tooltip for.
      */
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo, @Nullable V value);
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, @Nullable V value);
 
     /**
      * @param value The value
      * @return A short string representation used in guis to show the value.
      */
-    public String toCompactString(V value);
+    public ITextComponent toCompactString(V value);
 
     /**
      * @return The color that is used to identify this value type.
@@ -64,7 +66,7 @@ public interface IValueType<V extends IValue> {
     /**
      * @return The color that is used to identify this value type using MC formatting codes.
      */
-    public String getDisplayColorFormat();
+    public TextFormatting getDisplayColorFormat();
 
     /**
      * Check if the given type corresponds with this type.
@@ -79,21 +81,21 @@ public interface IValueType<V extends IValue> {
      * @param value The value to serialize.
      * @return The serialized value.
      */
-    public String serialize(V value);
+    public INBT serialize(V value);
 
     /**
      * Check if the given value can be deserialized.
      * @param value The value to deserialize.
      * @return An error or null.
      */
-    public L10NHelpers.UnlocalizedString canDeserialize(String value);
+    public ITextComponent canDeserialize(INBT value);
 
     /**
      * Deserialize the given value.
      * @param value The value to deserialize.
      * @return The deserialized value.
      */
-    public V deserialize(String value);
+    public V deserialize(INBT value);
 
     /**
      * Materialize the given value so that it can exist without any external references.
@@ -102,6 +104,28 @@ public interface IValueType<V extends IValue> {
      * @throws EvaluationException if materialization fails because of a variable evaluation.
      */
     public V materialize(V value) throws EvaluationException;
+
+    /**
+     * Get the string representation of the given value.
+     * This is useful for cases when the value needs to be edited in a GUI.
+     *
+     * This corresponds to {@link #parseString(String)}.
+     *
+     * @param value A value.
+     * @return A string representation of the given value.
+     */
+    public String toString(V value);
+
+    /**
+     * Parse the given string representation of a value.
+     *
+     * This corresponds to {@link #toString(IValue)}.
+     *
+     * @param value A string representation of a value.
+     * @return A value.
+     * @throws EvaluationException If parsing failed.
+     */
+    public V parseString(String value) throws EvaluationException;
 
     /**
      * @return A new logic programmer element for this value type.

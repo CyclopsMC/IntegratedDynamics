@@ -1,36 +1,27 @@
 package org.cyclops.integrateddynamics;
 
-import com.google.common.collect.Maps;
-import net.minecraft.command.ICommand;
-import net.minecraft.creativetab.CreativeTabs;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.command.CommandSource;
+import net.minecraft.item.ItemGroup;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.client.gui.GuiHandler;
-import org.cyclops.cyclopscore.command.CommandMod;
 import org.cyclops.cyclopscore.config.ConfigHandler;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockItemConfigReference;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
 import org.cyclops.cyclopscore.infobook.InfoBookRegistry;
-import org.cyclops.cyclopscore.init.ItemCreativeTab;
+import org.cyclops.cyclopscore.init.ItemGroupMod;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.init.ModBaseVersionable;
-import org.cyclops.cyclopscore.init.RecipeHandler;
-import org.cyclops.cyclopscore.item.BucketRegistry;
-import org.cyclops.cyclopscore.item.IBucketRegistry;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
+import org.cyclops.cyclopscore.proxy.IClientProxy;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
 import org.cyclops.cyclopscore.recipe.custom.SuperRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.xml.IRecipeConditionHandler;
-import org.cyclops.cyclopscore.recipe.xml.IRecipeTypeHandler;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRendererRegistry;
@@ -45,7 +36,6 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.api.network.INetworkCraftingHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
-import org.cyclops.integrateddynamics.block.BlockCableConfig;
 import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentCapabilities;
 import org.cyclops.integrateddynamics.capability.network.NetworkCapabilityConstructors;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRendererRegistry;
@@ -57,7 +47,6 @@ import org.cyclops.integrateddynamics.command.CommandNetworkDiagnostics;
 import org.cyclops.integrateddynamics.command.CommandTest;
 import org.cyclops.integrateddynamics.core.NoteBlockEventReceiver;
 import org.cyclops.integrateddynamics.core.TickHandler;
-import org.cyclops.integrateddynamics.core.client.gui.ExtendedGuiHandler;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
@@ -83,107 +72,38 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
-import org.cyclops.integrateddynamics.core.recipe.xml.DryingBasinRecipeTypeHandler;
-import org.cyclops.integrateddynamics.core.recipe.xml.MechanicalDryingBasinRecipeTypeHandler;
-import org.cyclops.integrateddynamics.core.recipe.xml.MechanicalSqueezerRecipeTypeHandler;
-import org.cyclops.integrateddynamics.core.recipe.xml.SqueezerRecipeTypeHandler;
-import org.cyclops.integrateddynamics.core.test.TestHelpers;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
 import org.cyclops.integrateddynamics.metadata.RegistryExportables;
 import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
-
-import java.util.Map;
+import org.cyclops.integrateddynamics.proxy.ClientProxy;
+import org.cyclops.integrateddynamics.proxy.CommonProxy;
 
 /**
  * The main mod class of IntegratedDynamics.
  * @author rubensworks
  *
  */
-@Mod(modid = Reference.MOD_ID,
-     name = Reference.MOD_NAME,
-     useMetadata = true,
-     version = Reference.MOD_VERSION,
-     dependencies = Reference.MOD_DEPENDENCIES,
-     guiFactory = "org.cyclops.integrateddynamics.GuiConfigOverview$ExtendedConfigGuiFactory",
-     certificateFingerprint = Reference.MOD_FINGERPRINT
-)
-public class IntegratedDynamics extends ModBaseVersionable {
-
-    /**
-     * The proxy of this mod, depending on 'side' a different proxy will be inside this field.
-     * @see net.minecraftforge.fml.common.SidedProxy
-     */
-    @SidedProxy(clientSide = "org.cyclops.integrateddynamics.proxy.ClientProxy", serverSide = "org.cyclops.integrateddynamics.proxy.CommonProxy")
-    public static ICommonProxy proxy;
+@Mod(Reference.MOD_ID)
+public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
 
     /**
      * The unique instance of this mod.
      */
-    @Mod.Instance(value = Reference.MOD_ID)
     public static IntegratedDynamics _instance;
 
     public static GlobalCounters globalCounters = null;
 
     public IntegratedDynamics() {
-        super(Reference.MOD_ID, Reference.MOD_NAME, Reference.MOD_VERSION);
+        super(Reference.MOD_ID, (instance) -> _instance = instance);
 
         // Register world storages
         registerWorldStorage(NetworkWorldStorage.getInstance(this));
         registerWorldStorage(globalCounters = new GlobalCounters(this));
         registerWorldStorage(LabelsWorldStorage.getInstance(this));
-    }
 
-    @Override
-    protected GuiHandler constructGuiHandler() {
-        return new ExtendedGuiHandler(this);
-    }
-
-    @Override
-    protected RecipeHandler constructRecipeHandler() {
-        return new ExtendedRecipeHandler(this,
-                "shaped.xml",
-                "shapeless.xml",
-                "smelting.xml",
-                "dryingbasin.xml",
-                "dryingbasin_convenience.xml",
-                "squeezer.xml",
-                "squeezer_convenience.xml",
-                "squeezer_ores.xml",
-                "mechanical_dryingbasin.xml",
-                "mechanical_dryingbasin_convenience.xml",
-                "mechanical_squeezer.xml",
-                "mechanical_squeezer_convenience.xml",
-                "mechanical_squeezer_ores.xml"
-        ) {
-            @Override
-            protected void registerHandlers(Map<String, IRecipeTypeHandler> recipeTypeHandlers, Map<String, IRecipeConditionHandler> recipeConditionHandlers) {
-                super.registerHandlers(recipeTypeHandlers, recipeConditionHandlers);
-                recipeTypeHandlers.put("integrateddynamics:dryingbasin", new DryingBasinRecipeTypeHandler());
-                recipeTypeHandlers.put("integrateddynamics:squeezer", new SqueezerRecipeTypeHandler());
-                recipeTypeHandlers.put("integrateddynamics:mechanical_dryingbasin", new MechanicalDryingBasinRecipeTypeHandler());
-                recipeTypeHandlers.put("integrateddynamics:mechanical_squeezer", new MechanicalSqueezerRecipeTypeHandler());
-            }
-        };
-    }
-
-    @Override
-    protected ICommand constructBaseCommand() {
-        Map<String, ICommand> commands = Maps.newHashMap();
-        if(TestHelpers.canRunIntegrationTests()) {
-            commands.put(CommandTest.NAME, new CommandTest(this));
-        }
-        commands.put(CommandNetworkDiagnostics.NAME, new CommandNetworkDiagnostics(this));
-        commands.put(CommandCrash.NAME, new CommandCrash(this));
-        return new CommandMod(this, commands);
-    }
-
-    @Mod.EventHandler
-    @Override
-    public final void preInit(FMLPreInitializationEvent event) {
         // Registries
-        getRegistryManager().addRegistry(IBucketRegistry.class, new BucketRegistry());
         getRegistryManager().addRegistry(ISuperRecipeRegistry.class, new SuperRecipeRegistry(this));
 
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
@@ -206,9 +126,21 @@ public class IntegratedDynamics extends ModBaseVersionable {
         getRegistryManager().addRegistry(IInfoBookRegistry.class, new InfoBookRegistry());
         getRegistryManager().addRegistry(IIngredientComponentHandlerRegistry.class, IngredientComponentHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(INetworkCraftingHandlerRegistry.class, NetworkCraftingHandlerRegistry.getInstance());
+    }
 
-        addInitListeners(getRegistryManager().getRegistry(IPartTypeRegistry.class));
+    @Override
+    protected LiteralArgumentBuilder<CommandSource> constructBaseCommand() {
+        LiteralArgumentBuilder<CommandSource> root = super.constructBaseCommand();
 
+        root.then(CommandCrash.make());
+        root.then(CommandNetworkDiagnostics.make());
+        root.then(CommandTest.make());
+
+        return root;
+    }
+
+    @Override
+    protected void setup(FMLCommonSetupEvent event) {
         ValueTypes.load();
         IngredientComponentCapabilities.load();
         IngredientComponentHandlers.load();
@@ -226,11 +158,12 @@ public class IntegratedDynamics extends ModBaseVersionable {
             VariableModelProviders.load();
         }
 
-        super.preInit(event);
+        super.setup(event);
 
         Advancements.load();
 
         // Initialize info book
+        putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
         getRegistryManager().getRegistry(IInfoBookRegistry.class).registerInfoBook(
                 OnTheDynamicsOfIntegrationBook.getInstance(), "/assets/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");
 
@@ -242,51 +175,34 @@ public class IntegratedDynamics extends ModBaseVersionable {
         }
     }
 
-    @Mod.EventHandler
     @Override
-    public final void init(FMLInitializationEvent event) {
-        super.init(event);
-
-        putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
-    }
-
-    @Mod.EventHandler
-    @Override
-    public void onServerStarting(FMLServerStartingEvent event) {
-        super.onServerStarting(event);
-    }
-
-    @Mod.EventHandler
-    @Override
-    public void onServerStarted(FMLServerStartedEvent event) {
+    protected void onServerStarted(FMLServerStartedEvent event) {
         PartTypeConnectorOmniDirectional.LOADED_GROUPS.onStartedEvent(event);
         super.onServerStarted(event);
     }
 
-    @Mod.EventHandler
     @Override
-    public void onServerStopping(FMLServerStoppingEvent event) {
-        super.onServerStopping(event);
+    @OnlyIn(Dist.CLIENT)
+    protected IClientProxy constructClientProxy() {
+        return new ClientProxy();
     }
 
     @Override
-    public CreativeTabs constructDefaultCreativeTab() {
-        return new ItemCreativeTab(this, new BlockItemConfigReference(BlockCableConfig.class));
+    protected ICommonProxy constructCommonProxy() {
+        return new CommonProxy();
     }
 
     @Override
-    public void onGeneralConfigsRegister(ConfigHandler configHandler) {
-        configHandler.add(new GeneralConfig());
+    public ItemGroup constructDefaultItemGroup() {
+        return new ItemGroupMod(this, () -> RegistryEntries.ITEM_CABLE);
     }
 
     @Override
-    public void onMainConfigsRegister(ConfigHandler configHandler) {
+    protected void onConfigsRegister(ConfigHandler configHandler) {
+        super.onConfigsRegister(configHandler);
+
+        configHandler.addConfigurable(new GeneralConfig());
         Configs.registerBlocks(configHandler);
-    }
-
-    @Override
-    public ICommonProxy getProxy() {
-        return proxy;
     }
 
     /**

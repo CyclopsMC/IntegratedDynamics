@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.block;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 
 import javax.annotation.Nullable;
 
@@ -18,12 +18,12 @@ public interface IFacadeable {
     /**
      * @return The blockstate of the facade.
      */
-    public IBlockState getFacade();
+    public BlockState getFacade();
 
     /**
      * Set the new facade
      * @param blockState The new facade or null.
      */
-    public void setFacade(@Nullable IBlockState blockState);
+    public void setFacade(@Nullable BlockState blockState);
 
 }

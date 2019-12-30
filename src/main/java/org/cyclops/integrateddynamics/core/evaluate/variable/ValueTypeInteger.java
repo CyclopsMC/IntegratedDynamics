@@ -1,8 +1,15 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
+import net.minecraft.nbt.ByteNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.IntNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 
 /**
@@ -13,7 +20,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueInteger> implements IValueTypeNumber<ValueTypeInteger.ValueInteger> {
 
     public ValueTypeInteger() {
-        super("integer", Helpers.RGBToInt(243, 150, 4), TextFormatting.GOLD.toString());
+        super("integer", Helpers.RGBToInt(243, 150, 4), TextFormatting.GOLD);
     }
 
     @Override
@@ -22,18 +29,36 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
-    public String toCompactString(ValueInteger value) {
+    public ITextComponent toCompactString(ValueInteger value) {
+        return new StringTextComponent(Integer.toString(value.getRawValue()));
+    }
+
+    @Override
+    public INBT serialize(ValueInteger value) {
+        return new IntNBT(value.getRawValue());
+    }
+
+    @Override
+    public ValueInteger deserialize(INBT value) {
+        if (value.getId() == Constants.NBT.TAG_INT) {
+            return ValueInteger.of(((IntNBT) value).getInt());
+        } else {
+            throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to an integer.", value));
+        }
+    }
+
+    @Override
+    public String toString(ValueInteger value) {
         return Integer.toString(value.getRawValue());
     }
 
     @Override
-    public String serialize(ValueInteger value) {
-        return Integer.toString(value.getRawValue());
-    }
-
-    @Override
-    public ValueInteger deserialize(String value) {
-        return ValueInteger.of(Integer.parseInt(value));
+    public ValueInteger parseString(String value) throws EvaluationException {
+        try {
+            return ValueInteger.of(Integer.parseInt(value));
+        } catch (NumberFormatException e) {
+            throw new EvaluationException(e.getMessage());
+        }
     }
 
     @Override
@@ -103,7 +128,7 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
 
     @Override
     public String getName(ValueInteger a) {
-        return toCompactString(a);
+        return toCompactString(a).getString();
     }
 
     @ToString

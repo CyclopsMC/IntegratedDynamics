@@ -3,13 +3,14 @@ package org.cyclops.integrateddynamics.core.network;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.util.LazyOptional;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -19,10 +20,8 @@ import org.cyclops.integrateddynamics.api.network.AttachCapabilitiesEventNetwork
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -64,7 +63,7 @@ public class Network implements INetwork {
     private final CapabilityDispatcher capabilityDispatcher;
     private IFullNetworkListener[] fullNetworkListeners;
 
-    private NBTTagCompound toRead = null;
+    private CompoundNBT toRead = null;
     private volatile boolean changed = false;
     private volatile boolean killed = false;
 
@@ -121,7 +120,7 @@ public class Network implements INetwork {
         MinecraftForge.EVENT_BUS.post(event);
         List<IFullNetworkListener> listeners = event.getFullNetworkListeners();
         this.fullNetworkListeners = listeners.toArray(new IFullNetworkListener[listeners.size()]);
-        return event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities()) : null;
+        return event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners()) : null;
     }
 
     protected IFullNetworkListener[] gatherFullNetworkListeners() {
@@ -137,12 +136,10 @@ public class Network implements INetwork {
     private void deriveNetworkElements(Cluster pathElements) {
         if(!killIfEmpty()) {
             for (ISidedPathElement sidedPathElement : pathElements) {
-                World world = sidedPathElement.getPathElement().getPosition().getWorld();
+                World world = sidedPathElement.getPathElement().getPosition().getWorld(true);
                 BlockPos pos = sidedPathElement.getPathElement().getPosition().getBlockPos();
-                EnumFacing side = sidedPathElement.getSide();
-                INetworkCarrier networkCarrier = TileHelpers.getCapability(
-                        world, pos, side, NetworkCarrierConfig.CAPABILITY);
-                if (networkCarrier != null) {
+                Direction side = sidedPathElement.getSide();
+                TileHelpers.getCapability(world, pos, side, NetworkCarrierConfig.CAPABILITY).ifPresent(networkCarrier -> {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
                     INetwork network = networkCarrier.getNetwork();
@@ -151,14 +148,12 @@ public class Network implements INetwork {
                     }
                     networkCarrier.setNetwork(null);
                     networkCarrier.setNetwork(this);
-                }
-                INetworkElementProvider networkElementProvider = TileHelpers.getCapability(
-                        world, pos, side, NetworkElementProviderConfig.CAPABILITY);
-                if (networkElementProvider != null) {
+                });
+                TileHelpers.getCapability(world, pos, side, NetworkElementProviderConfig.CAPABILITY).ifPresent(networkElementProvider -> {
                     for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
                     }
-                }
+                });
             }
             onNetworkChanged();
         }
@@ -187,29 +182,29 @@ public class Network implements INetwork {
     }
 
     @Override
-    public NBTTagCompound toNBT() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setTag("baseCluster", this.baseCluster.toNBT());
-        tag.setBoolean("crashed", this.crashed);
+    public CompoundNBT toNBT() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.put("baseCluster", this.baseCluster.toNBT());
+        tag.putBoolean("crashed", this.crashed);
         if (this.capabilityDispatcher != null) {
-            tag.setTag("ForgeCaps", this.capabilityDispatcher.serializeNBT());
+            tag.put("ForgeCaps", this.capabilityDispatcher.serializeNBT());
         }
         return tag;
     }
 
     @Override
-    public void fromNBT(NBTTagCompound tag) {
+    public void fromNBT(CompoundNBT tag) {
         // NBT reading is postponed until the first network tick, to ensure that the game is properly initialized.
         // Because other mods may register things such as dimensions at the same time when networks
         // are being constructed (as was the case in #349)
         this.toRead = tag;
     }
 
-    public void fromNBTEffective(NBTTagCompound tag) {
-        this.baseCluster.fromNBT(tag.getCompoundTag("baseCluster"));
+    public void fromNBTEffective(CompoundNBT tag) {
+        this.baseCluster.fromNBT(tag.getCompound("baseCluster"));
         this.crashed = tag.getBoolean("crashed");
-        if (this.capabilityDispatcher != null && tag.hasKey("ForgeCaps")) {
-            this.capabilityDispatcher.deserializeNBT(tag.getCompoundTag("ForgeCaps"));
+        if (this.capabilityDispatcher != null && tag.contains("ForgeCaps")) {
+            this.capabilityDispatcher.deserializeNBT(tag.getCompound("ForgeCaps"));
         }
         deriveNetworkElements(baseCluster);
         initialize(true);
@@ -234,12 +229,13 @@ public class Network implements INetwork {
             }
             if (element instanceof IEventListenableNetworkElement) {
                 IEventListenableNetworkElement<?> listenableElement = (IEventListenableNetworkElement<?>) element;
-                INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
-                if (listener != null && listener.hasEventSubscriptions()) {
-                    for (Class<? extends INetworkEvent> eventType : listener.getSubscribedEvents()) {
-                        getEventBus().register(listenableElement, eventType);
+                listenableElement.getNetworkEventListener().ifPresent(listener -> {
+                    if (listener.hasEventSubscriptions()) {
+                        for (Class<? extends INetworkEvent> eventType : listener.getSubscribedEvents()) {
+                            getEventBus().register(listenableElement, eventType);
+                        }
                     }
-                }
+                });
             }
             getEventBus().post(new NetworkElementAddEvent.Post(this, element));
             onNetworkChanged();
@@ -294,10 +290,11 @@ public class Network implements INetwork {
         }
         if (element instanceof IEventListenableNetworkElement) {
             IEventListenableNetworkElement<?> listenableElement = (IEventListenableNetworkElement<?>) element;
-            INetworkEventListener<?> listener = listenableElement.getNetworkEventListener();
-            if (listener != null && listener.hasEventSubscriptions()) {
-                getEventBus().unregister(listenableElement);
-            }
+            listenableElement.getNetworkEventListener().ifPresent(listener -> {
+                if (listener.hasEventSubscriptions()) {
+                    getEventBus().unregister(listenableElement);
+                }
+            });
         }
         element.beforeNetworkKill(this);
         element.onNetworkRemoval(this);
@@ -443,7 +440,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public synchronized boolean removePathElement(IPathElement pathElement, EnumFacing side) {
+    public synchronized boolean removePathElement(IPathElement pathElement, Direction side) {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
             if (!fullNetworkListener.removePathElement(pathElement, side)) {
                 return false;
@@ -455,7 +452,7 @@ public class Network implements INetwork {
                     position, side, NetworkElementProviderConfig.CAPABILITY);
             if (networkElementProvider != null) {
                 Collection<INetworkElement> networkElements = networkElementProvider.
-                        createNetworkElements(position.getWorld(), position.getBlockPos());
+                        createNetworkElements(position.getWorld(true), position.getBlockPos());
                 for (INetworkElement networkElement : networkElements) {
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;
@@ -541,12 +538,7 @@ public class Network implements INetwork {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability) {
-        return capabilityDispatcher != null && capabilityDispatcher.hasCapability(capability, null);
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability) {
+    public <T> LazyOptional<T> getCapability(Capability<T> capability) {
         return capabilityDispatcher == null ? null : capabilityDispatcher.getCapability(capability, null);
     }
 

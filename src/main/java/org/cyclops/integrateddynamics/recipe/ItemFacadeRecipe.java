@@ -1,43 +1,48 @@
 package org.cyclops.integrateddynamics.recipe;
 
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.integrateddynamics.item.ItemFacade;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
-import java.util.stream.StreamSupport;
+import javax.annotation.Nullable;
 
 /**
  * Recipe for combining facades with blocks.
  * @author rubensworks
  *
  */
-public class ItemFacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+public class ItemFacadeRecipe extends SpecialRecipe {
 
 	@Getter(lazy = true)
 	private final NonNullList<Ingredient> ingredients =
 			NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()), new BlocksIngredient());
 
+	public ItemFacadeRecipe(ResourceLocation id) {
+		super(id);
+	}
+
 	@Override
-	public boolean matches(InventoryCrafting grid, World world) {
+	public boolean matches(CraftingInventory grid, World world) {
 		return !getCraftingResult(grid).isEmpty();
 	}
 	
 	@Override
 	public ItemStack getRecipeOutput() {
-		return new ItemStack(ItemFacade.getInstance());
+		return new ItemStack(RegistryEntries.ITEM_FACADE);
 	}
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inventory) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inventory) {
 		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
 
         for (int i = 0; i < aitemstack.size(); ++i) {
@@ -49,7 +54,7 @@ public class ItemFacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implemen
     }
 
     @Override
-	public ItemStack getCraftingResult(InventoryCrafting grid) {						
+	public ItemStack getCraftingResult(CraftingInventory grid) {
 		ItemStack output = getRecipeOutput().copy();
 
 		int facades = 0;
@@ -60,7 +65,7 @@ public class ItemFacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implemen
 			if(!element.isEmpty()) {
 				if(element.getItem() == output.getItem()) {
 					facades++;
-				} else if(block.isEmpty() && element.getItem() instanceof ItemBlock) {
+				} else if(block.isEmpty() && element.getItem() instanceof BlockItem) {
 					block = element;
 				} else {
 					return ItemStack.EMPTY;
@@ -71,8 +76,8 @@ public class ItemFacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implemen
 		if(facades != 1 || block.isEmpty()) {
 			return ItemStack.EMPTY;
 		}
-		
-		ItemFacade.getInstance().writeFacadeBlock(output, BlockHelpers.getBlockStateFromItemStack(block));
+
+		RegistryEntries.ITEM_FACADE.writeFacadeBlock(output, BlockHelpers.getBlockStateFromItemStack(block));
 		return output;
 	}
 
@@ -86,18 +91,20 @@ public class ItemFacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implemen
 		return true;
 	}
 
+	@Override
+	public IRecipeSerializer<?> getSerializer() {
+		return RegistryEntries.RECIPESERIALIZER_FACADE;
+	}
+
 	public static class BlocksIngredient extends Ingredient {
 
-		@Override
-		public ItemStack[] getMatchingStacks() {
-			return StreamSupport.stream(Block.REGISTRY.spliterator(), false)
-					.map(ItemStack::new)
-					.toArray(ItemStack[]::new);
+		protected BlocksIngredient() {
+			super(ForgeRegistries.BLOCKS.getValues().stream().map(ItemStack::new).map(Ingredient.SingleItemList::new));
 		}
 
 		@Override
-		public boolean apply(ItemStack itemStack) {
-			return !itemStack.isEmpty() && itemStack.getItem() instanceof ItemBlock;
+		public boolean test(@Nullable ItemStack itemStack) {
+			return itemStack != null && !itemStack.isEmpty() && itemStack.getItem() instanceof BlockItem;
 		}
 	}
 

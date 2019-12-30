@@ -1,8 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.render.tileentity.RenderTileEntityDryingBasin;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
@@ -11,28 +13,19 @@ import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
  * Config for {@link BlockDryingBasin}.
  * @author rubensworks
  */
-public class BlockDryingBasinConfig extends BlockContainerConfig {
+public class BlockDryingBasinConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockDryingBasinConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public BlockDryingBasinConfig() {
         super(
-            IntegratedDynamics._instance,
-            true,
-            "drying_basin",
-            null,
-            BlockDryingBasin.class
+                IntegratedDynamics._instance,
+                "drying_basin",
+                eConfig -> new BlockDryingBasin(Block.Properties.create(Material.WOOD)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void onRegistered() {
         super.onRegistered();
         getMod().getProxy().registerRenderer(TileDryingBasin.class, new RenderTileEntityDryingBasin());

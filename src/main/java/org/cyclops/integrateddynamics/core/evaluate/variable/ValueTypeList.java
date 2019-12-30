@@ -5,8 +5,13 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.ToString;
-import net.minecraft.util.JsonUtils;
+import net.minecraft.nbt.EndNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -32,7 +37,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     public static final int MAX_RENDER_LINES = 20;
 
     public ValueTypeList() {
-        super("list", Helpers.RGBToInt(175, 3, 1), TextFormatting.DARK_RED.toString());
+        super("list", Helpers.RGBToInt(175, 3, 1), TextFormatting.DARK_RED);
     }
 
     @Override
@@ -41,37 +46,39 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public String toCompactString(ValueList value) {
+    public ITextComponent toCompactString(ValueList value) {
         return value.getRawValue().toCompactString();
     }
 
     @Override
-    public String serialize(ValueList value) {
+    public INBT serialize(ValueList value) {
         try {
             return ValueTypeListProxyFactories.REGISTRY.serialize(value.getRawValue());
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
             e.printStackTrace();
         }
-        return "";
+        return new EndNBT();
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString canDeserialize(String value) {
+    public ITextComponent canDeserialize(INBT value) {
         try {
             IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
             return null;
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
-            return new L10NHelpers.UnlocalizedString(e.getMessage());
+            return new TranslationTextComponent(e.getMessage());
         }
     }
 
     @Override
-    public ValueList deserialize(String value) {
-        try {
-            IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
-            return ValueList.ofFactory(proxy);
-        } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
-            e.printStackTrace();
+    public ValueList deserialize(INBT value) {
+        if (value.getId() != Constants.NBT.TAG_END) {
+            try {
+                IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
+                return ValueList.ofFactory(proxy);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                e.printStackTrace();
+            }
         }
         return getDefault();
     }
@@ -96,7 +103,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         JsonElement jsonElement = element.get("infinite_list");
         Boolean infinite = null;
         if (jsonElement != null && !jsonElement.isJsonNull()) {
-            infinite = JsonUtils.getBoolean(jsonElement, "infinite_list");
+            infinite = JSONUtils.getBoolean(jsonElement, "infinite_list");
         }
         return new ValueListPredicate(this, value, infinite);
     }

@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.capability.ingredient;
 
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.ingredient.capability.IIngredientComponentValueHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -43,10 +44,10 @@ public class IngredientComponentValueHandlerEnergy implements IIngredientCompone
     }
 
     @Override
-    public String toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
-        String value = getValueType().toCompactString(ingredientValue);
-        value += " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
-        return value;
+    public ITextComponent toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
+        return getValueType().toCompactString(ingredientValue)
+                .appendText(" ")
+                .appendSibling(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
     }
 
 }

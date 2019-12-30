@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "integrateddynamics:block/energy_battery_creative" }
+  }
+}

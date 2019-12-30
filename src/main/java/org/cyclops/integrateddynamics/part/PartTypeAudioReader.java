@@ -16,11 +16,22 @@ public class PartTypeAudioReader extends PartTypeReadBase<PartTypeAudioReader, P
     public PartTypeAudioReader(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Lists.<IAspect>newArrayList(
-                Aspects.Read.Audio.INTEGER_PIANO_NOTE,
-                Aspects.Read.Audio.INTEGER_BASSDRUM_NOTE,
+                Aspects.Read.Audio.INTEGER_HARP_NOTE,
+                Aspects.Read.Audio.INTEGER_BASEDRUM_NOTE,
                 Aspects.Read.Audio.INTEGER_SNARE_NOTE,
-                Aspects.Read.Audio.INTEGER_CLICKS_NOTE,
-                Aspects.Read.Audio.INTEGER_BASSGUITAR_NOTE
+                Aspects.Read.Audio.INTEGER_HAT_NOTE,
+                Aspects.Read.Audio.INTEGER_BASS_NOTE,
+                Aspects.Read.Audio.INTEGER_FLUTE_NOTE,
+                Aspects.Read.Audio.INTEGER_BELL_NOTE,
+                Aspects.Read.Audio.INTEGER_GUITAR_NOTE,
+                Aspects.Read.Audio.INTEGER_CHIME_NOTE,
+                Aspects.Read.Audio.INTEGER_XYLOPHONE_NOTE,
+                Aspects.Read.Audio.INTEGER_IRON_XYLOPHONE_NOTE,
+                Aspects.Read.Audio.INTEGER_COW_BELL_NOTE,
+                Aspects.Read.Audio.INTEGER_DIDGERIDOO_NOTE,
+                Aspects.Read.Audio.INTEGER_BIT_NOTE,
+                Aspects.Read.Audio.INTEGER_BANJO_NOTE,
+                Aspects.Read.Audio.INTEGER_PLING_NOTE
         ));
     }
 

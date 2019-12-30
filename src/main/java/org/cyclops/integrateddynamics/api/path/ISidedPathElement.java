@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.path;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 import javax.annotation.Nullable;
 
@@ -21,6 +21,6 @@ public interface ISidedPathElement extends Comparable<ISidedPathElement> {
      * @return The side the path element was found on.
      */
     @Nullable
-    public EnumFacing getSide();
+    public Direction getSide();
 
 }

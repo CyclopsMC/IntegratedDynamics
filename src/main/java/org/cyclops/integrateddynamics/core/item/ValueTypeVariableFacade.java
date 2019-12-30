@@ -2,12 +2,15 @@ package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.IModelData;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -20,6 +23,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Variable facade for variables determined by a raw value.
@@ -45,13 +49,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
         this.value = value;
     }
 
-    public ValueTypeVariableFacade(boolean generateId, IValueType<V> valueType, String value) {
+    public ValueTypeVariableFacade(boolean generateId, IValueType<V> valueType, INBT value) {
         super(generateId);
         this.valueType = valueType;
         this.value = ValueHelpers.deserializeRaw(valueType, value);
     }
 
-    public ValueTypeVariableFacade(int id, IValueType<V> valueType, String value) {
+    public ValueTypeVariableFacade(int id, IValueType<V> valueType, INBT value) {
         super(id);
         this.valueType = valueType;
         this.value = ValueHelpers.deserializeRaw(valueType, value);
@@ -76,13 +80,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
-            validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(new TranslationTextComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
             // Check expected aspect type and operator output type
             if (!ValueHelpers.correspondsTo(getValueType(), containingValueType)) {
-                validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
-                        new L10NHelpers.UnlocalizedString(containingValueType.getTranslationKey()),
-                        new L10NHelpers.UnlocalizedString(getValueType().getTranslationKey())));
+                validator.addError(new TranslationTextComponent(L10NValues.ASPECT_ERROR_INVALIDTYPE,
+                        new TranslationTextComponent(containingValueType.getTranslationKey()),
+                        new TranslationTextComponent(getValueType().getTranslationKey())));
             }
         }
     }
@@ -92,24 +96,24 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
         return getValueType();
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(List<String> list, World world) {
+    public void addInformation(List<ITextComponent> list, World world) {
         if(isValid()) {
             V value = getValue();
             getValueType().loadTooltip(list, false, value);
-            list.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
+            list.add(new TranslationTextComponent(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
         }
         super.addInformation(list, world);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData) {
         if(isValid()) {
             IBakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(getValueType());
             if(bakedModel != null) {
-                quads.addAll(bakedModel.getQuads(null, null, 0L));
+                quads.addAll(bakedModel.getQuads(null, null, random, modelData));
             }
         }
     }

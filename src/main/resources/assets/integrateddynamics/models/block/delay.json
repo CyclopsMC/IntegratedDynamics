@@ -1,12 +1,12 @@
 {
     "parent": "block/cube",
     "textures": {
-        "particle": "integrateddynamics:blocks/delay_top",
-        "down": "integrateddynamics:blocks/delay_top",
-        "up": "integrateddynamics:blocks/delay_top",
-        "north": "integrateddynamics:blocks/delay_front",
-        "east": "integrateddynamics:blocks/delay_side",
-        "south": "integrateddynamics:blocks/delay_front",
-        "west": "integrateddynamics:blocks/delay_side"
+        "particle": "integrateddynamics:block/delay_top",
+        "down": "integrateddynamics:block/delay_top",
+        "up": "integrateddynamics:block/delay_top",
+        "north": "integrateddynamics:block/delay_front",
+        "east": "integrateddynamics:block/delay_side",
+        "south": "integrateddynamics:block/delay_front",
+        "west": "integrateddynamics:block/delay_side"
     }
 }

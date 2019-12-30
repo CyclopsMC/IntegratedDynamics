@@ -4,21 +4,20 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.oredict.OreDictionary;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
-import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesItemStackOredictionary;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesItemStackTag;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.Reference;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -29,31 +28,30 @@ import java.util.stream.Collectors;
  */
 public enum ItemMatchType {
 
-    ITEMMETA(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.DAMAGE)),
     ITEM(new FlaggedPrototypeHandler(ItemMatch.ITEM)),
-    ITEMMETANBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT)),
     ITEMNBT(new FlaggedPrototypeHandler(ItemMatch.ITEM | ItemMatch.NBT)),
-    OREDICT(itemStack -> {
-        return new PrototypedIngredientAlternativesItemStackOredictionary(getOreDictKeys(itemStack),
-                ItemMatch.ITEM | ItemMatch.DAMAGE | ItemMatch.NBT, itemStack.getCount());
+    TAG(itemStack -> {
+        return new PrototypedIngredientAlternativesItemStackTag(getTagKeys(itemStack),
+                ItemMatch.ITEM | ItemMatch.NBT, itemStack.getCount());
     });
 
-    private static final LoadingCache<ItemStack, List<String>> CACHE_OREDICT = CacheBuilder.newBuilder()
+    private static final LoadingCache<ItemStack, List<String>> CACHE_TAG = CacheBuilder.newBuilder()
             .expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<ItemStack, List<String>>() {
                 @Override
                 public List<String> load(ItemStack key) {
                     if (key.isEmpty()) {
                         return Collections.emptyList();
                     }
-                    return Arrays.stream(OreDictionary.getOreIDs(key))
-                            .mapToObj(OreDictionary::getOreName)
+                    return ItemTags.getCollection().getOwningTags(key.getItem())
+                            .stream()
+                            .map(Objects::toString)
                             .collect(Collectors.toList());
                 }
             });
 
-    protected static List<String> getOreDictKeys(ItemStack itemStack) {
+    protected static List<String> getTagKeys(ItemStack itemStack) {
         try {
-            return CACHE_OREDICT.get(itemStack);
+            return CACHE_TAG.get(itemStack);
         } catch (ExecutionException e) {
             return Collections.emptyList();
         }
@@ -99,10 +97,7 @@ public enum ItemMatchType {
         @Override
         public IPrototypedIngredientAlternatives<ItemStack, Integer> getPrototypesFor(ItemStack itemStack) {
             return new PrototypedIngredientAlternativesList<>(
-                    ItemStackHelpers.getVariants(itemStack)
-                            .stream()
-                            .map(stack -> new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, stack, flags))
-                            .collect(Collectors.toList()));
+                    Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, flags)));
         }
     }
 }

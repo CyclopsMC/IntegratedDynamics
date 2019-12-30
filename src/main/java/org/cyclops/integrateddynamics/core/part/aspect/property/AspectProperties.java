@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.part.aspect.property;
 
 import com.google.common.collect.Maps;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -64,32 +64,32 @@ public class AspectProperties implements IAspectProperties {
     }
 
     @Override
-    public NBTTagCompound toNBT() {
-        NBTTagCompound tag = new NBTTagCompound();
-        NBTTagList map = new NBTTagList();
+    public CompoundNBT toNBT() {
+        CompoundNBT tag = new CompoundNBT();
+        ListNBT map = new ListNBT();
         for(Map.Entry<IAspectPropertyTypeInstance, IValue> entry : values.entrySet()) {
-            NBTTagCompound nbtEntry = new NBTTagCompound();
-            nbtEntry.setString("key", entry.getKey().getType().getTranslationKey());
-            nbtEntry.setString("label", entry.getKey().getTranslationKey());
-            nbtEntry.setString("value", ValueHelpers.serializeRaw(entry.getValue()));
-            map.appendTag(nbtEntry);
+            CompoundNBT nbtEntry = new CompoundNBT();
+            nbtEntry.putString("key", entry.getKey().getType().getTranslationKey());
+            nbtEntry.putString("label", entry.getKey().getTranslationKey());
+            nbtEntry.put("value", ValueHelpers.serializeRaw(entry.getValue()));
+            map.add(nbtEntry);
         }
-        tag.setTag("map", map);
+        tag.put("map", map);
         return tag;
     }
 
     @Override
-    public void fromNBT(NBTTagCompound tag) {
+    public void fromNBT(CompoundNBT tag) {
         values.clear();
-        NBTTagList map = tag.getTagList("map", MinecraftHelpers.NBTTag_Types.NBTTagCompound.ordinal());
-        for(int i = 0; i < map.tagCount(); i++) {
-            NBTTagCompound nbtEntry = map.getCompoundTagAt(i);
+        ListNBT map = tag.getList("map", Constants.NBT.TAG_COMPOUND);
+        for(int i = 0; i < map.size(); i++) {
+            CompoundNBT nbtEntry = map.getCompound(i);
             String valueTypeName = nbtEntry.getString("key");
             IValueType type = ValueTypes.REGISTRY.getValueType(valueTypeName);
             if(type == null) {
                 IntegratedDynamics.clog(Level.ERROR, String.format("Could not find value type with name %s, skipping loading.", valueTypeName));
             } else {
-                IValue value = ValueHelpers.deserializeRaw(type, nbtEntry.getString("value"));
+                IValue value = ValueHelpers.deserializeRaw(type, nbtEntry.get("value"));
                 String label = nbtEntry.getString("label");
                 if(value == null) {
                     IntegratedDynamics.clog(Level.ERROR, String.format("The value type %s could not load its value, using default.", valueTypeName));

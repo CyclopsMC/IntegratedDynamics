@@ -3,8 +3,8 @@
   "defaults": {
     "model": "integrateddynamics:reader",
     "textures": {
-      "back" : "integrateddynamics:parts/audio_reader_back",
-      "front": "integrateddynamics:parts/audio_reader_front"
+      "back" : "integrateddynamics:part/audio_reader_back",
+      "front": "integrateddynamics:part/audio_reader_front"
     }
   },
   "variants": {

@@ -1,8 +1,9 @@
 package org.cyclops.integrateddynamics.entity.item;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -10,9 +11,10 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.particle.ParticleBlur;
+import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
 
 import java.util.Random;
 
@@ -21,18 +23,18 @@ import java.util.Random;
  * @author rubensworks
  *
  */
-public class EntityItemTargetted extends EntityItem {
+public class EntityItemTargetted extends ItemEntity {
 
 	private static final DataParameter<BlockPos> TARGET = EntityDataManager.createKey(EntityItemTargetted.class, DataSerializers.BLOCK_POS);
 
-	private EntityLivingBase targetEntity = null;
+	private LivingEntity targetEntity = null;
 
 	/**
 	 * Make a new instance.
 	 * @param world The world.
 	 */
-	public EntityItemTargetted(World world) {
-        super(world);
+	public EntityItemTargetted(EntityType<? extends EntityItemTargetted> entityType,  World world) {
+        super(entityType, world);
 		this.lifespan = Integer.MAX_VALUE;
     }
 
@@ -62,8 +64,8 @@ public class EntityItemTargetted extends EntityItem {
     }
 
 	@Override
-	protected void entityInit() {
-		super.entityInit();
+	protected void registerData() {
+		super.registerData();
 		this.getDataManager().register(TARGET, getPosition());
 	}
 
@@ -71,7 +73,7 @@ public class EntityItemTargetted extends EntityItem {
 		this.getDataManager().set(TARGET, pos);
 	}
 
-	public void setTarget(EntityLivingBase targetEntity) {
+	public void setTarget(LivingEntity targetEntity) {
 		this.targetEntity = targetEntity;
 		this.setTarget(targetEntity.getPosition());
 	}
@@ -86,8 +88,8 @@ public class EntityItemTargetted extends EntityItem {
 	}
 
 	@Override
-	public void onUpdate() {
-		super.onUpdate();
+	public void tick() {
+		super.tick();
 		if (targetEntity != null) {
 			setTarget(targetEntity.getPosition());
 		}
@@ -104,20 +106,18 @@ public class EntityItemTargetted extends EntityItem {
 			dx *= m;
 			dy *= m;
 			dz *= m;
-			this.motionX = dx * strength;
-			this.motionY = dy * strength;
-			this.motionZ = dz * strength;
+			this.getMotion().mul(strength, strength, strength);
 			if(this.collidedHorizontally) {
-				this.motionY = 0.3;
+				this.setMotion(this.getMotion().x, 0.3, this.getMotion().z);
 			}
 		}
 
-		if(world.isRemote) {
+		if(world.isRemote()) {
 			showEntityMoved();
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	protected void showEntityMoved() {
 		Random rand = world.rand;
 		float scale = 0.05F;
@@ -126,10 +126,10 @@ public class EntityItemTargetted extends EntityItem {
 		float blue = rand.nextFloat() * 0.20F + 0.80F;
 		float ageMultiplier = (float) (rand.nextDouble() * 2.5D + 10D);
 
-		ParticleBlur blur = new ParticleBlur(world, this.posX, this.posY + 0.5D, this.posZ, scale,
-				0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2,
-				red, green, blue, ageMultiplier);
-		Minecraft.getMinecraft().effectRenderer.addEffect(blur);
+		ParticleBlur blur = new ParticleBlur(new ParticleBlurData(red, green, blue, scale, ageMultiplier),
+				world, this.posX, this.posY + 0.5D, this.posZ,
+				0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2);
+		Minecraft.getInstance().particles.addEffect(blur);
 
 		if (rand.nextInt(5) == 0) {
 			BlockPos target = getTarget();
@@ -141,9 +141,10 @@ public class EntityItemTargetted extends EntityItem {
 			double x = this.posX - dx * factor;
 			double y = this.posY - dy * factor;
 			double z = this.posZ - dz * factor;
-			ParticleBlur blur2 = new ParticleBlur(world, x, y, z, scale,
-					-0.02 * dx, -0.02 * dy, -0.02 * dz, red, green, blue, ageMultiplier);
-			Minecraft.getMinecraft().effectRenderer.addEffect(blur2);
+			ParticleBlur blur2 = new ParticleBlur(new ParticleBlurData(red, green, blue, scale, ageMultiplier),
+					world, x, y, z,
+					-0.02 * dx, -0.02 * dy, -0.02 * dz);
+			Minecraft.getInstance().particles.addEffect(blur2);
 		}
 	}
 

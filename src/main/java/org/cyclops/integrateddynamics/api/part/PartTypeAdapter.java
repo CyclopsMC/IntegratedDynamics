@@ -1,16 +1,17 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.init.IInitListener;
+import net.minecraftforge.common.util.Constants;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
@@ -41,17 +42,12 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void onInit(IInitListener.Step initStep) {
-
-    }
-
-    @Override
-    public void toNBT(NBTTagCompound tag, S partState) {
+    public void toNBT(CompoundNBT tag, S partState) {
         partState.writeToNBT(tag);
     }
 
     @Override
-    public S fromNBT(NBTTagCompound tag) {
+    public S fromNBT(CompoundNBT tag) {
         S partState = constructDefaultState();
         partState.readFromNBT(tag);
         partState.gatherCapabilities((P) this);
@@ -91,20 +87,20 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void setTargetSideOverride(S state, @Nullable EnumFacing side) {
+    public void setTargetSideOverride(S state, @Nullable Direction side) {
         state.setTargetSideOverride(side);
     }
 
     @Nullable
     @Override
-    public EnumFacing getTargetSideOverride(S state) {
+    public Direction getTargetSideOverride(S state) {
         return state.getTargetSideOverride();
     }
 
     @Override
     public PartTarget getTarget(PartPos pos, S state) {
         PartTarget target = PartTarget.fromCenter(pos);
-        EnumFacing sideOverride = getTargetSideOverride(state);
+        Direction sideOverride = getTargetSideOverride(state);
         if (sideOverride != null) {
             target = target.forTargetSide(sideOverride);
         }
@@ -140,9 +136,9 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     public ItemStack getItemStack(S state, boolean saveState) {
         ItemStack itemStack = new ItemStack(getItem());
         if (saveState) {
-            NBTTagCompound tag = new NBTTagCompound();
+            CompoundNBT tag = new CompoundNBT();
             toNBT(tag, state);
-            itemStack.setTagCompound(tag);
+            itemStack.setTag(tag);
         }
         return itemStack;
     }
@@ -155,9 +151,9 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     @Override
     public S getState(ItemStack itemStack) {
         S partState = null;
-        if(!itemStack.isEmpty() && itemStack.getTagCompound() != null
-                && itemStack.getTagCompound().hasKey("id", MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
-            partState = fromNBT(itemStack.getTagCompound());
+        if(!itemStack.isEmpty() && itemStack.getTag() != null
+                && itemStack.getTag().contains("id", Constants.NBT.TAG_INT)) {
+            partState = fromNBT(itemStack.getTag());
         }
         if(partState == null) {
             partState = getDefaultState();
@@ -196,7 +192,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public boolean onPartActivated(World world, BlockPos pos, S partState, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand, ItemStack heldItem, BlockRayTraceResult hit) {
         return false;
     }
 
@@ -215,16 +211,10 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     }
 
-    @Deprecated // TODO: remove in 1.14
-    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
-                                      IBlockAccess world, Block neighbourBlock) {
-
-    }
-
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
-                                      IBlockAccess world, Block neighbourBlock, BlockPos neighbourBlockPos) {
-        this.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock);
+                                      IBlockReader world, Block neighbourBlock, BlockPos neighbourBlockPos) {
+
     }
 
     @Override
@@ -248,12 +238,12 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void loadTooltip(S state, List<String> lines) {
+    public void loadTooltip(S state, List<ITextComponent> lines) {
 
     }
 
     @Override
-    public void loadTooltip(ItemStack itemStack, List<String> lines) {
+    public void loadTooltip(ItemStack itemStack, List<ITextComponent> lines) {
 
     }
 

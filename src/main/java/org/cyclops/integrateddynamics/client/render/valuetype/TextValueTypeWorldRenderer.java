@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -21,12 +21,12 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
     public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, EnumFacing direction, IPartType partType, IValue value,
+                            int destroyStage, Direction direction, IPartType partType, IValue value,
                             TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float maxWidth = 0;
 
-        String[] lines = value.getType().toCompactString(value).split("(?<=[^\\\\])\\\\n");
+        String[] lines = value.getType().toCompactString(value).getFormattedText().split("(?<=[^\\\\])\\\\n");
         for (String line : lines) {
             float width = fontRenderer.getStringWidth(polishLine(line)) - 1;
             maxWidth = Math.max(maxWidth, width);
@@ -43,8 +43,8 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         float scale = Math.min(scaleX, scaleY); // Maintain aspect ratio
         float newWidth = maxWidth * scale;
         float newHeight = totalHeight * scale;
-        GlStateManager.translate((DisplayPartOverlayRenderer.MAX - newWidth) / 2, (DisplayPartOverlayRenderer.MAX - newHeight) / 2, 0F);
-        GlStateManager.scale(scale, scale, 1F);
+        GlStateManager.translatef((DisplayPartOverlayRenderer.MAX - newWidth) / 2, (DisplayPartOverlayRenderer.MAX - newHeight) / 2, 0F);
+        GlStateManager.scalef(scale, scale, 1F);
 
         int offset = 0;
         for(String line : lines) {

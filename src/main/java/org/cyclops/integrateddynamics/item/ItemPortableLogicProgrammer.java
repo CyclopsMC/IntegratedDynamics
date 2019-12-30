@@ -1,14 +1,16 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.inventory.Container;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
+import net.minecraft.world.World;
+import org.cyclops.cyclopscore.inventory.container.NamedContainerProviderItem;
 import org.cyclops.cyclopscore.item.ItemGui;
-import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerPortable;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerPortable;
+
+import javax.annotation.Nullable;
 
 /**
  * A portable logic programmer.
@@ -16,33 +18,19 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class ItemPortableLogicProgrammer extends ItemGui {
 
-    private static ItemPortableLogicProgrammer _instance = null;
-
-    /**
-     * Get the unique instance.
-     * @return The instance.
-     */
-    public static ItemPortableLogicProgrammer getInstance() {
-        return _instance;
+    public ItemPortableLogicProgrammer(Properties properties) {
+        super(properties);
     }
 
-    /**
-     * Make a new item instance.
-     *
-     * @param eConfig Config for this blockState.
-     */
-    public ItemPortableLogicProgrammer(ExtendedConfig<ItemConfig> eConfig) {
-        super(eConfig);
+    @Nullable
+    @Override
+    public INamedContainerProvider getContainer(World world, PlayerEntity playerEntity, int itemIndex, Hand hand, ItemStack itemStack) {
+        return new NamedContainerProviderItem(itemIndex, hand, itemStack.getDisplayName(), ContainerLogicProgrammerPortable::new);
     }
 
     @Override
-    public Class<? extends Container> getContainer() {
+    public Class<? extends Container> getContainerClass(World world, PlayerEntity playerEntity, ItemStack itemStack) {
         return ContainerLogicProgrammerPortable.class;
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public Class<? extends GuiScreen> getGui() {
-        return GuiLogicProgrammerPortable.class;
-    }
 }

@@ -14,32 +14,17 @@ import org.cyclops.integrateddynamics.api.ingredient.capability.IPositionedAddon
  */
 public class PositionedAddonsNetworkIngredientsHandlerConfig extends CapabilityConfig<IPositionedAddonsNetworkIngredientsHandler> {
 
-    /**
-     * The unique instance.
-     */
-    public static PositionedAddonsNetworkIngredientsHandlerConfig _instance;
-
     @CapabilityInject(IPositionedAddonsNetworkIngredientsHandler.class)
     public static Capability<IPositionedAddonsNetworkIngredientsHandler> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public PositionedAddonsNetworkIngredientsHandlerConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "energy_network",
-                "A capability for networks that can hold energy.",
                 IPositionedAddonsNetworkIngredientsHandler.class,
                 new DefaultCapabilityStorage<IPositionedAddonsNetworkIngredientsHandler>(),
-                DefaultPositionedAddonsNetworkIngredientsHandler.class
+                () -> new DefaultPositionedAddonsNetworkIngredientsHandler(null)
         );
-    }
-
-    @Override
-    public boolean isDisableable() {
-        return false;
     }
 
 }

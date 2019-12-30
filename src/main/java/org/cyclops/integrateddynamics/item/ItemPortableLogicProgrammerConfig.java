@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.item;
 
+import net.minecraft.item.Item;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -9,21 +10,12 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemPortableLogicProgrammerConfig extends ItemConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static ItemPortableLogicProgrammerConfig _instance;
-
-    /**
-     * Make a new instance.
-     */
     public ItemPortableLogicProgrammerConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "portable_logic_programmer",
-                null,
-                ItemPortableLogicProgrammer.class
+                eConfig -> new ItemPortableLogicProgrammer(new Item.Properties()
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 

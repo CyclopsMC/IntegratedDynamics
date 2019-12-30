@@ -2,7 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
@@ -27,11 +28,11 @@ import java.util.concurrent.TimeUnit;
 public class PositionedOperatorRecipeHandlerRecipeByOutput<T extends IValueType<V>, V extends IValue>
         extends PositionedOperatorRecipeHandler<T, V> {
 
-    private static final Cache<Pair<Pair<DimPos, EnumFacing>, ValueObjectTypeIngredients.ValueIngredients>,
+    private static final Cache<Pair<Pair<DimPos, Direction>, ValueObjectTypeIngredients.ValueIngredients>,
             ValueObjectTypeRecipe.ValueRecipe> CACHE = CacheBuilder.newBuilder()
             .expireAfterAccess(20, TimeUnit.SECONDS).build();
 
-    public PositionedOperatorRecipeHandlerRecipeByOutput(DimPos pos, EnumFacing side) {
+    public PositionedOperatorRecipeHandlerRecipeByOutput(DimPos pos, Direction side) {
         super("recipebyoutput", new Function(), ValueTypes.OBJECT_RECIPE, pos, side);
     }
 
@@ -44,9 +45,9 @@ public class PositionedOperatorRecipeHandlerRecipeByOutput<T extends IValueType<
         @Override
         public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
             ValueObjectTypeIngredients.ValueIngredients ingredients = variables.getValue(0);
-            IRecipeHandler recipeHandler = this.getOperator().getRecipeHandler();
+            IRecipeHandler recipeHandler = (IRecipeHandler) this.getOperator().getRecipeHandler().orElse(null);
             if (recipeHandler != null && ingredients.getRawValue().isPresent()) {
-                Pair<Pair<DimPos, EnumFacing>, ValueObjectTypeIngredients.ValueIngredients> key =
+                Pair<Pair<DimPos, Direction>, ValueObjectTypeIngredients.ValueIngredients> key =
                         Pair.of(Pair.of(this.getOperator().getPos(), this.getOperator().getSide()), ingredients);
                 try {
                     return getCache().get(key, () -> {
@@ -73,7 +74,7 @@ public class PositionedOperatorRecipeHandlerRecipeByOutput<T extends IValueType<
             return validateIngredientsPartial(actualIngredients, givenIngredients);
         }
 
-        protected Cache<Pair<Pair<DimPos, EnumFacing>, ValueObjectTypeIngredients.ValueIngredients>,
+        protected Cache<Pair<Pair<DimPos, Direction>, ValueObjectTypeIngredients.ValueIngredients>,
                 ValueObjectTypeRecipe.ValueRecipe> getCache() {
             return CACHE;
         }

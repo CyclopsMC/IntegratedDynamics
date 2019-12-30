@@ -1,30 +1,30 @@
 package org.cyclops.integrateddynamics.fluid;
 
+import net.minecraft.item.Rarity;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import org.cyclops.cyclopscore.config.extendedconfig.FluidConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
- * Config for {@link FluidMenrilResin}.
+ * Config for Menril Resin.
  * @author rubensworks
  *
  */
 public class FluidMenrilResinConfig extends FluidConfig {
-    
-    /**
-     * The unique instance.
-     */
-    public static FluidMenrilResinConfig _instance;
 
-    /**
-     * Make a new instance.
-     */
     public FluidMenrilResinConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
-                "menrilresin",
-                null,
-                FluidMenrilResin.class
+                "menril_resin",
+                fluidConfig -> new ForgeFlowingFluid.Source(
+                        getDefaultFluidProperties(IntegratedDynamics._instance,
+                                "block/menril_resin",
+                                builder -> builder
+                                        .density(1500)
+                                        .viscosity(3000)
+                                        .rarity(Rarity.RARE))
+                                .block(() -> RegistryEntries.BLOCK_FLUID_MENRIL_RESIN))
         );
     }
 }

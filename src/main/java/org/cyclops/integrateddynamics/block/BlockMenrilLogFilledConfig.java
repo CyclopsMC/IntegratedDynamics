@@ -1,11 +1,15 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
-import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Config for the Menril Wood.
@@ -14,38 +18,23 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class BlockMenrilLogFilledConfig extends BlockConfig {
 
-    /**
-     * The unique instance.
-     */
-    public static BlockMenrilLogFilledConfig _instance;
-
-    /**
-     * The 1/x chance at which Menril Wood will be filled with Menril Resin when generated, the higher this value, the lower the chance.
-     */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.WORLDGENERATION, comment = "The 1/x chance at which Menril Wood will be filled with Menril Resin when generated, the higher this value, the lower the chance.", isCommandable = true, minimalValue = 0)
+    @ConfigurableProperty(category = "worldgeneration", comment = "The 1/x chance at which Menril Wood will be filled with Menril Resin when generated, the higher this value, the lower the chance.", isCommandable = true, minimalValue = 0)
     public static int filledMenrilLogChance = 10;
 
-    /**
-     * Make a new instance.
-     */
     public BlockMenrilLogFilledConfig() {
         super(
                 IntegratedDynamics._instance,
-                true,
                 "menril_log_filled",
-                null,
-                BlockMenrilLogFilled.class
+                eConfig -> new BlockMenrilLogFilled(MaterialColor.CYAN, Block.Properties.create(Material.WOOD, MaterialColor.CYAN)
+                        .hardnessAndResistance(2.0F)
+                        .sound(SoundType.WOOD)),
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
-    
-    @Override
-    public String getOreDictionaryId() {
-        return Reference.DICT_WOODLOG;
-    }
-    
+
     @Override
     public void onRegistered() {
-    	Blocks.FIRE.setFireInfo(getBlockInstance(), 5, 20);
+        ((FireBlock) Blocks.FIRE).setFireInfo(RegistryEntries.BLOCK_MENRIL_LOG, 5, 20);
     }
 
 }

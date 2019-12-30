@@ -1,52 +1,59 @@
 package org.cyclops.integrateddynamics.core.recipe;
 
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 
-/**
- * recipe for combining energy batteries in a shapeless manner.
- * @author rubensworks
- *
- */
-public class ItemBlockEnergyContainerCombinationRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+import java.util.function.Supplier;
 
+/**
+ * Recipe for combining energy batteries in a shapeless manner.
+ * @author rubensworks
+ */
+public class ItemBlockEnergyContainerCombinationRecipe extends SpecialRecipe {
+
+	private final IRecipeSerializer<?> serializer;
 	private final int size;
-	private final ItemBlockEnergyContainer batteryItem;
+	private final Supplier<ItemBlockEnergyContainer> batteryItem;
 	private final int maxCapacity;
 
 	/**
 	 * Make a new instance.
+	 * @param serializer The serializer;
+	 * @param id The recipe id.
 	 * @param size The recipe size (should be called multiple times (1 to 9) to allow for all shapeless crafting types.
 	 * @param batteryItem The battery item that is combinable.
 	 * @param maxCapacity The maximum allowed capacity.
 	 */
-	public ItemBlockEnergyContainerCombinationRecipe(int size, ItemBlockEnergyContainer batteryItem, int maxCapacity) {
+	public ItemBlockEnergyContainerCombinationRecipe(IRecipeSerializer<?> serializer, ResourceLocation id, int size, Supplier<ItemBlockEnergyContainer> batteryItem, int maxCapacity) {
+		super(id);
+		this.serializer = serializer;
 		this.size = size;
 		this.batteryItem = batteryItem;
 		this.maxCapacity = maxCapacity;
 	}
 
 	@Override
-	public boolean matches(InventoryCrafting grid, World world) {
+	public boolean matches(CraftingInventory grid, World world) {
 		return !getCraftingResult(grid).isEmpty();
 	}
 	
 	@Override
 	public ItemStack getRecipeOutput() {
-		return new ItemStack(BlockEnergyBattery.getInstance());
+		return new ItemStack(this.batteryItem.get());
 	}
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inventory) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inventory) {
 		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
 
         for (int i = 0; i < aitemstack.size(); ++i) {
@@ -57,8 +64,13 @@ public class ItemBlockEnergyContainerCombinationRecipe extends IForgeRegistryEnt
         return aitemstack;
     }
 
-    @Override
-	public ItemStack getCraftingResult(InventoryCrafting grid) {
+	@Override
+	public IRecipeSerializer<?> getSerializer() {
+		return this.serializer;
+	}
+
+	@Override
+	public ItemStack getCraftingResult(CraftingInventory grid) {
 		ItemStack output = getRecipeOutput().copy();
 		IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(CapabilityEnergy.ENERGY, null);
 
@@ -70,7 +82,7 @@ public class ItemBlockEnergyContainerCombinationRecipe extends IForgeRegistryEnt
 		for(int j = 0; j < grid.getSizeInventory(); j++) {
 			ItemStack element = grid.getStackInSlot(j);
 			if(!element.isEmpty()) {
-				if(element.getItem() == batteryItem) {
+				if(element.getItem() == batteryItem.get()) {
 					IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(CapabilityEnergy.ENERGY, null);
 					inputItems++;
 					totalEnergy = Helpers.addSafe(totalEnergy, currentEnergyStorage.getEnergyStored());

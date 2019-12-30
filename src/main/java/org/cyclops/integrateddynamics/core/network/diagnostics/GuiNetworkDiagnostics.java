@@ -6,9 +6,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -397,7 +398,7 @@ public class GuiNetworkDiagnostics extends JFrame {
             BlockPos blockPos = pos.getPos().getBlockPos().offset(pos.getSide());
             float yaw = pos.getSide().getOpposite().getHorizontalAngle();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
-                    pos.getPos().getDimensionId(),
+                    pos.getPos().getDimension(),
                     blockPos.getX(),
                     blockPos.getY() - 1,
                     blockPos.getZ(),
@@ -411,15 +412,15 @@ public class GuiNetworkDiagnostics extends JFrame {
     public static class ObservablePartData {
         private final int networkId;
         private final int networkCables;
-        private final int dimension;
+        private final DimensionType dimension;
         private final BlockPos pos;
-        private final EnumFacing side;
+        private final Direction side;
         private final String name;
         private final long last20TicksDurationNs;
 
         public PartPos toPartPos() {
-            World world = Minecraft.getMinecraft().world;
-            if (getDimension() == world.provider.getDimension()) {
+            World world = Minecraft.getInstance().world;
+            if (getDimension() == world.getDimension().getType()) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;
@@ -429,15 +430,15 @@ public class GuiNetworkDiagnostics extends JFrame {
     @Data
     public static class ObservableObserverData {
         private final int networkId;
-        private final int dimension;
+        private final DimensionType dimension;
         private final BlockPos pos;
-        private final EnumFacing side;
+        private final Direction side;
         private final String name;
         private final long last20TicksDurationNs;
 
         public PartPos toPartPos() {
-            World world = Minecraft.getMinecraft().world;
-            if (getDimension() == world.provider.getDimension()) {
+            World world = Minecraft.getInstance().world;
+            if (getDimension() == world.getDimension().getType()) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;

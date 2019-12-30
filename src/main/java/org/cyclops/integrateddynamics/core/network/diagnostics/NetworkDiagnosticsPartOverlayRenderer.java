@@ -2,13 +2,13 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -51,7 +51,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
     @SubscribeEvent
     public void onRender(RenderWorldLastEvent event) {
         if (!partPositions.isEmpty()) {
-            EntityPlayer player = Minecraft.getMinecraft().player;
+            PlayerEntity player = Minecraft.getInstance().player;
             float partialTicks = event.getPartialTicks();
 
             double offsetX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
@@ -59,22 +59,23 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             double offsetZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
 
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.glLineWidth(6.0F);
-            GlStateManager.disableTexture2D();
+            GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            GlStateManager.lineWidth(6.0F);
+            GlStateManager.disableTexture();
             GlStateManager.depthMask(false);
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (Iterator<PartPos> it = partList.iterator(); it.hasNext(); ) {
                 PartPos partPos = it.next();
-                if (partPos.getPos().getDimensionId() == player.world.provider.getDimension() && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
+                if (partPos.getPos().getDimension() == player.world.getDimension().getType() && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
                     if (partStateHolder != null) {
                         AxisAlignedBB bb = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide())
+                                .getBoundingBox()
                                 .offset(partPos.getPos().getBlockPos())
                                 .offset(-offsetX, -offsetY, -offsetZ)
                                 .expand(0.05, 0.05, 0.05);
-                        RenderGlobal.drawSelectionBoundingBox(bb, 1.0F, 0.2F, 0.1F, 0.8F);
+                        WorldRenderer.drawSelectionBoundingBox(bb, 1.0F, 0.2F, 0.1F, 0.8F);
                     } else {
                         it.remove();
                     }
@@ -82,7 +83,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             }
 
             GlStateManager.depthMask(true);
-            GlStateManager.enableTexture2D();
+            GlStateManager.enableTexture();
             GlStateManager.disableBlend();
         }
     }

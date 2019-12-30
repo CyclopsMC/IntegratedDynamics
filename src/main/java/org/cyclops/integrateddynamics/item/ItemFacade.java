@@ -2,32 +2,20 @@ package org.cyclops.integrateddynamics.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
-import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
-import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
-import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
 
 /**
  * An item that represents a facade of a certain type.
@@ -35,100 +23,64 @@ import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class ItemFacade extends ConfigurableItem {
+public class ItemFacade extends Item {
 
-    private static ItemFacade _instance = null;
-
-    /**
-     * Get the unique instance.
-     * @return The instance.
-     */
-    public static ItemFacade getInstance() {
-        return _instance;
+    public ItemFacade(Properties properties) {
+        super(properties);
     }
 
-    /**
-     * Make a new item instance.
-     *
-     * @param eConfig Config for this blockState.
-     */
-    public ItemFacade(ExtendedConfig<ItemConfig> eConfig) {
-        super(eConfig);
-    }
-
-    public IBlockState getFacadeBlock(ItemStack itemStack) {
-        if(!itemStack.isEmpty() && itemStack.hasTagCompound()) {
-            NBTTagCompound tag = itemStack.getTagCompound();
-            String blockName = tag.getString("blockName");
-            int meta = tag.getInteger("meta");
-            return BlockHelpers.deserializeBlockState(Pair.of(blockName, meta));
+    public BlockState getFacadeBlock(ItemStack itemStack) {
+        if(!itemStack.isEmpty() && itemStack.hasTag()) {
+            CompoundNBT tag = itemStack.getTag();
+            return BlockHelpers.deserializeBlockState(tag.get("block"));
         }
         return null;
     }
 
     public ItemStack getFacadeBlockItem(ItemStack itemStack) {
-        IBlockState blockState = getFacadeBlock(itemStack);
+        BlockState blockState = getFacadeBlock(itemStack);
         if(blockState != null) {
             return BlockHelpers.getItemStackFromBlockState(blockState);
         }
         return null;
     }
 
-    public void writeFacadeBlock(ItemStack itemStack, IBlockState blockState) {
-        NBTTagCompound tag = ItemStackHelpers.getSafeTagCompound(itemStack);
-        Pair<String, Integer> serializedBlockState = BlockHelpers.serializeBlockState(blockState);
-        tag.setString("blockName", serializedBlockState.getLeft());
-        tag.setInteger("meta", serializedBlockState.getRight());
+    public void writeFacadeBlock(ItemStack itemStack, BlockState blockState) {
+        CompoundNBT tag = itemStack.getOrCreateTag();
+        INBT serializedBlockState = BlockHelpers.serializeBlockState(blockState);
+        tag.put("block", serializedBlockState);
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack itemStack) {
-        String suffix = TextFormatting.ITALIC + L10NHelpers.localize("general.integrateddynamics.info.none");
+    public ITextComponent getDisplayName(ItemStack itemStack) {
+        ITextComponent suffix = new TranslationTextComponent("general.integrateddynamics.info.none")
+                .applyTextStyle(TextFormatting.ITALIC);
         ItemStack itemStackInner = getFacadeBlockItem(itemStack);
         if(itemStackInner != null) {
             suffix = getFacadeBlockItem(itemStack).getDisplayName();
         }
-        return super.getItemStackDisplayName(itemStack) + " - " + suffix;
+        return super.getDisplayName(itemStack)
+                .appendText(" - ")
+                .appendSibling(suffix);
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer playerIn, World world, BlockPos pos,
-                                      EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack itemStack = playerIn.getHeldItem(hand);
-        if(!world.isRemote) {
-            IFacadeable facadeable = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
-            IBlockState blockState = getFacadeBlock(itemStack);
+    public ActionResultType onItemUse(ItemUseContext context) {
+        ItemStack itemStack = context.getItem();
+        if(!context.getWorld().isRemote()) {
+            IFacadeable facadeable = TileHelpers.getCapability(context.getWorld(), context.getPos(), null, FacadeableConfig.CAPABILITY).orElse(null);
+            BlockState blockState = getFacadeBlock(itemStack);
             if(facadeable != null && blockState != null) {
                 // Add facade to existing cable
                 if (!facadeable.hasFacade()) {
                     facadeable.setFacade(blockState);
-                    ItemBlockCable.playPlaceSound(world, pos);
+                    ItemBlockCable.playPlaceSound(context.getWorld(), context.getPos());
                     itemStack.shrink(1);
                 }
             }
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
-        return super.onItemUse(playerIn, world, pos, hand, facing, hitX, hitY, hitZ);
-    }
-
-    @Override
-    public boolean hasDynamicModel() {
-        return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IBakedModel createDynamicModel() {
-        return new FacadeModel();
-    }
-
-    @SubscribeEvent
-    @Override
-    public void onModelBakeEvent(ModelBakeEvent event){
-        // Don't throw away the original model, but use if for displaying an unbound facade item.
-        IBakedModel oldModel = event.getModelRegistry().getObject(eConfig.dynamicItemVariantLocation);
-        FacadeModel.emptyModel = oldModel;
-        super.onModelBakeEvent(event);
+        return super.onItemUse(context);
     }
 
 }

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import net.minecraft.util.text.ITextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -98,7 +99,7 @@ public class TestStringOperators {
             }
 
             @Override
-            public String toCompactString() {
+            public ITextComponent toCompactString() {
                 return null;
             }
 

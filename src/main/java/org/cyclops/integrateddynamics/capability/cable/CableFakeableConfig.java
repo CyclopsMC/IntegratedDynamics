@@ -14,32 +14,22 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
  */
 public class CableFakeableConfig extends CapabilityConfig<ICableFakeable> {
 
-    /**
-     * The unique instance.
-     */
-    public static CableFakeableConfig _instance;
-
     @CapabilityInject(ICableFakeable.class)
     public static Capability<ICableFakeable> CAPABILITY = null;
 
-    /**
-     * Make a new instance.
-     */
     public CableFakeableConfig() {
         super(
                 CommonCapabilities._instance,
-                true,
                 "cableFakeable",
-                "Cables that can become fake",
                 ICableFakeable.class,
                 new DefaultCapabilityStorage<ICableFakeable>(),
-                CableFakeableDefault.class
-        );
-    }
+                () -> new CableFakeableDefault() {
+                    @Override
+                    protected void sendUpdate() {
 
-    @Override
-    public boolean isDisableable() {
-        return false;
+                    }
+                }
+        );
     }
 
 }
