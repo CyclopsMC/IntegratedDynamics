@@ -116,6 +116,8 @@ public class Configs {
         configHandler.addConfigurable(new BlockMechanicalDryingBasinConfig());
 
         // Items
+        configHandler.addConfigurable(new ItemBucketLiquidChorusConfig());
+        configHandler.addConfigurable(new ItemBucketMenrilResinConfig());
         configHandler.addConfigurable(new ItemWrenchConfig());
         configHandler.addConfigurable(new ItemVariableConfig());
         configHandler.addConfigurable(new ItemLabellerConfig());

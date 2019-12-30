@@ -17,7 +17,10 @@ public class BlockFluidMenrilResinConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "block_menril_resin",
-                eConfig -> new BlockFluidMenrilResin(Block.Properties.create(Material.WATER)),
+                eConfig -> new BlockFluidMenrilResin(Block.Properties.create(Material.WATER)
+                        .doesNotBlockMovement()
+                        .hardnessAndResistance(100.0F)
+                        .noDrops()),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

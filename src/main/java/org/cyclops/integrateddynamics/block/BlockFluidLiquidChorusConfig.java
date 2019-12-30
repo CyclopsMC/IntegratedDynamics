@@ -17,7 +17,10 @@ public class BlockFluidLiquidChorusConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "block_liquid_chorus",
-                eConfig -> new BlockFluidLiquidChorus(Block.Properties.create(Material.WATER)),
+                eConfig -> new BlockFluidLiquidChorus(Block.Properties.create(Material.WATER)
+                        .doesNotBlockMovement()
+                        .hardnessAndResistance(100.0F)
+                        .noDrops()),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

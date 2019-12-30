@@ -24,6 +24,7 @@ public class FluidMenrilResinConfig extends FluidConfig {
                                         .density(1500)
                                         .viscosity(3000)
                                         .rarity(Rarity.RARE))
+                                .bucket(() -> RegistryEntries.ITEM_BUCKET_MENRIL_RESIN)
                                 .block(() -> RegistryEntries.BLOCK_FLUID_MENRIL_RESIN))
         );
     }

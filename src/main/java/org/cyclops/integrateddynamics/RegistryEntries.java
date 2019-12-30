@@ -34,6 +34,10 @@ import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureTreeMenril;
  */
 public class RegistryEntries {
 
+    @ObjectHolder("integrateddynamics:bucket_liquid_chorus")
+    public static final Item ITEM_BUCKET_LIQUID_CHORUS = null;
+    @ObjectHolder("integrateddynamics:bucket_menril_resin")
+    public static final Item ITEM_BUCKET_MENRIL_RESIN = null;
     @ObjectHolder("integrateddynamics:cable")
     public static final Item ITEM_CABLE = null;
     @ObjectHolder("integrateddynamics:delay")
@@ -71,9 +75,9 @@ public class RegistryEntries {
     public static final BlockDryingBasin BLOCK_DRYING_BASIN = null;
     @ObjectHolder("integrateddynamics:energy_battery")
     public static final BlockEnergyBattery BLOCK_ENERGY_BATTERY = null;
-    @ObjectHolder("integrateddynamics:fluid_liquid_chorus")
+    @ObjectHolder("integrateddynamics:block_liquid_chorus")
     public static final BlockFluidLiquidChorus BLOCK_FLUID_LIQUID_CHORUS = null;
-    @ObjectHolder("integrateddynamics:fluid_menril_resin")
+    @ObjectHolder("integrateddynamics:block_menril_resin")
     public static final BlockFluidMenrilResin BLOCK_FLUID_MENRIL_RESIN = null;
     @ObjectHolder("integrateddynamics:invisible_light")
     public static final Block BLOCK_INVISIBLE_LIGHT = null;
@@ -101,7 +105,7 @@ public class RegistryEntries {
     public static final Block BLOCK_PROXY = null;
     @ObjectHolder("integrateddynamics:squeezer")
     public static final BlockSqueezer BLOCK_SQUEEZER = null;
-    @ObjectHolder("integrateddynamics:variable_store")
+    @ObjectHolder("integrateddynamics:variablestore")
     public static final Block BLOCK_VARIABLE_STORE = null;
 
     @ObjectHolder("integrateddynamics:coal_generator")
@@ -170,9 +174,9 @@ public class RegistryEntries {
     @ObjectHolder("integrateddynamics:tree_menril")
     public static final WorldFeatureTreeMenril WORLD_FEATURE_TREE_MENRIL = null;
 
-    @ObjectHolder("everlastingabilities:crafting_special_facade")
+    @ObjectHolder("integrateddynamics:crafting_special_facade")
     public static final SpecialRecipeSerializer<ItemFacadeRecipe> RECIPESERIALIZER_FACADE = null;
-    @ObjectHolder("everlastingabilities:crafting_special_variable_copy")
+    @ObjectHolder("integrateddynamics:crafting_special_variable_copy")
     public static final SpecialRecipeSerializer<ItemVariableCopyRecipe> RECIPESERIALIZER_VARIABLE_COPY = null;
 
 

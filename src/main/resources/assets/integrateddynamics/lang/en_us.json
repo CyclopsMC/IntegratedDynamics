@@ -122,6 +122,7 @@
     "item.integrateddynamics.labeller.button.write": "Write",
     "item.integrateddynamics.facade": "Facade",
     "item.integrateddynamics.facade.info": "Combine with a block in crafting table",
+    "item.integrateddynamics.bucket_liquid_chorus": "Liquid Chorus Bucket",
     "item.integrateddynamics.bucket_menril_resin": "Menril Resin Bucket",
     "item.integrateddynamics.crystalized_menril_chunk": "Crystalized Menril Chunk",
     "item.integrateddynamics.variable_transformer": "Input/Output Variable Transformers",
