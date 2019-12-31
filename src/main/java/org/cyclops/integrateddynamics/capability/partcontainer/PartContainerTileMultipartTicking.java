@@ -58,7 +58,7 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
     @Override
     public Direction getWatchingSide(World world, BlockPos pos, PlayerEntity player) {
         BlockRayTraceResultComponent rayTraceResult = ((BlockCable) world.getBlockState(pos).getBlock())
-                .getShape(world.getBlockState(pos), world, pos, ISelectionContext.forEntity(player))
+                .getSelectedShape(world.getBlockState(pos), world, pos, ISelectionContext.forEntity(player))
                 .rayTrace(pos, player);
         if(rayTraceResult != null) {
             return rayTraceResult.getFace();

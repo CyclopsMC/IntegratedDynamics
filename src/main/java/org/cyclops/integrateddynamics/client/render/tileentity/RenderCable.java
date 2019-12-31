@@ -51,7 +51,7 @@ public class RenderCable extends TileEntityRenderer<TileMultipartTicking> {
         // Pass 1
         startBreaking(rendererDispatcher);
 
-        BlockRayTraceResultComponent result = RegistryEntries.BLOCK_CABLE.getShape(tile.getBlockState(), tile.getWorld(), tile.getPos(), ISelectionContext.forEntity(Minecraft.getInstance().player))
+        BlockRayTraceResultComponent result = RegistryEntries.BLOCK_CABLE.getSelectedShape(tile.getBlockState(), tile.getWorld(), tile.getPos(), ISelectionContext.forEntity(Minecraft.getInstance().player))
                 .rayTrace(tile.getPos(), Minecraft.getInstance().player);
         IBakedModel model = null;
         if(result != null) {

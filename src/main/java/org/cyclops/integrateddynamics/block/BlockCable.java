@@ -140,7 +140,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
 
     @Override
     public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
-        BlockRayTraceResultComponent rayTraceResult = getShape(state, world, pos, ISelectionContext.forEntity(player))
+        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.forEntity(player))
                 .rayTrace(pos, player);
         if (rayTraceResult != null && rayTraceResult.getComponent().destroy(world, pos, player, false)) {
             return true;
@@ -158,7 +158,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
          */
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class).orElse(null);
         if(tile != null) {
-            BlockRayTraceResultComponent rayTraceResult = getShape(state, world, pos, ISelectionContext.forEntity(player))
+            BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.forEntity(player))
                     .rayTrace(pos, player);
             if(rayTraceResult != null && rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, hand, rayTraceResult)) {
                 return true;
@@ -186,7 +186,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
     @Override
     public ItemStack getPickBlock(BlockState state, net.minecraft.util.math.RayTraceResult target, IBlockReader world,
                                   BlockPos blockPos, PlayerEntity player) {
-        BlockRayTraceResultComponent rayTraceResult = getShape(state, world, blockPos, ISelectionContext.forEntity(player))
+        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, blockPos, ISelectionContext.forEntity(player))
                 .rayTrace(blockPos, player);
         if(rayTraceResult != null) {
             return rayTraceResult.getComponent().getPickBlock((World) world, blockPos);
@@ -231,7 +231,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
         partType.updateTick(world, pos, partState, random);
     }
 
-    /* --------------- Start ICollidable and rendering --------------- */
+    /* --------------- Start shapes and rendering --------------- */
 
     public AxisAlignedBB getCableBoundingBox(Direction side) {
         if (side == null) {
@@ -241,9 +241,18 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
         }
     }
 
-    @Override
-    public VoxelShapeComponents getShape(BlockState blockState, IBlockReader world, BlockPos pos, ISelectionContext selectionContext) {
+    public VoxelShapeComponents getSelectedShape(BlockState blockState, IBlockReader world, BlockPos pos, ISelectionContext selectionContext) {
         return voxelShapeComponentsFactory.createShape(blockState, world, pos, selectionContext);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext selectionContext) {
+        VoxelShapeComponents selectedShape = getSelectedShape(state, world, pos, selectionContext);
+        BlockRayTraceResultComponent rayTraceResult = selectedShape.rayTrace(pos, selectionContext.getEntity());
+        if (rayTraceResult != null) {
+            return rayTraceResult.getComponent().getShape(state, world, pos, selectionContext);
+        }
+        return getSelectedShape(state, world, pos, selectionContext);
     }
 
     @Override
@@ -253,6 +262,17 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
         }
         return super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
     }
+
+    /*@Override
+    public VoxelShape getRaytraceShape(BlockState state, IBlockReader world, BlockPos blockPos) {
+        BlockRayTraceResultComponent rayTraceResult = getShape(state, world, blockPos, ISelectionContext.forEntity(player))
+                .rayTrace(blockPos, player);
+        if(rayTraceResult != null) {
+            return rayTraceResult.getComponent().getShape(state, world, blockPos, );
+        }
+
+        return super.getRaytraceShape(state, world, blockPos);
+    }*/
 
     @Override
     public int getOpacity(BlockState blockState, IBlockReader world, BlockPos pos) {

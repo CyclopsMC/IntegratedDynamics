@@ -5,6 +5,8 @@ import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -201,20 +203,20 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
     /**
      * Do a ray trace for the current look direction of the player.
      * @param pos The block position to perform a ray trace for.
-     * @param player The player.
+     * @param entity The entity.
      * @return A holder object with information on the ray tracing.
      */
     @Nullable
-    public BlockRayTraceResultComponent rayTrace(BlockPos pos, @Nullable PlayerEntity player) {
-        if(player == null) {
+    public BlockRayTraceResultComponent rayTrace(BlockPos pos, @Nullable Entity entity) {
+        if(entity == null) {
             return null;
         }
-        IAttributeInstance reachDistanceAttribute = player.getAttribute(PlayerEntity.REACH_DISTANCE);
+        IAttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(PlayerEntity.REACH_DISTANCE) : null;
         double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
-        double eyeHeight = player.getEntityWorld().isRemote() ? player.getEyeHeight() : player.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
-        Vec3d lookVec = player.getLookVec();
-        Vec3d origin = new Vec3d(player.posX, player.posY + eyeHeight, player.posZ);
+        double eyeHeight = entity.getEntityWorld().isRemote() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
+        Vec3d lookVec = entity.getLookVec();
+        Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
         Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
         return rayTrace(origin, direction, pos);
