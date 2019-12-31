@@ -20,7 +20,7 @@ import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCap
  */
 public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
-    @Icon(location = "blocks/energy_battery_overlay_side_2")
+    @Icon(location = "block/energy_battery_overlay_side_2")
     @OnlyIn(Dist.CLIENT)
     public TextureAtlasSprite iconOverlay;
 

@@ -6,6 +6,7 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,9 +33,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelProperty;
 import org.cyclops.cyclopscore.block.BlockTile;
 import org.cyclops.cyclopscore.client.icon.Icon;
+import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -69,7 +73,7 @@ import java.util.Random;
  * This block refers to a ticking part entity.
  * @author rubensworks
  */
-public class BlockCable extends BlockTile {
+public class BlockCable extends BlockTile implements IDynamicModelElement {
 
     public static final float BLOCK_HARDNESS = 3.0F;
     public static final Material BLOCK_MATERIAL = Material.GLASS;
@@ -108,13 +112,16 @@ public class BlockCable extends BlockTile {
     );
 
     @OnlyIn(Dist.CLIENT)
-    @Icon(location = "blocks/cable")
+    @Icon(location = "block/cable")
     public TextureAtlasSprite texture;
     @Setter
     private boolean disableCollisionBox = false;
 
     public BlockCable(Properties properties) {
         super(properties, TileMultipartTicking::new);
+        if (MinecraftHelpers.isClientSide()) {
+            IntegratedDynamics._instance.getIconProvider().registerIconHolderObject(this);
+        }
     }
 
     @Override
@@ -343,5 +350,18 @@ public class BlockCable extends BlockTile {
             }
         }
         return light;
+    }
+
+    /* --------------- Start Dynamic model --------------- */
+
+    @Override
+    public boolean hasDynamicModel() {
+        return true;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public IBakedModel createDynamicModel() {
+        return new CableModel();
     }
 }
