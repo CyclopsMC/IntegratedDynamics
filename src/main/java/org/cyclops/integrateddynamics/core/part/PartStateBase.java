@@ -244,10 +244,10 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
         LazyOptional<Object> o = volatileCapabilities.get(capability);
-        if(o.isPresent()) {
+        if(o != null && o.isPresent()) {
             return o.cast();
         }
-        return capabilities == null ? null : capabilities.getCapability(capability, null);
+        return capabilities == null ? LazyOptional.empty() : capabilities.getCapability(capability);
     }
 
     @Override

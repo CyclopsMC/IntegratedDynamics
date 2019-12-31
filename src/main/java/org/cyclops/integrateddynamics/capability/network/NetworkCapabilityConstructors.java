@@ -24,6 +24,7 @@ public class NetworkCapabilityConstructors {
         INetwork network = event.getNetwork();
         PartNetwork partNetwork = new PartNetwork();
         EnergyNetwork energyNetwork = new EnergyNetwork(IngredientComponent.ENERGY);
+        energyNetwork.setNetwork(network);
         IEnergyStorage energyChannel = energyNetwork.getChannelExternal(CapabilityEnergy.ENERGY, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
 
         event.addCapability(new ResourceLocation(Reference.MOD_ID, "part_network"),
