@@ -18,7 +18,6 @@ public interface INetworkCarrier {
      * Get the current container network. Can be null.
      * @return The network.
      */
-    @Nullable
     public INetwork getNetwork();
 
 }

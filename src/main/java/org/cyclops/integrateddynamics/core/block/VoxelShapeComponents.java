@@ -15,9 +15,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.shapes.BitSetVoxelShapePart;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapeExtendable;
+import net.minecraft.util.math.shapes.VoxelShapePart;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -44,11 +46,12 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
     private final Collection<Pair<VoxelShape, IComponent>> entries;
 
     protected VoxelShapeComponents(Collection<Pair<VoxelShape, IComponent>> entries) {
-        super(null);
-        if (entries.isEmpty()) {
-            throw new IllegalArgumentException("Received zero voxel shape components");
-        }
+        super(createInnerPart(entries));
         this.entries = entries;
+    }
+
+    protected static VoxelShapePart createInnerPart(Collection<Pair<VoxelShape, IComponent>> entries) {
+        return new BitSetVoxelShapePart(1, 1, 1);
     }
 
     public static VoxelShapeComponents create(BlockState blockState, IBlockReader world, BlockPos blockPos,
@@ -68,7 +71,7 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
 
     @Override
     public double getStart(Direction.Axis axis) {
-        double startMin = 0D;
+        double startMin = 1D;
         for (VoxelShape shape : this) {
             double start = shape.getStart(axis);
             if (start < startMin) {
@@ -112,7 +115,7 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
     @Override
     public VoxelShape withOffset(double x, double y, double z) {
         List<Pair<VoxelShape, IComponent>> entries = Lists.newArrayList();
-        for (Pair<VoxelShape, IComponent> entry : entries) {
+        for (Pair<VoxelShape, IComponent> entry : this.entries) {
             entries.add(Pair.of(entry.getLeft().withOffset(x, y, z), entry.getRight()));
         }
         return new VoxelShapeComponents(entries);
@@ -134,7 +137,7 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
 
     @Override
     public double min(Direction.Axis axis, double a, double b) {
-        double valueMin = 0D;
+        double valueMin = 1D;
         for (VoxelShape shape : this) {
             double value = shape.min(axis, a, b);
             if (value < valueMin) {
@@ -219,7 +222,7 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
 
     @Override
     public double getAllowedOffset(AxisRotation rotation, AxisAlignedBB axisAlignedBB, double range) {
-        double valueBest = 0D;
+        double valueBest = range > 0 ? 1D : 0D;
         for (VoxelShape shape : this) {
             double value = shape.getAllowedOffset(rotation, axisAlignedBB, range);
             if (range > 0) {

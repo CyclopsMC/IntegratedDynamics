@@ -448,8 +448,8 @@ public class Network implements INetwork {
         }
         if(baseCluster.remove(SidedPathElement.of(pathElement, null))) {
             DimPos position = pathElement.getPosition();
-            INetworkElementProvider networkElementProvider = (INetworkElementProvider) TileHelpers.getCapability(
-                    position, side, NetworkElementProviderConfig.CAPABILITY);
+            INetworkElementProvider networkElementProvider = TileHelpers.getCapability(
+                    position, side, NetworkElementProviderConfig.CAPABILITY).orElse(null);
             if (networkElementProvider != null) {
                 Collection<INetworkElement> networkElements = networkElementProvider.
                         createNetworkElements(position.getWorld(true), position.getBlockPos());

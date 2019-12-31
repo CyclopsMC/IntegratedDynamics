@@ -70,7 +70,12 @@ public class NetworkHelpers {
      * @return The optional network.
      */
     public static LazyOptional<INetwork> getNetwork(IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        return getNetworkCarrier(world, pos, side).map(INetworkCarrier::getNetwork);
+        LazyOptional<LazyOptional<INetwork>> networkCarried = getNetworkCarrier(world, pos, side)
+                .map(carrier -> {
+                    INetwork network = carrier.getNetwork();
+                    return network != null ? LazyOptional.of(() -> network) : LazyOptional.empty();
+                });
+        return networkCarried.orElse(LazyOptional.empty());
     }
 
     /**
