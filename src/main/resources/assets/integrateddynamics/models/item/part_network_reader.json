@@ -1,5 +1,4 @@
 {
-  "forge_marker": 1,
   "parent": "integrateddynamics:block/reader",
   "textures": {
     "back" : "integrateddynamics:part/network_reader_back",

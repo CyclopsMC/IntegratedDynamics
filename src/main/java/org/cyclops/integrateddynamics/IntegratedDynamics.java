@@ -126,6 +126,9 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         getRegistryManager().addRegistry(IInfoBookRegistry.class, new InfoBookRegistry());
         getRegistryManager().addRegistry(IIngredientComponentHandlerRegistry.class, IngredientComponentHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(INetworkCraftingHandlerRegistry.class, NetworkCraftingHandlerRegistry.getInstance());
+
+        // Preload parts, so we force their blocks and items to be registered
+        PartTypes.load();
     }
 
     @Override
@@ -149,7 +152,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         ValueTypeListProxyFactories.load();
         Operators.load();
         Aspects.load();
-        PartTypes.load();
+        PartTypes.register();
         LogicProgrammerElementTypes.load();
         RegistryExportables.load();
         if(MinecraftHelpers.isClientSide()) {

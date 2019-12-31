@@ -78,7 +78,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * This is mainly used for the block model.
      */
     protected void registerBlock() {
-        BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + getName() + "_block", this::createBlock, this::createItem) {};
+        BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + getName(), this::createBlock, this::createItem) {};
         getMod().getConfigHandler().addConfigurable(blockConfig);
     }
 
@@ -103,12 +103,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getBlockModelPath() {
-        return new ResourceLocation(getMod().getModId(), "part_" + getName() + "_block");
+        return new ResourceLocation(getMod().getModId(), "part_" + getName());
     }
 
     @Override
     public String getTranslationKeyBase() {
-        return "parttype.parttypes." + getMod().getModId() + "." + getName();
+        return "parttype." + getMod().getModId() + "." + getName();
     }
 
     @SuppressWarnings("unchecked")

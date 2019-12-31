@@ -19,7 +19,7 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   private final T2 to;
 
   public ParseOperator(final T2 to, OperatorBase.IFunction operator) {
-    super("parse_" + L10NHelpers.localize(to.getTranslationKey()),
+    super("parse_" + to.getTypeName(),
         "parse_" + to.getTranslationKey(),
         constructInputVariables(1, ValueTypes.STRING),
         to,

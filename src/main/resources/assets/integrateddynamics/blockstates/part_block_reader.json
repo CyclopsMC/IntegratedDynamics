@@ -1,10 +1,10 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "integrateddynamics:reader",
+    "model": "integrateddynamics:block/reader",
     "textures": {
-      "back" : "integrateddynamics:part/entity_reader_back",
-      "front": "integrateddynamics:part/entity_reader_front"
+      "back" : "integrateddynamics:part/block_reader_back",
+      "front": "integrateddynamics:part/block_reader_front"
     }
   },
   "variants": {
@@ -15,9 +15,6 @@
       "west" : { "y": 90 },
       "up"   : { "x": 90 },
       "down" : { "x": 270 }
-    },
-    "inventory": {
-      "model": "integrateddynamics:reader"
     }
   }
 }
