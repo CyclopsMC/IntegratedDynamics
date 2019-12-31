@@ -89,7 +89,6 @@ public class RenderCable extends TileEntityRenderer<TileMultipartTicking> {
 
     private void finishBreaking() {
         Minecraft.getInstance().getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-        GlStateManager.disableDepthTest();
         GlStateManager.polygonOffset(0.0F, 0.0F);
         GlStateManager.disablePolygonOffset();
         GlStateManager.enableAlphaTest();
