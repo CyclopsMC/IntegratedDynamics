@@ -103,7 +103,7 @@ dependencies {
     if(project.hasProperty("commoncapabilities_version_local")) {
         compile "org.cyclops.commoncapabilities:CommonCapabilities:${project.commoncapabilities_version_local}:deobf"
     } else {
-        compileOnly fg.deobf("org.cyclops.commoncapabilities:CommonCapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
+        compile fg.deobf("org.cyclops.commoncapabilities:CommonCapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
             exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
         }
     }
