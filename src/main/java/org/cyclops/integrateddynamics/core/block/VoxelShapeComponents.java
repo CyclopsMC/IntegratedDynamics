@@ -17,10 +17,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.shapes.BitSetVoxelShapePart;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapeExtendable;
 import net.minecraft.util.math.shapes.VoxelShapePart;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
@@ -33,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A {@link VoxelShape} that contains one or more {@link VoxelShapeComponents.IComponent}.
@@ -43,7 +42,7 @@ import java.util.List;
  *
  * @author rubensworks
  */
-public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterable<VoxelShape> {
+public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelShape> {
 
     private final Collection<Pair<VoxelShape, IComponent>> entries;
 
@@ -53,7 +52,9 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
     }
 
     protected static VoxelShapePart createInnerPart(Collection<Pair<VoxelShape, IComponent>> entries) {
-        return new BitSetVoxelShapePart(1, 1, 1);
+        return new Part(entries.stream()
+                .map(pair -> pair.getLeft().part)
+                .collect(Collectors.toList()));
     }
 
     public static VoxelShapeComponents create(BlockState blockState, IBlockReader world, BlockPos blockPos,
@@ -73,11 +74,13 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
 
     @Override
     public double getStart(Direction.Axis axis) {
-        double startMin = 1D;
+        boolean first = true;
+        double startMin = 0;
         for (VoxelShape shape : this) {
             double start = shape.getStart(axis);
-            if (start < startMin) {
+            if (first || start < startMin) {
                 startMin = start;
+                first = false;
             }
         }
         return startMin;
@@ -85,11 +88,13 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
 
     @Override
     public double getEnd(Direction.Axis axis) {
-        double endMax = 0D;
+        boolean first = true;
+        double endMax = 0;
         for (VoxelShape shape : this) {
             double end = shape.getEnd(axis);
-            if (end > endMax) {
+            if (first || end > endMax) {
                 endMax = end;
+                first = false;
             }
         }
         return endMax;
@@ -107,8 +112,8 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
     @Override
     public boolean isEmpty() {
         for (VoxelShape shape : this) {
-            if (shape.isEmpty()) {
-                return true;
+            if (!shape.isEmpty()) {
+                return false;
             }
         }
         return true;
@@ -139,11 +144,13 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
 
     @Override
     public double min(Direction.Axis axis, double a, double b) {
+        boolean first = true;
         double valueMin = 1D;
         for (VoxelShape shape : this) {
             double value = shape.min(axis, a, b);
-            if (value < valueMin) {
+            if (first || value < valueMin) {
                 valueMin = value;
+                first = false;
             }
         }
         return valueMin;
@@ -151,11 +158,13 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
 
     @Override
     public double max(Direction.Axis axis, double a, double b) {
+        boolean first = true;
         double valueMax = 0D;
         for (VoxelShape shape : this) {
             double value = shape.max(axis, a, b);
-            if (value > valueMax) {
+            if (first || value > valueMax) {
                 valueMax = value;
+                first = false;
             }
         }
         return valueMax;
@@ -224,20 +233,114 @@ public class VoxelShapeComponents extends VoxelShapeExtendable implements Iterab
 
     @Override
     public double getAllowedOffset(AxisRotation rotation, AxisAlignedBB axisAlignedBB, double range) {
-        double valueBest = range > 0 ? 1D : 0D;
+        boolean first = true;
+        double valueBest = 0D;
         for (VoxelShape shape : this) {
             double value = shape.getAllowedOffset(rotation, axisAlignedBB, range);
             if (range > 0) {
-                if (value < valueBest) {
+                if (first || value < valueBest) {
                     valueBest = value;
+                    first = false;
                 }
             } else {
-                if (value > valueBest) {
+                if (first || value > valueBest) {
                     valueBest = value;
+                    first = false;
                 }
             }
         }
         return valueBest;
+    }
+
+    public static class Part extends VoxelShapePart implements Iterable<VoxelShapePart> {
+
+        private final Collection<VoxelShapePart> entries;
+
+        public Part(Collection<VoxelShapePart> entries) {
+            super(0, 0, 0);
+            this.entries = entries;
+        }
+
+        @Override
+        public Iterator<VoxelShapePart> iterator() {
+            return entries.iterator();
+        }
+
+        @Override
+        public boolean contains(int x, int y, int z) {
+            for (VoxelShapePart part : this) {
+                if (part.contains(x, y, z)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isFilled(int x, int y, int z) {
+            for (VoxelShapePart part : this) {
+                if (part.isFilled(x, y, z)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void setFilled(int x, int y, int z, boolean b, boolean b1) {
+            for (VoxelShapePart part : this) {
+                part.setFilled(x, y, z, b, b1);
+            }
+        }
+
+        @Override
+        public int getStart(Direction.Axis axis) {
+            boolean first = true;
+            int startMin = 0;
+            for (VoxelShapePart part : this) {
+                int start = part.getStart(axis);
+                if (first || start < startMin) {
+                    startMin = start;
+                    first = false;
+                }
+            }
+            return startMin;
+        }
+
+        @Override
+        public int getEnd(Direction.Axis axis) {
+            boolean first = true;
+            int endMax = 0;
+            for (VoxelShapePart part : this) {
+                int end = part.getEnd(axis);
+                if (first || end > endMax) {
+                    endMax = end;
+                    first = false;
+                }
+            }
+            return endMax;
+        }
+
+        @Override
+        public int getSize(Direction.Axis axis) {
+            boolean first = true;
+            int sizeMax = 0;
+            for (VoxelShapePart part : this) {
+                int size = part.getSize(axis);
+                if (first || size > sizeMax) {
+                    sizeMax = size;
+                    first = false;
+                }
+            }
+            return sizeMax;
+        }
+
+        @Override
+        public void forEachBox(ILineConsumer consumer, boolean p_197831_2_) {
+            for (VoxelShapePart part : this) {
+                part.forEachBox(consumer, p_197831_2_);
+            }
+        }
     }
 
     public static interface IComponent {

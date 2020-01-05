@@ -263,17 +263,6 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
         return super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
     }
 
-    /*@Override
-    public VoxelShape getRaytraceShape(BlockState state, IBlockReader world, BlockPos blockPos) {
-        BlockRayTraceResultComponent rayTraceResult = getShape(state, world, blockPos, ISelectionContext.forEntity(player))
-                .rayTrace(blockPos, player);
-        if(rayTraceResult != null) {
-            return rayTraceResult.getComponent().getShape(state, world, blockPos, );
-        }
-
-        return super.getRaytraceShape(state, world, blockPos);
-    }*/
-
     @Override
     public int getOpacity(BlockState blockState, IBlockReader world, BlockPos pos) {
         return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos, null) ? 255 : 0;
