@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
@@ -50,11 +51,11 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     public ContainerPartWriter(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
         this(id, playerInventory, new SimpleInventory(packetBuffer.readInt(), 1),
-                Optional.empty(), Optional.empty(), readPart(packetBuffer));
+                PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
     public ContainerPartWriter(int id, PlayerInventory playerInventory, IInventory inventory,
-                               Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
+                               PartTarget target, Optional<IPartContainer> partContainer, P partType) {
         super(RegistryEntries.CONTAINER_PART_WRITER, id, playerInventory, inventory, target, partContainer, partType,
                 partType.getWriteAspects());
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
@@ -94,7 +95,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     @Override
     protected IInventory constructInputSlotsInventory() {
         if (!player.world.isRemote()) {
-            SimpleInventory inventory = getPartState().get().getInventory();
+            SimpleInventory inventory = getPartState().getInventory();
             inventory.addDirtyMarkListener(this);
             return inventory;
         } else {
@@ -105,7 +106,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     @Override
     public void onDirty() {
         if (!player.world.isRemote()) {
-            getPartType().updateActivation(getTarget().get(), getPartState().get(), player);
+            getPartType().updateActivation(getTarget(), getPartState(), player);
         }
     }
 
@@ -117,13 +118,13 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
             if (!player.world.isRemote()) {
                 // Update write value
                 Pair<ITextComponent, Integer> readValue;
-                S partState = getPartState().get();
+                S partState = getPartState();
                 if (!partState.isEnabled()) {
                     readValue = Pair.of(new StringTextComponent("NO POWER"), 0);
                 } else if (partState.hasVariable()) {
-                    IPartContainer partContainer = getPartContainer().get();
+                    IPartContainer partContainer = getPartContainer();
                     LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(partContainer.getPosition().getWorld(true),
-                            partContainer.getPosition().getBlockPos(), getTarget().get().getCenter().getSide());
+                            partContainer.getPosition().getBlockPos(), getTarget().getCenter().getSide());
                     IPartNetwork partNetwork = optionalNetwork.map(NetworkHelpers::getPartNetworkChecked).orElse(null);
                     if (partNetwork != null) {
                         IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork);
@@ -138,7 +139,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
                 // Update error values
                 for (IAspectWrite aspectWrite : getPartType().getWriteAspects()) {
-                    ValueNotifierHelpers.setValue(this, aspectErrorIds.get(aspectWrite), getPartState().get().getErrors(aspectWrite));
+                    ValueNotifierHelpers.setValue(this, aspectErrorIds.get(aspectWrite), getPartState().getErrors(aspectWrite));
                 }
 
                 // Update state

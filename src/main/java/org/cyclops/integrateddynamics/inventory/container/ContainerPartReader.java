@@ -28,6 +28,7 @@ import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.part.event.PartReaderAspectEvent;
@@ -53,11 +54,11 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
 
     public ContainerPartReader(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
         this(id, playerInventory, new SimpleInventory(packetBuffer.readInt(), 1),
-                Optional.empty(), Optional.empty(), readPart(packetBuffer));
+                PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
     public ContainerPartReader(int id, PlayerInventory playerInventory, IInventory inventory,
-                                Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
+                                PartTarget target, Optional<IPartContainer> partContainer, P partType) {
         super(RegistryEntries.CONTAINER_PART_READER, id, playerInventory, inventory, target, partContainer, partType,
                 partType.getReadAspects());
 
@@ -121,11 +122,6 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     }
 
     @Override
-    protected int getSizeInventory() {
-        return getUnfilteredItemCount() * 2; // Input and output slots per item
-    }
-
-    @Override
     public void onContainerClosed(PlayerEntity player) {
         super.onContainerClosed(player);
         if (!player.world.isRemote()) {
@@ -163,8 +159,8 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
             if (!player.world.isRemote()) {
                 for (IAspectRead aspectRead : getUnfilteredItems()) {
                     Pair<ITextComponent, Integer> readValue;
-                    if(getPartState().get().isEnabled()) {
-                        IVariable variable = getPartType().getVariable(getTarget().get(), getPartState().get(), aspectRead);
+                    if(getPartState().isEnabled()) {
+                        IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
                         readValue = Pair.of(new StringTextComponent("NO POWER"), 0);
@@ -198,12 +194,16 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     @Override
     public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
         ItemStack resultStack = super.writeAspectInfo(generateId, itemStack, aspect);
-        PartTarget target = getTarget().get();
+        if (player.world.isRemote()) {
+            return resultStack;
+        }
+
+        PartTarget target = getTarget();
         INetwork network = NetworkHelpers.getNetworkChecked(target.getCenter().getPos().getWorld(true),
                 target.getCenter().getPos().getBlockPos(), target.getCenter().getSide());
         IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
         PartReaderAspectEvent event = new PartReaderAspectEvent<>(network, partNetwork, target, getPartType(),
-                getPartState().get(), player, (IAspectRead) aspect, resultStack);
+                getPartState(), player, (IAspectRead) aspect, resultStack);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getItemStack();
     }

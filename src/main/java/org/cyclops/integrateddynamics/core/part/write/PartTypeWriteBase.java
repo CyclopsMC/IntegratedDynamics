@@ -16,6 +16,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -40,7 +41,6 @@ import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.event.PartWriterAspectEvent;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
-import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
@@ -223,9 +223,9 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
             @Override
             public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
                 Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
-                PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
+                S partState = (S) data.getLeft().getPartState(data.getRight().getCenter().getSide());
                 return new ContainerPartWriter<>(id, playerInventory, partState.getInventory(),
-                        Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypeWriteBase) data.getMiddle());
+                        data.getRight(), Optional.of(data.getLeft()), (PartTypeWriteBase) data.getMiddle());
             }
         });
     }
@@ -234,6 +234,8 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
         // Write inventory size
         packetBuffer.writeInt(getWriteAspects().size());
+        // Write part position
+        PacketCodec.write(packetBuffer, pos);
 
         super.writeExtraGuiData(packetBuffer, pos, player);
     }

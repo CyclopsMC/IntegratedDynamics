@@ -8,6 +8,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -21,6 +22,7 @@ import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -34,10 +36,12 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
+import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Helpers related to parts.
@@ -463,6 +467,26 @@ public class PartHelpers {
         }
         PartTarget target = partType.getTarget(pos, partContainer.getPartState(pos.getSide()));
         return Triple.of(partContainer, (PartTypeBase) partType, target);
+    }
+
+    /**
+     * Read a part target from a packet buffer.
+     * @param packetBuffer A packet buffer.
+     * @return A part target.
+     */
+    public static PartTarget readPartTarget(PacketBuffer packetBuffer) {
+        return PartTarget.fromCenter(PacketCodec.read(packetBuffer, PartPos.class));
+    }
+
+    /**
+     * Read a part from a packet buffer.
+     * @param packetBuffer A packet buffer.
+     * @return A part.
+     */
+    public static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
+        String name = packetBuffer.readString();
+        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(name),
+                String.format("Could not find a part by name %s", name));
     }
 
     /**

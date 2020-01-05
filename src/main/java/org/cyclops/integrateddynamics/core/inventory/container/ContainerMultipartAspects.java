@@ -47,22 +47,16 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
 
     private static final int PAGE_SIZE = 3;
 
-    private final Optional<PartTarget> target;
-    private final Optional<IPartContainer> partContainer;
+    private final PartTarget target;
+    private final IPartContainer partContainer;
     private final P partType;
     private final World world;
     private final Map<IAspect, String> aspectPropertyButtons = Maps.newHashMap();
 
     protected final IInventory inputSlots;
 
-    protected static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
-        String name = packetBuffer.readString();
-        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(name),
-                String.format("Could not find a part by name %s", name));
-    }
-
     public ContainerMultipartAspects(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory, IInventory inventory,
-                                     Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType,
+                                     PartTarget target, Optional<IPartContainer> partContainer, P partType,
                                      List<A> items) {
         super(type, id, playerInventory, inventory, items, (item, pattern) -> {
             // We could cache this if this would prove to be a bottleneck.
@@ -70,7 +64,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
             return pattern.matcher(L10NHelpers.localize(item.getTranslationKey()).toLowerCase(Locale.ENGLISH)).matches();
         });
         this.target = target;
-        this.partContainer = partContainer;
+        this.partContainer = partContainer.orElseGet(() -> PartHelpers.getPartContainerChecked(target.getCenter()));
         this.partType = partType;
         this.world = player.getEntityWorld();
 
@@ -78,7 +72,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
 
         putButtonAction(ContainerMultipartAspects.BUTTON_SETTINGS, (s, containerExtended) -> {
             if (!world.isRemote()) {
-                PartHelpers.openContainerPartSettings((ServerPlayerEntity) player, target.get().getCenter(), partType);
+                PartHelpers.openContainerPartSettings((ServerPlayerEntity) player, target.getCenter(), partType);
             }
         });
 
@@ -88,7 +82,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
                 aspectPropertyButtons.put(aspect, buttonId);
                 putButtonAction(buttonId, (s, containerExtended) -> {
                     if (!world.isRemote()) {
-                        PartHelpers.openContainerAspectSettings((ServerPlayerEntity) player, target.get().getCenter(), aspect);
+                        PartHelpers.openContainerAspectSettings((ServerPlayerEntity) player, target.getCenter(), aspect);
                     }
                 });
             }
@@ -99,16 +93,16 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         return partType;
     }
 
-    public Optional<PartTarget> getTarget() {
+    public PartTarget getTarget() {
         return target;
     }
 
-    public Optional<IPartContainer> getPartContainer() {
+    public IPartContainer getPartContainer() {
         return partContainer;
     }
 
-    public Optional<S> getPartState() {
-        return partContainer.map(p -> (S) p.getPartState(getTarget().get().getCenter().getSide()));
+    public S getPartState() {
+        return (S) partContainer.getPartState(getTarget().getCenter().getSide());
     }
 
     public Map<IAspect, String> getAspectPropertyButtons() {
@@ -160,13 +154,8 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
     }
 
     @Override
-    protected int getSizeInventory() {
-        return getUnfilteredItemCount(); // Input and output slots per item
-    }
-
-    @Override
     public boolean canInteractWith(PlayerEntity player) {
-        return PartHelpers.canInteractWith(getTarget().get(), player, this.partContainer.get());
+        return PartHelpers.canInteractWith(getTarget(), player, this.partContainer);
     }
 
     public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
@@ -174,12 +163,12 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         return registry.writeVariableFacadeItem(generateId, itemStack, Aspects.REGISTRY, new IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IAspectVariableFacade>() {
             @Override
             public IAspectVariableFacade create(boolean generateId) {
-                return new AspectVariableFacade(generateId, getPartState().get().getId(), aspect);
+                return new AspectVariableFacade(generateId, getPartState().getId(), aspect);
             }
 
             @Override
             public IAspectVariableFacade create(int id) {
-                return new AspectVariableFacade(id, getPartState().get().getId(), aspect);
+                return new AspectVariableFacade(id, getPartState().getId(), aspect);
             }
         }, null, null);
     }

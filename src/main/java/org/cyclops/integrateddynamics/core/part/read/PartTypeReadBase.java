@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
@@ -14,6 +15,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -142,9 +144,8 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
             @Override
             public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
                 Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
-                PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
-                return new ContainerPartReader<>(id, playerInventory, partState.getInventory(),
-                        Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypeReadBase) data.getMiddle());
+                return new ContainerPartReader<>(id, playerInventory, new Inventory(0),
+                        data.getRight(), Optional.of(data.getLeft()), (PartTypeReadBase) data.getMiddle());
             }
         });
     }
@@ -153,6 +154,8 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
         // Write inventory size
         packetBuffer.writeInt(getReadAspects().size());
+        // Write part position
+        PacketCodec.write(packetBuffer, pos);
 
         super.writeExtraGuiData(packetBuffer, pos, player);
     }

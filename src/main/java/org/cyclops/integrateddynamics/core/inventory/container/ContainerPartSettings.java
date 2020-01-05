@@ -53,17 +53,7 @@ public class ContainerPartSettings extends InventoryContainer {
 
     public ContainerPartSettings(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
         this(id, playerInventory, new Inventory(0),
-                readPartTarget(packetBuffer), Optional.empty(), readPart(packetBuffer));
-    }
-
-    protected static PartTarget readPartTarget(PacketBuffer packetBuffer) {
-        return PartTarget.fromCenter(PacketCodec.read(packetBuffer, PartPos.class));
-    }
-
-    protected static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
-        String name = packetBuffer.readString();
-        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(name),
-                String.format("Could not find a part by name %s", name));
+                PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
     public ContainerPartSettings(int id, PlayerInventory playerInventory, IInventory inventory,

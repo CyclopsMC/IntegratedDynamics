@@ -100,7 +100,7 @@ public class NetworkHelpers {
      */
     public static INetwork getNetworkChecked(IBlockReader world, BlockPos pos, @Nullable Direction side) {
         return getNetwork(world, pos, side)
-                .orElseThrow(() -> new IllegalStateException("Could not find a part container at " + pos.toString()));
+                .orElseThrow(() -> new IllegalStateException("Could not find a network container at " + pos.toString()));
     }
 
     /**
@@ -114,7 +114,7 @@ public class NetworkHelpers {
      */
     public static INetwork getNetworkChecked(PartPos pos) {
         return getNetwork(pos)
-                .orElseThrow(() -> new IllegalStateException("Could not find a part container at " + pos.toString()));
+                .orElseThrow(() -> new IllegalStateException("Could not find a network container at " + pos.toString()));
     }
 
     /**
