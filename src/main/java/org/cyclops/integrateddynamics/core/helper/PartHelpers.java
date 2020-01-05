@@ -482,6 +482,8 @@ public class PartHelpers {
      * Read a part from a packet buffer.
      * @param packetBuffer A packet buffer.
      * @return A part.
+     * @param <P> The part type type.
+     * @param <S> The part state type.
      */
     public static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
         String name = packetBuffer.readString();
