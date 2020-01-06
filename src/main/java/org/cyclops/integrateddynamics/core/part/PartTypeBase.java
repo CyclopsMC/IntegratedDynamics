@@ -78,7 +78,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * This is mainly used for the block model.
      */
     protected void registerBlock() {
-        BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + getName(), this::createBlock, this::createItem) {};
+        BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + getName(),
+                (eConfig)        -> block = createBlock(eConfig),
+                (eConfig, block) -> item  = createItem(eConfig, block)) {};
         getMod().getConfigHandler().addConfigurable(blockConfig);
     }
 
@@ -88,7 +90,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The block instance.
      */
     protected Block createBlock(BlockConfig blockConfig) {
-        return block = new IgnoredBlock();
+        return new IgnoredBlock();
     }
 
     /**
@@ -98,7 +100,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The item instance.
      */
     protected Item createItem(BlockConfig blockConfig, Block block) {
-        return item = new ItemPart<>(new Item.Properties().group(blockConfig.getMod().getDefaultItemGroup()), this);
+        return new ItemPart<>(new Item.Properties().group(blockConfig.getMod().getDefaultItemGroup()), this);
     }
 
     @Override
